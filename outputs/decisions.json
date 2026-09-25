@@ -1,0 +1,493 @@
+{
+ "area": "decisions",
+ "version": "2.1.282",
+ "items": [
+  {
+   "id": "prompt-cache-ttl",
+   "title": "Prompt cache TTL",
+   "group": "Prompt caching",
+   "question": "How long Claude Code asks the API to keep a cached prompt prefix: 5 minutes or 1 hour, decided for every request.",
+   "shape": "first-wins",
+   "observe": "cache_ttl",
+   "value_labels": {
+    "5m": "5 minutes",
+    "1h": "1 hour",
+    "none": "No caching"
+   },
+   "context": [
+    {
+     "key": "kind",
+     "label": "Request",
+     "values": [
+      {
+       "value": "main",
+       "label": "Main conversation"
+      },
+      {
+       "value": "subagent",
+       "label": "Subagent or background"
+      }
+     ]
+    },
+    {
+     "key": "auth",
+     "label": "Signed in with",
+     "values": [
+      {
+       "value": "key",
+       "label": "API key"
+      },
+      {
+       "value": "subscription",
+       "label": "Claude subscription"
+      }
+     ]
+    },
+    {
+     "key": "overage",
+     "label": "Using extra usage",
+     "show_when": [
+      {
+       "auth": [
+        "subscription"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": false,
+       "label": "No"
+      },
+      {
+       "value": true,
+       "label": "Yes"
+      }
+     ]
+    },
+    {
+     "key": "provider",
+     "label": "Provider",
+     "values": [
+      {
+       "value": "anthropic",
+       "label": "Anthropic"
+      },
+      {
+       "value": "bedrock",
+       "label": "Bedrock"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "kind": {
+     "main": {},
+     "subagent": null
+    },
+    "auth": {
+     "key": {},
+     "subscription": null
+    },
+    "overage": {
+     "false": {},
+     "true": null
+    },
+    "provider": {
+     "anthropic": {},
+     "bedrock": null
+    }
+   },
+   "bypasses": [
+    {
+     "id": "disable",
+     "knob": "env-disable-prompt-caching",
+     "effect": {
+      "value": "none"
+     },
+     "note": "Checked before the ladder: no cache markers at all. The _OPUS, _SONNET, _HAIKU, _FABLE and _MYTHOS variants do the same for one model family.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182912355,
+       "length": 457,
+       "sha256": "d6f6767f219b98f8d85adce358160660ca3e2f2767745f02b492721b850ea9e8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "tested",
+     "id": "force5m",
+     "mechanism": "env",
+     "knob": "env-force-prompt-caching-5m",
+     "input": "toggle",
+     "note": "Forces 5 minutes. 0 and false count as off.",
+     "effect": {
+      "value": "5m"
+     },
+     "realize": {
+      "env": {
+       "FORCE_PROMPT_CACHING_5M": "1"
+      }
+     },
+     "label": "FORCE_PROMPT_CACHING_5M",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833075,
+       "length": 21,
+       "sha256": "c7fb4467b5b46db0ac44915e4d539606b3e14f2938bec0875be15a5bdf443463",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "envTtl",
+     "mechanism": "env",
+     "knob": "env-claude-code-prompt-cache-ttl",
+     "applies_when": [
+      {
+       "kind": [
+        "main"
+       ]
+      }
+     ],
+     "input": "choice",
+     "accepts": [
+      "5m",
+      "1h"
+     ],
+     "invalid_example": "2h",
+     "note": "Main-conversation requests only. Any other value is skipped without a warning.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_PROMPT_CACHE_TTL": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_PROMPT_CACHE_TTL",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833213,
+       "length": 12,
+       "sha256": "144061c231046f30b5522fc857155aa668add07bd334d1f82fed33eed68ccbed",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envSubagentTtl",
+     "mechanism": "env",
+     "knob": "env-claude-code-subagent-prompt-cache-ttl",
+     "applies_when": [
+      {
+       "kind": [
+        "subagent"
+       ]
+      }
+     ],
+     "input": "choice",
+     "accepts": [
+      "5m",
+      "1h"
+     ],
+     "note": "Every request that is not the main conversation. Any other value is skipped without a warning.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833213,
+       "length": 12,
+       "sha256": "144061c231046f30b5522fc857155aa668add07bd334d1f82fed33eed68ccbed",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "settingTtl",
+     "mechanism": "settings",
+     "knob": "setting-prompt-cache-ttl",
+     "applies_when": [
+      {
+       "kind": [
+        "main"
+       ]
+      }
+     ],
+     "input": "choice",
+     "accepts": [
+      "5m",
+      "1h"
+     ],
+     "note": "From any settings file Claude Code loads.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "promptCacheTtl": "{value}"
+      }
+     },
+     "label": "promptCacheTtl",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833311,
+       "length": 16,
+       "sha256": "ed98ba6c615dec43ad9434a2e55593550c5be762606a6bea410a75bf3d7fb48f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingSubagentTtl",
+     "mechanism": "settings",
+     "knob": "setting-subagent-prompt-cache-ttl",
+     "applies_when": [
+      {
+       "kind": [
+        "subagent"
+       ]
+      }
+     ],
+     "input": "choice",
+     "accepts": [
+      "5m",
+      "1h"
+     ],
+     "note": "From any settings file Claude Code loads.",
+     "effect": {
+      "from": "input"
+     },
+     "label": "subagentPromptCacheTtl",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833311,
+       "length": 16,
+       "sha256": "ed98ba6c615dec43ad9434a2e55593550c5be762606a6bea410a75bf3d7fb48f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "frontmatter",
+     "mechanism": "frontmatter",
+     "knob": null,
+     "label": "Agent frontmatter TTL",
+     "input": "choice",
+     "accepts": [
+      "5m",
+      "1h"
+     ],
+     "skip_when": [
+      {
+       "value": [
+        "1h"
+       ],
+       "auth": [
+        "subscription"
+       ],
+       "overage": [
+        true
+       ]
+      }
+     ],
+     "note": "When the request comes from an agent that sets one. A 1h value is skipped while a subscriber is on extra usage.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833372,
+       "length": 26,
+       "sha256": "22158a26a69fc9e32b41d87068da056e85bc4ef3847ea755d6ff14a20cc43c7d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "enable1h",
+     "mechanism": "env",
+     "knob": "env-enable-prompt-caching-1h",
+     "input": "toggle",
+     "note": "Asks for 1 hour.",
+     "effect": {
+      "value": "1h"
+     },
+     "realize": {
+      "env": {
+       "ENABLE_PROMPT_CACHING_1H": "1"
+      }
+     },
+     "label": "ENABLE_PROMPT_CACHING_1H",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833500,
+       "length": 22,
+       "sha256": "ecb0e0ccf0b5202b6a0e8fb70ff2509eba63adad222ff8c0a9ad548fd9eb02e6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "enable1hBedrock",
+     "mechanism": "env",
+     "knob": "env-enable-prompt-caching-1h-bedrock",
+     "applies_when": [
+      {
+       "provider": [
+        "bedrock"
+       ]
+      }
+     ],
+     "input": "toggle",
+     "note": "Bedrock only.",
+     "effect": {
+      "value": "1h"
+     },
+     "label": "ENABLE_PROMPT_CACHING_1H_BEDROCK",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182833500,
+       "length": 22,
+       "sha256": "ecb0e0ccf0b5202b6a0e8fb70ff2509eba63adad222ff8c0a9ad548fd9eb02e6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "notSubscriber",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Not a subscriber, or on extra usage",
+     "input": null,
+     "applies_when": [
+      {
+       "auth": [
+        "key"
+       ]
+      },
+      {
+       "overage": [
+        true
+       ]
+      }
+     ],
+     "note": "API-key and provider sign-ins, and subscribers using extra usage, stop here.",
+     "effect": {
+      "value": "5m"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182913080,
+       "length": 17,
+       "sha256": "76f54ce03f52f4be914fa994690b1f87505f0c5943858a776d6d230d9a75d94e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "allowlist",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's 1-hour allowlist",
+     "input": null,
+     "applies_when": [
+      {
+       "auth": [
+        "subscription"
+       ]
+      }
+     ],
+     "note": "A remote flag lists which request kinds get 1 hour; by default, the main conversation. Read once per session. Anthropic can change it without a release.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "kind": [
+          "main"
+         ]
+        },
+        "value": "1h"
+       },
+       {
+        "when": {},
+        "value": "5m"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182913127,
+       "length": 28,
+       "sha256": "717875db3b2df3b62359d560dc68c50c3defc14e7eecbba9ad8d7e17c5f134c2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "details": {},
+   "provenance": [
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182833007,
+     "length": 524,
+     "sha256": "b1745a8c35c72f7f982295f24bf530ca30871762b539ca0c492a21adc57332dc",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182912910,
+     "length": 365,
+     "sha256": "1acb3ee7058f1ee57ff5b65e18a9a63e1acf93ff467b1013454247119203d923",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "constraints": []
+  }
+ ]
+}
