@@ -1,5 +1,5 @@
 // GPT-6 / Codex desktop → gpt6aeon.dtmont.com
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, renameSync, rmSync } from "node:fs";
 import path from "node:path";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
@@ -26,12 +26,20 @@ export const codex = {
     // The config.toml and env-var reference follows the bundled CLI and app build. It needs
     // the matching openai/codex source tag; if that isn't published yet, say so and keep going.
     let configNote = "";
+    let cliPromptDiff = "";
+    const cliPromptDiffFile = path.join(repo, "work/codex-cli-prompts-diff.md");
     if (!previous || previous.cli_sha256 !== fingerprint.cli_sha256 || previous.app_build !== fingerprint.app_build) {
+      rmSync(cliPromptDiffFile, { force: true });
       const c = run("bash", ["extract/codex-config/run_all.sh"], { cwd: repo, timeoutMs: 30 * 60 * 1000 });
       if (c.status !== 0) {
         configNote = `config/env reference not regenerated: ${(c.stderr || c.stdout).slice(-300)}`;
         notify("gpt6aeon config reference", configNote);
-        run("git", ["checkout", "--", "outputs/codex-config.json", "outputs/codex-config.md", "outputs/codex-env-vars.json", "outputs/codex-env-vars.md"], { cwd: repo });
+        run("git", ["checkout", "--", "outputs/codex-config.json", "outputs/codex-config.md", "outputs/codex-env-vars.json", "outputs/codex-env-vars.md",
+          "outputs/codex-cli-prompts.md", "outputs/codex-cli-bundled-skills.md", "outputs/codex-cli-prompts.json"], { cwd: repo });
+      } else if (existsSync(cliPromptDiffFile)) {
+        // Written by this cycle's 07_cli_prompts.mjs against the committed pages; consumed once.
+        cliPromptDiff = readFileSync(cliPromptDiffFile, "utf8").trim();
+        rmSync(cliPromptDiffFile, { force: true });
       }
     }
     let r = run(node, ["extract/codex/refresh.mjs"], { cwd: repo, timeoutMs: 15 * 60 * 1000 });
@@ -43,8 +51,16 @@ export const codex = {
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
+    // Catalog settings baseline: advanced after a publish, or when nothing needs publishing;
+    // never in a dry run, so a failed gate or a dry run can't swallow a change.
+    const promoteSnapshot = () => {
+      const next = path.join(repo, "work/catalog-snapshot.next.json");
+      if (!dryRun && existsSync(next)) renameSync(next, path.join(repo, "work/catalog-snapshot.json"));
+    };
+    const privateSettings = summary.catalog_settings?.private ?? [];
+    if (privateSettings.length && !dryRun) notify("gpt6aeon catalog", `Catalog settings changed (not published, may be account-specific): ${privateSettings.join(", ").slice(0, 300)}`);
     const diffFile = path.join(repo, "work/codex-diff.md");
-    const diff = existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "";
+    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff].filter(Boolean).join("\n\n");
     const statusFile = path.join(repo, "outputs/status.json");
     const previousLabel = existsSync(statusFile) ? JSON.parse(readFileSync(statusFile, "utf8")).checked : null;
     const labelChanged = previousLabel !== this.checkedLabel(now);
@@ -52,12 +68,13 @@ export const codex = {
     // and file names). Publish those too so provenance stays current, without moving the
     // "Updated" date. sources.json alone changes every run (fetch time) and doesn't count.
     const dirty = run("git", ["status", "--porcelain", "--", "outputs", ":(exclude)outputs/sources.json", ":(exclude)outputs/status.json"], { cwd: repo }).stdout.trim();
-    if (!diff && !labelChanged && !dirty) return { published: false, summary };
+    if (!diff && !labelChanged && !dirty) { promoteSnapshot(); return { published: false, summary }; }
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: summary.sources, changed: Boolean(diff) || !previousLabel });
     if (diff && !dryRun) appendChangelog(repo, `ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build}), Codex CLI ${summary.sources.cli_version}`, diff);
     await gate(repo);
     if (dryRun) return { published: false, summary, wouldPublish: true };
-    await publish(repo, { origin: this.origin, message: diff ? `Refresh: ${summary.changed.length} documents changed upstream\n\n${diff.slice(0, 3000)}` : dirty ? `Provenance: ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build})` : `Status: now checked ${this.checkedLabel(now)}` });
+    await publish(repo, { origin: this.origin, message: diff ? `Refresh: ${summary.changed.length ? `${summary.changed.length} documents changed upstream` : "Codex model settings or CLI prompts changed"}\n\n${diff.slice(0, 3000)}` : dirty ? `Provenance: ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build})` : `Status: now checked ${this.checkedLabel(now)}` });
+    promoteSnapshot();
     return { published: true, summary };
   }
 };
