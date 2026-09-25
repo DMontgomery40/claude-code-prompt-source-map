@@ -136,3 +136,13 @@ test("constraints with applies_when are active without a toggle", () => {
   assert.deepEqual([vetoed.value, vetoed.skipped], ["default", ["mode"]]);
   assert.equal(evaluateLadder(d, { context: { managed: false }, set: { mode: "bypassPermissions" } }).value, "bypassPermissions");
 });
+
+test("replace_values maps a final value after the ladder", () => {
+  const d = { shape: "first-wins", constraints: [{ id: "noAuto", replace_values: { auto: "default" } }], rungs: [
+    { id: "cli", input: "choice", accepts: ["auto", "plan"], effect: { from: "input" } },
+    { id: "settings", input: "choice", accepts: ["plan"], effect: { from: "input" } }] };
+  const r = evaluateLadder(d, { set: { cli: "auto", settings: "plan" }, constraints: { noAuto: true } });
+  assert.deepEqual([r.value, r.rung, r.constrainedBy], ["default", "cli", "noAuto"]);
+  assert.equal(evaluateLadder(d, { set: { cli: "plan" }, constraints: { noAuto: true } }).constrainedBy, undefined);
+  assert.equal(evaluateLadder(d, { set: { cli: "auto" } }).value, "auto");
+});
