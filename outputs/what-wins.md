@@ -15,8 +15,8 @@ Whether the advisor tool, which lets Claude consult a stronger reviewer model, c
 2. **remote** Anthropic's advisor flag turned on: A remote flag that is off by default in code. When Anthropic turns it on for you, the advisor becomes available without the variable. Anthropic can change it without a release. Read from code.
 3. **default** Default: When nothing above turns it on: no advisor. Read from code.
 
-- After the ladder: Not on Anthropic's API. Only on Anthropic's API. With any other provider there is no advisor, whatever is set in the ladder.
-- After the ladder: The API refused the advisor. When the API refuses the advisor during a session, Claude Code stops offering it, for this process or for that host.
+* After the ladder: Not on Anthropic's API. Only on Anthropic's API. With any other provider there is no advisor, whatever is set in the ladder.
+* After the ladder: The API refused the advisor. When the API refuses the advisor during a session, Claude Code stops offering it, for this process or for that host.
 
 Source: `chunk-5ezz9t8y.js` · offset 179701832 · sha256 `1b710058…`
 
@@ -28,8 +28,8 @@ How many characters of a Bash or PowerShell command's output Claude receives in 
 2. **env** `BASH_MAX_OUTPUT_LENGTH`: Used only when the setting is not set. It sizes how much output is read back from the command, so it can shrink the limit below 30,000 but cannot raise it past the 30,000 inline threshold. Zero, negatives and non-numbers fall back to 30,000 with only a debug-log line; values above 150,000 are lowered to it. Read from code.
 3. **default** Built-in default: 30,000 characters. Read from code.
 
-- After the ladder: Inline size threshold. Output longer than what is read back, or longer than this threshold, is saved to a file, and Claude gets the first 2,000 characters plus the file's path instead. The threshold is the setting's value, at most 128,000, or 30,000 when the setting is not set; the environment variable does not change it.
-- After the ladder: Anthropic's per-tool threshold. A table Anthropic sends can set the inline threshold for each tool by name. The code's default is empty, so nothing changes unless Anthropic sends a value, which it can do without a release. Because output past the read-back size is saved to a file anyway, it can only lower the limit.
+* After the ladder: Inline size threshold. Output longer than what is read back, or longer than this threshold, is saved to a file, and Claude gets the first 2,000 characters plus the file's path instead. The threshold is the setting's value, at most 128,000, or 30,000 when the setting is not set; the environment variable does not change it.
+* After the ladder: Anthropic's per-tool threshold. A table Anthropic sends can set the inline threshold for each tool by name. The code's default is empty, so nothing changes unless Anthropic sends a value, which it can do without a release. Because output past the read-back size is saved to a file anyway, it can only lower the limit.
 
 Source: `chunk-7ks9wn7n.js` · offset 180697730 · sha256 `7521a5f0…`
 
@@ -41,11 +41,11 @@ How many tokens of an MCP tool's result Claude receives in the tool result befor
 2. **remote** Anthropic's per-tool table (MCP entry): Anthropic can send a token limit for all MCP tools in the same per-tool table that sets the Bash threshold, under its own MCP entry. The code's default table is empty, so nothing changes unless Anthropic sends a positive number, which it can do without a release. Read from code.
 3. **default** Built-in default: 25,000 tokens. Read from code.
 
-- After the ladder: Built-in IDE connection. Checked before the ladder. Results from the built-in IDE connection are passed through without this limit.
-- After the ladder: Tool declares its own result size. Checked before the ladder. An MCP tool that declares a positive anthropic/maxResultSizeChars value in its metadata skips this token limit, unless the result contains images.
-- After the ladder: What happens to a result over the limit. A result whose estimated size is at most half the limit passes; above that, the tokens are counted through the API, falling back to the estimate if counting fails. A result over the limit is normally saved to a file, and Claude gets the file's path, its format and instructions for reading it. It is instead cut to four characters per token of the limit, followed by a truncation notice, when ENABLE\_MCP\_LARGE\_OUTPUT\_FILES is set to a false value, when the result contains images, or when saving fails in remote-storage sessions; in other sessions a failed save returns an error with no content.
-- After the ladder: Saved-file instructions wording. MCP\_TRUNCATION\_PROMPT\_OVERRIDE only changes the wording of the reading instructions for a saved file, not the limit: legacy picks the older wording and any other value the newer one. When it is unset, a flag Anthropic can change without a release decides, and the code's default is the older wording.
-- After the ladder: General tool-result size threshold. After this check, MCP results also pass the size check every tool uses. For a tool that does not declare its own size it is 50,000 characters, so a text result under the token limit but longer than that is still saved to a file with a short preview. Anthropic's per-tool table can set this threshold for a single MCP tool by name without a release.
+* After the ladder: Built-in IDE connection. Checked before the ladder. Results from the built-in IDE connection are passed through without this limit.
+* After the ladder: Tool declares its own result size. Checked before the ladder. An MCP tool that declares a positive anthropic/maxResultSizeChars value in its metadata skips this token limit, unless the result contains images.
+* After the ladder: What happens to a result over the limit. A result whose estimated size is at most half the limit passes; above that, the tokens are counted through the API, falling back to the estimate if counting fails. A result over the limit is normally saved to a file, and Claude gets the file's path, its format and instructions for reading it. It is instead cut to four characters per token of the limit, followed by a truncation notice, when ENABLE\_MCP\_LARGE\_OUTPUT\_FILES is set to a false value, when the result contains images, or when saving fails in remote-storage sessions; in other sessions a failed save returns an error with no content.
+* After the ladder: Saved-file instructions wording. MCP\_TRUNCATION\_PROMPT\_OVERRIDE only changes the wording of the reading instructions for a saved file, not the limit: legacy picks the older wording and any other value the newer one. When it is unset, a flag Anthropic can change without a release decides, and the code's default is the older wording.
+* After the ladder: General tool-result size threshold. After this check, MCP results also pass the size check every tool uses. For a tool that does not declare its own size it is 50,000 characters, so a text result under the token limit but longer than that is still saved to a file with a short preview. Anthropic's per-tool table can set this threshold for a single MCP tool by name without a release.
 
 Source: `chunk-wq3ev8bt.js` · offset 199518311 · sha256 `5e19b5fa…`
 
@@ -57,7 +57,7 @@ Whether Claude Code gives up on a streaming response that goes silent: it sets a
 2. **remote** Anthropic's watchdog flag turned off: A remote flag that is on by default in code, so the watchdog runs unless Anthropic turns it off. Anthropic can change it without a release. Read from code.
 3. **default** Default: When nothing above answers: on. Read from code.
 
-- After the ladder: Provider without the watchdog. Only for Anthropic's API at its own address and Anthropic on AWS without a custom address. Bedrock also needs CLAUDE\_ENABLE\_BYTE\_WATCHDOG\_BEDROCK set to 1, true, yes or on. Anywhere else the watchdog stays off, whatever the ladder says.
+* After the ladder: Provider without the watchdog. Only for Anthropic's API at its own address and Anthropic on AWS without a custom address. Bedrock also needs CLAUDE\_ENABLE\_BYTE\_WATCHDOG\_BEDROCK set to 1, true, yes or on. Anywhere else the watchdog stays off, whatever the ladder says.
 
 Source: `chunk-5ezz9t8y.js` · offset 179777730 · sha256 `6e77a188…`
 
@@ -96,8 +96,8 @@ Which credential Claude Code sends with requests to the Anthropic API: a subscri
 10. **default** Signed in with claude.ai (/login): The login /login saved in the keychain or credentials file. It must carry the inference scope; a Console login does not, so it falls through to the next rung. Read from code.
 11. **default** API key saved by /login (Console): Read from the macOS keychain or Claude Code's config file. Not read when the host manages provider credentials. Read from code.
 
-- After the ladder: `forceLoginOrgUUID`. Checked at sign-in and before cloud sessions, not a rung. When managed settings pin an organization, an API key, auth token or apiKeyHelper makes the check fail, and an OAuth token from another organization is refused.
-- After the ladder: `forceLoginMethod`. Checked when you sign in, not a rung: a claude.ai or Console sign-in of the other kind is refused. It does not reorder the ladder.
+* After the ladder: `forceLoginOrgUUID`. Checked at sign-in and before cloud sessions, not a rung. When managed settings pin an organization, an API key, auth token or apiKeyHelper makes the check fail, and an OAuth token from another organization is refused.
+* After the ladder: `forceLoginMethod`. Checked when you sign in, not a rung: a claude.ai or Console sign-in of the other kind is refused. It does not reorder the ladder.
 
 Source: `chunk-3kj78r2m.js` · offset 176741266 · sha256 `3f2080c5…`
 
@@ -116,9 +116,9 @@ Which permission mode a session starts in: default, acceptEdits, plan, auto, don
 7. **remote** Anthropic's auto-by-default rollout: A remote flag, off by default in code, that starts sessions in auto when nothing above answers. Print mode needs a second remote flag, also off by default. Anthropic can change both without a release. Read from code.
 8. **default** Built-in default: When nothing above answers, the session starts in default. Read from code.
 
-- After the ladder: `permissions.disableBypassPermissionsMode`. When set to disable, any rung that answers bypassPermissions is passed over with a warning and the next rung answers.
-- After the ladder: `permissions.disableAutoMode`. When set to disable, auto answers are passed over and the next rung answers. An explicit auto from a flag, an agent or settings actually starts in auto and is switched to default once Claude Code checks whether auto is available. The top-level disableAutoMode setting does the same.
-- After the ladder: Anthropic's auto-mode switch. A remote flag that leaves auto mode available by default in code. When Anthropic switches auto mode off, auto answers are passed over and the next rung answers, and a session already in auto is switched to default once Claude Code checks whether auto is available. Anthropic can change it without a release.
+* After the ladder: `permissions.disableBypassPermissionsMode`. When set to disable, any rung that answers bypassPermissions is passed over with a warning and the next rung answers.
+* After the ladder: `permissions.disableAutoMode`. When set to disable, auto answers are passed over and the next rung answers. An explicit auto from a flag, an agent or settings actually starts in auto and is switched to default once Claude Code checks whether auto is available. The top-level disableAutoMode setting does the same.
+* After the ladder: Anthropic's auto-mode switch. A remote flag that leaves auto mode available by default in code. When Anthropic switches auto mode off, auto answers are passed over and the next rung answers, and a session already in auto is switched to default once Claude Code checks whether auto is available. Anthropic can change it without a release.
 
 Source: `chunk-76kv9jbg.js` · offset 177254731 · sha256 `42a12381…`
 
@@ -141,8 +141,8 @@ Which allow, deny and ask rules are in force for a session: every source adds it
 13. **env** `CLAUDE_BG_SESSION_PERMISSION_RULES`: Background sessions only: the deny list from the same JSON value. Read from code.
 14. **flag** `--tools <tools...>`: Built-in tools left out of --tools are withheld as deny rules. Read from code.
 
-- After the ladder: `allowManagedPermissionRulesOnly`. allowManagedPermissionRulesOnly, counted only when set in managed settings: rules from every other settings file, --allowedTools, background-session allow rules and user or project skill frontmatter are ignored. Deny rules from the command line and the session still apply.
-- After the ladder: `CLAUDE_CODE_EVAL_CONFINED`. Drops every allow rule read from a settings file, managed policy included. Command-line and frontmatter allow rules are unaffected.
+* After the ladder: `allowManagedPermissionRulesOnly`. allowManagedPermissionRulesOnly, counted only when set in managed settings: rules from every other settings file, --allowedTools, background-session allow rules and user or project skill frontmatter are ignored. Deny rules from the command line and the session still apply.
+* After the ladder: `CLAUDE_CODE_EVAL_CONFINED`. Drops every allow rule read from a settings file, managed policy included. Command-line and frontmatter allow rules are unaffected.
 
 Source: `chunk-qehhcpvf.js` · offset 177575938 · sha256 `7b2bbff2…`
 
@@ -178,8 +178,10 @@ Whether Claude Code compacts the conversation automatically, and the window it c
 7. **default** Unrecognized model: A model Claude Code does not recognize compacts at its full context window. CLAUDE\_CODE\_DISABLE\_UNKNOWN\_MODEL\_WINDOW\_ENFORCEMENT skips this rung. Read from code.
 8. **default** No window configured: Nothing above answers, so there is no threshold: Claude Code compacts when the API rejects a prompt as too long. On Claude Code on the web a remote flag, off by default in code, decides; while it is off, compaction runs at the full context window. Some models whose larger window is not available here get a built-in 200K window instead. Read from code.
 
-- After the ladder: The model's context window. A window larger than the model's context window is cut down to it.
-- After the ladder: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`. Leaves the window alone but moves the trigger earlier: a percent from 1 to 100 of the window after the reply room, never later than the usual trigger. Other values are ignored.
+- Some models have a built-in 200K window that this ladder does not show: for them, auto-compaction starts near 200K tokens instead of waiting for the API to reject a prompt as too long.
+
+* After the ladder: The model's context window. A window larger than the model's context window is cut down to it.
+* After the ladder: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`. Leaves the window alone but moves the trigger earlier: a percent from 1 to 100 of the window after the reply room, never later than the usual trigger. Other values are ignored.
 
 Source: `chunk-x9fwahqm.js` · offset 181929557 · sha256 `f914888e…`
 
@@ -197,6 +199,12 @@ Whether Claude Code keeps automatic memory for the session: loads the project's 
 5. **remote** Anthropic's per-model memory switch: Two remote flags: a list of model names (empty by default in code) and a switch (off by default in code). When the switch is on and the session's model name contains a listed name, auto memory is off. CLAUDE\_CODE\_DISABLE\_AUTO\_MEMORY=0 skips this check. Anthropic can change both without a release. Read from code.
 6. **settings** `autoMemoryEnabled`: Read from the merged settings, so any settings file Claude Code loads can set it. true turns auto memory on, false turns it off. The /memory toggle writes this key to your user settings. Read from code.
 7. **default** Default: When nothing above answers, auto memory is on. Read from code.
+
+- Auto memory is a folder of plain files on your machine. By default it is ~/.claude/projects/<project>/memory/, where <project> is the project's root folder path turned into a folder name, and MEMORY.md in it is the index Claude Code loads at the start of a session.
+- CLAUDE\_CODE\_REMOTE\_MEMORY\_DIR replaces ~/.claude as the base of that default path. The folder itself can be moved: CLAUDE\_COWORK\_MEMORY\_PATH\_OVERRIDE wins, then autoMemoryDirectory from managed settings, --settings, local and project settings (only in a trusted folder or a non-interactive run), then user settings.
+- Turning auto memory off with autoMemoryEnabled or /memory writes autoMemoryEnabled to your user settings file. /pause-memory turns it off for the current session only.
+- Memory stores are a separate decision: shared stores mounted next to your own memory, used when a remote flag (off by default in code) is on or CLAUDE\_MEMORY\_STORES is set. Whether Claude reaches memory through plain files or through memory tools is also decided separately, partly by another remote flag.
+- A session that the app launching Claude Code marks as restricted also has no auto memory, whatever is set on this ladder.
 
 Source: `chunk-3kj78r2m.js` · offset 176643728 · sha256 `7cf5c241…`
 
@@ -269,9 +277,9 @@ Whether fast mode is available in a session and, if so, whether requests go out 
 13. **env** `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`: Does not turn fast mode on. It only lifts the failed-organization-check block above, so the settings decide. Ignored in cloud sessions. Read from code.
 14. **env** `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK`: Does not turn fast mode on. It skips the organization check and treats the organization as allowed, which lifts the block above. Ignored in cloud sessions. Read from code.
 
-- After the ladder: Not the Anthropic API. Fast mode only runs against the Anthropic API directly. On Bedrock, Vertex, Foundry or a gateway it is unavailable.
-- After the ladder: Model can't run fast. Fast mode only applies to models that support it (Opus 5 family, Opus 4.8, or models the catalog marks as fast-capable). On any other model requests go out at normal speed.
-- After the ladder: Fast-mode cooldown running. While a fast-mode cooldown is running, requests go out at normal speed; fast mode comes back on its own when the cooldown ends.
+* After the ladder: Not the Anthropic API. Fast mode only runs against the Anthropic API directly. On Bedrock, Vertex, Foundry or a gateway it is unavailable.
+* After the ladder: Model can't run fast. Fast mode only applies to models that support it (Opus 5 family, Opus 4.8, or models the catalog marks as fast-capable). On any other model requests go out at normal speed.
+* After the ladder: Fast-mode cooldown running. While a fast-mode cooldown is running, requests go out at normal speed; fast mode comes back on its own when the cooldown ends.
 
 Source: `chunk-3kj78r2m.js` · offset 176409832 · sha256 `c73504c1…`
 
@@ -288,8 +296,8 @@ Which model the main conversation sends its requests to.
 7. **env** `ANTHROPIC_DEFAULT_MODEL`: Replaces the built-in default. The haiku and opusplan aliases, default and inherit are skipped without a warning, and it is ignored while enforceAvailableModels is on. Tested.
 8. **default** Built-in default: Opus 5.5 for a plain API-key run. The code chooses between the Opus and Sonnet families by sign-in and provider, and ANTHROPIC\_DEFAULT\_OPUS\_MODEL or ANTHROPIC\_DEFAULT\_SONNET\_MODEL can change the id. Read from code.
 
-- After the ladder: `availableModels`. A chosen model that is not on the list is dropped. An alias such as opus can become an allowed version of that family; otherwise the default is used, and lower rungs are not tried. An empty list allows no model.
-- After the ladder: `enforceAvailableModels`. With availableModels, the default is also kept on the list and ANTHROPIC\_DEFAULT\_MODEL is ignored. It is read from managed policy; when no managed policy exists, other settings files can set it. Set in policy without availableModels, it is turned off with a warning.
+* After the ladder: `availableModels`. A chosen model that is not on the list is dropped. An alias such as opus can become an allowed version of that family; otherwise the default is used, and lower rungs are not tried. An empty list allows no model.
+* After the ladder: `enforceAvailableModels`. With availableModels, the default is also kept on the list and ANTHROPIC\_DEFAULT\_MODEL is ignored. It is read from managed policy; when no managed policy exists, other settings files can set it. Set in policy without availableModels, it is turned off with a warning.
 
 Source: `chunk-76kv9jbg.js` · offset 177261692 · sha256 `32e9680b…`
 
@@ -302,8 +310,8 @@ The max\_tokens a main-conversation request asks for: how many tokens the model 
 3. **remote** Anthropic's per-account table: Account data Claude Code downloads at startup can hold a default output size per model. Nothing is set in the code, so the built-in table applies unless Anthropic sends one, which it can change without a release. Read from code.
 4. **default** Built-in default for the model: Claude Code's own table: 128,000 for Opus 5.5, 64,000 for other current models, 32,000 for older ones and for models it does not recognize. Claude 3.5 models get 8,192. Read from code.
 
-- After the ladder: Model's upper limit. Whatever the ladder picks is lowered to the model's limit: 128,000 for Opus 5.5, Sonnet 4.6 and later, Fable, Mythos and unrecognized models; 64,000 for Opus 4.5, Sonnet 4 and 4.5, Haiku 4.5 and Sonnet 3.7; 32,000 for Opus 4 and 4.1; 8,192 for Claude 3.5. On Anthropic's API the served model list can set a different limit.
-- After the ladder: Claude Code lowers it for its own reasons. Some internal requests ask for a smaller cap, and after a context-overflow error the request is retried with what still fits. These can only lower the value, never raise it.
+* After the ladder: Model's upper limit. Whatever the ladder picks is lowered to the model's limit: 128,000 for Opus 5.5, Sonnet 4.6 and later, Fable, Mythos and unrecognized models; 64,000 for Opus 4.5, Sonnet 4 and 4.5, Haiku 4.5 and Sonnet 3.7; 32,000 for Opus 4 and 4.1; 8,192 for Claude 3.5. On Anthropic's API the served model list can set a different limit.
+* After the ladder: Claude Code lowers it for its own reasons. Some internal requests ask for a smaller cap, and after a context-overflow error the request is retried with what still fits. These can only lower the value, never raise it.
 
 Source: `chunk-x9fwahqm.js` · offset 182955384 · sha256 `3bdcd3ff…`
 
@@ -338,10 +346,10 @@ Which reasoning effort (low, medium, high, xhigh or max) Claude Code asks the AP
 10. **remote** Anthropic's per-model default: A remote flag can set a default effort per model. In code it sets none. Anthropic can change it without a release. Read from code.
 11. **default** The model's default: The model's own default from Claude Code's model list: medium for Opus 5.5, high for most others. A model with no listed default gets high. Read from code.
 
-- After the ladder: Models without effort support get no effort at all. Models Claude Code does not treat as effort-capable, such as Claude 3, Opus 4.0 and 4.1, Sonnet 4.0 and 4.5 and Haiku 4.5, get no effort at all, even one put in CLAUDE\_CODE\_EXTRA\_BODY. CLAUDE\_CODE\_ALWAYS\_ENABLE\_EFFORT turns effort on for model IDs Claude Code does not recognize.
-- After the ladder: `maxEffortLevel`. maxEffortLevel caps the result: a higher level is lowered to it. Across settings files the lowest cap wins, modelSettings.<model>.maxEffortLevel replaces it for one model, and an organization's cap for the model counts too. A cap of max changes nothing. It does not apply to CLAUDE\_CODE\_EXTRA\_BODY.
-- After the ladder: max and xhigh become high on models that do not support them. Opus 5.5 supports both. Opus 4.6 and Sonnet 4.6 lack xhigh, and Opus 4.5 lacks both.
-- After the ladder: With thinking turned off, levels above high become high on models that require it. Opus 5 is such a model. This also applies to a value from CLAUDE\_CODE\_EXTRA\_BODY.
+* After the ladder: Models without effort support get no effort at all. Models Claude Code does not treat as effort-capable, such as Claude 3, Opus 4.0 and 4.1, Sonnet 4.0 and 4.5 and Haiku 4.5, get no effort at all, even one put in CLAUDE\_CODE\_EXTRA\_BODY. CLAUDE\_CODE\_ALWAYS\_ENABLE\_EFFORT turns effort on for model IDs Claude Code does not recognize.
+* After the ladder: `maxEffortLevel`. maxEffortLevel caps the result: a higher level is lowered to it. Across settings files the lowest cap wins, modelSettings.<model>.maxEffortLevel replaces it for one model, and an organization's cap for the model counts too. A cap of max changes nothing. It does not apply to CLAUDE\_CODE\_EXTRA\_BODY.
+* After the ladder: max and xhigh become high on models that do not support them. Opus 5.5 supports both. Opus 4.6 and Sonnet 4.6 lack xhigh, and Opus 4.5 lacks both.
+* After the ladder: With thinking turned off, levels above high become high on models that require it. Opus 5 is such a model. This also applies to a value from CLAUDE\_CODE\_EXTRA\_BODY.
 
 Source: `chunk-76kv9jbg.js` · offset 177251846 · sha256 `43c9fe80…`
 
@@ -357,7 +365,7 @@ Which thinking configuration Claude Code asks the API for on the main conversati
 6. **settings** `alwaysThinkingEnabled set to false`: Only false does anything: it turns thinking off. true is the same as leaving it unset. Interactive sessions can also switch thinking on or off for the session. Tested.
 7. **default** Thinking on, shaped by the model: Thinking is on by default: adaptive on models that support it, a default token budget on older models, and no thinking field for Claude 3 models. In -p runs with text output the request also carries display omitted; interactive sessions send a display only when showThinkingSummaries is on. Reasoning effort does not change this choice. Subagent and side requests, such as the title request, pick thinking on a separate path that can turn it off. Read from code.
 
-- After the ladder: Disabled thinking is sent only when the API and model accept it; otherwise no thinking field is sent. A disabled answer from --thinking, MAX\_THINKING\_TOKENS or alwaysThinkingEnabled becomes no field at all on Bedrock, Vertex or Foundry, on models without thinking, and on models that reject disabled thinking, such as Opus 5.5. With thinking off, some models also lower a reasoning effort above high.
+* After the ladder: Disabled thinking is sent only when the API and model accept it; otherwise no thinking field is sent. A disabled answer from --thinking, MAX\_THINKING\_TOKENS or alwaysThinkingEnabled becomes no field at all on Bedrock, Vertex or Foundry, on models without thinking, and on models that reject disabled thinking, such as Opus 5.5. With thinking off, some models also lower a reasoning effort above high.
 
 Source: `chunk-appb597y.js` · offset 189589287 · sha256 `0f5b195b…`
 
@@ -378,6 +386,11 @@ Whether Claude Code shows its session feedback survey and how often, checked aga
 9. **settings** `feedbackSurveyRate`: From any settings file Claude Code loads: the chance, from 0 to 1, that the survey appears at each prompt once the timing rules allow it. 0 turns it off. It replaces Anthropic's rate, including the rate passed to the extension and desktop app. Read from code.
 10. **remote** Anthropic's survey rate: A remote config that is 0.005 in code: once the timing rules allow a survey, each prompt has a half-percent chance. In code the first chance comes after 10 minutes and 5 prompts, later ones at least an hour and 10 prompts apart, and never within about 28 hours of a survey in any session. Anthropic can change it without a release. Read from code.
 11. **env** `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`: Picks no rate itself. 1, true, yes or on stops DISABLE\_TELEMETRY, DO\_NOT\_TRACK and CLAUDE\_CODE\_DISABLE\_NONESSENTIAL\_TRAFFIC from turning the survey off, so the other rules decide. Read from code.
+
+- As shipped, Claude Code never asks to share the transcript: after you answer bad, fine or good, the chance of asking is 0 in code for each answer.
+- Anthropic can raise those chances remotely without a release.
+- It never asks, whatever those chances are, when CLAUDE\_CODE\_DISABLE\_NONESSENTIAL\_TRAFFIC is set (even with CLAUDE\_CODE\_ENABLE\_FEEDBACK\_SURVEY\_FOR\_OTEL), when your organization's policy denies product feedback, when DISABLE\_FEEDBACK\_COMMAND or DISABLE\_BUG\_COMMAND is set, or after you choose don't ask again.
+- Nothing is shared unless you answer yes.
 
 Source: `chunk-fbctzhpm.js` · offset 201320958 · sha256 `0c9d78bc…`
 
@@ -419,10 +432,10 @@ Whether Claude Code sends the model its built-in git commit and pull request ins
 2. **settings** `includeGitInstructions`: From any settings file Claude Code loads. false turns off both the instructions and the status snapshot. Read from code.
 3. **default** Built-in default: Both are included. The instructions go in the Bash tool's description; the status snapshot (branch, main branch, git user, status and recent commits) goes in the session context. Read from code.
 
-- After the ladder: `CLAUDE_CODE_REMOTE`. Remote session A remote session never gets the status snapshot. The git instructions still follow the ladder.
-- After the ladder: Custom system prompt. In non-interactive runs (claude -p and the SDK), a system prompt that replaces the default one leaves out the status snapshot.
-- After the ladder: Explore or Plan subagent. The built-in Explore and Plan subagents never get the status snapshot.
-- After the ladder: Not a git repository. Outside a git repository, or when the git commands fail, there is no status snapshot.
+* After the ladder: `CLAUDE_CODE_REMOTE`. Remote session A remote session never gets the status snapshot. The git instructions still follow the ladder.
+* After the ladder: Custom system prompt. In non-interactive runs (claude -p and the SDK), a system prompt that replaces the default one leaves out the status snapshot.
+* After the ladder: Explore or Plan subagent. The built-in Explore and Plan subagents never get the status snapshot.
+* After the ladder: Not a git repository. Outside a git repository, or when the git commands fail, there is no status snapshot.
 
 Source: `chunk-x9fwahqm.js` · offset 181565492 · sha256 `628bc4a3…`
 
@@ -458,7 +471,7 @@ Claude Code reads settings from five sources. A single value comes from the high
 4. **file** .claude/settings.json: This project, shared with the team. Read from code.
 5. **file** ~/.claude/settings.json: All your projects. Read from code.
 
-- After the ladder: Managed policy's availableModels, enforceAvailableModels and modelPicker replace every other source's values.
+* After the ladder: Managed policy's availableModels, enforceAvailableModels and modelPicker replace every other source's values.
 
 Source: `chunk-wqf6nvvb.js` · offset 174501801 · sha256 `f123690e…`
 

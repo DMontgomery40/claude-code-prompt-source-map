@@ -63,3 +63,11 @@ test("constraints get a toggle only when the reader can turn one on", () => {
   assert.match(out, /Before &lt;all&gt;\./);
   assert.match(out, /<code>vetoSetting<\/code>/);
 });
+
+test("reader notes follow the rungs; maintainer details stay out of the page", () => {
+  const d = { ...decision, notes: ["Files live in <home>/memory."], details: "evidence: offset 123" };
+  const out = enhanceLadders('<h4 id="x--prompt-cache-ttl">Prompt cache TTL</h4><p>q</p><ol><li>r</li></ol><ul><li>Files live</li></ul>', [d]);
+  assert.match(out, /<\/ol><ul class="notes"><li>Files live in &lt;home&gt;\/memory\.<\/li><\/ul>/);
+  assert.doesNotMatch(out, /evidence: offset 123/);
+  assert.match(out, /<ul class="ladder-static"><li>Files live<\/li>/, "the static notes list is hidden with the rest");
+});

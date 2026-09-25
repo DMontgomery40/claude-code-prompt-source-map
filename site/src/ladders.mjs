@@ -57,6 +57,7 @@ function card(d) {
     + (contexts.length ? `<div class="context">${contexts.map(ctx).join("")}</div>` : "")
     + (d.bypasses?.length ? `<div class="bypasses"><div class="part-label">Before the ladder</div>${d.bypasses.map(bypass).join("")}</div>` : "")
     + `<ol class="rungs">${d.rungs.map((r, i) => rung(d, r, i)).join("")}</ol>`
+    + (d.notes?.length ? `<ul class="notes">${d.notes.map(n => `<li>${escapeHtml(n)}</li>`).join("")}</ul>` : "")
     + (d.constraints?.length ? `<div class="limits"><div class="part-label">After the ladder</div>${d.constraints.map(limit).join("")}</div>` : "")
     + `<div class="proof">${proof}</div></div>`;
 }
@@ -77,7 +78,7 @@ export function enhanceLadders(html, decisions) {
     return at < 0 ? `${heading[0]}${card(d)}${rest}` : `${heading[0]}${rest.slice(0, at)}${card(d)}${rest.slice(at)}`;
   }).join("");
   // The card needs the ladder, not its provenance or probe recipes; /data/ has the full records.
-  const slim = decisions.map(({ provenance, realize_context, ...d }) => ({ ...d,
+  const slim = decisions.map(({ provenance, realize_context, details, ...d }) => ({ ...d,
     rungs: d.rungs.map(({ provenance, realize, ...r }) => r),
     bypasses: d.bypasses?.map(({ provenance, realize, ...b }) => b),
     constraints: d.constraints?.map(({ provenance, realize, ...c }) => c) }));
@@ -295,6 +296,8 @@ export const ladderStyles = `
     .ladder .rung.skip{border-left-color:#f0c27a}.ladder .rung.skip .state{color:#f0c27a}
     .ladder .rung.over .state{color:#dcdfd7}
     .ladder .rung.over .knob-name,.ladder .rung.below .knob-name{color:#c9ccc4}
+    .ladder ul.notes{margin:0;padding:10px 22px 12px 40px;border-top:1px solid var(--line);color:#c9ccc4;font-size:14px}
+    .ladder ul.notes li{margin:.2em 0}
     .ladder .limits{padding:12px 22px 14px;border-top:1px solid var(--line);background:#141513}
     .ladder .limit{margin-top:10px}
     .ladder .limit-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;color:var(--text);font-size:14.5px;font-weight:600}
@@ -307,6 +310,7 @@ export const ladderStyles = `
     .ladder .proof b{font-weight:650}.ladder .tested{color:#c8f784}.ladder .read{color:#e0b86b}
     @media(max-width:640px){
       .ladder .result,.ladder .context,.ladder .bypasses,.ladder .limits,.ladder .proof{padding-right:14px;padding-left:14px}
+      .ladder ul.notes{padding-right:14px;padding-left:32px}
       .ladder .result-value{font-size:24px}
       .ladder .rung{grid-template-columns:20px minmax(0,1fr) auto;grid-template-areas:"n mech state" ". knob knob" ". control control";padding:12px 14px 12px 11px}
       .ladder .n{grid-area:n}.ladder .mech{grid-area:mech}.ladder .state{grid-area:state}.ladder .knob{grid-area:knob}

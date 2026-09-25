@@ -27,10 +27,12 @@ for (const g of groups) {
       out.push(`${i + 1}. **${MECH[r.mechanism] ?? r.mechanism}** ${name}: ${r.note ? `${sentence(md(r.note))} ` : ""}${r.verified === "tested" ? "Tested." : "Read from code."}`);
     });
     out.push("");
+    // Reader-facing notes; `details` is evidence for maintainers and stays out of the page.
+    if (d.notes?.length) out.push(...d.notes.map(n => `- ${md(n)}`), "");
     const after = (d.constraints ?? []).map(c => {
       const head = c.knob ? `${knobName({ knob: c.knob })}.` : sentence(md(c.label ?? c.id));
       const rest = [c.knob ? md(c.label) : "", md(c.note)].filter(Boolean).join(" ");
-      return `- After the ladder: ${head}${rest ? ` ${rest}` : ""}`;
+      return `* After the ladder: ${head}${rest ? ` ${rest}` : ""}`;
     });
     if (after.length) out.push(...after, "");
     const p = d.provenance[0];
