@@ -42,7 +42,7 @@ test("controls carry indexes and typed values map back through them", () => {
     rungs: [{ id: "c", mechanism: "settings", knob: "s-c", label: "ttl", input: "choice", accepts: [5, "1h"], invalid_example: "2h", effect: { from: "input" } },
             { id: "t", mechanism: "env", knob: "e-t", label: "T", input: "choice", effect: { from: "input" } }] };
   const out = enhanceLadders('<h4 id="x--prompt-cache-ttl">Prompt cache TTL</h4>', [d]);
-  assert.match(out, /<option value="">not set<\/option><option value="0">5<\/option><option value="1">1 hour<\/option><option value="2">2h \(invalid\)<\/option>/);
+  assert.match(out, /<option value="">not set<\/option><option value="0">5<\/option><option value="1">1h \(1 hour\)<\/option><option value="2">2h \(invalid\)<\/option>/);
   assert.match(out, /<input type="text" class="value"/, "a choice with no accepted list takes free text");
   assert.match(out, /<button type="button" data-i="1" aria-pressed="false">It&#39;s off<\/button>/);
 });

@@ -20,7 +20,12 @@ function control(d, r) {
   const list = choices(r);
   if (!list.length) return `<input type="text" class="value" placeholder="any value" spellcheck="false" autocomplete="off" ${aria}>`;
   const accepted = r.accepts?.length ?? 0;
-  return `<select ${aria}><option value="">not set</option>${list.map((v, i) => `<option value="${i}">${escapeHtml(valueName(d, v))}${i < accepted ? "" : " (invalid)"}</option>`).join("")}</select>`;
+  // The literal comes first: it is what the reader types. A differing label follows it.
+  const option = (v, i) => {
+    const literal = text(v), label = valueName(d, v);
+    return `<option value="${i}">${escapeHtml(literal)}${label !== literal ? ` (${escapeHtml(label)})` : ""}${i < accepted ? "" : " (invalid)"}</option>`;
+  };
+  return `<select ${aria}><option value="">not set</option>${list.map(option).join("")}</select>`;
 }
 
 function rung(d, r, i) {
@@ -261,7 +266,7 @@ export const ladderStyles = `
     .ladder .result-label,.ladder .ctx-name,.ladder .part-label{color:#b3b7af;font-size:12px;font-weight:650;letter-spacing:.07em;text-transform:uppercase}
     .ladder .result-value{color:#c8f784;font-size:28px;font-weight:650;line-height:1.2;letter-spacing:-.01em;overflow-wrap:anywhere}
     .ladder .result-value.many{font-size:18px;font-weight:600;line-height:1.4;letter-spacing:0}
-    .ladder .result-value.none{color:#f5a193}
+    .ladder .result-value.none{color:#b3b7af}
     .ladder .result-why{color:#c9ccc4;font-size:14.5px;overflow-wrap:anywhere}
     .ladder .result-why span{color:var(--text);font-weight:600}
     .ladder .context{display:flex;flex-wrap:wrap;gap:12px 26px;padding:14px 22px;border-bottom:1px solid var(--line)}
