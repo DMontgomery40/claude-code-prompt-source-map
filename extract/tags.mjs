@@ -57,6 +57,7 @@ const STATUS_BY_AREA = {
     { id: "documented", label: "Documented", kind: "status" },
     { id: "undocumented", label: "Undocumented", kind: "status" },
     { id: "internal", label: "Internal (@internal)", kind: "status" },
+    { id: "safe-env", label: "Safe env keys", kind: "status" },
     { id: "deprecated", label: "Deprecated", kind: "status" },
     { id: "fixed-values", label: "Fixed values", kind: "status" },
     { id: "invalid-value-dropped", label: "Invalid value ignored", kind: "status" },
@@ -95,6 +96,7 @@ const STATUS_TAGS_BY_AREA = {
     const d = item.details ?? {};
     const t = new Set([item.documented ? "documented" : "undocumented"]);
     if (item.group?.startsWith("Internal keys") || d.internal === true) t.add("internal");
+    if (item.group?.startsWith("Safe env")) t.add("safe-env");
     if (item.text?.startsWith("Deprecated")) t.add("deprecated");
     if (Array.isArray(d.values) && d.values.length) t.add("fixed-values");
     if (d.invalidValueDropped === true) t.add("invalid-value-dropped");

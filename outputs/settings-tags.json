@@ -148,6 +148,12 @@
    "count": 26
   },
   {
+   "id": "safe-env",
+   "label": "Safe env keys",
+   "kind": "status",
+   "count": 5
+  },
+  {
    "id": "deprecated",
    "label": "Deprecated",
    "kind": "status",
@@ -1537,23 +1543,28 @@
   ],
   "settings-safe-env-check": [
    "security-permissions",
-   "documented"
+   "documented",
+   "safe-env"
   ],
   "settings-safe-env-set-wl": [
    "security-permissions",
-   "undocumented"
+   "undocumented",
+   "safe-env"
   ],
   "settings-safe-env-set-gl": [
    "security-permissions",
-   "undocumented"
+   "undocumented",
+   "safe-env"
   ],
   "settings-safe-env-set-vl": [
    "security-permissions",
-   "undocumented"
+   "undocumented",
+   "safe-env"
   ],
   "settings-safe-env-custom-headers": [
    "security-permissions",
-   "undocumented"
+   "undocumented",
+   "safe-env"
   ]
  }
 }
