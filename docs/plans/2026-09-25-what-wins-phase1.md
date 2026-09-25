@@ -147,8 +147,9 @@ test("layered ladders merge by value type", () => {
 });
 
 test("exercisedRungs names exactly the rungs a case distinguishes", () => {
+  // The winner is exercised; the overridden rung is not (its own effect is tested alone).
   const scenario = { context: base, set: { envTtl: "5m", enable1h: true } };
-  assert.deepEqual(exercisedRungs(ttl, scenario), ["envTtl", "enable1h"]);
+  assert.deepEqual(exercisedRungs(ttl, scenario), ["envTtl"]);
   assert.deepEqual(exercisedRungs(ttl, { context: base, set: { envTtl: "2h", enable1h: true } }), ["enable1h"]);
 });
 ```
