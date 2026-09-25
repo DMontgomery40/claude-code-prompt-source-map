@@ -22,6 +22,7 @@ export const categories = [
   {
     label: "Configuration",
     files: [
+      { path: "outputs/what-wins.md", format: "markdown", title: "What wins", slug: "what-wins", summary: "For each value Claude Code decides, every source it checks, in order, and which one takes effect.", data: "outputs/decisions.json", ladders: "outputs/decisions.json", defaultOpen: false },
       { path: "outputs/environment-variables.md", format: "markdown", title: "Environment variables", slug: "env-vars", summary: "Every environment variable Claude Code reads or sets, documented or not.", data: "outputs/environment-variables.json", filters: { records: "outputs/environment-variables.json", tags: "outputs/environment-variables-tags.json" }, defaultOpen: false },
       { path: "outputs/settings.md", format: "markdown", title: "Settings", slug: "settings", summary: "Every settings.json key, with types, defaults, and scopes.", data: "outputs/settings.json", defaultOpen: false },
       { path: "outputs/hooks.md", format: "markdown", title: "Hooks", slug: "hooks", summary: "Hook events, payload fields, and handler types.", data: "outputs/hooks.json", defaultOpen: false },

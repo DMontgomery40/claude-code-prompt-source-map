@@ -22,6 +22,11 @@ function headingText(innerHtml) {
   return decodeEntities(innerHtml.replace(/<[^>]*>/g, "")).replace(/\s+/g, " ").trim();
 }
 
+// The slug of a rendered heading's text, for matching headings to the records they title.
+export function headingSlug(innerHtml) {
+  return slug(headingText(innerHtml));
+}
+
 function uniqueId(base, ids) {
   let id = base;
   for (let n = 2; ids.has(id); n += 1) id = `${base}-${n}`;

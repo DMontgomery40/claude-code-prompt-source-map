@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { evaluateLadder, exercisedRungs } from "../src/ladder-eval.mjs";
+import { appliesTo, evaluateLadder, exercisedRungs } from "../src/ladder-eval.mjs";
 
 const ttl = {
   shape: "first-wins",
@@ -160,4 +160,17 @@ test("replace_values does not match an array result's stringified form", () => {
     { id: "user", input: "choice", effect: { from: "input" } }] };
   const r = evaluateLadder(d, { set: { policy: ["a"], user: ["b"] }, constraints: { noAuto: true } });
   assert.deepEqual([r.value, r.constrainedBy], [["a", "b"], undefined]);
+});
+
+test("appliesTo reads context and other rungs' values and ignores the rung's own value", () => {
+  const rung = { applies_when: [{ kind: ["main"], "rung.inherit": ["yes"] }, { auth: ["key"], value: ["x"] }] };
+  assert.equal(appliesTo(rung, { context: { kind: "main" }, set: { inherit: "yes" } }), true);
+  assert.equal(appliesTo(rung, { context: { kind: "main" }, set: {} }), false);
+  assert.equal(appliesTo(rung, { context: { auth: "key" } }), true);
+  assert.equal(appliesTo({ applies_when: [] }, {}), true);
+  assert.equal(appliesTo({}, {}), true);
+  // The evaluator uses the same predicate: a rung that does not apply never answers.
+  const d = { shape: "first-wins", rungs: [{ id: "only", input: null, applies_when: [{ kind: ["sub"] }], effect: { value: "x" } }], fallback: { value: "none" } };
+  assert.equal(evaluateLadder(d, { context: { kind: "main" } }).value, "none");
+  assert.equal(evaluateLadder(d, { context: { kind: "sub" } }).value, "x");
 });

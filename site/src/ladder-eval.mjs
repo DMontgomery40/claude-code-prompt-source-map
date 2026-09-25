@@ -1,17 +1,28 @@
 // Decides which rung of a decision ladder takes effect for a scenario. The page serializes
 // these functions into its script, and extract/probe.mjs uses them for expected results, so
 // the ladder a reader plays with is the ladder the probes test. Keep this file free of
-// imports and closures over module state: evaluateLadder.toString() must run on its own.
+// imports and closures over module state: appliesTo.toString() and evaluateLadder.toString()
+// must run together on their own.
 //
 //   scenario = { context: { kind, auth, ... }, set: { rungId: value | true },
 //                bypass: { id: true }, constraints: { id: true } }
+
+// Whether a rung takes part in a scenario. A "rung.<id>" key reads another rung's set value;
+// a "value" key is ignored here, because a rung's own input is judged by skip_when. The page
+// uses this to hide rungs that do not apply.
+export function appliesTo(rung, scenario) {
+  const ctx = scenario.context ?? {}, set = scenario.set ?? {};
+  return !rung.applies_when?.length || rung.applies_when.some(when => Object.entries(when).every(([key, allowed]) =>
+    key === "value" || allowed.includes(key.startsWith("rung.") ? set[key.slice(5)] : ctx[key])
+  ));
+}
+
 export function evaluateLadder(decision, scenario) {
   const ctx = scenario.context ?? {}, set = scenario.set ?? {};
   const holds = (when, value) => Object.entries(when).every(([key, allowed]) => allowed.includes(
     key === "value" ? value : key.startsWith("rung.") ? set[key.slice(5)] : ctx[key]
   ));
   const any = (list, value) => (list ?? []).some(when => holds(when, value));
-  const applies = rung => !rung.applies_when?.length || any(rung.applies_when);
   const active = c => scenario.constraints?.[c.id] === true || Boolean(c.applies_when?.length && any(c.applies_when));
   const effect = (rung, input) => {
     if ("value" in rung.effect) return rung.effect.value;
@@ -25,7 +36,7 @@ export function evaluateLadder(decision, scenario) {
   }
   const skipped = [], answers = [];
   for (const rung of decision.rungs) {
-    if (!applies(rung)) continue;
+    if (!appliesTo(rung, scenario)) continue;
     let input;
     if (rung.input) {
       input = set[rung.id];

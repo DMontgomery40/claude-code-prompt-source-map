@@ -2,6 +2,7 @@ import { Marked } from "marked";
 import { site } from "./config.mjs";
 import { createRoutes } from "./routes.mjs";
 import { filterBar, filterScript, filterStyles, wrapFilterable } from "./filters.mjs";
+import { enhanceLadders, ladderScript, ladderStyles } from "./ladders.mjs";
 import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } from "./toc.mjs";
 
 export function escapeHtml(value) {
@@ -80,6 +81,7 @@ function renderDocument(document, ids) {
     if (wrapped.matched !== document.filter.records.length) throw new Error(`${document.path}: tagged ${wrapped.matched} of ${document.filter.records.length} entries`);
     body = `${filterBar(document.filter, wrapped.matched)}<div class="markdown-body">${wrapped.html}</div>`;
   }
+  if (document.ladders) body = enhanceLadders(body, document.ladders);
   return {
     path: document.path,
     anchor,
@@ -209,6 +211,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   <meta name="twitter:image:alt" content="${escapeHtml(site.socialCard.alt)}">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${icon}">
   <noscript><style>.intro{display:none}${tocNoscriptStyles}</style></noscript>
+  <script>document.documentElement.classList.add("js")</script>
   <style>
     :root{color-scheme:dark;--bg:#111210;--panel:#171816;--panel-2:#1c1d1b;--text:#f2f2ed;--muted:#8d918b;--subtle:#6f736d;--line:#2a2c29;--link:#b8c7d9;--focus:#d9e6f4}
     *{box-sizing:border-box}
@@ -304,6 +307,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro{display:none}.follow-link,.intro-follow{transition:none}}
 ${tocStyles}
 ${filterStyles}
+${ladderStyles}
   </style>
 </head>
 <body>
@@ -362,6 +366,7 @@ ${documentIndex(categories, rendered, routes)}` : rendered.map(documentPanel).jo
     revealHashTarget();
 ${tocScript}
 ${filterScript}
+${ladderScript}
   </script>
 </body>
 </html>`;
