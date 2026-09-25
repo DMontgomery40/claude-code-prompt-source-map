@@ -223,9 +223,10 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     a:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:4px;border-radius:2px}
     .skip-link{position:fixed;z-index:120;top:12px;left:12px;transform:translateY(-160%);padding:8px 12px;background:var(--text);color:var(--bg)}
     .skip-link:focus{transform:none}
-    .follow-link{position:fixed;z-index:30;top:16px;left:24px;display:inline-flex;align-items:center;gap:10px;max-width:calc(100vw - 48px);padding:7px 13px 7px 8px;border:1px solid #475a50;border-radius:999px;background:#17211b;color:#e5f6df;box-shadow:0 8px 30px #0005;font-size:12px;font-weight:550;line-height:1.2;text-decoration:none;white-space:nowrap;transition:background .2s,transform .2s,border-color .2s}
-    .follow-link:hover{transform:translateY(-2px);border-color:#b5eb74;background:#223025;color:#fff}
-    .follow-link-mark{display:grid;width:25px;height:25px;flex:none;place-items:center;border-radius:50%;background:#c8f784;color:#101610;font-size:13px;font-weight:800}
+    .corner-links{position:fixed;z-index:30;top:16px;left:24px;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 48px)}
+    .follow-link,.github-link{display:inline-flex;align-items:center;gap:10px;padding:7px 13px 7px 8px;border:1px solid #475a50;border-radius:999px;background:#17211b;color:#e5f6df;box-shadow:0 8px 30px #0005;font-size:12px;font-weight:550;line-height:1.2;text-decoration:none;white-space:nowrap;transition:background .2s,transform .2s,border-color .2s}
+    .follow-link:hover,.github-link:hover{transform:translateY(-2px);border-color:#b5eb74;background:#223025;color:#fff}
+    .follow-link-mark,.github-link-mark{display:grid;width:25px;height:25px;flex:none;place-items:center;border-radius:50%;background:#c8f784;color:#101610;font-size:13px;font-weight:800}
     .follow-link strong{font-weight:750}
     .main{padding:0 60px 0 370px}
     .content{width:min(768px,100%);margin:0 auto;padding:100px 0 80px}
@@ -303,8 +304,8 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     @keyframes intro-load{to{width:100%}}@keyframes intro-spin{to{transform:rotate(360deg)}}@keyframes intro-drift{to{transform:translateX(4%)}}@keyframes intro-blink{50%{opacity:.25}}@keyframes intro-rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}@keyframes intro-disc-in{from{opacity:0;transform:scale(.65) rotate(-18deg)}to{opacity:1;transform:scale(1) rotate(0)}}@keyframes intro-pop{from{opacity:0;transform:scale(1.5)}to{opacity:1;transform:scale(1)}}@keyframes intro-exit{to{opacity:0;transform:translateY(-32px);visibility:hidden}}
     @media(max-width:1050px){.main{padding-right:36px;padding-left:310px}}
     @media(max-width:800px){.main{padding:0 22px}.content{padding-top:100px}.page-title{font-size:38px}.dek{font-size:16px}.document{margin-top:80px}.document-summary h2{font-size:27px}.markdown-body h3{font-size:25px}.intro-main{grid-template-columns:1fr;gap:24px;padding:30px 26px 36px}.intro-disc{width:180px;height:180px;grid-row:1}.intro-disc-inner b{font-size:46px}.intro-title{font-size:clamp(48px,10vw,68px)}.intro-top,.intro-bottom{padding:14px 18px}}
-    @media(max-width:450px){.follow-link{top:12px;left:12px}.intro{padding:12px}.intro-main{padding:20px 22px 25px}.intro-disc{width:142px;height:142px}.intro-disc-inner b{font-size:37px}.intro-title{font-size:44px}.intro-top span:last-child{display:none}.intro-bottom{gap:10px;font-size:9px}.intro-joke{margin:16px 0 18px}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro{display:none}.follow-link,.intro-follow{transition:none}}
+    @media(max-width:450px){.corner-links{top:12px;left:12px;max-width:calc(100vw - 24px)}.github-link{padding-right:8px}.github-link-label{display:none}.intro{padding:12px}.intro-main{padding:20px 22px 25px}.intro-disc{width:142px;height:142px}.intro-disc-inner b{font-size:37px}.intro-title{font-size:44px}.intro-top span:last-child{display:none}.intro-bottom{gap:10px;font-size:9px}.intro-joke{margin:16px 0 18px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro{display:none}.follow-link,.github-link,.intro-follow{transition:none}}
 ${tocStyles}
 ${filterStyles}
 ${ladderStyles}
@@ -327,7 +328,10 @@ ${current ? "" : `  <div class="intro" id="intro" role="dialog" aria-modal="true
     </div>
   </div>`}
   <a class="skip-link" href="#content">Skip to content</a>
-  <a class="follow-link" href="${site.follow.url}" target="_blank" rel="noopener noreferrer" aria-label="Follow @${site.follow.handle} on X"><span class="follow-link-mark" aria-hidden="true">X</span><span>Follow <strong>@${site.follow.handle}</strong></span></a>
+  <div class="corner-links">
+    <a class="follow-link" href="${site.follow.url}" target="_blank" rel="noopener noreferrer" aria-label="Follow @${site.follow.handle} on X"><span class="follow-link-mark" aria-hidden="true">X</span><span>Follow <strong>@${site.follow.handle}</strong></span></a>
+    <a class="github-link" href="${site.repo.url}" target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub"><span class="github-link-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span><span class="github-link-label">GitHub</span></a>
+  </div>
   ${renderToc(categories, outlines, href)}
   <main id="content" class="main">
     <div class="content">

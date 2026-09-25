@@ -60,9 +60,25 @@ test("intro and persistent corner link both lead to the requested X profile", as
     assert.match(html, /David has good takes\./);
     assert.match(html, /class="intro-follow" href="https:\/\/x\.com\/_DMontgomery40"/);
     assert.match(html, /class="follow-link" href="https:\/\/x\.com\/_DMontgomery40"/);
-    assert.match(html, /\.follow-link\{position:fixed;/);
+    assert.match(html, /\.corner-links\{position:fixed;/);
     assert.match(html, /setTimeout\(closeIntro, 2350\)/);
     assert.match(html, /@media\(prefers-reduced-motion:reduce\).*\.intro\{display:none\}/);
+  });
+});
+
+test("GitHub link sits beside the X follow link and survives reduced motion", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    assert.match(
+      html,
+      /class="github-link" href="https:\/\/github\.com\/DMontgomery40\/claude-code-prompt-source-map" target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub"/
+    );
+    assert.match(html, /<div class="corner-links">/);
+    assert.match(
+      html,
+      /@media\(prefers-reduced-motion:reduce\).*\.follow-link,\.github-link,\.intro-follow\{transition:none\}/
+    );
   });
 });
 
