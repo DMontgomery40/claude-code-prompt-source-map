@@ -77,7 +77,7 @@ test("GitHub link sits beside the X follow link and survives reduced motion", as
     assert.match(html, /<div class="corner-links">/);
     assert.match(
       html,
-      /@media\(prefers-reduced-motion:reduce\).*\.follow-link,\.github-link,\.intro-follow\{transition:none\}/
+      /@media\(prefers-reduced-motion:reduce\).*\.follow-link,\.github-link,\.intro-follow[^{]*\{transition:none\}/
     );
   });
 });
@@ -269,6 +269,25 @@ test("a document page carries the site title in the sidebar, linking home, witho
     );
     assert.equal((documentPage.match(/<h1\b/g) ?? []).length, 1, "only the document title is an h1");
   });
+});
+
+test("What wins is featured once in the sidebar of every page and under the home intro", async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+  const outDir = await mkdtemp(path.join(os.tmpdir(), "cc-site-feature-test-"));
+  const outFile = path.join(outDir, "index.html");
+  try {
+    await buildSite({ sourceRoot: root, outFile, categories });
+    const home = await readFile(outFile, "utf8");
+    assert.match(home, /<a class="home-feature" href="what-wins\/"><span class="home-feature-kicker">Interactive<\/span><span class="home-feature-title">What wins<\/span>/);
+    for (const name of ["", "hooks", "what-wins", "env-vars"]) {
+      const html = await readFile(path.join(outDir, name, "index.html"), "utf8");
+      const cards = [...html.matchAll(/<a class="toc-feature" href="([^"]+)">/g)].map(match => match[1]);
+      assert.equal(cards.length, 1, `${name || "home"} has one sidebar feature card`);
+      assert.match(cards[0], name === "what-wins" ? /^#what-wins-md$/ : /^(?:\.\.\/)?what-wins\/$/, `${name || "home"} feature card links to What wins`);
+    }
+  } finally {
+    await rm(outDir, { recursive: true, force: true });
+  }
 });
 
 test("production pages resolve every contents link to exactly one unique anchor", async () => {

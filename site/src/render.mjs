@@ -233,6 +233,12 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     .date{color:var(--muted);font-size:14px;text-align:center}
     .page-title{margin:26px 0 24px;font-size:48px;line-height:1.16;font-weight:500;letter-spacing:-.025em;text-align:center}
     .dek{max-width:650px;margin:0 auto;color:#d3d5cf;font-size:18px;line-height:1.48;text-align:center}
+    .home-feature{display:grid;gap:6px;max-width:620px;margin:34px auto 0;padding:20px 24px 21px;border:1px solid #3a4a30;border-left:3px solid #c8f784;border-radius:3px;background:#161d14;color:#d6d9d0;text-align:left;text-decoration:none;transition:background .2s,border-color .2s,transform .2s}
+    .home-feature:hover,.home-feature:focus-visible{background:#1c2619;border-color:#56693f;border-left-color:#c8f784;transform:translateY(-1px)}
+    .home-feature-kicker{color:#a9c28f;font-size:12px;font-weight:650;letter-spacing:.07em;text-transform:uppercase}
+    .home-feature-title{color:#c8f784;font-size:24px;font-weight:750;line-height:1.2;letter-spacing:-.01em}
+    .home-feature-line{color:#d6d9d0;font-size:15px;line-height:1.5}
+    .home-feature-cta{margin-top:4px;color:#f2f2ed;font-size:14px;font-weight:650}
     .document{scroll-margin-top:36px;margin-top:112px;padding-top:34px;border-top:1px solid var(--line)}
     .document-summary{position:relative;padding-right:40px;cursor:pointer;list-style:none}
     .document-summary::-webkit-details-marker{display:none}
@@ -305,7 +311,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     @media(max-width:1050px){.main{padding-right:36px;padding-left:310px}}
     @media(max-width:800px){.main{padding:0 22px}.content{padding-top:100px}.page-title{font-size:38px}.dek{font-size:16px}.document{margin-top:80px}.document-summary h2{font-size:27px}.markdown-body h3{font-size:25px}.intro-main{grid-template-columns:1fr;gap:24px;padding:30px 26px 36px}.intro-disc{width:180px;height:180px;grid-row:1}.intro-disc-inner b{font-size:46px}.intro-title{font-size:clamp(48px,10vw,68px)}.intro-top,.intro-bottom{padding:14px 18px}}
     @media(max-width:450px){.corner-links{top:12px;left:12px;max-width:calc(100vw - 24px)}.github-link{padding-right:8px}.github-link-label{display:none}.intro{padding:12px}.intro-main{padding:20px 22px 25px}.intro-disc{width:142px;height:142px}.intro-disc-inner b{font-size:37px}.intro-title{font-size:44px}.intro-top span:last-child{display:none}.intro-bottom{gap:10px;font-size:9px}.intro-joke{margin:16px 0 18px}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro{display:none}.follow-link,.github-link,.intro-follow{transition:none}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro{display:none}.follow-link,.github-link,.intro-follow,.home-feature,.toc a.toc-feature{transition:none}.home-feature:hover{transform:none}}
 ${tocStyles}
 ${filterStyles}
 ${ladderStyles}
@@ -332,13 +338,14 @@ ${current ? "" : `  <div class="intro" id="intro" role="dialog" aria-modal="true
     <a class="follow-link" href="${site.follow.url}" target="_blank" rel="noopener noreferrer" aria-label="Follow @${site.follow.handle} on X"><span class="follow-link-mark" aria-hidden="true">X</span><span>Follow <strong>@${site.follow.handle}</strong></span></a>
     <a class="github-link" href="${site.repo.url}" target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub"><span class="github-link-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span><span class="github-link-label">GitHub</span></a>
   </div>
-  ${renderToc(categories, outlines, href, site.name)}
+  ${renderToc(categories, outlines, href, site.name, site.feature && { ...site.feature, href: href(site.feature.path) })}
   <main id="content" class="main">
     <div class="content">
 ${current ? documentArticle(current, routes) : `      <header>
         <div class="date">${escapeHtml(statusLine(status))}</div>
         <h1 class="page-title">${escapeHtml(site.name)}</h1>
-        <p class="dek">${escapeHtml(site.dek)}</p>
+        <p class="dek">${escapeHtml(site.dek)}</p>${site.feature ? `
+        <a class="home-feature" href="${href(site.feature.path)}"><span class="home-feature-kicker">${escapeHtml(site.feature.kicker)}</span><span class="home-feature-title">${escapeHtml(site.feature.title)}</span><span class="home-feature-line">${escapeHtml(site.feature.homeLine)}</span><span class="home-feature-cta">${escapeHtml(site.feature.cta)} <span aria-hidden="true">→</span></span></a>` : ""}
       </header>
 ${indexHome ? `${routes.homeLinks(inline.map(documentPanel).join("\n"), new Set(inline.map(document => document.anchor)))}
 ${documentIndex(categories, rendered, routes)}` : rendered.map(documentPanel).join("\n")}`}

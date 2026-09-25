@@ -105,7 +105,7 @@ function renderItems(items, depth, href) {
 
 // `href(path, id)` returns the link for a document (no id) or one of its headings.
 // Only documents with an entry in `outlines` list their headings.
-export function renderToc(categories, outlines, href, siteName) {
+export function renderToc(categories, outlines, href, siteName, feature) {
   const groups = categories
     .map(category => `
         <div class="toc-group">
@@ -130,7 +130,8 @@ export function renderToc(categories, outlines, href, siteName) {
         <span class="toc-current">Contents</span>
         <svg class="toc-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 15 6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div class="toc" id="toc">${groups}</div>
+      <div class="toc" id="toc">${feature ? `
+        <a class="toc-feature" href="${feature.href}"><span class="toc-feature-kicker">${escapeHtml(feature.kicker)}</span><span class="toc-feature-title">${escapeHtml(feature.title)}</span><span class="toc-feature-line">${escapeHtml(feature.line)}</span></a>` : ""}${groups}</div>
     </div>
   </nav>`;
 }
@@ -139,6 +140,11 @@ export const tocStyles = `
     .toc-nav{position:fixed;z-index:20;inset:0 auto 0 0;width:250px;display:flex;flex-direction:column;padding-top:89px}
     .toc-brand{flex:none;display:block;margin:0 30px 20px 48px;color:var(--text);font-size:23px;font-weight:800;line-height:1.15;letter-spacing:-.02em;text-decoration:none}
     .toc-brand:hover,.toc-brand:focus-visible{color:var(--link)}
+    .toc a.toc-feature{display:grid;gap:3px;margin:0 0 26px;padding:11px 13px 12px;border:1px solid #3a4a30;border-left:3px solid #c8f784;border-radius:3px;background:#161d14;color:#d6d9d0;text-decoration:none;transition:background .2s,border-color .2s}
+    .toc a.toc-feature:hover,.toc a.toc-feature:focus-visible{background:#1c2619;border-color:#56693f;border-left-color:#c8f784}
+    .toc-feature-kicker{color:#a9c28f;font-size:11.5px;font-weight:650;letter-spacing:.07em;text-transform:uppercase}
+    .toc-feature-title{color:#c8f784;font-size:16px;font-weight:750;line-height:1.2}
+    .toc-feature-line{color:#d6d9d0;font-size:12.5px;line-height:1.4}
     .toc-collapsible{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
     .toc{flex:1 1 auto;min-height:0;padding:0 30px 48px 48px;overflow-y:auto;scrollbar-width:thin}
     .toc-toggle{display:none}
