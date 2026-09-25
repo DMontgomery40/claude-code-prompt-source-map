@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { enhanceLadders, ladderScript } from "../src/ladders.mjs";
+import { enhanceLadders, ladderScript, readScenario, writeScenario } from "../src/ladders.mjs";
 
 const decision = { id: "ttl", title: "Prompt cache TTL", question: "q", shape: "first-wins",
   context: [{ key: "kind", label: "Request", values: [{ value: "main", label: "Main" }] }],
@@ -70,4 +70,19 @@ test("reader notes follow the rungs; maintainer details stay out of the page", (
   assert.match(out, /<\/ol><ul class="notes"><li>Files live in &lt;home&gt;\/memory\.<\/li><\/ul>/);
   assert.doesNotMatch(out, /evidence: offset 123/);
   assert.match(out, /<ul class="ladder-static"><li>Files live<\/li>/, "the static notes list is hidden with the rest");
+});
+
+test("a scenario value containing commas survives the query round trip", () => {
+  const entries = [["enable1h"], ["allowRules", "Bash(git:*),Read"], ["ctx.kind", "a,b:c"], ["limit.cap"]];
+  const search = writeScenario("?q=x%2Cy&other=1", "permission-rules", entries);
+  assert.deepEqual(readScenario(search, "permission-rules"), entries.map(([k, v]) => [k, v]));
+  assert.equal(new URLSearchParams(search).get("q"), "x,y");
+  assert.doesNotMatch(search, /permission-rules=[^&]*,/, "separators and value commas stay encoded");
+  assert.equal(readScenario(writeScenario(search, "permission-rules", []), "permission-rules").length, 0);
+});
+
+test("the page script carries the scenario helpers and qualifies a remote winner", () => {
+  assert.match(ladderScript, /function readScenario\(/);
+  assert.match(ladderScript, /function writeScenario\(/);
+  assert.match(ladderScript, /r\.mechanism === "remote"\) why\.push\(" \(default in code; Anthropic can change it\)"\)/);
 });

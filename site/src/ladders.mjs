@@ -90,11 +90,28 @@ export function enhanceLadders(html, decisions) {
   return `${out}<script type="application/json" id="ladder-data">${JSON.stringify(slim).replace(/</g, "\\u003c")}</script>`;
 }
 
-// Runs in the page, after appliesTo and evaluateLadder are declared beside it.
+// A card's scenario lives in the query: ?<decision>=<rung>,<rung>:<value>,ctx.<key>:<value>,
+// bypass.<id>,limit.<id>. Each value is encoded before the parts are joined, and the query
+// keeps %2C encoded, so a comma inside a value never becomes a separator. Both run in the page.
+export function readScenario(search, id) {
+  const decode = s => { try { return decodeURIComponent(s); } catch { return s; } };
+  return (new URLSearchParams(search).get(id) ?? "").split(",").filter(Boolean).map(part => {
+    const at = part.indexOf(":");
+    return at < 0 ? [part, undefined] : [part.slice(0, at), decode(part.slice(at + 1))];
+  });
+}
+
+export function writeScenario(search, id, entries) {
+  const params = new URLSearchParams(search);
+  const parts = entries.map(([key, value]) => (value === undefined ? key : key + ":" + encodeURIComponent(value)));
+  if (parts.length) params.set(id, parts.join(",")); else params.delete(id);
+  return params.toString().replace(/%3A/gi, ":");
+}
+
+// Runs in the page, after appliesTo, evaluateLadder and the scenario helpers are declared beside it.
 function ladderClient() {
   const data = JSON.parse(document.getElementById("ladder-data")?.textContent ?? "[]");
   const text = v => (v === null || v === undefined ? "" : typeof v === "object" ? JSON.stringify(v) : String(v));
-  const decode = s => { try { return decodeURIComponent(s); } catch { return s; } };
   for (const el of document.querySelectorAll(".ladder[data-decision]")) {
     const d = data.find(x => x.id === el.dataset.decision);
     if (!d) continue;
@@ -109,11 +126,7 @@ function ladderClient() {
     const defaults = Object.fromEntries(contexts.map(c => [c.key, c.values[0]?.value]));
     const state = { context: { ...defaults }, set: {}, bypass: {}, constraints: {} };
 
-    // ?<decision>=<rung>,<rung>:<value>,ctx.<key>:<value>,bypass.<id>,limit.<id>
-    for (const part of (new URLSearchParams(location.search).get(d.id) ?? "").split(",").filter(Boolean)) {
-      const at = part.indexOf(":");
-      const key = at < 0 ? part : part.slice(0, at);
-      const raw = at < 0 ? undefined : decode(part.slice(at + 1));
+    for (const [key, raw] of readScenario(location.search, d.id)) {
       if (key.startsWith("ctx.")) {
         const c = contexts.find(x => x.key === key.slice(4));
         const v = c?.values.find(x => text(x.value) === raw);
@@ -225,6 +238,7 @@ function ladderClient() {
       else if (out.rung) {
         const r = rungOf(out.rung);
         why.push("from rung " + winNumber + ": ", r.knob ? { code: r.label ?? r.knob } : { plain: r.label ?? r.id });
+        if (r.mechanism === "remote") why.push(" (default in code; Anthropic can change it)");
       } else why.push(d.fallback ? "no rung answers, so the default applies" : "no rung answers");
       if (out.constrainedBy) {
         const c = d.constraints.find(x => x.id === out.constrainedBy);
@@ -235,14 +249,13 @@ function ladderClient() {
       const parts = [];
       for (const r of d.rungs) {
         const v = state.set[r.id];
-        if (v !== undefined) parts.push(r.input === "toggle" ? r.id : r.id + ":" + encodeURIComponent(text(v)));
+        if (v !== undefined) parts.push(r.input === "toggle" ? [r.id] : [r.id, text(v)]);
       }
-      for (const c of contexts) if (state.context[c.key] !== defaults[c.key]) parts.push("ctx." + c.key + ":" + encodeURIComponent(text(state.context[c.key])));
-      for (const id of Object.keys(state.bypass)) parts.push("bypass." + id);
-      for (const id of Object.keys(state.constraints)) parts.push("limit." + id);
-      const url = new URL(location.href), params = new URLSearchParams(url.search);
-      if (parts.length) params.set(d.id, parts.join(",")); else params.delete(d.id);
-      url.search = params.toString().replace(/%3A/gi, ":").replace(/%2C/gi, ",");
+      for (const c of contexts) if (state.context[c.key] !== defaults[c.key]) parts.push(["ctx." + c.key, text(state.context[c.key])]);
+      for (const id of Object.keys(state.bypass)) parts.push(["bypass." + id]);
+      for (const id of Object.keys(state.constraints)) parts.push(["limit." + id]);
+      const url = new URL(location.href);
+      url.search = writeScenario(url.search, d.id, parts);
       if (url.href !== location.href) try { history.replaceState(history.state, "", url); } catch {}
     }
     draw();
@@ -253,6 +266,8 @@ export const ladderScript = `
     (() => {
       ${appliesTo}
       ${evaluateLadder}
+      ${readScenario}
+      ${writeScenario}
       (${ladderClient})();
     })();`;
 
