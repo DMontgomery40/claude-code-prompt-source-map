@@ -51,6 +51,19 @@ export const codex = {
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
+    // Model-facing text the inventory doesn't cover; never fails the refresh.
+    let sweepDiff = "";
+    const sweepDiffFile = path.join(repo, "work/desktop-model-facing-diff.md");
+    rmSync(sweepDiffFile, { force: true });
+    const sweep = run(node, ["extract/codex/prompt-sweep.mjs"], { cwd: repo, timeoutMs: 15 * 60 * 1000 });
+    if (sweep.status !== 0) {
+      log(`codex prompt sweep failed: ${(sweep.stderr || sweep.stdout).slice(-300)}`);
+      run("git", ["checkout", "--", "outputs/desktop-model-facing-text.md"], { cwd: repo });
+    } else {
+      const swept = JSON.parse(sweep.stdout.trim().split("\n").at(-1));
+      if (swept.jev_unavailable && !dryRun) notify("gpt6aeon prompt sweep", `${swept.unclassified} candidates unclassified: ${swept.jev_unavailable}`);
+      if (existsSync(sweepDiffFile)) { sweepDiff = readFileSync(sweepDiffFile, "utf8").trim(); rmSync(sweepDiffFile, { force: true }); }
+    }
     // Catalog settings baseline: advanced after a publish, or when nothing needs publishing;
     // never in a dry run, so a failed gate or a dry run can't swallow a change.
     const promoteSnapshot = () => {
@@ -60,7 +73,7 @@ export const codex = {
     const privateSettings = summary.catalog_settings?.private ?? [];
     if (privateSettings.length && !dryRun) notify("gpt6aeon catalog", `Catalog settings changed (not published, may be account-specific): ${privateSettings.join(", ").slice(0, 300)}`);
     const diffFile = path.join(repo, "work/codex-diff.md");
-    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff].filter(Boolean).join("\n\n");
+    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff, sweepDiff].filter(Boolean).join("\n\n");
     const statusFile = path.join(repo, "outputs/status.json");
     const previousLabel = existsSync(statusFile) ? JSON.parse(readFileSync(statusFile, "utf8")).checked : null;
     const labelChanged = previousLabel !== this.checkedLabel(now);
