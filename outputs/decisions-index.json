@@ -125,13 +125,29 @@
   },
   {
    "id": "env-anthropic-api-key",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "apiKey",
+     "rank": 5,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-anthropic-auth-token",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "authToken",
+     "rank": 4,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-anthropic-base-url",
@@ -170,8 +186,16 @@
   },
   {
    "id": "env-anthropic-default-fable-model",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "provider-default-model",
+     "title": "Model id for a family on each provider",
+     "rung": "envFable",
+     "rank": 4,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-anthropic-default-fable-model-description",
@@ -185,8 +209,16 @@
   },
   {
    "id": "env-anthropic-default-haiku-model",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "provider-default-model",
+     "title": "Model id for a family on each provider",
+     "rung": "envHaiku",
+     "rank": 3,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-anthropic-default-haiku-model-description",
@@ -200,13 +232,29 @@
   },
   {
    "id": "env-anthropic-default-model",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "main-model",
+     "title": "Main conversation model",
+     "rung": "envDefault",
+     "rank": 7,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-anthropic-default-opus-model",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "provider-default-model",
+     "title": "Model id for a family on each provider",
+     "rung": "envOpus",
+     "rank": 1,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-anthropic-default-opus-model-description",
@@ -220,8 +268,16 @@
   },
   {
    "id": "env-anthropic-default-sonnet-model",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "provider-default-model",
+     "title": "Model id for a family on each provider",
+     "rung": "envSonnet",
+     "rank": 2,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-anthropic-default-sonnet-model-description",
@@ -265,8 +321,16 @@
   },
   {
    "id": "env-anthropic-model",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "main-model",
+     "title": "Main conversation model",
+     "rung": "envModel",
+     "rank": 4,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-anthropic-organization-id",
@@ -540,8 +604,23 @@
   },
   {
    "id": "env-claude-bg-session-permission-rules",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "sessionAllow",
+     "rank": 12,
+     "of": 14
+    },
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "sessionDeny",
+     "rank": 13,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "env-claude-bg-socket-tokens-path",
@@ -720,8 +799,16 @@
   },
   {
    "id": "env-claude-code-api-key-file-descriptor",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "apiKeyFd",
+     "rank": 6,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-api-key-helper-ttl-ms",
@@ -970,8 +1057,16 @@
   },
   {
    "id": "env-claude-code-bridge-child-auto-default",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-mode",
+     "title": "Starting permission mode",
+     "rung": "bridgeChildAuto",
+     "rank": 6,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-claude-code-bridge-child-machine-settings",
@@ -1500,8 +1595,23 @@
   },
   {
    "id": "env-claude-code-effort-level",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "env",
+     "rank": 2,
+     "of": 11
+    },
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "envAuto",
+     "rank": 3,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-elegant-meadow",
@@ -1655,8 +1765,16 @@
   },
   {
    "id": "env-claude-code-extra-body",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "extraBody",
+     "rank": 1,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-extra-metadata",
@@ -1980,8 +2098,16 @@
   },
   {
    "id": "env-claude-code-max-output-tokens",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "max-output-tokens",
+     "title": "Max output tokens",
+     "rung": "env",
+     "rank": 1,
+     "of": 4
+    }
+   ]
   },
   {
    "id": "env-claude-code-max-retries",
@@ -2120,13 +2246,43 @@
   },
   {
    "id": "env-claude-code-oauth-token",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "oauthTokenHosted",
+     "rank": 1,
+     "of": 11
+    },
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "oauthToken",
+     "rank": 8,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-oauth-token-file-descriptor",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "oauthTokenFdHosted",
+     "rank": 2,
+     "of": 11
+    },
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "oauthTokenFd",
+     "rank": 9,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-organization-uuid",
@@ -2660,8 +2816,16 @@
   },
   {
    "id": "env-claude-code-subprocess-env-scrub",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-mode",
+     "title": "Starting permission mode",
+     "rung": "scrub",
+     "rank": 0,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-claude-code-subscription-type",
@@ -3915,8 +4079,16 @@
   },
   {
    "id": "env-claude-code-use-bedrock",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "provider",
+     "rank": 0,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-use-mantle",
@@ -8140,8 +8312,15 @@
   },
   {
    "id": "setting-model",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "main-model",
+     "title": "Main conversation model",
+     "rung": "settingModel",
+     "rank": 5,
+     "of": 8
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8192,8 +8371,15 @@
   },
   {
    "id": "setting-model-overrides",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "provider-default-model",
+     "title": "Model id for a family on each provider",
+     "rung": "modelOverrides",
+     "rank": 6,
+     "of": 8
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8362,8 +8548,22 @@
   },
   {
    "id": "setting-effort-level",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "setting",
+     "rank": 6,
+     "of": 11
+    },
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "userSetting",
+     "rank": 8,
+     "of": 11
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8388,8 +8588,15 @@
   },
   {
    "id": "setting-model-settings",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "modelSettings",
+     "rank": 7,
+     "of": 11
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8492,8 +8699,29 @@
   },
   {
    "id": "setting-permissions--allow",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "personalAllow",
+     "rank": 1,
+     "of": 14
+    },
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "sharedAllow",
+     "rank": 2,
+     "of": 14
+    },
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "localAllow",
+     "rank": 3,
+     "of": 14
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8505,8 +8733,15 @@
   },
   {
    "id": "setting-permissions--deny",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "settingsDeny",
+     "rank": 4,
+     "of": 14
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8518,8 +8753,15 @@
   },
   {
    "id": "setting-permissions--ask",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "settingsAsk",
+     "rank": 5,
+     "of": 14
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8531,8 +8773,15 @@
   },
   {
    "id": "setting-permissions--default-mode",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "permission-mode",
+     "title": "Starting permission mode",
+     "rung": "settingsMode",
+     "rank": 4,
+     "of": 8
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9350,8 +9599,36 @@
   },
   {
    "id": "setting-env",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "env-sources",
+     "title": "Where an environment variable's value comes from",
+     "rung": "managed",
+     "rank": 2,
+     "of": 8
+    },
+    {
+     "decision": "env-sources",
+     "title": "Where an environment variable's value comes from",
+     "rung": "local",
+     "rank": 4,
+     "of": 8
+    },
+    {
+     "decision": "env-sources",
+     "title": "Where an environment variable's value comes from",
+     "rung": "project",
+     "rank": 5,
+     "of": 8
+    },
+    {
+     "decision": "env-sources",
+     "title": "Where an environment variable's value comes from",
+     "rung": "user",
+     "rank": 6,
+     "of": 8
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -11079,8 +11356,15 @@
   },
   {
    "id": "setting-api-key-helper",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "auth-source",
+     "title": "API credential",
+     "rung": "apiKeyHelper",
+     "rank": 7,
+     "of": 11
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -12145,8 +12429,16 @@
   },
   {
    "id": "cli-flag-dangerously-skip-permissions",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-mode",
+     "title": "Starting permission mode",
+     "rung": "skipPermissions",
+     "rank": 1,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "cli-flag-allow-dangerously-skip-permissions",
@@ -12200,13 +12492,29 @@
   },
   {
    "id": "cli-flag-allowed-tools",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "cliAllow",
+     "rank": 8,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "cli-flag-tools",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "toolsNarrowing",
+     "rank": 14,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "cli-flag-restricted",
@@ -12215,8 +12523,16 @@
   },
   {
    "id": "cli-flag-disallowed-tools",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-rules",
+     "title": "Which permission rules apply",
+     "rung": "cliDeny",
+     "rank": 9,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "cli-flag-mcp-config",
@@ -12280,13 +12596,29 @@
   },
   {
    "id": "cli-flag-permission-mode",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-mode",
+     "title": "Starting permission mode",
+     "rung": "cliMode",
+     "rank": 2,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "cli-flag-inherit-permission-mode",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "permission-mode",
+     "title": "Starting permission mode",
+     "rung": "inherit",
+     "rank": 5,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "cli-flag-continue",
@@ -12375,13 +12707,29 @@
   },
   {
    "id": "cli-flag-model",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "main-model",
+     "title": "Main conversation model",
+     "rung": "cliModel",
+     "rank": 2,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "cli-flag-effort",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "effort-level",
+     "title": "Reasoning effort",
+     "rung": "cli",
+     "rank": 5,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "cli-flag-agent",
@@ -12405,8 +12753,16 @@
   },
   {
    "id": "cli-flag-settings",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "env-sources",
+     "title": "Where an environment variable's value comes from",
+     "rung": "flag",
+     "rank": 3,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "cli-flag-managed-settings",

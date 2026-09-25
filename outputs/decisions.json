@@ -3,6 +3,3416 @@
  "version": "2.1.282",
  "items": [
   {
+   "id": "auth-source",
+   "title": "API credential",
+   "group": "Authentication",
+   "question": "Which credential Claude Code sends with requests to the Anthropic API: a subscription OAuth token (as a bearer token, with no API key), an auth token, or an API key, and from which source.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "oauth-token": "CLAUDE_CODE_OAUTH_TOKEN",
+    "oauth-token-fd": "OAuth token from a file descriptor or host file",
+    "claude-ai": "claude.ai login",
+    "auth-token": "ANTHROPIC_AUTH_TOKEN (bearer)",
+    "api-key": "ANTHROPIC_API_KEY",
+    "api-key-fd": "API key from a file descriptor or host file",
+    "api-key-helper": "apiKeyHelper output",
+    "console-key": "API key saved by /login",
+    "provider": "Cloud provider credentials",
+    "none": "No credential"
+   },
+   "fallback": {
+    "value": "none"
+   },
+   "context": [
+    {
+     "key": "host",
+     "label": "Running in",
+     "values": [
+      {
+       "value": "local",
+       "label": "Your terminal"
+      },
+      {
+       "value": "hosted",
+       "label": "Claude Code on the web or the desktop app"
+      }
+     ]
+    },
+    {
+     "key": "bare",
+     "label": "Bare mode (--bare or CLAUDE_CODE_SIMPLE)",
+     "values": [
+      {
+       "value": false,
+       "label": "No"
+      },
+      {
+       "value": true,
+       "label": "Yes"
+      }
+     ]
+    },
+    {
+     "key": "mode",
+     "label": "Session",
+     "values": [
+      {
+       "value": "interactive",
+       "label": "Interactive"
+      },
+      {
+       "value": "print",
+       "label": "Non-interactive (-p)"
+      }
+     ]
+    },
+    {
+     "key": "approved",
+     "label": "ANTHROPIC_API_KEY approved at the prompt",
+     "show_when": [
+      {
+       "mode": [
+        "interactive"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": false,
+       "label": "No"
+      },
+      {
+       "value": true,
+       "label": "Yes"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "host": {
+     "local": {},
+     "hosted": null
+    },
+    "bare": {
+     "false": {},
+     "true": null
+    },
+    "mode": {
+     "interactive": null,
+     "print": {}
+    },
+    "approved": {
+     "false": {},
+     "true": null
+    }
+   },
+   "bypasses": [
+    {
+     "id": "provider",
+     "knob": "env-claude-code-use-bedrock",
+     "effect": {
+      "value": "provider"
+     },
+     "note": "Checked before the ladder: with Bedrock, Vertex or another cloud provider selected, that provider's own credentials are used. CLAUDE_CODE_USE_VERTEX and the other provider switches do the same.",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179768951,
+       "length": 18,
+       "sha256": "537127629e2b3bb1ba4370d68d70a0713ed7c9220eb8fa80419d086d768025ac",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "oauthTokenHosted",
+     "mechanism": "env",
+     "knob": "env-claude-code-oauth-token",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "host": [
+        "hosted"
+       ],
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "On the web and in the desktop app a subscription token is checked before any API key or auth token. It is sent as a bearer token and no API key goes with it.",
+     "effect": {
+      "value": "oauth-token"
+     },
+     "label": "CLAUDE_CODE_OAUTH_TOKEN",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176737352,
+       "length": 109,
+       "sha256": "e78ae33533a863ade4bbbe3bf6b895057f62c6ddebcf8d13fbe7ac1c631f3824",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176766322,
+       "length": 631,
+       "sha256": "068345ace6509c764fb11ad961f475bef088863eccb985ff2a6219b695a7b042",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "oauthTokenFdHosted",
+     "mechanism": "env",
+     "knob": "env-claude-code-oauth-token-file-descriptor",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "host": [
+        "hosted"
+       ],
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "A subscription token read from an inherited file descriptor, or from a token file the host places at a fixed path.",
+     "effect": {
+      "value": "oauth-token-fd"
+     },
+     "label": "CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR",
+     "provenance": [
+      {
+       "file": "chunk-6jyjgx35.js",
+       "binary_offset": 175932169,
+       "length": 165,
+       "sha256": "725d13a77c868e00541e60f5756c47238c650924ac503cdb1c7a12e461dff4e6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176766322,
+       "length": 631,
+       "sha256": "068345ace6509c764fb11ad961f475bef088863eccb985ff2a6219b695a7b042",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "claudeAiHosted",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Signed in with claude.ai (/login)",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "host": [
+        "hosted"
+       ],
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "The saved claude.ai login. Not read when the host manages provider credentials (CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST).",
+     "effect": {
+      "value": "claude-ai"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176766869,
+       "length": 40,
+       "sha256": "021a3f4ce22d2a1a371e0bab68f1e3f85972459ed50a1d7d46ef7e0ad713158f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "authToken",
+     "mechanism": "env",
+     "knob": "env-anthropic-auth-token",
+     "input": "toggle",
+     "note": "Sent as a bearer token, and in your terminal it turns subscription sign-in off. An API key found by a lower rung is still sent with it, as x-api-key.",
+     "effect": {
+      "value": "auth-token"
+     },
+     "label": "ANTHROPIC_AUTH_TOKEN",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179770780,
+       "length": 247,
+       "sha256": "b7563e9caec3f261de94f71df0c725c5ee3fc9adfbfe8ff73bd36f667b8eea0e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176741266,
+       "length": 367,
+       "sha256": "3f2080c54c3a6577c1878b8dc34e1ce2d324154aabdb2d48bc581ce9464ab9fa",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "apiKey",
+     "mechanism": "env",
+     "knob": "env-anthropic-api-key",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "bare": [
+        true
+       ]
+      },
+      {
+       "mode": [
+        "print"
+       ]
+      },
+      {
+       "approved": [
+        true
+       ]
+      }
+     ],
+     "note": "Always used with -p (unless the client is the VS Code extension) and in bare mode. In an interactive session it is used only after you approve it at the prompt; an unapproved or rejected key is skipped.",
+     "effect": {
+      "value": "api-key"
+     },
+     "label": "ANTHROPIC_API_KEY",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176745312,
+       "length": 52,
+       "sha256": "8299855e1fe2fb3d94234a8a84c1188acc0027148e0d4622fc79a42759d594e0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176745804,
+       "length": 24,
+       "sha256": "719361331ca72b6a393083adcb48bd022cb1aeca0a50e752e02b594b3ded701d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "apiKeyFd",
+     "mechanism": "env",
+     "knob": "env-claude-code-api-key-file-descriptor",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "An API key read from an inherited file descriptor, or from a key file the host places at a fixed path. Not read in bare mode.",
+     "effect": {
+      "value": "api-key-fd"
+     },
+     "label": "CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176745870,
+       "length": 56,
+       "sha256": "32f49fb14f348fd9fa4c0cac7468026fb5b81695b2c8c353aba552ebbaad49c5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "apiKeyHelper",
+     "mechanism": "settings",
+     "knob": "setting-api-key-helper",
+     "input": "toggle",
+     "note": "The script's output is sent as the API key and, unless ANTHROPIC_AUTH_TOKEN is set, also as a bearer token; it is cached and re-run after CLAUDE_CODE_API_KEY_HELPER_TTL_MS (default 5 minutes). In bare mode only a helper passed with --settings counts, one from project settings waits for workspace trust, and it is ignored when the host manages provider credentials.",
+     "effect": {
+      "value": "api-key-helper"
+     },
+     "label": "apiKeyHelper",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176746222,
+       "length": 107,
+       "sha256": "6abbed7f82458d074da92f15c507497561d8dcc406e072defafcf36f258415d4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176746892,
+       "length": 209,
+       "sha256": "336f564f54d15cd0928357d6450e15317176439ebac60133177a1d2757972b85",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "oauthToken",
+     "mechanism": "env",
+     "knob": "env-claude-code-oauth-token",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "host": [
+        "local"
+       ],
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "A subscription token, sent as a bearer token with no API key. With ANTHROPIC_UNIX_SOCKET set it is checked before any API key, and without it subscription sign-in is off.",
+     "effect": {
+      "value": "oauth-token"
+     },
+     "label": "CLAUDE_CODE_OAUTH_TOKEN",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176766322,
+       "length": 631,
+       "sha256": "068345ace6509c764fb11ad961f475bef088863eccb985ff2a6219b695a7b042",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "oauthTokenFd",
+     "mechanism": "env",
+     "knob": "env-claude-code-oauth-token-file-descriptor",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "host": [
+        "local"
+       ],
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "A subscription token from an inherited file descriptor or a host-provided token file. It is read before a saved login, except when the host restored the token from a background snapshot.",
+     "effect": {
+      "value": "oauth-token-fd"
+     },
+     "label": "CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR",
+     "provenance": [
+      {
+       "file": "chunk-6jyjgx35.js",
+       "binary_offset": 175932169,
+       "length": 165,
+       "sha256": "725d13a77c868e00541e60f5756c47238c650924ac503cdb1c7a12e461dff4e6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176766322,
+       "length": 631,
+       "sha256": "068345ace6509c764fb11ad961f475bef088863eccb985ff2a6219b695a7b042",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "claudeAi",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Signed in with claude.ai (/login)",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "host": [
+        "local"
+       ],
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "The login /login saved in the keychain or credentials file. It must carry the inference scope; a Console login does not, so it falls through to the next rung.",
+     "effect": {
+      "value": "claude-ai"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176766869,
+       "length": 40,
+       "sha256": "021a3f4ce22d2a1a371e0bab68f1e3f85972459ed50a1d7d46ef7e0ad713158f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179763565,
+       "length": 58,
+       "sha256": "07b0a98fb0074b642814edd2bdfd8627287ca0b41d60b29b1967c3eea8534812",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "consoleKey",
+     "mechanism": "default",
+     "knob": null,
+     "label": "API key saved by /login (Console)",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "bare": [
+        false
+       ]
+      }
+     ],
+     "note": "Read from the macOS keychain or Claude Code's config file. Not read when the host manages provider credentials.",
+     "effect": {
+      "value": "console-key"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176760296,
+       "length": 437,
+       "sha256": "c06a56e83e5c47bed267749970faaa12a5a94ea2b6501fcb9beaef07eb9fa75f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "orgPin",
+     "mechanism": "managed",
+     "knob": "setting-force-login-org-uuid",
+     "note": "Checked at sign-in and before cloud sessions, not a rung. When managed settings pin an organization, an API key, auth token or apiKeyHelper makes the check fail, and an OAuth token from another organization is refused.",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176797283,
+       "length": 3294,
+       "sha256": "682a84cb85304ba741fc6cfa95b109c94389eb7b3854bebbab9bb1fba95e7817",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "loginMethod",
+     "mechanism": "managed",
+     "knob": "setting-force-login-method",
+     "note": "Checked when you sign in, not a rung: a claude.ai or Console sign-in of the other kind is refused. It does not reorder the ladder.",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176800999,
+       "length": 713,
+       "sha256": "02aa2d36fe7258bcd0c3e82ff98b85d8a4b6b03f6b8147112e0b0defc27cc8cc",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": "chunk-3kj78r2m.js:534207"
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176741266,
+     "length": 367,
+     "sha256": "3f2080c54c3a6577c1878b8dc34e1ce2d324154aabdb2d48bc581ce9464ab9fa",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176745045,
+     "length": 1066,
+     "sha256": "c67f3cea50cac4b8886ecb349d9fbb04f48c9d5460cd831a5dd7def0562d4e72",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179763565,
+     "length": 58,
+     "sha256": "07b0a98fb0074b642814edd2bdfd8627287ca0b41d60b29b1967c3eea8534812",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-b4y911xg.js",
+     "binary_offset": 177142114,
+     "length": 128,
+     "sha256": "775c8933596e8ce7c5353b82b141e343408817750b40f77a0179b6fd4c1209e1",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ]
+  },
+  {
+   "id": "effort-level",
+   "title": "Reasoning effort",
+   "group": "Model and reasoning",
+   "question": "Which reasoning effort (low, medium, high, xhigh or max) Claude Code asks the API for, sent as output_config.effort on each request.",
+   "shape": "first-wins",
+   "observe": "effort",
+   "value_labels": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "xhigh": "Extra high",
+    "max": "Max",
+    "none": "Not sent"
+   },
+   "details": {
+    "candidate": "effort-level"
+   },
+   "context": [
+    {
+     "key": "model",
+     "label": "Model",
+     "values": [
+      {
+       "value": "opus-5-5",
+       "label": "Opus 5.5 (the default)"
+      },
+      {
+       "value": "other",
+       "label": "Opus 5, Fable 5.1, Sonnet 5 or an older model"
+      }
+     ]
+    },
+    {
+     "key": "provider",
+     "label": "Provider",
+     "values": [
+      {
+       "value": "anthropic",
+       "label": "Anthropic"
+      },
+      {
+       "value": "other",
+       "label": "Bedrock, Vertex or Foundry"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "model": {
+     "opus-5-5": {},
+     "other": null
+    },
+    "provider": {
+     "anthropic": {},
+     "other": null
+    }
+   },
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "extraBody",
+     "mechanism": "env",
+     "knob": "env-claude-code-extra-body",
+     "input": "choice",
+     "note": "An output_config.effort inside CLAUDE_CODE_EXTRA_BODY is sent as written. It is not checked or capped by maxEffortLevel.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_EXTRA_BODY": "{\"output_config\":{\"effort\":\"{value}\"}}"
+      }
+     },
+     "label": "CLAUDE_CODE_EXTRA_BODY",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182913853,
+       "length": 23,
+       "sha256": "2338d0aa204a7064543b93d9468c4577fd542237e312ae8d7724554428e8eda8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "env",
+     "mechanism": "env",
+     "knob": "env-claude-code-effort-level",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ],
+     "invalid_example": "extreme",
+     "note": "Case does not matter, and med means medium. Any other value is ignored without a warning. It wins over agent and skill effort, --effort and settings.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_EFFORT_LEVEL": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_EFFORT_LEVEL",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177248030,
+       "length": 119,
+       "sha256": "b524abecf7feedbee43c334b56ff5a75e5065047bc1f72835e173cc72c55e8fd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envAuto",
+     "mechanism": "env",
+     "knob": "env-claude-code-effort-level",
+     "label": "CLAUDE_CODE_EFFORT_LEVEL=auto",
+     "input": "choice",
+     "accepts": [
+      "auto",
+      "unset"
+     ],
+     "note": "auto or unset sends no effort, so the API uses its own default. If a maxEffortLevel cap is set, the model's default is sent instead. It shares its variable with the rung above, so only one of them can be set.",
+     "effect": {
+      "value": "none"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177252011,
+       "length": 23,
+       "sha256": "3726db97ef12136bbf61cad91307cc0d0e6a918dd68759eca514212f6dbd23ef",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "frontmatter",
+     "mechanism": "frontmatter",
+     "knob": null,
+     "label": "Agent or skill effort",
+     "input": "choice",
+     "note": "An agent's effort frontmatter applies to that agent's requests, and a skill's effort applies while the skill runs. Either wins over --effort and settings.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-4pwy8jq4.js",
+       "binary_offset": 187858470,
+       "length": 57,
+       "sha256": "cfb622fd847963cad3143bab6c743e38c0db059e17c98b5afe63d4a3b4743ddb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-pfsk9k27.js",
+       "binary_offset": 187984803,
+       "length": 46,
+       "sha256": "75c35c37fde6da96dffd284bb123197eabf0b4ba1f6b10926f9f0f919c79d73e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-qfyr3870.js",
+       "binary_offset": 177311231,
+       "length": 71,
+       "sha256": "98a1af0e8d8869633025f9955295c98632b1594d133fba36476acdb502317b4e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "cli",
+     "mechanism": "cli",
+     "knob": "cli-flag-effort",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ],
+     "note": "For this session. Case does not matter, med means medium and ultracode means xhigh. Any other value prints a warning and is ignored.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "args": [
+       "--effort",
+       "{value}"
+      ]
+     },
+     "label": "--effort <level>",
+     "provenance": [
+      {
+       "file": "chunk-hj3p6ej4.js",
+       "binary_offset": 190178393,
+       "length": 35,
+       "sha256": "26f60165f56ed49d2a87cdac5a9f2896e838e4fe07d61c685d270e10c53669eb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177247562,
+       "length": 22,
+       "sha256": "3b7ff74d8e21d781373e1d884d7a30b5e1c19819d6da99dabf04ba6a1769d25c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177251510,
+       "length": 27,
+       "sha256": "bc30cfed748a878b534624bc4550bed4b3b794e67d8284156da6dfc60e08a035",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "setting",
+     "mechanism": "settings",
+     "knob": "setting-effort-level",
+     "label": "effortLevel in a project, local, --settings or managed file",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh"
+     ],
+     "invalid_example": "max",
+     "note": "The highest-priority file that sets it wins, and it replaces the user file's value. It beats a modelSettings entry in a lower-priority file, such as a per-model choice saved in your user file. max is not accepted: the model's default is used.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "args": [
+       "--settings",
+       "{\"effortLevel\":\"{value}\"}"
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177250022,
+       "length": 33,
+       "sha256": "59544636d3ba3bf0c8a19809cc254f415e0f1cc63240b1ad29eccbbdb5ca8795",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177247881,
+       "length": 28,
+       "sha256": "ad2858003c8722862cb23c58faba93ec8b9a57bfaa6e8f1891d9f2768d1d2c42",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "modelSettings",
+     "mechanism": "settings",
+     "knob": "setting-model-settings",
+     "label": "modelSettings.<model>.effortLevel",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh"
+     ],
+     "note": "An effortLevel for the model in use, keyed by its canonical name; Claude Code saves per-model effort choices here. Within one file it beats that file's effortLevel. max is not accepted; any other value means the model's default.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "modelSettings": {
+        "claude-opus-5-5": {
+         "effortLevel": "{value}"
+        }
+       }
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177250208,
+       "length": 44,
+       "sha256": "14c9643c6161c9d042f244f218331c9f45aeab8d9676633ede3cedf905193947",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "userSetting",
+     "mechanism": "settings",
+     "knob": "setting-effort-level",
+     "label": "effortLevel in the user settings file",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh"
+     ],
+     "invalid_example": "max",
+     "applies_when": [
+      {
+       "model": [
+        "other"
+       ]
+      }
+     ],
+     "note": "An older form: it applies only to models from before Claude Code started saving effort per model under modelSettings, and never to Opus 5.5. On some older installs it also skips Opus 4.7, Opus 4.8 and Fable 5.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "effortLevel": "{value}"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177249923,
+       "length": 43,
+       "sha256": "3cbebd65e1baa8e280ba7d25df73befb82dd0d2ce7fd40964443d3dac82616e0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177251124,
+       "length": 39,
+       "sha256": "2194933ef0a34432dad76c900120e9aeec84780b874ad1788140aace02903acc",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "orgDefault",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Your organization's default model",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ],
+     "applies_when": [
+      {
+       "provider": [
+        "anthropic"
+       ]
+      }
+     ],
+     "note": "When your organization picks a default model with its own effort level and you are using that model. Anthropic provider only.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177246189,
+       "length": 266,
+       "sha256": "8e9c8def77ac22c19394f12847e354b10ca2d068f9867fb02ed39e1244001a40",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteDefault",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-model default",
+     "input": "choice",
+     "accepts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ],
+     "note": "A remote flag can set a default effort per model. In code it sets none. Anthropic can change it without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177254163,
+       "length": 25,
+       "sha256": "09eb4f8676d7e34a4ff441f6f1197a8a88daf2b2899d1bc6aeae9186614a0292",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "modelDefault",
+     "mechanism": "default",
+     "knob": null,
+     "label": "The model's default",
+     "input": null,
+     "note": "The model's own default from Claude Code's model list: medium for Opus 5.5, high for most others. A model with no listed default gets high.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "model": [
+          "opus-5-5"
+         ]
+        },
+        "value": "medium"
+       },
+       {
+        "when": {},
+        "value": "high"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177254513,
+       "length": 40,
+       "sha256": "d3dc0f5edf138cef4f37a086adf0c2187b15f5b07560b4bbea6efe019c367b76",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mrrt6yj3.js",
+       "binary_offset": 174998082,
+       "length": 49,
+       "sha256": "1d02675bce8c63d209ff0871fcf7c34e774100488e33b92ec9610f87f93cdd10",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "unsupportedModel",
+     "knob": null,
+     "label": "Models without effort support get no effort at all.",
+     "effect": {
+      "value": "none"
+     },
+     "note": "Models Claude Code does not treat as effort-capable, such as Claude 3, Opus 4.0 and 4.1, Sonnet 4.0 and 4.5 and Haiku 4.5, get no effort at all, even one put in CLAUDE_CODE_EXTRA_BODY. CLAUDE_CODE_ALWAYS_ENABLE_EFFORT turns effort on for model IDs Claude Code does not recognize.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177243522,
+       "length": 451,
+       "sha256": "a644438c6984e3244e3cbeed775ce7077d5f2ef2eb578113179dfe3292f96bbb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182913819,
+       "length": 34,
+       "sha256": "5c8d0ceee22b616d314ec0cc89803dfc065967661f70bdfca2f2b5e84a42cd60",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "maxEffortLevel",
+     "knob": "setting-max-effort-level",
+     "label": "maxEffortLevel caps the result: a higher level is lowered to it.",
+     "note": "Across settings files the lowest cap wins, modelSettings.<model>.maxEffortLevel replaces it for one model, and an organization's cap for the model counts too. A cap of max changes nothing. It does not apply to CLAUDE_CODE_EXTRA_BODY.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177245451,
+       "length": 428,
+       "sha256": "1d8c7149cd6f5ae71ad829752ba80ad0ffd76d7eefda49d8de0005e78cba65c1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177247002,
+       "length": 19,
+       "sha256": "73405aa4a4a09091c92ef06b9cbb5e96b8f0199a512e71923d40cc4aeeb01402",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "modelLevels",
+     "knob": null,
+     "label": "max and xhigh become high on models that do not support them.",
+     "note": "Opus 5.5 supports both. Opus 4.6 and Sonnet 4.6 lack xhigh, and Opus 4.5 lacks both.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177252259,
+       "length": 136,
+       "sha256": "d20fac6c4a1ffbe02f482aa78217318167f931af0dcdce9930968c5ec8e378a1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "thinkingDisabled",
+     "knob": null,
+     "label": "With thinking turned off, levels above high become high on models that require it.",
+     "note": "Opus 5 is such a model. This also applies to a value from CLAUDE_CODE_EXTRA_BODY.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182957307,
+       "length": 32,
+       "sha256": "71e77a891e6a2129affdcc6a9b53bbfb80b235a638b4a4158d8094dab5cb9403",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177245396,
+       "length": 54,
+       "sha256": "b061e2f6f97b032553b97d965dbe86023d63c120748d576188ee70bd5187894a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-76kv9jbg.js",
+     "binary_offset": 177251846,
+     "length": 283,
+     "sha256": "43c9fe803472e0730196fb2674eda080876928c66e92026b0c020464c09f531e",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182913795,
+     "length": 158,
+     "sha256": "232704f195683f076be0a54339b003b7c258e651bcf2ed892e6abca8fdbfffa4",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
+  },
+  {
+   "id": "env-sources",
+   "title": "Where an environment variable's value comes from",
+   "group": "Settings",
+   "question": "When the shell, settings files and managed settings set the same environment variable, which value Claude Code runs with.",
+   "shape": "first-wins",
+   "observe": "model",
+   "context": [
+    {
+     "key": "host",
+     "label": "Started from",
+     "values": [
+      {
+       "value": "terminal",
+       "label": "A terminal or script"
+      },
+      {
+       "value": "hosted",
+       "label": "The desktop app or a runner"
+      }
+     ]
+    },
+    {
+     "key": "trust",
+     "label": "Workspace trust",
+     "values": [
+      {
+       "value": "trusted",
+       "label": "Trusted, or a non-interactive run"
+      },
+      {
+       "value": "pending",
+       "label": "Trust prompt not yet accepted"
+      }
+     ]
+    },
+    {
+     "key": "key",
+     "label": "The variable",
+     "values": [
+      {
+       "value": "safe",
+       "label": "On the safe list"
+      },
+      {
+       "value": "other",
+       "label": "Not on the safe list"
+      },
+      {
+       "value": "project_blocked",
+       "label": "One project files can't set, such as HOME, TMPDIR or CLAUDE_CONFIG_DIR"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "host": {
+     "terminal": {},
+     "hosted": null
+    },
+    "trust": {
+     "trusted": {},
+     "pending": null
+    },
+    "key": {
+     "safe": {},
+     "other": null,
+     "project_blocked": null
+    }
+   },
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "launchHosted",
+     "mechanism": "env",
+     "knob": null,
+     "label": "Launch environment",
+     "applies_when": [
+      {
+       "host": [
+        "hosted"
+       ]
+      }
+     ],
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "note": "When the desktop app or a runner starts the session, a variable already in the launch environment keeps its value. Every settings entry for it is ignored with a warning, managed settings included.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177782897,
+       "length": 53,
+       "sha256": "91ad164acf41f74c0fb2417a304a9723dee553cbc3304cfdde150e6c5c5e08bd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "managed",
+     "mechanism": "managed",
+     "knob": "setting-env",
+     "label": "Managed settings env",
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "note": "Applied last, so it overrides every settings file and the shell. Trusted before the trust prompt.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177793240,
+       "length": 98,
+       "sha256": "7621091f777372feb56d57fd1437a98b680c349d43867d504fade44950db914b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-vgc9j46v.js",
+       "binary_offset": 173997757,
+       "length": 85,
+       "sha256": "524e1518573efe1efdeba359474447ce1bee36dae458d59f28d02b4269cfc753",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "flag",
+     "mechanism": "cli",
+     "knob": "cli-flag-settings",
+     "label": "--settings env",
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "note": "The env block of a --settings file or JSON string. Always read, even when --setting-sources leaves other files out, and trusted before the trust prompt.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "args": [
+       "--settings",
+       "{\"env\":{\"ANTHROPIC_MODEL\":\"{value}\"}}"
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-vgc9j46v.js",
+       "binary_offset": 173999593,
+       "length": 45,
+       "sha256": "427bac0d82a2ba32b2f001fcfebae0c02f32b1f3994ae22f5ba5a4d1a9951773",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-vgc9j46v.js",
+       "binary_offset": 173997757,
+       "length": 85,
+       "sha256": "524e1518573efe1efdeba359474447ce1bee36dae458d59f28d02b4269cfc753",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "local",
+     "mechanism": "settings",
+     "knob": "setting-env",
+     "label": "Local project settings env",
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "skip_when": [
+      {
+       "trust": [
+        "pending"
+       ],
+       "key": [
+        "other"
+       ]
+      },
+      {
+       "key": [
+        "project_blocked"
+       ]
+      }
+     ],
+     "note": "The env block in .claude/settings.local.json. Until the trust prompt is accepted only safe-list entries apply; the rest are applied once it is. Keys that pick folders or Claude Code's own plumbing are ignored here with a warning, except a few that are accepted when the value only turns something off and no higher source sets them.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-vgc9j46v.js",
+       "binary_offset": 173997757,
+       "length": 85,
+       "sha256": "524e1518573efe1efdeba359474447ce1bee36dae458d59f28d02b4269cfc753",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177793523,
+       "length": 28,
+       "sha256": "5b3753e30223181fdb15366841c9b10054ff8c105563c82552f689e8afb4d8e4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177779979,
+       "length": 42,
+       "sha256": "94bbb133a00204fbfe46ff321f3d33f6948b6e104326d428ad6fdda49fbcd0a3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "project",
+     "mechanism": "settings",
+     "knob": "setting-env",
+     "label": "Project settings env",
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "skip_when": [
+      {
+       "trust": [
+        "pending"
+       ],
+       "key": [
+        "other"
+       ]
+      },
+      {
+       "key": [
+        "project_blocked"
+       ]
+      }
+     ],
+     "note": "The env block in the project's .claude/settings.json. Same limits as the local file: safe-list entries only until the trust prompt is accepted, and folder or plumbing keys are ignored with a warning.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-vgc9j46v.js",
+       "binary_offset": 173997757,
+       "length": 85,
+       "sha256": "524e1518573efe1efdeba359474447ce1bee36dae458d59f28d02b4269cfc753",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177793523,
+       "length": 28,
+       "sha256": "5b3753e30223181fdb15366841c9b10054ff8c105563c82552f689e8afb4d8e4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177779979,
+       "length": 42,
+       "sha256": "94bbb133a00204fbfe46ff321f3d33f6948b6e104326d428ad6fdda49fbcd0a3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "user",
+     "mechanism": "settings",
+     "knob": "setting-env",
+     "label": "User settings env",
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "note": "The env block in ~/.claude/settings.json. Trusted before the trust prompt. Not read when --setting-sources leaves user settings out.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "env": {
+        "ANTHROPIC_MODEL": "{value}"
+       }
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177794381,
+       "length": 81,
+       "sha256": "aac5fe7a13f9086e2085bcf02eaf8aebf377a485da78d5d519d691b33ee660ca",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "globalConfig",
+     "mechanism": "settings",
+     "knob": null,
+     "label": "Global config env (~/.claude.json)",
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "note": "The env field in ~/.claude.json. Applied before any settings file, so it only overrides the shell.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177794250,
+       "length": 75,
+       "sha256": "c0105d76454bbab5e782e615e3b2a401c7ba6ca8276757c1b635f91971587e3d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "shell",
+     "mechanism": "env",
+     "knob": null,
+     "label": "Shell environment",
+     "applies_when": [
+      {
+       "host": [
+        "terminal"
+       ]
+      }
+     ],
+     "input": "choice",
+     "accepts": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-5-20250929"
+     ],
+     "note": "The environment Claude Code was started with. Any settings source that sets the same variable overwrites it.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_MODEL": "{value}"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-5p8vzr3d.js",
+       "binary_offset": 177787099,
+       "length": 80,
+       "sha256": "d6772f9dfed972184a5739d58fb8205f0a82491d8171452447d1d7f2d15476b1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": "env-sources",
+    "example_variable": "The choices are two model ids because the probe uses ANTHROPIC_MODEL, which is on the safe list, as the example variable; the order is the same for any variable.",
+    "timing": "Env values are applied at startup before the trust prompt (~/.claude.json, managed, --settings and user entries, plus safe-list entries from project files), then in full once the workspace is trusted or straight away in a non-interactive run, and again whenever a settings file's env block changes in a trusted workspace."
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-5p8vzr3d.js",
+     "binary_offset": 177792696,
+     "length": 1305,
+     "sha256": "6b0de24d5e5bc3a90a2bbd7a9087682049a9716c7c2c9c885a7d075358d0cf52",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5p8vzr3d.js",
+     "binary_offset": 177794032,
+     "length": 933,
+     "sha256": "040296813ca02881a7432f2c0b6d205764070613ed90396e71c2054ab79f83bc",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-ax07v2zx.js",
+     "binary_offset": 189721165,
+     "length": 19,
+     "sha256": "a8304553bc9b82d74620db7266f6546ac5970ef9b2ddc57ea4b3cdbd56a2fc9d",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-hj3p6ej4.js",
+     "binary_offset": 190121945,
+     "length": 15,
+     "sha256": "67228e3cfa78b0ee662b877a2cef83c464ff23effac2449facb13ac2e8642b32",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-appb597y.js",
+     "binary_offset": 189578451,
+     "length": 33,
+     "sha256": "7b9cfc8d50ec9f69c768bff204f0c29d90fb89febd469882d73584f5ecfd1c71",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-8xp2qvw6.js",
+     "binary_offset": 189744075,
+     "length": 42,
+     "sha256": "d7cc5eee3ba5037a900ad7adbf3e11259d6c80dfd0b9099737e8465aed058a4e",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": [],
+   "constraints": []
+  },
+  {
+   "id": "main-model",
+   "title": "Main conversation model",
+   "group": "Models",
+   "question": "Which model the main conversation sends its requests to.",
+   "shape": "first-wins",
+   "observe": "model",
+   "value_labels": {
+    "claude-sonnet-5": "Sonnet 5",
+    "claude-haiku-4-5": "Haiku 4.5",
+    "claude-opus-5-5": "Opus 5.5"
+   },
+   "context": [],
+   "realize_context": {},
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "session",
+     "mechanism": "cli",
+     "knob": null,
+     "label": "/model during the session",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "note": "Picking a model while the session runs replaces the startup choice for the rest of the session.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-8xp2qvw6.js",
+       "binary_offset": 189741956,
+       "length": 59,
+       "sha256": "ce65a8f84dfa3b4755ecf964dbf9d5f16ba2235bc4cfbdd39aa90fd08da58e48",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176477342,
+       "length": 77,
+       "sha256": "ccf6e6f969dbc0235a9799ee2bac5e1df078da8fdbee0de096b964aefddd7e77",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "cliModel",
+     "mechanism": "cli",
+     "knob": "cli-flag-model",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "note": "Aliases such as sonnet, opus, haiku and fable become the current full id of that family, and a [1m] suffix asks for the 1M-token context version. --model default asks for the built-in default.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "args": [
+       "--model",
+       "{value}"
+      ]
+     },
+     "label": "--model <model>",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177261810,
+       "length": 41,
+       "sha256": "40c21a732da4058875418057a675ad0a458d6a0e525748000cd7383d830cda4e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176505831,
+       "length": 546,
+       "sha256": "948e8571c080b1f67b6a2a5004912f9fccf88508c784a04e3ae01bc78dc2e6ee",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "agentFrontmatter",
+     "mechanism": "frontmatter",
+     "knob": null,
+     "label": "Model in the agent's frontmatter",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "skip_when": [
+      {
+       "value": [
+        "inherit"
+       ]
+      }
+     ],
+     "note": "When the session runs as an agent whose definition names a model, and --model is not given. A value of inherit is skipped.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177261938,
+       "length": 41,
+       "sha256": "25241531710f00e6037bf82d6655060a8322404adbc118b673f652dd1235adfe",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "envModel",
+     "mechanism": "env",
+     "knob": "env-anthropic-model",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "note": "Any model id or alias. It is checked before the model setting in every settings file.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_MODEL": "{value}"
+      }
+     },
+     "label": "ANTHROPIC_MODEL",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177262010,
+       "length": 48,
+       "sha256": "7ea5094f62434ec25f663924f2889d7a4d0c3e460f0e3f457c88a3bc5594bdea",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176477419,
+       "length": 55,
+       "sha256": "e7e9ed9100d5a635ab1da88ac06bb901a78d1bce46cbed97bb7ed45f52c2aa6a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "settingModel",
+     "mechanism": "settings",
+     "knob": "setting-model",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "note": "From the merged settings files. An organization default model that overrides user choices can set aside a model from user or project settings; one from managed policy or --settings is kept.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "model": "{value}"
+      }
+     },
+     "label": "model",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177262067,
+       "length": 62,
+       "sha256": "1a6950a9f3e7f8d84c7bf8671672f107480bc442d2d27106f640f0beed1ab9f9",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177260723,
+       "length": 969,
+       "sha256": "3928d6ae541a3bc38ec7390b5f0b598af02ffcadc14f278b3d09fa15857eb993",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "orgDefault",
+     "mechanism": "managed",
+     "knob": null,
+     "label": "Organization default model",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "note": "A default model set for your organization, sent by Anthropic's servers with your account. It only applies when nothing above chose a model, and it can change without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176465276,
+       "length": 314,
+       "sha256": "7842719fc1a12bd1b68cea9ac0bb3dd3e92b0ed875b272f0a93fde323908b7d9",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176486399,
+       "length": 247,
+       "sha256": "9ca256d1614b5e1e118a2b9a26fea2b646b54fb3b2c4c76254e951a8a1c7d170",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "tested",
+     "id": "envDefault",
+     "mechanism": "env",
+     "knob": "env-anthropic-default-model",
+     "input": "choice",
+     "accepts": [
+      "claude-sonnet-5",
+      "claude-haiku-4-5"
+     ],
+     "invalid_example": "haiku",
+     "note": "Replaces the built-in default. The haiku and opusplan aliases, default and inherit are skipped without a warning, and it is ignored while enforceAvailableModels is on.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_DEFAULT_MODEL": "{value}"
+      }
+     },
+     "label": "ANTHROPIC_DEFAULT_MODEL",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176489116,
+       "length": 369,
+       "sha256": "581025062545d544fa84e3f050a13c006edf75bd2148a5a80223e9423b08433a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "builtin",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Built-in default",
+     "input": null,
+     "note": "Opus 5.5 for a plain API-key run. The code chooses between the Opus and Sonnet families by sign-in and provider, and ANTHROPIC_DEFAULT_OPUS_MODEL or ANTHROPIC_DEFAULT_SONNET_MODEL can change the id.",
+     "effect": {
+      "value": "claude-opus-5-5"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176489544,
+       "length": 410,
+       "sha256": "816a6f499eaa5dfe575846ba0553e5ea00e6c74971d27c602e1c528279aca54f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176478368,
+       "length": 74,
+       "sha256": "3805097717f9b982b6ada111567a6d55b87ce6a542dd9ab1069787f474d06c0b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "allowlist",
+     "knob": "setting-available-models",
+     "note": "A chosen model that is not on the list is dropped. An alias such as opus can become an allowed version of that family; otherwise the default is used, and lower rungs are not tried. An empty list allows no model.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177262169,
+       "length": 53,
+       "sha256": "f5532e31e034b099b915ba10f6516497a1eb10c7ba8ed9f6f9ae7d77611f30cb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176484758,
+       "length": 301,
+       "sha256": "22b41636979c6f19effb24b29647867a7f7b8003fcd3cd57c6120b7ce3397c75",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "enforce",
+     "knob": "setting-enforce-available-models",
+     "note": "With availableModels, the default is also kept on the list and ANTHROPIC_DEFAULT_MODEL is ignored. It is read from managed policy; when no managed policy exists, other settings files can set it. Set in policy without availableModels, it is turned off with a warning.",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176489954,
+       "length": 3800,
+       "sha256": "d72dbad28d802ceb7f5c71fba5aab76e769be8c213763c7a89baa1b3ab5e71ea",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176494303,
+       "length": 2365,
+       "sha256": "67ef72d92d586697dbf0c0a989628b1c55f5e3292da1f68bf91881e6799053fa",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": "main-model"
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-76kv9jbg.js",
+     "binary_offset": 177261692,
+     "length": 963,
+     "sha256": "32e9680bb14d9f96993f8392fa691047834e014ff8025fd6594578564a4a4cf8",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176477419,
+     "length": 142,
+     "sha256": "365c9999db02d970fa6d30ca939d5d0aca46eda5b768289a994470895c697b3e",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
+  },
+  {
+   "id": "max-output-tokens",
+   "title": "Max output tokens",
+   "group": "Model output",
+   "question": "The max_tokens a main-conversation request asks for: how many tokens the model may write in one response, thinking included.",
+   "shape": "first-wins",
+   "observe": "max_tokens",
+   "value_labels": {
+    "remote": "Set by Anthropic, up to the model's limit"
+   },
+   "context": [
+    {
+     "key": "model",
+     "label": "Model",
+     "values": [
+      {
+       "value": "opus-5-5",
+       "label": "Opus 5.5"
+      },
+      {
+       "value": "current",
+       "label": "Sonnet 5, Opus 4.6 to 5, Fable or Mythos"
+      },
+      {
+       "value": "older",
+       "label": "Sonnet 4.6, earlier 4.x models, or a model Claude Code does not recognize"
+      }
+     ]
+    },
+    {
+     "key": "served",
+     "label": "Default sent by Anthropic",
+     "values": [
+      {
+       "value": "none",
+       "label": "None"
+      },
+      {
+       "value": "catalog",
+       "label": "From the served model list"
+      },
+      {
+       "value": "account",
+       "label": "From account data"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "model": {
+     "opus-5-5": {},
+     "current": null,
+     "older": null
+    },
+    "served": {
+     "none": {},
+     "catalog": null,
+     "account": null
+    }
+   },
+   "rungs": [
+    {
+     "verified": "tested",
+     "id": "env",
+     "mechanism": "env",
+     "knob": "env-claude-code-max-output-tokens",
+     "input": "choice",
+     "accepts": [
+      "8000",
+      "64000"
+     ],
+     "invalid_example": "0",
+     "note": "Any whole number up to the model's limit. Zero, negatives and non-numbers fall back to the default, with only a debug-log line; a value above the limit is lowered to it. Text after the leading digits is ignored, and 64,000 or 6.4e4 also parse.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 183040731,
+       "length": 147,
+       "sha256": "49317cdd3a30dc85539fdd9de8cc627b9bb26a2c8c159eac0110125bcb35f0c8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-7ks9wn7n.js",
+       "binary_offset": 180697343,
+       "length": 362,
+       "sha256": "b38c1379dc1e22a7a28b4d715b8879c35ebaff36cc3e74075d8a9e15e68abcb5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "catalogDefault",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's served model list",
+     "input": null,
+     "applies_when": [
+      {
+       "served": [
+        "catalog"
+       ]
+      }
+     ],
+     "note": "On Anthropic's own API at its default address, a model list fetched from Anthropic can give each model a default output size. Nothing is set in the code, so the built-in table applies unless Anthropic sends one, which it can change without a release.",
+     "effect": {
+      "value": "remote"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176464772,
+       "length": 66,
+       "sha256": "e44e87d89d0dd28f0bf9058fb6da9e7ab9dd72a7576a693c3f692724262e62d3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mrrt6yj3.js",
+       "binary_offset": 175012491,
+       "length": 47,
+       "sha256": "a984cae4d370c438e77d581ae7cce90dc711ca364361b0a5c2caa6e2f2214bc1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "accountDefault",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-account table",
+     "input": null,
+     "applies_when": [
+      {
+       "served": [
+        "account"
+       ]
+      }
+     ],
+     "note": "Account data Claude Code downloads at startup can hold a default output size per model. Nothing is set in the code, so the built-in table applies unless Anthropic sends one, which it can change without a release.",
+     "effect": {
+      "value": "remote"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176513937,
+       "length": 186,
+       "sha256": "6b2d3ceff7b4f68c3786894b0f5c59c8c3ba6402ccff087c1bdff00d3afc6580",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "modelDefault",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Built-in default for the model",
+     "input": null,
+     "note": "Claude Code's own table: 128,000 for Opus 5.5, 64,000 for other current models, 32,000 for older ones and for models it does not recognize. Claude 3.5 models get 8,192.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "model": [
+          "opus-5-5"
+         ]
+        },
+        "value": "128000"
+       },
+       {
+        "when": {
+         "model": [
+          "current"
+         ]
+        },
+        "value": "64000"
+       },
+       {
+        "when": {},
+        "value": "32000"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176514238,
+       "length": 32,
+       "sha256": "e80d234858ca71fa8deea2ab20df1c435ff7dc85f4b3517d5bfea2153f2a1b76",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176514378,
+       "length": 15,
+       "sha256": "7f713385574dfe9fa53d0bd24126a3590cf8deffba920f5cd03b903f91b328fa",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "upperLimit",
+     "label": "Model's upper limit",
+     "note": "Whatever the ladder picks is capped at the model's limit: 128,000 for Opus 5.5, Sonnet 4.6 and later, Fable and Mythos; 64,000 for Opus 4.5, Sonnet 4.5 and Haiku 4.5; 32,000 for Opus 4 and 4.1. On Anthropic's API the served model list can set a different limit.",
+     "provenance": [
+      {
+       "file": "chunk-7ks9wn7n.js",
+       "binary_offset": 180697343,
+       "length": 362,
+       "sha256": "b38c1379dc1e22a7a28b4d715b8879c35ebaff36cc3e74075d8a9e15e68abcb5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176514191,
+       "length": 47,
+       "sha256": "22192118136058d8bd1859b7563ab787d57b2d74a79a499b9a94a8980d079e94",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "internalLower",
+     "label": "Claude Code lowers it for its own reasons",
+     "note": "Some internal requests ask for a smaller cap, and after a context-overflow error the request is retried with what still fits. These can only lower the value, never raise it.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182955384,
+       "length": 68,
+       "sha256": "3bdcd3ff1ce9911582f323d712b2c3c1b87b2628dd59f56288fa03d74cdda73a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182902390,
+       "length": 47,
+       "sha256": "9c13a5d9f5735278c801d8070b2438d68a36764988627f38bc5ac5f3d980e737",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": "max-output-tokens"
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182955384,
+     "length": 68,
+     "sha256": "3bdcd3ff1ce9911582f323d712b2c3c1b87b2628dd59f56288fa03d74cdda73a",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182960204,
+     "length": 25,
+     "sha256": "aaee9357b66c69d0e36765e988088a7928aa58fc95d1b708a78978f0d29ccacd",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176514123,
+     "length": 430,
+     "sha256": "90404117c30866a78b25b0eb65d0319230b0dcebf74f96a21af1a652f2ac3ce8",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
+  },
+  {
+   "id": "permission-mode",
+   "title": "Starting permission mode",
+   "group": "Permissions",
+   "question": "Which permission mode a session starts in: default, acceptEdits, plan, auto, dontAsk or bypassPermissions.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "default": "Default (Manual)",
+    "acceptEdits": "Accept edits",
+    "plan": "Plan",
+    "auto": "Auto",
+    "dontAsk": "Don't ask",
+    "bypassPermissions": "Bypass permissions"
+   },
+   "details": {
+    "candidate": "chunk-76kv9jbg.js:13697"
+   },
+   "context": [
+    {
+     "key": "session",
+     "label": "Session",
+     "values": [
+      {
+       "value": "interactive",
+       "label": "Interactive terminal"
+      },
+      {
+       "value": "print",
+       "label": "Print mode (-p) or SDK"
+      },
+      {
+       "value": "background",
+       "label": "Background session"
+      }
+     ]
+    },
+    {
+     "key": "consent",
+     "label": "Bypass disclaimer accepted",
+     "show_when": [
+      {
+       "session": [
+        "background"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": true,
+       "label": "Yes"
+      },
+      {
+       "value": false,
+       "label": "No"
+      }
+     ]
+    },
+    {
+     "key": "remote",
+     "label": "Claude Code on the web (CLAUDE_CODE_REMOTE)",
+     "values": [
+      {
+       "value": false,
+       "label": "No"
+      },
+      {
+       "value": true,
+       "label": "Yes"
+      }
+     ]
+    },
+    {
+     "key": "source",
+     "label": "Settings defaultMode comes from",
+     "values": [
+      {
+       "value": "trusted",
+       "label": "Managed policy, --settings or user settings"
+      },
+      {
+       "value": "repo",
+       "label": "Project or local settings only"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "session": {
+     "interactive": null,
+     "print": {},
+     "background": null
+    },
+    "consent": {
+     "true": null,
+     "false": null
+    },
+    "remote": {
+     "false": {},
+     "true": null
+    },
+    "source": {
+     "trusted": {},
+     "repo": null
+    }
+   },
+   "bypasses": [
+    {
+     "id": "scrub",
+     "knob": "env-claude-code-subprocess-env-scrub",
+     "effect": {
+      "value": "default"
+     },
+     "note": "Checked before the ladder: the session starts in default and every flag, agent and setting below is ignored, with a warning if one asked for another mode. Set it to 0 to opt out.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177254919,
+       "length": 68,
+       "sha256": "e478a69fdd77320f0e0edd9cffd595ace3ab14ee027a35c44269fe87719cb59b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187717418,
+       "length": 34,
+       "sha256": "40c260c39e91ee57709fb94bb26654196a210e6c4574f6f48fda3b0009762b9e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "skipPermissions",
+     "mechanism": "cli",
+     "knob": "cli-flag-dangerously-skip-permissions",
+     "input": "toggle",
+     "note": "Asks for bypassPermissions. In a background session where the bypass disclaimer has not been accepted, it answers default instead.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "session": [
+          "background"
+         ],
+         "consent": [
+          false
+         ]
+        },
+        "value": "default"
+       },
+       {
+        "when": {},
+        "value": "bypassPermissions"
+       }
+      ]
+     },
+     "realize": {
+      "args": [
+       "--dangerously-skip-permissions"
+      ]
+     },
+     "label": "--dangerously-skip-permissions",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177255609,
+       "length": 85,
+       "sha256": "0f4db0ae448880ff1b456e13ee4d144257b665e197bcc4f7f7002340fd9421df",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177264676,
+       "length": 118,
+       "sha256": "a356900240128971699757a0b29281237586e2b14b7a0da088cf0edcd6aa4fb9",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "cliMode",
+     "mechanism": "cli",
+     "knob": "cli-flag-permission-mode",
+     "input": "choice",
+     "accepts": [
+      "acceptEdits",
+      "auto",
+      "bypassPermissions",
+      "default",
+      "dontAsk",
+      "plan"
+     ],
+     "note": "manual is also accepted and means default. Any other value stops Claude Code with an error. bypassPermissions in a background session without the disclaimer accepted answers default.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "args": [
+       "--permission-mode",
+       "{value}"
+      ]
+     },
+     "label": "--permission-mode <mode>",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177255695,
+       "length": 18,
+       "sha256": "529943725d52556761ab8dcaa9da633ec9933745167fa81b7daced79366b87bf",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177264794,
+       "length": 136,
+       "sha256": "813ab6f2d0e37cbc4dd424fe0d776131895af3be0c64c26531d944341766137a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-hj3p6ej4.js",
+       "binary_offset": 190139508,
+       "length": 98,
+       "sha256": "6a194c98eb0e30f616f9bc8882cf38a4eed58dd6af22aa0181d0a482113010fc",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "frontmatter",
+     "mechanism": "frontmatter",
+     "knob": null,
+     "label": "Agent frontmatter permissionMode",
+     "input": "choice",
+     "note": "From the agent the session runs as, chosen with --agent or the agent setting. Ignored with a warning when it would widen a mode passed with --inherit-permission-mode.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177255873,
+       "length": 64,
+       "sha256": "e722faa907ba655bf750e120bec8f53586426899186bc169cc8dbd4c7fe5be45",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-appb597y.js",
+       "binary_offset": 189564043,
+       "length": 49,
+       "sha256": "f9fc453dc087a8ff4ec267ca3d41f8a79a9a230a353e06f5e31f16ae2388b557",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingsMode",
+     "mechanism": "settings",
+     "knob": "setting-permissions--default-mode",
+     "input": "choice",
+     "accepts": [
+      "acceptEdits",
+      "auto",
+      "bypassPermissions",
+      "default",
+      "dontAsk",
+      "plan"
+     ],
+     "skip_when": [
+      {
+       "value": [
+        "bypassPermissions",
+        "dontAsk"
+       ],
+       "remote": [
+        true
+       ]
+      },
+      {
+       "value": [
+        "bypassPermissions",
+        "auto"
+       ],
+       "source": [
+        "repo"
+       ]
+      },
+      {
+       "value": [
+        "bypassPermissions"
+       ],
+       "session": [
+        "background"
+       ],
+       "consent": [
+        false
+       ]
+      }
+     ],
+     "note": "On the web only acceptEdits, plan, default and auto are honored. Project and local settings cannot grant bypassPermissions or auto, or widen an inherited mode; a bypassPermissions they ask for starts the session in default unless a mode is inherited. VS Code extension sessions ignore this setting unless Anthropic turns it on remotely.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "permissions": {
+        "defaultMode": "{value}"
+       }
+      }
+     },
+     "label": "permissions.defaultMode",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177257392,
+       "length": 73,
+       "sha256": "f95a22f3d146d870f7d4e469c97ef6849aa7825c96adf38261980ec902016764",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177257468,
+       "length": 34,
+       "sha256": "2568bf94dcf087706b8c1552f83a3635fcefd13bf89155ad9d1e07dc60b6ffc6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177262877,
+       "length": 98,
+       "sha256": "55b6418ae36d62c671364523534c057f2ab9c796ec28fbf5f5568f2da3122181",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177256304,
+       "length": 23,
+       "sha256": "0e7191f1ccfc5a227403ff650a921a7b9b37349558da3b80453a3d5ceb0f7031",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "inherit",
+     "mechanism": "cli",
+     "knob": "cli-flag-inherit-permission-mode",
+     "input": "choice",
+     "accepts": [
+      "acceptEdits",
+      "auto",
+      "bypassPermissions",
+      "default",
+      "dontAsk",
+      "plan"
+     ],
+     "note": "A hidden flag a parent session passes on. Used only when nothing above answers. bypassPermissions in a background session without the disclaimer accepted answers default.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "args": [
+       "--inherit-permission-mode",
+       "{value}"
+      ]
+     },
+     "label": "--inherit-permission-mode <mode>",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177259069,
+       "length": 20,
+       "sha256": "6d682d8722302c911cf7e3f735760ae61e1c7f4c5e910f53b2260244c12421c7",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "bridgeChildAuto",
+     "mechanism": "env",
+     "knob": "env-claude-code-bridge-child-auto-default",
+     "input": "toggle",
+     "note": "Starts a Remote Control machine session in auto when nothing above answers. Not when auto mode is disabled in settings.",
+     "effect": {
+      "value": "auto"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_BRIDGE_CHILD_AUTO_DEFAULT": "1"
+      }
+     },
+     "label": "CLAUDE_CODE_BRIDGE_CHILD_AUTO_DEFAULT",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177259463,
+       "length": 58,
+       "sha256": "188860ac1973546f14ff523965b8bf925f9b9a40c7b5c1bf7a9b123c29f315b5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "autoRollout",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's auto-by-default rollout",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "session": [
+        "interactive"
+       ]
+      }
+     ],
+     "note": "A remote flag, off by default in code, that starts sessions in auto when nothing above answers. Print mode needs a second remote flag, also off by default. Not when auto mode is disabled in settings. Anthropic can change both without a release.",
+     "effect": {
+      "value": "auto"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177262799,
+       "length": 49,
+       "sha256": "2ba02dabb80fd2d8ece55d5ee337a8482b856b8420083934bd8a9038980de404",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177259435,
+       "length": 25,
+       "sha256": "7fa02c4f84b9488e5f90850373bb2bd1a44fad7cacccae3178b4930d5a4eebfb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Built-in default",
+     "input": null,
+     "note": "When nothing above answers, the session starts in default.",
+     "effect": {
+      "value": "default"
+     },
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177259363,
+       "length": 23,
+       "sha256": "a0d8ae33f371fd4ada1c1abefb2639cc7ceef9cc819ec197245d84996ed6c143",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "disableBypass",
+     "knob": "setting-permissions--disable-bypass-permissions-mode",
+     "note": "When set to disable, any rung that answers bypassPermissions is passed over with a warning and the next rung answers.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177259162,
+       "length": 31,
+       "sha256": "d073650137ad1d141c2eebc0a5a290a611159a3096fea74d642c6864729276f7",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177255387,
+       "length": 57,
+       "sha256": "4169f4549ae8d6f108028801e9c3e93c6b22c0b889a49061e60138199999fbcd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "disableAutoMode",
+     "knob": "setting-permissions--disable-auto-mode",
+     "note": "When set to disable, sessions no longer fall back to auto. An explicit auto from a flag, an agent or settings still resolves, and Claude Code leaves auto mode once it checks whether auto is available. The top-level disableAutoMode setting does the same.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177263118,
+       "length": 95,
+       "sha256": "20f3ff5d2c6b6e9b42be29607157edbfd20486af1d3d5b3f1107bf229313f178",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187727286,
+       "length": 47,
+       "sha256": "def07be62feed710912507904dec73f08eb1b0ce406ce06cb43df7144dc5a892",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "autoKillswitch",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's auto-mode switch",
+     "note": "A remote flag that leaves auto mode available by default in code. When Anthropic switches auto mode off, auto answers are passed over and the next rung answers, and a session already in auto leaves it once Claude Code checks whether auto is available. Anthropic can change it without a release.",
+     "provenance": [
+      {
+       "file": "chunk-76kv9jbg.js",
+       "binary_offset": 177254591,
+       "length": 140,
+       "sha256": "ab1d62877325bb0b4467a3c53c1129dff60aad34284dceb672e93f650593082e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187727417,
+       "length": 63,
+       "sha256": "5a2b56ed5da3f92afb3c4a19fb4a858f1171630539891b6cdcbc6eea34999cf0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187726174,
+       "length": 33,
+       "sha256": "93d5314d1c3c904e7df429bd50c229ad87ae31161a3569e570f68bea629ee32b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-76kv9jbg.js",
+     "binary_offset": 177254731,
+     "length": 4972,
+     "sha256": "42a12381a548ffb04a686ca35bbc1453657b92bf50db79f40ebe92c62960df6f",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-ga64084q.js",
+     "binary_offset": 187717180,
+     "length": 1217,
+     "sha256": "efa34c66f6f89d56c5fa9c72d13aca9985631460e916d2759aaba176ae37e8d8",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ]
+  },
+  {
+   "id": "permission-rules",
+   "title": "Which permission rules apply",
+   "group": "Permissions",
+   "question": "Which allow, deny and ask rules are in force for a session: every source adds its rules, and managed policy can shut most sources out.",
+   "shape": "merge",
+   "observe": "none",
+   "context": [
+    {
+     "key": "trust",
+     "label": "Workspace",
+     "values": [
+      {
+       "value": "trusted",
+       "label": "Trusted"
+      },
+      {
+       "value": "untrusted",
+       "label": "Not yet trusted"
+      }
+     ]
+    },
+    {
+     "key": "session",
+     "label": "Session",
+     "values": [
+      {
+       "value": "interactive",
+       "label": "Normal session"
+      },
+      {
+       "value": "background",
+       "label": "Background session"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "personalAllow",
+     "mechanism": "settings",
+     "knob": "setting-permissions--allow",
+     "label": "permissions.allow in ~/.claude/settings.json or --settings",
+     "input": "toggle",
+     "note": "Allow rules from your user settings file and from --settings. Each file's rules are read on their own and keep their source; --setting-sources can leave the user file out.",
+     "effect": {
+      "value": "Allow: user and --settings files"
+     },
+     "realize": {
+      "settings": {
+       "permissions": {
+        "allow": [
+         "Read"
+        ]
+       }
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575938,
+       "length": 494,
+       "sha256": "7b2bbff241ace6628f336dfba466d13c1580145688b8e2b1c6b0635ccf41be93",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "sharedAllow",
+     "mechanism": "settings",
+     "knob": "setting-permissions--allow",
+     "label": "permissions.allow in .claude/settings.json",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "trust": [
+        "trusted"
+       ]
+      }
+     ],
+     "note": "Dropped with a warning until the workspace is trusted, unless the project folder is your home folder. Deny and ask rules from the same file still apply.",
+     "effect": {
+      "value": "Allow: shared project file"
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177576078,
+       "length": 32,
+       "sha256": "4c30b6ddd0865b0a82e17fc4ae53066c3f7be7cfc3e35939ea220f3f6d99f41c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "localAllow",
+     "mechanism": "settings",
+     "knob": "setting-permissions--allow",
+     "label": "permissions.allow in .claude/settings.local.json",
+     "input": "toggle",
+     "note": "Allow rules from the local project file. In a workspace that is not yet trusted these can be dropped too, depending on how the file is tracked.",
+     "effect": {
+      "value": "Allow: local project file"
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177576078,
+       "length": 32,
+       "sha256": "4c30b6ddd0865b0a82e17fc4ae53066c3f7be7cfc3e35939ea220f3f6d99f41c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingsDeny",
+     "mechanism": "settings",
+     "knob": "setting-permissions--deny",
+     "input": "toggle",
+     "note": "Deny rules from the user, project, local and --settings files. Not gated by workspace trust.",
+     "effect": {
+      "value": "Deny: settings files"
+     },
+     "realize": {
+      "settings": {
+       "permissions": {
+        "deny": [
+         "WebFetch"
+        ]
+       }
+      }
+     },
+     "label": "permissions.deny",
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575938,
+       "length": 494,
+       "sha256": "7b2bbff241ace6628f336dfba466d13c1580145688b8e2b1c6b0635ccf41be93",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingsAsk",
+     "mechanism": "settings",
+     "knob": "setting-permissions--ask",
+     "input": "toggle",
+     "note": "Ask rules from the user, project, local and --settings files. Not gated by workspace trust.",
+     "effect": {
+      "value": "Ask: settings files"
+     },
+     "realize": {
+      "settings": {
+       "permissions": {
+        "ask": [
+         "Bash"
+        ]
+       }
+      }
+     },
+     "label": "permissions.ask",
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575938,
+       "length": 494,
+       "sha256": "7b2bbff241ace6628f336dfba466d13c1580145688b8e2b1c6b0635ccf41be93",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "policyAllow",
+     "mechanism": "managed",
+     "knob": null,
+     "label": "permissions.allow in managed settings",
+     "input": "toggle",
+     "note": "Allow rules set by an administrator. Always loaded.",
+     "effect": {
+      "value": "Allow: managed policy"
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575956,
+       "length": 36,
+       "sha256": "9b41b2d2d25be5d91127580172997250c888658fc203d6700df69b5741057bfd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "policyDenyAsk",
+     "mechanism": "managed",
+     "knob": null,
+     "label": "permissions.deny and ask in managed settings",
+     "input": "toggle",
+     "note": "Deny and ask rules set by an administrator. Always loaded.",
+     "effect": {
+      "value": [
+       "Deny: managed policy",
+       "Ask: managed policy"
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575956,
+       "length": 36,
+       "sha256": "9b41b2d2d25be5d91127580172997250c888658fc203d6700df69b5741057bfd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "cliAllow",
+     "mechanism": "cli",
+     "knob": "cli-flag-allowed-tools",
+     "input": "toggle",
+     "note": "Allow rules from the command line. A rule naming a tool that does not exist is skipped with a warning.",
+     "effect": {
+      "value": "Allow: --allowedTools"
+     },
+     "realize": {
+      "args": [
+       "--allowedTools",
+       "Read"
+      ]
+     },
+     "label": "--allowedTools, --allowed-tools <tools...>",
+     "provenance": [
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187722040,
+       "length": 31,
+       "sha256": "25e9584c1022b7731ce2e6ef48a595781d6ddad588738eb1b5f7e01d1f999040",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "cliDeny",
+     "mechanism": "cli",
+     "knob": "cli-flag-disallowed-tools",
+     "input": "toggle",
+     "note": "Deny rules from the command line.",
+     "effect": {
+      "value": "Deny: --disallowedTools"
+     },
+     "realize": {
+      "args": [
+       "--disallowedTools",
+       "WebFetch"
+      ]
+     },
+     "label": "--disallowedTools, --disallowed-tools <tools...>",
+     "provenance": [
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187722102,
+       "length": 25,
+       "sha256": "34ea57d25dff8cab6b44de3b7138fe85b70f02016c03d427a4e7b24e60e384a4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "frontmatterKept",
+     "mechanism": "frontmatter",
+     "knob": null,
+     "label": "allowed-tools of managed or bundled skills and most plugins",
+     "input": "toggle",
+     "note": "While a skill or custom command runs, its allowed-tools frontmatter adds allow rules. These origins keep theirs even under managed-only rules.",
+     "effect": {
+      "value": "Allow: managed, bundled or plugin skill frontmatter"
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575402,
+       "length": 184,
+       "sha256": "70f31424792b443ec7ef6f39b1f0c988d5bae3d506425232c33777d0c6fa9b7a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "frontmatterUser",
+     "mechanism": "frontmatter",
+     "knob": null,
+     "label": "allowed-tools of user, project or --add-dir skills and commands",
+     "input": "toggle",
+     "note": "Frontmatter from your own, project or --add-dir skills and commands, including plugins found inside those skill folders.",
+     "effect": {
+      "value": "Allow: user or project skill frontmatter"
+     },
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177574527,
+       "length": 657,
+       "sha256": "af7e8ee9f5faaf659871ce1a27ace907a385bec49f4dc7afaa9eff2c4a473fbc",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "sessionAllow",
+     "mechanism": "env",
+     "knob": "env-claude-bg-session-permission-rules",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "session": [
+        "background"
+       ]
+      }
+     ],
+     "note": "Background sessions only: the allow list from a JSON value that must carry both an allow and a deny list, or the whole value is skipped.",
+     "effect": {
+      "value": "Allow: background session rules"
+     },
+     "label": "CLAUDE_BG_SESSION_PERMISSION_RULES",
+     "provenance": [
+      {
+       "file": "chunk-appb597y.js",
+       "binary_offset": 189504420,
+       "length": 355,
+       "sha256": "ad089e41f2843cdcbd0199dd523fe2395051ff1bdd9699ee6f1bbff1900a0e3c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "sessionDeny",
+     "mechanism": "env",
+     "knob": "env-claude-bg-session-permission-rules",
+     "input": "toggle",
+     "applies_when": [
+      {
+       "session": [
+        "background"
+       ]
+      }
+     ],
+     "note": "Background sessions only: the deny list from the same JSON value.",
+     "effect": {
+      "value": "Deny: background session rules"
+     },
+     "label": "CLAUDE_BG_SESSION_PERMISSION_RULES",
+     "provenance": [
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187722135,
+       "length": 14,
+       "sha256": "acf7b6b0db3e6e3a1d13d3426fd603dfaa0d40826e599ebdbfd7b91eb5661f05",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "toolsNarrowing",
+     "mechanism": "cli",
+     "knob": "cli-flag-tools",
+     "input": "toggle",
+     "note": "Built-in tools left out of --tools are withheld as deny rules.",
+     "effect": {
+      "value": "Deny: tools left out of --tools"
+     },
+     "realize": {
+      "args": [
+       "--tools",
+       "Read"
+      ]
+     },
+     "label": "--tools <tools...>",
+     "provenance": [
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187722154,
+       "length": 30,
+       "sha256": "06ccfefbf5e7d5d9b15952b5cf9e82c7c069ff116e79dd3a43c188247349fb68",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "managedOnly",
+     "knob": "setting-allow-managed-permission-rules-only",
+     "label": "allowManagedPermissionRulesOnly, counted only when set in managed settings: rules from every other settings file, --allowedTools, background-session allow rules and user or project skill frontmatter are ignored. Deny rules from the command line and the session still apply.",
+     "keep_rungs": [
+      "policyAllow",
+      "policyDenyAsk",
+      "cliDeny",
+      "frontmatterKept",
+      "sessionDeny",
+      "toolsNarrowing"
+     ],
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177574226,
+       "length": 80,
+       "sha256": "54e4bbbb0e0ce08102f95fda633a609a0894b5b36fc780af20422ee933c5c93a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575956,
+       "length": 36,
+       "sha256": "9b41b2d2d25be5d91127580172997250c888658fc203d6700df69b5741057bfd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ga64084q.js",
+       "binary_offset": 187722040,
+       "length": 31,
+       "sha256": "25e9584c1022b7731ce2e6ef48a595781d6ddad588738eb1b5f7e01d1f999040",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575402,
+       "length": 184,
+       "sha256": "70f31424792b443ec7ef6f39b1f0c988d5bae3d506425232c33777d0c6fa9b7a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "evalConfined",
+     "knob": "env-claude-code-eval-confined",
+     "label": "Drops every allow rule read from a settings file, managed policy included. Command-line and frontmatter allow rules are unaffected.",
+     "keep_rungs": [
+      "settingsDeny",
+      "settingsAsk",
+      "policyDenyAsk",
+      "cliAllow",
+      "cliDeny",
+      "frontmatterKept",
+      "frontmatterUser",
+      "sessionAllow",
+      "sessionDeny",
+      "toolsNarrowing"
+     ],
+     "provenance": [
+      {
+       "file": "chunk-qehhcpvf.js",
+       "binary_offset": 177575853,
+       "length": 85,
+       "sha256": "c8d2888445e9503ca6730eb9f732d83d391f53f41b9704fd795c5d4cfd0488ce",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": "permission-rules",
+    "conflict": "Rules from all sources sit side by side, each tagged with where it came from. When a tool call is checked, a matching deny rule is looked at first, then a whole-tool ask rule, then the tool's own check, then other ask rules, and allow rules last, so deny beats ask and ask beats allow. Both deny checks have an exemption this trace did not pin down.",
+    "not_from_merged_settings": "Permission rules are not taken from the combined settings object. Each settings file's permissions are read separately, which is why managed-only rules and workspace trust can drop one file's rules and keep another's."
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-qehhcpvf.js",
+     "binary_offset": 177575938,
+     "length": 494,
+     "sha256": "7b2bbff241ace6628f336dfba466d13c1580145688b8e2b1c6b0635ccf41be93",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-ga64084q.js",
+     "binary_offset": 187718496,
+     "length": 6993,
+     "sha256": "716266a2ced885cd21392b360468e290f7b77b4156d7f3c0045acf0077590546",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
+  },
+  {
    "id": "prompt-cache-ttl",
    "title": "Prompt cache TTL",
    "group": "Prompt caching",
@@ -487,6 +3897,533 @@
      "platform": "darwin-arm64"
     }
    ],
+   "constraints": []
+  },
+  {
+   "id": "provider-default-model",
+   "title": "Model id for a family on each provider",
+   "group": "Models",
+   "question": "Which model id Claude Code sends when it resolves a model family (Opus, Sonnet, Haiku or Fable) on the active provider.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "served": "The model Anthropic's served catalog names",
+    "profile": "The matching inference profile in the account",
+    "claude-opus-5-5": "This provider's id for Claude Opus 5.5",
+    "claude-opus-4-7": "This provider's id for Claude Opus 4.7",
+    "claude-opus-4-6": "This provider's id for Claude Opus 4.6",
+    "claude-sonnet-5": "This provider's id for Claude Sonnet 5",
+    "claude-sonnet-4-6": "This provider's id for Claude Sonnet 4.6",
+    "claude-sonnet-4-5": "This provider's id for Claude Sonnet 4.5",
+    "claude-haiku-4-5": "This provider's id for Claude Haiku 4.5",
+    "claude-fable-5-1": "This provider's id for Claude Fable 5.1",
+    "claude-fable-5": "This provider's id for Claude Fable 5"
+   },
+   "context": [
+    {
+     "key": "family",
+     "label": "Model family",
+     "values": [
+      {
+       "value": "opus",
+       "label": "Opus"
+      },
+      {
+       "value": "sonnet",
+       "label": "Sonnet"
+      },
+      {
+       "value": "haiku",
+       "label": "Haiku"
+      },
+      {
+       "value": "fable",
+       "label": "Fable"
+      }
+     ]
+    },
+    {
+     "key": "provider",
+     "label": "Provider",
+     "values": [
+      {
+       "value": "firstParty",
+       "label": "Anthropic API"
+      },
+      {
+       "value": "bedrock",
+       "label": "Amazon Bedrock"
+      },
+      {
+       "value": "vertex",
+       "label": "Google Vertex AI"
+      },
+      {
+       "value": "foundry",
+       "label": "Microsoft Foundry"
+      },
+      {
+       "value": "mantle",
+       "label": "Bedrock Mantle"
+      },
+      {
+       "value": "anthropicAws",
+       "label": "Anthropic on AWS"
+      },
+      {
+       "value": "gateway",
+       "label": "Gateway"
+      }
+     ]
+    },
+    {
+     "key": "catalog",
+     "label": "Served model catalog active",
+     "show_when": [
+      {
+       "provider": [
+        "firstParty"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": "none",
+       "label": "No"
+      },
+      {
+       "value": "served",
+       "label": "Yes"
+      }
+     ]
+    },
+    {
+     "key": "profile",
+     "label": "Inference profile found for the model",
+     "show_when": [
+      {
+       "provider": [
+        "bedrock"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": "none",
+       "label": "No, or lookup not finished"
+      },
+      {
+       "value": "found",
+       "label": "Yes"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "family": {
+     "opus": {},
+     "sonnet": {},
+     "haiku": {},
+     "fable": {}
+    },
+    "provider": {
+     "firstParty": {},
+     "bedrock": null,
+     "vertex": null,
+     "foundry": null,
+     "mantle": null,
+     "anthropicAws": null,
+     "gateway": null
+    },
+    "catalog": {
+     "none": null,
+     "served": null
+    },
+    "profile": {
+     "none": null,
+     "found": null
+    }
+   },
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "envOpus",
+     "mechanism": "env",
+     "knob": "env-anthropic-default-opus-model",
+     "applies_when": [
+      {
+       "family": [
+        "opus"
+       ]
+      }
+     ],
+     "input": "choice",
+     "note": "Used exactly as written, on every provider, before any lookup.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_DEFAULT_OPUS_MODEL": "{value}"
+      }
+     },
+     "label": "ANTHROPIC_DEFAULT_OPUS_MODEL",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176484106,
+       "length": 50,
+       "sha256": "cb9fdc73166db3d57dc597d4a9d0191d22e97b9704abaed0dcbbfadc20876cd8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envSonnet",
+     "mechanism": "env",
+     "knob": "env-anthropic-default-sonnet-model",
+     "applies_when": [
+      {
+       "family": [
+        "sonnet"
+       ]
+      }
+     ],
+     "input": "choice",
+     "note": "Used exactly as written, on every provider, before any lookup.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_DEFAULT_SONNET_MODEL": "{value}"
+      }
+     },
+     "label": "ANTHROPIC_DEFAULT_SONNET_MODEL",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176484258,
+       "length": 52,
+       "sha256": "e112cadfe9663b5cd923a45283c266d34f11772cdb5b7969a3f2f02cc637483b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envHaiku",
+     "mechanism": "env",
+     "knob": "env-anthropic-default-haiku-model",
+     "applies_when": [
+      {
+       "family": [
+        "haiku"
+       ]
+      }
+     ],
+     "input": "choice",
+     "note": "Used exactly as written, on every provider, before any lookup.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_DEFAULT_HAIKU_MODEL": "{value}"
+      }
+     },
+     "label": "ANTHROPIC_DEFAULT_HAIKU_MODEL",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176484418,
+       "length": 52,
+       "sha256": "3f14b99865b460ef32b7bfe764adfe6f135c3d47357f98be5cf74a4b0f138331",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envFable",
+     "mechanism": "env",
+     "knob": "env-anthropic-default-fable-model",
+     "applies_when": [
+      {
+       "family": [
+        "fable"
+       ]
+      }
+     ],
+     "input": "choice",
+     "note": "Used on every provider, before any lookup.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "ANTHROPIC_DEFAULT_FABLE_MODEL": "{value}"
+      }
+     },
+     "label": "ANTHROPIC_DEFAULT_FABLE_MODEL",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176483876,
+       "length": 64,
+       "sha256": "9902bf895222d284ab4abc29a4c1ce06a17d8959d30ac73971bdc4cf5979ac5c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "servedCatalog",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's served model catalog",
+     "input": null,
+     "applies_when": [
+      {
+       "provider": [
+        "firstParty"
+       ],
+       "catalog": [
+        "served"
+       ],
+       "family": [
+        "opus",
+        "sonnet",
+        "haiku"
+       ]
+      }
+     ],
+     "note": "Anthropic API only, with no custom ANTHROPIC_BASE_URL, and not for Fable. When the catalog names a model this version knows, that model's id still passes through modelOverrides. Anthropic can change the catalog without a release.",
+     "effect": {
+      "value": "served"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176483613,
+       "length": 204,
+       "sha256": "5b36dd5e92924d8b2d5c0baa7b1d14ef7e120e8c88a9df24bfb86c6c69aa2381",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "modelOverrides",
+     "mechanism": "settings",
+     "knob": "setting-model-overrides",
+     "input": "choice",
+     "note": "The key must be the first-party id of the model this provider uses for the family, such as claude-sonnet-4-5 for Sonnet on Bedrock; the value replaces that model's provider id. A key naming any other model, such as claude-sonnet-5 on Bedrock, leaves this family's default alone.",
+     "effect": {
+      "from": "input"
+     },
+     "label": "modelOverrides",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176221249,
+       "length": 143,
+       "sha256": "74c147833a39ab518b5ac052b4d43a0d177d65c9d3d71f3952ec6893d32da76b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "bedrockProfile",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Inference profile found in the AWS account",
+     "input": null,
+     "applies_when": [
+      {
+       "provider": [
+        "bedrock"
+       ],
+       "profile": [
+        "found"
+       ]
+      }
+     ],
+     "note": "Bedrock only. Claude Code lists the account's inference profiles and uses the one for this model, preferring the region prefix from ANTHROPIC_BEDROCK_REGION_PREFIX.",
+     "effect": {
+      "value": "profile"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176220940,
+       "length": 18,
+       "sha256": "2d0aba600c94ebfef8be9606cd9673002c058f25277551def2d00ee8311f67c8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "builtin",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Built-in model for this provider",
+     "input": null,
+     "note": "The bundled model catalog names a model for each family and provider, and Claude Code sends that provider's id for it. On Bedrock the id carries a region prefix, and requests made before the profile lookup finishes land here.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "family": [
+          "opus"
+         ],
+         "provider": [
+          "foundry"
+         ]
+        },
+        "value": "claude-opus-4-6"
+       },
+       {
+        "when": {
+         "family": [
+          "opus"
+         ],
+         "provider": [
+          "gateway"
+         ]
+        },
+        "value": "claude-opus-4-7"
+       },
+       {
+        "when": {
+         "family": [
+          "opus"
+         ]
+        },
+        "value": "claude-opus-5-5"
+       },
+       {
+        "when": {
+         "family": [
+          "sonnet"
+         ],
+         "provider": [
+          "bedrock",
+          "vertex",
+          "foundry",
+          "mantle"
+         ]
+        },
+        "value": "claude-sonnet-4-5"
+       },
+       {
+        "when": {
+         "family": [
+          "sonnet"
+         ],
+         "provider": [
+          "anthropicAws",
+          "gateway"
+         ]
+        },
+        "value": "claude-sonnet-4-6"
+       },
+       {
+        "when": {
+         "family": [
+          "sonnet"
+         ]
+        },
+        "value": "claude-sonnet-5"
+       },
+       {
+        "when": {
+         "family": [
+          "haiku"
+         ]
+        },
+        "value": "claude-haiku-4-5"
+       },
+       {
+        "when": {
+         "family": [
+          "fable"
+         ],
+         "provider": [
+          "gateway"
+         ]
+        },
+        "value": "claude-fable-5"
+       },
+       {
+        "when": {},
+        "value": "claude-fable-5-1"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176483482,
+       "length": 131,
+       "sha256": "90e694fc162532e79a0951a2eac3936d1e97d69682cf5f119a5450867d2a432e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176484228,
+       "length": 29,
+       "sha256": "70412471fc78d5636c77e1a106fdc9c72a29aac50ad79a686523cfec680e1a76",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mrrt6yj3.js",
+       "binary_offset": 175001455,
+       "length": 23,
+       "sha256": "0629fda2b4d91f687d212c8f22eed04e8e7e6a4d1de2f2fd0f8a203a8a1040c3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": null
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176484106,
+     "length": 102,
+     "sha256": "846f9082d65e2b9ffbb3d3c11c26239d3752b7a191c1efe277f441f03f718bea",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176221249,
+     "length": 143,
+     "sha256": "74c147833a39ab518b5ac052b4d43a0d177d65c9d3d71f3952ec6893d32da76b",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": [],
    "constraints": []
   },
   {
