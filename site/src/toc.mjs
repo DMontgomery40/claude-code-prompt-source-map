@@ -137,7 +137,7 @@ export function renderToc(categories, outlines, href, siteName) {
 
 export const tocStyles = `
     .toc-nav{position:fixed;z-index:20;inset:0 auto 0 0;width:250px;display:flex;flex-direction:column;padding-top:89px}
-    .toc-brand{flex:none;display:block;margin:0 30px 20px 48px;color:var(--text);font-size:15px;font-weight:700;line-height:1.3;letter-spacing:-.01em;text-decoration:none}
+    .toc-brand{flex:none;display:block;margin:0 30px 20px 48px;color:var(--text);font-size:23px;font-weight:800;line-height:1.15;letter-spacing:-.02em;text-decoration:none}
     .toc-brand:hover,.toc-brand:focus-visible{color:var(--link)}
     .toc-collapsible{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
     .toc{flex:1 1 auto;min-height:0;padding:0 30px 48px 48px;overflow-y:auto;scrollbar-width:thin}
@@ -157,7 +157,7 @@ export const tocStyles = `
     @media(max-width:1050px){.toc-nav{width:220px}.toc-brand{margin-left:30px}.toc{padding-left:30px}}
     @media(max-width:800px){
       .toc-nav{inset:auto 0 0 0;z-index:40;flex-direction:column;width:auto;padding-top:0;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid #3a3d39;background:var(--panel);box-shadow:0 -12px 32px #0007}
-      .toc-brand{margin:0;padding:12px 22px;font-size:14px;border-bottom:1px solid #3a3d39}
+      .toc-brand{margin:0;padding:12px 22px;font-size:17px;border-bottom:1px solid #3a3d39}
       .toc-collapsible{flex:none;flex-direction:column-reverse}
       .toc-toggle{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:0 18px 0 22px;border:0;background:none;color:var(--text);font:500 15px/1.3 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:left;cursor:pointer}
       .toc-current{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
