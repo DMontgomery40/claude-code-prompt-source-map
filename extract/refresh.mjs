@@ -10,7 +10,7 @@ import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { isDerived } from "./decisions-lib.mjs";
+import { isDerived, knobIndex, validateDecision } from "./decisions-lib.mjs";
 
 const [version, integrity, flag] = process.argv.slice(2);
 // Scheduled runs don't inherit a shell profile; the TypeSafe key lives in ~/.env.
@@ -64,6 +64,11 @@ if (flag === "--verify") {
         if (p.sha256 && createHash("sha256").update(buf).digest("hex") !== p.sha256) problems.push(`${name}:${item.id} hash mismatch at ${p.binary_offset}`);
       }
     }
+  }
+  // A reviewed ladder must still be a valid decision (knobs exist, the decision cites its function).
+  if (existsSync(path.join(root, "outputs/decisions.json"))) {
+    const knobIds = new Set(knobIndex(root).keys());
+    for (const d of records("decisions.json")) problems.push(...validateDecision(d, knobIds).map(e => `decisions:${e}`));
   }
   if (problems.length) {
     writeFileSync(path.join(work, "verify-problems.txt"), `${problems.join("\n")}\n`);
