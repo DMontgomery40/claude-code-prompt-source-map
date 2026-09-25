@@ -41,6 +41,7 @@ export function validateDecision(d, knobIds) {
   need(SHAPES.includes(d.shape), `shape ${d.shape} is not one of ${SHAPES.join(", ")}`);
   need(OBSERVERS.includes(d.observe ?? "none"), `observe ${d.observe} is not a known observer`);
   need(Array.isArray(d.provenance) && d.provenance.length && d.provenance.every(provOk), "decision provenance is missing or malformed");
+  need(Array.isArray(d.provenance) && d.provenance.some(p => p.span === "function"), "decision provenance needs an anchor with span \"function\" on the function that makes the decision (relocation compares it across releases)");
   need(Array.isArray(d.rungs) && d.rungs.length, "rungs are required");
   const ids = new Set();
   for (const r of d.rungs ?? []) {

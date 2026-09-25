@@ -33,7 +33,9 @@ export function resolveAnchor(anchor) {
 }
 
 export function compile(draft, knobs) {
-  const toProv = anchors => (anchors ?? []).map(resolveAnchor);
+  // Each range keeps its anchor's span: relocation treats a "function" range as the decision
+  // itself (see decision-change.mjs).
+  const toProv = anchors => (anchors ?? []).map(a => ({ ...resolveAnchor(a), span: a.span ?? "text" }));
   const { anchors, ...rest } = draft;
   return {
     ...rest,

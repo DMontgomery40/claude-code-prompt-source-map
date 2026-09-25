@@ -7,7 +7,7 @@ const good = {
   id: "prompt-cache-ttl", title: "Prompt cache TTL", group: "Prompt caching", kind: "decision", question: "How long a cached prefix lives",
   shape: "first-wins", context: [{ key: "kind", label: "Request", values: [{ value: "main", label: "Main conversation" }] }],
   rungs: [{ id: "force5m", mechanism: "env", knob: "env-force-prompt-caching-5m", label: "FORCE_PROMPT_CACHING_5M", input: "toggle", effect: { value: "5m" }, verified: "read", provenance: [prov], realize: { env: { FORCE_PROMPT_CACHING_5M: "1" } } }],
-  observe: "cache_ttl", provenance: [prov], text: null, documented: null, details: {}
+  observe: "cache_ttl", provenance: [{ ...prov, span: "function" }], text: null, documented: null, details: {}
 };
 
 test("derived files are recognized by name", () => {
@@ -17,6 +17,13 @@ test("derived files are recognized by name", () => {
 
 test("a complete decision validates", () => {
   assert.deepEqual(validateDecision(good, new Set(["env-force-prompt-caching-5m"])), []);
+});
+
+test("a decision without a function-span anchor of its own does not validate", () => {
+  const textOnly = structuredClone(good);
+  textOnly.provenance = [{ ...prov, span: "text" }];
+  textOnly.rungs[0].provenance = [{ ...prov, span: "function" }];
+  assert.ok(validateDecision(textOnly, new Set(["env-force-prompt-caching-5m"])).some(e => e.includes('span "function"')));
 });
 
 test("validation names every broken field", () => {

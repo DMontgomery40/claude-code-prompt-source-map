@@ -9,6 +9,7 @@ import path from "node:path";
 import * as walk from "acorn-walk";
 import { byteMapper, indexExtraction, literalsWithin, parseSource } from "./literals.mjs";
 import { isDerived } from "./decisions-lib.mjs";
+import { decisionRangeChanged } from "./decision-change.mjs";
 
 const [prevDir, newDir, newVersion] = process.argv.slice(2);
 const root = new URL("../", import.meta.url).pathname;
@@ -289,9 +290,14 @@ function publishedTextKept(item, p) {
 
 // A range cited by several items is shared evidence (for example the whole root-command
 // definition behind every CLI flag). When its contents change, update its offsets and
-// report it once instead of flagging every item that cites it.
+// report it once instead of flagging every item that cites it. Items are counted, not
+// citations: one item citing a range three times does not make it shared.
 const refs = new Map();
-for (const p of results.keys()) { const k = `${p.file}:${p.binary_offset}:${p.length}`; refs.set(k, (refs.get(k) ?? 0) + 1); }
+for (const { data } of areas) for (const item of data.items ?? []) for (const p of provenanceObjects(item)) {
+  const k = `${p.file}:${p.binary_offset}:${p.length}`;
+  (refs.get(k) ?? refs.set(k, new Set()).get(k)).add(item);
+}
+const rangeText = (dir, manifest, file, offset, length) => { const rel = offset - manifest.get(file).file_offset; return fileBytes(dir, file).subarray(rel, rel + length).toString("utf8"); };
 const sharedChanged = new Map();
 // Items with at least one exactly relocated range.
 const anchored = new Set();
@@ -303,14 +309,20 @@ for (const { name, data } of areas) {
     for (const p of provenanceObjects(item)) {
       const r = results.get(p);
       const key = `${p.file}:${p.binary_offset}:${p.length}`;
-      const shared = refs.get(key) >= 3;
+      const shared = refs.get(key).size >= 3;
       const usable = r.status === "same" || r.status === "reshaped";
-      if (!usable || (r.status === "reshaped" && !shared && !(anchored.has(item) && publishedTextKept(item, p)))) {
+      // The function that makes a decision is the decision: any change to it beyond renamed
+      // identifiers flags the decision, however many items cite it and whatever text survives.
+      const decisionFn = item.kind === "decision" && p.span === "function";
+      const flagged = decisionFn
+        ? decisionRangeChanged({ status: r.status, oldText: usable ? rangeText(prevDir, prevManifest, p.file, p.binary_offset, p.length) : null, newText: usable ? rangeText(newDir, newManifest, r.file, r.offset, r.length) : null })
+        : !usable || (r.status === "reshaped" && !shared && !(anchored.has(item) && publishedTextKept(item, p)));
+      if (flagged) {
         itemChanged = true;
-        area.changed.push({ area: name.replace(/\.json$/, ""), id: item.id, title: item.title, file: p.file, binary_offset: p.binary_offset, status: r.status, reason: r.reason, old_text: r.old_text, near_file: r.near_file });
+        area.changed.push({ area: name.replace(/\.json$/, ""), id: item.id, title: item.title, file: p.file, binary_offset: p.binary_offset, status: r.status, reason: decisionFn && usable ? "the decision's function changed beyond renamed identifiers" : r.reason, old_text: r.old_text, near_file: r.near_file });
       }
       if (!usable) continue;
-      if (r.status === "reshaped" && shared) { area.reshaped_shared += 1; sharedChanged.set(key, { file: r.file, binary_offset: r.offset, cited_by: refs.get(key) }); }
+      if (r.status === "reshaped" && shared) { area.reshaped_shared += 1; sharedChanged.set(key, { file: r.file, binary_offset: r.offset, cited_by: refs.get(key).size }); }
       else area.same += 1;
       substitutions.set(String(p.binary_offset), String(r.offset));
       substitutions.set(p.file, r.file);

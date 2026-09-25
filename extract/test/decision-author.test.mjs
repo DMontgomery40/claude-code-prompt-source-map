@@ -24,8 +24,8 @@ test("compile turns anchors into provenance and fills labels from the knob index
   // anchors resolve against work/extracted; use the prompt-cache-ttl draft's first rung anchor
   const knobs = new Map([["env-force-prompt-caching-5m", { area: "environment-variables", kind: "env-var", title: "FORCE_PROMPT_CACHING_5M" }]]);
   const draft = { id: "t", title: "T", group: "G", question: "Q", shape: "first-wins", observe: "none",
-    anchors: [{ file: "chunk-x9fwahqm.js", find: "reason:\"force_5m_env\"", span: "text" }],
-    rungs: [{ id: "r", mechanism: "env", knob: "env-force-prompt-caching-5m", input: "toggle", effect: { value: "5m" }, anchors: [{ file: "chunk-x9fwahqm.js", find: "reason:\"force_5m_env\"", span: "text" }] }] };
+    anchors: [{ file: "chunk-x9fwahqm.js", find: "reason:\"force_5m_env\"", span: "function" }],
+    rungs: [{ id: "r", mechanism: "env", knob: "env-force-prompt-caching-5m", input: "toggle", effect: { value: "5m" }, anchors: [{ file: "chunk-x9fwahqm.js", find: "reason:\"force_5m_env\"" }] }] };
   const r = compile(draft, knobs);
   assert.equal(r.kind, "decision");
   assert.equal(r.rungs[0].label, "FORCE_PROMPT_CACHING_5M");
@@ -33,4 +33,8 @@ test("compile turns anchors into provenance and fills labels from the knob index
   assert.equal(r.provenance[0].file, "chunk-x9fwahqm.js");
   assert.ok(Number.isInteger(r.rungs[0].provenance[0].binary_offset));
   assert.equal(r.rungs[0].anchors, undefined);
+  // Spans survive compilation (a missing span is "text"); relocation reads them.
+  assert.equal(r.provenance[0].span, "function");
+  assert.ok(r.provenance[0].length > r.rungs[0].provenance[0].length);
+  assert.equal(r.rungs[0].provenance[0].span, "text");
 });
