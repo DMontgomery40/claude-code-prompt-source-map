@@ -6,12 +6,14 @@ import os from "node:os";
 import path from "node:path";
 
 const root = new URL("../", import.meta.url).pathname;
-const key = process.env.TYPESAFE_API_KEY ?? readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1];
-const cacheFile = `${root}work/decision-triage-cache.json`;
-const cache = existsSync(cacheFile) ? JSON.parse(readFileSync(cacheFile, "utf8")) : {};
-const candidates = JSON.parse(readFileSync(`${root}work/decision-candidates.json`, "utf8"));
+// Reads TYPESAFE_API_KEY from `env`, falling back to ~/.env via `readEnvFile` (injected so this
+// is testable without touching the real ~/.env or the network).
+export function typesafeKey(env, readEnvFile) {
+  if (env.TYPESAFE_API_KEY) return env.TYPESAFE_API_KEY;
+  try { return readEnvFile().match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
+}
 
-async function judge(c) {
+async function judge(key, cache, c) {
   const code = readFileSync(`${root}work/extracted/${c.file}`, "utf8").slice(c.start, Math.min(c.end, c.start + 6000));
   const k = createHash("sha256").update(code).digest("hex");
   if (cache[k]) return cache[k];
@@ -30,9 +32,17 @@ async function judge(c) {
   throw new Error("TypeSafe retries exhausted");
 }
 
-const queue = [...candidates], out = [];
-await Promise.all(Array.from({ length: 8 }, async () => { while (queue.length) { const c = queue.shift(); out.push({ id: c.id, file: c.file, start: c.start, name: c.name, knobs: c.knobs, ...(await judge(c)) }); } }));
-writeFileSync(cacheFile, JSON.stringify(cache));
-out.sort((a, b) => b.resolves - a.resolves);
-writeFileSync(`${root}work/decision-triage.json`, JSON.stringify(out, null, 1));
-console.log(`${out.filter(c => c.resolves >= 0.7).length} of ${out.length} candidates resolve a value (>= 0.7)`);
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  const key = typesafeKey(process.env, () => readFileSync(path.join(os.homedir(), ".env"), "utf8"));
+  if (!key) throw new Error("decision-triage.mjs needs TYPESAFE_API_KEY");
+  const cacheFile = `${root}work/decision-triage-cache.json`;
+  const cache = existsSync(cacheFile) ? JSON.parse(readFileSync(cacheFile, "utf8")) : {};
+  const candidates = JSON.parse(readFileSync(`${root}work/decision-candidates.json`, "utf8"));
+
+  const queue = [...candidates], out = [];
+  await Promise.all(Array.from({ length: 8 }, async () => { while (queue.length) { const c = queue.shift(); out.push({ id: c.id, file: c.file, start: c.start, name: c.name, knobs: c.knobs, ...(await judge(key, cache, c)) }); } }));
+  writeFileSync(cacheFile, JSON.stringify(cache));
+  out.sort((a, b) => b.resolves - a.resolves);
+  writeFileSync(`${root}work/decision-triage.json`, JSON.stringify(out, null, 1));
+  console.log(`${out.filter(c => c.resolves >= 0.7).length} of ${out.length} candidates resolve a value (>= 0.7)`);
+}
