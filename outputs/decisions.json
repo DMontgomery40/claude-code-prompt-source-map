@@ -322,7 +322,7 @@
       },
       {
        "value": "hosted",
-       "label": "Claude Code on the web or the desktop app"
+       "label": "Claude Code on the web or the desktop app (the third-party desktop app, or CLAUDE_CODE_HOST_AUTH_ENV_VAR set, behaves like your terminal)"
       }
      ]
     },
@@ -401,13 +401,29 @@
      "effect": {
       "value": "provider"
      },
-     "note": "Checked before the ladder: with Bedrock, Vertex or another cloud provider selected, that provider's own credentials are used. CLAUDE_CODE_USE_VERTEX and the other provider switches do the same.",
+     "note": "Checked before the ladder: with Bedrock, Vertex or another cloud provider selected, that provider's own credentials are used. Exception: with CLAUDE_CODE_SKIP_VERTEX_AUTH, or CLAUDE_CODE_SKIP_BEDROCK_AUTH and no AWS_BEARER_TOKEN_BEDROCK (likewise the Mantle and Google Cloud skip-auth switches), the bearer header from ANTHROPIC_AUTH_TOKEN or apiKeyHelper is sent instead.",
      "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179764440,
+       "length": 19,
+       "sha256": "097000f78a1c075da4d829899a6d157bfb7b80699cb107a41754ae39aab70461",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
       {
        "file": "chunk-5ezz9t8y.js",
        "binary_offset": 179768951,
        "length": 18,
        "sha256": "537127629e2b3bb1ba4370d68d70a0713ed7c9220eb8fa80419d086d768025ac",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179770780,
+       "length": 247,
+       "sha256": "b7563e9caec3f261de94f71df0c725c5ee3fc9adfbfe8ff73bd36f667b8eea0e",
        "version": "2.1.282",
        "platform": "darwin-arm64"
       }
@@ -580,7 +596,7 @@
        ]
       }
      ],
-     "note": "Always used with -p (unless the client is the VS Code extension) and in bare mode. In an interactive session it is used only after you approve it at the prompt; an unapproved or rejected key is skipped.",
+     "note": "Always used with -p (unless the client is the VS Code extension) and in bare mode. In an interactive session it is used only after you approve it at the prompt; an unapproved or rejected key is skipped. A configured apiKeyHelper is still sent alongside it as the bearer token, unless ANTHROPIC_AUTH_TOKEN is set.",
      "effect": {
       "value": "api-key"
      },
@@ -679,7 +695,7 @@
        ]
       }
      ],
-     "note": "A subscription token, sent as a bearer token with no API key. With ANTHROPIC_UNIX_SOCKET set it is checked before any API key, and without it subscription sign-in is off.",
+     "note": "A subscription token, sent as a bearer token with no API key. With ANTHROPIC_UNIX_SOCKET set it is checked before any API key; with ANTHROPIC_UNIX_SOCKET set and no CLAUDE_CODE_OAUTH_TOKEN, subscription sign-in is off.",
      "effect": {
       "value": "oauth-token"
      },
@@ -1486,7 +1502,7 @@
    "notes": [
     "Auto memory is a folder of plain files on your machine. By default it is ~/.claude/projects/<project>/memory/, where <project> is the project's root folder path turned into a folder name, and MEMORY.md in it is the index Claude Code loads at the start of a session.",
     "CLAUDE_CODE_REMOTE_MEMORY_DIR replaces ~/.claude as the base of that default path. The folder itself can be moved: CLAUDE_COWORK_MEMORY_PATH_OVERRIDE wins, then autoMemoryDirectory from managed settings, --settings, local and project settings (only in a trusted folder or a non-interactive run), then user settings.",
-    "Turning auto memory off with autoMemoryEnabled or /memory writes autoMemoryEnabled to your user settings file. /pause-memory turns it off for the current session only.",
+    "Using the /memory toggle to turn auto memory on or off writes autoMemoryEnabled to your user settings file. Setting autoMemoryEnabled yourself in a settings file writes nothing else. /pause-memory turns auto memory off for the current session only.",
     "Memory stores are a separate decision: shared stores mounted next to your own memory, used when a remote flag (off by default in code) is on or CLAUDE_MEMORY_STORES is set. Whether Claude reaches memory through plain files or through memory tools is also decided separately, partly by another remote flag.",
     "A session that the app launching Claude Code marks as restricted also has no auto memory, whatever is set on this ladder."
    ],
@@ -1637,13 +1653,7 @@
      "mechanism": "env",
      "knob": "env-claude-code-simple",
      "input": "toggle",
-     "accepts": [
-      "1",
-      "true",
-      "yes",
-      "on"
-     ],
-     "note": "Bare mode turns auto memory off. --bare sets the same switch.",
+     "note": "Bare mode turns auto memory off. CLAUDE_CODE_SIMPLE counts as set when it is 1, true, yes or on, and --bare sets the same switch.",
      "effect": {
       "value": "disabled"
      },
@@ -1678,13 +1688,7 @@
      "mechanism": "env",
      "knob": "env-claude-code-remote",
      "input": "toggle",
-     "accepts": [
-      "1",
-      "true",
-      "yes",
-      "on"
-     ],
-     "note": "A remote session has no auto memory unless CLAUDE_CODE_REMOTE_MEMORY_DIR or CLAUDE_COWORK_MEMORY_PATH_OVERRIDE gives it a folder. With either set, this rung does not answer.",
+     "note": "A remote session has no auto memory unless CLAUDE_CODE_REMOTE_MEMORY_DIR or CLAUDE_COWORK_MEMORY_PATH_OVERRIDE gives it a folder. CLAUDE_CODE_REMOTE counts as set when it is 1, true, yes or on. With either folder variable set, this rung does not answer.",
      "effect": {
       "value": "disabled"
      },
@@ -7049,10 +7053,10 @@
     {
      "id": "disableAutoMode",
      "knob": "setting-permissions--disable-auto-mode",
-     "note": "When set to disable, auto answers are passed over and the next rung answers. An explicit auto from a flag, an agent or settings actually starts in auto and is switched to default once Claude Code checks whether auto is available. The top-level disableAutoMode setting does the same.",
-     "skip_values": [
-      "auto"
-     ],
+     "note": "When set to disable, a session that would start in auto starts in default: an explicit auto from a flag, an agent or settings resolves to auto and is switched to default once Claude Code checks whether auto is available, and the fallback to auto is blocked. In a Remote Control machine session an auto from settings is passed over instead, so an inherited mode can still answer. The top-level disableAutoMode setting does the same.",
+     "replace_values": {
+      "auto": "default"
+     },
      "provenance": [
       {
        "file": "chunk-76kv9jbg.js",
@@ -11367,7 +11371,7 @@
    "id": "workflows-enabled",
    "title": "Workflow tool available",
    "group": "Tools and output",
-   "question": "Whether the Workflow tool (multi-agent workflows) is offered to Claude in a session, decided once when the session starts.",
+   "question": "Whether the Workflow tool (multi-agent workflows) is offered to Claude. Settings and organization policy are checked each time; the remote flag and CLAUDE_CODE_WORKFLOWS are read once per session.",
    "shape": "first-wins",
    "observe": "none",
    "value_labels": {

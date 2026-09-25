@@ -63,7 +63,7 @@ Source: `chunk-5ezz9t8y.js` · offset 179777730 · sha256 `6e77a188…`
 
 ### Workflow tool available
 
-Whether the Workflow tool (multi-agent workflows) is offered to Claude in a session, decided once when the session starts.
+Whether the Workflow tool (multi-agent workflows) is offered to Claude. Settings and organization policy are checked each time; the remote flag and CLAUDE\_CODE\_WORKFLOWS are read once per session.
 
 - Before the ladder: `CLAUDE_CODE_DISABLE_WORKFLOWS`. Checked before the ladder: no Workflow tool, whatever is set below. 1, true, yes and on count as set.
 - Before the ladder: `disableWorkflows`. Checked before the ladder: disableWorkflows set to true in any settings file turns the tool off, whatever is set below.
@@ -82,16 +82,16 @@ Source: `chunk-mw9espfa.js` · offset 177239724 · sha256 `25a1eb47…`
 
 Which credential Claude Code sends with requests to the Anthropic API: a subscription OAuth token (as a bearer token, with no API key), an auth token, or an API key, and from which source.
 
-- Before the ladder: `CLAUDE_CODE_USE_BEDROCK`. Checked before the ladder: with Bedrock, Vertex or another cloud provider selected, that provider's own credentials are used. CLAUDE\_CODE\_USE\_VERTEX and the other provider switches do the same.
+- Before the ladder: `CLAUDE_CODE_USE_BEDROCK`. Checked before the ladder: with Bedrock, Vertex or another cloud provider selected, that provider's own credentials are used. Exception: with CLAUDE\_CODE\_SKIP\_VERTEX\_AUTH, or CLAUDE\_CODE\_SKIP\_BEDROCK\_AUTH and no AWS\_BEARER\_TOKEN\_BEDROCK (likewise the Mantle and Google Cloud skip-auth switches), the bearer header from ANTHROPIC\_AUTH\_TOKEN or apiKeyHelper is sent instead.
 
 1. **env** `CLAUDE_CODE_OAUTH_TOKEN`: On the web and in the desktop app a subscription token is checked before any API key or auth token. It is sent as a bearer token and no API key goes with it. Read from code.
 2. **env** `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`: A subscription token read from an inherited file descriptor, or from a token file the host places at a fixed path. Read from code.
 3. **default** Signed in with claude.ai (/login): The saved claude.ai login. Not read when the host manages provider credentials (CLAUDE\_CODE\_PROVIDER\_MANAGED\_BY\_HOST). Read from code.
 4. **env** `ANTHROPIC_AUTH_TOKEN`: Sent as a bearer token, and in your terminal it turns subscription sign-in off. An API key found by a lower rung is still sent with it, as x-api-key. Read from code.
-5. **env** `ANTHROPIC_API_KEY`: Always used with -p (unless the client is the VS Code extension) and in bare mode. In an interactive session it is used only after you approve it at the prompt; an unapproved or rejected key is skipped. Read from code.
+5. **env** `ANTHROPIC_API_KEY`: Always used with -p (unless the client is the VS Code extension) and in bare mode. In an interactive session it is used only after you approve it at the prompt; an unapproved or rejected key is skipped. A configured apiKeyHelper is still sent alongside it as the bearer token, unless ANTHROPIC\_AUTH\_TOKEN is set. Read from code.
 6. **env** `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`: An API key read from an inherited file descriptor, or from a key file the host places at a fixed path. Not read in bare mode. Read from code.
 7. **settings** `apiKeyHelper`: The script's output is sent as the API key and, unless ANTHROPIC\_AUTH\_TOKEN is set, also as a bearer token; it is cached and re-run after CLAUDE\_CODE\_API\_KEY\_HELPER\_TTL\_MS (default 5 minutes). In bare mode only a helper passed with --settings counts, one from project settings waits for workspace trust, and it is ignored when the host manages provider credentials. Read from code.
-8. **env** `CLAUDE_CODE_OAUTH_TOKEN`: A subscription token, sent as a bearer token with no API key. With ANTHROPIC\_UNIX\_SOCKET set it is checked before any API key, and without it subscription sign-in is off. Read from code.
+8. **env** `CLAUDE_CODE_OAUTH_TOKEN`: A subscription token, sent as a bearer token with no API key. With ANTHROPIC\_UNIX\_SOCKET set it is checked before any API key; with ANTHROPIC\_UNIX\_SOCKET set and no CLAUDE\_CODE\_OAUTH\_TOKEN, subscription sign-in is off. Read from code.
 9. **env** `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`: A subscription token from an inherited file descriptor or a host-provided token file. It is read before a saved login, except when the host restored the token from a background snapshot. Read from code.
 10. **default** Signed in with claude.ai (/login): The login /login saved in the keychain or credentials file. It must carry the inference scope; a Console login does not, so it falls through to the next rung. Read from code.
 11. **default** API key saved by /login (Console): Read from the macOS keychain or Claude Code's config file. Not read when the host manages provider credentials. Read from code.
@@ -117,7 +117,7 @@ Which permission mode a session starts in: default, acceptEdits, plan, auto, don
 8. **default** Built-in default: When nothing above answers, the session starts in default. Read from code.
 
 * After the ladder: `permissions.disableBypassPermissionsMode`. When set to disable, any rung that answers bypassPermissions is passed over with a warning and the next rung answers.
-* After the ladder: `permissions.disableAutoMode`. When set to disable, auto answers are passed over and the next rung answers. An explicit auto from a flag, an agent or settings actually starts in auto and is switched to default once Claude Code checks whether auto is available. The top-level disableAutoMode setting does the same.
+* After the ladder: `permissions.disableAutoMode`. When set to disable, a session that would start in auto starts in default: an explicit auto from a flag, an agent or settings resolves to auto and is switched to default once Claude Code checks whether auto is available, and the fallback to auto is blocked. In a Remote Control machine session an auto from settings is passed over instead, so an inherited mode can still answer. The top-level disableAutoMode setting does the same.
 * After the ladder: Anthropic's auto-mode switch. A remote flag that leaves auto mode available by default in code. When Anthropic switches auto mode off, auto answers are passed over and the next rung answers, and a session already in auto is switched to default once Claude Code checks whether auto is available. Anthropic can change it without a release.
 
 Source: `chunk-76kv9jbg.js` · offset 177254731 · sha256 `42a12381…`
@@ -194,15 +194,15 @@ Whether Claude Code keeps automatic memory for the session: loads the project's 
 
 1. **flag** /pause-memory in this session: Checked first: once memory is paused for the session, nothing below turns it back on, not even CLAUDE\_CODE\_DISABLE\_AUTO\_MEMORY=0. Read from code.
 2. **env** `CLAUDE_CODE_DISABLE_AUTO_MEMORY`: 1, true, yes or on turns auto memory off. 0, false, no or off forces it on and skips everything below, including autoMemoryEnabled set to false. Any other value counts as unset. Read from code.
-3. **env** `CLAUDE_CODE_SIMPLE`: Bare mode turns auto memory off. --bare sets the same switch. Read from code.
-4. **env** `CLAUDE_CODE_REMOTE`: A remote session has no auto memory unless CLAUDE\_CODE\_REMOTE\_MEMORY\_DIR or CLAUDE\_COWORK\_MEMORY\_PATH\_OVERRIDE gives it a folder. With either set, this rung does not answer. Read from code.
+3. **env** `CLAUDE_CODE_SIMPLE`: Bare mode turns auto memory off. CLAUDE\_CODE\_SIMPLE counts as set when it is 1, true, yes or on, and --bare sets the same switch. Read from code.
+4. **env** `CLAUDE_CODE_REMOTE`: A remote session has no auto memory unless CLAUDE\_CODE\_REMOTE\_MEMORY\_DIR or CLAUDE\_COWORK\_MEMORY\_PATH\_OVERRIDE gives it a folder. CLAUDE\_CODE\_REMOTE counts as set when it is 1, true, yes or on. With either folder variable set, this rung does not answer. Read from code.
 5. **remote** Anthropic's per-model memory switch: Two remote flags: a list of model names (empty by default in code) and a switch (off by default in code). When the switch is on and the session's model name contains a listed name, auto memory is off. CLAUDE\_CODE\_DISABLE\_AUTO\_MEMORY=0 skips this check. Anthropic can change both without a release. Read from code.
 6. **settings** `autoMemoryEnabled`: Read from the merged settings, so any settings file Claude Code loads can set it. true turns auto memory on, false turns it off. The /memory toggle writes this key to your user settings. Read from code.
 7. **default** Default: When nothing above answers, auto memory is on. Read from code.
 
 - Auto memory is a folder of plain files on your machine. By default it is ~/.claude/projects/<project>/memory/, where <project> is the project's root folder path turned into a folder name, and MEMORY.md in it is the index Claude Code loads at the start of a session.
 - CLAUDE\_CODE\_REMOTE\_MEMORY\_DIR replaces ~/.claude as the base of that default path. The folder itself can be moved: CLAUDE\_COWORK\_MEMORY\_PATH\_OVERRIDE wins, then autoMemoryDirectory from managed settings, --settings, local and project settings (only in a trusted folder or a non-interactive run), then user settings.
-- Turning auto memory off with autoMemoryEnabled or /memory writes autoMemoryEnabled to your user settings file. /pause-memory turns it off for the current session only.
+- Using the /memory toggle to turn auto memory on or off writes autoMemoryEnabled to your user settings file. Setting autoMemoryEnabled yourself in a settings file writes nothing else. /pause-memory turns auto memory off for the current session only.
 - Memory stores are a separate decision: shared stores mounted next to your own memory, used when a remote flag (off by default in code) is on or CLAUDE\_MEMORY\_STORES is set. Whether Claude reaches memory through plain files or through memory tools is also decided separately, partly by another remote flag.
 - A session that the app launching Claude Code marks as restricted also has no auto memory, whatever is set on this ladder.
 
