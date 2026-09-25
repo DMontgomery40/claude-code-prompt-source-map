@@ -15,6 +15,8 @@ test("each decision heading gets an interactive card and the data once", () => {
   assert.match(out, /<span class="mech remote">remote<\/span>/);
   assert.match(out, /class="knob-name plain">Allowlist</);
   assert.equal((out.match(/id="ladder-data"/g) ?? []).length, 1);
+  const withProof = enhanceLadders(html, [{ ...decision, provenance: [{ file: "x.js" }], rungs: decision.rungs.map(r => ({ ...r, provenance: [{ file: "x.js" }], realize: { env: {} } })) }]);
+  assert.doesNotMatch(withProof.slice(withProof.indexOf('id="ladder-data"')), /provenance|realize/, "the page data carries the ladder only");
 });
 
 test("the page script carries the evaluator", () => {

@@ -76,7 +76,12 @@ export function enhanceLadders(html, decisions) {
     const at = rest.search(/<(?:ol|ul)[\s>]/);
     return at < 0 ? `${heading[0]}${card(d)}${rest}` : `${heading[0]}${rest.slice(0, at)}${card(d)}${rest.slice(at)}`;
   }).join("");
-  return `${out}<script type="application/json" id="ladder-data">${JSON.stringify(decisions).replace(/</g, "\\u003c")}</script>`;
+  // The card needs the ladder, not its provenance or probe recipes; /data/ has the full records.
+  const slim = decisions.map(({ provenance, realize_context, ...d }) => ({ ...d,
+    rungs: d.rungs.map(({ provenance, realize, ...r }) => r),
+    bypasses: d.bypasses?.map(({ provenance, realize, ...b }) => b),
+    constraints: d.constraints?.map(({ provenance, realize, ...c }) => c) }));
+  return `${out}<script type="application/json" id="ladder-data">${JSON.stringify(slim).replace(/</g, "\\u003c")}</script>`;
 }
 
 // Runs in the page, after appliesTo and evaluateLadder are declared beside it.
