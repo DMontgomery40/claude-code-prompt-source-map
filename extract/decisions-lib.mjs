@@ -4,7 +4,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-export const MECHANISMS = ["env", "settings", "cli", "frontmatter", "managed", "remote", "default", "layer"];
+export const MECHANISMS = ["env", "settings", "cli", "frontmatter", "managed", "remote", "default", "layer", "session"];
 export const SHAPES = ["first-wins", "merge", "layered"];
 export const OBSERVERS = ["cache_ttl", "model", "effort", "max_tokens", "thinking", "betas", "none"];
 

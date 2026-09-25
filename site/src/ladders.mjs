@@ -5,7 +5,7 @@ import { appliesTo, evaluateLadder } from "./ladder-eval.mjs";
 import { escapeHtml } from "./render.mjs";
 import { headingSlug } from "./toc.mjs";
 
-const MECH = { env: "env", settings: "settings", cli: "flag", frontmatter: "agent", managed: "managed", remote: "remote", default: "default", layer: "file" };
+const MECH = { env: "env", settings: "settings", cli: "flag", frontmatter: "agent", managed: "managed", remote: "remote", default: "default", layer: "file", session: "session" };
 // A constraint that has none of these only describes a check; it gets no toggle.
 const KINDS = ["skip_values", "cap", "replace_values", "keep_rungs", "effect"];
 const text = v => (v === null || v === undefined ? "" : typeof v === "object" ? JSON.stringify(v) : String(v));
@@ -302,7 +302,7 @@ export const ladderStyles = `
     .ladder .n{color:#b3b7af;font:600 14px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right}
     .ladder .mech{justify-self:start;padding:2px 7px;border:1px solid currentColor;border-radius:5px;font-size:11.5px;font-weight:650;line-height:1.4;letter-spacing:.06em;text-transform:uppercase}
     .ladder .mech.env{color:#83bfd8}.ladder .mech.settings,.ladder .mech.layer,.ladder .mech.managed{color:#e0b86b}.ladder .mech.cli{color:#9fd3a8}
-    .ladder .mech.frontmatter{color:#c9a2f2}.ladder .mech.remote{color:#f5a193}.ladder .mech.default{color:#b3b7af}
+    .ladder .mech.frontmatter{color:#c9a2f2}.ladder .mech.remote{color:#f5a193}.ladder .mech.default{color:#b3b7af}.ladder .mech.session{color:#f08fd2}
     .ladder .knob{min-width:0}
     .ladder .knob-name{color:var(--text);font-size:15px;font-weight:600;overflow-wrap:anywhere}
     .ladder .knob-name.plain{font-family:inherit}

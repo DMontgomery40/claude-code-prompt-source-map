@@ -5,7 +5,7 @@ import { writeFileSync } from "node:fs";
 import { knobIndex, readDecisions } from "./decisions-lib.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
-const MECH = { env: "env", settings: "settings", cli: "flag", frontmatter: "agent", managed: "managed", remote: "remote", default: "default", layer: "file" };
+const MECH = { env: "env", settings: "settings", cli: "flag", frontmatter: "agent", managed: "managed", remote: "remote", default: "default", layer: "file", session: "session" };
 const md = value => String(value ?? "").replace(/[\\*_[\]]/g, "\\$&").trim();
 const sentence = value => (/[.!?:]$/.test(value) ? value : `${value}.`);
 // Surprising ladders first: a remote rung, a silent skip, or a veto.

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { enhanceLadders, ladderScript, readScenario, writeScenario } from "../src/ladders.mjs";
+import { MECHANISMS } from "../../extract/decisions-lib.mjs";
+import { enhanceLadders, ladderScript, ladderStyles, readScenario, writeScenario } from "../src/ladders.mjs";
 
 const decision = { id: "ttl", title: "Prompt cache TTL", question: "q", shape: "first-wins",
   context: [{ key: "kind", label: "Request", values: [{ value: "main", label: "Main" }] }],
@@ -85,4 +86,20 @@ test("the page script carries the scenario helpers and qualifies a remote winner
   assert.match(ladderScript, /function readScenario\(/);
   assert.match(ladderScript, /function writeScenario\(/);
   assert.match(ladderScript, /r\.mechanism === "remote"\) why\.push\(" \(default in code; Anthropic can change it\)"\)/);
+});
+
+test("every rung mechanism has a label and its own color, legible on every card surface", () => {
+  const luminance = hex => { const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+  const contrast = (a, b) => { const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+  const colors = new Map();
+  for (const m of ladderStyles.matchAll(/((?:\.ladder \.mech\.[a-z]+,?)+)\{color:(#[0-9a-f]{6})\}/g)) for (const [, name] of m[1].matchAll(/\.mech\.([a-z]+)/g)) colors.set(name, m[2]);
+  const html = '<h4 id="prompt-cache-ttl">Prompt cache TTL</h4>';
+  for (const mechanism of MECHANISMS) {
+    const out = enhanceLadders(html, [{ ...decision, rungs: [{ ...decision.rungs[0], mechanism }] }]);
+    assert.match(out, new RegExp(`<span class="mech ${mechanism}">[a-z]+</span>`), `${mechanism} has no label`);
+    assert.ok(colors.has(mechanism), `${mechanism} has no color`);
+    for (const surface of ["#171816", "#1e2718", "#141513"]) assert.ok(contrast(colors.get(mechanism), surface) >= 4.5, `${mechanism} ${colors.get(mechanism)} on ${surface}`);
+  }
+  assert.ok([...colors].every(([k, c]) => k === "session" || c !== colors.get("session")), "session shares a color with another mechanism");
+  assert.match(enhanceLadders(html, [{ ...decision, rungs: [{ ...decision.rungs[0], mechanism: "session" }] }]), /<span class="mech session">session<\/span>/);
 });
