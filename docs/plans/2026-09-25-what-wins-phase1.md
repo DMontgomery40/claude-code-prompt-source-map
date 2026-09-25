@@ -12,14 +12,14 @@
 
 **Tech Stack:** Node 22 ESM, acorn and acorn-walk, node:test, marked (site), the TypeSafe Jev API (`https://api.typesafe.ai/v1/systemone`, model `jev-latest`), Cloudflare Workers static assets (wrangler), and the prompt-watch watcher.
 
-**Spec:** `~/Documents/prompt-watch/docs/specs/2026-09-25-what-wins-design.md`
+**Spec:** `~/prompt-watch/docs/specs/2026-09-25-what-wins-design.md`
 
 ## Global Constraints
 
-- **Repo and paths:** `~/Documents/claude-code-prompt-source-map` (public; the watcher pushes `main`). Plans and specs stay in `~/Documents/prompt-watch` (private, no remote).
+- **Repo and paths:** `~/claude-code-prompt-source-map` (public; the watcher pushes `main`). Plans and specs stay in `~/prompt-watch` (private, no remote).
 - **Never publish code:** no minified JS excerpts on pages or in `outputs/`. Rungs cite `{file, binary_offset, length, sha256, version, platform}` from `extract/lib.mjs` `provenance()`. Code snippets sent to Jev or kept in `work/` are fine.
 - **Numbers in prose** are `{{count:…}}`, `{{distinct:…}}` or `{{value:…}}` tokens (see `site/src/facts.mjs`). The gate's Jev lint rejects typed statistics.
-- **Shared files:** `site/src/facts.mjs` and `site/src/filters.mjs` must stay byte-identical with `~/Documents/gpt6-prompt-source-map/site/src/`. Any change is copied to both, and both test suites run.
+- **Shared files:** `site/src/facts.mjs` and `site/src/filters.mjs` must stay byte-identical with `~/gpt6-prompt-source-map/site/src/`. Any change is copied to both, and both test suites run.
 - **Legibility floor** (`~/.claude/rules/design-legibility.md`):
   - Body text 14px or larger, labels 11.5px or larger.
   - Contrast: body at least 7:1, support text at least 4.5:1.
@@ -1399,7 +1399,7 @@ git commit -m "Add the What wins page"
 **Files:**
 - Modify: `site/src/filters.mjs` (and mirror to the gpt6 repo), `site/src/build-site.mjs`, `site/src/catalog.mjs`, `extract/tags.mjs`
 - Create: `extract/tags/settings-taxonomy.json`, `extract/tags/settings-seed.json`, and `work/tags/settings-check.json` (a cc-env-tags-style agent writes the taxonomy and check set; Jev runs first)
-- Test: `site/test/build-site.test.mjs` (the filter test gains feeds), `~/Documents/gpt6-prompt-source-map/site/test/build-site.test.mjs` (the mirror stays green)
+- Test: `site/test/build-site.test.mjs` (the filter test gains feeds), `~/gpt6-prompt-source-map/site/test/build-site.test.mjs` (the mirror stays green)
 
 **Interfaces:**
 - Consumes: `outputs/decisions-index.json` (Task 7).
@@ -1419,7 +1419,7 @@ assert.match(html, /<a class="feeds-link" href="\.\.\/what-wins\/#prompt-cache-t
   - In `filters.mjs` `wrapFilterable`, after `chips`, add: `const feeds = (record.feeds ?? []).map(f => \`<a class="feeds-link" href="${escapeHtml(f.href)}">${escapeHtml(f.label)}</a>\`).join("");` and render `${chips}${feeds}`. Add the CSS `.feeds-link{padding:2px 8px;border:1px solid #5f7f3f;border-radius:999px;color:#dcffad;font-size:12px;text-decoration:none}.feeds-link:hover{border-color:#c8f784}`.
   - In `build-site.mjs`, load `outputs/decisions-index.json` when it exists, and set each filter record's `feeds` from it. The href is `../what-wins/#${headingSlug(title)}`. The label is `Feeds: ${title}, rung ${rank} of ${of}`; rank 0 means "Bypasses", and for `settings-layers` the label is `Resolved through: ${title}`.
   - Export `headingSlug` from `toc.mjs`: `export const headingSlug = slug;`.
-  - Copy `filters.mjs` to `~/Documents/gpt6-prompt-source-map/site/src/filters.mjs` and run that repo's `cd site && npm test`.
+  - Copy `filters.mjs` to `~/gpt6-prompt-source-map/site/src/filters.mjs` and run that repo's `cd site && npm test`.
   - `tags.mjs`: take the area from `process.argv[2] ?? "environment-variables"`. Read `extract/tags/<prefix>-taxonomy.json` and `<prefix>-seed.json`, where the prefix is `env`, `settings`, `cli` or `decisions`. Areas without a taxonomy get status tags only, with this status table:
     - settings: documented, undocumented, internal (`details.internal`), safe-env (the group starts with "Safe env");
     - cli: documented, undocumented, hidden, command or flag;
@@ -1437,7 +1437,7 @@ assert.match(html, /<a class="feeds-link" href="\.\.\/what-wins\/#prompt-cache-t
 ```bash
 git add site/src/filters.mjs site/src/build-site.mjs site/src/catalog.mjs site/src/toc.mjs extract/tags.mjs extract/tags outputs/*-tags.json site/test/build-site.test.mjs
 git commit -m "Link every entry to the ladders it feeds; filters for settings, CLI and decisions"
-cd ~/Documents/gpt6-prompt-source-map && git add site/src/filters.mjs && git commit -m "Render feeds links in filtered entries (shared filters.mjs)"
+cd ~/gpt6-prompt-source-map && git add site/src/filters.mjs && git commit -m "Render feeds links in filtered entries (shared filters.mjs)"
 ```
 
 ---
@@ -1475,14 +1475,14 @@ Remove the existing single `run(node, ["extract/tags.mjs"])` line.
 
 - [ ] **Step 2: Update the watcher.** In `targets/cc.mjs`, `reviewAreas()` already picks up `decisions` when records have `needs_review`. Add this to the per-area brief when `area === "decisions"`: "Read work/DECISIONS-BRIEF.md. Fix the traced ladder so `node extract/probe.mjs --only <id>` passes; change a rung only with evidence from code."
 
-- [ ] **Step 3: Dry run.** Run `node ~/Documents/prompt-watch/watch.mjs --dry-run --force cc`. Expected: the refresh completes, the gate passes (tests including coverage, build, leak check, narrative lint), and "would publish" is reported.
+- [ ] **Step 3: Dry run.** Run `node ~/prompt-watch/watch.mjs --dry-run --force cc`. Expected: the refresh completes, the gate passes (tests including coverage, build, leak check, narrative lint), and "would publish" is reported.
 
 - [ ] **Step 4: Publish through the watcher's publish path** (it deploys, verifies the live hash, commits, and pushes within the budget).
-  - Run `node -e 'import("/Users/davidmontgomery/Documents/prompt-watch/lib/publish.mjs").then(async m=>{const r="/Users/davidmontgomery/Documents/claude-code-prompt-source-map";await m.gate(r);await m.publish(r,{origin:"https://ccprompts.dtmont.com",message:"Add What wins: decision ladders for every knob\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"})})'`.
+  - Run `node -e 'import("/Users/davidmontgomery/prompt-watch/lib/publish.mjs").then(async m=>{const r="/Users/davidmontgomery/claude-code-prompt-source-map";await m.gate(r);await m.publish(r,{origin:"https://ccprompts.dtmont.com",message:"Add What wins: decision ladders for every knob\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"})})'`.
   - Then check `curl -s https://ccprompts.dtmont.com/what-wins/ | grep -c 'class="ladder"'`. Expected: equal to the number of decisions.
 
 - [ ] **Step 5: Commit the watcher change and record memory.**
-  - `cd ~/Documents/prompt-watch && git commit -am "Review agents handle decision ladders"`.
+  - `cd ~/prompt-watch && git commit -am "Review agents handle decision ladders"`.
   - Append the phase-1 outcome to `~/.claude/projects/-Users-davidmontgomery/memory/prompt_sites_autoupdate_09_25.md`: decisions count, tested rung count, pending count, and file locations.
 
 ---
