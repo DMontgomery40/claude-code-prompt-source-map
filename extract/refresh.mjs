@@ -67,6 +67,13 @@ if (flag === "--verify") {
 }
 
 if (previousVersion === version) {
+  // Relocated to this release already; success only once every flagged record is reviewed.
+  const pending = areaFiles().flatMap(name => (readJson(path.join(root, "outputs", name)).items ?? []).filter(item => item.needs_review).map(item => `${name}:${item.id}`));
+  if (pending.length) {
+    log(`${pending.length} records still need review`);
+    console.log(JSON.stringify({ changed: [], needs_review: pending.length, sources: status?.sources ?? { version, integrity } }));
+    process.exit(3);
+  }
   log("outputs already describe this release");
   console.log(JSON.stringify({ changed: [], needs_review: 0, sources: status?.sources ?? { version, integrity } }));
   process.exit(0);
