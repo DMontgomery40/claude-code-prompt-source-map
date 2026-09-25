@@ -404,8 +404,16 @@
   },
   {
    "id": "env-bash-max-output-length",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "bash-output-limit",
+     "title": "Bash output limit",
+     "rung": "env",
+     "rank": 2,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-bash-max-timeout-ms",
@@ -1405,8 +1413,16 @@
   },
   {
    "id": "env-claude-code-disable-git-instructions",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "git-instructions",
+     "title": "Git instructions and status",
+     "rung": "envDisable",
+     "rank": 1,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-hook-forwarding",
@@ -1535,8 +1551,16 @@
   },
   {
    "id": "env-claude-code-disable-thinking",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "thinking-mode",
+     "title": "Thinking mode",
+     "rung": "disableThinking",
+     "rank": 2,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-turn-handoff",
@@ -1565,8 +1589,16 @@
   },
   {
    "id": "env-claude-code-disable-workflows",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "workflows-enabled",
+     "title": "Workflow tool available",
+     "rung": "disableEnv",
+     "rank": 0,
+     "of": 5
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-working-sync",
@@ -1680,8 +1712,16 @@
   },
   {
    "id": "env-claude-code-enable-prompt-suggestion",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "prompt-suggestions",
+     "title": "Prompt suggestions",
+     "rung": "env",
+     "rank": 3,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-enable-refresh-mcp-tools",
@@ -1735,8 +1775,16 @@
   },
   {
    "id": "env-claude-code-eval-confined",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "sandbox-network-proxy",
+     "title": "Sandbox network proxy",
+     "rung": "evalConfined",
+     "rank": 0,
+     "of": 4
+    }
+   ]
   },
   {
    "id": "env-claude-code-eval-interview-session",
@@ -1773,6 +1821,13 @@
      "rung": "extraBody",
      "rank": 1,
      "of": 11
+    },
+    {
+     "decision": "thinking-mode",
+     "title": "Thinking mode",
+     "rung": "extraBody",
+     "rank": 1,
+     "of": 7
     }
    ]
   },
@@ -3134,8 +3189,16 @@
   },
   {
    "id": "env-claude-code-workflows",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "workflows-enabled",
+     "title": "Workflow tool available",
+     "rung": "envWorkflows",
+     "rank": 3,
+     "of": 5
+    }
+   ]
   },
   {
    "id": "env-claude-code-workspace-host-paths",
@@ -3534,8 +3597,16 @@
   },
   {
    "id": "env-max-thinking-tokens",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "thinking-mode",
+     "title": "Thinking mode",
+     "rung": "env",
+     "rank": 4,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-mcp-client-secret",
@@ -8535,8 +8606,15 @@
   },
   {
    "id": "setting-always-thinking-enabled",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "thinking-mode",
+     "title": "Thinking mode",
+     "rung": "setting",
+     "rank": 6,
+     "of": 7
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9170,8 +9248,15 @@
   },
   {
    "id": "setting-sandbox--network--http-proxy-port",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "sandbox-network-proxy",
+     "title": "Sandbox network proxy",
+     "rung": "httpPort",
+     "rank": 2,
+     "of": 4
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9183,8 +9268,15 @@
   },
   {
    "id": "setting-sandbox--network--socks-proxy-port",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "sandbox-network-proxy",
+     "title": "Sandbox network proxy",
+     "rung": "socksPort",
+     "rank": 3,
+     "of": 4
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9640,8 +9732,15 @@
   },
   {
    "id": "setting-bash-output-max-chars",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "bash-output-limit",
+     "title": "Bash output limit",
+     "rung": "settings",
+     "rank": 1,
+     "of": 3
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -10212,8 +10311,15 @@
   },
   {
    "id": "setting-prompt-suggestion-enabled",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "prompt-suggestions",
+     "title": "Prompt suggestions",
+     "rung": "settingOff",
+     "rank": 6,
+     "of": 7
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -10615,8 +10721,15 @@
   },
   {
    "id": "setting-include-git-instructions",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "git-instructions",
+     "title": "Git instructions and status",
+     "rung": "setting",
+     "rank": 2,
+     "of": 3
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -10667,8 +10780,15 @@
   },
   {
    "id": "setting-disable-workflows",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "workflows-enabled",
+     "title": "Workflow tool available",
+     "rung": "disableSetting",
+     "rank": 0,
+     "of": 5
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -10680,8 +10800,15 @@
   },
   {
    "id": "setting-enable-workflows",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "workflows-enabled",
+     "title": "Workflow tool available",
+     "rung": "settingEnable",
+     "rank": 4,
+     "of": 5
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -12447,8 +12574,16 @@
   },
   {
    "id": "cli-flag-thinking",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "thinking-mode",
+     "title": "Thinking mode",
+     "rung": "cli",
+     "rank": 3,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "cli-flag-thinking-display",
@@ -12457,8 +12592,16 @@
   },
   {
    "id": "cli-flag-max-thinking-tokens",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "thinking-mode",
+     "title": "Thinking mode",
+     "rung": "flag",
+     "rank": 5,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "cli-flag-max-turns",
@@ -12482,8 +12625,16 @@
   },
   {
    "id": "cli-flag-prompt-suggestions",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "prompt-suggestions",
+     "title": "Prompt suggestions",
+     "rung": "cli",
+     "rank": 1,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "cli-flag-enable-auth-status",
