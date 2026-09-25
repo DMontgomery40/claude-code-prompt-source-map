@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-25 · What wins
+
+- New page, What wins: for 28 values Claude Code decides (prompt cache TTL, model, effort, thinking, permission mode and rules, auth source, env var sources, and more), every source it checks in order, as interactive cards. Set rungs to see which one takes effect; share the exact setup as a link.
+- Ladders marked Tested were checked against the requests Claude Code 2.1.282 actually sent; the rest were read from code and independently reviewed.
+- Every environment variable, setting and CLI flag links to the ladders it feeds. Settings, CLI and What wins pages gain tag filters.
+
 ## 2026-09-25 · Claude Code 2.1.282
 
 - Requests: the Artifact, ArtifactData and SendMessage tool descriptions changed, and ArtifactData takes a new input schema. The default system prompt is unchanged.
