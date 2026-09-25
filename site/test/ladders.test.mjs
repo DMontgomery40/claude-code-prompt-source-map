@@ -85,7 +85,7 @@ test("a scenario value containing commas survives the query round trip", () => {
 test("the page script carries the scenario helpers and qualifies a remote winner", () => {
   assert.match(ladderScript, /function readScenario\(/);
   assert.match(ladderScript, /function writeScenario\(/);
-  assert.match(ladderScript, /r\.mechanism === "remote"\) why\.push\(" \(default in code; Anthropic can change it\)"\)/);
+  assert.match(ladderScript, /r\.mechanism === "remote"\) why\.push\(" \(Anthropic can change this without a release\)"\)/);
 });
 
 test("every rung mechanism has a label and its own color, legible on every card surface", () => {

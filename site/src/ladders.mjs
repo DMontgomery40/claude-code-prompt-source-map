@@ -238,7 +238,7 @@ function ladderClient() {
       else if (out.rung) {
         const r = rungOf(out.rung);
         why.push("from rung " + winNumber + ": ", r.knob ? { code: r.label ?? r.knob } : { plain: r.label ?? r.id });
-        if (r.mechanism === "remote") why.push(" (default in code; Anthropic can change it)");
+        if (r.mechanism === "remote") why.push(" (Anthropic can change this without a release)");
       } else why.push(d.fallback ? "no rung answers, so the default applies" : "no rung answers");
       if (out.constrainedBy) {
         const c = d.constraints.find(x => x.id === out.constrainedBy);
