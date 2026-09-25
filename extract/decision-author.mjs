@@ -32,7 +32,7 @@ export function resolveAnchor(anchor) {
   return provenance(anchor.file, src, start, end);
 }
 
-function compile(draft, knobs) {
+export function compile(draft, knobs) {
   const toProv = anchors => (anchors ?? []).map(resolveAnchor);
   const { anchors, ...rest } = draft;
   return {
