@@ -14,13 +14,17 @@ const loader = find => [{ file: chunks[0], find, span: "function" }];
 const layer = (id, label, short, note) => ({ id, mechanism: "layer", knob: null, label, input: "toggle", note, effect: { value: short }, anchors: loader('"settings_load_started"') });
 const draft = {
   id: "settings-layers", title: "Where a setting's value comes from", group: "Settings files",
-  question: "Claude Code reads settings from five sources. A single value comes from the highest source that sets it; lists combine across all of them.",
+  question: "Claude Code reads settings from five sources, over settings that plugins supply as the lowest layer. A single value comes from the highest source that sets it; lists combine across all of them.",
   shape: "layered", observe: "none", merge_when: [{ type: ["array"] }],
-  context: [{ key: "type", label: "Value type", values: [{ value: "scalar", label: "Single value" }, { value: "array", label: "List (such as permission rules)" }] }],
+  context: [{ key: "type", label: "Value type", values: [{ value: "scalar", label: "Single value" }, { value: "array", label: "List (such as companyAnnouncements)" }] }],
   anchors: loader('"settings_load_started"'),
+  notes: [
+    "Credential-helper keys (apiKeyHelper, awsAuthRefresh, awsCredentialExport, gcpAuthRefresh, otelHeadersHelper, proxyAuthHelper) can be removed from a source before the merge, so for them the highest source that sets one does not always win.",
+    "Some keys are read from particular sources rather than from this combined value, and can ignore the project files. Permission rules are one: see their own ladder."
+  ],
   rungs: [
     layer("policy", "Managed policy (managed-settings.json)", "managed policy", "Set by an administrator. Always loaded."),
-    layer("flag", "--settings file or JSON", "--settings", "Always loaded when given."),
+    layer("flag", "--settings file or JSON", "--settings", "Loaded even when --setting-sources leaves the other files out."),
     layer("local", ".claude/settings.local.json", "local project file", "This project, this machine; not checked in."),
     layer("project", ".claude/settings.json", "shared project file", "This project, shared with the team."),
     layer("user", "~/.claude/settings.json", "user file", "All your projects.")
