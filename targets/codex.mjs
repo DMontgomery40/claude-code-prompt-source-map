@@ -55,7 +55,7 @@ export const codex = {
     if (!diff && !labelChanged && !dirty) return { published: false, summary };
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: summary.sources, changed: Boolean(diff) || !previousLabel });
     if (diff && !dryRun) appendChangelog(repo, `ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build}), Codex CLI ${summary.sources.cli_version}`, diff);
-    gate(repo);
+    await gate(repo);
     if (dryRun) return { published: false, summary, wouldPublish: true };
     await publish(repo, { origin: this.origin, message: diff ? `Refresh: ${summary.changed.length} documents changed upstream\n\n${diff.slice(0, 3000)}` : dirty ? `Provenance: ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build})` : `Status: now checked ${this.checkedLabel(now)}` });
     return { published: true, summary };

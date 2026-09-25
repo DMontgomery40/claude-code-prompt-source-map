@@ -1,6 +1,6 @@
 // Claude Code → ccprompts.dtmont.com. Tracks the npm "latest" dist-tag of the
 // darwin-arm64 build (the tag the default auto-updater follows).
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
@@ -9,6 +9,13 @@ import { run } from "../lib/run.mjs";
 const repo = `${process.env.HOME}/Documents/claude-code-prompt-source-map`;
 const node = process.execPath;
 const npm = path.join(path.dirname(process.execPath), "npm");
+
+// Areas with records still marked "needs_review", in file order.
+function reviewAreas() {
+  return readdirSync(path.join(repo, "outputs")).filter(f => f.endsWith(".json")).sort()
+    .filter(f => JSON.parse(readFileSync(path.join(repo, "outputs", f), "utf8")).items?.some(i => i.needs_review))
+    .map(f => f.replace(/\.json$/, ""));
+}
 
 export const cc = {
   name: "cc",
@@ -37,8 +44,14 @@ export const cc = {
     if (r.status === 3) {
       // Records whose source changed need a careful update of their text and conditions.
       if (dryRun) return { published: false, summary: JSON.parse(r.stdout.trim().split("\n").at(-1)), wouldPublish: true, note: "review agent would run" };
+      // One bounded agent per area, in series: each owns only its area's two files, so a
+      // budget running out in one area cannot leave another half-edited.
       const report = readFileSync(path.join(repo, "work/cc-diff.md"), "utf8");
-      runAgent(repo, `Claude Code ${fingerprint.version} was released. extract/refresh.mjs moved every unchanged record to the new build; the records listed below changed at their source and are marked "needs_review": true in outputs/*.json.\n\n${report.slice(0, 24000)}\n\nFor each flagged record, update its text, conditions, and provenance in outputs/<area>.json and the matching section of outputs/<area>.md so they match ${fingerprint.version} exactly, following work/CONTRACT.md (read the new code in work/extracted/; the "new" excerpts above are candidates chosen by a classifier, so confirm them). Remove records whose source no longer exists, add new ones where the report shows new behavior, then delete "needs_review". Finish by running \`node ${args.join(" ")} --verify\` until it exits 0, and \`cd site && npm test\`.`, { budgetUsd: 15, timeoutMs: 90 * 60 * 1000 });
+      const shared = report.split("\n### ").filter(s => /^(Default requests|claude --help)/.test(s)).map(s => `### ${s}`).join("\n").slice(0, 6000);
+      for (const area of reviewAreas()) {
+        const lines = report.split("\n").filter((l, i, all) => l.startsWith(`- **${area}** `) || (l.startsWith("  - ") && all.slice(0, i).reverse().find(x => x.startsWith("- **"))?.startsWith(`- **${area}** `)));
+        runAgent(repo, `Claude Code ${fingerprint.version} was released. extract/refresh.mjs moved every unchanged record to the new build; the ${area} records below changed at their source and are marked "needs_review": true in outputs/${area}.json.\n\n${lines.join("\n").slice(0, 16000)}\n\nContext from the release report:\n\n${shared}\n\nYou own only outputs/${area}.json and outputs/${area}.md. For each flagged record, update its text, conditions, and provenance so they match ${fingerprint.version} exactly, following work/CONTRACT.md (read the new code in work/extracted/; the "new" excerpts above are candidates chosen by a classifier, so confirm them). Provenance must cite files that exist in work/extracted/. Remove records whose source no longer exists, add new ones where the report shows new behavior, then delete "needs_review". Never type counts or statistics about this reference into prose (how many settings, tools, flags, records, or documented or undocumented ones): write {{count:<area> path=value ...}} or {{value:<file> dotted.path}} tokens, which site/src/facts.mjs fills from the JSON; the publishing gate rejects typed statistics. Finish by running \`node ${args.join(" ")} --verify 2>&1 | grep ${area}\` until it prints nothing.`, { budgetUsd: 8, timeoutMs: 45 * 60 * 1000 });
+      }
       r = refresh(["--verify"]);
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
@@ -47,7 +60,7 @@ export const cc = {
     const diff = existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "";
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: { ...summary.sources, version: fingerprint.version, integrity: fingerprint.integrity }, changed: Boolean(diff) });
     if (diff && !dryRun) appendChangelog(repo, `Claude Code ${fingerprint.version}`, diff);
-    gate(repo);
+    await gate(repo);
     if (dryRun) return { published: false, summary, wouldPublish: true };
     await publish(repo, { origin: this.origin, message: `Refresh for Claude Code ${fingerprint.version}\n\n${diff.slice(0, 3000) || "No prompt or reference changes; provenance moved to the new build."}` });
     return { published: true, summary };
