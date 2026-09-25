@@ -7,13 +7,15 @@
 //                bypass: { id: true }, constraints: { id: true } }
 export function evaluateLadder(decision, scenario) {
   const ctx = scenario.context ?? {}, set = scenario.set ?? {};
-  const holds = (when, value) => Object.entries(when).every(([key, allowed]) => allowed.includes(key === "value" ? value : ctx[key]));
+  const holds = (when, value) => Object.entries(when).every(([key, allowed]) => allowed.includes(
+    key === "value" ? value : key.startsWith("rung.") ? set[key.slice(5)] : ctx[key]
+  ));
   const any = (list, value) => (list ?? []).some(when => holds(when, value));
   const applies = rung => !rung.applies_when?.length || any(rung.applies_when);
   const effect = (rung, input) => {
     if ("value" in rung.effect) return rung.effect.value;
     if (rung.effect.from === "input") return input;
-    return rung.effect.by_context.find(entry => holds(entry.when ?? {}))?.value;
+    return rung.effect.by_context.find(entry => holds(entry.when ?? {}, input))?.value;
   };
   for (const bypass of decision.bypasses ?? []) {
     if (scenario.bypass?.[bypass.id] && (!bypass.applies_when?.length || any(bypass.applies_when))) {
@@ -30,7 +32,10 @@ export function evaluateLadder(decision, scenario) {
       if (rung.accepts && !rung.accepts.includes(input)) { skipped.push(rung.id); continue; }
       if (any(rung.skip_when, input)) { skipped.push(rung.id); continue; }
     }
-    answers.push({ rung: rung.id, value: effect(rung, input) });
+    const value = effect(rung, input);
+    const vetoingConstraint = (decision.constraints ?? []).find(c => scenario.constraints?.[c.id] && c.skip_values?.includes(value));
+    if (vetoingConstraint) { skipped.push(rung.id); continue; }
+    answers.push({ rung: rung.id, value });
   }
   const merging = decision.shape === "merge" || (decision.shape === "layered" && any(decision.merge_when));
   let result;
@@ -44,7 +49,14 @@ export function evaluateLadder(decision, scenario) {
     const first = answers[0];
     result = { value: first ? first.value : decision.fallback?.value ?? null, rung: first?.rung ?? null, contributors: first ? [first.rung] : [], skipped, bypassedBy: null };
   }
-  for (const c of decision.constraints ?? []) if (scenario.constraints?.[c.id] && c.effect) result = { ...result, value: c.effect.value, constrainedBy: c.id };
+  for (const c of decision.constraints ?? []) {
+    if (!scenario.constraints?.[c.id]) continue;
+    if (c.effect) result = { ...result, value: c.effect.value, constrainedBy: c.id };
+    if (c.cap) {
+      const capValue = "value" in c.cap ? c.cap.value : c.cap.by_context.find(entry => holds(entry.when ?? {}, result.value))?.value;
+      if (capValue !== undefined && result.value > capValue) result = { ...result, value: capValue, constrainedBy: c.id };
+    }
+  }
   return result;
 }
 
