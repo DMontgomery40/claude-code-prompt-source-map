@@ -12,6 +12,7 @@ export function evaluateLadder(decision, scenario) {
   ));
   const any = (list, value) => (list ?? []).some(when => holds(when, value));
   const applies = rung => !rung.applies_when?.length || any(rung.applies_when);
+  const active = c => scenario.constraints?.[c.id] === true || Boolean(c.applies_when?.length && any(c.applies_when));
   const effect = (rung, input) => {
     if ("value" in rung.effect) return rung.effect.value;
     if (rung.effect.from === "input") return input;
@@ -33,7 +34,7 @@ export function evaluateLadder(decision, scenario) {
       if (any(rung.skip_when, input)) { skipped.push(rung.id); continue; }
     }
     const value = effect(rung, input);
-    const vetoingConstraint = (decision.constraints ?? []).find(c => scenario.constraints?.[c.id] && c.skip_values?.includes(value));
+    const vetoingConstraint = (decision.constraints ?? []).find(c => active(c) && c.skip_values?.includes(value));
     if (vetoingConstraint) { skipped.push(rung.id); continue; }
     answers.push({ rung: rung.id, value });
   }
@@ -41,7 +42,7 @@ export function evaluateLadder(decision, scenario) {
   let result;
   if (merging) {
     let kept = answers;
-    for (const c of decision.constraints ?? []) if (scenario.constraints?.[c.id] && c.keep_rungs) kept = kept.filter(a => c.keep_rungs.includes(a.rung));
+    for (const c of decision.constraints ?? []) if (active(c) && c.keep_rungs) kept = kept.filter(a => c.keep_rungs.includes(a.rung));
     const value = [];
     for (const a of kept) for (const item of [].concat(a.value)) if (!value.some(v => JSON.stringify(v) === JSON.stringify(item))) value.push(item);
     result = { value, rung: null, contributors: kept.map(a => a.rung), skipped, bypassedBy: null };
@@ -50,7 +51,7 @@ export function evaluateLadder(decision, scenario) {
     result = { value: first ? first.value : decision.fallback?.value ?? null, rung: first?.rung ?? null, contributors: first ? [first.rung] : [], skipped, bypassedBy: null };
   }
   for (const c of decision.constraints ?? []) {
-    if (!scenario.constraints?.[c.id]) continue;
+    if (!active(c)) continue;
     if (c.effect) result = { ...result, value: c.effect.value, constrainedBy: c.id };
     if (c.cap) {
       const capValue = "value" in c.cap ? c.cap.value : c.cap.by_context.find(entry => holds(entry.when ?? {}, result.value))?.value;

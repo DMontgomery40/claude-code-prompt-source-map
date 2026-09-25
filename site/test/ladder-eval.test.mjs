@@ -118,3 +118,21 @@ test("numeric caps compare string-typed values as numbers and leave non-numbers 
   assert.deepEqual([capped("200000").value, capped("200000").constrainedBy], ["128000", "limit"]);
   assert.equal(capped("remote").value, "remote");
 });
+
+test("constraints with applies_when are active without a toggle", () => {
+  const d = { shape: "first-wins",
+    constraints: [
+      { id: "limit", applies_when: [{}], cap: { by_context: [{ when: { model: ["opus-4"] }, value: 32000 }, { when: {}, value: 128000 }] } },
+      { id: "managedVeto", applies_when: [{ managed: [true] }], skip_values: ["bypassPermissions"] }
+    ],
+    rungs: [
+      { id: "env", input: "choice", accepts: [8000, 200000], effect: { from: "input" } },
+      { id: "mode", input: "choice", accepts: ["bypassPermissions", "plan"], effect: { from: "input" } }
+    ], fallback: { value: "default" } };
+  assert.equal(evaluateLadder(d, { context: { model: "opus-4" }, set: { env: 200000 } }).value, 32000);
+  assert.equal(evaluateLadder(d, { context: { model: "sonnet-5" }, set: { env: 200000 } }).value, 128000);
+  assert.equal(evaluateLadder(d, { context: { model: "sonnet-5" }, set: { env: 8000 } }).value, 8000);
+  const vetoed = evaluateLadder(d, { context: { managed: true }, set: { mode: "bypassPermissions" } });
+  assert.deepEqual([vetoed.value, vetoed.skipped], ["default", ["mode"]]);
+  assert.equal(evaluateLadder(d, { context: { managed: false }, set: { mode: "bypassPermissions" } }).value, "bypassPermissions");
+});
