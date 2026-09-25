@@ -55,6 +55,8 @@ if (flag === "--verify") {
   for (const name of areaFiles()) {
     for (const item of records(name)) {
       if (item.needs_review) problems.push(`${name}:${item.id} still needs review`);
+      // A ladder a probe contradicted on this build is not publishable, even once reviewed.
+      if (item.details?.probe_failures?.length ?? item.details?.probe_failures) problems.push(`${name}:${item.id} has probe failures (details.probe_failures)`);
       for (const p of provenanceObjects(item)) {
         const f = manifest.get(p.file);
         if (!f) { problems.push(`${name}:${item.id} cites unknown file ${p.file}`); continue; }
@@ -170,7 +172,7 @@ try {
   }
   if (regenerated.length) sections.push(`### Regenerated from the new build (${regenerated.length})\n\n${regenerated.map(c => `- **${c.area}** \`${c.id}\` (${c.title ?? ""}): ${c.reason}`).join("\n")}`);
   const unlisted = [...flagged].filter(key => !review.some(c => `${c.area}:${c.id}` === key));
-  if (unlisted.length) sections.push(`### Records an extractor marked for review (${unlisted.length})\n\n${unlisted.map(key => `- **${key.split(":")[0]}** \`${key.split(":").slice(1).join(":")}\`: see details.review_reasons`).join("\n")}`);
+  if (unlisted.length) sections.push(`### Records an extractor marked for review (${unlisted.length})\n\n${unlisted.map(key => `- **${key.split(":")[0]}** \`${key.split(":").slice(1).join(":")}\`: see details.review_reasons or details.probe_failures`).join("\n")}`);
   if (newOther.length) sections.push(`### New model-facing text (${newOther.length}, published on "Other model-facing text")\n\n${newOther.slice(0, 40).map(i => `- ${JSON.stringify(i.text.slice(0, 160))}`).join("\n")}`);
   writeFileSync(path.join(work, "cc-diff.md"), sections.length ? `## Claude Code ${version} (from ${previousVersion})\n\n${sections.join("\n\n")}\n` : "");
 

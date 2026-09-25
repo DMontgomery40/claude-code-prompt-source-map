@@ -5,12 +5,18 @@ import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { renderWhatWins } from "../../extract/decisions-page.mjs";
 import { buildSite } from "../src/build-site.mjs";
 import { categories } from "../src/catalog.mjs";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const decisions = JSON.parse(await readFile(path.join(root, "outputs/decisions.json"), "utf8")).items;
 const regenerate = "regenerate with node extract/decisions-page.mjs";
+
+test("what-wins.md is exactly the page rendered from outputs/decisions.json", async () => {
+  const committed = await readFile(path.join(root, "outputs/what-wins.md"), "utf8");
+  assert.ok(committed === renderWhatWins(decisions), `outputs/what-wins.md differs from the current decisions: ${regenerate}`);
+});
 
 test("what-wins.md has exactly one heading per decision", async () => {
   const headings = (await readFile(path.join(root, "outputs/what-wins.md"), "utf8")).split("\n").filter(line => line.startsWith("### ")).map(line => line.slice(4).trim());

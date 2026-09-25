@@ -438,6 +438,20 @@ test("every env var, settings key and CLI flag feeds a ladder or says why not", 
       assert.ok(statuses.has(covered.get(r.id)?.status), `${area}:${r.id} has no ladder and no reason`);
     }
   }
-  const decisions = new Set(JSON.parse(await readFile(path.join(root, "outputs/decisions.json"), "utf8")).items.map(d => d.id));
-  for (const i of index) for (const f of i.feeds) assert.ok(decisions.has(f.decision), `${i.id} feeds missing decision ${f.decision}`);
+  // Each feed link names a rung by position; after a ladder edit the index must be regenerated
+  // (node extract/decision-coverage.mjs) or the link points at the wrong rung.
+  const decisions = new Map(JSON.parse(await readFile(path.join(root, "outputs/decisions.json"), "utf8")).items.map(d => [d.id, d]));
+  for (const i of index) for (const f of i.feeds) {
+    const d = decisions.get(f.decision);
+    assert.ok(d, `${i.id} feeds missing decision ${f.decision}`);
+    assert.equal(f.title, d.title, `${i.id} feed title for ${d.id}`);
+    if (f.rank === null) continue;
+    const at = f.rank === 0 ? (d.bypasses ?? []).find(b => b.id === f.rung) : d.rungs[f.rank - 1];
+    assert.equal(at?.id, f.rung, `${i.id} feed rank ${f.rank} in ${d.id}`);
+    assert.equal(at.knob, i.id, `${i.id} feed ${d.id}/${f.rung} is another knob's`);
+    assert.equal(f.of, d.rungs.length, `${i.id} feed "of" for ${d.id}`);
+  }
+  for (const d of decisions.values()) for (const r of [...d.rungs, ...(d.bypasses ?? [])].filter(x => x.knob)) {
+    assert.ok(covered.get(r.knob)?.feeds.some(f => f.decision === d.id && f.rung === r.id), `${r.knob} has no feed for ${d.id}/${r.id}`);
+  }
 });
