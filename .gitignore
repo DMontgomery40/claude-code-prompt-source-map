@@ -1,0 +1,7 @@
+# Extracted Claude Code binary contents stay local; only prompt texts, provenance, and scripts are published.
+work/
+node_modules/
+site/node_modules/
+site/dist/
+site/.wrangler/
+.DS_Store

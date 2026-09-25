@@ -1,0 +1,354 @@
+import assert from "node:assert/strict";
+import { mkdtemp, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import test from "node:test";
+import { fileURLToPath } from "node:url";
+import { buildSite } from "../src/build-site.mjs";
+import { categories } from "../src/catalog.mjs";
+import { site } from "../src/config.mjs";
+
+const fixtureCatalog = [
+  {
+    label: "Instructions",
+    files: [
+      { path: "outputs/current.md", format: "markdown" },
+      { path: "outputs/evidence.json", format: "source" }
+    ]
+  }
+];
+
+async function withFixture(run) {
+  const root = await mkdtemp(path.join(os.tmpdir(), "aeon-site-test-"));
+  await mkdir(path.join(root, "outputs"));
+  await writeFile(
+    path.join(root, "outputs/current.md"),
+    "# Overview\n\nUse `<checkpoint>` & continue.\n"
+  );
+  await writeFile(
+    path.join(root, "outputs/evidence.json"),
+    '{"state":"<ready>","ok":true}\n'
+  );
+  try {
+    await run(root, path.join(root, "dist/index.html"));
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+function tableOfContents(html) {
+  return html.slice(html.indexOf('<nav class="toc-nav"'), html.indexOf("</nav>"));
+}
+
+test("build renders every catalog file and stable filename navigation", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    assert.match(html, /href="#current-md"/);
+    assert.match(html, /id="current-md"/);
+    assert.match(html, /href="#evidence-json"/);
+    assert.match(html, /current\.md/);
+    assert.match(html, /evidence\.json/);
+  });
+});
+
+test("intro and persistent corner link both lead to the requested X profile", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    assert.match(html, /id="intro" role="dialog"/);
+    assert.match(html, /David has good takes\./);
+    assert.match(html, /class="intro-follow" href="https:\/\/x\.com\/_DMontgomery40"/);
+    assert.match(html, /class="follow-link" href="https:\/\/x\.com\/_DMontgomery40"/);
+    assert.match(html, /\.follow-link\{position:fixed;/);
+    assert.match(html, /setTimeout\(closeIntro, 2350\)/);
+    assert.match(html, /@media\(prefers-reduced-motion:reduce\).*\.intro\{display:none\}/);
+  });
+});
+
+test("social previews use the public canonical URL and an absolute large card image", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    assert.match(html, /<link rel="canonical" href="https:\/\/ccprompts\.dtmont\.com\/">/);
+    assert.match(html, /<meta property="og:url" content="https:\/\/ccprompts\.dtmont\.com\/">/);
+    assert.match(html, /<meta property="og:image" content="https:\/\/ccprompts\.dtmont\.com\/social-card\.png">/);
+    assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
+    assert.match(html, /<meta name="twitter:image" content="https:\/\/ccprompts\.dtmont\.com\/social-card\.png">/);
+    assert.match(html, /<meta name="twitter:creator" content="@_DMontgomery40">/);
+    assert.match(html, /<meta name="twitter:title" content="Claude Code Prompt Source Map:/);
+  });
+});
+
+test("build keeps default-open documents open and the rest collapsed but expandable", async () => {
+  await withFixture(async (root, outFile) => {
+    const expandableCatalog = [
+      {
+        label: "Prompts",
+        files: [
+          { path: "outputs/current.md", format: "markdown", defaultOpen: true },
+          { path: "outputs/evidence.json", format: "source", defaultOpen: false }
+        ]
+      }
+    ];
+
+    await buildSite({ sourceRoot: root, outFile, categories: expandableCatalog });
+    const html = await readFile(outFile, "utf8");
+
+    assert.match(html, /<details class="document" id="current-md"[^>]* open>/);
+    assert.match(html, /<details class="document" id="evidence-json"(?![^>]* open)[^>]*>/);
+    assert.match(html, /<summary class="document-summary">/);
+    assert.match(html, /<div class="document-content">/);
+  });
+});
+
+test("build escapes markup-looking source while preserving visible text", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    assert.match(html, /<code>&lt;checkpoint&gt;<\/code> &amp; continue/);
+    assert.match(html, /&quot;state&quot;:&quot;&lt;ready&gt;&quot;/);
+    assert.doesNotMatch(html, /&amp;lt;checkpoint&amp;gt;/);
+    assert.doesNotMatch(html, /<checkpoint>/);
+    assert.doesNotMatch(html, /<ready>/);
+  });
+});
+
+test("build keeps duplicate internal headings subordinate to unique file anchors", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(path.join(root, "outputs/duplicate.md"), "# Overview\n\nSecond file.\n");
+    const duplicateHeadings = [
+      {
+        label: "Instructions",
+        files: [
+          { path: "outputs/current.md", format: "markdown" },
+          { path: "outputs/duplicate.md", format: "markdown" }
+        ]
+      }
+    ];
+    await buildSite({ sourceRoot: root, outFile, categories: duplicateHeadings });
+    const html = await readFile(outFile, "utf8");
+    assert.match(html, /id="current-md"/);
+    assert.match(html, /id="duplicate-md"/);
+    assert.doesNotMatch(html, /id="overview"/);
+  });
+});
+
+test("build reports the filename when a catalog source is missing", async () => {
+  await withFixture(async (root, outFile) => {
+    const missing = [
+      {
+        label: "Missing",
+        files: [{ path: "outputs/absent.md", format: "markdown" }]
+      }
+    ];
+    await assert.rejects(
+      buildSite({ sourceRoot: root, outFile, categories: missing }),
+      /outputs\/absent\.md/
+    );
+  });
+});
+
+test("build wraps long lines in source panels and fenced code blocks", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(
+      path.join(root, "outputs/current.md"),
+      "```text\nthis-is-one-extremely-long-unbroken-code-token\n```\n"
+    );
+    await writeFile(
+      path.join(root, "outputs/evidence.json"),
+      `{"value":"${"x".repeat(200)}"}\n`
+    );
+
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+
+    assert.match(
+      html,
+      /pre\{[^}]*overflow-x:hidden;[^}]*white-space:pre-wrap;[^}]*overflow-wrap:anywhere;[^}]*word-break:break-word;/
+    );
+    assert.match(
+      html,
+      /\.source-block\{[^}]*overflow-x:hidden;[^}]*white-space:pre-wrap;[^}]*overflow-wrap:anywhere;[^}]*word-break:break-word;/
+    );
+  });
+});
+
+
+test("table of contents nests two heading levels under each document and anchors every heading", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(
+      path.join(root, "outputs/current.md"),
+      "# Title\n\n## Work\n\n### Detail & <scope>\n\n#### Too deep\n\n## Work\n\nAgain.\n"
+    );
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    const toc = tableOfContents(html);
+
+    assert.match(toc, /<li data-document="current-md"><a href="#current-md" data-depth="0">current\.md<\/a><ul><li><a href="#current-md--work" data-depth="1">Work<\/a><ul><li><a href="#current-md--detail-scope" data-depth="2">Detail &amp; &lt;scope&gt;<\/a><\/li><\/ul><\/li><li><a href="#current-md--work-2" data-depth="1">Work<\/a><\/li><\/ul><\/li>/);
+    assert.match(toc, /<li data-document="evidence-json"><a href="#evidence-json" data-depth="0">evidence\.json<\/a><\/li>/);
+    assert.doesNotMatch(toc, /Too deep|<scope>/);
+    assert.match(html, /<h3 id="current-md--work">Work<\/h3>/);
+    assert.match(html, /<h4 id="current-md--detail-scope">Detail &amp; &lt;scope&gt;<\/h4>/);
+    assert.match(html, /<h5 id="current-md--too-deep">Too deep<\/h5>/);
+    assert.match(html, /<h3 id="current-md--work-2">Work<\/h3>/);
+    assert.match(html, /\.toc li>ul\{display:none;/);
+    assert.match(html, /\.toc a\.in-view\+ul\{display:block\}/);
+  });
+});
+
+test("every document also gets a directly linkable page with relative links", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(
+      path.join(root, "outputs/current.md"),
+      "# Title\n\n## Work\n\nSee [the evidence](#evidence-json), [this](#current-md--work), and [the archive](./archive.tar.gz).\n"
+    );
+    await mkdir(path.join(root, "dist/renamed-document"), { recursive: true });
+    await writeFile(path.join(root, "dist/renamed-document/index.html"), "stale");
+    const catalog = [{ label: "Instructions", files: [
+      { path: "outputs/current.md", format: "markdown" },
+      { path: "outputs/evidence.json", format: "source", title: "Evidence", slug: "raw-evidence" }
+    ] }];
+    await buildSite({ sourceRoot: root, outFile, categories: catalog });
+    const index = await readFile(outFile, "utf8");
+    const page = await readFile(path.join(root, "dist/current-md/index.html"), "utf8");
+    const toc = tableOfContents(page);
+
+    await assert.rejects(readFile(path.join(root, "dist/renamed-document/index.html")));
+    assert.match(index, /id="intro"/);
+    assert.match(index, /<h3 id="current-md--work">Work<\/h3>/);
+    assert.match(page, /<title>current\.md · Claude Code Prompt Source Map<\/title>/);
+    assert.match(page, /<link rel="canonical" href="https:\/\/ccprompts\.dtmont\.com\/current-md\/">/);
+    assert.match(page, /<meta property="og:url" content="https:\/\/ccprompts\.dtmont\.com\/current-md\/">/);
+    assert.doesNotMatch(page, /id="intro"|<details class="document"|&quot;state&quot;/);
+    assert.match(page, /<article class="document-page" id="current-md"/);
+    assert.match(page, /<a class="full-reference-link" href="\.\.\/">/);
+    assert.match(page, /<h3 id="work">Work<\/h3>/);
+    assert.match(page, /href="\.\.\/raw-evidence\/">the evidence/);
+    assert.match(page, /href="#work">this/);
+    assert.match(page, /href="\.\.\/archive\.tar\.gz">the archive/);
+    assert.match(toc, /<a href="#current-md" data-depth="0">current\.md<\/a><ul><li><a href="#work" data-depth="1">Work</);
+    assert.match(toc, /<li data-document="evidence-json"><a href="\.\.\/raw-evidence\/" data-depth="0">Evidence<\/a><\/li>/);
+    const sourcePage = await readFile(path.join(root, "dist/raw-evidence/index.html"), "utf8");
+    assert.match(sourcePage, /&quot;state&quot;:&quot;&lt;ready&gt;&quot;/);
+  });
+});
+
+test("production pages resolve every contents link to exactly one unique anchor", async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+  const outDir = await mkdtemp(path.join(os.tmpdir(), "aeon-site-toc-test-"));
+  const outFile = path.join(outDir, "index.html");
+  const documents = categories.flatMap(category => category.files);
+
+  try {
+    await buildSite({ sourceRoot: root, outFile, categories });
+    const pages = (await readdir(outDir, { withFileTypes: true }))
+      .filter(entry => entry.isDirectory() && entry.name !== "data")
+      .map(entry => path.join(outDir, entry.name, "index.html"));
+    assert.equal(pages.length, documents.length);
+
+    for (const file of [outFile, ...pages]) {
+      const html = await readFile(file, "utf8");
+      const toc = tableOfContents(html);
+      const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+      assert.deepEqual(ids.filter((id, index) => ids.indexOf(id) !== index), [], `${file} ids are unique`);
+
+      const links = [...toc.matchAll(/<a href="([^"]+)" data-depth="(\d)">/g)];
+      assert.equal(links.filter(link => link[2] === "0").length, documents.length);
+      assert(links.every(link => Number(link[2]) <= 2));
+      for (const [, href] of links) {
+        if (href.startsWith("#")) assert(ids.includes(href.slice(1)), `${file} contents target ${href} exists`);
+        else assert.match(href, /^(?:\.\.\/)?[a-z0-9-]+\/$/);
+      }
+      for (const [, href] of html.matchAll(/href="(?:\.\.\/)?([a-z0-9-]+)\/(?:#[^"]*)?"/g)) {
+        assert(pages.includes(path.join(outDir, href, "index.html")), `${file} links to an existing page ${href}`);
+      }
+    }
+
+    const index = await readFile(outFile, "utf8");
+    const systemPrompt = await readFile(path.join(outDir, "system-prompt/index.html"), "utf8");
+    const levels = [...tableOfContents(systemPrompt).matchAll(/data-depth="(\d)"/g)].map(match => match[1]);
+    assert(levels.includes("1") && levels.includes("2"), "document pages list two heading levels");
+    assert.match(index, /<nav class="doc-index-wrap"/, "the home page lists every reference page");
+    for (const file of documents.filter(file => file.format === "source")) {
+      const anchor = file.path.split("/").at(-1).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      assert.match(tableOfContents(index), new RegExp(`<li data-document="${anchor}"><a [^>]+>[^<]+</a></li>`), `${file.path} has no child list`);
+    }
+  } finally {
+    await rm(outDir, { recursive: true, force: true });
+  }
+});
+
+test("prompt text shows markdown links and images literally while editorial links stay live", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(
+      path.join(root, "outputs/current.md"),
+      "# Findings\n\nSee [the evidence](#evidence-json) and ![card](/card.png).\n"
+    );
+    await writeFile(
+      path.join(root, "outputs/prompts.md"),
+      "# Helpers\n\n# Media\n\nUse ![alt](/absolute/path.png) and [label](codex://review?pr=PR_URL&line=LINE).\n"
+    );
+    await writeFile(
+      path.join(root, "outputs/base.md"),
+      "# Links\n\nCite [My Report.md](</abs/path/My Project/My Report.md:3>) or https://example.com.\n"
+    );
+    const catalog = [{ label: "Evidence", files: [
+      { path: "outputs/current.md", format: "markdown" },
+      { path: "outputs/evidence.json", format: "source" },
+      { path: "outputs/prompts.md", format: "markdown", promptText: true },
+      { path: "outputs/base.md", format: "markdown", promptText: true }
+    ] }];
+    await buildSite({ sourceRoot: root, outFile, categories: catalog });
+    const html = await readFile(outFile, "utf8");
+
+    assert.doesNotMatch(html, /<img\b/);
+    assert.match(html, /<a href="#evidence-json">the evidence<\/a> and !\[card\]\(\/card\.png\)/);
+    assert.match(html, /Use !\[alt\]\(\/absolute\/path\.png\) and \[label\]\(codex:\/\/review\?pr=PR_URL&amp;line=LINE\)\./);
+    assert.match(html, /Cite \[My Report\.md\]\(&lt;\/abs\/path\/My Project\/My Report\.md:3&gt;\) or https:\/\/example\.com\./);
+    assert.doesNotMatch(html, /href="codex:|href="\/abs\/path|href="https:\/\/example\.com"/);
+  });
+});
+
+test("documents with structured records link to their JSON from the panel and the page", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(path.join(root, "outputs/current.json"), '{"items":[]}\n');
+    const catalog = [{ label: "Prompts", files: [
+      { path: "outputs/current.md", format: "markdown", title: "Current", slug: "current", data: "outputs/current.json" }
+    ] }];
+    await buildSite({ sourceRoot: root, outFile, categories: catalog });
+    const index = await readFile(outFile, "utf8");
+    const page = await readFile(path.join(root, "dist/current/index.html"), "utf8");
+
+    assert.equal(await readFile(path.join(root, "dist/data/current.json"), "utf8"), '{"items":[]}\n');
+    assert.match(index, /<p class="data-link"><a href="data\/current\.json">current\.json<\/a>/);
+    assert.match(page, /<p class="data-link"><a href="\.\.\/data\/current\.json">current\.json<\/a>/);
+  });
+});
+
+test("production catalog pins every page path and every record carries binary provenance", async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+  const files = categories.flatMap(category => category.files);
+  const slugs = files.map(file => file.slug);
+  assert(files.every(file => /^[a-z0-9-]+$/.test(file.slug ?? "")), "every catalog entry pins a slug");
+  assert.equal(new Set(slugs).size, slugs.length);
+  assert.equal(new Set(files.map(file => file.title)).size, files.length);
+
+  const versions = new Set();
+  for (const file of files.filter(file => file.data)) {
+    const data = JSON.parse(await readFile(path.join(root, file.data), "utf8"));
+    const items = data.items ?? [];
+    assert(items.length > 0, `${file.data} has records`);
+    for (const item of items) {
+      assert(item.id && item.title, `${file.data} record has id and title`);
+      assert(Array.isArray(item.provenance) && item.provenance.length > 0, `${file.data}:${item.id} has provenance`);
+      for (const p of item.provenance) {
+        assert(Number.isInteger(p.binary_offset) && p.binary_offset > 0, `${file.data}:${item.id} offset`);
+        assert.match(p.sha256 ?? "", /^[0-9a-f]{64}$/, `${file.data}:${item.id} sha256`);
+        assert.match(p.version ?? "", /^\d+\.\d+\.\d+$/);
+        versions.add(p.version);
+      }
+    }
+  }
+  assert.equal(versions.size, 1, `every record cites the same build (${[...versions].join(", ")})`);
+});

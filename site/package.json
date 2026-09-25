@@ -1,0 +1,13 @@
+{
+  "name": "aeon-reference-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "marked": "18.0.14"
+  }
+}
+

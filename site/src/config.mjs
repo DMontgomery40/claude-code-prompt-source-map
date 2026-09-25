@@ -1,0 +1,16 @@
+// Everything that identifies this site. The generator itself is shared with the GPT-6
+// prompt source map.
+export const site = {
+  origin: "https://ccprompts.dtmont.com",
+  name: "Claude Code Prompt Source Map",
+  homeTitle: "Claude Code Prompt Source Map · Prompts, Tools, Config",
+  shareTitle: "Claude Code Prompt Source Map: prompts, tools, env vars, config",
+  description: "The system prompt, tool descriptions, reminders, agents, skills, environment variables, settings, and hooks inside Claude Code, read from the shipped binary and kept current.",
+  dek: "What Claude Code sends the model, and every setting, flag, and environment variable that changes it.",
+  socialCard: { file: "social-card.png", alt: "Claude Code prompt source map card listing prompts, tools, env vars, and config." },
+  follow: { handle: "_DMontgomery40", url: "https://x.com/_DMontgomery40" },
+  introLabel: "PROMPTS / TOOLS / ENV / FIELD REPORT",
+  themeColor: "#101710",
+  // "index": the home page lists the documents instead of embedding all of them.
+  homeMode: "index"
+};
