@@ -1,7 +1,8 @@
 import { copyFile, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { expandFacts } from "./facts.mjs";
-import { renderSite } from "./render.mjs";
+import { escapeHtml, renderSite } from "./render.mjs";
+import { headingSlug } from "./toc.mjs";
 
 // Document pages are regenerated on every build so renamed documents leave no stale pages.
 async function removeDocumentPages(outDir) {
@@ -27,8 +28,23 @@ function titleKnobs(decisions, titles) {
   return decisions.map(d => ({ ...d, bypasses: d.bypasses?.map(titled), constraints: d.constraints?.map(titled) }));
 }
 
+// A knob's "Feeds:" link to the What wins card whose ladder it feeds, from decisions-index.json
+// (Task 7). settings-layers isn't a ladder, so it reads "Resolved through:" instead, and a
+// bypass (rank 0) reads "Bypasses" in place of "rung N of M".
+function feedLink(f) {
+  // Document-relative, like any other cross-document link in rendered content: routes.localize
+  // (site/src/routes.mjs pageHref) adds the "../" on a document's own standalone page, and it
+  // is already correct as-is when a document is inlined on the index page.
+  const href = `what-wins/#${headingSlug(escapeHtml(f.title))}`;
+  if (f.decision === "settings-layers") return { label: `Resolved through: ${f.title}`, href };
+  const rung = f.rank === 0 ? "Bypasses" : `rung ${f.rank} of ${f.of}`;
+  return { label: `Feeds: ${f.title}, ${rung}`, href };
+}
+
 export async function buildSite({ sourceRoot, outFile, categories }) {
   const documents = [];
+  const decisionsIndex = await readFile(path.join(sourceRoot, "outputs/decisions-index.json"), "utf8").then(raw => JSON.parse(raw).items, () => []);
+  const feedsById = new Map(decisionsIndex.map(i => [i.id, i.feeds ?? []]));
 
   for (const category of categories) {
     for (const file of category.files) {
@@ -40,7 +56,7 @@ export async function buildSite({ sourceRoot, outFile, categories }) {
         if (file.filters) {
           const records = JSON.parse(await readFile(path.join(sourceRoot, file.filters.records), "utf8")).items;
           const tags = JSON.parse(await readFile(path.join(sourceRoot, file.filters.tags), "utf8"));
-          filter = { vocabulary: tags.tags, records: records.map(r => ({ group: r.group, title: r.title, tags: tags.items[r.id] ?? [] })) };
+          filter = { vocabulary: tags.tags, records: records.map(r => ({ group: r.group, title: r.title, tags: tags.items[r.id] ?? [], feeds: (feedsById.get(r.id) ?? []).map(feedLink) })) };
         }
         const ladders = file.ladders ? titleKnobs(JSON.parse(await readFile(path.join(sourceRoot, file.ladders), "utf8")).items, await knobTitles(sourceRoot)) : undefined;
         documents.push({ ...file, category: category.label, source, count, filter, ladders });

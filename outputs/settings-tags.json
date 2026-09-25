@@ -1,0 +1,958 @@
+{
+ "tags": [
+  {
+   "id": "documented",
+   "label": "Documented",
+   "kind": "status",
+   "count": 258
+  },
+  {
+   "id": "undocumented",
+   "label": "Undocumented",
+   "kind": "status",
+   "count": 45
+  },
+  {
+   "id": "internal",
+   "label": "Internal (@internal)",
+   "kind": "status",
+   "count": 14
+  },
+  {
+   "id": "safe-env",
+   "label": "Safe env keys",
+   "kind": "status",
+   "count": 5
+  }
+ ],
+ "items": {
+  "settings-schema-overview": [
+   "documented"
+  ],
+  "setting-model": [
+   "documented"
+  ],
+  "setting-fallback-model": [
+   "documented"
+  ],
+  "setting-available-models": [
+   "documented"
+  ],
+  "setting-enforce-available-models": [
+   "documented"
+  ],
+  "setting-model-overrides": [
+   "documented"
+  ],
+  "setting-model-picker": [
+   "documented"
+  ],
+  "setting-model-picker--options": [
+   "documented"
+  ],
+  "setting-model-picker--replace-built-in-options": [
+   "documented"
+  ],
+  "setting-model-pricing": [
+   "documented"
+  ],
+  "setting-model-pricing--multiplier": [
+   "documented"
+  ],
+  "setting-model-pricing--overrides": [
+   "documented"
+  ],
+  "setting-output-style": [
+   "documented"
+  ],
+  "setting-language": [
+   "documented"
+  ],
+  "setting-prompt-cache-ttl": [
+   "documented"
+  ],
+  "setting-subagent-prompt-cache-ttl": [
+   "documented"
+  ],
+  "setting-always-thinking-enabled": [
+   "documented"
+  ],
+  "setting-effort-level": [
+   "documented"
+  ],
+  "setting-max-effort-level": [
+   "documented"
+  ],
+  "setting-model-settings": [
+   "documented"
+  ],
+  "setting-ultracode": [
+   "documented"
+  ],
+  "setting-advisor-model": [
+   "documented"
+  ],
+  "setting-fast-mode": [
+   "documented"
+  ],
+  "setting-fast-mode-per-session-opt-in": [
+   "documented"
+  ],
+  "setting-show-thinking-summaries": [
+   "documented"
+  ],
+  "setting-switch-models-on-flag": [
+   "documented"
+  ],
+  "setting-permissions": [
+   "documented"
+  ],
+  "setting-permissions--allow": [
+   "documented"
+  ],
+  "setting-permissions--deny": [
+   "documented"
+  ],
+  "setting-permissions--ask": [
+   "documented"
+  ],
+  "setting-permissions--default-mode": [
+   "documented"
+  ],
+  "setting-permissions--disable-bypass-permissions-mode": [
+   "documented"
+  ],
+  "setting-permissions--block-reads-outside-working-directories": [
+   "documented"
+  ],
+  "setting-permissions--disable-auto-mode": [
+   "documented"
+  ],
+  "setting-permissions--additional-directories": [
+   "documented"
+  ],
+  "setting-allow-managed-permission-rules-only": [
+   "documented"
+  ],
+  "setting-skip-dangerous-mode-permission-prompt": [
+   "documented"
+  ],
+  "setting-disable-auto-mode": [
+   "documented"
+  ],
+  "setting-skip-auto-permission-prompt": [
+   "documented"
+  ],
+  "setting-use-auto-mode-during-plan": [
+   "documented"
+  ],
+  "setting-auto-mode": [
+   "documented"
+  ],
+  "setting-auto-mode--allow": [
+   "documented"
+  ],
+  "setting-auto-mode--soft-deny": [
+   "documented"
+  ],
+  "setting-auto-mode--hard-deny": [
+   "documented"
+  ],
+  "setting-auto-mode--environment": [
+   "documented"
+  ],
+  "setting-auto-mode--classify-all-shell": [
+   "documented"
+  ],
+  "setting-sandbox": [
+   "documented"
+  ],
+  "setting-sandbox--enabled": [
+   "documented"
+  ],
+  "setting-sandbox--fail-if-unavailable": [
+   "documented"
+  ],
+  "setting-sandbox--auto-allow-bash-if-sandboxed": [
+   "documented"
+  ],
+  "setting-sandbox--allow-unsandboxed-commands": [
+   "documented"
+  ],
+  "setting-sandbox--network": [
+   "documented"
+  ],
+  "setting-sandbox--network--allowed-domains": [
+   "documented"
+  ],
+  "setting-sandbox--network--denied-domains": [
+   "documented"
+  ],
+  "setting-sandbox--network--strict-allowlist": [
+   "documented"
+  ],
+  "setting-sandbox--network--allow-managed-domains-only": [
+   "documented"
+  ],
+  "setting-sandbox--network--allow-unix-sockets": [
+   "documented"
+  ],
+  "setting-sandbox--network--allow-all-unix-sockets": [
+   "documented"
+  ],
+  "setting-sandbox--network--allow-local-binding": [
+   "documented"
+  ],
+  "setting-sandbox--network--allow-mach-lookup": [
+   "documented"
+  ],
+  "setting-sandbox--network--http-proxy-port": [
+   "documented"
+  ],
+  "setting-sandbox--network--socks-proxy-port": [
+   "documented"
+  ],
+  "setting-sandbox--network--tls-terminate": [
+   "documented"
+  ],
+  "setting-sandbox--network--tls-terminate--ca-cert-path": [
+   "documented"
+  ],
+  "setting-sandbox--network--tls-terminate--ca-key-path": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem--allow-write": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem--deny-write": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem--deny-read": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem--allow-read": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem--allow-managed-read-paths-only": [
+   "documented"
+  ],
+  "setting-sandbox--filesystem--disabled": [
+   "documented"
+  ],
+  "setting-sandbox--credentials": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--files": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--env-vars": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--allow-plaintext-inject": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--aws-pairs": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--sigv4": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--sigv4--streaming": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--sigv4--presigned": [
+   "documented"
+  ],
+  "setting-sandbox--credentials--sigv4--sigv4a": [
+   "documented"
+  ],
+  "setting-sandbox--ignore-violations": [
+   "documented"
+  ],
+  "setting-sandbox--enable-weaker-nested-sandbox": [
+   "documented"
+  ],
+  "setting-sandbox--enable-weaker-network-isolation": [
+   "documented"
+  ],
+  "setting-sandbox--allow-apple-events": [
+   "documented"
+  ],
+  "setting-sandbox--excluded-commands": [
+   "documented"
+  ],
+  "setting-sandbox--ripgrep": [
+   "documented"
+  ],
+  "setting-sandbox--ripgrep--command": [
+   "documented"
+  ],
+  "setting-sandbox--ripgrep--args": [
+   "documented"
+  ],
+  "setting-sandbox--bwrap-path": [
+   "documented"
+  ],
+  "setting-sandbox--socat-path": [
+   "documented"
+  ],
+  "setting-skill-listing-max-desc-chars": [
+   "documented"
+  ],
+  "setting-skill-listing-budget-fraction": [
+   "documented"
+  ],
+  "setting-env": [
+   "documented"
+  ],
+  "setting-bash-output-max-chars": [
+   "documented"
+  ],
+  "setting-task-output-max-chars": [
+   "documented"
+  ],
+  "setting-auto-compact-window": [
+   "documented"
+  ],
+  "setting-plans-directory": [
+   "documented"
+  ],
+  "setting-auto-memory-enabled": [
+   "documented"
+  ],
+  "setting-auto-memory-directory": [
+   "documented"
+  ],
+  "setting-claude-md": [
+   "documented"
+  ],
+  "setting-claude-md-excludes": [
+   "documented"
+  ],
+  "setting-auto-compact-enabled": [
+   "documented"
+  ],
+  "setting-file-checkpointing-enabled": [
+   "documented"
+  ],
+  "setting-file-suggestion": [
+   "documented"
+  ],
+  "setting-file-suggestion--type": [
+   "documented"
+  ],
+  "setting-file-suggestion--command": [
+   "documented"
+  ],
+  "setting-respect-gitignore": [
+   "documented"
+  ],
+  "setting-default-shell": [
+   "documented"
+  ],
+  "setting-bash-edit-diff-enabled": [
+   "documented"
+  ],
+  "setting-respond-to-bash-commands": [
+   "documented"
+  ],
+  "setting-status-line": [
+   "documented"
+  ],
+  "setting-status-line--type": [
+   "documented"
+  ],
+  "setting-status-line--command": [
+   "documented"
+  ],
+  "setting-status-line--padding": [
+   "documented"
+  ],
+  "setting-status-line--refresh-interval": [
+   "documented"
+  ],
+  "setting-status-line--hide-vim-mode-indicator": [
+   "documented"
+  ],
+  "setting-footer-links-regexes": [
+   "documented"
+  ],
+  "setting-subagent-status-line": [
+   "documented"
+  ],
+  "setting-subagent-status-line--type": [
+   "documented"
+  ],
+  "setting-subagent-status-line--command": [
+   "documented"
+  ],
+  "setting-view-mode": [
+   "documented"
+  ],
+  "setting-spinner-tips-enabled": [
+   "documented"
+  ],
+  "setting-spinner-verbs": [
+   "documented"
+  ],
+  "setting-spinner-verbs--mode": [
+   "documented"
+  ],
+  "setting-spinner-verbs--verbs": [
+   "documented"
+  ],
+  "setting-spinner-tips-override": [
+   "documented"
+  ],
+  "setting-spinner-tips-override--exclude-default": [
+   "documented"
+  ],
+  "setting-spinner-tips-override--tips": [
+   "documented"
+  ],
+  "setting-spinner-tips-override--tips-file": [
+   "documented"
+  ],
+  "setting-spinner-tips-override--label": [
+   "documented"
+  ],
+  "setting-syntax-highlighting-disabled": [
+   "documented"
+  ],
+  "setting-spellcheck": [
+   "documented"
+  ],
+  "setting-spellcheck--enabled": [
+   "documented"
+  ],
+  "setting-spellcheck--checker": [
+   "documented"
+  ],
+  "setting-spellcheck--language": [
+   "documented"
+  ],
+  "setting-spellcheck--color": [
+   "documented"
+  ],
+  "setting-terminal-title-from-rename": [
+   "documented"
+  ],
+  "setting-prompt-suggestion-enabled": [
+   "documented"
+  ],
+  "setting-emoji-completion-enabled": [
+   "documented"
+  ],
+  "setting-show-clear-context-on-plan-accept": [
+   "documented"
+  ],
+  "setting-ask-user-question-timeout": [
+   "documented"
+  ],
+  "setting-dialog-expiry": [
+   "documented"
+  ],
+  "setting-company-announcements": [
+   "documented"
+  ],
+  "setting-tui": [
+   "documented"
+  ],
+  "setting-voice": [
+   "documented"
+  ],
+  "setting-voice--enabled": [
+   "documented"
+  ],
+  "setting-voice--mode": [
+   "documented"
+  ],
+  "setting-voice--auto-submit": [
+   "documented"
+  ],
+  "setting-prefers-reduced-motion": [
+   "documented"
+  ],
+  "setting-time-format": [
+   "documented"
+  ],
+  "setting-time-zone": [
+   "documented"
+  ],
+  "setting-theme": [
+   "documented"
+  ],
+  "setting-editor-mode": [
+   "documented"
+  ],
+  "setting-keybinding-flavor": [
+   "documented"
+  ],
+  "setting-vim-insert-mode-remaps": [
+   "documented"
+  ],
+  "setting-verbose": [
+   "documented"
+  ],
+  "setting-auto-continue-at-usage-limit": [
+   "documented"
+  ],
+  "setting-auto-scroll-enabled": [
+   "documented"
+  ],
+  "setting-wheel-scroll-acceleration-enabled": [
+   "documented"
+  ],
+  "setting-show-turn-duration": [
+   "documented"
+  ],
+  "setting-terminal-progress-bar-enabled": [
+   "documented"
+  ],
+  "setting-voice-enabled": [
+   "documented"
+  ],
+  "setting-ax-screen-reader": [
+   "documented"
+  ],
+  "setting-attribution": [
+   "documented"
+  ],
+  "setting-attribution--commit": [
+   "documented"
+  ],
+  "setting-attribution--pr": [
+   "documented"
+  ],
+  "setting-attribution--session-url": [
+   "documented"
+  ],
+  "setting-include-co-authored-by": [
+   "documented"
+  ],
+  "setting-include-git-instructions": [
+   "documented"
+  ],
+  "setting-pr-url-template": [
+   "documented"
+  ],
+  "setting-hooks": [
+   "documented"
+  ],
+  "setting-disable-all-hooks": [
+   "documented"
+  ],
+  "setting-disable-workflows": [
+   "documented"
+  ],
+  "setting-enable-workflows": [
+   "documented"
+  ],
+  "setting-workflow-size-guideline": [
+   "documented"
+  ],
+  "setting-workflow-keyword-trigger-enabled": [
+   "documented"
+  ],
+  "setting-allow-managed-hooks-only": [
+   "documented"
+  ],
+  "setting-allowed-http-hook-urls": [
+   "documented"
+  ],
+  "setting-http-hook-allowed-env-vars": [
+   "documented"
+  ],
+  "setting-sync-claude-ai-skills": [
+   "documented"
+  ],
+  "setting-sync-claude-ai-plugins": [
+   "documented"
+  ],
+  "setting-skill-overrides": [
+   "documented"
+  ],
+  "setting-disable-bundled-skills": [
+   "documented"
+  ],
+  "setting-disable-skill-shell-execution": [
+   "documented"
+  ],
+  "setting-strict-plugin-only-customization": [
+   "documented"
+  ],
+  "setting-enabled-plugins": [
+   "documented"
+  ],
+  "setting-extra-known-marketplaces": [
+   "documented"
+  ],
+  "setting-strict-known-marketplaces": [
+   "documented"
+  ],
+  "setting-blocked-marketplaces": [
+   "documented"
+  ],
+  "setting-disable-command-plugin-sources": [
+   "documented"
+  ],
+  "setting-plugin-suggestion-marketplaces": [
+   "documented"
+  ],
+  "setting-plugin-configs": [
+   "documented"
+  ],
+  "setting-channels-enabled": [
+   "documented"
+  ],
+  "setting-allowed-channel-plugins": [
+   "documented"
+  ],
+  "setting-plugin-trust-message": [
+   "documented"
+  ],
+  "setting-enable-all-project-mcp-servers": [
+   "documented"
+  ],
+  "setting-enabled-mcpjson-servers": [
+   "documented"
+  ],
+  "setting-disabled-mcpjson-servers": [
+   "documented"
+  ],
+  "setting-disable-claude-ai-connectors": [
+   "documented"
+  ],
+  "setting-managed-mcp-servers": [
+   "documented"
+  ],
+  "setting-allowed-mcp-servers": [
+   "documented"
+  ],
+  "setting-denied-mcp-servers": [
+   "documented"
+  ],
+  "setting-allow-managed-mcp-servers-only": [
+   "documented"
+  ],
+  "setting-allow-all-claude-ai-mcps": [
+   "documented"
+  ],
+  "setting-process-wrapper": [
+   "documented"
+  ],
+  "setting-worktree": [
+   "documented"
+  ],
+  "setting-worktree--symlink-directories": [
+   "documented"
+  ],
+  "setting-worktree--sparse-paths": [
+   "documented"
+  ],
+  "setting-worktree--base-ref": [
+   "documented"
+  ],
+  "setting-worktree--bg-isolation": [
+   "documented"
+  ],
+  "setting-worktree--location": [
+   "undocumented"
+  ],
+  "setting-disable-agent-view": [
+   "documented"
+  ],
+  "setting-agent": [
+   "documented"
+  ],
+  "setting-teammate-mode": [
+   "documented"
+  ],
+  "setting-isolate-peer-machines": [
+   "documented"
+  ],
+  "setting-cross-session-inbound": [
+   "documented"
+  ],
+  "setting-disable-remote-control": [
+   "documented"
+  ],
+  "setting-disable-artifact": [
+   "documented"
+  ],
+  "setting-enable-artifact": [
+   "documented"
+  ],
+  "setting-ssh-configs": [
+   "documented"
+  ],
+  "setting-preferred-notif-channel": [
+   "documented"
+  ],
+  "setting-remote-control-at-startup": [
+   "documented"
+  ],
+  "setting-input-needed-notif-enabled": [
+   "documented"
+  ],
+  "setting-agent-push-notif-enabled": [
+   "documented"
+  ],
+  "setting-disable-deep-link-registration": [
+   "documented"
+  ],
+  "setting-api-key-helper": [
+   "documented"
+  ],
+  "setting-aws-credential-export": [
+   "documented"
+  ],
+  "setting-aws-auth-refresh": [
+   "documented"
+  ],
+  "setting-gcp-auth-refresh": [
+   "documented"
+  ],
+  "setting-force-login-method": [
+   "documented"
+  ],
+  "setting-force-login-gateway-url": [
+   "documented"
+  ],
+  "setting-gateway-internal-networks": [
+   "documented"
+  ],
+  "setting-force-login-org-uuid": [
+   "documented"
+  ],
+  "setting-otel-headers-helper": [
+   "documented"
+  ],
+  "setting-auto-updates-channel": [
+   "documented"
+  ],
+  "setting-minimum-version": [
+   "documented"
+  ],
+  "setting-required-minimum-version": [
+   "documented"
+  ],
+  "setting-required-maximum-version": [
+   "documented"
+  ],
+  "setting-cleanup-period-days": [
+   "documented"
+  ],
+  "setting-desktop-session-cleanup-period-days": [
+   "documented"
+  ],
+  "setting-skip-web-fetch-preflight": [
+   "documented"
+  ],
+  "setting-feedback-survey-rate": [
+   "documented"
+  ],
+  "setting-feedback-drafts": [
+   "documented"
+  ],
+  "setting-policy-helper": [
+   "documented"
+  ],
+  "setting-policy-helper--path": [
+   "documented"
+  ],
+  "setting-policy-helper--timeout-ms": [
+   "documented"
+  ],
+  "setting-policy-helper--refresh-interval-ms": [
+   "documented"
+  ],
+  "setting-wsl-inherits-windows-settings": [
+   "documented"
+  ],
+  "setting-disable-sideload-flags": [
+   "documented"
+  ],
+  "setting-parent-settings-behavior": [
+   "documented"
+  ],
+  "setting-managed-sources-behavior": [
+   "documented"
+  ],
+  "setting-force-remote-settings-refresh": [
+   "documented"
+  ],
+  "setting-schema": [
+   "documented"
+  ],
+  "setting-proxy-auth-helper": [
+   "undocumented"
+  ],
+  "setting-xaa-idp": [
+   "undocumented"
+  ],
+  "setting-xaa-idp--issuer": [
+   "undocumented"
+  ],
+  "setting-xaa-idp--client-id": [
+   "undocumented"
+  ],
+  "setting-xaa-idp--callback-port": [
+   "undocumented"
+  ],
+  "setting-prepend-plugins": [
+   "undocumented"
+  ],
+  "setting-append-plugins": [
+   "undocumented"
+  ],
+  "setting-additional-marketplaces": [
+   "documented"
+  ],
+  "setting-allowed-marketplaces": [
+   "documented"
+  ],
+  "setting-remote": [
+   "undocumented"
+  ],
+  "setting-remote--default-environment-id": [
+   "documented"
+  ],
+  "setting-auto-dream-enabled": [
+   "undocumented"
+  ],
+  "setting-precompute-compaction-enabled": [
+   "undocumented"
+  ],
+  "setting-show-message-timestamps": [
+   "undocumented"
+  ],
+  "setting-todo-feature-enabled": [
+   "undocumented"
+  ],
+  "setting-daemon-cold-start": [
+   "undocumented"
+  ],
+  "setting-auto-upload-sessions": [
+   "undocumented"
+  ],
+  "setting-default-view": [
+   "undocumented"
+  ],
+  "setting-policy-helpers": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-policy-helpers--macos": [
+   "undocumented"
+  ],
+  "setting-policy-helpers--linux": [
+   "undocumented"
+  ],
+  "setting-policy-helpers--windows": [
+   "undocumented"
+  ],
+  "setting-policy-helpers--wsl": [
+   "undocumented"
+  ],
+  "setting-policy-helpers--default": [
+   "undocumented"
+  ],
+  "setting-break-reminder": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-break-reminder--enabled": [
+   "undocumented"
+  ],
+  "setting-break-reminder--interval-minutes": [
+   "undocumented"
+  ],
+  "setting-break-reminder--break-threshold-minutes": [
+   "undocumented"
+  ],
+  "setting-break-reminder--message": [
+   "undocumented"
+  ],
+  "setting-quiet-hours": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-quiet-hours--enabled": [
+   "undocumented"
+  ],
+  "setting-quiet-hours--start": [
+   "undocumented"
+  ],
+  "setting-quiet-hours--end": [
+   "undocumented"
+  ],
+  "setting-away-summary-enabled": [
+   "documented",
+   "internal"
+  ],
+  "setting-model-proposed-goals": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-done-means-merged": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-total-tokens-reminder": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-total-tokens-reminder-budget": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-total-tokens-reminder-after-user-turn": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-skip-workflow-usage-warning": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-remote-tools": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-remote-tools--allow-unattended-serving": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-remote-control": [
+   "undocumented",
+   "internal"
+  ],
+  "setting-remote-control--share-host-profile": [
+   "undocumented",
+   "internal"
+  ],
+  "settings-safe-env-check": [
+   "documented",
+   "safe-env"
+  ],
+  "settings-safe-env-set-wl": [
+   "undocumented",
+   "safe-env"
+  ],
+  "settings-safe-env-set-gl": [
+   "undocumented",
+   "safe-env"
+  ],
+  "settings-safe-env-set-vl": [
+   "undocumented",
+   "safe-env"
+  ],
+  "settings-safe-env-custom-headers": [
+   "undocumented",
+   "safe-env"
+  ]
+ }
+}

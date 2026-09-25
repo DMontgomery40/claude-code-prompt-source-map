@@ -22,11 +22,11 @@ export const categories = [
   {
     label: "Configuration",
     files: [
-      { path: "outputs/what-wins.md", format: "markdown", title: "What wins", slug: "what-wins", summary: "For each value Claude Code decides, every source it checks, in order, and which one takes effect.", data: "outputs/decisions.json", ladders: "outputs/decisions.json", defaultOpen: false },
+      { path: "outputs/what-wins.md", format: "markdown", title: "What wins", slug: "what-wins", summary: "For each value Claude Code decides, every source it checks, in order, and which one takes effect.", data: "outputs/decisions.json", ladders: "outputs/decisions.json", filters: { records: "outputs/decisions.json", tags: "outputs/decisions-tags.json" }, defaultOpen: false },
       { path: "outputs/environment-variables.md", format: "markdown", title: "Environment variables", slug: "env-vars", summary: "Every environment variable Claude Code reads or sets, documented or not.", data: "outputs/environment-variables.json", filters: { records: "outputs/environment-variables.json", tags: "outputs/environment-variables-tags.json" }, defaultOpen: false },
-      { path: "outputs/settings.md", format: "markdown", title: "Settings", slug: "settings", summary: "Every settings.json key, with types, defaults, and scopes.", data: "outputs/settings.json", defaultOpen: false },
+      { path: "outputs/settings.md", format: "markdown", title: "Settings", slug: "settings", summary: "Every settings.json key, with types, defaults, and scopes.", data: "outputs/settings.json", filters: { records: "outputs/settings.json", tags: "outputs/settings-tags.json" }, defaultOpen: false },
       { path: "outputs/hooks.md", format: "markdown", title: "Hooks", slug: "hooks", summary: "Hook events, payload fields, and handler types.", data: "outputs/hooks.json", defaultOpen: false },
-      { path: "outputs/cli.md", format: "markdown", title: "CLI commands and flags", slug: "cli", summary: "Commands and flags, including hidden ones.", data: "outputs/cli.json", defaultOpen: false },
+      { path: "outputs/cli.md", format: "markdown", title: "CLI commands and flags", slug: "cli", summary: "Commands and flags, including hidden ones.", data: "outputs/cli.json", filters: { records: "outputs/cli.json", tags: "outputs/cli-tags.json" }, defaultOpen: false },
       { path: "outputs/slash-commands.md", format: "markdown", title: "Slash commands", slug: "slash-commands", summary: "Built-in slash commands and bundled skill commands.", data: "outputs/slash-commands.json", defaultOpen: false }
     ]
   },

@@ -28,7 +28,8 @@ export function wrapFilterable(html, filter) {
     if (!record) { out += block; continue; }
     matched += 1;
     const chips = record.tags.map(t => `<button type="button" class="chip chip-small" data-tag="${t}" aria-pressed="false">${escapeHtml(labels.get(t) ?? t)}</button>`).join("");
-    out += `<section class="filter-item" data-tags="${record.tags.join(" ")}">${heading}<div class="item-tags">${chips}</div>${block.slice(heading.length)}</section>`;
+    const feeds = (record.feeds ?? []).map(f => `<a class="feeds-link" href="${escapeHtml(f.href)}">${escapeHtml(f.label)}</a>`).join("");
+    out += `<section class="filter-item" data-tags="${record.tags.join(" ")}">${heading}<div class="item-tags">${chips}${feeds}</div>${block.slice(heading.length)}</section>`;
   }
   if (open) out += "</section>";
   return { html: out, matched };
@@ -58,6 +59,8 @@ export const filterStyles = `
     .chip-count{color:#a3a79f;font-size:12px}.chip[aria-pressed="true"] .chip-count{color:inherit;opacity:.85}
     .chip-small{padding:2px 8px;font-size:12px}
     .item-tags{display:flex;flex-wrap:wrap;gap:5px;margin:-6px 0 14px}
+    .feeds-link{padding:2px 8px;border:1px solid #5f7f3f;border-radius:999px;color:#dcffad;font-size:12px;text-decoration:none}
+    .feeds-link:hover{border-color:#c8f784}
     .filter-status{display:flex;align-items:center;gap:14px;color:#b9bcb5;font-size:14px}
     .filter-clear{padding:0;border:0;background:none;color:var(--link);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:.2em}
     .filter-item[hidden],.filter-group[hidden]{display:none}

@@ -1,0 +1,132 @@
+{
+ "tags": [
+  {
+   "id": "tested",
+   "label": "Tested",
+   "kind": "status",
+   "count": 6
+  },
+  {
+   "id": "has-remote",
+   "label": "Has a remote source",
+   "kind": "status",
+   "count": 18
+  },
+  {
+   "id": "silent-skip",
+   "label": "Silent skip",
+   "kind": "status",
+   "count": 22
+  },
+  {
+   "id": "merge",
+   "label": "Merge or layered",
+   "kind": "status",
+   "count": 2
+  }
+ ],
+ "items": {
+  "advisor-tool-available": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "auth-source": [],
+  "auto-compact": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "auto-memory": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "bash-output-limit": [
+   "silent-skip"
+  ],
+  "effort-level": [
+   "tested",
+   "has-remote",
+   "silent-skip"
+  ],
+  "env-sources": [
+   "tested",
+   "silent-skip"
+  ],
+  "fast-mode": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "feedback-survey": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "git-instructions": [
+   "silent-skip"
+  ],
+  "main-model": [
+   "tested",
+   "silent-skip"
+  ],
+  "max-output-tokens": [
+   "tested",
+   "has-remote",
+   "silent-skip"
+  ],
+  "mcp-output-limit": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "native-cursor": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "permission-mode": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "permission-rules": [
+   "merge"
+  ],
+  "prompt-cache-ttl": [
+   "tested",
+   "has-remote",
+   "silent-skip"
+  ],
+  "prompt-suggestions": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "provider-default-model": [
+   "has-remote"
+  ],
+  "sandbox-network-proxy": [],
+  "settings-layers": [
+   "merge"
+  ],
+  "stream-stall-watchdog": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "thinking-mode": [
+   "tested"
+  ],
+  "todo-reminders": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "total-tokens-reminder": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "total-tokens-reminder-budget": [
+   "has-remote",
+   "silent-skip"
+  ],
+  "workflow-size-guidance": [
+   "silent-skip"
+  ],
+  "workflows-enabled": [
+   "has-remote",
+   "silent-skip"
+  ]
+ }
+}

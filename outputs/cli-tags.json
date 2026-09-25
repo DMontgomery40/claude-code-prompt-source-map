@@ -1,0 +1,1512 @@
+{
+ "tags": [
+  {
+   "id": "documented",
+   "label": "Documented",
+   "kind": "status",
+   "count": 245
+  },
+  {
+   "id": "undocumented",
+   "label": "Undocumented",
+   "kind": "status",
+   "count": 103
+  },
+  {
+   "id": "hidden",
+   "label": "Hidden",
+   "kind": "status",
+   "count": 85
+  },
+  {
+   "id": "command",
+   "label": "Command",
+   "kind": "status",
+   "count": 72
+  },
+  {
+   "id": "flag",
+   "label": "Flag",
+   "kind": "status",
+   "count": 275
+  }
+ ],
+ "items": {
+  "cli-root": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-help": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-debug": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-debug-to-stderr": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-debug-file": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-verbose": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-print": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-bare": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-safe-mode": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-init": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-init-only": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-maintenance": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-output-format": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-json-schema": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-include-hook-events": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-include-partial-messages": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-forward-subagent-text": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-session-mirror": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-await-claim": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-input-format": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-await-initialize": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-dangerously-skip-permissions": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-allow-dangerously-skip-permissions": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-thinking": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-thinking-display": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-max-thinking-tokens": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-max-turns": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-max-budget-usd": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-task-budget": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-replay-user-messages": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-prompt-suggestions": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-enable-auth-status": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-allowed-tools": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-tools": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-restricted": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-disallowed-tools": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-config": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-permission-prompt-tool": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-permission-prompts": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-system-prompt": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-system-prompt-file": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-append-system-prompt": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-append-system-prompt-file": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-system-prompt-snapshot": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-append-subagent-system-prompt": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-append-subagent-system-prompt-file": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-plan-mode-instructions": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-exclude-dynamic-system-prompt-sections": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-permission-mode": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-inherit-permission-mode": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-continue": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-resume": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-fork-session": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-watch-artifact": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-watch-artifact-no-autoreact": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-prefill": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-deep-link-origin": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-deep-link-repo": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-deep-link-last-fetch": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-prefill-b64": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-deep-link-cwd-b64": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-from-pr": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-no-session-persistence": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-resume-session-at": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-resume-drops-turn": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-reply-on-resume": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-rewind-files": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-model": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-effort": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agent": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-betas": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-fallback-model": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-workload": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-settings": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-managed-settings": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-add-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-project-config-root": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-ide": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-strict-mcp-config": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-session-id": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-name": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-setting-sources": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-dir-no-mcp": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-plugin-url": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-disable-slash-commands": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-chrome": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-no-chrome": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-file": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-worktree": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-tmux": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-advisor": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-autocompact": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-enable-auto-mode": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-bg": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-brief": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-ax-screen-reader": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-channels": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-dangerously-load-development-channels": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agent-id": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agent-name": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-team-name": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agent-color": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-plan-mode-required": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-parent-session-id": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-teammate-mode": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agent-type": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-sdk-url": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-teleport": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-cloud": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-forward-home-settings": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-remote": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-attach-serve": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-environment": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-pool": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-correlation-id": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-ref": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-on-branch": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-remote-control": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-rc": [
+   "documented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-remote-control-session-name-prefix": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-agents": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-agents-setting-sources": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-cwd": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-add-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-plugin-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-plugin-dir-no-mcp": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agents-settings": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-managed-settings": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agents-mcp-config": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-strict-mcp-config": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-restricted": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-permission-mode": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-inherit-permission-mode": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-agents-dangerously-skip-permissions": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-allow-dangerously-skip-permissions": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-model": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-effort": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-agent": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-agents-all": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-attach": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-auth": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-auth-login": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-auth-login-email": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-auth-login-sso": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-auth-login-console": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-auth-login-claudeai": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-auth-logout": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-auth-status": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-auth-status-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-auth-status-text": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-auto-mode": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-auto-mode-config": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-auto-mode-critique": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-auto-mode-critique-model": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-auto-mode-defaults": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-auto-mode-defaults-label": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-auto-mode-reset": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-auto-mode-reset-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-design-login": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-design-login-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-design-login-status": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-doctor": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-edit-chrome-settings": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-edit-chrome-settings-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-edit-hook": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-edit-hook-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-edit-memory-settings": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-edit-memory-settings-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-edit-permission-rules": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-edit-permission-rules-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-edit-sandbox-settings": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-edit-sandbox-settings-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-edit-skill-overrides": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-edit-skill-overrides-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-gateway": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-gateway-config": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-import": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-import-dry-run": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-import-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-import-conversations": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-import-conversations-cwd": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-import-conversations-dry-run": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-install": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-install-force": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-logs": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-mcp": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-mcp-add": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-mcp-add-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-transport": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-env": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-header": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-client-id": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-client-secret": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-callback-port": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-help": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-xaa": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-mcp-add-from-claude-desktop": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-mcp-add-from-claude-desktop-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-mcp-add-json": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-mcp-add-json-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-mcp-add-json-client-secret": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-mcp-get": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-mcp-list": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-mcp-login": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-mcp-login-no-browser": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-mcp-logout": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-mcp-remove": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-mcp-remove-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-mcp-reset-project-choices": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-mcp-serve": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-mcp-serve-debug": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-mcp-serve-verbose": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-mcp-xaa": [
+   "undocumented",
+   "command"
+  ],
+  "cli-cmd-mcp-xaa-clear": [
+   "undocumented",
+   "command"
+  ],
+  "cli-cmd-mcp-xaa-login": [
+   "undocumented",
+   "command"
+  ],
+  "cli-flag-mcp-xaa-login-force": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-mcp-xaa-login-id-token": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-mcp-xaa-setup": [
+   "undocumented",
+   "command"
+  ],
+  "cli-flag-mcp-xaa-setup-issuer": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-mcp-xaa-setup-client-id": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-mcp-xaa-setup-client-secret": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-mcp-xaa-setup-callback-port": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-cmd-mcp-xaa-show": [
+   "undocumented",
+   "command"
+  ],
+  "cli-cmd-plugin": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-plugin-details": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-details-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-disable": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-disable-all": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-disable-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-disable-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-disable-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-enable": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-enable-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-enable-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-enable-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-eval": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-eval-case": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-tag": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-runs": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-concurrency": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-model": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-judge-model": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-max-cost-usd": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-output-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-eval-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-threshold": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-allow-tools": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-scaffold": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-no-scaffold": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-trust-plugin": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-ablation": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-mocks": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-allow-real-servers": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-keep-temp": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-verbose": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-report": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-publish-report": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-no-publish": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-plugin-eval-init": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-eval-init-bare": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-init-interactive": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-init-interview": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-plugin-eval-init-eval-dir": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-plugin-init": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-init-description": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-init-author": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-init-author-email": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-init-with": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-init-force": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-plugin-install": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-install-scope": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-install-config": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-install-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-install-accept-command": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-install-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-install-registry": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-install-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-list": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-list-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-list-available": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-list-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-marketplace": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-plugin-marketplace-add": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-marketplace-add-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-plugin-marketplace-add-sparse": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-marketplace-add-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-marketplace-add-claudeai": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-plugin-marketplace-list": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-marketplace-list-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-marketplace-list-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-marketplace-remove": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-marketplace-remove-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-marketplace-remove-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-marketplace-update": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-marketplace-update-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-prune": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-prune-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-prune-dry-run": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-prune-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-prune-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-tag": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-tag-push": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-tag-dry-run": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-tag-force": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-tag-message": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-tag-remote": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-plugin-uninstall": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-uninstall-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-uninstall-keep-data": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-uninstall-prune": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-uninstall-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-uninstall-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-uninstall-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-update": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-update-scope": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-update-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-update-accept-command": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-update-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-update-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-plugin-validate": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-plugin-validate-strict": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-validate-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-validate-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-cmd-project": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-project-purge": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-project-purge-dry-run": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-project-purge-yes": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-project-purge-interactive": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-project-purge-all": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-remote-control": [
+   "documented",
+   "hidden",
+   "command"
+  ],
+  "cli-remote-control-help": [
+   "documented"
+  ],
+  "cli-cmd-respawn": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-rm": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-sandbox": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-cmd-sandbox-install": [
+   "undocumented",
+   "command"
+  ],
+  "cli-cmd-sandbox-status": [
+   "undocumented",
+   "command"
+  ],
+  "cli-cmd-setup-token": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-stop": [
+   "documented",
+   "command"
+  ],
+  "cli-cmd-ultrareview": [
+   "documented",
+   "command"
+  ],
+  "cli-flag-ultrareview-json": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-ultrareview-timeout": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-ultrareview-post": [
+   "documented",
+   "flag"
+  ],
+  "cli-flag-ultrareview-no-post": [
+   "documented",
+   "flag"
+  ],
+  "cli-cmd-update": [
+   "documented",
+   "command"
+  ]
+ }
+}

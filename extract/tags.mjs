@@ -1,11 +1,13 @@
-// Tags every environment variable for the site's filters.
-//   node extract/tags.mjs
-// Status tags come straight from the records (documented, read or set, child environments).
-// Topic tags, prompt caching first, come from extract/tags/env-taxonomy.json: a variable gets
-// a tag when extract/tags/env-seed.json lists it for that tag or when Jev scores it at or
-// above the threshold, unless the seed excludes it. Jev verdicts are cached by record state and taxonomy version in
-// work/tag-verdicts.json, so a refresh only classifies new or changed variables.
-// Writes outputs/environment-variables-tags.json.
+// Tags every environment variable, setting, CLI entry or decision for the site's filters.
+//   node extract/tags.mjs <area>
+// area is environment-variables (default), settings, cli or decisions.
+// Status tags come straight from the records (documented, read or set, child environments, ...).
+// Topic tags, prompt caching first, come from extract/tags/<prefix>-taxonomy.json: a record gets
+// a tag when extract/tags/<prefix>-seed.json lists it for that tag or when Jev scores it at or
+// above the threshold, unless the seed excludes it. Jev verdicts are cached by record state and
+// taxonomy version in work/tag-verdicts.json, so a refresh only classifies new or changed
+// records. An area with no taxonomy file yet gets status tags only.
+// Writes outputs/<area>-tags.json.
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
@@ -14,45 +16,102 @@ import path from "node:path";
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const readJson = file => JSON.parse(readFileSync(file, "utf8"));
 const sha = value => createHash("sha256").update(value).digest("hex");
-const taxonomy = readJson(path.join(root, "extract/tags/env-taxonomy.json"));
-const seed = readJson(path.join(root, "extract/tags/env-seed.json"));
+
+const PREFIX = { "environment-variables": "env", settings: "settings", cli: "cli", decisions: "decisions" };
+const area = process.argv[2] ?? "environment-variables";
+const prefix = PREFIX[area];
+if (!prefix) throw new Error(`tags.mjs: unknown area "${area}" (expected one of ${Object.keys(PREFIX).join(", ")})`);
+
+const taxonomyFile = path.join(root, `extract/tags/${prefix}-taxonomy.json`);
+const seedFile = path.join(root, `extract/tags/${prefix}-seed.json`);
+const hasTaxonomy = existsSync(taxonomyFile);
+const taxonomy = hasTaxonomy ? readJson(taxonomyFile) : null;
+const seed = hasTaxonomy && existsSync(seedFile) ? readJson(seedFile) : [];
 const cacheFile = path.join(root, "work/tag-verdicts.json");
 const cache = existsSync(cacheFile) ? readJson(cacheFile) : {};
-const taxonomyVersion = sha(JSON.stringify(taxonomy)).slice(0, 12);
+const taxonomyVersion = hasTaxonomy ? sha(JSON.stringify(taxonomy)).slice(0, 12) : null;
 const THRESHOLD = 0.7;
-const FEATURE = taxonomy.tags[0].id;
+const FEATURE = hasTaxonomy ? taxonomy.tags[0].id : null;
 
-const key = process.env.TYPESAFE_API_KEY ?? (() => {
-  try { return readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
-})();
-if (!key) throw new Error("tags.mjs needs TYPESAFE_API_KEY");
+const key = hasTaxonomy
+  ? (process.env.TYPESAFE_API_KEY ?? (() => {
+      try { return readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
+    })())
+  : undefined;
+if (hasTaxonomy && !key) throw new Error("tags.mjs needs TYPESAFE_API_KEY");
 
-const STATUS = [
-  { id: "documented", label: "Documented", kind: "status" },
-  { id: "undocumented", label: "Undocumented", kind: "status" },
-  { id: "read", label: "Read by Claude Code", kind: "status" },
-  { id: "set", label: "Set by Claude Code", kind: "status" },
-  { id: "any-value", label: "Any value turns it on, even 0", kind: "status" },
-  { id: "removed-for-children", label: "Removed from child environments", kind: "status" },
-  { id: "passed-to-children", label: "Passed to tools, hooks or MCP servers", kind: "status" },
-  { id: "fixed-values", label: "Fixed values", kind: "status" },
-  { id: "third-party", label: "Third-party library", kind: "status" },
-  { id: "os-shell", label: "OS, shell or CI", kind: "status" }
-];
+const STATUS_BY_AREA = {
+  "environment-variables": [
+    { id: "documented", label: "Documented", kind: "status" },
+    { id: "undocumented", label: "Undocumented", kind: "status" },
+    { id: "read", label: "Read by Claude Code", kind: "status" },
+    { id: "set", label: "Set by Claude Code", kind: "status" },
+    { id: "any-value", label: "Any value turns it on, even 0", kind: "status" },
+    { id: "removed-for-children", label: "Removed from child environments", kind: "status" },
+    { id: "passed-to-children", label: "Passed to tools, hooks or MCP servers", kind: "status" },
+    { id: "fixed-values", label: "Fixed values", kind: "status" },
+    { id: "third-party", label: "Third-party library", kind: "status" },
+    { id: "os-shell", label: "OS, shell or CI", kind: "status" }
+  ],
+  settings: [
+    { id: "documented", label: "Documented", kind: "status" },
+    { id: "undocumented", label: "Undocumented", kind: "status" },
+    { id: "internal", label: "Internal (@internal)", kind: "status" },
+    { id: "safe-env", label: "Safe env keys", kind: "status" }
+  ],
+  cli: [
+    { id: "documented", label: "Documented", kind: "status" },
+    { id: "undocumented", label: "Undocumented", kind: "status" },
+    { id: "hidden", label: "Hidden", kind: "status" },
+    { id: "command", label: "Command", kind: "status" },
+    { id: "flag", label: "Flag", kind: "status" }
+  ],
+  decisions: [
+    { id: "tested", label: "Tested", kind: "status" },
+    { id: "has-remote", label: "Has a remote source", kind: "status" },
+    { id: "silent-skip", label: "Silent skip", kind: "status" },
+    { id: "merge", label: "Merge or layered", kind: "status" }
+  ]
+};
 
-function statusTags(item) {
-  const d = item.details ?? {};
-  const t = new Set([item.documented ? "documented" : "undocumented", d.direction === "set" ? "set" : "read"]);
-  // One code path parses it as a boolean, another only checks that it is set, so "0" and
-  // "false" still turn the behavior on there.
-  if (d.also_parsed_as_boolean === true) t.add("any-value");
-  if (d.direction === "set" && (d.set_values ?? []).some(v => String(v?.value ?? v).startsWith("removed"))) t.add("removed-for-children");
-  if (Array.isArray(d.receivers) && d.receivers.length && !(d.receivers.length === 1 && d.receivers[0] === "not traced")) t.add("passed-to-children");
-  if (d.read_as === "enum") t.add("fixed-values");
-  if (item.group.startsWith("Read only by bundled third-party")) t.add("third-party");
-  if (item.group.startsWith("Shell, terminal, OS")) t.add("os-shell");
-  return t;
-}
+const STATUS_TAGS_BY_AREA = {
+  "environment-variables": item => {
+    const d = item.details ?? {};
+    const t = new Set([item.documented ? "documented" : "undocumented", d.direction === "set" ? "set" : "read"]);
+    // One code path parses it as a boolean, another only checks that it is set, so "0" and
+    // "false" still turn the behavior on there.
+    if (d.also_parsed_as_boolean === true) t.add("any-value");
+    if (d.direction === "set" && (d.set_values ?? []).some(v => String(v?.value ?? v).startsWith("removed"))) t.add("removed-for-children");
+    if (Array.isArray(d.receivers) && d.receivers.length && !(d.receivers.length === 1 && d.receivers[0] === "not traced")) t.add("passed-to-children");
+    if (d.read_as === "enum") t.add("fixed-values");
+    if (item.group.startsWith("Read only by bundled third-party")) t.add("third-party");
+    if (item.group.startsWith("Shell, terminal, OS")) t.add("os-shell");
+    return t;
+  },
+  settings: item => {
+    const t = new Set([item.documented ? "documented" : "undocumented"]);
+    if (item.details?.internal) t.add("internal");
+    if (item.group?.startsWith("Safe env")) t.add("safe-env");
+    return t;
+  },
+  cli: item => {
+    const t = new Set([item.documented ? "documented" : "undocumented"]);
+    if (item.details?.hidden) t.add("hidden");
+    if (item.kind === "cli-command") t.add("command");
+    if (item.kind === "cli-flag") t.add("flag");
+    return t;
+  },
+  decisions: item => {
+    const t = new Set();
+    if ((item.rungs ?? []).some(r => r.verified === "tested")) t.add("tested");
+    if ((item.rungs ?? []).some(r => r.mechanism === "remote") || (item.bypasses ?? []).some(b => b.mechanism === "remote")) t.add("has-remote");
+    if ((item.rungs ?? []).some(r => r.invalid_example !== undefined || r.skip_when !== undefined)) t.add("silent-skip");
+    if (item.shape === "merge" || item.shape === "layered") t.add("merge");
+    return t;
+  }
+};
+
+const statusTags = STATUS_TAGS_BY_AREA[area];
 
 // The state shape the taxonomy was previewed with (work/tags/check.json); keep it in step.
 function describe(item) {
@@ -71,7 +130,7 @@ function describe(item) {
 
 async function topicScores(item) {
   const state = describe(item);
-  const cacheKey = `env:${taxonomyVersion}:${sha(JSON.stringify(state))}`;
+  const cacheKey = `${prefix}:${taxonomyVersion}:${sha(JSON.stringify(state))}`;
   if (cache[cacheKey]) return cache[cacheKey];
   const questions = Object.fromEntries(taxonomy.tags.map(tag => [tag.id, {
     type: "noul",
@@ -96,7 +155,7 @@ async function topicScores(item) {
   throw new Error("TypeSafe retries exhausted");
 }
 
-const records = readJson(path.join(root, "outputs/environment-variables.json")).items;
+const records = readJson(path.join(root, `outputs/${area}.json`)).items;
 const ids = new Set(records.map(r => r.id));
 const stale = seed.filter(s => !ids.has(s.id));
 if (stale.length) console.error(`seed entries with no record (skipped): ${stale.map(s => s.id).join(", ")}`);
@@ -105,22 +164,29 @@ const seeded = new Map(), excluded = new Map();
 for (const s of seed) { const map = s.exclude ? excluded : seeded; (map.get(s.id) ?? map.set(s.id, []).get(s.id)).push(s.tag); }
 
 const items = {};
-const queue = [...records];
-await Promise.all(Array.from({ length: 8 }, async () => {
-  while (queue.length) {
-    const item = queue.shift();
-    const tags = statusTags(item);
-    const scores = await topicScores(item);
-    const topics = taxonomy.tags.map(t => t.id).filter(id => (scores[id] >= THRESHOLD || seeded.get(item.id)?.includes(id)) && !excluded.get(item.id)?.includes(id));
-    items[item.id] = [...topics, ...tags];
-  }
-}));
-writeFileSync(cacheFile, JSON.stringify(cache));
+if (hasTaxonomy) {
+  const queue = [...records];
+  await Promise.all(Array.from({ length: 8 }, async () => {
+    while (queue.length) {
+      const item = queue.shift();
+      const tags = statusTags(item);
+      const scores = await topicScores(item);
+      const topics = taxonomy.tags.map(t => t.id).filter(id => (scores[id] >= THRESHOLD || seeded.get(item.id)?.includes(id)) && !excluded.get(item.id)?.includes(id));
+      items[item.id] = [...topics, ...tags];
+    }
+  }));
+  writeFileSync(cacheFile, JSON.stringify(cache));
+} else {
+  for (const item of records) items[item.id] = [...statusTags(item)];
+}
 
 const vocabulary = [
-  ...taxonomy.tags.map(t => ({ id: t.id, label: t.label, kind: "topic", definition: t.definition, ...(t.id === FEATURE ? { feature: true } : {}) })),
-  ...STATUS
+  ...(hasTaxonomy ? taxonomy.tags.map(t => ({ id: t.id, label: t.label, kind: "topic", definition: t.definition, ...(t.id === FEATURE ? { feature: true } : {}) })) : []),
+  ...STATUS_BY_AREA[area]
 ].map(t => ({ ...t, count: Object.values(items).filter(list => list.includes(t.id)).length })).filter(t => t.count);
 const ordered = Object.fromEntries(records.map(r => [r.id, items[r.id]]));
-writeFileSync(path.join(root, "outputs/environment-variables-tags.json"), `${JSON.stringify({ taxonomy_version: taxonomyVersion, threshold: THRESHOLD, tags: vocabulary, items: ordered }, null, 1)}\n`);
-console.log(`environment-variables: ${records.length} entries, tags: ${vocabulary.map(t => `${t.id} ${t.count}`).join(", ")}`);
+const output = hasTaxonomy
+  ? { taxonomy_version: taxonomyVersion, threshold: THRESHOLD, tags: vocabulary, items: ordered }
+  : { tags: vocabulary, items: ordered };
+writeFileSync(path.join(root, `outputs/${area}-tags.json`), `${JSON.stringify(output, null, 1)}\n`);
+console.log(`${area}: ${records.length} entries, tags: ${vocabulary.map(t => `${t.id} ${t.count}`).join(", ")}`);

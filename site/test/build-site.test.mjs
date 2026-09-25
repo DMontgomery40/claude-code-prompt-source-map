@@ -393,6 +393,9 @@ test("filterable pages wrap every entry with its tags and fail when an entry has
       tags: [{ id: "prompt-caching", label: "Prompt caching", kind: "topic", feature: true, count: 2 }, { id: "any-value", label: "Any value counts, even 0", kind: "status", count: 1 }],
       items: { a: ["prompt-caching"], b: ["prompt-caching", "any-value"] }
     }));
+    await writeFile(path.join(root, "outputs/decisions-index.json"), JSON.stringify({ items: [
+      { id: "b", status: "rung", feeds: [{ decision: "prompt-cache-ttl", title: "Prompt cache TTL", rung: "envTtl", rank: 2, of: 7 }] }
+    ] }));
     const catalog = [{ label: "Config", files: [{ path: "outputs/current.md", format: "markdown", filters: { records: "outputs/records.json", tags: "outputs/tags.json" } }] }];
     await buildSite({ sourceRoot: root, outFile, categories: catalog });
     const html = await readFile(path.join(root, "dist/current-md/index.html"), "utf8");
@@ -400,6 +403,7 @@ test("filterable pages wrap every entry with its tags and fail when an entry has
     assert.match(html, /class="chip chip-feature" data-tag="prompt-caching" aria-pressed="false">Prompt caching <span class="chip-count">2<\/span>/);
     assert.match(html, /class="chip" data-tag="any-value" aria-pressed="false">Any value counts, even 0 <span class="chip-count">1<\/span>/);
     assert.match(html, /<section class="filter-item" data-tags="prompt-caching any-value"><h4 id="disable-cache"><code>DISABLE_CACHE<\/code><\/h4><div class="item-tags">/);
+    assert.match(html, /<a class="feeds-link" href="\.\.\/what-wins\/#prompt-cache-ttl">Feeds: Prompt cache TTL, rung 2 of 7<\/a>/);
     assert.equal((html.match(/class="filter-item"/g) ?? []).length, 2);
 
     await writeFile(path.join(root, "outputs/records.json"), JSON.stringify({ items: [{ id: "a", group: "Caching", title: "CACHE_TTL" }, { id: "c", group: "Caching", title: "MISSING" }] }));
