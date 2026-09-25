@@ -68,6 +68,21 @@ export function casesFor(d) {
   return cases;
 }
 
+// Applies one decision's probe outcome to its record. Never clears needs_review: other code
+// (e.g. relocate.mjs, for "source changed") can set it for reasons the probe knows nothing
+// about, so a passing run only removes its own details.probe_failures, not the flag itself.
+export function applyProbeOutcome(d, { tested, failures }) {
+  for (const r of d.rungs) if (r.mechanism !== "remote") r.verified = tested.has(r.id) ? "tested" : "read";
+  if (failures.length) {
+    d.needs_review = true;
+    d.details = { ...d.details, probe_failures: failures };
+  } else if (d.details?.probe_failures) {
+    const { probe_failures, ...rest } = d.details;
+    d.details = rest;
+  }
+  return d;
+}
+
 export async function startRecorder() {
   let requests = [];
   const server = createServer((req, res) => {

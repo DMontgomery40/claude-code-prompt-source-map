@@ -7,7 +7,7 @@ import path from "node:path";
 import { evaluateLadder, exercisedRungs } from "../site/src/ladder-eval.mjs";
 import { readDecisions, writeDecisions } from "./decisions-lib.mjs";
 import { VERSION } from "./lib.mjs";
-import { casesFor, observers, runClaude, startRecorder } from "./probe-lib.mjs";
+import { applyProbeOutcome, casesFor, observers, runClaude, startRecorder } from "./probe-lib.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const only = process.argv.includes("--only") ? process.argv[process.argv.indexOf("--only") + 1] : null;
@@ -34,9 +34,8 @@ for (const d of decisions) {
     if (pass) for (const id of exercisedRungs(d, c.scenario)) tested.add(id);
     else failures.push(`${c.name}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(got)}`);
   }
-  for (const r of d.rungs) if (r.mechanism !== "remote") r.verified = tested.has(r.id) ? "tested" : "read";
-  if (failures.length) { d.needs_review = true; d.details = { ...d.details, probe_failures: failures }; failed += 1; }
-  else if (d.details?.probe_failures) { delete d.details.probe_failures; delete d.needs_review; }
+  applyProbeOutcome(d, { tested, failures });
+  if (failures.length) failed += 1;
   console.log(`${d.id}: ${failures.length ? `FAIL ${failures.length}` : "ok"}, tested ${[...tested].join(", ") || "none"}`);
 }
 recorder.close();

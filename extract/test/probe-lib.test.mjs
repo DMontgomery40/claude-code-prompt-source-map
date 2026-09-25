@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { casesFor, observers } from "../probe-lib.mjs";
+import { applyProbeOutcome, casesFor, observers } from "../probe-lib.mjs";
 
 // The shape of a real request with ENABLE_PROMPT_CACHING_1H=1 (spike capture, trimmed).
 const oneHour = { system: [{ type: "text", text: "billing" }, { type: "text", text: "identity", cache_control: { type: "ephemeral", ttl: "1h" } }], messages: [{ role: "user", content: [{ type: "text", text: "hi", cache_control: { type: "ephemeral", ttl: "1h" } }] }] };
@@ -30,4 +30,34 @@ test("cases cover each realizable rung alone, adjacent pairs, and invalid values
   const pair = casesFor(d).find(c => c.name === "a over b=1h");
   assert.deepEqual(pair.env, { A: "1", B: "1h" });
   assert.deepEqual(pair.scenario.context, { kind: "main", auth: "key" });
+});
+
+test("applyProbeOutcome on failure sets needs_review and probe_failures", () => {
+  const d = { rungs: [{ id: "a", mechanism: "env" }] };
+  applyProbeOutcome(d, { tested: new Set(), failures: ["a alone: expected 5m, got 1h"] });
+  assert.equal(d.needs_review, true);
+  assert.deepEqual(d.details.probe_failures, ["a alone: expected 5m, got 1h"]);
+});
+
+test("applyProbeOutcome on pass after a failure removes probe_failures but leaves needs_review true", () => {
+  // needs_review can have been set by relocate.mjs for "source changed", unrelated to the
+  // probe; a passing run must not silently clear a real relocation flag.
+  const d = { needs_review: true, details: { probe_failures: ["old failure"] }, rungs: [{ id: "a", mechanism: "env" }] };
+  applyProbeOutcome(d, { tested: new Set(["a"]), failures: [] });
+  assert.equal(d.needs_review, true);
+  assert.equal(d.details.probe_failures, undefined);
+  assert.equal(d.rungs[0].verified, "tested");
+});
+
+test("applyProbeOutcome on pass with needs_review set by someone else and no probe_failures leaves it untouched", () => {
+  const d = { needs_review: true, rungs: [{ id: "a", mechanism: "env" }] };
+  applyProbeOutcome(d, { tested: new Set(["a"]), failures: [] });
+  assert.equal(d.needs_review, true);
+  assert.equal(d.details, undefined);
+});
+
+test("applyProbeOutcome keeps remote rungs verified as read even when listed in tested", () => {
+  const d = { rungs: [{ id: "r", mechanism: "remote", verified: "read" }] };
+  applyProbeOutcome(d, { tested: new Set(["r"]), failures: [] });
+  assert.equal(d.rungs[0].verified, "read");
 });
