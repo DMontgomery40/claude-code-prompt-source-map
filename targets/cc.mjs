@@ -57,9 +57,10 @@ export const cc = {
       }
       // Reviews edit records; the views derived from them are rebuilt here so --verify and the
       // gate check what will be published. Ladders reviewed on this build are probed again.
+      // Only once the repo has decision ladders (the What wins branch is merged).
       const binary = path.join(repo, "work/releases", fingerprint.version, "package/claude");
-      const derive = [["extract/decision-coverage.mjs"], ["extract/decisions-page.mjs"], ["extract/tags.mjs", "decisions"]];
-      if (areas.includes("decisions")) derive.unshift(["extract/probe.mjs", binary]);
+      const derive = existsSync(path.join(repo, "outputs/decisions.json")) ? [["extract/decision-coverage.mjs"], ["extract/decisions-page.mjs"], ["extract/tags.mjs", "decisions"]] : [];
+      if (derive.length && areas.includes("decisions")) derive.unshift(["extract/probe.mjs", binary]);
       for (const step of derive) {
         // probe.mjs exits 3 when a case fails; it records details.probe_failures, which --verify refuses.
         const s = run(node, step, { cwd: repo, timeoutMs: 30 * 60 * 1000 });
