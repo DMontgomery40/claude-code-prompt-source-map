@@ -17,11 +17,19 @@ const dryRun = args.includes("--dry-run");
 const forced = args.includes("--force") ? args[args.indexOf("--force") + 1] : null;
 const targets = [codex, cc];
 
-if (existsSync(lockFile) && Date.now() - Number(readFileSync(lockFile, "utf8")) < 3 * 3600e3) {
-  log("another run holds the lock; exiting");
-  process.exit(0);
+// The lock names its process. A run killed outright (it happened once, most likely an
+// iCloud-evicted file under ~/Documents) leaves the file behind; the next run takes over
+// instead of waiting out the three-hour window.
+const alive = pid => { try { process.kill(pid, 0); return true; } catch { return false; } };
+if (existsSync(lockFile)) {
+  const [pid, started] = readFileSync(lockFile, "utf8").trim().split(" ").map(Number);
+  if (started && Date.now() - started < 3 * 3600e3 && pid && alive(pid)) {
+    log("another run holds the lock; exiting");
+    process.exit(0);
+  }
+  log(`taking over a stale lock${pid ? ` from pid ${pid}` : ""}`);
 }
-writeFileSync(lockFile, String(Date.now()));
+writeFileSync(lockFile, `${process.pid} ${Date.now()}`);
 const state = existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, "utf8")) : {};
 const save = () => writeFileSync(stateFile, `${JSON.stringify(state, null, 2)}\n`);
 
@@ -29,8 +37,8 @@ try {
   const now = Date.now();
   for (const target of targets) {
     const s = (state[target.name] ??= {});
-    // Commits that waited for the GitHub budget go out as soon as a slot is free.
-    try { if (target.repo) pushWithinBudget(target.repo); } catch (error) { log(`${target.name}: pending push failed: ${error.message}`); }
+    // Commits that waited for the GitHub budget go out as soon as a slot is free (never in a dry run).
+    if (!dryRun) try { if (target.repo) pushWithinBudget(target.repo); } catch (error) { log(`${target.name}: pending push failed: ${error.message}`); }
     const due = forced === target.name || !s.lastCheck || now - s.lastCheck >= target.intervalMs(now) - 5 * 60e3;
     if (!due) continue;
     let fingerprint;
