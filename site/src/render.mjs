@@ -213,7 +213,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   <noscript><style>.intro{display:none}${tocNoscriptStyles}</style></noscript>
   <script>document.documentElement.classList.add("js")</script>
   <style>
-    :root{color-scheme:dark;--bg:#111210;--panel:#171816;--panel-2:#1c1d1b;--text:#f2f2ed;--muted:#8d918b;--subtle:#6f736d;--line:#2a2c29;--link:#b8c7d9;--focus:#d9e6f4}
+    :root{color-scheme:dark;--bg:#111210;--panel:#171816;--panel-2:#1c1d1b;--text:#f2f2ed;--muted:#8d918b;--subtle:#6f736d;--line:#2a2c29;--link:#b8c7d9;--focus:#d9e6f4;--entry-accent:#ffd479}
     *{box-sizing:border-box}
     html{overflow-x:clip;scroll-behavior:smooth;background:var(--bg)}
     body{margin:0;overflow-x:clip;background:var(--bg);color:var(--text);font:16px/1.58 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -250,7 +250,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     .doc-index-summary{grid-column:1 / -1;color:#b9bcb5;font-size:15px}
     .data-link{margin:0 0 18px;color:var(--muted);font-size:14px}.data-link a{color:var(--link)}
     .markdown-body h3{margin:56px 0 20px;font-size:29px;line-height:1.22;font-weight:500;letter-spacing:-.015em}
-    .markdown-body h4{margin:42px 0 16px;font-size:22px;line-height:1.3;font-weight:550}
+    .markdown-body h4{margin:42px 0 16px;font-size:22px;line-height:1.3;font-weight:550;color:var(--entry-accent)}
     .markdown-body h5{margin:34px 0 13px;font-size:18px;line-height:1.35;font-weight:600}
     .markdown-body h6{margin:28px 0 12px;color:#d5d8d1;font-size:15px;line-height:1.4;font-weight:650}
     .markdown-body p{margin:0 0 1.25em}

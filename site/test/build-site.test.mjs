@@ -82,6 +82,15 @@ test("GitHub link sits beside the X follow link and survives reduced motion", as
   });
 });
 
+test("entry-name headings use the warm accent color, defined as a custom property", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const html = await readFile(outFile, "utf8");
+    assert.match(html, /--entry-accent:#ffd479/);
+    assert.match(html, /\.markdown-body h4\{[^}]*color:var\(--entry-accent\)/);
+  });
+});
+
 test("social previews use the public canonical URL and an absolute large card image", async () => {
   await withFixture(async (root, outFile) => {
     await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
