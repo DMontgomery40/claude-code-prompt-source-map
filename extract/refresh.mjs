@@ -10,6 +10,7 @@ import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { isDerived } from "./decisions-lib.mjs";
 
 const [version, integrity, flag] = process.argv.slice(2);
 // Scheduled runs don't inherit a shell profile; the TypeSafe key lives in ~/.env.
@@ -43,7 +44,7 @@ function* provenanceObjects(v) {
     for (const x of Object.values(v)) yield* provenanceObjects(x);
   }
 }
-const areaFiles = () => readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && !["status.json"].includes(f));
+const areaFiles = () => readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && f !== "status.json" && !isDerived(f));
 const records = name => { const items = readJson(path.join(root, "outputs", name)).items; return Array.isArray(items) ? items : []; };
 const pendingReview = () => areaFiles().flatMap(name => records(name).filter(item => item.needs_review).map(item => `${name.replace(/\.json$/, "")}:${item.id}`));
 

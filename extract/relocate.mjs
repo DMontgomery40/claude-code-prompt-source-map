@@ -8,10 +8,11 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import * as walk from "acorn-walk";
 import { byteMapper, indexExtraction, literalsWithin, parseSource } from "./literals.mjs";
+import { isDerived } from "./decisions-lib.mjs";
 
 const [prevDir, newDir, newVersion] = process.argv.slice(2);
 const root = new URL("../", import.meta.url).pathname;
-const skip = new Set(["inventory.json", "other-model-text.json", "status.json", "environment-variables.json", "capture-summary.json"]);
+const skip = new Set(["inventory.json", "other-model-text.json", "status.json", "environment-variables.json"]);
 const sha = buf => createHash("sha256").update(buf).digest("hex");
 
 const loadManifest = dir => new Map(JSON.parse(readFileSync(path.join(dir, "embedded-manifest.json"), "utf8")).files.map(f => [f.name.replace("/$bunfs/root/", ""), f]));
@@ -248,7 +249,7 @@ function* provenanceObjects(v) {
 
 const report = { version: newVersion, areas: {} };
 const substitutions = new Map();
-const areas = readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && !skip.has(f) && !f.endsWith("-tags.json")).map(name => ({ name, data: JSON.parse(readFileSync(path.join(root, "outputs", name), "utf8")) }));
+const areas = readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && !skip.has(f) && !isDerived(f)).map(name => ({ name, data: JSON.parse(readFileSync(path.join(root, "outputs", name), "utf8")) }));
 const results = new Map();
 for (const { data } of areas) for (const item of data.items ?? []) for (const p of provenanceObjects(item)) results.set(p, relocateExact(p));
 for (const list of shifts.values()) list.sort((a, b) => a.oldRel - b.oldRel);

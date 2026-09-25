@@ -4,15 +4,16 @@
 // judged it human-facing UI, library text, or other. This makes omissions detectable.
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { files, provenance, sha256, source, VERSION, PLATFORM, BINARY_SHA256 } from "./lib.mjs";
+import { isDerived } from "./decisions-lib.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const candidates = JSON.parse(readFileSync(`${root}work/candidates.json`, "utf8"));
 const verdicts = JSON.parse(readFileSync(`${root}work/jev-verdicts-v2.json`, "utf8"));
-const own = new Set(["inventory.json", "other-model-text.json", "capture-summary.json"]);
+const own = new Set(["inventory.json", "other-model-text.json"]);
 
 // Published ranges per embedded file, from every area's records.
 const ranges = new Map();
-for (const name of readdirSync(`${root}outputs`).filter(f => f.endsWith(".json") && !own.has(f) && !f.endsWith("-tags.json"))) {
+for (const name of readdirSync(`${root}outputs`).filter(f => f.endsWith(".json") && !own.has(f) && !isDerived(f))) {
   const data = JSON.parse(readFileSync(`${root}outputs/${name}`, "utf8"));
   for (const item of data.items ?? []) for (const p of item.provenance ?? []) {
     if (!files.has(p.file)) continue;

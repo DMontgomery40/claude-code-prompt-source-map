@@ -337,7 +337,7 @@ test("production catalog pins every page path and every record carries binary pr
   assert.equal(new Set(files.map(file => file.title)).size, files.length);
 
   const versions = new Set();
-  for (const file of files.filter(file => file.data)) {
+  for (const file of files.filter(file => file.data && !/-(tags|index)\.json$|^capture-summary\.json$/.test(path.basename(file.data)))) {
     const data = JSON.parse(await readFile(path.join(root, file.data), "utf8"));
     const items = data.items ?? [];
     assert(items.length > 0, `${file.data} has records`);
