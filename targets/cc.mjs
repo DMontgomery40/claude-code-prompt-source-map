@@ -48,10 +48,22 @@ export const cc = {
       // budget running out in one area cannot leave another half-edited.
       const report = readFileSync(path.join(repo, "work/cc-diff.md"), "utf8");
       const shared = report.split("\n### ").filter(s => /^(Default requests|claude --help)/.test(s)).map(s => `### ${s}`).join("\n").slice(0, 6000);
-      for (const area of reviewAreas()) {
+      const areas = reviewAreas();
+      for (const area of areas) {
         const lines = report.split("\n").filter((l, i, all) => l.startsWith(`- **${area}** `) || (l.startsWith("  - ") && all.slice(0, i).reverse().find(x => x.startsWith("- **"))?.startsWith(`- **${area}** `)));
-        const decisionsNote = area === "decisions" ? " Read work/DECISIONS-BRIEF.md. Fix the traced ladder so `node extract/probe.mjs --only <id>` passes; change a rung only with evidence from code." : "";
-        runAgent(repo, `Claude Code ${fingerprint.version} was released. extract/refresh.mjs moved every unchanged record to the new build; the ${area} records below changed at their source and are marked "needs_review": true in outputs/${area}.json.\n\n${lines.join("\n").slice(0, 16000)}\n\nContext from the release report:\n\n${shared}\n\nYou own only outputs/${area}.json and outputs/${area}.md.${decisionsNote} For each flagged record, update its text, conditions, and provenance so they match ${fingerprint.version} exactly, following work/CONTRACT.md (read the new code in work/extracted/; the "new" excerpts above are candidates chosen by a classifier, so confirm them). Provenance must cite files that exist in work/extracted/. Remove records whose source no longer exists, add new ones where the report shows new behavior, then delete "needs_review". Never type counts or statistics about this reference into prose (how many settings, tools, flags, records, or documented or undocumented ones): write {{count:<area> path=value ...}} or {{value:<file> dotted.path}} tokens, which site/src/facts.mjs fills from the JSON; the publishing gate rejects typed statistics. Finish by running \`node ${args.join(" ")} --verify 2>&1 | grep ${area}\` until it prints nothing.`, { budgetUsd: 8, timeoutMs: 45 * 60 * 1000 });
+        const decisionsNote = area === "decisions" ? " Read work/DECISIONS-BRIEF.md. Fix the traced ladder so `node extract/probe.mjs --only <id>` passes; change a rung only with evidence from code. outputs/what-wins.md is generated: rerun `node extract/decisions-page.mjs` after editing decisions.json." : "";
+        const owned = area === "decisions" ? "outputs/decisions.json and outputs/what-wins.md" : `outputs/${area}.json and outputs/${area}.md`;
+        runAgent(repo, `Claude Code ${fingerprint.version} was released. extract/refresh.mjs moved every unchanged record to the new build; the ${area} records below changed at their source and are marked "needs_review": true in outputs/${area}.json.\n\n${lines.join("\n").slice(0, 16000)}\n\nContext from the release report:\n\n${shared}\n\nYou own only ${owned}.${decisionsNote} For each flagged record, update its text, conditions, and provenance so they match ${fingerprint.version} exactly, following work/CONTRACT.md (read the new code in work/extracted/; the "new" excerpts above are candidates chosen by a classifier, so confirm them). Provenance must cite files that exist in work/extracted/. Remove records whose source no longer exists, add new ones where the report shows new behavior, then delete "needs_review". Never type counts or statistics about this reference into prose (how many settings, tools, flags, records, or documented or undocumented ones): write {{count:<area> path=value ...}} or {{value:<file> dotted.path}} tokens, which site/src/facts.mjs fills from the JSON; the publishing gate rejects typed statistics. Finish by running \`node ${args.join(" ")} --verify 2>&1 | grep ${area}\` until it prints nothing.`, { budgetUsd: 8, timeoutMs: 45 * 60 * 1000 });
+      }
+      // Reviews edit records; the views derived from them are rebuilt here so --verify and the
+      // gate check what will be published. Ladders reviewed on this build are probed again.
+      const binary = path.join(repo, "work/releases", fingerprint.version, "package/claude");
+      const derive = [["extract/decision-coverage.mjs"], ["extract/decisions-page.mjs"], ["extract/tags.mjs", "decisions"]];
+      if (areas.includes("decisions")) derive.unshift(["extract/probe.mjs", binary]);
+      for (const step of derive) {
+        // probe.mjs exits 3 when a case fails; it records details.probe_failures, which --verify refuses.
+        const s = run(node, step, { cwd: repo, timeoutMs: 30 * 60 * 1000 });
+        if (s.status !== 0 && !(step[0] === "extract/probe.mjs" && s.status === 3)) throw new Error(`${step.join(" ")} failed after review (${s.status}): ${(s.stderr || s.stdout).slice(-800)}`);
       }
       r = refresh(["--verify"]);
     }
