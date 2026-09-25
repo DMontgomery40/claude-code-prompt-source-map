@@ -131,8 +131,14 @@ try {
   // Tools regenerate from the new build and its captures; exit 3 marks records for review.
   run(node, ["--max-old-space-size=12000", "extract/tools.mjs", path.join(release, "capture")], { breakCode: 2, allow: [3] });
   run(node, ["--max-old-space-size=8192", "extract/env-vars.mjs"], { breakCode: 2 });
-  // Topic and status tags for the env-var filters; Jev scores only new or changed variables.
-  run(node, ["extract/tags.mjs"]);
+  // What wins: new decision functions, tested ladders, coverage, and the page.
+  run(node, ["--max-old-space-size=8192", "extract/decision-candidates.mjs"], { breakCode: 2 });
+  run(node, ["extract/decision-triage.mjs"]);
+  run(node, ["extract/probe.mjs", binary], { breakCode: 2, allow: [3] });
+  run(node, ["extract/decision-coverage.mjs"]);
+  run(node, ["extract/decisions-page.mjs"]);
+  // Topic and status tags for each area's filters; Jev scores only new or changed records.
+  for (const area of ["environment-variables", "settings", "cli", "decisions"]) run(node, ["extract/tags.mjs", area]);
   const envAfter = new Set(readJson(path.join(root, "outputs/environment-variables.json")).items.map(i => i.title));
   const envAdded = [...envAfter].filter(x => !envBefore.has(x)), envRemoved = [...envBefore].filter(x => !envAfter.has(x));
   const otherBefore = new Set(existsSync(path.join(root, "outputs/other-model-text.json")) ? readJson(path.join(root, "outputs/other-model-text.json")).items.map(i => i.text) : []);
