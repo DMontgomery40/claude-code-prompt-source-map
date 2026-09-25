@@ -5,12 +5,16 @@
 import { escapeHtml } from "./render.mjs";
 
 const plain = html => html.replace(/<[^>]*>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, "&").trim();
+// Some group/title strings carry literal backticks around inline code (e.g. "settings `env`")
+// while the rendered heading turns that into <code>, which plain() strips along with the
+// backticks. Compare with backticks removed on both sides so those still match.
+const norm = s => s.replace(/`/g, "");
 
 export function wrapFilterable(html, filter) {
   const labels = new Map(filter.vocabulary.map(t => [t.id, t.label]));
   const queues = new Map();
   for (const record of filter.records) {
-    const key = `${record.group}\u0000${record.title}`;
+    const key = `${norm(record.group)}\u0000${norm(record.title)}`;
     (queues.get(key) ?? queues.set(key, []).get(key)).push(record);
   }
   let group = null, matched = 0, open = false, out = "";
@@ -24,7 +28,7 @@ export function wrapFilterable(html, filter) {
     }
     if (!block.startsWith("<h4")) { out += block; continue; }
     const heading = block.match(/^<h4[^>]*>[\s\S]*?<\/h4>/)[0];
-    const record = queues.get(`${group}\u0000${plain(heading)}`)?.shift();
+    const record = queues.get(`${norm(group)}\u0000${norm(plain(heading))}`)?.shift();
     if (!record) { out += block; continue; }
     matched += 1;
     const chips = record.tags.map(t => `<button type="button" class="chip chip-small" data-tag="${t}" aria-pressed="false">${escapeHtml(labels.get(t) ?? t)}</button>`).join("");

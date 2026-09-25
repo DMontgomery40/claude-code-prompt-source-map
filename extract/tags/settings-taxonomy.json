@@ -1,0 +1,315 @@
+{
+ "tags": [
+  {
+   "id": "prompt-caching",
+   "label": "Prompt caching",
+   "definition": "settings.json keys that change Anthropic prompt caching on Claude Code's model requests. Counts: the cache TTL for the main conversation (promptCacheTtl) or for subagents, workflows and background requests (subagentPromptCacheTtl); the `env` block, which is where the prompt-caching environment variables (DISABLE_PROMPT_CACHING*, the TTL variables) are set for a user, project or organization; and the few keys the prompt-caching docs name as invalidating the cache when changed mid-session: model, effortLevel, fastMode, enabledPlugins, and deny rules for an entire tool (permissions.deny). Applies whatever group the key is in, including internal and undocumented keys. Does NOT include other caches that only share the word (WebFetch, MCP discovery, plugin or credential caches); other model, effort or thinking keys (availableModels, fallbackModel, modelSettings, maxEffortLevel, alwaysThinkingEnabled); compaction settings; MCP server approvals, which apply only after a restart; output style, permission mode, and allow or ask rules, which the docs say keep the cache; the prices of cache reads and writes in cost reports (modelPricing); or auto-update controls.",
+   "true_examples": [
+    "setting-prompt-cache-ttl",
+    "setting-subagent-prompt-cache-ttl",
+    "setting-env",
+    "setting-enabled-plugins"
+   ],
+   "false_examples": [
+    "setting-fallback-model",
+    "setting-max-effort-level",
+    "setting-disabled-mcpjson-servers",
+    "setting-permissions--ask",
+    "setting-auto-compact-enabled",
+    "setting-model-pricing",
+    "setting-auto-updates-channel"
+   ]
+  },
+  {
+   "id": "security-permissions",
+   "label": "Security and permissions",
+   "definition": "settings.json keys that change what Claude Code is allowed to do, or how exposed the machine and its secrets are. Counts: permission rules (allow, deny, ask), permission modes, bypass and auto mode, and the auto-mode classifier rules; the working-directory scope and reads outside it; every sandbox key, including the sandbox's network allowlists, proxy ports, TLS termination, filesystem paths, credential masking, the sandbox's custom ripgrep command, and platform escape hatches; managed-only switches that make only organization rules count (allowManagedPermissionRulesOnly, allowManagedHooksOnly, allowManagedMcpServersOnly, allowManagedDomainsOnly); approving project .mcp.json servers (also MCP); organization allowlists and denylists for MCP servers, plugins, marketplaces, channels and HTTP hook targets; blocking side-loaded extensions; shell execution inside skills; and which settings `env` entries are safe to apply before workspace trust. Applies whatever group the key is in. Does NOT include which credentials or login to use (Authentication), feedback, telemetry or transcript retention (Privacy), or Claude Code's own proxy and certificate settings (Network).",
+   "true_examples": [
+    "setting-permissions--ask",
+    "setting-auto-mode--hard-deny",
+    "setting-sandbox--filesystem--deny-write",
+    "setting-sandbox--network--denied-domains",
+    "setting-sandbox--credentials--env-vars",
+    "setting-allow-managed-hooks-only",
+    "setting-denied-mcp-servers",
+    "setting-disable-skill-shell-execution"
+   ],
+   "false_examples": [
+    "setting-aws-auth-refresh",
+    "setting-feedback-drafts",
+    "setting-desktop-session-cleanup-period-days",
+    "setting-policy-helper--path"
+   ]
+  },
+  {
+   "id": "privacy-telemetry",
+   "label": "Privacy, telemetry and nonessential traffic",
+   "definition": "settings.json keys that control what Claude Code reports about the user, sends beyond the model request, or keeps about their sessions. Counts: session-quality surveys and model-drafted feedback; transcript retention and cleanup periods; mirroring or uploading local sessions to claude.ai; what a machine reports about itself when it registers for Remote Control; and pre-flight checks that send requested URLs to Anthropic. Applies whatever group the key is in. Does NOT include OpenTelemetry export (Observability), or permission and sandbox controls (Security).",
+   "true_examples": [
+    "setting-feedback-drafts",
+    "setting-desktop-session-cleanup-period-days",
+    "setting-auto-upload-sessions",
+    "setting-remote-control--share-host-profile"
+   ],
+   "false_examples": [
+    "setting-sandbox--credentials--files",
+    "setting-spinner-tips-enabled"
+   ]
+  },
+  {
+   "id": "observability",
+   "label": "Logging, tracing and diagnostics",
+   "definition": "settings.json keys for the logs, metrics and traces that the user collects about Claude Code, such as the helper script that supplies OpenTelemetry exporter headers. Applies whatever group the key is in. Does NOT include Anthropic feedback or survey controls (Privacy), status lines (Terminal UI), or credentials for reaching models (Authentication).",
+   "true_examples": [
+    "setting-otel-headers-helper"
+   ],
+   "false_examples": [
+    "setting-feedback-drafts",
+    "setting-status-line",
+    "setting-aws-credential-export"
+   ]
+  },
+  {
+   "id": "authentication",
+   "label": "Authentication and credentials",
+   "definition": "settings.json keys that supply or control credentials for reaching Anthropic, cloud providers or MCP servers. Counts: API key helper scripts; AWS credential export and refresh scripts; GCP auth refresh commands; forcing a login method, an organization, or the Cloud gateway that login connects to (its URL and the network blocks /login accepts it in, also Providers); and identity-provider (IdP/OIDC) connections that MCP servers reuse. Applies whatever group the key is in. Does NOT include proxy authentication helpers (Network), header helpers for OpenTelemetry exporters (Observability), or sandbox credential masking (Security).",
+   "true_examples": [
+    "setting-aws-credential-export",
+    "setting-gcp-auth-refresh",
+    "setting-force-login-method",
+    "setting-force-login-org-uuid",
+    "setting-xaa-idp--client-id"
+   ],
+   "false_examples": [
+    "setting-sandbox--credentials--env-vars",
+    "setting-model-overrides"
+   ]
+  },
+  {
+   "id": "providers",
+   "label": "Model providers and API endpoints",
+   "definition": "settings.json keys that choose or configure the backend serving model requests. Counts: mapping Anthropic model IDs to provider-specific IDs or inference profiles (modelOverrides); Cloud gateway URLs and the network blocks a gateway sits in (also Authentication, since /login uses them). Applies whatever group the key is in. Does NOT include credentials, login methods or auth refresh scripts (Authentication), proxies (Network), or choosing which Claude model runs (Models).",
+   "true_examples": [
+    "setting-force-login-gateway-url",
+    "setting-gateway-internal-networks"
+   ],
+   "false_examples": [
+    "setting-aws-auth-refresh",
+    "setting-fallback-model"
+   ]
+  },
+  {
+   "id": "models-context",
+   "label": "Models, thinking and context window",
+   "definition": "settings.json keys that choose which Claude model runs, how much it thinks, and how much it holds. Counts: the model, fallback models, the allowlist of selectable models and /model picker entries; effort, maximum effort and per-model settings; ultracode's effort; thinking on or off and thinking summaries; fast mode; the advisor model; switching models when safeguards flag a message; and auto-compaction on or off, its window, and precomputed compaction. Applies whatever group the key is in. Does NOT include mapping model IDs to provider-specific IDs (Providers), prompt-cache TTLs (Prompt caching), prices used for cost figures (modelPricing), or text injected into the prompt, including budgets for how much of the context window the skill listing may use (Prompt and instructions).",
+   "true_examples": [
+    "setting-fallback-model",
+    "setting-available-models",
+    "setting-model-picker--options",
+    "setting-max-effort-level",
+    "setting-always-thinking-enabled",
+    "setting-show-thinking-summaries",
+    "setting-auto-compact-enabled",
+    "setting-advisor-model"
+   ],
+   "false_examples": [
+    "setting-language",
+    "setting-subagent-prompt-cache-ttl",
+    "setting-model-pricing"
+   ]
+  },
+  {
+   "id": "prompt-instructions",
+   "label": "Prompt, instructions and memory",
+   "definition": "settings.json keys that replace, shorten, add or remove text that Claude Code puts in the model's context. Counts: output styles and response language; organization-managed CLAUDE.md text and CLAUDE.md exclusions; auto memory on or off, its directory, and background memory consolidation; built-in git commit and PR instructions; skill-listing size and description caps; and token-budget reminders. Applies whatever group the key is in. Does NOT include model choice or compaction (Models), tool output limits such as Bash output size (Built-in tools), or keys that change behavior without changing prompt text.",
+   "true_examples": [
+    "setting-language",
+    "setting-claude-md-excludes",
+    "setting-auto-memory-enabled",
+    "setting-include-git-instructions",
+    "setting-skill-listing-max-desc-chars",
+    "setting-auto-dream-enabled"
+   ],
+   "false_examples": [
+    "setting-task-output-max-chars",
+    "setting-auto-compact-enabled",
+    "setting-syntax-highlighting-disabled"
+   ]
+  },
+  {
+   "id": "mcp",
+   "label": "MCP servers",
+   "definition": "settings.json keys for Model Context Protocol servers and their tools. Counts: approving or rejecting project .mcp.json servers; organization-managed MCP servers; MCP server allowlists and denylists; claude.ai connectors; channel notifications that MCP servers push; per-plugin MCP server configuration; and identity-provider connections that MCP servers reuse. Applies whatever group the key is in. Does NOT include plugins, skills or hooks in general (Plugins, skills and hooks) unless the key is about the MCP servers they bring.",
+   "true_examples": [
+    "setting-enable-all-project-mcp-servers",
+    "setting-disabled-mcpjson-servers",
+    "setting-managed-mcp-servers",
+    "setting-disable-claude-ai-connectors",
+    "setting-channels-enabled",
+    "setting-plugin-configs"
+   ],
+   "false_examples": [
+    "setting-enabled-plugins",
+    "setting-disable-all-hooks"
+   ]
+  },
+  {
+   "id": "plugins-skills-hooks",
+   "label": "Plugins, skills and hooks",
+   "definition": "settings.json keys for user- or organization-supplied extensions other than MCP. Counts: plugins and plugin marketplaces (enabling, extra, blocked or strict marketplaces, command sources, install suggestions, trust messages, plugin hook order); skills (claude.ai sync, per-skill overrides, bundled skills, shell execution in skills); lifecycle hooks, disabling hooks, and HTTP hook limits; and restricting customization to plugins. Skill-listing size caps count here and also under Prompt and instructions. Applies whatever group the key is in. Does NOT include MCP server settings (MCP), workflows or subagents (Subagents), tools that ship with Claude Code (Built-in tools), or status lines (Terminal UI).",
+   "true_examples": [
+    "setting-enabled-plugins",
+    "setting-extra-known-marketplaces",
+    "setting-blocked-marketplaces",
+    "setting-sync-claude-ai-skills",
+    "setting-skill-overrides",
+    "setting-disable-all-hooks",
+    "setting-allowed-http-hook-urls",
+    "setting-prepend-plugins"
+   ],
+   "false_examples": [
+    "setting-managed-mcp-servers",
+    "setting-disable-workflows",
+    "setting-status-line"
+   ]
+  },
+  {
+   "id": "agents-background",
+   "label": "Subagents, teams and background work",
+   "definition": "settings.json keys for work that runs beside or beyond the main conversation. Counts: the agent (built-in or custom) whose prompt, tools and model the main thread uses; the agent view and the background-agent supervisor; teammates and their execution mode (tmux, iTerm2 panes or in-process); workflows (on or off, keyword trigger, size guideline, usage warning); ultracode orchestration; background-session worktree isolation; cross-session and peer messages; the background service's cold start; away summaries; model-proposed goals; and continuing automatically until the work is done or after a usage limit resets. Applies whatever group the key is in. Does NOT include the subagent prompt-cache TTL (Prompt caching), cloud or Remote Control sessions (Cloud, remote and hosted sessions), hook settings (Plugins, skills and hooks), or git worktree options other than background isolation (Git).",
+   "true_examples": [
+    "setting-disable-agent-view",
+    "setting-process-wrapper",
+    "setting-disable-workflows",
+    "setting-workflow-size-guideline",
+    "setting-cross-session-inbound",
+    "setting-worktree--bg-isolation",
+    "setting-away-summary-enabled",
+    "setting-model-proposed-goals"
+   ],
+   "false_examples": [
+    "setting-subagent-prompt-cache-ttl",
+    "setting-remote-control-at-startup",
+    "setting-allowed-http-hook-urls",
+    "setting-worktree--sparse-paths"
+   ]
+  },
+  {
+   "id": "built-in-tools",
+   "label": "Built-in tools",
+   "definition": "settings.json keys that change tools shipped with Claude Code that the model calls. Counts: Bash and PowerShell tool behavior and output limits; file checkpointing for /rewind; WebFetch pre-flight checks; the Artifact tool; AskUserQuestion timeouts; the push-notification tool; and the advisor tool. Applies whatever group the key is in. Does NOT include the input box's ! shell commands, which the user runs (Terminal UI), MCP tools (MCP), plugin or skill tools (Plugins, skills and hooks), subagent spawning (Subagents), or sandbox rules (Security).",
+   "true_examples": [
+    "setting-bash-edit-diff-enabled",
+    "setting-file-checkpointing-enabled",
+    "setting-disable-artifact",
+    "setting-ask-user-question-timeout",
+    "setting-agent-push-notif-enabled"
+   ],
+   "false_examples": [
+    "setting-respond-to-bash-commands",
+    "setting-managed-mcp-servers",
+    "setting-sandbox--ripgrep"
+   ]
+  },
+  {
+   "id": "remote-hosted",
+   "label": "Cloud, remote and hosted sessions",
+   "definition": "settings.json keys for Claude Code running somewhere other than a local terminal, or reached from elsewhere. Counts: Remote Control (turning it off, starting it at startup, what it shares about the machine); cloud sessions and their default environment; serving tool calls to cloud sessions; SSH connection configurations; Desktop's SSH worktree location; mirroring sessions to claude.ai; and how long dialogs forwarded to a remote client wait. Applies whatever group the key is in. Does NOT include local background sessions or teammates (Subagents), or provider endpoints (Providers).",
+   "true_examples": [
+    "setting-remote-control-at-startup",
+    "setting-ssh-configs",
+    "setting-remote--default-environment-id",
+    "setting-remote-tools--allow-unattended-serving",
+    "setting-dialog-expiry",
+    "setting-auto-upload-sessions"
+   ],
+   "false_examples": [
+    "setting-disable-agent-view",
+    "setting-process-wrapper"
+   ]
+  },
+  {
+   "id": "network",
+   "label": "Network, proxies and timeouts",
+   "definition": "settings.json keys for how Claude Code's own network connections behave, such as a helper that supplies a Proxy-Authorization header. Applies whatever group the key is in. Does NOT include the sandbox's network allowlists, proxy ports or TLS termination for sandboxed commands (Security), which provider or gateway serves model requests (Providers), or tool-specific timeouts.",
+   "true_examples": [
+    "setting-proxy-auth-helper"
+   ],
+   "false_examples": [
+    "setting-sandbox--network--http-proxy-port",
+    "setting-sandbox--network--tls-terminate",
+    "setting-gateway-internal-networks"
+   ]
+  },
+  {
+   "id": "terminal-ui",
+   "label": "Terminal UI, commands and IDE",
+   "definition": "settings.json keys that change what the user sees or types in the terminal or IDE. Counts: the renderer (fullscreen), theme and colors; syntax highlighting; spinner tips and verbs; status lines, including the per-subagent status line; transcript and chat view modes, message timestamps and verbosity; time format and zone; keybindings and vim mode; spell check; emoji and prompt suggestions; file suggestions for @ mentions and whether the file picker respects .gitignore; the input box's ! shell commands; voice dictation; reduced motion and screen-reader output; scrolling; terminal titles and progress bars; startup announcements; the claude-cli:// deep-link handler; OS and mobile notifications about waiting prompts; the todo panel; and break reminders and quiet hours. Applies whatever group the key is in. Does NOT include logging (Observability), tools the model calls (Built-in tools), or how teammates are laid out in tmux or iTerm2 (Subagents).",
+   "true_examples": [
+    "setting-tui",
+    "setting-status-line",
+    "setting-spinner-verbs",
+    "setting-respond-to-bash-commands",
+    "setting-editor-mode",
+    "setting-voice--mode",
+    "setting-preferred-notif-channel",
+    "setting-quiet-hours--start"
+   ],
+   "false_examples": [
+    "setting-bash-edit-diff-enabled",
+    "setting-ask-user-question-timeout"
+   ]
+  },
+  {
+   "id": "managed-policy",
+   "label": "Managed settings and policy",
+   "definition": "settings.json keys that decide how organization-managed settings themselves are computed, delivered and layered. Counts: policy helper executables and their per-OS variants; how managed sources and the SDK parent tier compose; forcing a fresh remote-settings fetch at startup; WSL inheriting Windows policy; and rejecting side-loading CLI flags. Does NOT include ordinary keys that are merely honored only from managed settings, such as MCP, plugin, marketplace, hook, permission or domain allowlists (their own topic and Security), managed CLAUDE.md text (Prompt and instructions), gateway login settings (Authentication, Providers), or version floors and ceilings (Updates).",
+   "true_examples": [
+    "setting-policy-helper--timeout-ms",
+    "setting-policy-helpers--macos",
+    "setting-managed-sources-behavior",
+    "setting-parent-settings-behavior",
+    "setting-force-remote-settings-refresh",
+    "setting-wsl-inherits-windows-settings",
+    "setting-disable-sideload-flags"
+   ],
+   "false_examples": [
+    "setting-allow-managed-permission-rules-only",
+    "setting-strict-known-marketplaces",
+    "setting-required-maximum-version",
+    "setting-force-login-org-uuid"
+   ]
+  },
+  {
+   "id": "updates",
+   "label": "Updates and versions",
+   "definition": "settings.json keys for which Claude Code version runs: the auto-update release channel, the minimum version to stay on, and the minimum or maximum version allowed to start. Applies whatever group the key is in. Does NOT include plugin or skill syncing and updates (Plugins, skills and hooks), or forcing a managed-settings refresh (Managed settings).",
+   "true_examples": [
+    "setting-auto-updates-channel",
+    "setting-minimum-version",
+    "setting-required-maximum-version"
+   ],
+   "false_examples": [
+    "setting-force-remote-settings-refresh",
+    "setting-sync-claude-ai-plugins"
+   ]
+  },
+  {
+   "id": "git",
+   "label": "Git, attribution and worktrees",
+   "definition": "settings.json keys for how Claude Code works with git. Counts: commit and PR attribution text and trailers, co-authored-by, session links in commits and PRs; PR link templates; built-in git commit and PR instructions (also Prompt and instructions); and git worktree creation: symlinked directories, sparse-checkout paths, the base ref, background-session isolation (also Subagents) and Desktop's SSH worktree location (also Cloud, remote and hosted). Applies whatever group the key is in. Does NOT include file checkpointing (Built-in tools) or teammates (Subagents).",
+   "true_examples": [
+    "setting-attribution--commit",
+    "setting-include-co-authored-by",
+    "setting-attribution--session-url",
+    "setting-pr-url-template",
+    "setting-worktree--symlink-directories",
+    "setting-worktree--sparse-paths"
+   ],
+   "false_examples": [
+    "setting-file-checkpointing-enabled",
+    "setting-process-wrapper"
+   ]
+  }
+ ]
+}

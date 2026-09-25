@@ -57,7 +57,10 @@ const STATUS_BY_AREA = {
     { id: "documented", label: "Documented", kind: "status" },
     { id: "undocumented", label: "Undocumented", kind: "status" },
     { id: "internal", label: "Internal (@internal)", kind: "status" },
-    { id: "safe-env", label: "Safe env keys", kind: "status" }
+    { id: "deprecated", label: "Deprecated", kind: "status" },
+    { id: "fixed-values", label: "Fixed values", kind: "status" },
+    { id: "invalid-value-dropped", label: "Invalid value ignored", kind: "status" },
+    { id: "build-gated", label: "Feature module (build-gated)", kind: "status" }
   ],
   cli: [
     { id: "documented", label: "Documented", kind: "status" },
@@ -89,9 +92,13 @@ const STATUS_TAGS_BY_AREA = {
     return t;
   },
   settings: item => {
+    const d = item.details ?? {};
     const t = new Set([item.documented ? "documented" : "undocumented"]);
-    if (item.details?.internal) t.add("internal");
-    if (item.group?.startsWith("Safe env")) t.add("safe-env");
+    if (item.group?.startsWith("Internal keys") || d.internal === true) t.add("internal");
+    if (item.text?.startsWith("Deprecated")) t.add("deprecated");
+    if (Array.isArray(d.values) && d.values.length) t.add("fixed-values");
+    if (d.invalidValueDropped === true) t.add("invalid-value-dropped");
+    if (d.buildGate !== undefined) t.add("build-gated");
     return t;
   },
   cli: item => {
@@ -113,20 +120,39 @@ const STATUS_TAGS_BY_AREA = {
 
 const statusTags = STATUS_TAGS_BY_AREA[area];
 
-// The state shape the taxonomy was previewed with (work/tags/check.json); keep it in step.
-function describe(item) {
-  const d = item.details ?? {};
-  const text = typeof d.description === "string" ? d.description : d.description?.text;
-  return {
-    name: item.title,
-    kind: "environment variable",
-    group: item.group,
-    type: d.type ?? d.read_as ?? null,
-    default: d.default ?? null,
-    values: d.values ?? null,
-    description: text ?? d.source_comment ?? null
-  };
-}
+// The state shape and question wording each area's taxonomy was previewed with (work/tags/*-check.json
+// for environment-variables, .superpowers/sdd/2026-09-25-what-wins-phase1/settings-tags-report.md
+// for settings); keep both in step; changing either invalidates that area's preview accuracy.
+const NOUN_BY_AREA = { "environment-variables": "environment variable", settings: "settings.json key" };
+
+const DESCRIBE_BY_AREA = {
+  "environment-variables": item => {
+    const d = item.details ?? {};
+    const text = typeof d.description === "string" ? d.description : d.description?.text;
+    return {
+      name: item.title,
+      kind: "environment variable",
+      group: item.group,
+      type: d.type ?? d.read_as ?? null,
+      default: d.default ?? null,
+      values: d.values ?? null,
+      description: text ?? d.source_comment ?? null
+    };
+  },
+  settings: item => {
+    const d = item.details ?? {};
+    return {
+      name: d.path ?? item.title,
+      kind: item.kind === "setting" ? "settings.json key" : "settings.json reference note",
+      group: item.group,
+      type: d.type ?? null,
+      default: d.default ?? null,
+      values: d.values ?? null,
+      description: item.text || (item.kind === "setting" ? null : item.when) || null
+    };
+  }
+};
+const describe = DESCRIBE_BY_AREA[area];
 
 async function topicScores(item) {
   const state = describe(item);
@@ -134,7 +160,7 @@ async function topicScores(item) {
   if (cache[cacheKey]) return cache[cacheKey];
   const questions = Object.fromEntries(taxonomy.tags.map(tag => [tag.id, {
     type: "noul",
-    instructions: `Does the Claude Code environment variable described in \`state\` belong to this topic? Topic: ${tag.label}. ${tag.definition}`,
+    instructions: `Does the Claude Code ${NOUN_BY_AREA[area]} described in \`state\` belong to this topic? Topic: ${tag.label}. ${tag.definition}`,
     criteria: {
       true: `It belongs, like: ${tag.true_examples.join(", ")}.`,
       false: `It does not, like these near misses: ${tag.false_examples.join(", ")}.`

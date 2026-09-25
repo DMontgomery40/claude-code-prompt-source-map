@@ -411,6 +411,23 @@ test("filterable pages wrap every entry with its tags and fail when an entry has
   });
 });
 
+test("filterable pages match a group whose inline-code backticks the rendered heading drops", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(path.join(root, "outputs/current.md"), "# Title\n\n## Safe env keys (settings `env`)\n\n### Safe env check\n\nA predicate.\n");
+    await writeFile(path.join(root, "outputs/records.json"), JSON.stringify({ items: [
+      { id: "a", group: "Safe env keys (settings `env`)", title: "Safe env check" }
+    ] }));
+    await writeFile(path.join(root, "outputs/tags.json"), JSON.stringify({
+      tags: [{ id: "safe-env", label: "Safe env keys", kind: "status", count: 1 }],
+      items: { a: ["safe-env"] }
+    }));
+    const catalog = [{ label: "Config", files: [{ path: "outputs/current.md", format: "markdown", filters: { records: "outputs/records.json", tags: "outputs/tags.json" } }] }];
+    await buildSite({ sourceRoot: root, outFile, categories: catalog });
+    const html = await readFile(path.join(root, "dist/current-md/index.html"), "utf8");
+    assert.match(html, /<section class="filter-item" data-tags="safe-env">/);
+  });
+});
+
 test("every env var, settings key and CLI flag feeds a ladder or says why not", async () => {
   const root = fileURLToPath(new URL("../../", import.meta.url));
   const index = JSON.parse(await readFile(path.join(root, "outputs/decisions-index.json"), "utf8")).items;

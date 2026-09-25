@@ -1,0 +1,50 @@
+[
+ {
+  "id": "setting-prompt-cache-ttl",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Step 3 of TTL resolution for main-conversation requests: IEt() reads Ye().promptCacheTtl after FORCE_PROMPT_CACHING_5M and CLAUDE_CODE_PROMPT_CACHE_TTL and returns {ttl, reason:\"setting\"} (work/extracted/chunk-x9fwahqm.js, IEt(), the resolver the env seed cites at char 1867187). Docs work/docs/pages/prompt-caching.md:275 and :284."
+ },
+ {
+  "id": "setting-subagent-prompt-cache-ttl",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Same IEt() step for every request outside the main conversation (subagents, workflows, background, helpers): reads Ye().subagentPromptCacheTtl, ahead of an agent's experimental.cacheTtl frontmatter (chunk-x9fwahqm.js). Docs work/docs/pages/prompt-caching.md:276 and :284-285."
+ },
+ {
+  "id": "setting-env",
+  "tag": "prompt-caching",
+  "relation": "carries-cache-env",
+  "reason": "Docs work/docs/pages/prompt-caching.md:347: 'To set caching policy across an organization, put any of these [DISABLE_PROMPT_CACHING*] or the TTL variables in the env block of managed settings.' Code: every prompt-caching variable (DISABLE_PROMPT_CACHING, _HAIKU/_SONNET/_OPUS/_FABLE, CLAUDE_CODE_PROMPT_CACHE_TTL, CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL, ENABLE_PROMPT_CACHING_1H, _1H_BEDROCK, FORCE_PROMPT_CACHING_5M, plus ENABLE_TOOL_SEARCH and CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS) is on the always-safe env list (record settings-safe-env-set-wl), so even project and local `env` entries apply them."
+ },
+ {
+  "id": "setting-model",
+  "tag": "prompt-caching",
+  "relation": "invalidates-on-change",
+  "reason": "Docs work/docs/pages/prompt-caching.md:37 and 'Switching models' (:79-81): each model has its own cache, so a model switch re-reads the whole conversation uncached. /model rewrites this key mid-session. DECISION: docs-named invalidator, differs from the env page, where a fixed-for-session ANTHROPIC_MODEL is a near miss."
+ },
+ {
+  "id": "setting-effort-level",
+  "tag": "prompt-caching",
+  "relation": "invalidates-on-change",
+  "reason": "Docs work/docs/pages/prompt-caching.md:38 and 'Changing effort level' (:95-99): on most models each effort level has its own cache (Opus 5.5 and Fable 5.1 on API key or subscription keep it). /effort persists this key. DECISION: docs-named invalidator."
+ },
+ {
+  "id": "setting-fast-mode",
+  "tag": "prompt-caching",
+  "relation": "invalidates-on-change",
+  "reason": "Docs 'Turning on fast mode' (work/docs/pages/prompt-caching.md:103-107): enabling fast mode adds a request header that is part of the cache key, so the first fast request re-reads the conversation uncached. DECISION: docs-named invalidator."
+ },
+ {
+  "id": "setting-enabled-plugins",
+  "tag": "prompt-caching",
+  "relation": "invalidates-on-change",
+  "reason": "Docs 'Enabling or disabling a plugin' (work/docs/pages/prompt-caching.md:120-156): a plugin that brings MCP servers whose tools load into the prefix invalidates the cache when enabled or disabled; skills, commands, agents and hooks keep it (:126). DECISION: conditional, docs-named invalidator."
+ },
+ {
+  "id": "setting-permissions--deny",
+  "tag": "prompt-caching",
+  "relation": "invalidates-on-change",
+  "reason": "Docs 'Denying an entire tool' (work/docs/pages/prompt-caching.md:158-164): a bare tool-name deny rule removes the tool definition, invalidating the cache when tool search is unavailable or disabled; scoped deny rules and all allow and ask rules keep it. DECISION: conditional, docs-named invalidator."
+ }
+]

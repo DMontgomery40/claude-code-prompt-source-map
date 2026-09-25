@@ -1,5 +1,134 @@
 {
+ "taxonomy_version": "2b8fa5126b86",
+ "threshold": 0.7,
  "tags": [
+  {
+   "id": "prompt-caching",
+   "label": "Prompt caching",
+   "kind": "topic",
+   "definition": "settings.json keys that change Anthropic prompt caching on Claude Code's model requests. Counts: the cache TTL for the main conversation (promptCacheTtl) or for subagents, workflows and background requests (subagentPromptCacheTtl); the `env` block, which is where the prompt-caching environment variables (DISABLE_PROMPT_CACHING*, the TTL variables) are set for a user, project or organization; and the few keys the prompt-caching docs name as invalidating the cache when changed mid-session: model, effortLevel, fastMode, enabledPlugins, and deny rules for an entire tool (permissions.deny). Applies whatever group the key is in, including internal and undocumented keys. Does NOT include other caches that only share the word (WebFetch, MCP discovery, plugin or credential caches); other model, effort or thinking keys (availableModels, fallbackModel, modelSettings, maxEffortLevel, alwaysThinkingEnabled); compaction settings; MCP server approvals, which apply only after a restart; output style, permission mode, and allow or ask rules, which the docs say keep the cache; the prices of cache reads and writes in cost reports (modelPricing); or auto-update controls.",
+   "feature": true,
+   "count": 8
+  },
+  {
+   "id": "security-permissions",
+   "label": "Security and permissions",
+   "kind": "topic",
+   "definition": "settings.json keys that change what Claude Code is allowed to do, or how exposed the machine and its secrets are. Counts: permission rules (allow, deny, ask), permission modes, bypass and auto mode, and the auto-mode classifier rules; the working-directory scope and reads outside it; every sandbox key, including the sandbox's network allowlists, proxy ports, TLS termination, filesystem paths, credential masking, the sandbox's custom ripgrep command, and platform escape hatches; managed-only switches that make only organization rules count (allowManagedPermissionRulesOnly, allowManagedHooksOnly, allowManagedMcpServersOnly, allowManagedDomainsOnly); approving project .mcp.json servers (also MCP); organization allowlists and denylists for MCP servers, plugins, marketplaces, channels and HTTP hook targets; blocking side-loaded extensions; shell execution inside skills; and which settings `env` entries are safe to apply before workspace trust. Applies whatever group the key is in. Does NOT include which credentials or login to use (Authentication), feedback, telemetry or transcript retention (Privacy), or Claude Code's own proxy and certificate settings (Network).",
+   "count": 97
+  },
+  {
+   "id": "privacy-telemetry",
+   "label": "Privacy, telemetry and nonessential traffic",
+   "kind": "topic",
+   "definition": "settings.json keys that control what Claude Code reports about the user, sends beyond the model request, or keeps about their sessions. Counts: session-quality surveys and model-drafted feedback; transcript retention and cleanup periods; mirroring or uploading local sessions to claude.ai; what a machine reports about itself when it registers for Remote Control; and pre-flight checks that send requested URLs to Anthropic. Applies whatever group the key is in. Does NOT include OpenTelemetry export (Observability), or permission and sandbox controls (Security).",
+   "count": 8
+  },
+  {
+   "id": "observability",
+   "label": "Logging, tracing and diagnostics",
+   "kind": "topic",
+   "definition": "settings.json keys for the logs, metrics and traces that the user collects about Claude Code, such as the helper script that supplies OpenTelemetry exporter headers. Applies whatever group the key is in. Does NOT include Anthropic feedback or survey controls (Privacy), status lines (Terminal UI), or credentials for reaching models (Authentication).",
+   "count": 1
+  },
+  {
+   "id": "authentication",
+   "label": "Authentication and credentials",
+   "kind": "topic",
+   "definition": "settings.json keys that supply or control credentials for reaching Anthropic, cloud providers or MCP servers. Counts: API key helper scripts; AWS credential export and refresh scripts; GCP auth refresh commands; forcing a login method, an organization, or the Cloud gateway that login connects to (its URL and the network blocks /login accepts it in, also Providers); and identity-provider (IdP/OIDC) connections that MCP servers reuse. Applies whatever group the key is in. Does NOT include proxy authentication helpers (Network), header helpers for OpenTelemetry exporters (Observability), or sandbox credential masking (Security).",
+   "count": 12
+  },
+  {
+   "id": "providers",
+   "label": "Model providers and API endpoints",
+   "kind": "topic",
+   "definition": "settings.json keys that choose or configure the backend serving model requests. Counts: mapping Anthropic model IDs to provider-specific IDs or inference profiles (modelOverrides); Cloud gateway URLs and the network blocks a gateway sits in (also Authentication, since /login uses them). Applies whatever group the key is in. Does NOT include credentials, login methods or auth refresh scripts (Authentication), proxies (Network), or choosing which Claude model runs (Models).",
+   "count": 2
+  },
+  {
+   "id": "models-context",
+   "label": "Models, thinking and context window",
+   "kind": "topic",
+   "definition": "settings.json keys that choose which Claude model runs, how much it thinks, and how much it holds. Counts: the model, fallback models, the allowlist of selectable models and /model picker entries; effort, maximum effort and per-model settings; ultracode's effort; thinking on or off and thinking summaries; fast mode; the advisor model; switching models when safeguards flag a message; and auto-compaction on or off, its window, and precomputed compaction. Applies whatever group the key is in. Does NOT include mapping model IDs to provider-specific IDs (Providers), prompt-cache TTLs (Prompt caching), prices used for cost figures (modelPricing), or text injected into the prompt, including budgets for how much of the context window the skill listing may use (Prompt and instructions).",
+   "count": 20
+  },
+  {
+   "id": "prompt-instructions",
+   "label": "Prompt, instructions and memory",
+   "kind": "topic",
+   "definition": "settings.json keys that replace, shorten, add or remove text that Claude Code puts in the model's context. Counts: output styles and response language; organization-managed CLAUDE.md text and CLAUDE.md exclusions; auto memory on or off, its directory, and background memory consolidation; built-in git commit and PR instructions; skill-listing size and description caps; and token-budget reminders. Applies whatever group the key is in. Does NOT include model choice or compaction (Models), tool output limits such as Bash output size (Built-in tools), or keys that change behavior without changing prompt text.",
+   "count": 16
+  },
+  {
+   "id": "mcp",
+   "label": "MCP servers",
+   "kind": "topic",
+   "definition": "settings.json keys for Model Context Protocol servers and their tools. Counts: approving or rejecting project .mcp.json servers; organization-managed MCP servers; MCP server allowlists and denylists; claude.ai connectors; channel notifications that MCP servers push; per-plugin MCP server configuration; and identity-provider connections that MCP servers reuse. Applies whatever group the key is in. Does NOT include plugins, skills or hooks in general (Plugins, skills and hooks) unless the key is about the MCP servers they bring.",
+   "count": 13
+  },
+  {
+   "id": "plugins-skills-hooks",
+   "label": "Plugins, skills and hooks",
+   "kind": "topic",
+   "definition": "settings.json keys for user- or organization-supplied extensions other than MCP. Counts: plugins and plugin marketplaces (enabling, extra, blocked or strict marketplaces, command sources, install suggestions, trust messages, plugin hook order); skills (claude.ai sync, per-skill overrides, bundled skills, shell execution in skills); lifecycle hooks, disabling hooks, and HTTP hook limits; and restricting customization to plugins. Skill-listing size caps count here and also under Prompt and instructions. Applies whatever group the key is in. Does NOT include MCP server settings (MCP), workflows or subagents (Subagents), tools that ship with Claude Code (Built-in tools), or status lines (Terminal UI).",
+   "count": 25
+  },
+  {
+   "id": "agents-background",
+   "label": "Subagents, teams and background work",
+   "kind": "topic",
+   "definition": "settings.json keys for work that runs beside or beyond the main conversation. Counts: the agent (built-in or custom) whose prompt, tools and model the main thread uses; the agent view and the background-agent supervisor; teammates and their execution mode (tmux, iTerm2 panes or in-process); workflows (on or off, keyword trigger, size guideline, usage warning); ultracode orchestration; background-session worktree isolation; cross-session and peer messages; the background service's cold start; away summaries; model-proposed goals; and continuing automatically until the work is done or after a usage limit resets. Applies whatever group the key is in. Does NOT include the subagent prompt-cache TTL (Prompt caching), cloud or Remote Control sessions (Cloud, remote and hosted sessions), hook settings (Plugins, skills and hooks), or git worktree options other than background isolation (Git).",
+   "count": 20
+  },
+  {
+   "id": "built-in-tools",
+   "label": "Built-in tools",
+   "kind": "topic",
+   "definition": "settings.json keys that change tools shipped with Claude Code that the model calls. Counts: Bash and PowerShell tool behavior and output limits; file checkpointing for /rewind; WebFetch pre-flight checks; the Artifact tool; AskUserQuestion timeouts; the push-notification tool; and the advisor tool. Applies whatever group the key is in. Does NOT include the input box's ! shell commands, which the user runs (Terminal UI), MCP tools (MCP), plugin or skill tools (Plugins, skills and hooks), subagent spawning (Subagents), or sandbox rules (Security).",
+   "count": 12
+  },
+  {
+   "id": "remote-hosted",
+   "label": "Cloud, remote and hosted sessions",
+   "kind": "topic",
+   "definition": "settings.json keys for Claude Code running somewhere other than a local terminal, or reached from elsewhere. Counts: Remote Control (turning it off, starting it at startup, what it shares about the machine); cloud sessions and their default environment; serving tool calls to cloud sessions; SSH connection configurations; Desktop's SSH worktree location; mirroring sessions to claude.ai; and how long dialogs forwarded to a remote client wait. Applies whatever group the key is in. Does NOT include local background sessions or teammates (Subagents), or provider endpoints (Providers).",
+   "count": 16
+  },
+  {
+   "id": "network",
+   "label": "Network, proxies and timeouts",
+   "kind": "topic",
+   "definition": "settings.json keys for how Claude Code's own network connections behave, such as a helper that supplies a Proxy-Authorization header. Applies whatever group the key is in. Does NOT include the sandbox's network allowlists, proxy ports or TLS termination for sandboxed commands (Security), which provider or gateway serves model requests (Providers), or tool-specific timeouts.",
+   "count": 1
+  },
+  {
+   "id": "terminal-ui",
+   "label": "Terminal UI, commands and IDE",
+   "kind": "topic",
+   "definition": "settings.json keys that change what the user sees or types in the terminal or IDE. Counts: the renderer (fullscreen), theme and colors; syntax highlighting; spinner tips and verbs; status lines, including the per-subagent status line; transcript and chat view modes, message timestamps and verbosity; time format and zone; keybindings and vim mode; spell check; emoji and prompt suggestions; file suggestions for @ mentions and whether the file picker respects .gitignore; the input box's ! shell commands; voice dictation; reduced motion and screen-reader output; scrolling; terminal titles and progress bars; startup announcements; the claude-cli:// deep-link handler; OS and mobile notifications about waiting prompts; the todo panel; and break reminders and quiet hours. Applies whatever group the key is in. Does NOT include logging (Observability), tools the model calls (Built-in tools), or how teammates are laid out in tmux or iTerm2 (Subagents).",
+   "count": 73
+  },
+  {
+   "id": "managed-policy",
+   "label": "Managed settings and policy",
+   "kind": "topic",
+   "definition": "settings.json keys that decide how organization-managed settings themselves are computed, delivered and layered. Counts: policy helper executables and their per-OS variants; how managed sources and the SDK parent tier compose; forcing a fresh remote-settings fetch at startup; WSL inheriting Windows policy; and rejecting side-loading CLI flags. Does NOT include ordinary keys that are merely honored only from managed settings, such as MCP, plugin, marketplace, hook, permission or domain allowlists (their own topic and Security), managed CLAUDE.md text (Prompt and instructions), gateway login settings (Authentication, Providers), or version floors and ceilings (Updates).",
+   "count": 15
+  },
+  {
+   "id": "updates",
+   "label": "Updates and versions",
+   "kind": "topic",
+   "definition": "settings.json keys for which Claude Code version runs: the auto-update release channel, the minimum version to stay on, and the minimum or maximum version allowed to start. Applies whatever group the key is in. Does NOT include plugin or skill syncing and updates (Plugins, skills and hooks), or forcing a managed-settings refresh (Managed settings).",
+   "count": 4
+  },
+  {
+   "id": "git",
+   "label": "Git, attribution and worktrees",
+   "kind": "topic",
+   "definition": "settings.json keys for how Claude Code works with git. Counts: commit and PR attribution text and trailers, co-authored-by, session links in commits and PRs; PR link templates; built-in git commit and PR instructions (also Prompt and instructions); and git worktree creation: symlinked directories, sparse-checkout paths, the base ref, background-session isolation (also Subagents) and Desktop's SSH worktree location (also Cloud, remote and hosted). Applies whatever group the key is in. Does NOT include file checkpointing (Built-in tools) or teammates (Subagents).",
+   "count": 13
+  },
   {
    "id": "documented",
    "label": "Documented",
@@ -16,13 +145,31 @@
    "id": "internal",
    "label": "Internal (@internal)",
    "kind": "status",
-   "count": 14
+   "count": 26
   },
   {
-   "id": "safe-env",
-   "label": "Safe env keys",
+   "id": "deprecated",
+   "label": "Deprecated",
    "kind": "status",
-   "count": 5
+   "count": 4
+  },
+  {
+   "id": "fixed-values",
+   "label": "Fixed values",
+   "kind": "status",
+   "count": 37
+  },
+  {
+   "id": "invalid-value-dropped",
+   "label": "Invalid value ignored",
+   "kind": "status",
+   "count": 42
+  },
+  {
+   "id": "build-gated",
+   "label": "Feature module (build-gated)",
+   "kind": "status",
+   "count": 8
   }
  ],
  "items": {
@@ -30,27 +177,36 @@
    "documented"
   ],
   "setting-model": [
+   "prompt-caching",
+   "models-context",
    "documented"
   ],
   "setting-fallback-model": [
+   "models-context",
    "documented"
   ],
   "setting-available-models": [
+   "models-context",
    "documented"
   ],
   "setting-enforce-available-models": [
+   "models-context",
    "documented"
   ],
   "setting-model-overrides": [
+   "providers",
    "documented"
   ],
   "setting-model-picker": [
+   "models-context",
    "documented"
   ],
   "setting-model-picker--options": [
+   "models-context",
    "documented"
   ],
   "setting-model-picker--replace-built-in-options": [
+   "models-context",
    "documented"
   ],
   "setting-model-pricing": [
@@ -63,896 +219,1341 @@
    "documented"
   ],
   "setting-output-style": [
+   "prompt-instructions",
    "documented"
   ],
   "setting-language": [
+   "prompt-instructions",
    "documented"
   ],
   "setting-prompt-cache-ttl": [
-   "documented"
+   "prompt-caching",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-subagent-prompt-cache-ttl": [
-   "documented"
+   "prompt-caching",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-always-thinking-enabled": [
+   "models-context",
    "documented"
   ],
   "setting-effort-level": [
-   "documented"
+   "prompt-caching",
+   "models-context",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-max-effort-level": [
-   "documented"
+   "models-context",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-model-settings": [
-   "documented"
+   "models-context",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-ultracode": [
-   "documented"
+   "models-context",
+   "agents-background",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-advisor-model": [
+   "models-context",
+   "built-in-tools",
    "documented"
   ],
   "setting-fast-mode": [
+   "prompt-caching",
+   "models-context",
    "documented"
   ],
   "setting-fast-mode-per-session-opt-in": [
+   "models-context",
    "documented"
   ],
   "setting-show-thinking-summaries": [
+   "models-context",
+   "terminal-ui",
    "documented"
   ],
   "setting-switch-models-on-flag": [
+   "models-context",
    "documented"
   ],
   "setting-permissions": [
+   "security-permissions",
    "documented"
   ],
   "setting-permissions--allow": [
+   "security-permissions",
    "documented"
   ],
   "setting-permissions--deny": [
+   "prompt-caching",
+   "security-permissions",
    "documented"
   ],
   "setting-permissions--ask": [
+   "security-permissions",
    "documented"
   ],
   "setting-permissions--default-mode": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values"
   ],
   "setting-permissions--disable-bypass-permissions-mode": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values"
   ],
   "setting-permissions--block-reads-outside-working-directories": [
+   "security-permissions",
    "documented"
   ],
   "setting-permissions--disable-auto-mode": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values",
+   "build-gated"
   ],
   "setting-permissions--additional-directories": [
+   "security-permissions",
    "documented"
   ],
   "setting-allow-managed-permission-rules-only": [
+   "security-permissions",
    "documented"
   ],
   "setting-skip-dangerous-mode-permission-prompt": [
+   "security-permissions",
    "documented"
   ],
   "setting-disable-auto-mode": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values"
   ],
   "setting-skip-auto-permission-prompt": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "build-gated"
   ],
   "setting-use-auto-mode-during-plan": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "build-gated"
   ],
   "setting-auto-mode": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "build-gated"
   ],
   "setting-auto-mode--allow": [
+   "security-permissions",
    "documented"
   ],
   "setting-auto-mode--soft-deny": [
+   "security-permissions",
    "documented"
   ],
   "setting-auto-mode--hard-deny": [
+   "security-permissions",
    "documented"
   ],
   "setting-auto-mode--environment": [
+   "security-permissions",
    "documented"
   ],
   "setting-auto-mode--classify-all-shell": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--enabled": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--fail-if-unavailable": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--auto-allow-bash-if-sandboxed": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--allow-unsandboxed-commands": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--allowed-domains": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--denied-domains": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--strict-allowlist": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--allow-managed-domains-only": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--allow-unix-sockets": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--allow-all-unix-sockets": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--allow-local-binding": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--allow-mach-lookup": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--http-proxy-port": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--socks-proxy-port": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--tls-terminate": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--tls-terminate--ca-cert-path": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--network--tls-terminate--ca-key-path": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem--allow-write": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem--deny-write": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem--deny-read": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem--allow-read": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem--allow-managed-read-paths-only": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--filesystem--disabled": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials--files": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials--env-vars": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials--allow-plaintext-inject": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials--aws-pairs": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials--sigv4": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--credentials--sigv4--streaming": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values"
   ],
   "setting-sandbox--credentials--sigv4--presigned": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values"
   ],
   "setting-sandbox--credentials--sigv4--sigv4a": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "fixed-values"
   ],
   "setting-sandbox--ignore-violations": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--enable-weaker-nested-sandbox": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--enable-weaker-network-isolation": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--allow-apple-events": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--excluded-commands": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--ripgrep": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--ripgrep--command": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--ripgrep--args": [
+   "security-permissions",
    "documented"
   ],
   "setting-sandbox--bwrap-path": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-sandbox--socat-path": [
-   "documented"
+   "security-permissions",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-skill-listing-max-desc-chars": [
+   "prompt-instructions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-skill-listing-budget-fraction": [
+   "prompt-instructions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-env": [
+   "prompt-caching",
    "documented"
   ],
   "setting-bash-output-max-chars": [
-   "documented"
+   "built-in-tools",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-task-output-max-chars": [
-   "documented"
+   "documented",
+   "deprecated",
+   "invalid-value-dropped"
   ],
   "setting-auto-compact-window": [
-   "documented"
+   "models-context",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-plans-directory": [
    "documented"
   ],
   "setting-auto-memory-enabled": [
+   "prompt-instructions",
    "documented"
   ],
   "setting-auto-memory-directory": [
+   "prompt-instructions",
    "documented"
   ],
   "setting-claude-md": [
+   "prompt-instructions",
    "documented"
   ],
   "setting-claude-md-excludes": [
+   "prompt-instructions",
    "documented"
   ],
   "setting-auto-compact-enabled": [
+   "models-context",
    "documented"
   ],
   "setting-file-checkpointing-enabled": [
+   "built-in-tools",
    "documented"
   ],
   "setting-file-suggestion": [
+   "terminal-ui",
    "documented"
   ],
   "setting-file-suggestion--type": [
+   "terminal-ui",
    "documented"
   ],
   "setting-file-suggestion--command": [
+   "terminal-ui",
    "documented"
   ],
   "setting-respect-gitignore": [
+   "terminal-ui",
    "documented"
   ],
   "setting-default-shell": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values"
   ],
   "setting-bash-edit-diff-enabled": [
+   "built-in-tools",
    "documented"
   ],
   "setting-respond-to-bash-commands": [
+   "terminal-ui",
    "documented"
   ],
   "setting-status-line": [
+   "terminal-ui",
    "documented"
   ],
   "setting-status-line--type": [
+   "terminal-ui",
    "documented"
   ],
   "setting-status-line--command": [
+   "terminal-ui",
    "documented"
   ],
   "setting-status-line--padding": [
+   "terminal-ui",
    "documented"
   ],
   "setting-status-line--refresh-interval": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-status-line--hide-vim-mode-indicator": [
+   "terminal-ui",
    "documented"
   ],
   "setting-footer-links-regexes": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-subagent-status-line": [
+   "agents-background",
+   "terminal-ui",
    "documented"
   ],
   "setting-subagent-status-line--type": [
+   "agents-background",
+   "terminal-ui",
    "documented"
   ],
   "setting-subagent-status-line--command": [
+   "agents-background",
+   "terminal-ui",
    "documented"
   ],
   "setting-view-mode": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-spinner-tips-enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-spinner-verbs": [
+   "terminal-ui",
    "documented"
   ],
   "setting-spinner-verbs--mode": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values"
   ],
   "setting-spinner-verbs--verbs": [
+   "terminal-ui",
    "documented"
   ],
   "setting-spinner-tips-override": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spinner-tips-override--exclude-default": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spinner-tips-override--tips": [
+   "terminal-ui",
    "documented"
   ],
   "setting-spinner-tips-override--tips-file": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spinner-tips-override--label": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-syntax-highlighting-disabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-spellcheck": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spellcheck--enabled": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spellcheck--checker": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spellcheck--language": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-spellcheck--color": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-terminal-title-from-rename": [
+   "terminal-ui",
    "documented"
   ],
   "setting-prompt-suggestion-enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-emoji-completion-enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-show-clear-context-on-plan-accept": [
+   "terminal-ui",
    "documented"
   ],
   "setting-ask-user-question-timeout": [
-   "documented"
+   "built-in-tools",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-dialog-expiry": [
-   "documented"
+   "remote-hosted",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-company-announcements": [
+   "terminal-ui",
    "documented"
   ],
   "setting-tui": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values"
   ],
   "setting-voice": [
+   "terminal-ui",
    "documented"
   ],
   "setting-voice--enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-voice--mode": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values"
   ],
   "setting-voice--auto-submit": [
+   "terminal-ui",
    "documented"
   ],
   "setting-prefers-reduced-motion": [
+   "terminal-ui",
    "documented"
   ],
   "setting-time-format": [
+   "terminal-ui",
    "documented"
   ],
   "setting-time-zone": [
+   "terminal-ui",
    "documented"
   ],
   "setting-theme": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-editor-mode": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-keybinding-flavor": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "deprecated",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-vim-insert-mode-remaps": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-verbose": [
+   "terminal-ui",
    "documented"
   ],
   "setting-auto-continue-at-usage-limit": [
+   "agents-background",
    "documented"
   ],
   "setting-auto-scroll-enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-wheel-scroll-acceleration-enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-show-turn-duration": [
+   "terminal-ui",
    "documented"
   ],
   "setting-terminal-progress-bar-enabled": [
+   "terminal-ui",
    "documented"
   ],
   "setting-voice-enabled": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "build-gated"
   ],
   "setting-ax-screen-reader": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "build-gated"
   ],
   "setting-attribution": [
+   "git",
    "documented"
   ],
   "setting-attribution--commit": [
+   "prompt-instructions",
+   "git",
    "documented"
   ],
   "setting-attribution--pr": [
+   "prompt-instructions",
+   "git",
    "documented"
   ],
   "setting-attribution--session-url": [
+   "remote-hosted",
+   "git",
    "documented"
   ],
   "setting-include-co-authored-by": [
-   "documented"
+   "git",
+   "documented",
+   "deprecated"
   ],
   "setting-include-git-instructions": [
+   "prompt-instructions",
+   "git",
    "documented"
   ],
   "setting-pr-url-template": [
+   "git",
    "documented"
   ],
   "setting-hooks": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-disable-all-hooks": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-disable-workflows": [
+   "agents-background",
    "documented"
   ],
   "setting-enable-workflows": [
+   "agents-background",
    "documented"
   ],
   "setting-workflow-size-guideline": [
-   "documented"
+   "agents-background",
+   "documented",
+   "fixed-values"
   ],
   "setting-workflow-keyword-trigger-enabled": [
+   "agents-background",
    "documented"
   ],
   "setting-allow-managed-hooks-only": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-allowed-http-hook-urls": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-http-hook-allowed-env-vars": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-sync-claude-ai-skills": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-sync-claude-ai-plugins": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-skill-overrides": [
+   "prompt-instructions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-disable-bundled-skills": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-disable-skill-shell-execution": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-strict-plugin-only-customization": [
-   "documented"
+   "security-permissions",
+   "plugins-skills-hooks",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-enabled-plugins": [
+   "prompt-caching",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-extra-known-marketplaces": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-strict-known-marketplaces": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-blocked-marketplaces": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-disable-command-plugin-sources": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-plugin-suggestion-marketplaces": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-plugin-configs": [
+   "mcp",
    "documented"
   ],
   "setting-channels-enabled": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-allowed-channel-plugins": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-plugin-trust-message": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-enable-all-project-mcp-servers": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-enabled-mcpjson-servers": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-disabled-mcpjson-servers": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-disable-claude-ai-connectors": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-managed-mcp-servers": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-allowed-mcp-servers": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-denied-mcp-servers": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-allow-managed-mcp-servers-only": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-allow-all-claude-ai-mcps": [
+   "security-permissions",
+   "mcp",
    "documented"
   ],
   "setting-process-wrapper": [
+   "agents-background",
    "documented"
   ],
   "setting-worktree": [
+   "remote-hosted",
+   "git",
    "documented"
   ],
   "setting-worktree--symlink-directories": [
+   "git",
    "documented"
   ],
   "setting-worktree--sparse-paths": [
+   "git",
    "documented"
   ],
   "setting-worktree--base-ref": [
-   "documented"
+   "git",
+   "documented",
+   "fixed-values"
   ],
   "setting-worktree--bg-isolation": [
-   "documented"
+   "agents-background",
+   "git",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-worktree--location": [
-   "undocumented"
+   "remote-hosted",
+   "git",
+   "undocumented",
+   "invalid-value-dropped"
   ],
   "setting-disable-agent-view": [
+   "agents-background",
    "documented"
   ],
   "setting-agent": [
+   "agents-background",
    "documented"
   ],
   "setting-teammate-mode": [
-   "documented"
+   "agents-background",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-isolate-peer-machines": [
+   "security-permissions",
+   "remote-hosted",
    "documented"
   ],
   "setting-cross-session-inbound": [
-   "documented"
+   "security-permissions",
+   "agents-background",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-disable-remote-control": [
+   "remote-hosted",
    "documented"
   ],
   "setting-disable-artifact": [
-   "documented"
+   "built-in-tools",
+   "documented",
+   "deprecated"
   ],
   "setting-enable-artifact": [
+   "built-in-tools",
    "documented"
   ],
   "setting-ssh-configs": [
+   "remote-hosted",
    "documented"
   ],
   "setting-preferred-notif-channel": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-remote-control-at-startup": [
+   "remote-hosted",
    "documented"
   ],
   "setting-input-needed-notif-enabled": [
+   "built-in-tools",
+   "remote-hosted",
+   "terminal-ui",
    "documented"
   ],
   "setting-agent-push-notif-enabled": [
+   "built-in-tools",
+   "terminal-ui",
    "documented"
   ],
   "setting-disable-deep-link-registration": [
-   "documented"
+   "terminal-ui",
+   "documented",
+   "fixed-values",
+   "build-gated"
   ],
   "setting-api-key-helper": [
+   "authentication",
    "documented"
   ],
   "setting-aws-credential-export": [
+   "authentication",
    "documented"
   ],
   "setting-aws-auth-refresh": [
+   "authentication",
    "documented"
   ],
   "setting-gcp-auth-refresh": [
+   "authentication",
    "documented"
   ],
   "setting-force-login-method": [
-   "documented"
+   "authentication",
+   "documented",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-force-login-gateway-url": [
-   "documented"
+   "authentication",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-gateway-internal-networks": [
-   "documented"
+   "authentication",
+   "providers",
+   "documented",
+   "invalid-value-dropped"
   ],
   "setting-force-login-org-uuid": [
+   "authentication",
    "documented"
   ],
   "setting-otel-headers-helper": [
+   "observability",
    "documented"
   ],
   "setting-auto-updates-channel": [
-   "documented"
+   "updates",
+   "documented",
+   "fixed-values"
   ],
   "setting-minimum-version": [
+   "updates",
    "documented"
   ],
   "setting-required-minimum-version": [
+   "updates",
    "documented"
   ],
   "setting-required-maximum-version": [
+   "updates",
    "documented"
   ],
   "setting-cleanup-period-days": [
+   "privacy-telemetry",
    "documented"
   ],
   "setting-desktop-session-cleanup-period-days": [
+   "privacy-telemetry",
    "documented"
   ],
   "setting-skip-web-fetch-preflight": [
+   "privacy-telemetry",
+   "built-in-tools",
    "documented"
   ],
   "setting-feedback-survey-rate": [
+   "privacy-telemetry",
    "documented"
   ],
   "setting-feedback-drafts": [
-   "documented"
+   "privacy-telemetry",
+   "built-in-tools",
+   "documented",
+   "fixed-values"
   ],
   "setting-policy-helper": [
+   "managed-policy",
    "documented"
   ],
   "setting-policy-helper--path": [
+   "managed-policy",
    "documented"
   ],
   "setting-policy-helper--timeout-ms": [
+   "managed-policy",
    "documented"
   ],
   "setting-policy-helper--refresh-interval-ms": [
+   "managed-policy",
    "documented"
   ],
   "setting-wsl-inherits-windows-settings": [
+   "managed-policy",
    "documented"
   ],
   "setting-disable-sideload-flags": [
+   "security-permissions",
+   "mcp",
+   "managed-policy",
    "documented"
   ],
   "setting-parent-settings-behavior": [
-   "documented"
+   "managed-policy",
+   "documented",
+   "fixed-values"
   ],
   "setting-managed-sources-behavior": [
-   "documented"
+   "managed-policy",
+   "documented",
+   "fixed-values"
   ],
   "setting-force-remote-settings-refresh": [
+   "managed-policy",
    "documented"
   ],
   "setting-schema": [
    "documented"
   ],
   "setting-proxy-auth-helper": [
+   "network",
    "undocumented"
   ],
   "setting-xaa-idp": [
+   "authentication",
+   "mcp",
    "undocumented"
   ],
   "setting-xaa-idp--issuer": [
+   "authentication",
    "undocumented"
   ],
   "setting-xaa-idp--client-id": [
+   "authentication",
    "undocumented"
   ],
   "setting-xaa-idp--callback-port": [
+   "authentication",
    "undocumented"
   ],
   "setting-prepend-plugins": [
-   "undocumented"
+   "plugins-skills-hooks",
+   "undocumented",
+   "invalid-value-dropped"
   ],
   "setting-append-plugins": [
-   "undocumented"
+   "plugins-skills-hooks",
+   "undocumented",
+   "invalid-value-dropped"
   ],
   "setting-additional-marketplaces": [
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-allowed-marketplaces": [
+   "security-permissions",
+   "plugins-skills-hooks",
    "documented"
   ],
   "setting-remote": [
+   "remote-hosted",
    "undocumented"
   ],
   "setting-remote--default-environment-id": [
+   "remote-hosted",
    "documented"
   ],
   "setting-auto-dream-enabled": [
+   "prompt-instructions",
    "undocumented"
   ],
   "setting-precompute-compaction-enabled": [
+   "models-context",
    "undocumented"
   ],
   "setting-show-message-timestamps": [
+   "terminal-ui",
    "undocumented"
   ],
   "setting-todo-feature-enabled": [
+   "terminal-ui",
    "undocumented"
   ],
   "setting-daemon-cold-start": [
-   "undocumented"
+   "agents-background",
+   "undocumented",
+   "fixed-values"
   ],
   "setting-auto-upload-sessions": [
+   "privacy-telemetry",
+   "remote-hosted",
    "undocumented"
   ],
   "setting-default-view": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "fixed-values",
+   "build-gated"
   ],
   "setting-policy-helpers": [
+   "managed-policy",
    "undocumented",
    "internal"
   ],
   "setting-policy-helpers--macos": [
-   "undocumented"
+   "managed-policy",
+   "undocumented",
+   "internal"
   ],
   "setting-policy-helpers--linux": [
-   "undocumented"
+   "managed-policy",
+   "undocumented",
+   "internal"
   ],
   "setting-policy-helpers--windows": [
-   "undocumented"
+   "managed-policy",
+   "undocumented",
+   "internal"
   ],
   "setting-policy-helpers--wsl": [
-   "undocumented"
+   "managed-policy",
+   "undocumented",
+   "internal"
   ],
   "setting-policy-helpers--default": [
-   "undocumented"
+   "managed-policy",
+   "undocumented",
+   "internal"
   ],
   "setting-break-reminder": [
+   "terminal-ui",
    "undocumented",
    "internal"
   ],
   "setting-break-reminder--enabled": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-break-reminder--interval-minutes": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-break-reminder--break-threshold-minutes": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-break-reminder--message": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-quiet-hours": [
+   "terminal-ui",
    "undocumented",
    "internal"
   ],
   "setting-quiet-hours--enabled": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-quiet-hours--start": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-quiet-hours--end": [
-   "undocumented"
+   "terminal-ui",
+   "undocumented",
+   "internal"
   ],
   "setting-away-summary-enabled": [
+   "agents-background",
    "documented",
    "internal"
   ],
   "setting-model-proposed-goals": [
+   "security-permissions",
+   "agents-background",
+   "built-in-tools",
    "undocumented",
-   "internal"
+   "internal",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "setting-done-means-merged": [
+   "agents-background",
    "undocumented",
    "internal"
   ],
   "setting-total-tokens-reminder": [
+   "prompt-instructions",
    "undocumented",
-   "internal"
+   "internal",
+   "fixed-values"
   ],
   "setting-total-tokens-reminder-budget": [
+   "prompt-instructions",
    "undocumented",
    "internal"
   ],
   "setting-total-tokens-reminder-after-user-turn": [
+   "prompt-instructions",
    "undocumented",
    "internal"
   ],
   "setting-skip-workflow-usage-warning": [
+   "security-permissions",
+   "agents-background",
    "undocumented",
    "internal"
   ],
   "setting-remote-tools": [
+   "remote-hosted",
    "undocumented",
    "internal"
   ],
   "setting-remote-tools--allow-unattended-serving": [
+   "security-permissions",
+   "remote-hosted",
    "undocumented",
    "internal"
   ],
   "setting-remote-control": [
+   "privacy-telemetry",
+   "remote-hosted",
    "undocumented",
    "internal"
   ],
   "setting-remote-control--share-host-profile": [
+   "privacy-telemetry",
+   "remote-hosted",
    "undocumented",
-   "internal"
+   "internal",
+   "fixed-values",
+   "invalid-value-dropped"
   ],
   "settings-safe-env-check": [
-   "documented",
-   "safe-env"
+   "security-permissions",
+   "documented"
   ],
   "settings-safe-env-set-wl": [
-   "undocumented",
-   "safe-env"
+   "security-permissions",
+   "undocumented"
   ],
   "settings-safe-env-set-gl": [
-   "undocumented",
-   "safe-env"
+   "security-permissions",
+   "undocumented"
   ],
   "settings-safe-env-set-vl": [
-   "undocumented",
-   "safe-env"
+   "security-permissions",
+   "undocumented"
   ],
   "settings-safe-env-custom-headers": [
-   "undocumented",
-   "safe-env"
+   "security-permissions",
+   "undocumented"
   ]
  }
 }
