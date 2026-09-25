@@ -105,7 +105,7 @@ function renderItems(items, depth, href) {
 
 // `href(path, id)` returns the link for a document (no id) or one of its headings.
 // Only documents with an entry in `outlines` list their headings.
-export function renderToc(categories, outlines, href) {
+export function renderToc(categories, outlines, href, siteName) {
   const groups = categories
     .map(category => `
         <div class="toc-group">
@@ -124,17 +124,23 @@ export function renderToc(categories, outlines, href) {
     .join("\n");
 
   return `<nav class="toc-nav" aria-label="Table of contents">
-    <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc">
-      <span class="toc-current">Contents</span>
-      <svg class="toc-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 15 6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="toc" id="toc">${groups}</div>
+    <a class="toc-brand" href="/">${escapeHtml(siteName)}</a>
+    <div class="toc-collapsible">
+      <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc">
+        <span class="toc-current">Contents</span>
+        <svg class="toc-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 15 6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="toc" id="toc">${groups}</div>
+    </div>
   </nav>`;
 }
 
 export const tocStyles = `
-    .toc-nav{position:fixed;z-index:20;inset:0 auto 0 0;width:250px}
-    .toc{height:100%;padding:89px 30px 48px 48px;overflow-y:auto;scrollbar-width:thin}
+    .toc-nav{position:fixed;z-index:20;inset:0 auto 0 0;width:250px;display:flex;flex-direction:column;padding-top:89px}
+    .toc-brand{flex:none;display:block;margin:0 30px 20px 48px;color:var(--text);font-size:15px;font-weight:700;line-height:1.3;letter-spacing:-.01em;text-decoration:none}
+    .toc-brand:hover,.toc-brand:focus-visible{color:var(--link)}
+    .toc-collapsible{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+    .toc{flex:1 1 auto;min-height:0;padding:0 30px 48px 48px;overflow-y:auto;scrollbar-width:thin}
     .toc-toggle{display:none}
     .toc-group{margin:0 0 24px}
     .toc-label{margin-bottom:6px;color:#c6c9c2;font-size:12px;font-weight:600;letter-spacing:.045em;text-transform:uppercase}
@@ -148,9 +154,11 @@ export const tocStyles = `
     .toc li>ul a{color:#a3a79f}
     .toc li>ul a:hover,.toc li>ul a:focus-visible,.toc li>ul a.in-view{color:var(--text)}
     .markdown-body :is(h2,h3,h4,h5,h6),.markdown-body section[id]{scroll-margin-top:28px}
-    @media(max-width:1050px){.toc-nav{width:220px}.toc{padding-left:30px}}
+    @media(max-width:1050px){.toc-nav{width:220px}.toc-brand{margin-left:30px}.toc{padding-left:30px}}
     @media(max-width:800px){
-      .toc-nav{inset:auto 0 0 0;z-index:40;display:flex;flex-direction:column-reverse;width:auto;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid #3a3d39;background:var(--panel);box-shadow:0 -12px 32px #0007}
+      .toc-nav{inset:auto 0 0 0;z-index:40;flex-direction:column;width:auto;padding-top:0;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid #3a3d39;background:var(--panel);box-shadow:0 -12px 32px #0007}
+      .toc-brand{margin:0;padding:12px 22px;font-size:14px;border-bottom:1px solid #3a3d39}
+      .toc-collapsible{flex:none;flex-direction:column-reverse}
       .toc-toggle{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:0 18px 0 22px;border:0;background:none;color:var(--text);font:500 15px/1.3 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:left;cursor:pointer}
       .toc-current{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
       .toc-chevron{flex:none;color:var(--muted);transition:transform .25s}
@@ -158,7 +166,7 @@ export const tocStyles = `
       .toc{display:none;height:auto;max-height:min(62vh,480px);padding:20px 22px 8px;border-bottom:1px solid var(--line)}
       .toc-nav.is-open .toc{display:block}
       .toc a{padding:3px 0;font-size:14px}
-      .main{padding-bottom:72px}
+      .main{padding-bottom:130px}
     }
     @media(prefers-reduced-motion:reduce){.toc a,.toc-chevron{transition:none}}`;
 

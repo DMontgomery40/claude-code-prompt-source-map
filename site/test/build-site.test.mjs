@@ -250,6 +250,18 @@ test("every document also gets a directly linkable page with relative links", as
   });
 });
 
+test("a document page carries the site title in the sidebar, linking home, without a second h1", async () => {
+  await withFixture(async (root, outFile) => {
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    const documentPage = await readFile(path.join(root, "dist/current-md/index.html"), "utf8");
+    assert.match(
+      documentPage,
+      /<a class="toc-brand" href="\/">Claude Code Prompt Source Map<\/a>/
+    );
+    assert.equal((documentPage.match(/<h1\b/g) ?? []).length, 1, "only the document title is an h1");
+  });
+});
+
 test("production pages resolve every contents link to exactly one unique anchor", async () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
   const outDir = await mkdtemp(path.join(os.tmpdir(), "aeon-site-toc-test-"));
