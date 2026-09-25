@@ -3,9 +3,296 @@
  "version": "2.1.282",
  "items": [
   {
+   "id": "advisor-tool-available",
+   "title": "Advisor tool available",
+   "group": "Tools and output",
+   "question": "Whether the advisor tool, which lets Claude consult a stronger reviewer model, can be used. When it can, Claude gets it once an advisor model is chosen, for example with the advisorModel setting.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "enabled": "Advisor can be used",
+    "disabled": "No advisor tool"
+   },
+   "details": {
+    "candidate": "chunk-5ezz9t8y.js:389685"
+   },
+   "context": [
+    {
+     "key": "provider",
+     "label": "Provider",
+     "values": [
+      {
+       "value": "anthropic",
+       "label": "Anthropic API"
+      },
+      {
+       "value": "other",
+       "label": "Bedrock, Vertex, Foundry, Anthropic on AWS, or a gateway"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "provider": {
+     "anthropic": {},
+     "other": null
+    }
+   },
+   "bypasses": [
+    {
+     "id": "disableAdvisor",
+     "knob": "env-claude-code-disable-advisor-tool",
+     "effect": {
+      "value": "disabled"
+     },
+     "note": "Checked before the ladder: no advisor, whatever is set below. 1, true, yes and on count as set.",
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_ADVISOR_TOOL": "1"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179701746,
+       "length": 53,
+       "sha256": "0fc9327ef1e79fc08f9d7bd6ea5e14f22ed83d64bf7ea1bc225da83e944a3498",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173889848,
+       "length": 39,
+       "sha256": "b84a4f555c5e77cda78b08c93759f491b579513aca7e31f4df97d13edeafa3aa",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "disableBetas",
+     "knob": "env-claude-code-disable-experimental-betas",
+     "effect": {
+      "value": "disabled"
+     },
+     "note": "Checked before the ladder: turning off experimental betas also removes the advisor. A HIPAA-restricted organization gets the same result. 1, true, yes and on count as set.",
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-2393h2ax.js",
+       "binary_offset": 175493170,
+       "length": 35,
+       "sha256": "9cc1d68003a9776019d8da5e5dad00e66d8679e26704750de03bef7d6e34a899",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-2393h2ax.js",
+       "binary_offset": 175493031,
+       "length": 69,
+       "sha256": "668925d4ee9f1c98faba53ff9ddaa3d7b15ef4cbd778642c9ef9ffe3093137f3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "anthropicApiOnly",
+     "label": "Not on Anthropic's API",
+     "applies_when": [
+      {
+       "provider": [
+        "other"
+       ]
+      }
+     ],
+     "effect": {
+      "value": "disabled"
+     },
+     "note": "Only on Anthropic's API. With any other provider there is no advisor, whatever is set in the ladder.",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179701799,
+       "length": 33,
+       "sha256": "88333394f06ce0243d0bd549bb27b40c10bc1f9b5476e2ea859845e1c879107b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "apiRefused",
+     "label": "The API refused the advisor",
+     "effect": {
+      "value": "disabled"
+     },
+     "note": "When the API refuses the advisor during a session, Claude Code stops offering it, for this process or for that host.",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179701682,
+       "length": 49,
+       "sha256": "809701285d9b8a6a31fd5791425c05d7bd976ace988e9ed01c6f0a8d3988b5a2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182967064,
+       "length": 50,
+       "sha256": "401d3096511c932622ce09771e08f09ca56a148fcef9cf591a088d9ba048f08f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "envEnable",
+     "mechanism": "env",
+     "knob": "env-claude-code-enable-experimental-advisor-tool",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "2",
+     "note": "1, true, yes or on (any case) makes the advisor available without Anthropic's flag. It also skips the model catalog check on which main and advisor models may pair. Any other value counts as unset.",
+     "effect": {
+      "value": "enabled"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179701865,
+       "length": 59,
+       "sha256": "2093d8cbfae0a4bfd25fc75875c3aa0c923063db65b8160d9f722891918338bb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179702217,
+       "length": 54,
+       "sha256": "9469551cf21fa18b9b06077565162e5ea56a5e2e0eb7abc2bbed6287b23a028e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173892448,
+       "length": 51,
+       "sha256": "8b1a1c1e11d9a994a29adfac83850ea5a6264a722f4fca1f0b5e7957bc0f4e6c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173900151,
+       "length": 38,
+       "sha256": "5cffdea0a03195ea651a9292aae71cab4bddc844cb8ca8dfeba2ee12a80b5c78",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-zzm2rf18.js",
+       "binary_offset": 173551299,
+       "length": 42,
+       "sha256": "0ec15b01f93721852428a423a77171e235e2572ef667d0364fe4ccfd3e548d68",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's advisor flag turned on",
+     "input": "toggle",
+     "note": "A remote flag that is off by default in code. When Anthropic turns it on for you, the advisor becomes available without the variable. Anthropic can change it without a release.",
+     "effect": {
+      "value": "enabled"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179701924,
+       "length": 46,
+       "sha256": "d1d74cb8c57e778a6e899c6f64c8a65439ea806689eed5fa430e0688287c1b73",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above turns it on: no advisor.",
+     "effect": {
+      "value": "disabled"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179701924,
+       "length": 46,
+       "sha256": "d1d74cb8c57e778a6e899c6f64c8a65439ea806689eed5fa430e0688287c1b73",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179701832,
+     "length": 139,
+     "sha256": "1b71005825d4c7482001b8ae3b53be22696f70a0e2e74f996b1c0dec2b85efb7",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179703892,
+     "length": 48,
+     "sha256": "6d8684d678f59e52d651090003d29eee07c6312d3c11aeea1edacd135bdd2250",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ]
+  },
+  {
    "id": "auth-source",
    "title": "API credential",
-   "group": "Authentication",
+   "group": "Permissions and security",
    "question": "Which credential Claude Code sends with requests to the Anthropic API: a subscription OAuth token (as a bearer token, with no API key), an auth token, or an API key, and from which source.",
    "shape": "first-wins",
    "observe": "none",
@@ -594,9 +881,973 @@
    ]
   },
   {
+   "id": "auto-compact",
+   "title": "Auto-compact window",
+   "group": "Prompt caching and context",
+   "question": "Whether Claude Code compacts the conversation automatically, and the window it compacts against: compaction starts once the conversation reaches the window minus room for the reply (up to 20,000 tokens) and a 13,000-token buffer.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "100000": "100K tokens",
+    "200000": "200K tokens",
+    "300000": "300K tokens",
+    "500000": "500K tokens",
+    "800000": "800K tokens",
+    "1000000": "1M tokens",
+    "off": "Off",
+    "reactive": "Only when the API rejects a too-long prompt"
+   },
+   "details": {
+    "candidate": "chunk-x9fwahqm.js:1826361"
+   },
+   "notes": [
+    "Some models have a built-in 200K window that this ladder does not show: for them, auto-compaction starts near 200K tokens instead of waiting for the API to reject a prompt as too long."
+   ],
+   "context": [
+    {
+     "key": "model",
+     "label": "Model",
+     "values": [
+      {
+       "value": "sonnet-5",
+       "label": "Claude Sonnet 5"
+      },
+      {
+       "value": "opus-4-8",
+       "label": "Claude Opus 4.8"
+      },
+      {
+       "value": "other",
+       "label": "Another Claude model"
+      },
+      {
+       "value": "unknown",
+       "label": "A model Claude Code does not recognize"
+      }
+     ]
+    },
+    {
+     "key": "window",
+     "label": "Model's context window",
+     "values": [
+      {
+       "value": "200000",
+       "label": "200K tokens"
+      },
+      {
+       "value": "1000000",
+       "label": "1M tokens"
+      }
+     ]
+    },
+    {
+     "key": "remote",
+     "label": "Claude Code on the web (CLAUDE_CODE_REMOTE)",
+     "values": [
+      {
+       "value": false,
+       "label": "No"
+      },
+      {
+       "value": true,
+       "label": "Yes"
+      }
+     ]
+    }
+   ],
+   "bypasses": [
+    {
+     "id": "disableCompact",
+     "knob": "env-disable-compact",
+     "effect": {
+      "value": "off"
+     },
+     "note": "Checked before the ladder: no automatic compaction, and the /compact command is turned off too.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182792217,
+       "length": 60,
+       "sha256": "cb43a3997b07fc4cd23316217d0bb9fa44b8b94123e3b0a7c3cd5529e28f1ec6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "disableAutoCompact",
+     "knob": "env-disable-auto-compact",
+     "effect": {
+      "value": "off"
+     },
+     "note": "Checked before the ladder: no automatic compaction. /compact still works.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181929557,
+       "length": 87,
+       "sha256": "f914888ee1d2ca32e87151b87987fd0455dd973e01e5d1e16dc0d8b5a6c2bbc5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "autoCompactSetting",
+     "knob": "setting-auto-compact-enabled",
+     "effect": {
+      "value": "off"
+     },
+     "note": "Checked before the ladder when set to false. Read from the highest-priority settings file that sets it, then from the older global config the /config toggle wrote; on by default.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181929676,
+       "length": 40,
+       "sha256": "cf4001280e693928b449a65b073e37edf8160477e37ae1aefc34a9801fdb49e6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-4j43ehyd.js",
+       "binary_offset": 177237016,
+       "length": 385,
+       "sha256": "5e21fda8cc03ea9eb1e1ebac7d4aee5d817b3c636ce4048f751828dc29349b51",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "envWindow",
+     "mechanism": "env",
+     "knob": "env-claude-code-auto-compact-window",
+     "input": "choice",
+     "accepts": [
+      "100000",
+      "200000",
+      "300000",
+      "500000",
+      "800000",
+      "1000000"
+     ],
+     "invalid_example": "0",
+     "note": "Any whole number of tokens: below 100,000 is raised to 100,000 and above 1,000,000 is lowered to 1,000,000. A value that is not a positive number is skipped with a debug-log message.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_AUTO_COMPACT_WINDOW",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181933642,
+       "length": 48,
+       "sha256": "0fe965b83ae7173fff1e0a57f119ed6755236ab4b4ba154afd2b8888b2739022",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-7ks9wn7n.js",
+       "binary_offset": 180697343,
+       "length": 362,
+       "sha256": "b38c1379dc1e22a7a28b4d715b8879c35ebaff36cc3e74075d8a9e15e68abcb5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingWindow",
+     "mechanism": "settings",
+     "knob": "setting-auto-compact-window",
+     "input": "choice",
+     "accepts": [
+      "100000",
+      "200000",
+      "300000",
+      "500000",
+      "800000",
+      "1000000"
+     ],
+     "invalid_example": "50000",
+     "note": "The /autocompact command writes this to user settings. A value outside 100,000 to 1,000,000 is dropped when settings load.",
+     "effect": {
+      "from": "input"
+     },
+     "label": "autoCompactWindow",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181933906,
+       "length": 73,
+       "sha256": "9b5c7dadfefed3295d34f61fec8f80bdc9299632d413415f328523f1fbded611",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s8r7whrg.js",
+       "binary_offset": 193272779,
+       "length": 45,
+       "sha256": "553bf0e93e52d275b49a69ee46dafe9c138b6a7e1c11369a4a80677a0a4e6b43",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "accountWindow",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-account window",
+     "input": "choice",
+     "accepts": [
+      "100000",
+      "200000",
+      "300000",
+      "500000",
+      "800000",
+      "1000000"
+     ],
+     "note": "Anthropic can send a window per model with your account data, or with your organization's startup data when you sign in to Anthropic directly. None is sent by default in code. Anthropic can change it without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181933092,
+       "length": 420,
+       "sha256": "37cdf52259b3d667f3670d801c32d263c3621ede9a50507706b4333a924f181c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934067,
+       "length": 20,
+       "sha256": "9147420780bd41c9c160148035ec8a48d9410771c4dae1c4408875ec45850ecb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176513371,
+       "length": 92,
+       "sha256": "53549a7b8a7997555ca96c4e3c38cdffce9cb71c5d2f10847d4335248f6ac18a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "experiment",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's Opus 4.8 window experiment",
+     "input": "choice",
+     "accepts": [
+      "100000",
+      "200000",
+      "300000",
+      "500000",
+      "800000",
+      "1000000"
+     ],
+     "applies_when": [
+      {
+       "model": [
+        "opus-4-8"
+       ]
+      }
+     ],
+     "note": "Claude Opus 4.8 only. Two remote flags, empty by default in code, can set a window. Anthropic can change them without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934156,
+       "length": 20,
+       "sha256": "59de2eeb77d71104e203bdaf6efe33af87df61c88ac7c3e8cf7e6378290e0c8b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181929454,
+       "length": 21,
+       "sha256": "f896eb1820e72dad189dcf100bb43d49bd12b70cc0726124edcd44f4f04bddd9",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181929476,
+       "length": 50,
+       "sha256": "39a497004920fbd197c345b104144599c0e6c17cf1f97eb97b34373ccac6fc06",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "sonnet5Default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Built-in window for Claude Sonnet 5",
+     "input": null,
+     "applies_when": [
+      {
+       "model": [
+        "sonnet-5"
+       ]
+      }
+     ],
+     "note": "1M tokens, or 500K in Cowork and local-agent sessions. Skipped when Anthropic's organization startup data lists the model.",
+     "effect": {
+      "value": "1000000"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934403,
+       "length": 36,
+       "sha256": "c85c939b701337320159cb65ce72730878e6d0d69b267d65ece552a44fd609f0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181932501,
+       "length": 110,
+       "sha256": "177bc07d97cb65cfceb88ae2c9081d9676670c27f24fd15392d216186f63a127",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "native1m",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Model with a native 1M window",
+     "input": null,
+     "applies_when": [
+      {
+       "window": [
+        "1000000"
+       ]
+      }
+     ],
+     "note": "A model whose 1M-token window is native here uses all of it. Skipped when Anthropic's organization startup data lists the model.",
+     "effect": {
+      "value": "1000000"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934440,
+       "length": 52,
+       "sha256": "22276e5e280bb5717371c56aaa878fedc740fa8f951b502d31099f5e9a8a9859",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "unknownModel",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Unrecognized model",
+     "input": null,
+     "applies_when": [
+      {
+       "model": [
+        "unknown"
+       ]
+      }
+     ],
+     "note": "A model Claude Code does not recognize compacts at its full context window. CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT skips this rung.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "window": [
+          "1000000"
+         ]
+        },
+        "value": "1000000"
+       },
+       {
+        "when": {},
+        "value": "200000"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934686,
+       "length": 23,
+       "sha256": "4b346da5ce940f4e224c470b3e17a5360c7ac420b6480c1ef9f303070a372de5",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "noWindow",
+     "mechanism": "default",
+     "knob": null,
+     "label": "No window configured",
+     "input": null,
+     "note": "Nothing above answers, so there is no threshold: Claude Code compacts when the API rejects a prompt as too long. On Claude Code on the web a remote flag, off by default in code, decides; while it is off, compaction runs at the full context window. Some models whose larger window is not available here get a built-in 200K window instead.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "remote": [
+          true
+         ],
+         "window": [
+          "1000000"
+         ]
+        },
+        "value": "1000000"
+       },
+       {
+        "when": {
+         "remote": [
+          true
+         ]
+        },
+        "value": "200000"
+       },
+       {
+        "when": {},
+        "value": "reactive"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934710,
+       "length": 43,
+       "sha256": "9b08f7bf0279163a242900cf89d733201bf9cf048195857656a26b32223b2c37",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181929923,
+       "length": 93,
+       "sha256": "f6249a47bf50108e5d5dffe6b6daf38871169f7928658f502dbb257a13ca5361",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181934285,
+       "length": 37,
+       "sha256": "99f259b4c668c01f77a7fb4654455be9f2d9ee74152cde31ceffa8f16c9b8159",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "modelWindow",
+     "knob": null,
+     "label": "The model's context window",
+     "applies_when": [
+      {}
+     ],
+     "note": "A window larger than the model's context window is cut down to it.",
+     "cap": {
+      "by_context": [
+       {
+        "when": {
+         "window": [
+          "200000"
+         ]
+        },
+        "value": "200000"
+       },
+       {
+        "when": {},
+        "value": "1000000"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181933906,
+       "length": 73,
+       "sha256": "9b5c7dadfefed3295d34f61fec8f80bdc9299632d413415f328523f1fbded611",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "pctOverride",
+     "knob": "env-claude-autocompact-pct-override",
+     "note": "Leaves the window alone but moves the trigger earlier: a percent from 1 to 100 of the window after the reply room, never later than the usual trigger. Other values are ignored.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 181931517,
+       "length": 139,
+       "sha256": "dee6ac0cc2194ab05b74c15b7c7637a8c432280a4c0688cd8f46f784bbe8f77b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 181929557,
+     "length": 87,
+     "sha256": "f914888ee1d2ca32e87151b87987fd0455dd973e01e5d1e16dc0d8b5a6c2bbc5",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 181933512,
+     "length": 1242,
+     "sha256": "ff3cd698e9c97b943d30b9290a976ae7ff3b150a3986121aa995e1731c0fce76",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182791879,
+     "length": 302,
+     "sha256": "b05de7c4e19ae1fac2f46b493fa643fd4d60dcbb590105b659671db29c44589a",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ]
+  },
+  {
+   "id": "auto-memory",
+   "title": "Automatic memory",
+   "group": "Prompt caching and context",
+   "question": "Whether Claude Code keeps automatic memory for the session: loads the project's memory folder into its instructions and may read and write files there.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "enabled": "Auto memory on",
+    "disabled": "Auto memory off"
+   },
+   "details": {
+    "candidate": "chunk-qehhcpvf.js:145295",
+    "restricted_session_anchors": [
+     {
+      "file": "chunk-ceeyzz98.js",
+      "find": "function MT(){return n().host.launchOptions.restrictedSession()}",
+      "span": "text"
+     },
+     {
+      "file": "chunk-3kj78r2m.js",
+      "find": "if(MT())return\"off\";let e=process.env.CLAUDE_CODE_DISABLE_AUTO_MEMORY;",
+      "span": "text"
+     }
+    ]
+   },
+   "context": [],
+   "realize_context": {},
+   "notes": [
+    "Auto memory is a folder of plain files on your machine. By default it is ~/.claude/projects/<project>/memory/, where <project> is the project's root folder path turned into a folder name, and MEMORY.md in it is the index Claude Code loads at the start of a session.",
+    "CLAUDE_CODE_REMOTE_MEMORY_DIR replaces ~/.claude as the base of that default path. The folder itself can be moved: CLAUDE_COWORK_MEMORY_PATH_OVERRIDE wins, then autoMemoryDirectory from managed settings, --settings, local and project settings (only in a trusted folder or a non-interactive run), then user settings.",
+    "Turning auto memory off with autoMemoryEnabled or /memory writes autoMemoryEnabled to your user settings file. /pause-memory turns it off for the current session only.",
+    "Memory stores are a separate decision: shared stores mounted next to your own memory, used when a remote flag (off by default in code) is on or CLAUDE_MEMORY_STORES is set. Whether Claude reaches memory through plain files or through memory tools is also decided separately, partly by another remote flag.",
+    "A session that the app launching Claude Code marks as restricted also has no auto memory, whatever is set on this ladder."
+   ],
+   "bypasses": [
+    {
+     "id": "safeModeEnv",
+     "knob": "env-claude-code-safe-mode",
+     "effect": {
+      "value": "disabled"
+     },
+     "note": "Checked before the ladder: safe mode turns auto memory off, even with CLAUDE_CODE_DISABLE_AUTO_MEMORY=0. 1, true, yes and on count as set.",
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_SAFE_MODE": "1"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-mfzs2r1w.js",
+       "binary_offset": 173711600,
+       "length": 77,
+       "sha256": "bf7b3ceda1c417a81a6cc9049c1e7169c81967244f033c48a58a2ff7da5c3d94",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "safeModeFlag",
+     "knob": "cli-flag-safe-mode",
+     "effect": {
+      "value": "disabled"
+     },
+     "note": "Checked before the ladder: --safe-mode does the same as CLAUDE_CODE_SAFE_MODE.",
+     "realize": {
+      "args": [
+       "--safe-mode"
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-mfzs2r1w.js",
+       "binary_offset": 173711600,
+       "length": 77,
+       "sha256": "bf7b3ceda1c417a81a6cc9049c1e7169c81967244f033c48a58a2ff7da5c3d94",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "pauseMemory",
+     "mechanism": "cli",
+     "knob": null,
+     "label": "/pause-memory in this session",
+     "input": "toggle",
+     "note": "Checked first: once memory is paused for the session, nothing below turns it back on, not even CLAUDE_CODE_DISABLE_AUTO_MEMORY=0.",
+     "effect": {
+      "value": "disabled"
+     },
+     "provenance": [
+      {
+       "file": "chunk-ceeyzz98.js",
+       "binary_offset": 173675997,
+       "length": 57,
+       "sha256": "8b210600a96b4ec6eea79bcf23641a972769c73e1a0aa84d3a77451370b6bbac",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197507305,
+       "length": 53,
+       "sha256": "6879757e1e9c4c544ff0aab3258bdf30ea6e4874a5f03c78363165a55122379e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envDisable",
+     "mechanism": "env",
+     "knob": "env-claude-code-disable-auto-memory",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on",
+      "0",
+      "false",
+      "no",
+      "off"
+     ],
+     "invalid_example": "2",
+     "note": "1, true, yes or on turns auto memory off. 0, false, no or off forces it on and skips everything below, including autoMemoryEnabled set to false. Any other value counts as unset.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "value": [
+          "1",
+          "true",
+          "yes",
+          "on"
+         ]
+        },
+        "value": "disabled"
+       },
+       {
+        "when": {},
+        "value": "enabled"
+       }
+      ]
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176644539,
+       "length": 124,
+       "sha256": "1e912e0803e3fee07d9cff98f1bbb5194c167327ff339784adaa36ac66732227",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-zzm2rf18.js",
+       "binary_offset": 173551449,
+       "length": 43,
+       "sha256": "b224b77fc82df4d815d13ccc15c15dbf05250688e4392d757c621098ef34a087",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "bareMode",
+     "mechanism": "env",
+     "knob": "env-claude-code-simple",
+     "input": "toggle",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "note": "Bare mode turns auto memory off. --bare sets the same switch.",
+     "effect": {
+      "value": "disabled"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_SIMPLE": "1"
+      }
+     },
+     "label": "CLAUDE_CODE_SIMPLE",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176644663,
+       "length": 47,
+       "sha256": "b91b95f25423a87330deef764078e3c023740a3dd56e3c727f87bdc3e2d69835",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mfzs2r1w.js",
+       "binary_offset": 173711850,
+       "length": 70,
+       "sha256": "05d0a4571adf785f42412703ee12f32fa1aad3b6094d7bbe2807666720b5ca65",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteNoDir",
+     "mechanism": "env",
+     "knob": "env-claude-code-remote",
+     "input": "toggle",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "note": "A remote session has no auto memory unless CLAUDE_CODE_REMOTE_MEMORY_DIR or CLAUDE_COWORK_MEMORY_PATH_OVERRIDE gives it a folder. With either set, this rung does not answer.",
+     "effect": {
+      "value": "disabled"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_REMOTE": "1"
+      }
+     },
+     "label": "CLAUDE_CODE_REMOTE",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176644710,
+       "length": 120,
+       "sha256": "43ab58994ddfaf134929e5876677100e9a6f9d59a013449070881384e69c42ed",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "modelFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-model memory switch",
+     "input": "toggle",
+     "note": "Two remote flags: a list of model names (empty by default in code) and a switch (off by default in code). When the switch is on and the session's model name contains a listed name, auto memory is off. CLAUDE_CODE_DISABLE_AUTO_MEMORY=0 skips this check. Anthropic can change both without a release.",
+     "effect": {
+      "value": "disabled"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176645021,
+       "length": 82,
+       "sha256": "6417dc0252b645a7e38614bd4dd639328a38156f4bcf1a7c986fc7640311d3fc",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176645177,
+       "length": 34,
+       "sha256": "5525d5c6fdafe6d9262c93902d7640ba4b48df6976d66ca5d69c7c5495004d09",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingEnabled",
+     "mechanism": "settings",
+     "knob": "setting-auto-memory-enabled",
+     "input": "choice",
+     "accepts": [
+      "true",
+      "false"
+     ],
+     "note": "Read from the merged settings, so any settings file Claude Code loads can set it. true turns auto memory on, false turns it off. The /memory toggle writes this key to your user settings.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "value": [
+          "true"
+         ]
+        },
+        "value": "enabled"
+       },
+       {
+        "when": {},
+        "value": "disabled"
+       }
+      ]
+     },
+     "label": "autoMemoryEnabled",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176644009,
+       "length": 93,
+       "sha256": "1038479f0ec726d4ac54caefcf9fe182c880bc0ffb185153bcef88104d8be5b7",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-kbx92m5p.js",
+       "binary_offset": 210103660,
+       "length": 49,
+       "sha256": "3e1b9496cbcd6281e7009ba11f6f0006a49291a656ac895d0d35fb7e052d3996",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "defaultOn",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers, auto memory is on.",
+     "effect": {
+      "value": "enabled"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176644034,
+       "length": 82,
+       "sha256": "bed2c51b6badaf850576a0223bfd9f828aeecf40ac8da93aa9bd6a4ed149de25",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176643728,
+     "length": 44,
+     "sha256": "7cf5c2418c47316740e6e4d76d8c955a046eb6b58a01ffbbd8c6d9cab04a795c",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176643772,
+     "length": 120,
+     "sha256": "bbd1de211a2b32f836942cea72f6b1a1554c141985b9caca7e3f9b4b85a45a4f",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176644485,
+     "length": 54,
+     "sha256": "28fb9ba5f2a2333211de1739cfdf6118cd3d0ba0f3946bde8b1b0dc7c70368de",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-qehhcpvf.js",
+     "binary_offset": 177654207,
+     "length": 18,
+     "sha256": "f1f8026cadd09f08ae506cdfceb9b01ef8aa27b0da70ae5627642b0791b31783",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "constraints": []
+  },
+  {
    "id": "bash-output-limit",
    "title": "Bash output limit",
-   "group": "Tool output",
+   "group": "Tools and output",
    "question": "How many characters of a Bash or PowerShell command's output Claude receives in the tool result before the rest is saved to a file and replaced by a short preview.",
    "shape": "first-wins",
    "observe": "none",
@@ -840,7 +2091,7 @@
   {
    "id": "effort-level",
    "title": "Reasoning effort",
-   "group": "Model and reasoning",
+   "group": "Models and reasoning",
    "question": "Which reasoning effort (low, medium, high, xhigh or max) Claude Code asks the API for, sent as output_config.effort on each request.",
    "shape": "first-wins",
    "observe": "effort",
@@ -1430,7 +2681,7 @@
   {
    "id": "env-sources",
    "title": "Where an environment variable's value comes from",
-   "group": "Settings",
+   "group": "Settings and environment",
    "question": "When the shell, settings files and managed settings set the same environment variable, which value Claude Code runs with.",
    "shape": "first-wins",
    "observe": "model",
@@ -1879,9 +3130,1420 @@
    "constraints": []
   },
   {
+   "id": "fast-mode",
+   "title": "Fast mode",
+   "group": "Models and reasoning",
+   "question": "Whether fast mode is available in a session and, if so, whether requests go out with it on.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "on": "Fast mode on",
+    "off": "Available, but off",
+    "unavailable": "Fast mode unavailable",
+    "cooldown": "On, but paused by a cooldown"
+   },
+   "details": {
+    "candidate": "chunk-3kj78r2m.js:202773"
+   },
+   "context": [
+    {
+     "key": "provider",
+     "label": "Model provider",
+     "values": [
+      {
+       "value": "anthropic",
+       "label": "Anthropic API (API key or Claude sign-in)"
+      },
+      {
+       "value": "other",
+       "label": "Bedrock, Vertex, Foundry or a gateway"
+      }
+     ]
+    },
+    {
+     "key": "session",
+     "label": "Session",
+     "values": [
+      {
+       "value": "print",
+       "label": "claude -p or the Agent SDK"
+      },
+      {
+       "value": "interactive",
+       "label": "Interactive terminal or the VS Code extension"
+      }
+     ]
+    },
+    {
+     "key": "model",
+     "label": "Session model",
+     "values": [
+      {
+       "value": "capable",
+       "label": "A fast-capable model (Opus 5 family, Opus 4.8)"
+      },
+      {
+       "value": "other",
+       "label": "Any other model"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "provider": {
+     "anthropic": {},
+     "other": null
+    },
+    "session": {
+     "print": {},
+     "interactive": null
+    },
+    "model": {
+     "capable": {},
+     "other": null
+    }
+   },
+   "bypasses": [
+    {
+     "id": "disableEnv",
+     "knob": "env-claude-code-disable-fast-mode",
+     "effect": {
+      "value": "unavailable"
+     },
+     "note": "Checked before the ladder: fast mode is unavailable, whatever is set below.",
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_FAST_MODE": "1"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176408705,
+       "length": 85,
+       "sha256": "633d09a864c1e3696b54e35e153c0cb62b71ce96f212ad46a02e5addc7343dab",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "remoteKill",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's fast-mode kill switch",
+     "input": "toggle",
+     "note": "A remote flag that is empty by default in code. When Anthropic sets it, fast mode is unavailable for everyone and the flag's text is shown as the reason. Anthropic can change it without a release.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176409959,
+       "length": 54,
+       "sha256": "a7dd19490dab6ebb26b5d3896358da64bcab5a3772ae6f5dc9481e9a0eabb13b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "modelAllowlist",
+     "mechanism": "settings",
+     "knob": "setting-available-models",
+     "label": "availableModels leaves out Opus and the session model",
+     "input": "toggle",
+     "note": "When availableModels leaves out Opus, fast mode is unavailable unless the session's own model is on the list and supports fast mode.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410014,
+       "length": 97,
+       "sha256": "202dd3d30869c8923d0d652486ac4511f4a0658374a7dde046a1472de7ff5454",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "managedOff",
+     "mechanism": "managed",
+     "knob": "setting-fast-mode",
+     "input": "choice",
+     "accepts": [
+      "false"
+     ],
+     "note": "fastMode set to false in managed settings means your organization turned fast mode off. Nothing below turns it back on.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "label": "fastMode",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410154,
+       "length": 57,
+       "sha256": "22eaa21f1505315a0d9c5aa2b3480960345c9df58cc966b3da9b1f75a765eaaf",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "orgDenied",
+     "mechanism": "managed",
+     "knob": null,
+     "label": "Anthropic's server says your organization can't use fast mode",
+     "input": "toggle",
+     "note": "Claude Code asks Anthropic whether your organization may use fast mode. A no (no paid plan, turned off by an admin, or no usage credits) makes it unavailable, and a saved fastMode setting is cleared.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176418967,
+       "length": 97,
+       "sha256": "f02f148047a053ddaf8ed97095660b803782fa854a98bf33e85ab6f555e70aac",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410495,
+       "length": 122,
+       "sha256": "8b2603023c59bb5794d03e6af203f3923ddcd5af9b269d0b7b88b0d38a0247f0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "orgUnreachable",
+     "mechanism": "default",
+     "knob": null,
+     "label": "The organization check failed or hasn't answered",
+     "input": "toggle",
+     "skip_when": [
+      {
+       "rung.flagSettings": [
+        "true"
+       ]
+      },
+      {
+       "rung.skipNetworkErrors": [
+        true
+       ]
+      },
+      {
+       "rung.skipOrgCheck": [
+        true
+       ]
+      }
+     ],
+     "note": "Until the organization check answers, or when it fails on the network, fast mode is unavailable, unless a check once succeeded before. Turning it on with --settings, CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS or CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK lifts this.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410355,
+       "length": 61,
+       "sha256": "8b98112593fa674a3c68b6f829d12a324ca2ab77f962d9c44f96b7f68ba5ed15",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176419598,
+       "length": 94,
+       "sha256": "cdfeac78cf4f15aa60f0a8aa99fcfd63981b73cc8377435f4682accd78acbf2b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176417732,
+       "length": 111,
+       "sha256": "35393ce5d0399b9334b195e241cb8024ab839f66e2300fbe0d23aabba7507c5d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "fastCommand",
+     "mechanism": "cli",
+     "knob": null,
+     "label": "/fast in this session",
+     "input": "choice",
+     "accepts": [
+      "on",
+      "off"
+     ],
+     "applies_when": [
+      {
+       "session": [
+        "interactive"
+       ]
+      }
+     ],
+     "note": "/fast turns fast mode on or off for the session and saves the choice to your user settings, unless you pick this session only. Turning it on switches to Opus when the current model can't run fast. When managed settings set fastModePerSessionOptIn, the this-session-only choice is refused.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-yw9zy5m8.js",
+       "binary_offset": 192901102,
+       "length": 99,
+       "sha256": "cf21fd4dbb189ac4cf66f5820a55c63207887964519e067b36b8b26e02fa28ed",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-yw9zy5m8.js",
+       "binary_offset": 192900865,
+       "length": 59,
+       "sha256": "48cad7b4ec767591e5b2fa0bf3d55312cf6576c7a87b1a8f4f9b4061fc4b7f2c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410212,
+       "length": 80,
+       "sha256": "f8a05545fa91683662d9aa14ca2d154b50e91c6d7e31242671f2f946ec7c0555",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "flagSettings",
+     "mechanism": "cli",
+     "knob": "cli-flag-settings",
+     "label": "fastMode: true passed with --settings",
+     "input": "choice",
+     "accepts": [
+      "true"
+     ],
+     "note": "fastMode set to true in the --settings flag is how claude -p and the Agent SDK opt in. It turns fast mode on at startup, even with fastModePerSessionOptIn in your own settings, but not when managed settings set fastModePerSessionOptIn.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "rung.managedPerSession": [
+          "true"
+         ]
+        },
+        "value": "off"
+       },
+       {
+        "when": {},
+        "value": "on"
+       }
+      ]
+     },
+     "realize": {
+      "args": [
+       "--settings",
+       "{\"fastMode\":{value}}"
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410111,
+       "length": 43,
+       "sha256": "bdfc1f5a32a8410ce945511059f2916e9063a974a5a31dc789d6bb2f53a89023",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176411584,
+       "length": 186,
+       "sha256": "2d3cb2030103294690fc5b4a28ecf52fc037700693c7ce29addca03f6e62eef3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "printOptIn",
+     "mechanism": "default",
+     "knob": null,
+     "label": "claude -p or the Agent SDK without the --settings opt-in",
+     "input": null,
+     "applies_when": [
+      {
+       "session": [
+        "print"
+       ]
+      }
+     ],
+     "note": "In claude -p and the Agent SDK, fast mode is unavailable unless fastMode is passed with --settings. A fastMode setting in a settings file is not enough there.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410293,
+       "length": 46,
+       "sha256": "d6a72831c217172cadd38e3af75770314defae7dd312a54f5b8e7ae3cff34cf4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "managedPerSession",
+     "mechanism": "managed",
+     "knob": "setting-fast-mode-per-session-opt-in",
+     "input": "choice",
+     "accepts": [
+      "true"
+     ],
+     "note": "Set in managed settings, every session starts with fast mode off, and only /fast (saved, not this-session-only) turns it on.",
+     "effect": {
+      "value": "off"
+     },
+     "label": "fastModePerSessionOptIn",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176411584,
+       "length": 186,
+       "sha256": "2d3cb2030103294690fc5b4a28ecf52fc037700693c7ce29addca03f6e62eef3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "perSession",
+     "mechanism": "settings",
+     "knob": "setting-fast-mode-per-session-opt-in",
+     "input": "choice",
+     "accepts": [
+      "true"
+     ],
+     "note": "Set in any other settings file, a saved fastMode no longer carries over: each session starts off until you run /fast or pass fastMode with --settings.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "settings": {
+       "fastMode": true,
+       "fastModePerSessionOptIn": true
+      }
+     },
+     "label": "fastModePerSessionOptIn",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176411584,
+       "length": 186,
+       "sha256": "2d3cb2030103294690fc5b4a28ecf52fc037700693c7ce29addca03f6e62eef3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "userSetting",
+     "mechanism": "settings",
+     "knob": "setting-fast-mode",
+     "input": "choice",
+     "accepts": [
+      "true",
+      "false"
+     ],
+     "note": "fastMode from the merged settings files. true starts each interactive session with fast mode on; /fast writes this for you.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "value": [
+          "true"
+         ]
+        },
+        "value": "on"
+       },
+       {
+        "when": {},
+        "value": "off"
+       }
+      ]
+     },
+     "label": "fastMode",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176411584,
+       "length": 186,
+       "sha256": "2d3cb2030103294690fc5b4a28ecf52fc037700693c7ce29addca03f6e62eef3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "offDefault",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers, fast mode is available but off.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176411584,
+       "length": 186,
+       "sha256": "2d3cb2030103294690fc5b4a28ecf52fc037700693c7ce29addca03f6e62eef3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "skipNetworkErrors",
+     "mechanism": "env",
+     "knob": "env-claude-code-skip-fast-mode-network-errors",
+     "input": "toggle",
+     "note": "Does not turn fast mode on. It only lifts the failed-organization-check block above, so the settings decide. Ignored in cloud sessions.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS": "1"
+      }
+     },
+     "label": "CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176410495,
+       "length": 122,
+       "sha256": "8b2603023c59bb5794d03e6af203f3923ddcd5af9b269d0b7b88b0d38a0247f0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "skipOrgCheck",
+     "mechanism": "env",
+     "knob": "env-claude-code-skip-fast-mode-org-check",
+     "input": "toggle",
+     "note": "Does not turn fast mode on. It skips the organization check and treats the organization as allowed, which lifts the block above. Ignored in cloud sessions.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK": "1"
+      }
+     },
+     "label": "CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK",
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176408824,
+       "length": 67,
+       "sha256": "8c5e2456cde824a1eaf0963d31b7db2847a9edb7888f0e2cb7eaf5133d05e626",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176417653,
+       "length": 56,
+       "sha256": "102740604efc833f28117ab69538c4f92b4959551dffccff202f3a0436d37504",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "notAnthropic",
+     "label": "Not the Anthropic API",
+     "applies_when": [
+      {
+       "provider": [
+        "other"
+       ]
+      }
+     ],
+     "note": "Fast mode only runs against the Anthropic API directly. On Bedrock, Vertex, Foundry or a gateway it is unavailable.",
+     "effect": {
+      "value": "unavailable"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176408705,
+       "length": 85,
+       "sha256": "633d09a864c1e3696b54e35e153c0cb62b71ce96f212ad46a02e5addc7343dab",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "modelNotCapable",
+     "label": "Model can't run fast",
+     "applies_when": [
+      {
+       "model": [
+        "other"
+       ]
+      }
+     ],
+     "note": "Fast mode only applies to models that support it (Opus 5 family, Opus 4.8, or models the catalog marks as fast-capable). On any other model requests go out at normal speed.",
+     "replace_values": {
+      "on": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176412284,
+       "length": 51,
+       "sha256": "7ac6205dfcafa69d37c9558c30fa8cf519050bb4aabbe302d8cf96134b2de607",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "cooldown",
+     "label": "Fast-mode cooldown running",
+     "note": "While a fast-mode cooldown is running, requests go out at normal speed; fast mode comes back on its own when the cooldown ends.",
+     "replace_values": {
+      "on": "cooldown"
+     },
+     "provenance": [
+      {
+       "file": "chunk-3kj78r2m.js",
+       "binary_offset": 176416494,
+       "length": 48,
+       "sha256": "1469636365a4fe7a6bb5b4843b172b007562e5d588183ad66968ef844dd031b6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176409832,
+     "length": 798,
+     "sha256": "c73504c15109aec0a7a5311dfa2c242859d1e7bfd32d73cca2e837c3df08d43d",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-3kj78r2m.js",
+     "binary_offset": 176411496,
+     "length": 88,
+     "sha256": "2f0407db307c177bce49f8c047be713d7d25cb7060e2e25e07e4b34642dfd96b",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-hj3p6ej4.js",
+     "binary_offset": 190155798,
+     "length": 33,
+     "sha256": "c886eb15a964c7480b5a3f0382a2a385c39d30e186dd7646282f7c9963395fdd",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182944636,
+     "length": 69,
+     "sha256": "fa88b48284c314871af52369ad8bbc3bd9a628fb866be0beece0834c7aa01466",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182957731,
+     "length": 68,
+     "sha256": "28bba5d30bd80fae2df2b02dde0ee29b14b3d74ef21767f695349916802b2aca",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-2393h2ax.js",
+     "binary_offset": 175490809,
+     "length": 37,
+     "sha256": "a86c89716e0dd0a1dc0c5b071b781fccaf420c6520803e2d5b63694cbe043c70",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ]
+  },
+  {
+   "id": "feedback-survey",
+   "title": "Feedback survey",
+   "group": "Privacy and interface",
+   "question": "Whether Claude Code shows its session feedback survey and how often, checked again before each chance to show it. After you answer, it can also ask to share the transcript.",
+   "shape": "first-wins",
+   "observe": "none",
+   "notes": [
+    "As shipped, Claude Code never asks to share the transcript: after you answer bad, fine or good, the chance of asking is 0 in code for each answer.",
+    "Anthropic can raise those chances remotely without a release.",
+    "It never asks, whatever those chances are, when CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set (even with CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL), when your organization's policy denies product feedback, when DISABLE_FEEDBACK_COMMAND or DISABLE_BUG_COMMAND is set, or after you choose don't ask again.",
+    "Nothing is shared unless you answer yes."
+   ],
+   "value_labels": {
+    "off": "No survey",
+    "forced": "Shown at the first chance, once per session",
+    "your_rate": "Shown at the rate you set",
+    "anthropic_rate": "Shown at Anthropic's rate"
+   },
+   "details": {
+    "candidate": "chunk-rtgjjsce.js:248669",
+    "transcript_ask": {
+     "note": "Asked only after you answer bad, fine or good. Each answer has its own remote chance, 0 in code, so Claude Code does not ask unless Anthropic raises it. It never asks when CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set (even with CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL), when organization policy denies product feedback, when DISABLE_FEEDBACK_COMMAND or DISABLE_BUG_COMMAND is set, or after you choose don't ask again. Nothing is shared unless you answer yes.",
+     "anchors": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "find": "if(Vn!==\"bad\"&&Vn!==\"fine\"&&Vn!==\"good\")return!1;if(Rt())return!1;",
+       "span": "text"
+      },
+      {
+       "file": "chunk-fbctzhpm.js",
+       "find": "if(V$e().kind===\"disabled\")return!1;if(HQ())return!0;if(le().transcriptShareDismissed)return!1;",
+       "span": "text"
+      },
+      {
+       "file": "chunk-fbctzhpm.js",
+       "find": "let Kn=Vn===\"bad\"?ut.probability:Vn===\"fine\"?bt.probability:pt.probability;return Math.random()<=Kn",
+       "span": "text"
+      },
+      {
+       "file": "chunk-fbctzhpm.js",
+       "find": "ut=i_(\"tengu_bad_survey_transcript_ask_config\",Vmn)",
+       "span": "text"
+      },
+      {
+       "file": "chunk-sts5a1pb.js",
+       "find": "Vmn={probability:0}",
+       "span": "text"
+      },
+      {
+       "file": "chunk-appb597y.js",
+       "find": "function V$e(e=\"/feedback\"){let n=DQ(e);if(n!==null)return{kind:\"disabled\",reason:n};",
+       "span": "text"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "find": "function DQ(e=\"/feedback\"){return Hj(e)??lf(\"allow_product_feedback\",e,\"is\")}",
+       "span": "text"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "find": "if(a.DISABLE_FEEDBACK_COMMAND)return`${e} has been disabled via the DISABLE_FEEDBACK_COMMAND environment variable`",
+       "span": "text"
+      },
+      {
+       "file": "chunk-fbctzhpm.js",
+       "find": "if(Kn===\"dont_ask_again\")await Ce((Mr)=>({...Mr,transcriptShareDismissed:!0}),ee)",
+       "span": "text"
+      }
+     ]
+    }
+   },
+   "context": [
+    {
+     "key": "surface",
+     "label": "Where Claude Code runs",
+     "values": [
+      {
+       "value": "terminal",
+       "label": "Terminal"
+      },
+      {
+       "value": "host",
+       "label": "VS Code extension or Claude desktop app"
+      }
+     ]
+    },
+    {
+     "key": "hostFlag",
+     "label": "Anthropic's survey flag for the extension and desktop app",
+     "show_when": [
+      {
+       "surface": [
+        "host"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": "off",
+       "label": "Off (the default in code)"
+      },
+      {
+       "value": "on",
+       "label": "On"
+      }
+     ]
+    },
+    {
+     "key": "models",
+     "label": "Current model on Anthropic's survey list",
+     "show_when": [
+      {
+       "surface": [
+        "terminal"
+       ]
+      }
+     ],
+     "values": [
+      {
+       "value": "listed",
+       "label": "Listed (every model is, by default in code)"
+      },
+      {
+       "value": "unlisted",
+       "label": "Not listed"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "surface": {
+     "terminal": null,
+     "host": null
+    },
+    "hostFlag": {
+     "off": null,
+     "on": null
+    },
+    "models": {
+     "listed": null,
+     "unlisted": null
+    }
+   },
+   "bypasses": [],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "hostFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's extension and desktop survey flag",
+     "input": null,
+     "applies_when": [
+      {
+       "surface": [
+        "host"
+       ],
+       "hostFlag": [
+        "off"
+       ]
+      }
+     ],
+     "note": "VS Code extension and desktop app only. A remote flag that is off in code, so those apps get no survey unless Anthropic turns it on. Anthropic can change it without a release.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197463248,
+       "length": 48,
+       "sha256": "c79d4355b21948264d043a0fac4bddad30e003d5234478fddd2930bb209a2ea0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197687408,
+       "length": 27,
+       "sha256": "04feb8b094b1721ddcb4370a75e84487fc7f907c6946ff29a5f8d56428603a1b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rqp1pwc5.js",
+       "binary_offset": 173938012,
+       "length": 78,
+       "sha256": "fc108f123eb8cecb0534834737b376505670094cfd31f6202bdbb18f3529bab8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rqp1pwc5.js",
+       "binary_offset": 173933882,
+       "length": 63,
+       "sha256": "dcf3e42f3cb891658bf211894f860e3f3be9e0aaf31b58cf400453110e15e2e6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "disableEnv",
+     "mechanism": "env",
+     "knob": "env-claude-code-disable-feedback-survey",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "0",
+     "note": "Turns the survey off everywhere, including in the extension and desktop app. 1, true, yes or on count, in any letter case; any other value is ignored.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY",
+     "provenance": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201327656,
+       "length": 67,
+       "sha256": "70eae7751a758f5208505d682a07864293c7ac43f6e38a0114d3dbc06108d6d8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197463296,
+       "length": 63,
+       "sha256": "e5b3779b9e8dc6d87b744e9271b9fd09df7bff714065db2d398f6b77a661ce80",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173890757,
+       "length": 42,
+       "sha256": "4ac757dd811a3c82cb909ca1b0b75077802751890c8fa915e00a51e780b1f9b0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-fps7hcj2.js",
+       "binary_offset": 173867374,
+       "length": 12,
+       "sha256": "49cf92e73fd77d9c49f54de61058172425f7adaf04505727bb737ddbb832a5df",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "disableTelemetry",
+     "mechanism": "env",
+     "knob": "env-disable-telemetry",
+     "input": "toggle",
+     "skip_when": [
+      {
+       "rung.otelOverride": [
+        "1",
+        "true",
+        "yes",
+        "on"
+       ]
+      }
+     ],
+     "note": "Turning telemetry off also turns the survey off. Any value counts, even 0 or false. CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL undoes this.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "DISABLE_TELEMETRY": "1"
+      }
+     },
+     "label": "DISABLE_TELEMETRY",
+     "provenance": [
+      {
+       "file": "chunk-vnyh2jpk.js",
+       "binary_offset": 173793903,
+       "length": 123,
+       "sha256": "fd4be4d526a896e392b8a71bfbc062fe210520aacb3126febb003676bc16e014",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-vnyh2jpk.js",
+       "binary_offset": 173794073,
+       "length": 37,
+       "sha256": "54eaaa906ec136c62d610ebc87a55368565140dcaa2d7a32408b60c2c7b83bf0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-53wazwdn.js",
+       "binary_offset": 175014389,
+       "length": 43,
+       "sha256": "a42e8d2fde764a3c2f2ad8bfd3a6511796b6867c211c5473d0132d0f1ae6495d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "doNotTrack",
+     "mechanism": "env",
+     "knob": "env-do-not-track",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "0",
+     "skip_when": [
+      {
+       "rung.otelOverride": [
+        "1",
+        "true",
+        "yes",
+        "on"
+       ]
+      }
+     ],
+     "note": "Works like DISABLE_TELEMETRY here, but only 1, true, yes or on count. CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL undoes this.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "DO_NOT_TRACK": "{value}"
+      }
+     },
+     "label": "DO_NOT_TRACK",
+     "provenance": [
+      {
+       "file": "chunk-vnyh2jpk.js",
+       "binary_offset": 173793957,
+       "length": 52,
+       "sha256": "f8969a085edcacdfe85375f90109913b7632e69269f42de76adc2c59bd636bcb",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-zzm2rf18.js",
+       "binary_offset": 173551199,
+       "length": 142,
+       "sha256": "0cd1e3bf52a5322b221b5b0c9e8e3e7511dd2dcdf1dda995d0691afa3816edc4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-53wazwdn.js",
+       "binary_offset": 175014389,
+       "length": 43,
+       "sha256": "a42e8d2fde764a3c2f2ad8bfd3a6511796b6867c211c5473d0132d0f1ae6495d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "nonessential",
+     "mechanism": "env",
+     "knob": "env-claude-code-disable-nonessential-traffic",
+     "input": "toggle",
+     "skip_when": [
+      {
+       "rung.otelOverride": [
+        "1",
+        "true",
+        "yes",
+        "on"
+       ]
+      }
+     ],
+     "note": "Turns the survey off. Any value counts, even 0 or false. CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL brings the survey back, but never the transcript ask.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+      }
+     },
+     "label": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+     "provenance": [
+      {
+       "file": "chunk-vnyh2jpk.js",
+       "binary_offset": 173793808,
+       "length": 94,
+       "sha256": "624b314ee89a8cd378950136d239b096932d870a15fbd15c1a18a6894eb880f8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-53wazwdn.js",
+       "binary_offset": 175014389,
+       "length": 43,
+       "sha256": "a42e8d2fde764a3c2f2ad8bfd3a6511796b6867c211c5473d0132d0f1ae6495d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-b4y911xg.js",
+       "binary_offset": 177178436,
+       "length": 66,
+       "sha256": "7132eee19a30ab9f12efefb067bf931e1e76ac1fa435ddbad52138fe56390bd6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "orgPolicy",
+     "mechanism": "managed",
+     "knob": null,
+     "label": "Organization policy denies product feedback",
+     "input": "toggle",
+     "note": "When your organization's policy denies product feedback, there is no survey and no transcript ask, whatever is set below.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201327723,
+       "length": 88,
+       "sha256": "5ace4900e32ef1ff3ae2ceeddf8e7013a4045a08f4f44831d0b030658bc61f7d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197463344,
+       "length": 61,
+       "sha256": "4f94f4c3183d59d79f0a5657bdb81e539989b0ad4b652fb0223e312bfa461c6c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "forceDisplay",
+     "mechanism": "env",
+     "knob": "env-claude-force-display-survey",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "0",
+     "applies_when": [
+      {
+       "surface": [
+        "terminal"
+       ]
+      }
+     ],
+     "note": "Terminal only. 1, true, yes or on shows the survey at the first chance in each session, skipping the model list, timing and rate below; after that the normal rules apply. Everything above still turns it off.",
+     "effect": {
+      "value": "forced"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_FORCE_DISPLAY_SURVEY": "{value}"
+      }
+     },
+     "label": "CLAUDE_FORCE_DISPLAY_SURVEY",
+     "provenance": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201327765,
+       "length": 75,
+       "sha256": "da8c2f8f3172fd7eeb99c255efc5151847c9fad3b796df8a39110331fba3e1dd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "modelList",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's survey model list",
+     "input": null,
+     "applies_when": [
+      {
+       "surface": [
+        "terminal"
+       ],
+       "models": [
+        "unlisted"
+       ]
+      }
+     ],
+     "note": "Terminal only. Anthropic's survey config lists the models the survey runs for; in code the list covers every model. Anthropic can change it without a release.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201327394,
+       "length": 79,
+       "sha256": "a6518973620a50185fb730d5697cf1f162cdd973d6abfd16148c59eadb381745",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-sts5a1pb.js",
+       "binary_offset": 197067042,
+       "length": 35,
+       "sha256": "778ecd49a738d0b26968d20dbb0c1a6e7785d5e684fe2240a2550643daeead17",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "settingRate",
+     "mechanism": "settings",
+     "knob": "setting-feedback-survey-rate",
+     "input": "choice",
+     "accepts": [
+      "0",
+      "0.01",
+      "0.05",
+      "0.5",
+      "1"
+     ],
+     "note": "From any settings file Claude Code loads: the chance, from 0 to 1, that the survey appears at each prompt once the timing rules allow it. 0 turns it off. It replaces Anthropic's rate, including the rate passed to the extension and desktop app.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "value": [
+          "0"
+         ]
+        },
+        "value": "off"
+       },
+       {
+        "when": {},
+        "value": "your_rate"
+       }
+      ]
+     },
+     "label": "feedbackSurveyRate",
+     "provenance": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201328237,
+       "length": 46,
+       "sha256": "dfee09b9e9e2938b43bbdfde4a744c1ea961785bc3fcc098e33094f5e7220909",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201321487,
+       "length": 26,
+       "sha256": "b28717decbd382b05df24da3a692542911436eafa0e8e8147c41d2ff163d8b59",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197463455,
+       "length": 50,
+       "sha256": "42fa1f50ecaba4f7dc6cc637822a9e23017153b71f021c885eadfe30043b2563",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174343274,
+       "length": 47,
+       "sha256": "0be0009df36fd0c4b140183f201939fffb5fadab90867cf14388d845c44b656c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "anthropicRate",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's survey rate",
+     "input": null,
+     "note": "A remote config that is 0.005 in code: once the timing rules allow a survey, each prompt has a half-percent chance. In code the first chance comes after 10 minutes and 5 prompts, later ones at least an hour and 10 prompts apart, and never within about 28 hours of a survey in any session. Anthropic can change it without a release.",
+     "effect": {
+      "value": "anthropic_rate"
+     },
+     "provenance": [
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201321258,
+       "length": 41,
+       "sha256": "be7885ebcc2627766a1099cc86245ac2b03e5750798384b2a3991ae8498a8b19",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-sts5a1pb.js",
+       "binary_offset": 197066855,
+       "length": 163,
+       "sha256": "a6b1c6fa7e212d45b457d30e8a9df3ba48304318d6f44b1a74f24cb6723caa04",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-fbctzhpm.js",
+       "binary_offset": 201328362,
+       "length": 73,
+       "sha256": "e6267be9d924142784b1889fd1f0095f573ff97197eab93e457a39b21ac0d58b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-rtgjjsce.js",
+       "binary_offset": 197463399,
+       "length": 43,
+       "sha256": "c4611958ad50c51530a82f43473770a5b2e207fdf76d7b648c04559a7eba82a9",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "otelOverride",
+     "mechanism": "env",
+     "knob": "env-claude-code-enable-feedback-survey-for-otel",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "0",
+     "note": "Picks no rate itself. 1, true, yes or on stops DISABLE_TELEMETRY, DO_NOT_TRACK and CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC from turning the survey off, so the other rules decide.",
+     "effect": {
+      "value": "anthropic_rate"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL",
+     "provenance": [
+      {
+       "file": "chunk-53wazwdn.js",
+       "binary_offset": 175014322,
+       "length": 67,
+       "sha256": "1c7d8fa3675eb2ed1440886f6a3851b0cc9421aaeac56ff4ab06d04bf9c0a037",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173892500,
+       "length": 50,
+       "sha256": "6632b38936bf25040562dfb80dd1ca0bba8ec1e67555d7d474f0ddadfc4f1856",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173900162,
+       "length": 27,
+       "sha256": "ef31b3d447c57c58d354b847ce3d3be143a53c057a50df6a75739bb55a2628e2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-fbctzhpm.js",
+     "binary_offset": 201320958,
+     "length": 8055,
+     "sha256": "0c9d78bca13bf8a9b4f22db6c702d63b347a9a37a3b18cb8a88cc454b9018f2e",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-rtgjjsce.js",
+     "binary_offset": 197463211,
+     "length": 362,
+     "sha256": "03080fa616bb56b0044b81c69045d13a74711f00f29f0b6ea78181e9cfd77465",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ]
+  },
+  {
    "id": "git-instructions",
    "title": "Git instructions and status",
-   "group": "System prompt",
+   "group": "What the model is told",
    "question": "Whether Claude Code sends the model its built-in git commit and pull request instructions, and a snapshot of the repository's git status at the start of the conversation.",
    "shape": "first-wins",
    "observe": "none",
@@ -2162,7 +4824,7 @@
   {
    "id": "main-model",
    "title": "Main conversation model",
-   "group": "Models",
+   "group": "Models and reasoning",
    "question": "Which model the main conversation sends its requests to.",
    "shape": "first-wins",
    "observe": "model",
@@ -2533,7 +5195,7 @@
   {
    "id": "max-output-tokens",
    "title": "Max output tokens",
-   "group": "Model output",
+   "group": "Models and reasoning",
    "question": "The max_tokens a main-conversation request asks for: how many tokens the model may write in one response, thinking included.",
    "shape": "first-wins",
    "observe": "max_tokens",
@@ -2897,9 +5559,637 @@
    "bypasses": []
   },
   {
+   "id": "mcp-output-limit",
+   "title": "MCP output limit",
+   "group": "Tools and output",
+   "question": "How many tokens of an MCP tool's result Claude receives in the tool result before the result is saved to a file or cut short.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "remote": "The value Anthropic sends"
+   },
+   "context": [],
+   "realize_context": {},
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "env",
+     "mechanism": "env",
+     "knob": "env-max-mcp-output-tokens",
+     "input": "choice",
+     "accepts": [
+      "10000",
+      "50000",
+      "100000"
+     ],
+     "invalid_example": "0",
+     "note": "A whole number of tokens. Zero, negatives and non-numbers are skipped without a warning, and the lookup moves on to Anthropic's value rather than straight to the default. There is no upper cap.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "MAX_MCP_OUTPUT_TOKENS": "{value}"
+      }
+     },
+     "label": "MAX_MCP_OUTPUT_TOKENS",
+     "provenance": [
+      {
+       "file": "chunk-wq3ev8bt.js",
+       "binary_offset": 199518324,
+       "length": 58,
+       "sha256": "b59c00e0d166d1db84799aff4303d255d879d17f936d68dbf821f638eec04caf",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173927614,
+       "length": 28,
+       "sha256": "111aba10fd0c7114771a901dfc3fa1daa1f717a4fc8ce79fbcf0f06d3eb3f363",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-fps7hcj2.js",
+       "binary_offset": 173867656,
+       "length": 42,
+       "sha256": "5657a14052d0147e509de802a849f01fa86fd21e192fc93ea8cbf792a8cacef2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remote",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-tool table (MCP entry)",
+     "input": null,
+     "note": "Anthropic can send a token limit for all MCP tools in the same per-tool table that sets the Bash threshold, under its own MCP entry. The code's default table is empty, so nothing changes unless Anthropic sends a positive number, which it can do without a release.",
+     "effect": {
+      "value": "remote"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wq3ev8bt.js",
+       "binary_offset": 199518382,
+       "length": 99,
+       "sha256": "de41eca50140363737ace462850564b6e03092adf49c0aa14538cec1172167c2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Built-in default",
+     "input": null,
+     "note": "25,000 tokens.",
+     "effect": {
+      "value": "25000"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wq3ev8bt.js",
+       "binary_offset": 199518286,
+       "length": 25,
+       "sha256": "9b4c6445f6d84cbb3788cb57ef977fa0d143fa12f069bb421ecc2c4cf8c9e799",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "ideServer",
+     "label": "Built-in IDE connection",
+     "note": "Checked before the ladder. Results from the built-in IDE connection are passed through without this limit.",
+     "provenance": [
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207043979,
+       "length": 22,
+       "sha256": "bc3d79b9e250ef40990301a79347f7161fbb342e2a0e3a501ffc670a869690c0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "sizeAnnotation",
+     "label": "Tool declares its own result size",
+     "note": "Checked before the ladder. An MCP tool that declares a positive anthropic/maxResultSizeChars value in its metadata skips this token limit, unless the result contains images.",
+     "provenance": [
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207011535,
+       "length": 124,
+       "sha256": "9389e012851ec390fb5ccbc3e7abc2a1539c6fe9697882aa62e459223eee5f45",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207018033,
+       "length": 17,
+       "sha256": "082fb041c2d570ca78c6b72b36a76ad6a82de7202e0f0e3414848fa36b489935",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207044001,
+       "length": 22,
+       "sha256": "7786b4de3040644cc12061373f8bab789e5d1b8a234f01e70bb6cca80bd1520b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "overflow",
+     "label": "What happens to a result over the limit",
+     "note": "A result whose estimated size is at most half the limit passes; above that, the tokens are counted through the API, falling back to the estimate if counting fails. A result over the limit is normally saved to a file, and Claude gets the file's path, its format and instructions for reading it. It is instead cut to four characters per token of the limit, followed by a truncation notice, when ENABLE_MCP_LARGE_OUTPUT_FILES is set to a false value, when the result contains images, or when saving fails in remote-storage sessions; in other sessions a failed save returns an error with no content.",
+     "provenance": [
+      {
+       "file": "chunk-wq3ev8bt.js",
+       "binary_offset": 199519019,
+       "length": 28,
+       "sha256": "24cd301e17e968e9dcb9c46d709cb69d94a007d4c2c377d70cbc7817251290ba",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-wq3ev8bt.js",
+       "binary_offset": 199520085,
+       "length": 158,
+       "sha256": "9f32f59ef2cd02240f41b6a6c0f38c13dfd8dc4148c2b9ef70f34ed5cead7a70",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207044064,
+       "length": 130,
+       "sha256": "a620c7e8c7970be00d7f4798d2e3b8fff89d90e25480b8c92d9822104eed684f",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207044322,
+       "length": 27,
+       "sha256": "b246363a6fe0c539d1e7b5aee1e6ba8f40802cf434fb893f07a4194c244c058c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207045008,
+       "length": 22,
+       "sha256": "650ebabd37de3112879a90696f5a480f38d19443ba0ad89e5c406bef6b5fd8c8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207045149,
+       "length": 26,
+       "sha256": "c93a579a44f582b0cd771715b110104b6841c87cea52d7a508343c481b7e0023",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207045472,
+       "length": 45,
+       "sha256": "04e431bd9198b91eb2c416b2d3610ed9b703017937cb947a0c77ba5a05d1e8fd",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "savedFileWording",
+     "label": "Saved-file instructions wording",
+     "note": "MCP_TRUNCATION_PROMPT_OVERRIDE only changes the wording of the reading instructions for a saved file, not the limit: legacy picks the older wording and any other value the newer one. When it is unset, a flag Anthropic can change without a release decides, and the code's default is the older wording.",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182244218,
+       "length": 110,
+       "sha256": "b9ecec6aa285e1288fe8158600f3a0cabe4a1f161b6593923a3578de3dd535ef",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182244530,
+       "length": 2720,
+       "sha256": "6fe7016877d4a0bdb8b1c07f0fbae2b96ea8be229d5aaf9c191a15f959df1738",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "characterThreshold",
+     "label": "General tool-result size threshold",
+     "note": "After this check, MCP results also pass the size check every tool uses. For a tool that does not declare its own size it is 50,000 characters, so a text result under the token limit but longer than that is still saved to a file with a short preview. Anthropic's per-tool table can set this threshold for a single MCP tool by name without a release.",
+     "provenance": [
+      {
+       "file": "chunk-s1t81hd7.js",
+       "binary_offset": 207013245,
+       "length": 100,
+       "sha256": "4aafff1dff7e8883e819ee84f24a83c7ff59473a366f0cd2baedc71b5781ec36",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-s9a0hj00.js",
+       "binary_offset": 199521426,
+       "length": 69,
+       "sha256": "8d2c62a29c57bce119ff062f9e14c2e9b721dd55c272b83a5059651c593f44c8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-07g0g4dg.js",
+       "binary_offset": 180605009,
+       "length": 151,
+       "sha256": "43efebf58e57f157b7a9647c1d4b977570cf7dcc77363404e786a6340b612f9c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-07g0g4dg.js",
+       "binary_offset": 180601878,
+       "length": 183,
+       "sha256": "716ca19a64a9a94ea17061d6ac9a85bdcb2718cbcda713846af769dd14cf58f3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ay21hy4k.js",
+       "binary_offset": 175132310,
+       "length": 8,
+       "sha256": "cb9aca4bd8d83bf2f6dca9a748c6105f73bc89049272409039e20d27ecdbed3c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "candidate": "chunk-wq3ev8bt.js:971"
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-wq3ev8bt.js",
+     "binary_offset": 199518311,
+     "length": 179,
+     "sha256": "5e19b5fae3e85215e6a2f4fffe5650c93d2cbd86d882e54ba8e5f52344167985",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-wq3ev8bt.js",
+     "binary_offset": 199519856,
+     "length": 229,
+     "sha256": "a00a79dab510e3229ff45c70d5223b14514d19a49df0547bb3f8e4c7067d5a42",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-s1t81hd7.js",
+     "binary_offset": 207043895,
+     "length": 1883,
+     "sha256": "00ea78cf2a49fe31278d1ac7e754373c39140940680ae6c8a3647f8f7818682e",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
+  },
+  {
+   "id": "native-cursor",
+   "title": "Native terminal cursor",
+   "group": "Privacy and interface",
+   "question": "Whether Claude Code shows the terminal's own cursor at the input caret instead of drawing a block cursor, decided once per terminal.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "on": "Terminal's own cursor",
+    "off": "Drawn block cursor"
+   },
+   "details": {
+    "candidate": "chunk-ye4x3h8k.js:360231"
+   },
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "envAccessibility",
+     "mechanism": "env",
+     "knob": "env-claude-code-accessibility",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "2",
+     "note": "1, true, yes or on (any case) turns the native cursor on, whatever is set below. Any other value counts as unset.",
+     "effect": {
+      "value": "on"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_ACCESSIBILITY": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_ACCESSIBILITY",
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186732817,
+       "length": 63,
+       "sha256": "17369e1efbb30df66a095fae406c28e0e85e4c2b064ea1e626f4c9f71858d495",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173887752,
+       "length": 32,
+       "sha256": "49971a87716e9923c31623fc6100aec75e205c25bcdbfa97481a36cf15575ff3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173900606,
+       "length": 26,
+       "sha256": "74e5f3d4e66ecf1d52dde71fadf1cdfdf30d8d171a3a57e477573c0766c651a0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "screenReader",
+     "mechanism": "env",
+     "knob": "env-claude-ax-screen-reader",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "2",
+     "note": "Screen reader mode also turns the native cursor on. It comes from --ax-screen-reader, this variable, or the axScreenReader setting; 0, false, no or off here overrides the setting. A remote gate that is on by default in code can still keep screen reader mode off.",
+     "effect": {
+      "value": "on"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_AX_SCREEN_READER": "{value}"
+      }
+     },
+     "label": "CLAUDE_AX_SCREEN_READER",
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186732880,
+       "length": 40,
+       "sha256": "b9b887ecff57b0379b5312a100d4ccc217783873c5d0a95929e284663e349bee",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ky74kxy1.js",
+       "binary_offset": 175877636,
+       "length": 42,
+       "sha256": "544933f75b2e17706360b7986b7cc1c19a41112f26480353acfe91d2db67e256",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ky74kxy1.js",
+       "binary_offset": 175877810,
+       "length": 26,
+       "sha256": "bac0f33feb80a2f2e56d1a550640a5a8c141a684fc4e9e54a7f410abc32c2f0c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envScrollRegion",
+     "mechanism": "env",
+     "knob": "env-claude-code-decstbm",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "0",
+     "note": "Turning on the scroll-region renderer keeps the drawn cursor. It only takes effect in an interactive terminal that supports it. 0 or false does not turn the renderer off; it leaves the choice to Anthropic's flag below.",
+     "effect": {
+      "value": "off"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DECSTBM": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_DECSTBM",
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186732920,
+       "length": 41,
+       "sha256": "85257824c20cc530447ee14b893653b29cc358112884d2b2aece6c64f88a3d55",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186732238,
+       "length": 491,
+       "sha256": "e6ccd04fa0f127074bea077dc91a6cbd3bd2c54ba7f513b1200f419ad456d324",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186732572,
+       "length": 64,
+       "sha256": "7350b234cccf74c1d418605b197fe1f5e3c77b5dd0a7284b609a395cf048ecf6",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteScrollRegion",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's scroll-region renderer flag turned on",
+     "input": "toggle",
+     "note": "A remote flag that is off by default in code. When Anthropic turns it on, the scroll-region renderer runs in supported terminals and the cursor stays drawn, even with CLAUDE_CODE_NATIVE_CURSOR set. Anthropic can change it without a release.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186732636,
+       "length": 58,
+       "sha256": "d6b41baafaf36ea638af3365722f8fcd18aba352cc1598d221e46090f9365d61",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "envNativeCursor",
+     "mechanism": "env",
+     "knob": "env-claude-code-native-cursor",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on"
+     ],
+     "invalid_example": "2",
+     "note": "1, true, yes or on (any case) turns the native cursor on. Only accessibility or screen reader mode beats it, and the scroll-region renderer above keeps the cursor drawn. Any other value counts as unset.",
+     "effect": {
+      "value": "on"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_NATIVE_CURSOR": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_NATIVE_CURSOR",
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186733034,
+       "length": 40,
+       "sha256": "c21a1fad101f5d237351b5a208cd1d5b66162ca1b3aaf409c605313cf2353d77",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173894530,
+       "length": 32,
+       "sha256": "074ab5808df52e36cf02469665b476f9c9a95b45c52b6d2fc80353f25f047a53",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173901533,
+       "length": 38,
+       "sha256": "bd66dd94db475b4efef1f375f0c79970a71ebf1396a47860be5965767c4e6094",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteNativeCursor",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's native cursor flag turned on",
+     "input": "toggle",
+     "note": "A remote flag that is off by default in code. When Anthropic turns it on, you get the native cursor without setting anything. Anthropic can change it without a release.",
+     "effect": {
+      "value": "on"
+     },
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186733074,
+       "length": 34,
+       "sha256": "006e651e56fc03bad4753b5853ec5f13d6800cd0ca4da3729e464b6b301393ce",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers: the drawn block cursor.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-ye4x3h8k.js",
+       "binary_offset": 186733074,
+       "length": 34,
+       "sha256": "006e651e56fc03bad4753b5853ec5f13d6800cd0ca4da3729e464b6b301393ce",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-ye4x3h8k.js",
+     "binary_offset": 186732729,
+     "length": 233,
+     "sha256": "133e7d05947ab105b6aa920d3c332b22c94250aab925bafec9530af5d089cc2b",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-ye4x3h8k.js",
+     "binary_offset": 186732962,
+     "length": 147,
+     "sha256": "bed83cc6ca2f64fea8a4c294d43a4e5b2a33062e1992db99dded985a4dead099",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": [],
+   "constraints": []
+  },
+  {
    "id": "permission-mode",
    "title": "Starting permission mode",
-   "group": "Permissions",
+   "group": "Permissions and security",
    "question": "Which permission mode a session starts in: default, acceptEdits, plan, auto, dontAsk or bypassPermissions.",
    "shape": "first-wins",
    "observe": "none",
@@ -3852,7 +7142,7 @@
   {
    "id": "permission-rules",
    "title": "Which permission rules apply",
-   "group": "Permissions",
+   "group": "Permissions and security",
    "question": "Which allow, deny and ask rules are in force for a session: every source adds its rules, and managed policy can shut most sources out.",
    "shape": "merge",
    "observe": "none",
@@ -4372,7 +7662,7 @@
   {
    "id": "prompt-cache-ttl",
    "title": "Prompt cache TTL",
-   "group": "Prompt caching",
+   "group": "Prompt caching and context",
    "question": "How long Claude Code asks the API to keep a cached prompt prefix: 5 minutes or 1 hour, decided for every request.",
    "shape": "first-wins",
    "observe": "cache_ttl",
@@ -4859,7 +8149,7 @@
   {
    "id": "prompt-suggestions",
    "title": "Prompt suggestions",
-   "group": "Interface",
+   "group": "Privacy and interface",
    "question": "Whether Claude Code suggests your next prompt after a reply, decided when the session starts.",
    "shape": "first-wins",
    "observe": "none",
@@ -5290,7 +8580,7 @@
   {
    "id": "provider-default-model",
    "title": "Model id for a family on each provider",
-   "group": "Models",
+   "group": "Models and reasoning",
    "question": "Which model id Claude Code sends when it resolves a model family (Opus, Sonnet, Haiku or Fable) on the active provider.",
    "shape": "first-wins",
    "observe": "none",
@@ -5817,7 +9107,7 @@
   {
    "id": "sandbox-network-proxy",
    "title": "Sandbox network proxy",
-   "group": "Sandbox",
+   "group": "Permissions and security",
    "question": "Which proxy a sandboxed command's network traffic is sent to: none, a proxy you already run on a local port, or Claude Code's built-in proxy.",
    "shape": "first-wins",
    "observe": "none",
@@ -6077,7 +9367,7 @@
   {
    "id": "settings-layers",
    "title": "Where a setting's value comes from",
-   "group": "Settings files",
+   "group": "Settings and environment",
    "question": "Claude Code reads settings from five sources. A single value comes from the highest source that sets it; lists combine across all of them.",
    "shape": "layered",
    "observe": "none",
@@ -6258,9 +9548,270 @@
    "bypasses": []
   },
   {
+   "id": "stream-stall-watchdog",
+   "title": "Stalled-stream watchdog",
+   "group": "Tools and output",
+   "question": "Whether Claude Code gives up on a streaming response that goes silent: it sets a deadline for the first byte and aborts the stream when no bytes arrive for the idle timeout (3 minutes by default on Anthropic's API).",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "on": "Watchdog on",
+    "off": "Watchdog off"
+   },
+   "details": {
+    "candidate": "chunk-5ezz9t8y.js:465583"
+   },
+   "context": [
+    {
+     "key": "provider",
+     "label": "Provider",
+     "values": [
+      {
+       "value": "anthropic",
+       "label": "Anthropic API at its own address, or Anthropic on AWS without ANTHROPIC_AWS_BASE_URL"
+      },
+      {
+       "value": "bedrockOptIn",
+       "label": "Bedrock, with CLAUDE_ENABLE_BYTE_WATCHDOG_BEDROCK on"
+      },
+      {
+       "value": "bedrock",
+       "label": "Bedrock"
+      },
+      {
+       "value": "other",
+       "label": "Vertex, Foundry, a gateway, or ANTHROPIC_BASE_URL set to another address"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "provider": {
+     "anthropic": {},
+     "bedrockOptIn": null,
+     "bedrock": null,
+     "other": null
+    }
+   },
+   "constraints": [
+    {
+     "id": "unsupportedRoute",
+     "label": "Provider without the watchdog",
+     "applies_when": [
+      {
+       "provider": [
+        "bedrock",
+        "other"
+       ]
+      }
+     ],
+     "effect": {
+      "value": "off"
+     },
+     "note": "Only for Anthropic's API at its own address and Anthropic on AWS without a custom address. Bedrock also needs CLAUDE_ENABLE_BYTE_WATCHDOG_BEDROCK set to 1, true, yes or on. Anywhere else the watchdog stays off, whatever the ladder says.",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179777991,
+       "length": 102,
+       "sha256": "03589a8bf1b551e9503469fc054da72b67f87304987948e7bd19871e28f8dfce",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179778166,
+       "length": 49,
+       "sha256": "4dfe5546bc40fce3115af98708ae3430c4002bbc4e0f82e848d971fef8eb6314",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179778093,
+       "length": 73,
+       "sha256": "98c855c153b7d5ba28277d03dada7a40d859be55a15173be00fff95e74b11ea8",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mrrt6yj3.js",
+       "binary_offset": 175012619,
+       "length": 79,
+       "sha256": "748fbd9f9456e94ec2f66e47402ea0af9aa653e5b707ecc5f112fbeab3cb33aa",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "envWatchdog",
+     "mechanism": "env",
+     "knob": "env-claude-enable-byte-watchdog",
+     "input": "choice",
+     "accepts": [
+      "1",
+      "true",
+      "yes",
+      "on",
+      "0",
+      "false",
+      "no",
+      "off"
+     ],
+     "invalid_example": "2",
+     "note": "0, false, no or off turns the watchdog off; 1, true, yes or on turns it on. Case and surrounding spaces are ignored. Any other value counts as unset.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "value": [
+          "0",
+          "false",
+          "no",
+          "off"
+         ]
+        },
+        "value": "off"
+       },
+       {
+        "when": {},
+        "value": "on"
+       }
+      ]
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_ENABLE_BYTE_WATCHDOG": "{value}"
+      }
+     },
+     "label": "CLAUDE_ENABLE_BYTE_WATCHDOG",
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179777744,
+       "length": 112,
+       "sha256": "eebe0a57869fc2219f62a556f78eb604991ba905aa827bdd26d9e5f77fccffc2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-zzm2rf18.js",
+       "binary_offset": 173551299,
+       "length": 42,
+       "sha256": "0ec15b01f93721852428a423a77171e235e2572ef667d0364fe4ccfd3e548d68",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-zzm2rf18.js",
+       "binary_offset": 173551449,
+       "length": 43,
+       "sha256": "b224b77fc82df4d815d13ccc15c15dbf05250688e4392d757c621098ef34a087",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's watchdog flag turned off",
+     "input": "toggle",
+     "note": "A remote flag that is on by default in code, so the watchdog runs unless Anthropic turns it off. Anthropic can change it without a release.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179777856,
+       "length": 47,
+       "sha256": "7d2099fb6bed76a881362257e7343dc1f2af616dc7cf083a16be3fa1db3a5a2e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers: on.",
+     "effect": {
+      "value": "on"
+     },
+     "provenance": [
+      {
+       "file": "chunk-5ezz9t8y.js",
+       "binary_offset": 179777856,
+       "length": 47,
+       "sha256": "7d2099fb6bed76a881362257e7343dc1f2af616dc7cf083a16be3fa1db3a5a2e",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179777730,
+     "length": 174,
+     "sha256": "6e77a1886fb92902ef636bfe939511efbeff4e94c0205677754374f59ae4e476",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179778215,
+     "length": 57,
+     "sha256": "8a8e9c3fcacbd0d3e25bf4742b13c6297e6db7fa4c80165f608bee0ee7b49732",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179773710,
+     "length": 34,
+     "sha256": "92681c6a6176f9f8f5dd2f5fbd5caaf2d9bf2a2d72078f9b54318b9495dce40f",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179763962,
+     "length": 27,
+     "sha256": "789a4f014588848e21850948cd45cc4233e669de441c19ff8e952c9c07925a7b",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-5ezz9t8y.js",
+     "binary_offset": 179772760,
+     "length": 32,
+     "sha256": "188496b780266f526e40efbc68a80e280700b5b23df4121fb4f79d37bd21c78b",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
+  },
+  {
    "id": "thinking-mode",
    "title": "Thinking mode",
-   "group": "Model and reasoning",
+   "group": "Models and reasoning",
    "question": "Which thinking configuration Claude Code asks the API for on the main conversation's requests, sent as the thinking field: adaptive, budgeted (enabled with budget_tokens), disabled, or no field at all.",
    "shape": "first-wins",
    "observe": "thinking",
@@ -6829,9 +10380,993 @@
    "bypasses": []
   },
   {
+   "id": "todo-reminders",
+   "title": "To-do list reminders",
+   "group": "What the model is told",
+   "question": "Whether Claude Code reminds Claude about its to-do list or tasks when it has not used them for 10 turns, at most once every 10 turns.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "baseline": "Reminders on",
+    "off": "No reminders"
+   },
+   "details": {
+    "candidate": "chunk-x9fwahqm.js:3106151"
+   },
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "envMode",
+     "mechanism": "env",
+     "knob": "env-claude-code-todo-reminder-mode",
+     "input": "choice",
+     "accepts": [
+      "baseline",
+      "off"
+     ],
+     "invalid_example": "0",
+     "note": "Exactly baseline or off, in lower case; surrounding spaces are ignored. Any other value, such as 0 or false, counts as unset.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_TODO_REMINDER_MODE": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_TODO_REMINDER_MODE",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 184071986,
+       "length": 62,
+       "sha256": "f86bb387b05889de13972fa3f0d290265523fa895a74554852ce2e246a0e897c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173900527,
+       "length": 29,
+       "sha256": "77ac4b9e19458fb46a2f33578f4e626af99142de88537e1eb341be22784a15e3",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-fps7hcj2.js",
+       "binary_offset": 173867423,
+       "length": 97,
+       "sha256": "8b213fc59127d475aed5b670b49730e4300283ecae4804596d0412ccc625a93c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's reminder flag set to off",
+     "input": "toggle",
+     "note": "A remote flag that is baseline by default in code; only the value off turns reminders off. Anthropic can change it without a release.",
+     "effect": {
+      "value": "off"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 184072048,
+       "length": 70,
+       "sha256": "1222813d00981fc626d7aafb021d46147fb07a7416d3e4c25551af236a9c9bae",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers: reminders on.",
+     "effect": {
+      "value": "baseline"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 184072048,
+       "length": 70,
+       "sha256": "1222813d00981fc626d7aafb021d46147fb07a7416d3e4c25551af236a9c9bae",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184071971,
+     "length": 148,
+     "sha256": "8767022dfc0a10c72fe4bf2f7f239192b36f21af288785937aeae088278b31ba",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184071913,
+     "length": 58,
+     "sha256": "9eb5d5897446751c79cfd5077d59d9ea959b7df479a9634b734cea048e18ad35",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184118236,
+     "length": 55,
+     "sha256": "6013c2bd5a4712a1d552a43adf025efba5ed5dbe5ac82f87aff1d6b676911422",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184119097,
+     "length": 60,
+     "sha256": "d9f1dcc8d86cff7fb055fd26925ae0acfda95428cd1b44f2e8836b4b4dbff83f",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": [],
+   "constraints": []
+  },
+  {
+   "id": "total-tokens-reminder",
+   "title": "Total tokens reminder",
+   "group": "Prompt caching and context",
+   "question": "Whether Claude is shown a tokens-left reminder, and which number it shows, decided once when the session starts. It is on by default for every sign-in, including API keys.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "off": "No reminder",
+    "infinite": "Reminder says Infinite",
+    "fixed": "Reminder says 5,000,000",
+    "countdown": "Reminder counts down the context window",
+    "padded-countdown": "Reminder counts down from the budget"
+   },
+   "details": {
+    "candidate": "chunk-x9fwahqm.js:1332151"
+   },
+   "context": [],
+   "realize_context": {},
+   "bypasses": [
+    {
+     "id": "disableAttachments",
+     "knob": "env-claude-code-disable-attachments",
+     "effect": {
+      "value": "off"
+     },
+     "note": "Checked before the ladder: no reminder anywhere, neither in the system prompt nor after tool results or prompts. 1, true, yes and on count as set, in any case.",
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_DISABLE_ATTACHMENTS": "1"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182339424,
+       "length": 87,
+       "sha256": "0c0f39ae690c1fef44a688e89f072c0e32a20df623e0bf11f5d062e6918f3d8b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 184073214,
+       "length": 79,
+       "sha256": "3aa67b204a5d7bc5acb039ef28f8fcf4a66e840456c8e5b37b8c3a09b5653c18",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173899410,
+       "length": 13,
+       "sha256": "564bd0d09a24de0869400a541923e1cea95ff1e3da3c4b33d4740377fd1fdb95",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "id": "simpleMode",
+     "knob": "env-claude-code-simple",
+     "effect": {
+      "value": "off"
+     },
+     "note": "Checked before the ladder: simple mode drops the reminder everywhere, whatever is set below. 1, true, yes and on count as set, in any case.",
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_SIMPLE": "1"
+      }
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182339424,
+       "length": 87,
+       "sha256": "0c0f39ae690c1fef44a688e89f072c0e32a20df623e0bf11f5d062e6918f3d8b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 184073214,
+       "length": 79,
+       "sha256": "3aa67b204a5d7bc5acb039ef28f8fcf4a66e840456c8e5b37b8c3a09b5653c18",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173922857,
+       "length": 13,
+       "sha256": "21050544dd5320f4c6bba97fed185654d7f060a114fab51966b23828b40f2bf1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "env",
+     "mechanism": "env",
+     "knob": "env-claude-code-total-tokens-reminder",
+     "input": "choice",
+     "accepts": [
+      "off",
+      "infinite",
+      "fixed",
+      "countdown",
+      "padded-countdown"
+     ],
+     "invalid_example": "1",
+     "note": "Takes a mode name, not an on/off toggle: off, infinite, fixed, countdown or padded-countdown. Spaces around it are trimmed but case matters; 1, on, OFF or any other value counts as unset and the setting below decides.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_TOTAL_TOKENS_REMINDER": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_TOTAL_TOKENS_REMINDER",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182297971,
+       "length": 75,
+       "sha256": "36e86b3b72d092d64c490298ef8a4b453b67671e73ad05f23ad88f9f408e32cf",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182297529,
+       "length": 59,
+       "sha256": "86aed0c99038c690b107af16dbbed441d25ab345c7bdc1b8e04a9c50606aff4c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173900556,
+       "length": 37,
+       "sha256": "14635bcd718bae3f5228e3fb4b491662aadb076606d3a90e529aefe29ac124a1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "setting",
+     "mechanism": "settings",
+     "knob": "setting-total-tokens-reminder",
+     "input": "choice",
+     "accepts": [
+      "off",
+      "infinite",
+      "fixed",
+      "countdown",
+      "padded-countdown"
+     ],
+     "note": "From any settings file Claude Code loads. Takes the same mode names as the environment variable, which wins when both are set.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "totalTokensReminder": "{value}"
+      }
+     },
+     "label": "totalTokensReminder",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298046,
+       "length": 49,
+       "sha256": "81ecaf1f50a0f5eb0d42bc3252e42dc72b1c7149f89ca1b43d40451a23276ff0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174356031,
+       "length": 91,
+       "sha256": "ad45bf1f322dc6ac412e28bcbf129216fdf425d017f69b2c6e2a993935202c5d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "accountData",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-account setting",
+     "input": "choice",
+     "accepts": [
+      "off",
+      "infinite",
+      "fixed",
+      "countdown",
+      "padded-countdown",
+      "false"
+     ],
+     "note": "Account data Claude Code downloads can pick a mode, or false to turn the reminder off. Nothing is set in the code, and any other value is ignored with a warning in the debug log. Anthropic can change it without a release.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "value": [
+          "false",
+          "off"
+         ]
+        },
+        "value": "off"
+       },
+       {
+        "when": {
+         "value": [
+          "infinite"
+         ]
+        },
+        "value": "infinite"
+       },
+       {
+        "when": {
+         "value": [
+          "fixed"
+         ]
+        },
+        "value": "fixed"
+       },
+       {
+        "when": {
+         "value": [
+          "countdown"
+         ]
+        },
+        "value": "countdown"
+       },
+       {
+        "when": {
+         "value": [
+          "padded-countdown"
+         ]
+        },
+        "value": "padded-countdown"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298095,
+       "length": 48,
+       "sha256": "2fa7e8a8e04584f9a2bcf7c8382084917e26bafe99812fa599c1c108634e6069",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182297726,
+       "length": 152,
+       "sha256": "312aff8691f8320577ea9145eaac9192b21065319668716ab712ccfe9105a80b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's reminder flag",
+     "input": "choice",
+     "accepts": [
+      "off",
+      "infinite",
+      "fixed",
+      "countdown",
+      "padded-countdown"
+     ],
+     "note": "A remote flag whose default in code is padded-countdown. A value that is not a mode name also gives padded-countdown. Anthropic can change it without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298196,
+       "length": 65,
+       "sha256": "db8dc0be9e70bf85548c7b026f747d0dd404b79e9768ce027e68fa6c4180d2e0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers, padded-countdown: the system prompt shows the budget, and later reminders count down from it as tokens are used. The reminder appears in the system prompt, after each batch of tool results, and after each regular user prompt unless the after-user-turn switch is off. That switch is decided by its environment variable (1, true, yes or on; 0, false, no or off; anything else is unset), then its setting, then Anthropic's per-account data and remote flag, and is on by default. With it on, padded-countdown resets to the full budget at each user prompt; with it off, the count runs down across the whole session.",
+     "effect": {
+      "value": "padded-countdown"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298228,
+       "length": 34,
+       "sha256": "623de575d4d50877f67e13091ed36849804b7b8a04da078224ab17b98b0edf7c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182297878,
+     "length": 93,
+     "sha256": "d29d4be3add169c6ebc448ed95edbdf48e5df355a74d03e286519531820a5485",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182296424,
+     "length": 90,
+     "sha256": "f09e2dcc9eab3eb623daba37a3c6530922e55b0575963de6a15759f57f8814d3",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182299055,
+     "length": 125,
+     "sha256": "7d071e5e4916a1d95ea4690c9f1a4ddcaa3fc38bea46806867cfcad92f0f03bb",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182339511,
+     "length": 96,
+     "sha256": "cffd56dfe5a41735bf0736a24e665295a868f7d0260c6109c4d6003418bcf103",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184076902,
+     "length": 90,
+     "sha256": "fc8cd26601feeb6ab60fce5957764ac84737deab3c002dff648d51cb6424c556",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184123626,
+     "length": 259,
+     "sha256": "f80ae14ee914ca30475c860a74efb11e6454309bade06a4441e98a28b53ee6fa",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182298793,
+     "length": 262,
+     "sha256": "4c055b20e481c5971c29eb8d0647d2569bea3fb7688092bf00d0825f1ca152f9",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "total-tokens-reminder-budget",
+   "title": "Tokens-left reminder budget",
+   "group": "Prompt caching and context",
+   "question": "The number of tokens the padded-countdown reminder starts from, decided once when the session starts. It is used only when the reminder mode is padded-countdown.",
+   "shape": "first-wins",
+   "observe": "none",
+   "details": {
+    "candidate": "chunk-x9fwahqm.js:1332538"
+   },
+   "context": [],
+   "realize_context": {},
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "env",
+     "mechanism": "env",
+     "knob": "env-claude-code-total-tokens-reminder-budget",
+     "input": "choice",
+     "accepts": [
+      "1000000",
+      "15000000",
+      "50000000"
+     ],
+     "invalid_example": "0",
+     "note": "A whole number of tokens above zero. Zero, negatives and non-numbers count as unset and the setting below decides.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "env": {
+       "CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET": "{value}"
+      }
+     },
+     "label": "CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298358,
+       "length": 92,
+       "sha256": "197dadc816698da6425225ff22e7e542fa95880f119ac8826006517438625177",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-bkgbm924.js",
+       "binary_offset": 173900556,
+       "length": 37,
+       "sha256": "14635bcd718bae3f5228e3fb4b491662aadb076606d3a90e529aefe29ac124a1",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "setting",
+     "mechanism": "settings",
+     "knob": "setting-total-tokens-reminder-budget",
+     "input": "choice",
+     "accepts": [
+      "1000000",
+      "15000000",
+      "50000000"
+     ],
+     "note": "From any settings file Claude Code loads: a whole number of tokens above zero. The environment variable wins when both are set.",
+     "effect": {
+      "from": "input"
+     },
+     "label": "totalTokensReminderBudget",
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298450,
+       "length": 73,
+       "sha256": "a6d234650c12dd2eb1c55eccc4f33e882303150b3e81c84107f55b856fa20cd2",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174356741,
+       "length": 57,
+       "sha256": "003dd4918da1177e3c6bad6b2633eb5db3ca66dd02acf8a310a56eae09fc163d",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "accountData",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's per-account budget",
+     "input": "choice",
+     "accepts": [
+      "1000000",
+      "15000000",
+      "50000000"
+     ],
+     "note": "Account data Claude Code downloads can set a whole number above zero. Nothing is set in the code, and any other value is ignored with a warning in the debug log. Anthropic can change it without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298541,
+       "length": 76,
+       "sha256": "0d2edf87f1599b127c6d818d9611e1e8ab8ba7e55190ec17e2c08ce2d8303810",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "remoteFlag",
+     "mechanism": "remote",
+     "knob": null,
+     "label": "Anthropic's budget flag",
+     "input": "choice",
+     "accepts": [
+      "1000000",
+      "15000000",
+      "50000000"
+     ],
+     "note": "A remote flag whose default in code is 15,000,000. A value that is not a number above zero also gives 15,000,000. Anthropic can change it without a release.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182298628,
+       "length": 54,
+       "sha256": "7a2c061ce0541fe929e1c17d8079895ca4596206306d4c6db8aa473950caf61c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "default",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default",
+     "input": null,
+     "note": "When nothing above answers, 15,000,000 tokens.",
+     "effect": {
+      "value": "15000000"
+     },
+     "provenance": [
+      {
+       "file": "chunk-x9fwahqm.js",
+       "binary_offset": 182296490,
+       "length": 24,
+       "sha256": "59eaec27bef1516b0ae5e7efc111c44c7421d6adf680490fa11b1c57b687f7fe",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182298262,
+     "length": 96,
+     "sha256": "faeb9a479b342c64d1c73fa0cfd76d6a369129d269e789419472a885749f9f3c",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 182339548,
+     "length": 45,
+     "sha256": "e03eb434ec10afcf2b019cce67d5356dfa584b07351614dc2b375d73f3e90769",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": [],
+   "constraints": []
+  },
+  {
+   "id": "workflow-size-guidance",
+   "title": "Workflow size guideline",
+   "group": "What the model is told",
+   "question": "Which size guideline Claude is given for the multi-agent workflows it writes, fixed when the session starts and added to the Workflow tool's description whenever that tool is offered.",
+   "shape": "first-wins",
+   "observe": "none",
+   "value_labels": {
+    "unrestricted": "Unrestricted: no guideline sent",
+    "small": "Small: fewer than 5 agents",
+    "medium": "Medium: fewer than 10 agents",
+    "large": "Large: fewer than 50 agents"
+   },
+   "details": {
+    "candidate": "chunk-fbctzhpm.js:375373"
+   },
+   "context": [
+    {
+     "key": "plan",
+     "label": "Signed in with",
+     "values": [
+      {
+       "value": "other",
+       "label": "API key, provider, or a Max, Team or Enterprise plan"
+      },
+      {
+       "value": "pro",
+       "label": "Claude Pro plan"
+      }
+     ]
+    }
+   ],
+   "realize_context": {
+    "plan": {
+     "other": {},
+     "pro": null
+    }
+   },
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "settingGuideline",
+     "mechanism": "settings",
+     "knob": "setting-workflow-size-guideline",
+     "input": "choice",
+     "accepts": [
+      "unrestricted",
+      "small",
+      "medium",
+      "large"
+     ],
+     "invalid_example": "huge",
+     "note": "From any settings file Claude Code loads, including managed settings. It beats the /config choice, and /config hides its row while a settings file sets the key. Any other value is ignored, so the /config choice applies even though its row stays hidden.",
+     "effect": {
+      "from": "input"
+     },
+     "realize": {
+      "settings": {
+       "workflowSizeGuideline": "{value}"
+      }
+     },
+     "label": "workflowSizeGuideline",
+     "provenance": [
+      {
+       "file": "chunk-h058ppsw.js",
+       "binary_offset": 180926917,
+       "length": 73,
+       "sha256": "b06deef34f23fa8a87a55fcdb3d1469ca113399ac6db94cc4f49763c95a2b2e4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-h058ppsw.js",
+       "binary_offset": 180926849,
+       "length": 68,
+       "sha256": "f645f6d11d7976b67011ccb4344426832efe6b502d3fa71d8e55f9c4b33f11f0",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mw9espfa.js",
+       "binary_offset": 177238447,
+       "length": 44,
+       "sha256": "415924ecfb8358aecba70dfef2fc6b182dc50f0b1be4923819cc50d02964fe3b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174325156,
+       "length": 66,
+       "sha256": "fa3d6416ff68665de5eba6000b2f6d95169b8031b5671385b06f3eb9486e0f72",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "configChoice",
+     "mechanism": "settings",
+     "knob": null,
+     "label": "Dynamic workflow size in /config",
+     "input": "choice",
+     "accepts": [
+      "unrestricted",
+      "small",
+      "medium",
+      "large"
+     ],
+     "invalid_example": "huge",
+     "note": "Your choice in /config, saved in the global config file (~/.claude.json). Changing it, or the settings key, during a session reaches Claude as a short note with your next prompt. A hand-edited value outside the four names is ignored.",
+     "effect": {
+      "from": "input"
+     },
+     "provenance": [
+      {
+       "file": "chunk-0pmh3wgd.js",
+       "binary_offset": 193325795,
+       "length": 57,
+       "sha256": "3d07277c53895ccfd1747d54b25e37e2a0e6302135ce953019bac06b8ecbf987",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-0pmh3wgd.js",
+       "binary_offset": 193344803,
+       "length": 8,
+       "sha256": "276ba5aaad7e4ab312a0f09447681cb082045d2816247725e68679af7abc850b",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-h058ppsw.js",
+       "binary_offset": 180926990,
+       "length": 93,
+       "sha256": "75641541aeb3170660860fc241b77826feeace8879329be97c3e8f17fecd6a5c",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "planDefault",
+     "mechanism": "default",
+     "knob": null,
+     "label": "Default by plan",
+     "input": null,
+     "note": "When neither answers: small on the Claude Pro plan, medium for every other sign-in. Claude is told this is the default and that the user can raise or remove it in /config.",
+     "effect": {
+      "by_context": [
+       {
+        "when": {
+         "plan": [
+          "pro"
+         ]
+        },
+        "value": "small"
+       },
+       {
+        "when": {},
+        "value": "medium"
+       }
+      ]
+     },
+     "provenance": [
+      {
+       "file": "chunk-mw9espfa.js",
+       "binary_offset": 177240182,
+       "length": 38,
+       "sha256": "65afb540e7d18d25dcad11ec9cc11c78a52f141430a0f7207a2545d9416ebfb4",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      },
+      {
+       "file": "chunk-mw9espfa.js",
+       "binary_offset": 177238426,
+       "length": 20,
+       "sha256": "ae3865958756926f67e016481be32df921a37e528cb1a068eb8a5ac5e5b5417a",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-h058ppsw.js",
+     "binary_offset": 180927119,
+     "length": 46,
+     "sha256": "0e70baa6102ec3394944a986d04f0d62d44a9c4d60b1fadadf7fab92315d9802",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-h058ppsw.js",
+     "binary_offset": 180927202,
+     "length": 104,
+     "sha256": "81a163d8881f6d108da4d885f0bbcd5381e0ae6dfae6583eefcc8323b21391b6",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-cqxmm4rt.js",
+     "binary_offset": 204676763,
+     "length": 78,
+     "sha256": "76e79ddf46201cda636ab475c70be164d39e956abfa3c2d8f75f69010324b564",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-mw9espfa.js",
+     "binary_offset": 177238491,
+     "length": 34,
+     "sha256": "36fa26732acd5be3a91d8dd28b1e746ddd5af6ffb23b28a3a7e8d591c77cf1b4",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-mw9espfa.js",
+     "binary_offset": 177239012,
+     "length": 258,
+     "sha256": "9708246bc0ed98bb76cba059a56b17d35ad0ddd4c1b1dc629659228c302a970e",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184077425,
+     "length": 83,
+     "sha256": "7d3a760ee29990e827476ee56a72e172db79da33cd362ae70a0f6941e7188686",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-x9fwahqm.js",
+     "binary_offset": 184741409,
+     "length": 79,
+     "sha256": "84355245eba9c8a998eea177856afec9c6e5cd97eca19957848c06ce57b1c438",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    },
+    {
+     "file": "chunk-fbctzhpm.js",
+     "binary_offset": 200815673,
+     "length": 633,
+     "sha256": "3d60693e2283931f19d3d06d8251291b9786d8bfdb3ce9ead7e8309a60f9a351",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": [],
+   "constraints": []
+  },
+  {
    "id": "workflows-enabled",
    "title": "Workflow tool available",
-   "group": "Workflows",
+   "group": "Tools and output",
    "question": "Whether the Workflow tool (multi-agent workflows) is offered to Claude in a session, decided once when the session starts.",
    "shape": "first-wins",
    "observe": "none",

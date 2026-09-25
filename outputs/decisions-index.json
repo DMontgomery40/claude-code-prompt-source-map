@@ -542,8 +542,16 @@
   },
   {
    "id": "env-claude-ax-screen-reader",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "native-cursor",
+     "title": "Native terminal cursor",
+     "rung": "screenReader",
+     "rank": 2,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-ax-startup-quiet-ms",
@@ -732,8 +740,16 @@
   },
   {
    "id": "env-claude-code-accessibility",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "native-cursor",
+     "title": "Native terminal cursor",
+     "rung": "envAccessibility",
+     "rank": 1,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-account-tagged-id",
@@ -990,8 +1006,16 @@
   },
   {
    "id": "env-claude-code-auto-compact-window",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "envWindow",
+     "rank": 1,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-claude-code-auto-connect-ide",
@@ -1233,8 +1257,16 @@
   },
   {
    "id": "env-claude-code-decstbm",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "native-cursor",
+     "title": "Native terminal cursor",
+     "rung": "envScrollRegion",
+     "rank": 3,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-design-oauth-client-id",
@@ -1298,8 +1330,16 @@
   },
   {
    "id": "env-claude-code-disable-advisor-tool",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "advisor-tool-available",
+     "title": "Advisor tool available",
+     "rung": "disableAdvisor",
+     "rank": 0,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-agent-view",
@@ -1313,13 +1353,29 @@
   },
   {
    "id": "env-claude-code-disable-attachments",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "total-tokens-reminder",
+     "title": "Total tokens reminder",
+     "rung": "disableAttachments",
+     "rank": 0,
+     "of": 5
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-auto-memory",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-memory",
+     "title": "Automatic memory",
+     "rung": "envDisable",
+     "rank": 2,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-awaiting-user-idle",
@@ -1383,8 +1439,16 @@
   },
   {
    "id": "env-claude-code-disable-experimental-betas",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "advisor-tool-available",
+     "title": "Advisor tool available",
+     "rung": "disableBetas",
+     "rank": 0,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-explore-inherit-cap",
@@ -1398,13 +1462,29 @@
   },
   {
    "id": "env-claude-code-disable-fast-mode",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "disableEnv",
+     "rank": 0,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-feedback-survey",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "disableEnv",
+     "rank": 2,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-file-checkpointing",
@@ -1481,8 +1561,16 @@
   },
   {
    "id": "env-claude-code-disable-nonessential-traffic",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "nonessential",
+     "rank": 5,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-disable-nonstreaming-fallback",
@@ -1687,8 +1775,16 @@
   },
   {
    "id": "env-claude-code-enable-experimental-advisor-tool",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "advisor-tool-available",
+     "title": "Advisor tool available",
+     "rung": "envEnable",
+     "rank": 1,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-claude-code-enable-fine-grained-tool-streaming",
@@ -2256,8 +2352,16 @@
   },
   {
    "id": "env-claude-code-native-cursor",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "native-cursor",
+     "title": "Native terminal cursor",
+     "rung": "envNativeCursor",
+     "rank": 5,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-new-init",
@@ -2566,8 +2670,16 @@
   },
   {
    "id": "env-claude-code-remote",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-memory",
+     "title": "Automatic memory",
+     "rung": "remoteNoDir",
+     "rank": 4,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-remote-environment-type",
@@ -2671,8 +2783,16 @@
   },
   {
    "id": "env-claude-code-safe-mode",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-memory",
+     "title": "Automatic memory",
+     "rung": "safeModeEnv",
+     "rank": 0,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "env-claude-code-sandboxed",
@@ -2776,8 +2896,23 @@
   },
   {
    "id": "env-claude-code-simple",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-memory",
+     "title": "Automatic memory",
+     "rung": "bareMode",
+     "rank": 3,
+     "of": 7
+    },
+    {
+     "decision": "total-tokens-reminder",
+     "title": "Total tokens reminder",
+     "rung": "simpleMode",
+     "rank": 0,
+     "of": 5
+    }
+   ]
   },
   {
    "id": "env-claude-code-simple-system-prompt",
@@ -2796,13 +2931,29 @@
   },
   {
    "id": "env-claude-code-skip-fast-mode-network-errors",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "skipNetworkErrors",
+     "rank": 13,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "env-claude-code-skip-fast-mode-org-check",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "skipOrgCheck",
+     "rank": 14,
+     "of": 14
+    }
+   ]
   },
   {
    "id": "env-claude-code-skip-plugin-mcp-servers",
@@ -3044,8 +3195,16 @@
   },
   {
    "id": "env-claude-code-todo-reminder-mode",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "todo-reminders",
+     "title": "To-do list reminders",
+     "rung": "envMode",
+     "rank": 1,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-claude-code-tool-memory-cgroup-exclude",
@@ -3059,8 +3218,16 @@
   },
   {
    "id": "env-claude-code-total-tokens-reminder",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "total-tokens-reminder",
+     "title": "Total tokens reminder",
+     "rung": "env",
+     "rank": 1,
+     "of": 5
+    }
+   ]
   },
   {
    "id": "env-claude-code-total-tokens-reminder-after-user-turn",
@@ -3069,8 +3236,16 @@
   },
   {
    "id": "env-claude-code-total-tokens-reminder-budget",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "total-tokens-reminder-budget",
+     "title": "Tokens-left reminder budget",
+     "rung": "env",
+     "rank": 1,
+     "of": 5
+    }
+   ]
   },
   {
    "id": "env-claude-code-transcript-local-gc",
@@ -3179,12 +3354,12 @@
   },
   {
    "id": "env-claude-code-workflow-size-warning-agents",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
    "id": "env-claude-code-workflow-size-warning-tokens",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -3212,7 +3387,7 @@
   },
   {
    "id": "env-claude-cowork-memory-extra-guidelines",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -3242,8 +3417,16 @@
   },
   {
    "id": "env-claude-enable-byte-watchdog",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "stream-stall-watchdog",
+     "title": "Stalled-stream watchdog",
+     "rung": "envWatchdog",
+     "rank": 1,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-claude-enable-stream-watchdog",
@@ -3257,8 +3440,16 @@
   },
   {
    "id": "env-claude-force-display-survey",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "forceDisplay",
+     "rank": 7,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-import-conversations",
@@ -3452,8 +3643,16 @@
   },
   {
    "id": "env-disable-auto-compact",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "disableAutoCompact",
+     "rank": 0,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-disable-autoupdater",
@@ -3472,8 +3671,16 @@
   },
   {
    "id": "env-disable-compact",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "disableCompact",
+     "rank": 0,
+     "of": 8
+    }
+   ]
   },
   {
    "id": "env-disable-cost-warnings",
@@ -3587,8 +3794,16 @@
   },
   {
    "id": "env-max-mcp-output-tokens",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "mcp-output-limit",
+     "title": "MCP output limit",
+     "rung": "env",
+     "rank": 1,
+     "of": 3
+    }
+   ]
   },
   {
    "id": "env-max-structured-output-retries",
@@ -4468,8 +4683,16 @@
   },
   {
    "id": "env-claude-code-enable-feedback-survey-for-otel",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "otelOverride",
+     "rank": 11,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-claude-code-enable-telemetry",
@@ -4518,13 +4741,29 @@
   },
   {
    "id": "env-disable-telemetry",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "disableTelemetry",
+     "rank": 3,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-do-not-track",
-   "status": "pending",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "doNotTrack",
+     "rank": 4,
+     "of": 11
+    }
+   ]
   },
   {
    "id": "env-enable-beta-tracing-detailed",
@@ -8416,8 +8655,15 @@
   },
   {
    "id": "setting-available-models",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "modelAllowlist",
+     "rank": 2,
+     "of": 14
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8712,8 +8958,22 @@
   },
   {
    "id": "setting-fast-mode",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "managedOff",
+     "rank": 3,
+     "of": 14
+    },
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "userSetting",
+     "rank": 11,
+     "of": 14
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -8725,8 +8985,22 @@
   },
   {
    "id": "setting-fast-mode-per-session-opt-in",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "managedPerSession",
+     "rank": 9,
+     "of": 14
+    },
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "perSession",
+     "rank": 10,
+     "of": 14
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9765,8 +10039,15 @@
   },
   {
    "id": "setting-auto-compact-window",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "settingWindow",
+     "rank": 2,
+     "of": 8
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9791,8 +10072,15 @@
   },
   {
    "id": "setting-auto-memory-enabled",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "auto-memory",
+     "title": "Automatic memory",
+     "rung": "settingEnabled",
+     "rank": 6,
+     "of": 7
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -9843,8 +10131,15 @@
   },
   {
    "id": "setting-auto-compact-enabled",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "autoCompactSetting",
+     "rank": 0,
+     "of": 8
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -10820,8 +11115,15 @@
   },
   {
    "id": "setting-workflow-size-guideline",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "workflow-size-guidance",
+     "title": "Workflow size guideline",
+     "rung": "settingGuideline",
+     "rank": 1,
+     "of": 3
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -11698,8 +12000,15 @@
   },
   {
    "id": "setting-feedback-survey-rate",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "feedback-survey",
+     "title": "Feedback survey",
+     "rung": "settingRate",
+     "rank": 9,
+     "of": 11
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -12322,8 +12631,15 @@
   },
   {
    "id": "setting-total-tokens-reminder",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "total-tokens-reminder",
+     "title": "Total tokens reminder",
+     "rung": "setting",
+     "rank": 2,
+     "of": 5
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -12335,8 +12651,15 @@
   },
   {
    "id": "setting-total-tokens-reminder-budget",
-   "status": "layered",
+   "status": "rung",
    "feeds": [
+    {
+     "decision": "total-tokens-reminder-budget",
+     "title": "Tokens-left reminder budget",
+     "rung": "setting",
+     "rank": 2,
+     "of": 5
+    },
     {
      "decision": "settings-layers",
      "title": "Where a setting's value comes from",
@@ -12491,8 +12814,16 @@
   },
   {
    "id": "cli-flag-safe-mode",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-memory",
+     "title": "Automatic memory",
+     "rung": "safeModeFlag",
+     "rank": 0,
+     "of": 7
+    }
+   ]
   },
   {
    "id": "cli-flag-init",
@@ -12912,6 +13243,13 @@
      "rung": "flag",
      "rank": 3,
      "of": 8
+    },
+    {
+     "decision": "fast-mode",
+     "title": "Fast mode",
+     "rung": "flagSettings",
+     "rank": 7,
+     "of": 14
     }
    ]
   },
