@@ -10,32 +10,32 @@ Claude Code ran with a throwaway home directory, no settings, MCP servers, plugi
 
 A request is a `POST /v1/messages?beta=true` with these parts:
 
-1. **System block 1**, not cached: `x-anthropic-billing-header: cc_version=<version>.<suffix>; cc_entrypoint=<entrypoint>;`. The entrypoint was `cli` for the interactive run and `sdk-cli` for `claude -p`. The suffix differed between the title request and the main request.
-2. **System block 2**, cached (`cache_control: ephemeral`): the identity line. The interactive CLI sends "You are Claude Code, Anthropic's official CLI for Claude." and `claude -p` sends "You are a Claude agent, built on Anthropic's Claude Agent SDK."
+1. **System block 1**, not cached: `x-anthropic-billing-header: cc_version=<version>.<suffix>; cc_entrypoint=<entrypoint>;`. The entrypoint was `{{value:capture-summary cli.entrypoint}}` for the interactive run and `{{value:capture-summary sdk.entrypoint}}` for `claude -p`. The suffix differed between the title request and the main request.
+2. **System block 2**, cached (`cache_control: ephemeral`): the identity line. The interactive CLI sends "{{value:capture-summary cli.identity}}" and `claude -p` sends "{{value:capture-summary sdk.identity}}"
 3. **System block 3**, cached: the main system prompt. See [Main system prompt](#system-prompt-md) for every section and the conditions that include it.
-4. **Tools**, sorted by name, with no `cache_control` of their own: 31 in the interactive run and 23 with `claude -p`. See [Tools](#tools-md).
+4. **Tools**, sorted by name, with no `cache_control` of their own: {{value:capture-summary cli.tools}} in the interactive run and {{value:capture-summary sdk.tools}} with `claude -p`. See [Tools](#tools-md).
 5. **First user message**: a `<system-reminder>` with commit and pull-request attribution rules, then the user's text as a separate content block.
-6. **Final message, role `system`**, cached: the environment (working directory, git status, platform, shell, OS), the model name and ID, the knowledge cutoff, the available agent types, the available skills, and today's date. It was 9,069 characters in the interactive run and 7,600 with `claude -p`.
+6. **Final message, role `system`**, cached: the environment (working directory, git status, platform, shell, OS), the model name and ID, the knowledge cutoff, the available agent types, the available skills, and today's date. It was {{value:capture-summary cli.trailing_chars}} characters in the interactive run and {{value:capture-summary sdk.trailing_chars}} with `claude -p`.
 
 The Messages API builds its cache prefix in the order tools, system, messages, so a change to any tool description or to the system blocks invalidates everything cached after it.
 
 ## Request parameters
 
 ~~~~~~text
-model               claude-opus-5-5 (the default for this install; the prompt names it "claude-opus-5-5[1m]")
-max_tokens          128000
-thinking            {"type": "adaptive"}  (claude -p adds "display": "omitted")
-output_config       {"effort": "medium"}
-context_management  {"edits": [{"type": "clear_thinking_20251015", "keep": "all"}]}
+model               {{value:capture-summary cli.model}} (the default for this install)
+max_tokens          {{value:capture-summary cli.max_tokens as=raw}}
+thinking            {{value:capture-summary cli.thinking}}  (claude -p: {{value:capture-summary sdk.thinking}})
+output_config       {"effort":"{{value:capture-summary cli.effort}}"}
+context_management  {{value:capture-summary cli.context_management}}
 metadata.user_id    JSON string with device_id, account_uuid, session_id
 stream              true
 ~~~~~~
 
-The `anthropic-beta` header listed `claude-code-20250219`, `context-1m-2025-08-07`, `interleaved-thinking-2025-05-14`, `thinking-token-count-2026-05-13`, `context-management-2025-06-27`, `prompt-caching-scope-2026-01-05`, `mid-conversation-system-2026-04-07`, `per-turn-control-2026-07-01`, `mid-conversation-tool-changes-2026-07-01`, `advisor-tool-2026-03-01`, `effort-2025-11-24`, and `fallback-credit-2026-06-01`. The interactive run also sent `redact-thinking-2026-02-12`.
+The `anthropic-beta` header in both runs listed {{value:capture-summary betas_shared as=code}}. Sent only by the interactive run: {{value:capture-summary betas_cli_only as=code}}. Sent only by `claude -p`: {{value:capture-summary betas_sdk_only as=code}}.
 
 ## Side requests
 
-Before the first model call, Claude Code sent `HEAD /api/hello`. In the interactive run it also sent a separate session-title request to the same model. That request carries the same billing and identity blocks, uses the title-naming prompt as its third system block, sends no tools, wraps the user's first message in `<session>` tags, and asks for structured output matching `{"title": string}` (beta `structured-outputs-2025-12-15`). The prompt text is in [Background and utility prompts](#utility-prompts-md).
+Before the first model call, Claude Code sent `HEAD /api/hello`. In the interactive run it also sent a separate session-title request to the same model. That request carries the same billing and identity blocks, uses the title-naming prompt as its third system block, sends no tools, wraps the user's first message in `<session>` tags, and asks for structured output matching `{"title": string}` (extra beta {{value:capture-summary cli.title_request.betas_extra as=code}}). The prompt text is in [Background and utility prompts](#utility-prompts-md).
 
 ## Settings that change this shape
 

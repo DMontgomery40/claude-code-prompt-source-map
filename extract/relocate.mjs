@@ -11,7 +11,7 @@ import { byteMapper, indexExtraction, literalsWithin, parseSource } from "./lite
 
 const [prevDir, newDir, newVersion] = process.argv.slice(2);
 const root = new URL("../", import.meta.url).pathname;
-const skip = new Set(["inventory.json", "other-model-text.json", "status.json", "environment-variables.json"]);
+const skip = new Set(["inventory.json", "other-model-text.json", "status.json", "environment-variables.json", "capture-summary.json"]);
 const sha = buf => createHash("sha256").update(buf).digest("hex");
 
 const loadManifest = dir => new Map(JSON.parse(readFileSync(path.join(dir, "embedded-manifest.json"), "utf8")).files.map(f => [f.name.replace("/$bunfs/root/", ""), f]));
@@ -140,34 +140,51 @@ function nodesAt(entry, predicate) {
   walk.full(entry.ast, n => { if (predicate(n)) out.push(n); });
   return out;
 }
+// The first or last few tokens of a whole node as a pattern anchored at that end. Tokenizing
+// the whole node keeps literals intact; a call chain prefix (every link of `a.b().c().d()`
+// starts at the same byte) is told apart by where it ends.
+function edgePattern(slice, edge) {
+  const tokens = slice.match(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`|[A-Za-z_$][\w$]*|\d+(?:\.\d+)?|\S/g) ?? [];
+  const source = (edge === "head" ? tokens.slice(0, 10) : tokens.slice(-8)).map(t => anyLiteral[t[0]] ?? (minified.test(t) && !keywords.has(t) ? "[A-Za-z_$][\\w$]{0,2}" : escape(t))).join("\\s*");
+  try {
+    return new RegExp(edge === "head" ? `^(?:${source})` : `(?:${source})$`);
+  } catch {
+    return null;
+  }
+}
 function followNode(p, rel, inside) {
   const old = astOf(prevDir, p.file);
   const oldNode = nodesAt(old, n => old.toByte(n.start) === rel && old.toByte(n.end) === rel + p.length)[0];
   if (!oldNode) return null;
-  for (const lit of inside.filter(l => l.norm.length >= 8)) {
+  const head = edgePattern(old.src.slice(oldNode.start, oldNode.end), "head");
+  const tail = edgePattern(old.src.slice(oldNode.start, oldNode.end), "tail");
+  // Anchor on the literal nearest the end: the smallest enclosing node of a late literal is
+  // the one that ends where the old range ended, not a shorter prefix of the same chain.
+  for (const lit of inside.filter(l => l.norm.length >= 8).reverse()) {
     const t = uniqueNew(lit);
     if (!t) continue;
     const cur = astOf(newDir, t.file);
-    const head = codePattern(old.src.slice(oldNode.start, Math.min(oldNode.end, oldNode.start + 60)).replace(/["'`][^"'`]*$/, ""));
     const candidates = nodesAt(cur, n => n.type === oldNode.type && cur.toByte(n.start) <= t.bs && cur.toByte(n.end) >= t.be)
       .sort((a, b) => (a.end - a.start) - (b.end - b.start));
-    const match = candidates.find(n => !head || new RegExp(`^(?:${head.source})`).test(cur.src.slice(n.start, n.start + 400)));
+    const match = candidates.find(n => (!head || head.test(cur.src.slice(n.start, Math.min(n.end, n.start + 20000))))
+      && (!tail || tail.test(cur.src.slice(Math.max(n.start, n.end - 2000), n.end))));
     if (match) return { file: t.file, rel: cur.toByte(match.start), length: cur.toByte(match.end) - cur.toByte(match.start) };
   }
   return null;
 }
 
-// Last resort for evidence ranges: the smallest function or object in the new build that
-// encloses a literal from the old range that still exists exactly once.
+// Last resort for evidence ranges: the function or object in the new build, closest in size
+// to the old range, that encloses a literal from the old range that still exists exactly once.
 function enclosingOfSurvivor(p, rel, inside) {
   for (const lit of [...inside].sort((a, b) => b.norm.length - a.norm.length)) {
     if (lit.norm.length < 12) break;
     const t = uniqueNew(lit);
     if (!t) continue;
     const cur = astOf(newDir, t.file);
+    const size = n => cur.toByte(n.end) - cur.toByte(n.start);
     const node = nodesAt(cur, n => /Function|ObjectExpression|ClassBody/.test(n.type) && cur.toByte(n.start) <= t.bs && cur.toByte(n.end) >= t.be)
-      .sort((a, b) => (a.end - a.start) - (b.end - b.start))[0];
-    if (node) return { file: t.file, rel: cur.toByte(node.start), length: cur.toByte(node.end) - cur.toByte(node.start) };
+      .sort((a, b) => Math.abs(size(a) - p.length) - Math.abs(size(b) - p.length))[0];
+    if (node) return { file: t.file, rel: cur.toByte(node.start), length: size(node) };
   }
   return null;
 }
@@ -208,9 +225,13 @@ function relocateByPosition(p, pending, itemSamples) {
   }
   if (!best) {
     const node = followNode(p, rel, inside) ?? enclosingOfSurvivor(p, rel, inside);
+    // A node half or twice the old size is a different node until someone has looked.
+    if (node && (node.length * 2 < p.length || node.length > p.length * 2)) return { status: "changed", reason: `nearest code node is ${node.length} bytes, was ${p.length}`, old_text: oldBytes.toString("utf8").slice(0, 300), near_file: node.file };
     if (node) return { ...found(node.file, node.rel, node.length), status: "reshaped", reason: "same code node, contents changed" };
     return { status: "changed", reason: "text or code in this range changed", old_text: oldBytes.toString("utf8").slice(0, 300), near_file: target.file };
   }
+  // A lone literal's pattern matches any literal; one half or twice the size is not this one.
+  if (best.length * 2 < p.length || best.length > p.length * 2) return { status: "changed", reason: `nearest match is ${best.length} bytes, was ${p.length}`, old_text: oldBytes.toString("utf8").slice(0, 300), near_file: target.file };
   const oldNorms = inside.map(l => l.norm).join("\u0001");
   const newNorms = literalsWithin(newIndex, target.file, best.start, best.start + best.length).map(l => l.norm).join("\u0001");
   if (oldNorms !== newNorms) return { ...found(target.file, best.start, best.length), status: "reshaped", reason: "text inside this range changed" };
@@ -227,7 +248,7 @@ function* provenanceObjects(v) {
 
 const report = { version: newVersion, areas: {} };
 const substitutions = new Map();
-const areas = readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && !skip.has(f)).map(name => ({ name, data: JSON.parse(readFileSync(path.join(root, "outputs", name), "utf8")) }));
+const areas = readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && !skip.has(f) && !f.endsWith("-tags.json")).map(name => ({ name, data: JSON.parse(readFileSync(path.join(root, "outputs", name), "utf8")) }));
 const results = new Map();
 for (const { data } of areas) for (const item of data.items ?? []) for (const p of provenanceObjects(item)) results.set(p, relocateExact(p));
 for (const list of shifts.values()) list.sort((a, b) => a.oldRel - b.oldRel);

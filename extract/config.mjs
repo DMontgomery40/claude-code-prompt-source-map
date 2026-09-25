@@ -332,11 +332,8 @@ function settings() {
   const order = ["About the schema", ...[...new Set([...docsIdx.sections.values()].map(s => s.category))], "Keys not in the settings reference", "Internal keys (@internal)", "Safe env keys (settings `env`)"];
   items.sort((a, b) => order.indexOf(a.group) - order.indexOf(b.group));
   const settingItems = items.filter(i => i.kind === "setting");
-  const top = settingItems.filter(i => !i.details.path.includes("."));
-  const nested = settingItems.length - top.length;
   const docCount = settingItems.filter(i => i.documented).length;
-  const internal = settingItems.filter(i => i.details.internal).length;
-  const summary = `${settingItems.length} settings keys from the Claude Code settings schema (${top.length} top-level, ${nested} nested): ${docCount} documented, ${settingItems.length - docCount} undocumented, ${internal} tagged \`@internal\`. Groups follow the official settings reference; keys it does not cover are grouped separately. The last group lists the safe-env allowlist that decides which \`env\` entries apply from every settings file at startup.`;
+  const summary = `{{count:settings kind=setting}} settings keys from the Claude Code settings schema ({{count:settings kind=setting details.path!=*.*}} top-level, {{count:settings kind=setting details.path=*.*}} nested): {{count:settings kind=setting documented=*}} documented, {{count:settings kind=setting documented=null}} undocumented, {{count:settings kind=setting details.internal=true}} tagged \`@internal\`. Groups follow the official settings reference; keys it does not cover are grouped separately. The last group lists the safe-env allowlist that decides which \`env\` entries apply from every settings file at startup.`;
   writeArea("settings", "Claude Code settings.json keys", summary, items, it => {
     const d = it.details;
     const lines = [statusLine(it)];
@@ -686,7 +683,7 @@ function hooks() {
   const evItems = items.filter(i => i.kind === "hook-event");
   const docCount = evItems.filter(i => i.documented).length;
   const typeCount = items.filter(i => i.group === "Hook handler types").length - 1;
-  const summary = `${evItems.length} hook events (${docCount} documented, ${evItems.length - docCount} undocumented) and ${typeCount} hook handler types, from the Claude Code settings schema, hook event metadata, payload builders, and hook input/output schemas.`;
+  const summary = `{{count:hooks kind=hook-event}} hook events ({{count:hooks kind=hook-event documented=*}} documented, {{count:hooks kind=hook-event documented=null}} undocumented) and {{count:hooks group="Hook handler types" id!=hook-matcher-config}} hook handler types, from the Claude Code settings schema, hook event metadata, payload builders, and hook input/output schemas.`;
   writeArea("hooks", "Claude Code hook events", summary, items, it => {
     const d = it.details;
     const lines = [statusLine(it), it.when];
@@ -1041,9 +1038,7 @@ function cli() {
   }
   const flags = items.filter(i => i.kind === "cli-flag");
   const cmds = items.filter(i => i.kind === "cli-command");
-  const hiddenF = flags.filter(i => i.details.hidden).length, hiddenC = cmds.filter(i => i.details.hidden).length;
-  const notShownF = flags.filter(i => !i.details.hidden && !i.details.shownInHelp).length;
-  const summary = `${cmds.length} commands and ${flags.length} flags in Claude Code: ${cmds.filter(i => i.documented).length} commands and ${flags.filter(i => i.documented).length} flags documented; ${hiddenC} commands and ${hiddenF} flags hidden in code; ${notShownF} more flags not shown in \`--help\` on this machine. ${main.dynamic.length + side.dynamic.length} option registrations use computed flag names and are not listed.`;
+  const summary = `{{count:cli kind=cli-command}} commands and {{count:cli kind=cli-flag}} flags in Claude Code: {{count:cli kind=cli-command documented=*}} commands and {{count:cli kind=cli-flag documented=*}} flags documented; {{count:cli kind=cli-command details.hidden=true}} commands and {{count:cli kind=cli-flag details.hidden=true}} flags hidden in code; {{count:cli kind=cli-flag details.hidden!=true details.shownInHelp!=true}} more flags not shown in \`--help\` on this machine.${main.dynamic.length + side.dynamic.length ? " Option registrations whose flag names are computed at runtime are not listed." : ""}`;
   writeArea("cli", "Claude Code CLI commands and flags", summary, items, it => {
     const d = it.details;
     const lines = [statusLine(it)];
@@ -1234,7 +1229,8 @@ function slash() {
   const G = ["Local commands", "Prompt commands", "Bundled skill commands", "Hidden commands"];
   items.sort((a, b) => G.indexOf(a.group) - G.indexOf(b.group) || a.title.localeCompare(b.title));
   const docCount = items.filter(i => i.documented).length;
-  const summary = `${items.length} built-in slash command definitions (${items.filter(i => i.group === "Bundled skill commands").length} of them bundled skills) in Claude Code (${new Set(items.map(i => i.title.split(" ")[0])).size} distinct names): ${docCount} documented, ${items.length - docCount} undocumented, ${items.filter(i => i.details.hidden).length} hidden by a literal \`isHidden\`. Gates are recorded only as literal values or the literal names their conditions reference.${dynamicNames ? ` ${dynamicNames} registration(s) with runtime-computed names are not listed.` : ""}`;
+  for (const it of items) it.details.name = it.title.split(" ")[0];
+  const summary = `{{count:slash-commands kind=slash-command}} built-in slash command definitions ({{count:slash-commands group="Bundled skill commands"}} of them bundled skills) in Claude Code ({{distinct:slash-commands details.name}} distinct names): {{count:slash-commands documented=*}} documented, {{count:slash-commands documented=null}} undocumented, {{count:slash-commands details.hidden=true}} hidden by a literal \`isHidden\`. Gates are recorded only as literal values or the literal names their conditions reference.${dynamicNames ? " Registrations whose names are computed at runtime are not listed." : ""}`;
   writeArea("slash-commands", "Claude Code built-in slash commands", summary, items, it => {
     const d = it.details;
     const lines = [statusLine(it), `Type: \`${d.type}\``];

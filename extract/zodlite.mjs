@@ -4,14 +4,48 @@
 import * as walk from "acorn-walk";
 import { source, parse, files } from "./lib.mjs";
 
-const ZOD_CHUNK = "chunk-ktvgy0cx.js";
-// Exported names of the zod chunk, identified by the ZodXxx class each factory constructs.
-const ZOD = {
-  o: "string", C: "number", H: "boolean", nQ: "undefined", df: "null", ae: "unknown", xot: "never",
-  k: "array", u: "object", Je: "strictObject", ct: "looseObject", $e: "union", Mo: "discriminatedUnion",
-  pe: "record", Pot: "partialRecord", V: "enum", R: "literal", sA: "lazy", Ni: "preprocess", Cs: "optional", rd: "custom",
-  Hgo: "coercedString", Ogo: "coercedNumber", Dgo: "coercedBoolean",
+// Zod chunks are found by content: a chunk that declares the Zod classes ($constructor("ZodString", …)).
+// Each export is mapped to the builder it is by the Zod class it constructs, so the minified export
+// names and the chunk name can change freely between releases.
+const CLASS = {
+  ZodString: "string", ZodNumber: "number", ZodBoolean: "boolean", ZodUndefined: "undefined", ZodNull: "null", ZodUnknown: "unknown", ZodNever: "never",
+  ZodArray: "array", ZodObject: "object", ZodUnion: "union", ZodDiscriminatedUnion: "discriminatedUnion", ZodRecord: "record", ZodEnum: "enum",
+  ZodLiteral: "literal", ZodLazy: "lazy", ZodOptional: "optional", ZodCustom: "custom", ZodPreprocess: "preprocess",
 };
+function zodExports(m) {
+  const classOf = new Map(); // local name -> "ZodXxx"
+  for (const [name, d] of m.decls) {
+    const init = d.init;
+    if (init?.type === "CallExpression" && init.arguments[0]?.type === "Literal" && /^Zod\w+$/.test(init.arguments[0].value ?? "")) classOf.set(name, init.arguments[0].value);
+  }
+  if (![...classOf.values()].includes("ZodString")) return null;
+  const classesIn = node => { const refs = []; walk.full(node, n => { if (n.type === "Identifier" && classOf.has(n.name)) refs.push(classOf.get(n.name)); }); return refs; };
+  const out = {};
+  for (const [exp, local] of m.exportsMap) {
+    const d = m.decls.get(local);
+    const fn = d?.type === "FunctionDeclaration" ? d : /Function/.test(d?.init?.type ?? "") ? d.init : null;
+    if (!fn) continue;
+    const src = m.src.slice(fn.start, fn.end);
+    // coerce helpers take the class as a parameter: new e({type:"string",coerce:!0,…})
+    const coerced = src.match(/\{type:"(string|number|boolean)",coerce:!0/);
+    if (coerced) { out[exp] = `coerced${coerced[1][0].toUpperCase()}${coerced[1].slice(1)}`; continue; }
+    let type = CLASS[classesIn(fn.body)[0]];
+    if (!type) continue;
+    if (type === "object" && /catchall:/.test(src)) {
+      const cd = m.decls.get(src.match(/catchall:([\w$]+)\(\)/)?.[1]);
+      const catchall = cd ? CLASS[classesIn(cd)[0]] : undefined;
+      type = catchall === "never" ? "strictObject" : catchall === "unknown" ? "looseObject" : type;
+    }
+    if (type === "record" && /\._zod\.values=void 0/.test(src)) type = "partialRecord";
+    out[exp] = type;
+  }
+  return Object.keys(out).length ? out : null;
+}
+const zodMaps = new Map();
+function zodMap(file) {
+  if (!zodMaps.has(file)) zodMaps.set(file, source(file).includes('"ZodString"') ? zodExports(mod(file)) : null);
+  return zodMaps.get(file);
+}
 
 // Lexical bindings (function params, block-local consts) pushed while descending into factories.
 function lookup(ctx, name) {
@@ -81,7 +115,8 @@ export function resolve(m, id, depth = 0) {
   if (m.decls.has(id)) return { m, node: m.decls.get(id), name: id };
   const imp = m.imports.get(id);
   if (!imp || !files.has(imp.file)) return null;
-  if (imp.file === ZOD_CHUNK) return { zod: ZOD[imp.name] || `zod:${imp.name}` };
+  const zm = zodMap(imp.file);
+  if (zm) return { zod: zm[imp.name] || `zod:${imp.name}` };
   const target = mod(imp.file);
   const local = target.exportsMap.get(imp.name) ?? imp.name;
   return resolve(target, local, depth + 1);

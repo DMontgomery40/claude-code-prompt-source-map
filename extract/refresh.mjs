@@ -29,7 +29,7 @@ const npm = path.join(path.dirname(process.execPath), "npm");
 const log = message => console.error(`[refresh ${version}] ${message}`);
 const run = (cmd, args, options = {}) => {
   const r = spawnSync(cmd, args, { cwd: root, encoding: "utf8", maxBuffer: 512 * 1024 * 1024, timeout: 30 * 60 * 1000, ...options });
-  if (r.status !== 0) throw Object.assign(new Error(`${path.basename(cmd)} ${args.slice(0, 2).join(" ")} failed: ${(r.stderr || r.stdout || r.error?.message || "").slice(-1500)}`), { code: options.breakCode ?? 1 });
+  if (r.status !== 0 && !(options.allow ?? []).includes(r.status)) throw Object.assign(new Error(`${path.basename(cmd)} ${args.slice(0, 2).join(" ")} failed: ${(r.stderr || r.stdout || r.error?.message || "").slice(-1500)}`), { code: options.breakCode ?? 1 });
   return r.stdout;
 };
 const readJson = file => JSON.parse(readFileSync(file, "utf8"));
@@ -44,14 +44,15 @@ function* provenanceObjects(v) {
   }
 }
 const areaFiles = () => readdirSync(path.join(root, "outputs")).filter(f => f.endsWith(".json") && !["status.json"].includes(f));
+const records = name => { const items = readJson(path.join(root, "outputs", name)).items; return Array.isArray(items) ? items : []; };
+const pendingReview = () => areaFiles().flatMap(name => records(name).filter(item => item.needs_review).map(item => `${name.replace(/\.json$/, "")}:${item.id}`));
 
 // --verify: after a review, every record must be current and match the release bytes.
 if (flag === "--verify") {
   const manifest = new Map(readJson(path.join(work, "embedded-manifest.json")).files.map(f => [f.name.replace("/$bunfs/root/", ""), f]));
   const problems = [];
   for (const name of areaFiles()) {
-    const data = readJson(path.join(root, "outputs", name));
-    for (const item of data.items ?? []) {
+    for (const item of records(name)) {
       if (item.needs_review) problems.push(`${name}:${item.id} still needs review`);
       for (const p of provenanceObjects(item)) {
         const f = manifest.get(p.file);
@@ -61,14 +62,18 @@ if (flag === "--verify") {
       }
     }
   }
-  if (problems.length) { console.error(problems.slice(0, 40).join("\n")); process.exit(1); }
+  if (problems.length) {
+    writeFileSync(path.join(work, "verify-problems.txt"), `${problems.join("\n")}\n`);
+    console.error(`${problems.length} problem(s); all in work/verify-problems.txt\n${problems.slice(0, 40).join("\n")}`);
+    process.exit(1);
+  }
   console.log(JSON.stringify({ changed: [], needs_review: 0, sources: { version, integrity } }));
   process.exit(0);
 }
 
 if (previousVersion === version) {
   // Relocated to this release already; success only once every flagged record is reviewed.
-  const pending = areaFiles().flatMap(name => (readJson(path.join(root, "outputs", name)).items ?? []).filter(item => item.needs_review).map(item => `${name}:${item.id}`));
+  const pending = pendingReview();
   if (pending.length) {
     log(`${pending.length} records still need review`);
     console.log(JSON.stringify({ changed: [], needs_review: pending.length, sources: status?.sources ?? { version, integrity } }));
@@ -120,18 +125,30 @@ try {
   renameSync(path.join(release, "extracted"), path.join(work, "extracted"));
   cpSync(path.join(release, "embedded-manifest.json"), path.join(work, "embedded-manifest.json"));
   writeFileSync(path.join(work, "current.json"), JSON.stringify({ version, binary_sha256: binarySha }));
+  // Numbers on "What a request contains" come from this summary of the new captures.
+  run(node, ["extract/capture-summary.mjs", path.join(release, "capture")]);
+  // Tools regenerate from the new build and its captures; exit 3 marks records for review.
+  run(node, ["--max-old-space-size=12000", "extract/tools.mjs", path.join(release, "capture")], { breakCode: 2, allow: [3] });
   run(node, ["--max-old-space-size=8192", "extract/env-vars.mjs"], { breakCode: 2 });
+  // Topic and status tags for the env-var filters; Jev scores only new or changed variables.
+  run(node, ["extract/tags.mjs"]);
   const envAfter = new Set(readJson(path.join(root, "outputs/environment-variables.json")).items.map(i => i.title));
   const envAdded = [...envAfter].filter(x => !envBefore.has(x)), envRemoved = [...envBefore].filter(x => !envAfter.has(x));
   const otherBefore = new Set(existsSync(path.join(root, "outputs/other-model-text.json")) ? readJson(path.join(root, "outputs/other-model-text.json")).items.map(i => i.text) : []);
   run(node, ["extract/candidates.mjs"]);
+  // Areas whose extractor regenerates from any build by content anchors (not relocation).
+  run(node, ["--max-old-space-size=8192", "extract/skills.mjs"], { breakCode: 2 });
   run(node, ["extract/classify.mjs"]);
   run(node, ["extract/inventory.mjs"]);
   const newOther = readJson(path.join(root, "outputs/other-model-text.json")).items.filter(i => !otherBefore.has(i.text));
 
   // 5. One report a person or a reviewing agent can act on.
+  // Relocation flags every record whose source changed. Areas regenerated above (tools, skills,
+  // environment variables) are current already; only records still marked need a review.
   const review = Object.values(relocation.areas).flatMap(a => a.changed);
-  const reviewIds = new Set(review.map(c => `${c.area}:${c.id}`));
+  const flagged = new Set(pendingReview());
+  const reviewIds = new Set(review.map(c => `${c.area}:${c.id}`).filter(key => flagged.has(key)));
+  const regenerated = review.filter(c => !flagged.has(`${c.area}:${c.id}`));
   if (captureDiff.length) sections.push(`### Default requests\n\n${captureDiff.join("\n")}`);
   if (helpDiff.length) sections.push(`### claude --help\n\n~~~~~~diff\n${helpDiff.join("\n")}\n~~~~~~`);
   if (envAdded.length || envRemoved.length) sections.push(`### Environment variables\n\n${envAdded.length ? `Added: ${envAdded.map(x => `\`${x}\``).join(", ")}\n` : ""}${envRemoved.length ? `Removed: ${envRemoved.map(x => `\`${x}\``).join(", ")}` : ""}`);
@@ -144,6 +161,9 @@ try {
     });
     sections.push(`### Records whose source changed (${reviewIds.size})\n\n${lines.join("\n")}`);
   }
+  if (regenerated.length) sections.push(`### Regenerated from the new build (${regenerated.length})\n\n${regenerated.map(c => `- **${c.area}** \`${c.id}\` (${c.title ?? ""}): ${c.reason}`).join("\n")}`);
+  const unlisted = [...flagged].filter(key => !review.some(c => `${c.area}:${c.id}` === key));
+  if (unlisted.length) sections.push(`### Records an extractor marked for review (${unlisted.length})\n\n${unlisted.map(key => `- **${key.split(":")[0]}** \`${key.split(":").slice(1).join(":")}\`: see details.review_reasons`).join("\n")}`);
   if (newOther.length) sections.push(`### New model-facing text (${newOther.length}, published on "Other model-facing text")\n\n${newOther.slice(0, 40).map(i => `- ${JSON.stringify(i.text.slice(0, 160))}`).join("\n")}`);
   writeFileSync(path.join(work, "cc-diff.md"), sections.length ? `## Claude Code ${version} (from ${previousVersion})\n\n${sections.join("\n\n")}\n` : "");
 
@@ -152,8 +172,8 @@ try {
   for (const old of releases.slice(0, -2)) rmSync(path.join(work, "releases", old), { recursive: true, force: true });
 
   const changedAreas = [...new Set(review.map(c => c.area))].concat(envAdded.length || envRemoved.length ? ["environment-variables"] : []).concat(newOther.length ? ["other-model-text"] : []);
-  console.log(JSON.stringify({ changed: changedAreas, needs_review: reviewIds.size, sources: { version, integrity, binary_sha256: binarySha } }));
-  process.exit(reviewIds.size ? 3 : 0);
+  console.log(JSON.stringify({ changed: changedAreas, needs_review: flagged.size, sources: { version, integrity, binary_sha256: binarySha } }));
+  process.exit(flagged.size ? 3 : 0);
 } catch (error) {
   log(error.message);
   // Restore the previous release's outputs and extraction so the next run starts clean.

@@ -251,6 +251,8 @@ test("production pages resolve every contents link to exactly one unique anchor"
       const html = await readFile(file, "utf8");
       const toc = tableOfContents(html);
       const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+      const broken = [...html.matchAll(/href="#([^"]+)"/g)].map(match => match[1]).filter(id => !ids.includes(id));
+      assert.deepEqual(broken, [], `${file} in-page links resolve`);
       assert.deepEqual(ids.filter((id, index) => ids.indexOf(id) !== index), [], `${file} ids are unique`);
 
       const links = [...toc.matchAll(/<a href="([^"]+)" data-depth="(\d)">/g)];
@@ -351,4 +353,56 @@ test("production catalog pins every page path and every record carries binary pr
     }
   }
   assert.equal(versions.size, 1, `every record cites the same build (${[...versions].join(", ")})`);
+});
+
+test("narrative numbers come from data tokens, and a bad token fails the build", async () => {
+  await withFixture(async (root, outFile) => {
+    const page = () => readFile(path.join(root, "dist/current-md/index.html"), "utf8");
+    await writeFile(path.join(root, "outputs/current.json"), JSON.stringify({
+      tools: { cli: 31, betas: ["a-1", "b-2"], none: [] },
+      items: [
+        { id: "a", kind: "setting", documented: "https://x", details: { hidden: true, path: "a.b", name: "x" } },
+        { id: "b", kind: "setting", documented: null, group: "Safe env keys", details: { path: "b", name: "x" } },
+        { id: "c", kind: "env-var", documented: null }
+      ]
+    }));
+    await writeFile(path.join(root, "outputs/current.md"), "# Title\n\n{{count:current kind=setting}} settings, {{count:current kind=setting documented=null}} undocumented, {{count:current group=\"Safe env keys\"}} safe, {{count:current kind!=setting}} other, {{count:current details.path=*.*}} nested, {{count:current kind=setting details.path!=*.*}} top; {{distinct:current details.name kind=setting}} names; {{value:current tools.cli}} tools; {{value:current tools.betas as=code}}; {{value:current tools.none as=list}}.\n");
+    await buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog });
+    assert.match(await page(), /2 settings, 1 undocumented, 1 safe, 1 other, 1 nested, 1 top; 1 names; 31 tools; <code>a-1<\/code> and <code>b-2<\/code>; none\./);
+
+    for (const [bad, message] of [
+      ["{{value:current tools.missing}}", /tools\.missing is not in outputs\/current\.json/],
+      ["{{value:current tools.cli as=table}}", /at most one as=code, as=list or as=raw/],
+      ["{{distinct:current details.nowhere}}", /no record has details\.nowhere/],
+      ["{{count:current kind}}", /filters are path=value/],
+      ["{{count:absent kind=setting}}", /needs outputs\/absent\.json/]
+    ]) {
+      await writeFile(path.join(root, "outputs/current.md"), `# Title\n\n${bad}\n`);
+      await assert.rejects(buildSite({ sourceRoot: root, outFile, categories: fixtureCatalog }), message);
+    }
+  });
+});
+
+test("filterable pages wrap every entry with its tags and fail when an entry has no record", async () => {
+  await withFixture(async (root, outFile) => {
+    await writeFile(path.join(root, "outputs/current.md"), "# Title\n\n## Caching\n\n### `CACHE_TTL`\n\nRead as: enum\n\n### `DISABLE_CACHE`\n\nRead as: boolean\n");
+    await writeFile(path.join(root, "outputs/records.json"), JSON.stringify({ items: [
+      { id: "a", group: "Caching", title: "CACHE_TTL" }, { id: "b", group: "Caching", title: "DISABLE_CACHE" }
+    ] }));
+    await writeFile(path.join(root, "outputs/tags.json"), JSON.stringify({
+      tags: [{ id: "prompt-caching", label: "Prompt caching", kind: "topic", feature: true, count: 2 }, { id: "any-value", label: "Any value counts, even 0", kind: "status", count: 1 }],
+      items: { a: ["prompt-caching"], b: ["prompt-caching", "any-value"] }
+    }));
+    const catalog = [{ label: "Config", files: [{ path: "outputs/current.md", format: "markdown", filters: { records: "outputs/records.json", tags: "outputs/tags.json" } }] }];
+    await buildSite({ sourceRoot: root, outFile, categories: catalog });
+    const html = await readFile(path.join(root, "dist/current-md/index.html"), "utf8");
+    assert.match(html, /<div class="filter-bar" data-total="2">/);
+    assert.match(html, /class="chip chip-feature" data-tag="prompt-caching" aria-pressed="false">Prompt caching <span class="chip-count">2<\/span>/);
+    assert.match(html, /class="chip" data-tag="any-value" aria-pressed="false">Any value counts, even 0 <span class="chip-count">1<\/span>/);
+    assert.match(html, /<section class="filter-item" data-tags="prompt-caching any-value"><h4 id="disable-cache"><code>DISABLE_CACHE<\/code><\/h4><div class="item-tags">/);
+    assert.equal((html.match(/class="filter-item"/g) ?? []).length, 2);
+
+    await writeFile(path.join(root, "outputs/records.json"), JSON.stringify({ items: [{ id: "a", group: "Caching", title: "CACHE_TTL" }, { id: "c", group: "Caching", title: "MISSING" }] }));
+    await assert.rejects(buildSite({ sourceRoot: root, outFile, categories: catalog }), /tagged 1 of 2 entries/);
+  });
 });

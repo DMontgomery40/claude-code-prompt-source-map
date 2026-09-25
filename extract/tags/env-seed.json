@@ -1,0 +1,152 @@
+[
+ {
+  "id": "env-force-prompt-caching-5m",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Step 1 of TTL resolution: IEt() returns {ttl:\"5m\",reason:\"force_5m_env\"} before every other TTL source (work/extracted/chunk-x9fwahqm.js char 1867187; record evidence ttl_resolver)."
+ },
+ {
+  "id": "env-claude-code-prompt-cache-ttl",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Step 2 of TTL resolution for main-conversation requests (repl_main_thread*, sdk, auto_mode, memdir_relevance); only \"5m\"/\"1h\" accepted (IEt(), chunk-x9fwahqm.js char 1867187; record text)."
+ },
+ {
+  "id": "env-claude-code-subagent-prompt-cache-ttl",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Step 2 of TTL resolution for every non-main-conversation request, such as subagents and background work (IEt(), chunk-x9fwahqm.js char 1867187; record text)."
+ },
+ {
+  "id": "env-enable-prompt-caching-1h",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Step 5 of TTL resolution: returns {ttl:\"1h\",reason:\"enable_1h_env\"} when no higher-priority TTL source is set (IEt(), chunk-x9fwahqm.js char 1867187; record text)."
+ },
+ {
+  "id": "env-enable-prompt-caching-1h-bedrock",
+  "tag": "prompt-caching",
+  "relation": "sets-ttl",
+  "reason": "Step 5 of TTL resolution, Bedrock only: Le()===\"bedrock\"&&ENABLE_PROMPT_CACHING_1H_BEDROCK gives the 1-hour TTL (IEt(), chunk-x9fwahqm.js char 1867187; record text, deprecated)."
+ },
+ {
+  "id": "env-disable-prompt-caching",
+  "tag": "prompt-caching",
+  "relation": "disables-caching",
+  "reason": "Vbe(), the check that decides whether a request gets cache_control markers, returns false for every model; checked before the per-model variables (chunk-x9fwahqm.js char 1946535; record evidence cache_enable_check)."
+ },
+ {
+  "id": "env-disable-prompt-caching-haiku",
+  "tag": "prompt-caching",
+  "relation": "disables-caching",
+  "reason": "Vbe() returns false for requests on the resolved small/fast model when it differs from the main-loop model (chunk-x9fwahqm.js char 1946535; record text)."
+ },
+ {
+  "id": "env-disable-prompt-caching-sonnet",
+  "tag": "prompt-caching",
+  "relation": "disables-caching",
+  "reason": "Vbe() returns false when the request model equals the resolved default Sonnet model (chunk-x9fwahqm.js char 1946535; record text)."
+ },
+ {
+  "id": "env-disable-prompt-caching-opus",
+  "tag": "prompt-caching",
+  "relation": "disables-caching",
+  "reason": "Vbe() returns false when the request model equals the resolved default Opus model (chunk-x9fwahqm.js char 1946535; record text)."
+ },
+ {
+  "id": "env-disable-prompt-caching-fable",
+  "tag": "prompt-caching",
+  "relation": "disables-caching",
+  "reason": "Vbe() returns false when the model ID contains \"claude-fable-\" or equals ANTHROPIC_DEFAULT_FABLE_MODEL (chunk-x9fwahqm.js char 1946535; record text)."
+ },
+ {
+  "id": "env-disable-prompt-caching-mythos",
+  "tag": "prompt-caching",
+  "relation": "disables-caching",
+  "reason": "Vbe() returns false when the model ID contains \"claude-mythos-\"; undocumented, and the caching-off notice does not list it (chunk-x9fwahqm.js char 1946535; record text)."
+ },
+ {
+  "id": "env-claude-code-subagent-cache-evict",
+  "tag": "prompt-caching",
+  "relation": "evicts-cache",
+  "reason": "rko() forces the prompt-caching evict beta when Gm() passes, so the request's cache_control carries evict_on_complete: true (chunk-x9fwahqm.js char 1955820; record text)."
+ },
+ {
+  "id": "env-claude-code-workflow-prefix-stagger-ms",
+  "tag": "prompt-caching",
+  "relation": "shares-warm-prefix",
+  "reason": "Workflow agents wait up to this long for a same-prefix sibling's first response so they reuse its cache write; bo() forces 0 when DISABLE_PROMPT_CACHING is set (chunk-gajx20pg.js char 32855; record text)."
+ },
+ {
+  "id": "env-claude-code-disable-experimental-betas",
+  "tag": "prompt-caching",
+  "relation": "gates-cache-features",
+  "reason": "Docs prompt-caching.md:53 and :99: the mid-conversation system block is sent uncached and effort changes invalidate the cache. In code, Gae() makes Gm() false (chunk-2393h2ax.js char 159879), which turns off the evict beta rko() (chunk-x9fwahqm.js char 1955820) and the mid-conversation tool-change path tge() (chunk-3kj78r2m.js char 313999)."
+ },
+ {
+  "id": "env-set-claude-code-disable-experimental-betas",
+  "tag": "prompt-caching",
+  "relation": "set-for-child",
+  "reason": "Claude Code sets CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1 for a child process (record text), so the child loses the same cache features: docs prompt-caching.md:53 and :99; Gae()/Gm() gating as for the read record."
+ },
+ {
+  "id": "env-enable-tool-search",
+  "tag": "prompt-caching",
+  "relation": "prefix-stability",
+  "reason": "Docs prompt-caching.md:114 and :162: with tool search off, MCP tool changes invalidate the cache. In code, the global cache strategy becomes \"none\" when any non-deferred MCP tool is present (chunk-x9fwahqm.js char 1968630, `let To=qo?vo?\"none\":\"system_prompt\"`)."
+ },
+ {
+  "id": "env-anthropic-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs prompt-caching.md:51, :57 and :293: the cache lives wherever the gateway forwards requests, cache_control handling depends on the gateway, and the 1-hour TTL needs the anthropic-beta header forwarded; :114: a custom base URL leaves tool search off, so MCP tool changes invalidate the cache."
+ },
+ {
+  "id": "env-anthropic-bedrock-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs only, prompt-caching.md:57: with a cloud-provider base-URL override, what stays cached depends on how the gateway handles cache_control markers. The docs name ANTHROPIC_BEDROCK_BASE_URL as one example of the class. No code path traced."
+ },
+ {
+  "id": "env-anthropic-bedrock-mantle-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs only, prompt-caching.md:57: with a cloud-provider base-URL override, what stays cached depends on how the gateway handles cache_control markers. The docs name ANTHROPIC_BEDROCK_BASE_URL as one example of the class. No code path traced."
+ },
+ {
+  "id": "env-anthropic-vertex-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs only, prompt-caching.md:57: with a cloud-provider base-URL override, what stays cached depends on how the gateway handles cache_control markers. The docs name ANTHROPIC_BEDROCK_BASE_URL as one example of the class. No code path traced."
+ },
+ {
+  "id": "env-anthropic-foundry-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs only, prompt-caching.md:57: with a cloud-provider base-URL override, what stays cached depends on how the gateway handles cache_control markers. The docs name ANTHROPIC_BEDROCK_BASE_URL as one example of the class. No code path traced."
+ },
+ {
+  "id": "env-anthropic-aws-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs only, prompt-caching.md:57: with a cloud-provider base-URL override, what stays cached depends on how the gateway handles cache_control markers. The docs name ANTHROPIC_BEDROCK_BASE_URL as one example of the class. No code path traced."
+ },
+ {
+  "id": "env-anthropic-google-cloud-base-url",
+  "tag": "prompt-caching",
+  "relation": "cache-location",
+  "reason": "Docs only, prompt-caching.md:57: with a cloud-provider base-URL override, what stays cached depends on how the gateway handles cache_control markers. The docs name ANTHROPIC_BEDROCK_BASE_URL as one example of the class. No code path traced."
+ },
+ {
+  "id": "env-claude-code-force-mid-conversation-system",
+  "tag": "prompt-caching",
+  "relation": "prefix-stability",
+  "reason": "Inferred: bx()/tge() force the mid-conversation system path, which carries tool changes mid-conversation instead of changing the prefix (chunk-3kj78r2m.js chars 313999, 314238). Docs prompt-caching.md:53 say that block is marked for caching."
+ },
+ {
+  "id": "env-claude-code-sync-reuse-within-ms",
+  "tag": "prompt-caching",
+  "exclude": true,
+  "reason": "Reviewed: the value is a reuse window for a synced session file (read next to the sync file helpers in chunk-x9fwahqm.js), not the API prompt cache; Jev matched the name alone."
+ }
+]

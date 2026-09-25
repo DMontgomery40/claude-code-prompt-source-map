@@ -57,7 +57,17 @@ export function anchorOutline(html, { anchor, ids }) {
     outline.push({ level: Number(level), text, id: id ?? uniqueId(`${anchor}--${slug(text) || "section"}`, ids) });
     return id ? match : `<h${level}${attributes} id="${outline.at(-1).id}">${inner}</h${level}>`;
   });
-  return { html: anchored, outline };
+  // Documents often link to their own headings by bare slug (#section-name); point those at
+  // the document-scoped ids assigned above, tolerating GitHub-style slugs.
+  const own = new Set(outline.map(item => item.id));
+  const squash = value => value.replace(/[^a-z0-9]/g, "");
+  const bySquash = new Map(outline.filter(item => item.id.startsWith(`${anchor}--`)).map(item => [squash(item.id.slice(anchor.length + 2)), item.id]));
+  const linked = anchored.replace(/href="#([^"]+)"/g, (match, target) => {
+    if (own.has(`${anchor}--${target}`)) return `href="#${anchor}--${target}"`;
+    const loose = bySquash.get(squash(target));
+    return loose && !own.has(target) ? `href="#${loose}"` : match;
+  });
+  return { html: linked, outline };
 }
 
 // Nests an outline under its shallowest heading level plus one level below it.
@@ -192,10 +202,12 @@ export const tocScript = `
           const box = entry.target.getBoundingClientRect();
           return [box.top, box.bottom];
         }
-        if (!entry.panel || !shown(entry.panel)) return null;
+        if (!entry.panel || !shown(entry.panel) || entry.target.closest("[hidden]")) return null;
         const top = entry.target.getBoundingClientRect().top;
-        const bottom = entry.next
-          ? entry.next.target.getBoundingClientRect().top
+        let next = entry.next;
+        while (next && next.target.closest("[hidden]")) next = next.next;
+        const bottom = next
+          ? next.target.getBoundingClientRect().top
           : entry.panel.getBoundingClientRect().bottom;
         return [top, bottom];
       }
@@ -301,6 +313,7 @@ export const tocScript = `
       document.addEventListener("toggle", () => { syncClosedDocuments(); schedule(); }, true);
       addEventListener("scroll", schedule, { passive: true });
       addEventListener("resize", schedule);
+      document.addEventListener("filterchange", schedule);
       syncClosedDocuments();
       update();
     })();`;

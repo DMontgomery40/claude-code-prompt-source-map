@@ -725,12 +725,6 @@ md.push("# Environment variables read by Claude Code", "");
 md.push(`Claude Code reads ${named.length} environment variables by name, plus ${families.size} name patterns built at run time. ${documentedCount} of the named variables are documented at code.claude.com and ${named.length - documentedCount} are not. It also sets ${setItems.length} variables for its own process, tools, hooks and other child processes; these are listed in their own section.`, "");
 md.push("A name counts as read when code reads it from `process.env`, through the typed env accessor, through a helper that takes the name, or by iterating a list of names into `process.env`. Names that only appear as strings, or are only written for child processes, are excluded. Documented means the name appears on the env-vars docs page or in a table row on another docs page.", "");
 md.push("Prompt caching: DISABLE_PROMPT_CACHING* decide whether requests get cache markers, and the TTL resolves in this order: FORCE_PROMPT_CACHING_5M, then the *_PROMPT_CACHE_TTL variables, then settings, then agent frontmatter, then ENABLE_PROMPT_CACHING_1H. See the first section for details.", "");
-md.push("## Undocumented variables", "");
-md.push("These names are read in code but do not appear on the env-vars docs page or in any docs table.", "");
-for (const g of GROUPS) {
-  const names = named.filter(i => i.group === g && !i.documented).map(i => tick(i.title));
-  if (names.length) md.push(`**${g}** (${names.length}): ${names.join(", ")}`, "");
-}
 for (const g of GROUPS) {
   const gi = items.filter(i => i.group === g);
   if (!gi.length) continue;

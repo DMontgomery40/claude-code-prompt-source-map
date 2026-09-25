@@ -1,0 +1,8 @@
+{
+  "exempt": [
+    "outputs/environment-variables.md",
+    "outputs/other-model-text.md",
+    "outputs/provenance.md"
+  ],
+  "_why": "These pages are rewritten from the data on every refresh (env-vars.mjs, inventory.mjs), so their numbers cannot go stale."
+}

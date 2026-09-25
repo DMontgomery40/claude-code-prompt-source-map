@@ -1,0 +1,297 @@
+{
+ "tags": [
+  {
+   "id": "prompt-caching",
+   "label": "Prompt caching",
+   "definition": "Environment variables that change Anthropic prompt caching on Claude Code's model requests. Counts: the cache TTL each request gets (5-minute or 1-hour, for the main conversation or for subagents and background work); whether requests carry cache_control markers at all, for every model or for one model family (DISABLE_PROMPT_CACHING*); cache eviction and cache-scope betas; cached mid-conversation system blocks; and timing that lets parallel agents reuse a warm cached prefix. Also counts switches that the prompt-caching docs say change what stays cached, such as stripping pre-release anthropic-beta headers or turning MCP tool search off. Applies whatever group the variable is in, including undocumented variables and records of Claude Code setting the same variable for a child process. Does NOT include other caches that only share the word: the WebFetch response cache, the MCP discovery cache, plugin or zip caches, credential caches, feature-flag disk caches, XDG_CACHE_HOME, or library LRU caches. Also excludes settings fixed for the whole session that only feed the request, such as effort level or model choice, and auto-update controls.",
+   "true_examples": [
+    "env-claude-code-subagent-prompt-cache-ttl",
+    "env-force-prompt-caching-5m",
+    "env-disable-prompt-caching-opus",
+    "env-claude-code-subagent-cache-evict",
+    "env-claude-code-workflow-prefix-stagger-ms"
+   ],
+   "false_examples": [
+    "env-claude-code-plugin-use-zip-cache",
+    "env-mcp-discovery-cache",
+    "env-claude-code-gb-disk-cache-when-telemetry-off",
+    "env-xdg-cache-home",
+    "env-disable-autoupdater",
+    "env-anthropic-model"
+   ]
+  },
+  {
+   "id": "security-permissions",
+   "label": "Security and permissions",
+   "definition": "Environment variables that change what Claude Code is allowed to do, or how exposed the machine and its secrets are. Counts: permission modes, permission rules and auto-mode review; restricted, safe or plan-required modes; sandboxing (bubblewrap, sandboxed or container-sandbox flags); workspace trust; confirmation prompts before dangerous commands; PowerShell execution policy; turning TLS certificate verification off; stripping or allowlisting credentials in the environments of Bash, hooks and MCP servers; upload or egress gates that limit data leaving the machine; and file write protection. Applies whatever group the variable is in. Does NOT include which API key, token or login to use (that is Authentication), telemetry or analytics opt-outs (Privacy), or ordinary proxy and CA-certificate settings that don't weaken verification (Network).",
+   "true_examples": [
+    "env-claude-code-sandboxed",
+    "env-is-sandbox",
+    "env-claude-code-restricted",
+    "env-claude-code-powershell-respect-execution-policy",
+    "env-claude-bg-session-permission-rules",
+    "env-ccr-agent-proxy-upload-gate-disabled",
+    "env-claude-code-disable-dangerous-rm-timeout"
+   ],
+   "false_examples": [
+    "env-anthropic-auth-token",
+    "env-do-not-track",
+    "env-node-extra-ca-certs",
+    "env-claude-code-client-cert"
+   ]
+  },
+  {
+   "id": "privacy-telemetry",
+   "label": "Privacy, telemetry and nonessential traffic",
+   "definition": "Environment variables that control what Claude Code reports about the user, or sends beyond the model request itself. Counts: telemetry and analytics opt-outs (DISABLE_TELEMETRY, DO_NOT_TRACK); error reporting; the nonessential-traffic switch; feature-flag (GrowthBook) fetching; feedback commands and session-quality surveys; demo mode that hides account details; account or session identifiers attached to metrics; and switches that put prompt text, model responses, tool content or raw API bodies into exported logs and traces. Applies whatever group the variable is in. Does NOT include plain OpenTelemetry plumbing with no privacy effect, such as exporter endpoints, protocols, intervals, timeouts or length limits (that is Observability), or permission and sandbox controls (Security).",
+   "true_examples": [
+    "env-do-not-track",
+    "env-disable-error-reporting",
+    "env-disable-growthbook",
+    "env-otel-log-raw-api-bodies",
+    "env-claude-code-disable-feedback-survey",
+    "env-is-demo",
+    "env-otel-metrics-include-account-uuid"
+   ],
+   "false_examples": [
+    "env-claude-code-enable-telemetry",
+    "env-otel-exporter-otlp-protocol",
+    "env-claude-code-otel-flush-timeout-ms"
+   ]
+  },
+  {
+   "id": "observability",
+   "label": "Logging, tracing and diagnostics",
+   "definition": "Environment variables for the logs, metrics and traces that the user collects about Claude Code. Counts: enabling OpenTelemetry; OTEL_* exporter endpoints, headers, protocols, intervals, temporality and attribute limits; trace-context propagation (TRACEPARENT); Datadog and beta tracing; debug log files and levels; diagnostics files; startup profiling and performance traces. Switches that add prompts, responses, tool content or raw API bodies to exports count here and also under Privacy. Applies whatever group the variable is in. Does NOT include Anthropic telemetry opt-outs (Privacy), network timeouts (Network), or debug-logging variables read only by bundled third-party libraries (GRPC_TRACE, NODE_DEBUG).",
+   "true_examples": [
+    "env-claude-code-enable-telemetry",
+    "env-otel-exporter-otlp-protocol",
+    "env-otel-metric-export-interval",
+    "env-traceparent",
+    "env-claude-code-debug-logs-dir",
+    "env-claude-code-perfetto-trace",
+    "env-otel-log-tool-details"
+   ],
+   "false_examples": [
+    "env-do-not-track",
+    "env-grpc-trace",
+    "env-api-timeout-ms"
+   ]
+  },
+  {
+   "id": "authentication",
+   "label": "Authentication and credentials",
+   "definition": "Environment variables that supply or control credentials for reaching Anthropic, cloud providers, gateways or MCP servers. Counts: API keys; bearer, OAuth access and refresh tokens; OAuth scopes, client IDs and client secrets; apiKeyHelper refresh; token file descriptors and token files; session JWTs; workload identity federation IDs; cloud credentials (AWS keys and profiles, Google application credentials, Azure identities); mTLS client certificates and keys; credential caches; and switches that skip a provider's own authentication. Applies whatever group the variable is in. Does NOT include which provider, region or endpoint is used (Providers), or scrubbing credentials out of subprocess environments (Security).",
+   "true_examples": [
+    "env-anthropic-auth-token",
+    "env-claude-code-oauth-token",
+    "env-claude-code-api-key-helper-ttl-ms",
+    "env-aws-bearer-token-bedrock",
+    "env-claude-code-skip-bedrock-auth",
+    "env-claude-code-client-cert",
+    "env-mcp-client-secret"
+   ],
+   "false_examples": [
+    "env-claude-code-use-bedrock",
+    "env-anthropic-vertex-project-id",
+    "env-is-sandbox"
+   ]
+  },
+  {
+   "id": "providers",
+   "label": "Model providers and API endpoints",
+   "definition": "Environment variables that choose or configure the backend serving model requests. Counts: switches for Amazon Bedrock, Mantle, Google Cloud Agent Platform (Vertex), Microsoft Foundry, Anthropic on AWS or Google Cloud, and LLM gateways; base URLs and endpoint overrides; regions, projects, resource and workspace names, and per-model region overrides; gateway model discovery and hint headers; and extra beta headers, custom headers or extra body fields sent with API requests. Applies whatever group the variable is in. Does NOT include credentials or skip-auth switches (Authentication); generic HTTP proxies, certificates and timeouts (Network); or choosing which Claude model runs and how it thinks, including thinking-related beta headers (Models).",
+   "true_examples": [
+    "env-claude-code-use-bedrock",
+    "env-claude-code-use-vertex",
+    "env-anthropic-vertex-project-id",
+    "env-cloud-ml-region",
+    "env-vertex-region-claude-4-5-sonnet",
+    "env-claude-code-gateway-hint-headers",
+    "env-anthropic-betas",
+    "env-claude-code-extra-body"
+   ],
+   "false_examples": [
+    "env-aws-secret-access-key",
+    "env-no-proxy",
+    "env-anthropic-model"
+   ]
+  },
+  {
+   "id": "models-context",
+   "label": "Models, thinking and context window",
+   "definition": "Environment variables that choose which Claude model runs, how much it thinks, and how much it holds. Counts: model IDs and aliases; /model picker entries; default, subagent and small-fast models; fallback and legacy remapping; effort level; extended, adaptive or interleaved thinking, thinking budgets and the thinking parameter or beta header; maximum output tokens; fast mode; 1M context; the context-window size Claude Code assumes; auto-compaction thresholds and windows; and turning compaction off. Applies whatever group the variable is in. Does NOT include per-model prompt-cache switches (Prompt caching), provider regions for a model (Providers), or text injected into the prompt (Prompt and instructions).",
+   "true_examples": [
+    "env-anthropic-model",
+    "env-claude-code-subagent-model",
+    "env-max-thinking-tokens",
+    "env-claude-code-max-output-tokens",
+    "env-claude-code-disable-fast-mode",
+    "env-claude-code-auto-compact-window",
+    "env-disable-compact"
+   ],
+   "false_examples": [
+    "env-disable-prompt-caching-opus",
+    "env-vertex-region-claude-4-5-sonnet",
+    "env-claude-code-simple-system-prompt"
+   ]
+  },
+  {
+   "id": "prompt-instructions",
+   "label": "Prompt, instructions and memory",
+   "definition": "Environment variables that replace, shorten, add or remove text that Claude Code puts in the model's context. Counts: system prompt variants (simple or minimal prompts); built-in git or browser-tool instructions; CLAUDE.md and memory-file loading; auto memory and memory guidelines; system reminders and their text; resume or continuation prompts; skill-listing budgets; MCP description length limits; and prompt override files. Applies whatever group the variable is in. Does NOT include model choice or compaction (Models), or settings that change behavior without changing the prompt text.",
+   "true_examples": [
+    "env-claude-code-simple-system-prompt",
+    "env-claude-code-disable-git-instructions",
+    "env-claude-code-disable-auto-memory",
+    "env-claude-code-silent-turn-reminder-text",
+    "env-claude-code-resume-prompt",
+    "env-slash-command-tool-char-budget",
+    "env-claude-cowork-memory-guidelines"
+   ],
+   "false_examples": [
+    "env-claude-code-max-output-tokens",
+    "env-disable-compact",
+    "env-claude-code-syntax-highlight"
+   ]
+  },
+  {
+   "id": "mcp",
+   "label": "MCP servers",
+   "definition": "Environment variables for Model Context Protocol servers and their tools. Counts: MCP_* and CLAUDE_CODE_MCP_* settings; server connection batching; startup and tool timeouts; the MCP discovery cache; MCP OAuth callbacks and client secrets; MCP tool search; MCP output and description limits; claude.ai connectors and SDK-created MCP servers; and the environment MCP servers are spawned with. Applies whatever group the variable is in. Does NOT include plugins, skills or hooks in general (Plugins, skills and hooks) unless the variable is about the MCP servers they bring.",
+   "true_examples": [
+    "env-mcp-timeout",
+    "env-mcp-tool-timeout",
+    "env-max-mcp-output-tokens",
+    "env-mcp-discovery-cache",
+    "env-enable-claudeai-mcp-servers",
+    "env-mcp-oauth-callback-port",
+    "env-claude-code-max-mcp-description-length"
+   ],
+   "false_examples": [
+    "env-claude-code-plugin-dirs",
+    "env-claude-code-disable-bundled-skills"
+   ]
+  },
+  {
+   "id": "plugins-skills-hooks",
+   "label": "Plugins, skills and hooks",
+   "definition": "Environment variables for user- or organization-supplied extensions other than MCP. Counts: plugins and plugin marketplaces (directories, seeds, caches, sync, auto-update, git cloning); skills, including bundled and managed skills; and lifecycle hooks (hook timeouts, Stop-hook block caps, hook forwarding, function hooks, Notification hooks). Applies whatever group the variable is in. Does NOT include MCP server settings (MCP) or tools that ship with Claude Code (Built-in tools).",
+   "true_examples": [
+    "env-claude-code-plugin-dirs",
+    "env-claude-code-plugin-git-timeout-ms",
+    "env-force-autoupdate-plugins",
+    "env-claude-code-disable-bundled-skills",
+    "env-claude-code-sync-skills",
+    "env-claude-code-sessionend-hooks-timeout-ms",
+    "env-claude-code-enable-function-hooks",
+    "env-claude-code-disable-permission-prompt-notify-hooks"
+   ],
+   "false_examples": [
+    "env-mcp-tool-timeout",
+    "env-bash-max-timeout-ms"
+   ]
+  },
+  {
+   "id": "agents-background",
+   "label": "Subagents, teams and background work",
+   "definition": "Environment variables for work that runs beside or beyond the main conversation. Counts: subagents and their spawn depth, concurrency and stall timeouts; built-in Explore and Plan agents; forked subagents; agent teams and teammates; workflows; coordinator mode; background tasks and background sessions (CLAUDE_BG_*); agent view; scheduled or cron tasks; goals, auto-continue and away summaries. A subagent-specific model setting counts here and also under Models. Applies whatever group the variable is in. Does NOT include cloud-hosted or self-hosted sessions (Cloud, remote and hosted sessions), or hook settings that merely mention subagent events such as SubagentStop (Plugins, skills and hooks).",
+   "true_examples": [
+    "env-claude-code-subagent-model",
+    "env-claude-code-max-subagent-spawn-depth",
+    "env-claude-code-experimental-agent-teams",
+    "env-claude-code-disable-background-tasks",
+    "env-claude-code-workflow-max-concurrent-agents",
+    "env-claude-code-disable-cron",
+    "env-claude-bg-backend",
+    "env-claude-code-coordinator-mode"
+   ],
+   "false_examples": [
+    "env-self-hosted-runner-idle-shutdown-ms",
+    "env-claude-code-remote",
+    "env-mcp-tool-timeout",
+    "env-claude-code-sessionend-hooks-timeout-ms"
+   ]
+  },
+  {
+   "id": "built-in-tools",
+   "label": "Built-in tools",
+   "definition": "Environment variables that change tools shipped with Claude Code that the model calls. Counts: Bash and PowerShell (shell choice, timeouts, output limits, working directory, prefixes, memory caps); Glob, Grep and ripgrep; file reads and file checkpointing; WebFetch and WebSearch; task and todo tools; AskUserQuestion; the advisor tool; Claude in Chrome browser tools; artifacts (CLAUDE_CODE_ARTIFACT_*); attachments; and push notifications. Applies whatever group the variable is in. Does NOT include MCP tools (MCP), plugin or skill tools (Plugins, skills and hooks), subagent spawning (Subagents), or plain OS shell variables such as SHELL.",
+   "true_examples": [
+    "env-bash-max-output-length",
+    "env-claude-code-shell",
+    "env-claude-code-glob-timeout-seconds",
+    "env-use-builtin-ripgrep",
+    "env-claude-code-webfetch-deadline-ms",
+    "env-claude-code-max-web-searches-per-session",
+    "env-claude-code-disable-file-checkpointing",
+    "env-claude-code-artifact-auto-open",
+    "env-claude-code-disable-advisor-tool"
+   ],
+   "false_examples": [
+    "env-mcp-tool-timeout",
+    "env-claude-code-max-subagent-spawn-depth",
+    "env-shell"
+   ]
+  },
+  {
+   "id": "remote-hosted",
+   "label": "Cloud, remote and hosted sessions",
+   "definition": "Environment variables for Claude Code running somewhere other than a local terminal, or embedded by a host. Counts: cloud sessions (claude --cloud, CCR_*); Remote Control and bridge reattachment (CLAUDE_BRIDGE_*); self-hosted runners (SELF_HOSTED_RUNNER_*, CLAUDE_RUNNER_*); session ingress tokens and URLs; host platforms, desktop apps and SDKs that embed Claude Code (CLAUDE_CODE_HOST_*, Cowork); and remote environment identifiers. Applies whatever group the variable is in. Does NOT include local background sessions (Subagents) or ordinary provider endpoints (Providers).",
+   "true_examples": [
+    "env-claude-code-remote",
+    "env-ccr-force-bundle",
+    "env-claude-bridge-reattach-session",
+    "env-self-hosted-runner-idle-shutdown-ms",
+    "env-claude-runner-fetch-depth",
+    "env-session-ingress-url",
+    "env-claude-code-host-platform",
+    "env-claude-code-provider-managed-by-host"
+   ],
+   "false_examples": [
+    "env-claude-bg-backend",
+    "env-claude-code-use-bedrock"
+   ]
+  },
+  {
+   "id": "network",
+   "label": "Network, proxies and timeouts",
+   "definition": "Environment variables for how Claude Code's network connections behave. Counts: HTTP, HTTPS and SOCKS proxies and NO_PROXY; proxy authentication helpers; CA certificate stores and extra CA files; TLS settings; DNS resolution; API request timeouts; retry counts; streaming idle and first-byte watchdogs; non-streaming fallback; and request compression. Applies whatever group the variable is in. Does NOT include which model provider or base URL is used (Providers), or tool-specific timeouts such as Bash or MCP timeouts (those belong to their tool's topic).",
+   "true_examples": [
+    "env-http-proxy",
+    "env-no-proxy",
+    "env-node-extra-ca-certs",
+    "env-claude-code-cert-store",
+    "env-api-timeout-ms",
+    "env-claude-code-max-retries",
+    "env-claude-byte-stream-idle-timeout-ms",
+    "env-claude-code-gzip-request-bodies"
+   ],
+   "false_examples": [
+    "env-anthropic-vertex-base-url",
+    "env-bash-max-timeout-ms",
+    "env-mcp-timeout"
+   ]
+  },
+  {
+   "id": "terminal-ui",
+   "label": "Terminal UI, commands and IDE",
+   "definition": "Environment variables that change what the user sees or types in the terminal or IDE. Counts: fullscreen and alternate-screen rendering; mouse, cursor and scrolling; colors and truecolor; syntax highlighting; accessibility and screen-reader mode; terminal titles; startup logo and hints; prompt suggestions; keyboard handling; hiding slash commands; and IDE extension connection. OS variables count only when they force or disable a display feature (FORCE_COLOR, NO_COLOR, FORCE_HYPERLINK). Applies whatever group the variable is in. Does NOT include plain OS, shell or CI variables that Claude Code merely reads (TERM, HOME, PATH, CI), or logging (Observability).",
+   "true_examples": [
+    "env-claude-code-no-flicker",
+    "env-claude-code-disable-alternate-screen",
+    "env-claude-ax-screen-reader",
+    "env-claude-code-disable-terminal-title",
+    "env-claude-code-syntax-highlight",
+    "env-force-color",
+    "env-disable-doctor-command",
+    "env-claude-code-auto-connect-ide"
+   ],
+   "false_examples": [
+    "env-term",
+    "env-path",
+    "env-claude-code-debug-logs-dir"
+   ]
+  }
+ ]
+}

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-// Standalone model-facing prompts in Claude Code 2.1.280: built-in subagent definitions,
-// bundled skills, and utility prompts (side queries, evaluators, summarizers, classifiers).
-// Writes outputs/{agents,skills,utility-prompts}.{json,md}. Review evidence stays in work/.
+// Standalone model-facing prompts in Claude Code 2.1.280: built-in subagent definitions and
+// utility prompts (side queries, evaluators, summarizers, classifiers). Bundled skills moved
+// to extract/skills.mjs. Writes outputs/{agents,utility-prompts}.{json,md}. Review evidence
+// stays in work/.
 //
 // Every text is rendered from the AST of the embedded chunks: template literals, `+` chains,
 // [..].join(sep), statically resolvable constants (followed through chunk imports) and small
@@ -875,23 +876,7 @@ function frontmatter(text) {
   return out;
 }
 
-const SKILL_LABELS = { simplify: { "Oe(o)": "the Agent tool is available in this context (from code: the two prompts are the multi-agent and the single-pass variants)" } };
-const SKILL_FAILURES = [];
 const details_parts = {}; const provsExtra = [];
-// Skills whose prompt is assembled by code the renderer cannot follow: their prompt fragments,
-// given as [file, start, end] ranges (every outermost string expression starting inside) or anchors.
-const SKILL_PARTS = {
-  "code-review": [["chunk-daa108e6.js", 70000, 89990]],
-  "update-config": [["chunk-daa108e6.js", 208000, 224100]],
-  batch: [["chunk-daa108e6.js", 35600, 41200]],
-  loop: [["chunk-rhs0r6ze.js", 0, 21280]],
-  schedule: [["chunk-w3v33vhw.js", 19000, 30560]],
-  "workflow-authoring": [{ file: "chunk-2q9yd9pz.js", anchor: "# Workflow authoring reference" }],
-  "setup-claude": [["chunk-c4qymhw4.js", 0, 1e9]],
-  "artifact-capabilities": [["chunk-daa108e6.js", 20400, 24600]],
-  commit: [{ file: "chunk-daa108e6.js", anchor: "- Current git diff (st" }],
-  pr: [{ file: "chunk-daa108e6.js", anchor: "- Current branch: !`gi" }],
-};
 function partsFor(specs) {
   const out = []; const seen = new Set();
   const cands = JSON.parse(readFileSync(new URL("../work/candidates.json", import.meta.url), "utf8"));
@@ -913,120 +898,6 @@ function climbFrom(file, start) {
   return hit;
 }
 
-function skillItems() {
-  const items = []; const usedFiles = new Set();
-  const chunks = readdirSyncSafe().filter(f => f.startsWith("chunk-"));
-  for (const file of chunks) {
-    if (!readFileSync(EXTRACTED + file, "utf8").includes("getPromptForCommand")) continue;
-    const objs = findObjects(file, (o, p) => p.has("getPromptForCommand") && p.has("name") && !p.has("type"));
-    for (const obj of objs) {
-      const props = new Map(obj.properties.filter(p => p.type === "Property").map(p => [p.key.name ?? p.key.value, p]));
-      const gp = props.get("getPromptForCommand").value;
-      // generator: for (const {kind, ...} of LIST) register({name: `x-${kind}`, ...})
-      const loop = (() => { for (let p = load(file).parent.get(obj); p; p = load(file).parent.get(p)) { if (p.type === "ForOfStatement") return p; if (/Function/.test(p.type)) return null; } return null; })();
-      const loaders = dynamicLoaders(file, gp).map(f => ({ f, map: loaderMap(f) })).filter(x => x.map);
-      const elements = loop ? (staticObjects(file, loop.right) ?? [null]) : [null];
-      for (const el of elements) {
-        const bindings = {};
-        if (el && loop.left.type === "VariableDeclaration") for (const pr of loop.left.declarations[0].id.properties ?? []) bindings[pr.value.name] = el[pr.key.name];
-        const fields = {};
-        for (const k of SKILL_FIELDS) {
-          if (!props.has(k)) continue; const v = props.get(k).value;
-          if (v.type === "Identifier" && v.name in bindings) { fields[k] = bindings[v.name]; continue; }
-          if (v.type === "TemplateLiteral" && el) { fields[k] = v.quasis.map((q, i) => q.value.cooked + (v.expressions[i] ? bindings[v.expressions[i].name] ?? `{{expr:${abbrev(rawOf(file, v.expressions[i]))}}}` : "")).join(""); continue; }
-          const sv = staticValue(file, v); if (sv !== undefined) { fields[k] = sv; continue; }
-          if (v.type === "ArrowFunctionExpression" || v.type === "FunctionExpression") { fields[k] = "(computed by a function at run time; read at the definition offset)"; continue; }
-          const r = render(file, v, {}); fields[k] = joinParts(r.parts);
-        }
-        if (!fields.name || /\{\{expr:/.test(fields.name)) { if (!fields.name) continue; }
-        // embedded body
-        let emb = null;
-        for (const L of loaders) { const f = typeof L.map === "string" ? L.map : (el && bindings[loop.left.declarations[0].id.properties[0].value.name] !== undefined ? L.map[el.kind ?? el[Object.keys(el)[0]]] : null); if (f) { emb = embeddedFile(f); break; } }
-        // prompt composition (returns of getPromptForCommand with a text part)
-        const comps = [];
-        for (const ret of returnsOf(gp)) {
-          if (ret.type !== "ArrayExpression") continue;
-          for (const elx of ret.elements) {
-            if (elx?.type !== "ObjectExpression") continue;
-            const tp = elx.properties.find(p => (p.key?.name ?? p.key?.value) === "text"); if (!tp) continue;
-            const pname = gp.params[0]?.type === "Identifier" ? gp.params[0].name : null;
-            const names = pname ? { [pname]: { name: "ARGUMENTS", info: "the text the user typed after the skill name (first argument of getPromptForCommand; from code)" } } : {};
-            comps.push(renderItem(`skill.${fields.name}`, file, tp.value, { names, passthrough: ["Vte"], labels: SKILL_LABELS[fields.name] }));
-          }
-        }
-        const refs = referencesFor(loaders.length ? loaders : dynamicLoaders(file, obj).map(f => ({ f })), el ? el.kind : undefined);
-        const extraParts = SKILL_PARTS[fields.name];
-        if (extraParts) details_parts[fields.name] = partsFor(extraParts);
-        const id = `skill-${String(fields.name).replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
-        const defProv = provOf({ file, start: obj.start, end: obj.end, role: "definition" });
-        const details = { registration: fields, ...(refs.length ? { references: refs } : {}), ...(details_parts[fields.name] ? { prompt_parts: details_parts[fields.name], prompt_parts_note: "Prompt fragments located in code for this skill (from code); the code assembles them at run time (by effort level, flags or tool availability) and that assembly is not reconstructed here." } : {}) };
-        if (details_parts[fields.name]) provsExtra.push(...details_parts[fields.name].flatMap(x => x.provenance));
-        let text, provs;
-        if (emb) {
-          usedFiles.add(emb.path);
-          text = emb.text; provs = [emb.provenance, defProv, ...provsExtra.splice(0)];
-          details.embedded_file = emb.path; details.words = emb.words;
-          const fm = frontmatter(emb.text); if (fm) details.frontmatter = fm;
-          if (comps.length) details.prompt_composition = comps.map(c => ({ text: c.text, ...c.details }));
-          details.note = "The prompt sent is composed in code from this file (frontmatter stripped by the loader, from code: .content of the parsed file) plus the parts shown in prompt_composition.";
-        } else if (comps.length) {
-          text = comps[0].text; provs = [...comps[0].provenance, defProv, ...provsExtra.splice(0)];
-          Object.assign(details, comps[0].details);
-          if (comps.length > 1) details.other_returns = comps.slice(1).map(c => ({ text: c.text, ...c.details }));
-        } else { text = null; provs = [defProv, ...provsExtra.splice(0)]; details.note = "getPromptForCommand builds its prompt through code this extractor does not render; read at the definition offset."; }
-        const title = /\{\{expr:/.test(String(fields.name)) ? "claude-test generated skills (name looked up at run time)" : `/${fields.name}`;
-        if (emb === null && typeof loaders[0]?.map === "object") details.skill_files_loader = loaders[0].f;
-        items.push({ id, title, group: "Bundled skills defined in code", kind: "skill", text,
-          when: [fields.whenToUse && `whenToUse: ${fields.whenToUse}`, fields.userInvocable === true ? "User-invocable as a slash command." : null, fields.disableModelInvocation === true ? "The model cannot invoke it (disableModelInvocation)." : null].filter(Boolean).join(" ") || null,
-          documented: null, details, provenance: provs });
-      }
-    }
-  }
-  // /code-review: one prompt per review recipe (from code: switch in Ps(recipe, …))
-  try {
-    const f = "chunk-daa108e6.js"; const ps = def(f, "Ps"); const sw = ps.node.body.body.find(x => x.type === "SwitchStatement");
-    for (const cs of sw.cases) {
-      const recipe = cs.test.value; const ret = cs.consequent.find(x => x.type === "ReturnStatement")?.argument; if (!ret) continue;
-      let node = ret, rf = f;
-      if (ret.type === "CallExpression") { const d = lookup(f, ret.callee); const fn = d && (d.kind === "function" ? d.node : d.init); if (fn && /Function/.test(fn.type) && singleReturn(fn)) { node = singleReturn(fn); rf = d.file ?? f; } }
-      if (!node) continue;
-      const r = renderItem(`code-review.${recipe}`, rf, node, { primaryFunction: node !== ret });
-      items.push({ id: `skill-code-review-recipe-${recipe}`, title: `/code-review recipe: ${recipe}`, group: "/code-review review recipes", kind: "skill", text: r.text,
-        when: `Prompt for review recipe "${recipe}" (from code: case "${recipe}" of the recipe switch in the code-review skill); which effort level and model select this recipe comes from a lookup table that is not reconstructed here.`,
-        documented: `${DOCS}commands`, details: r.details, provenance: [...r.provenance, provOf({ file: f, start: cs.start, end: cs.end, role: "dispatch" })] });
-    }
-  } catch (e) { SKILL_FAILURES.push(`code-review recipes: ${e.message}`); }
-  // prompts in the bundled-skills chunk whose registration the loop above does not match
-  for (const [id, title, anchor] of [["skill-skillify", "Skillify prompt", "# Skillify"], ["skill-stuck", "/stuck prompt", "# /stuck — diagnose frozen/slow Claude Code sessions"]]) {
-    try { const f = "chunk-daa108e6.js"; const r = renderItem(id, f, locate(f, anchor), {});
-      items.push({ id, title, group: "Bundled skills defined in code", kind: "skill", text: r.text, when: `Undocumented; read at ${r.provenance[0].file} offset ${r.provenance[0].binary_offset}. Its registration was not matched by this extractor.`, documented: null, details: r.details, provenance: r.provenance });
-    } catch (e) { SKILL_FAILURES.push(`${id}: ${e.message}`); }
-  }
-  // embedded SKILL files no registration above reads
-  for (const [name] of manifest) {
-    if (!/^SKILL[\w-]*\.md(\.zst)?$/.test(name)) continue;
-    const plain = name.replace(/\.zst$/, ""); if (usedFiles.has(plain) || (name.endsWith(".zst") && manifest.has(plain))) continue;
-    usedFiles.add(plain);
-    const emb = embeddedFile(name); const fm = frontmatter(emb.text) || {};
-    const title = fm.name ? `/${fm.name}` : (emb.text.match(/^#\s+(.+)/m)?.[1] ?? plain);
-    items.push({ id: `skill-file-${plain.replace(/\.md$/, "").toLowerCase()}`, title, group: "Embedded skill files", kind: "skill", text: emb.text,
-      when: fm.when_to_use ? `when_to_use (frontmatter): ${fm.when_to_use}` : null, documented: null,
-      details: { embedded_file: plain, words: emb.words, ...(Object.keys(fm).length ? { frontmatter: fm } : {}), references_from: referencingChunks(plain) }, provenance: [emb.provenance] });
-  }
-  return dedupeSkillIds(items);
-}
-function dedupeSkillIds(items) { const n = new Map(); return items.map(it => { const c = n.get(it.id) ?? 0; n.set(it.id, c + 1); return c ? { ...it, id: `${it.id}-${c + 1}` } : it; }); }
-function staticObjects(file, node) {
-  let n = node; if (n.type === "Identifier") { const l = lookup(file, n); n = l?.init; }
-  if (n?.type !== "ArrayExpression") return null;
-  return n.elements.map(e => e.type === "ObjectExpression" ? Object.fromEntries(e.properties.map(p => [p.key.name ?? p.key.value, staticValue(file, p.value)])) : null);
-}
-function referencingChunks(plain) {
-  const key = plain.replace(/\.md$/, "");
-  return readdirSyncSafe().filter(f => f.startsWith("chunk-") && readFileSync(EXTRACTED + f, "utf8").includes(key));
-}
-let _dir = null;
-function readdirSyncSafe() { _dir ??= execSync(`ls ${EXTRACTED}`, { encoding: "utf8" }).split("\n").filter(Boolean); return _dir; }
 
 // ---------------------------------------------------------------- verification
 // 1. Every literal part of every rendered text equals a string literal / template chunk inside
@@ -1198,12 +1069,10 @@ function dedupeTexts(items, seen) {
 const seenTexts = new Map();
 const agents = dedupeTexts(agentItems(), seenTexts);
 const utility = dedupeTexts(splitVariants(typeof utilityItems === "function" ? utilityItems() : []), seenTexts);
-const skills = dedupeTexts(splitVariants(typeof skillItems === "function" ? skillItems() : []), seenTexts);
-const all = [...agents, ...utility, ...skills];
+const all = [...agents, ...utility];
 const ids = new Set(); for (const it of all) { if (ids.has(it.id)) throw new Error(`duplicate id ${it.id}`); ids.add(it.id); }
 writeArea("agents", "Built-in subagents", "Built-in subagent definitions and their system prompts in Claude Code.", agents);
 if (utility.length) writeArea("utility-prompts", "Utility prompts", "Standalone model-facing prompts in Claude Code outside the main system prompt, tool descriptions and system reminders: side queries, evaluators, classifiers, summarizers and agent-mode prompts.", utility);
-if (skills.length) writeArea("skills", "Bundled skills", "Skills bundled with Claude Code: embedded SKILL.md files and skills defined in code.", skills);
 const partProblems = verifyParts();
 const bin = verifyBinary(all);
 // Coverage: "You are…" and ≥150-word prose candidates that fall inside none of these ranges.
@@ -1212,7 +1081,7 @@ const cands = JSON.parse(readFileSync(new URL("../work/candidates.json", import.
 const inRange = c => covered.some(p => p.file === c.file && p.binary_offset <= manifest.get(c.file).file_offset + c.byte_start && manifest.get(c.file).file_offset + c.byte_start < p.binary_offset + p.length);
 const uncovered = cands.filter(c => (/^\s*You are/.test(c.text) || c.words >= 150) && !inRange(c)).map(c => ({ file: c.file, start: c.start, binary_offset: manifest.get(c.file).file_offset + c.byte_start, words: c.words, head: c.text.slice(0, 90).replace(/\s+/g, " ") }));
 const naive = contractCheck(all);
-const report = { contract_check_provenance0: { failing: naive.length, items: naive }, items: { agents: agents.length, utility: utility.length, skills: skills.length }, failures: [...(typeof FAILURES === "undefined" ? [] : FAILURES), ...(typeof SKILL_FAILURES === "undefined" ? [] : SKILL_FAILURES)], part_problems: partProblems, binary: bin, uncovered_candidates: uncovered };
+const report = { contract_check_provenance0: { failing: naive.length, items: naive }, items: { agents: agents.length, utility: utility.length }, failures: [...(typeof FAILURES === "undefined" ? [] : FAILURES), ...(typeof SKILL_FAILURES === "undefined" ? [] : SKILL_FAILURES)], part_problems: partProblems, binary: bin, uncovered_candidates: uncovered };
 writeFileSync(new URL("../work/sa/verify-report.json", import.meta.url).pathname, JSON.stringify(report, null, 2));
 console.log(JSON.stringify({ ...report, contract_check_provenance0: naive.length, part_problems: partProblems.length, binary: { ...bin, bad: bin.bad?.length }, uncovered_candidates: uncovered.length }));
 if (partProblems.length) console.log(partProblems.slice(0, 20).join("\n"));

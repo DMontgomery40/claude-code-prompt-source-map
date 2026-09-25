@@ -1,0 +1,8138 @@
+{
+ "taxonomy_version": "8782ff0162e6",
+ "threshold": 0.7,
+ "tags": [
+  {
+   "id": "prompt-caching",
+   "label": "Prompt caching",
+   "kind": "topic",
+   "definition": "Environment variables that change Anthropic prompt caching on Claude Code's model requests. Counts: the cache TTL each request gets (5-minute or 1-hour, for the main conversation or for subagents and background work); whether requests carry cache_control markers at all, for every model or for one model family (DISABLE_PROMPT_CACHING*); cache eviction and cache-scope betas; cached mid-conversation system blocks; and timing that lets parallel agents reuse a warm cached prefix. Also counts switches that the prompt-caching docs say change what stays cached, such as stripping pre-release anthropic-beta headers or turning MCP tool search off. Applies whatever group the variable is in, including undocumented variables and records of Claude Code setting the same variable for a child process. Does NOT include other caches that only share the word: the WebFetch response cache, the MCP discovery cache, plugin or zip caches, credential caches, feature-flag disk caches, XDG_CACHE_HOME, or library LRU caches. Also excludes settings fixed for the whole session that only feed the request, such as effort level or model choice, and auto-update controls.",
+   "feature": true,
+   "count": 24
+  },
+  {
+   "id": "security-permissions",
+   "label": "Security and permissions",
+   "kind": "topic",
+   "definition": "Environment variables that change what Claude Code is allowed to do, or how exposed the machine and its secrets are. Counts: permission modes, permission rules and auto-mode review; restricted, safe or plan-required modes; sandboxing (bubblewrap, sandboxed or container-sandbox flags); workspace trust; confirmation prompts before dangerous commands; PowerShell execution policy; turning TLS certificate verification off; stripping or allowlisting credentials in the environments of Bash, hooks and MCP servers; upload or egress gates that limit data leaving the machine; and file write protection. Applies whatever group the variable is in. Does NOT include which API key, token or login to use (that is Authentication), telemetry or analytics opt-outs (Privacy), or ordinary proxy and CA-certificate settings that don't weaken verification (Network).",
+   "count": 43
+  },
+  {
+   "id": "privacy-telemetry",
+   "label": "Privacy, telemetry and nonessential traffic",
+   "kind": "topic",
+   "definition": "Environment variables that control what Claude Code reports about the user, or sends beyond the model request itself. Counts: telemetry and analytics opt-outs (DISABLE_TELEMETRY, DO_NOT_TRACK); error reporting; the nonessential-traffic switch; feature-flag (GrowthBook) fetching; feedback commands and session-quality surveys; demo mode that hides account details; account or session identifiers attached to metrics; and switches that put prompt text, model responses, tool content or raw API bodies into exported logs and traces. Applies whatever group the variable is in. Does NOT include plain OpenTelemetry plumbing with no privacy effect, such as exporter endpoints, protocols, intervals, timeouts or length limits (that is Observability), or permission and sandbox controls (Security).",
+   "count": 45
+  },
+  {
+   "id": "observability",
+   "label": "Logging, tracing and diagnostics",
+   "kind": "topic",
+   "definition": "Environment variables for the logs, metrics and traces that the user collects about Claude Code. Counts: enabling OpenTelemetry; OTEL_* exporter endpoints, headers, protocols, intervals, temporality and attribute limits; trace-context propagation (TRACEPARENT); Datadog and beta tracing; debug log files and levels; diagnostics files; startup profiling and performance traces. Switches that add prompts, responses, tool content or raw API bodies to exports count here and also under Privacy. Applies whatever group the variable is in. Does NOT include Anthropic telemetry opt-outs (Privacy), network timeouts (Network), or debug-logging variables read only by bundled third-party libraries (GRPC_TRACE, NODE_DEBUG).",
+   "count": 66
+  },
+  {
+   "id": "authentication",
+   "label": "Authentication and credentials",
+   "kind": "topic",
+   "definition": "Environment variables that supply or control credentials for reaching Anthropic, cloud providers, gateways or MCP servers. Counts: API keys; bearer, OAuth access and refresh tokens; OAuth scopes, client IDs and client secrets; apiKeyHelper refresh; token file descriptors and token files; session JWTs; workload identity federation IDs; cloud credentials (AWS keys and profiles, Google application credentials, Azure identities); mTLS client certificates and keys; credential caches; and switches that skip a provider's own authentication. Applies whatever group the variable is in. Does NOT include which provider, region or endpoint is used (Providers), or scrubbing credentials out of subprocess environments (Security).",
+   "count": 111
+  },
+  {
+   "id": "providers",
+   "label": "Model providers and API endpoints",
+   "kind": "topic",
+   "definition": "Environment variables that choose or configure the backend serving model requests. Counts: switches for Amazon Bedrock, Mantle, Google Cloud Agent Platform (Vertex), Microsoft Foundry, Anthropic on AWS or Google Cloud, and LLM gateways; base URLs and endpoint overrides; regions, projects, resource and workspace names, and per-model region overrides; gateway model discovery and hint headers; and extra beta headers, custom headers or extra body fields sent with API requests. Applies whatever group the variable is in. Does NOT include credentials or skip-auth switches (Authentication); generic HTTP proxies, certificates and timeouts (Network); or choosing which Claude model runs and how it thinks, including thinking-related beta headers (Models).",
+   "count": 80
+  },
+  {
+   "id": "models-context",
+   "label": "Models, thinking and context window",
+   "kind": "topic",
+   "definition": "Environment variables that choose which Claude model runs, how much it thinks, and how much it holds. Counts: model IDs and aliases; /model picker entries; default, subagent and small-fast models; fallback and legacy remapping; effort level; extended, adaptive or interleaved thinking, thinking budgets and the thinking parameter or beta header; maximum output tokens; fast mode; 1M context; the context-window size Claude Code assumes; auto-compaction thresholds and windows; and turning compaction off. Applies whatever group the variable is in. Does NOT include per-model prompt-cache switches (Prompt caching), provider regions for a model (Providers), or text injected into the prompt (Prompt and instructions).",
+   "count": 49
+  },
+  {
+   "id": "prompt-instructions",
+   "label": "Prompt, instructions and memory",
+   "kind": "topic",
+   "definition": "Environment variables that replace, shorten, add or remove text that Claude Code puts in the model's context. Counts: system prompt variants (simple or minimal prompts); built-in git or browser-tool instructions; CLAUDE.md and memory-file loading; auto memory and memory guidelines; system reminders and their text; resume or continuation prompts; skill-listing budgets; MCP description length limits; and prompt override files. Applies whatever group the variable is in. Does NOT include model choice or compaction (Models), or settings that change behavior without changing the prompt text.",
+   "count": 45
+  },
+  {
+   "id": "mcp",
+   "label": "MCP servers",
+   "kind": "topic",
+   "definition": "Environment variables for Model Context Protocol servers and their tools. Counts: MCP_* and CLAUDE_CODE_MCP_* settings; server connection batching; startup and tool timeouts; the MCP discovery cache; MCP OAuth callbacks and client secrets; MCP tool search; MCP output and description limits; claude.ai connectors and SDK-created MCP servers; and the environment MCP servers are spawned with. Applies whatever group the variable is in. Does NOT include plugins, skills or hooks in general (Plugins, skills and hooks) unless the variable is about the MCP servers they bring.",
+   "count": 59
+  },
+  {
+   "id": "plugins-skills-hooks",
+   "label": "Plugins, skills and hooks",
+   "kind": "topic",
+   "definition": "Environment variables for user- or organization-supplied extensions other than MCP. Counts: plugins and plugin marketplaces (directories, seeds, caches, sync, auto-update, git cloning); skills, including bundled and managed skills; and lifecycle hooks (hook timeouts, Stop-hook block caps, hook forwarding, function hooks, Notification hooks). Applies whatever group the variable is in. Does NOT include MCP server settings (MCP) or tools that ship with Claude Code (Built-in tools).",
+   "count": 54
+  },
+  {
+   "id": "agents-background",
+   "label": "Subagents, teams and background work",
+   "kind": "topic",
+   "definition": "Environment variables for work that runs beside or beyond the main conversation. Counts: subagents and their spawn depth, concurrency and stall timeouts; built-in Explore and Plan agents; forked subagents; agent teams and teammates; workflows; coordinator mode; background tasks and background sessions (CLAUDE_BG_*); agent view; scheduled or cron tasks; goals, auto-continue and away summaries. A subagent-specific model setting counts here and also under Models. Applies whatever group the variable is in. Does NOT include cloud-hosted or self-hosted sessions (Cloud, remote and hosted sessions), or hook settings that merely mention subagent events such as SubagentStop (Plugins, skills and hooks).",
+   "count": 89
+  },
+  {
+   "id": "built-in-tools",
+   "label": "Built-in tools",
+   "kind": "topic",
+   "definition": "Environment variables that change tools shipped with Claude Code that the model calls. Counts: Bash and PowerShell (shell choice, timeouts, output limits, working directory, prefixes, memory caps); Glob, Grep and ripgrep; file reads and file checkpointing; WebFetch and WebSearch; task and todo tools; AskUserQuestion; the advisor tool; Claude in Chrome browser tools; artifacts (CLAUDE_CODE_ARTIFACT_*); attachments; and push notifications. Applies whatever group the variable is in. Does NOT include MCP tools (MCP), plugin or skill tools (Plugins, skills and hooks), subagent spawning (Subagents), or plain OS shell variables such as SHELL.",
+   "count": 97
+  },
+  {
+   "id": "remote-hosted",
+   "label": "Cloud, remote and hosted sessions",
+   "kind": "topic",
+   "definition": "Environment variables for Claude Code running somewhere other than a local terminal, or embedded by a host. Counts: cloud sessions (claude --cloud, CCR_*); Remote Control and bridge reattachment (CLAUDE_BRIDGE_*); self-hosted runners (SELF_HOSTED_RUNNER_*, CLAUDE_RUNNER_*); session ingress tokens and URLs; host platforms, desktop apps and SDKs that embed Claude Code (CLAUDE_CODE_HOST_*, Cowork); and remote environment identifiers. Applies whatever group the variable is in. Does NOT include local background sessions (Subagents) or ordinary provider endpoints (Providers).",
+   "count": 186
+  },
+  {
+   "id": "network",
+   "label": "Network, proxies and timeouts",
+   "kind": "topic",
+   "definition": "Environment variables for how Claude Code's network connections behave. Counts: HTTP, HTTPS and SOCKS proxies and NO_PROXY; proxy authentication helpers; CA certificate stores and extra CA files; TLS settings; DNS resolution; API request timeouts; retry counts; streaming idle and first-byte watchdogs; non-streaming fallback; and request compression. Applies whatever group the variable is in. Does NOT include which model provider or base URL is used (Providers), or tool-specific timeouts such as Bash or MCP timeouts (those belong to their tool's topic).",
+   "count": 79
+  },
+  {
+   "id": "terminal-ui",
+   "label": "Terminal UI, commands and IDE",
+   "kind": "topic",
+   "definition": "Environment variables that change what the user sees or types in the terminal or IDE. Counts: fullscreen and alternate-screen rendering; mouse, cursor and scrolling; colors and truecolor; syntax highlighting; accessibility and screen-reader mode; terminal titles; startup logo and hints; prompt suggestions; keyboard handling; hiding slash commands; and IDE extension connection. OS variables count only when they force or disable a display feature (FORCE_COLOR, NO_COLOR, FORCE_HYPERLINK). Applies whatever group the variable is in. Does NOT include plain OS, shell or CI variables that Claude Code merely reads (TERM, HOME, PATH, CI), or logging (Observability).",
+   "count": 47
+  },
+  {
+   "id": "documented",
+   "label": "Documented",
+   "kind": "status",
+   "count": 514
+  },
+  {
+   "id": "undocumented",
+   "label": "Undocumented",
+   "kind": "status",
+   "count": 1103
+  },
+  {
+   "id": "read",
+   "label": "Read by Claude Code",
+   "kind": "status",
+   "count": 1151
+  },
+  {
+   "id": "set",
+   "label": "Set by Claude Code",
+   "kind": "status",
+   "count": 466
+  },
+  {
+   "id": "any-value",
+   "label": "Any value turns it on, even 0",
+   "kind": "status",
+   "count": 9
+  },
+  {
+   "id": "removed-for-children",
+   "label": "Removed from child environments",
+   "kind": "status",
+   "count": 52
+  },
+  {
+   "id": "passed-to-children",
+   "label": "Passed to tools, hooks or MCP servers",
+   "kind": "status",
+   "count": 118
+  },
+  {
+   "id": "fixed-values",
+   "label": "Fixed values",
+   "kind": "status",
+   "count": 19
+  },
+  {
+   "id": "third-party",
+   "label": "Third-party library",
+   "kind": "status",
+   "count": 63
+  },
+  {
+   "id": "os-shell",
+   "label": "OS, shell or CI",
+   "kind": "status",
+   "count": 161
+  }
+ ],
+ "items": {
+  "env-claude-code-prompt-cache-ttl": [
+   "prompt-caching",
+   "documented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-subagent-cache-evict": [
+   "prompt-caching",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-subagent-prompt-cache-ttl": [
+   "prompt-caching",
+   "agents-background",
+   "documented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-workflow-prefix-stagger-ms": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-disable-prompt-caching": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-disable-prompt-caching-fable": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-disable-prompt-caching-haiku": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-disable-prompt-caching-mythos": [
+   "prompt-caching",
+   "undocumented",
+   "read"
+  ],
+  "env-disable-prompt-caching-opus": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-disable-prompt-caching-sonnet": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-enable-prompt-caching-1h": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-enable-prompt-caching-1h-bedrock": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-force-prompt-caching-5m": [
+   "prompt-caching",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-assume-first-party-base-url": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-ai-agent": [
+   "undocumented",
+   "read",
+   "any-value"
+  ],
+  "env-anthropic-api-key": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-auth-token": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-base-url": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-betas": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-config-dir": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-custom-headers": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-custom-model-option": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-custom-model-option-description": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-custom-model-option-name": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-fable-model": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-fable-model-description": [
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-fable-model-name": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-haiku-model": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-haiku-model-description": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-haiku-model-name": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-model": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-opus-model": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-opus-model-description": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-opus-model-name": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-sonnet-model": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-sonnet-model-description": [
+   "documented",
+   "read"
+  ],
+  "env-anthropic-default-sonnet-model-name": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-environment-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-environment-key": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-federation-rule-id": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-identity-token": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-identity-token-file": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-log": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-model": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-organization-id": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-profile": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-scope": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-service-account-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-session-id": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-small-fast-model": [
+   "models-context",
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-unix-socket": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-webhook-signing-key": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-work-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-workspace-id": [
+   "authentication",
+   "providers",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-api-force-idle-timeout": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-api-timeout-ms": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-automode-decision-log": [
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-bash-default-timeout-ms": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-bash-max-output-length": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-bash-max-timeout-ms": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-bughunter-dev-bundle-b64": [
+   "undocumented",
+   "read"
+  ],
+  "env-bughunter-fleet-size": [
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-enable-bundle": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-force-bundle": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-ccr-on-branch-default-guard": [
+   "remote-hosted",
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-ccr-session-profile": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-shr-sse-hints": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-spawn-timestamp-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claubbit": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-afk-countdown-ms": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-afk-timeout-ms": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-after-last-compact": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-agent-sdk-client-app": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-agent-sdk-disable-builtin-agents": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-agent-sdk-disable-mcp-manifests": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-agent-sdk-mcp-no-prefix": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-claude-agent-sdk-version": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-agents-auto-relaunched-at": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-agents-select": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-artifact-host-grant": [
+   "built-in-tools",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-async-agent-stall-timeout-ms": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-auto-background-tasks": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-autocompact-pct-override": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-ax-prepark-ms": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-ax-screen-reader": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-ax-startup-quiet-ms": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-bash-maintain-project-working-dir": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-bg-auth-snapshot-path": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-backend": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-claim-auth": [
+   "authentication",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-dispatcher-rate-limit-tier": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-dispatcher-subscription-type": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-isolation": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-memory-toggled-off": [
+   "prompt-instructions",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-post-clear-respawn": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-pty-auth": [
+   "authentication",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-rendezvous-sock": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-rv-auth": [
+   "authentication",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-session-permission-rules": [
+   "security-permissions",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-socket-tokens-path": [
+   "authentication",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-source": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-startup-wedge-ms": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-tcc-disclaimed": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bg-workspace-trusted": [
+   "security-permissions",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-base-url": [
+   "providers",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-grouping": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-no-backfill": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-outbound-only": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-owner-acct": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-owner-org": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-seq": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-bridge-reattach-session": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-byte-stream-idle-timeout-ms": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-chrome-classifier-floor": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-chrome-paired-device-id": [
+   "privacy-telemetry",
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-chrome-permission-mode": [
+   "security-permissions",
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-client-presence-file": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-3p-probe-wrote-opus-default": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-3p-probe-wrote-sonnet-default": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-accessibility": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-account-tagged-id": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-account-uuid": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-act-dont-rederive": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-action": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-additional-directories-claude-md": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-additional-protection": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-adopt-underivable-parked-permission": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-agent": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-agent-view-relaunch": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-alt-screen-full-repaint": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-altgr-as-text": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-always-enable-effort": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-amber-astrolabe": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-api-base-url": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-api-key-file-descriptor": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-api-key-helper-ttl-ms": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-artifact": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-assets": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-auto-open": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-artifact-comment-fast-ack": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-comment-fast-ack-fixed": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-comment-responder": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-comments": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-artifact-comments-autoreact": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-artifact-db": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-db-str-replace": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-delete": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-fresh-read": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-hot": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-multi-file": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-open-action": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-opening-prefetch": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-path-pin": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-pin": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-presence": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-preview": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-quickstart": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-start-kit": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-text-variant": [
+   "built-in-tools",
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-artifact-toolset": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-type-catalog": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-type-cloud-create": [
+   "built-in-tools",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-types": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifact-verify": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-artifacts-api-token": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-attribution-announcement": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-attribution-header": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-auth-fail-exit-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-auto-background-worker-checkin-seconds": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-auto-compact-window": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-auto-connect-ide": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-auto-mode-server": [
+   "security-permissions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-basalt-cove": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-base-ref": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-base-refs": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bash-edit-diff": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-bash-output-audience-note": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bash-sandbox-show-indicator": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bench-live-counts": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bg-tasks-report-running": [
+   "agents-background",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-bison-cairn": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-blocking-limit-override": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-breezy-horizon": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bridge-child-artifact": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bridge-child-auto-default": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bridge-child-machine-settings": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bridge-mcp-carrier": [
+   "remote-hosted",
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-bridge-owner-account-uuid": [
+   "privacy-telemetry",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bridge-owner-org-uuid": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bridge-prompt-sha256": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-brief": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-brief-upload": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-bs-as-ctrl-backspace": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-bubblewrap": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ccr-early-hydrate-prefetch": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ccr-early-remote-connect": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ccr-surface": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-child-session": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-chrome-mcp-org-denied": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-classifier-summary": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-cold-compact": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-commit-between-keys": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-container-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-coordinator-extra-tools": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-coordinator-force-worker-inherit-model": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-coordinator-mode": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-coordinator-skill-guidance": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-coordinator-worker-checkin-seconds": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-cowork-frame-artifacts": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-cozy-teapot": [
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-custom-oauth-url": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-daemon-cold-start": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dd-error-tracking-flush-interval-ms": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-debug-log-level": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-debug-logs-dir": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-debug-repaints": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-decstbm": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-design-oauth-client-id": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-desktop-app-version": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-diagnostics-file": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dir-sync-chain": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dir-sync-disable-anchoring": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dir-sync-engine": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dir-sync-ffwd": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dir-sync-git": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dir-sync-stream": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-1m-context": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-adaptive-thinking": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-admin-env-union": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-advisor-tool": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-agent-view": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-alternate-screen": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-attachments": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-auto-memory": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-awaiting-user-idle": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-background-tasks": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-bg-exit-handoff": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-bg-shell-pressure-reap": [
+   "agents-background",
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-bundled-skills": [
+   "plugins-skills-hooks",
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-cfc-prompt": [
+   "prompt-instructions",
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-claude-api-skill": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-claude-code-skill": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-claude-mds": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-cron": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-dangerous-rm-timeout": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-dir-sync": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-experimental-betas": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-explore-inherit-cap": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-explore-plan-agents": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-fast-mode": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-feedback-survey": [
+   "privacy-telemetry",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-file-checkpointing": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-git-instructions": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-hook-forwarding": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-legacy-model-remap": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-memory-bulk-inflate": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-memory-mass-delete-hold": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-memory-periodic-resync": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-memory-ro-unsaved-notice": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-memory-stream-list": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-mouse": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-mouse-clicks": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-nested-chain-idle": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-nested-user-repair": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-nonessential-traffic": [
+   "privacy-telemetry",
+   "documented",
+   "read",
+   "any-value"
+  ],
+  "env-claude-code-disable-nonstreaming-fallback": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-notification-presence-check": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-official-marketplace-autoinstall": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-org-memory": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-permission-prompt-notify-hooks": [
+   "security-permissions",
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-plugin-forwarding": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-policy-skills": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-precompact-skip": [
+   "models-context",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-refusal-fallback": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-refusal-retry": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-startup-work-gate": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-substitution-rm-prompt": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-terminal-title": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-thinking": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-turn-handoff": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-unknown-model-window-enforcement": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-virtual-scroll": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-vitals-emitter": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-windows-shell-launcher": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-workflows": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-working-sync": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-dont-inherit-env": [
+   "undocumented",
+   "read",
+   "any-value"
+  ],
+  "env-claude-code-download-deadline-ms-for-testing": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-eager-flush": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-editor-codelivery": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-effort-level": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-elegant-meadow": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-emit-session-state-events": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-emit-startup-timing": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-emit-tool-use-summaries": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-append-subagent-prompt": [
+   "prompt-instructions",
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-away-summary": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-background-plugin-refresh": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-cfc": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-experimental-advisor-tool": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-fine-grained-tool-streaming": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-function-hooks": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-menu-kind-lanes": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-narration": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-prompt-suggestion": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-refresh-mcp-tools": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-remote-recap": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-sdk-file-checkpointing": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-tasks": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-todo-tools": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-token-usage-attachment": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-xaa": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-entrypoint": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-environment-kind": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-environment-runner-version": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-eval-confined": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-eval-interview-session": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-exit-after-first-render": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-exit-after-stop-delay": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-experimental-agent-teams": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-experimental-observer-agents": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-extra-body": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-extra-metadata": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-federation-cache-dir": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-file-read-max-output-tokens": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-flag-fetch-wait-ms": [
+   "privacy-telemetry",
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-fleetview-simple": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-footer-indicator": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-force-fullscreen-upsell": [
+   "terminal-ui",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-force-mid-conversation-system": [
+   "prompt-caching",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-force-session-persistence": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-force-strikethrough": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-force-sync-output": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-force-terminal-images": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-force-windows-credman": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-fork-subagent": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-forward-subagent-text": [
+   "privacy-telemetry",
+   "observability",
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-forward-user-intent": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-frame-timing-log": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-frame-timing-sample-every": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-git-bash-path": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-glob-hidden": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-glob-no-ignore": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-glob-timeout-seconds": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-goal-checkin-minutes": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-gorse-plover": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-gzip-ccr-request-bodies": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-gzip-request-bodies": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-gzip-request-body-level": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-harbor-kite": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-harbor-kite-cloud": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-harbor-kite-pacing-off": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-hide-cwd": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-hide-settings-hint": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-hold-report-park-at-init": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-home-seed-hold-timeout-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-home-seed-verdict-timeout-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-hooks-same-thread": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-auth-env-var": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-auth-refresh-timeout-ms": [
+   "authentication",
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-creds-file": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-platform": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-scheduled-run": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-session-id": [
+   "privacy-telemetry",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-hover-rest": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-humble-hammock": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ide-host-override": [
+   "remote-hosted",
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-ide-skip-auto-install": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-ide-skip-valid-check": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-idle-threshold-minutes": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-idle-token-threshold": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-include-partial-messages": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-inline-tools": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-intro-frame": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-is-cowork": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-juniper-sundial": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-kb-cohesion-fixes": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-lantern-prism": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-larch-cistern": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-legacy-bundle": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-loop-keepalive": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-loop-persistent": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-max-concurrent-subagents": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-context-tokens": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-effort-reminder": [
+   "models-context",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-max-mcp-description-length": [
+   "prompt-instructions",
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-output-tokens": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-retries": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-subagent-spawn-depth": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-tool-use-concurrency": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-turns": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-max-web-searches-per-session": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-mcp-allowlist-env": [
+   "security-permissions",
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-mcp-apps-host": [
+   "mcp",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-mcp-auto-background-ms": [
+   "mcp",
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-mcp-connector-prewait-ms": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-mcp-memory-cgroup": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-mcp-startup-wait-ms": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-mcp-tool-idle-timeout": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-memory-push-delete-mode": [
+   "prompt-instructions",
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-messaging-socket": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-model-capabilities": [
+   "models-context",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-model-catalog": [
+   "models-context",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-model-catalog-url": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-nankeen-kestrel": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-native-cursor": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-new-init": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-no-flicker": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-no-model-fallback": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-nonblocking-stdout": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-oauth-401-wait-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-oauth-client-id": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-oauth-refresh-token": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-oauth-scopes": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-oauth-token": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-oauth-token-file-descriptor": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-organization-uuid": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-package-manager-auto-update": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-parchment-fern": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-parked-permission-wait-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-parked-run-before-clear": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-parked-stop-retires": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-parsed-willow": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-perforce-mode": [
+   "security-permissions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-pewter-owl": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-pewter-owl-tool": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plan-mode-required": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plan-v2-agent-count": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plan-v2-explore-agent-count": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plugin-attribution": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plugin-binary-assets": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plugin-cache-dir": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-plugin-dir-watch": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-plugin-dirs": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-plugin-git-timeout-ms": [
+   "plugins-skills-hooks",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-plugin-keep-marketplace-on-failure": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-plugin-prefer-https": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-plugin-seed-dir": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-plugin-use-zip-cache": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-polished-dewdrop": [
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-poll-events": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-post-turn-memory": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-post-turn-memory-config": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-post-turn-memory-sync": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-powershell-respect-execution-policy": [
+   "security-permissions",
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-powerup-onboarding": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-print-bg-wait-ceiling-ms": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-proactive": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-process-wrapper": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-profile-startup": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-project-dir-name": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-projects-session": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-propagate-traceparent": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-provider-managed-by-host": [
+   "providers",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-pwsh-parse-timeout-ms": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-question-extended": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-question-optional-descriptions": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-question-preview-format": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-rate-limit-tier": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-refusal-fallback-catch-all": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-relaunch-terminal-size": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-remote": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-remote-environment-type": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-remote-hermetic-mode": [
+   "security-permissions",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-remote-memory-dir": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-remote-send-keepalives": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-remote-session-id": [
+   "privacy-telemetry",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-remote-session-origin": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-repo-checkouts": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-report-findings": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-restricted": [
+   "security-permissions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-resume-from-session": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-resume-interrupted-turn": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-resume-interrupted-turn-max-age-ms": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-resume-prompt": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-resume-reason": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-resume-source-alive": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-resume-threshold-minutes": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-resume-token-threshold": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-resume-tolerates-context-appends": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-retry-watchdog": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-rustling-pixel": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-safe-mode": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-sandboxed": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-script-caps": [
+   "security-permissions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-scroll-speed": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-sdk-has-host-auth-refresh": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sdk-has-oauth-refresh": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-send-feedback": [
+   "privacy-telemetry",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-session-access-token": [
+   "authentication",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-session-attended": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-session-id": [
+   "privacy-telemetry",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-session-kind": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-session-log": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-session-name": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-session-origin": [
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-session-start-announcements-before-prompt": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sessionend-hooks-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-shell": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-shell-prefix": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-silent-turn-reminder": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-silent-turn-reminder-text": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-silent-turn-reminder-turns": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-simple": [
+   "prompt-instructions",
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-simple-system-prompt": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skill-attribution": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-skill-proposals": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-skip-fast-mode-network-errors": [
+   "models-context",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-fast-mode-org-check": [
+   "models-context",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-plugin-mcp-servers": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-skip-plugin-mcp-servers-except": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-skip-prompt-history": [
+   "privacy-telemetry",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-slow-operation-threshold-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-spawn-timestamp-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-squishy-newt": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sse-port": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-stall-timeout-ms-for-testing": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-startup-failure-results": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-stellar-drift": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-stop-hook-block-cap": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-subagent-model": [
+   "models-context",
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-subagent-model-force": [
+   "models-context",
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-subprocess-env-scrub": [
+   "security-permissions",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-subscription-type": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-supervised": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-suppress-session-attribution": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-plugin-install": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-sync-plugin-install-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-sync-plugins": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-plugins-buffered-download": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-plugins-download-stall-ms": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-plugins-install-timeout-ms": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-plugins-mcp-timeout-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-reuse-within-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-session-refs": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-sync-skills": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-sync-skills-install-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-sync-skills-wait-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-syntax-highlight": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-system-prompt-gb-feature": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tags": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-task-list-id": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-team-teardown-park-timeout-ms": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-tee-sdk-stdout": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-terminal-mcp-tools": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-test-allow-real-network": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-test-fixtures-root": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-thinking-display-updates": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-thistle-grebe": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-thrifty-sonic": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tmpdir": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-tmux-prefix": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tmux-prefix-conflicts": [
+   "built-in-tools",
+   "terminal-ui",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tmux-session": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tmux-truecolor": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-todo-reminder-mode": [
+   "undocumented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-code-tool-memory-cgroup-exclude": [
+   "documented",
+   "read"
+  ],
+  "env-claude-code-tool-memory-limit": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-total-tokens-reminder": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-total-tokens-reminder-after-user-turn": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-total-tokens-reminder-budget": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-transcript-local-gc": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-trigger-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tui-just-switched": [
+   "terminal-ui",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-tui-trial": [
+   "terminal-ui",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-turn-updates": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ultrareview-preflight-fixture": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ultrareview-quota-fixture": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-use-cowork-plugins": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-use-powershell-tool": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-user-dialog-timeout-ms": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-user-email": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-voice-forward-interims-typed": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-web-fetch-agent": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-web-search-fast-arg": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-webfetch-cache-ttl-ms": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-webfetch-deadline-ms": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-websocket-auth-file-descriptor": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-willow-tern": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-wise-comet": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-worker-epoch": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-workflow-max-concurrent-agents": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-workflow-size-warning-agents": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-workflow-size-warning-tokens": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-workflows": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-workspace-host-paths": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-config-dir": [
+   "documented",
+   "read"
+  ],
+  "env-claude-cowork-memory-extra-guidelines": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-cowork-memory-guidelines": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-cowork-memory-index-content": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-cowork-memory-path-override": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-debug": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-disable-adopt": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-enable-byte-watchdog": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-enable-stream-watchdog": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-env-file": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-claude-force-display-survey": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-import-conversations": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-internal-assistant-team-name": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-internal-fc-overrides": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-job-dir": [
+   "agents-background",
+   "documented",
+   "read"
+  ],
+  "env-claude-local-oauth-api-base": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-local-oauth-apps-base": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-local-oauth-console-base": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-memory-stores": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-project-uuid": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-pty-heartbeat-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-pty-host-exec": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-pty-orphan-check-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-pty-record": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-relaunch-session-add-dirs": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-remote-control-session-name-prefix": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-remote-workflow-args": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-remote-workflow-script": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-runner-activity-fd": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-runner-api-base-url": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-runner-disable-awaiting-action-override": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-runner-fetch-depth": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-runner-session-id": [
+   "privacy-telemetry",
+   "observability",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-runner-skip-git-verify": [
+   "remote-hosted",
+   "documented",
+   "read",
+   "fixed-values"
+  ],
+  "env-claude-securestorage-config-dir": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-session-ingress-token-file": [
+   "authentication",
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-claude-slow-first-byte-ms": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-stage-file-root": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-stream-first-byte-timeout-ms": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-stream-idle-timeout-ms": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-tmpdir": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-trusted-device-token": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-workflow-name-only": [
+   "undocumented",
+   "read"
+  ],
+  "env-claudecode": [
+   "documented",
+   "read"
+  ],
+  "env-clipboard-napi-node-path": [
+   "undocumented",
+   "read"
+  ],
+  "env-container-sandbox-mount-point": [
+   "security-permissions",
+   "undocumented",
+   "read"
+  ],
+  "env-debug-claude-agent-sdk": [
+   "undocumented",
+   "read"
+  ],
+  "env-debug-sdk": [
+   "undocumented",
+   "read"
+  ],
+  "env-demo-version": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-disable-auto-compact": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-disable-autoupdater": [
+   "documented",
+   "read"
+  ],
+  "env-disable-brief-mode-stop-hook": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "read"
+  ],
+  "env-disable-bug-command": [
+   "documented",
+   "read"
+  ],
+  "env-disable-compact": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-disable-cost-warnings": [
+   "documented",
+   "read"
+  ],
+  "env-disable-doctor-command": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-disable-error-reporting": [
+   "privacy-telemetry",
+   "documented",
+   "read",
+   "any-value"
+  ],
+  "env-disable-extra-usage-command": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-disable-feedback-command": [
+   "privacy-telemetry",
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-disable-growthbook": [
+   "privacy-telemetry",
+   "documented",
+   "read"
+  ],
+  "env-disable-install-github-app-command": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-disable-installation-checks": [
+   "documented",
+   "read"
+  ],
+  "env-disable-interleaved-thinking": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-disable-login-command": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-disable-logout-command": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-disable-updates": [
+   "documented",
+   "read"
+  ],
+  "env-disable-upgrade-command": [
+   "terminal-ui",
+   "documented",
+   "read"
+  ],
+  "env-enable-claudeai-mcp-servers": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-enable-mcp-large-output-files": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-enable-tool-search": [
+   "prompt-caching",
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-fallback-for-all-primary-models": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-force-autoupdate-plugins": [
+   "plugins-skills-hooks",
+   "documented",
+   "read"
+  ],
+  "env-homeshare": [
+   "undocumented",
+   "read"
+  ],
+  "env-is-demo": [
+   "privacy-telemetry",
+   "documented",
+   "read",
+   "any-value"
+  ],
+  "env-is-sandbox": [
+   "security-permissions",
+   "undocumented",
+   "read",
+   "any-value"
+  ],
+  "env-local-bridge": [
+   "undocumented",
+   "read"
+  ],
+  "env-max-mcp-output-tokens": [
+   "models-context",
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-max-structured-output-retries": [
+   "documented",
+   "read"
+  ],
+  "env-max-thinking-tokens": [
+   "models-context",
+   "documented",
+   "read"
+  ],
+  "env-mcp-client-secret": [
+   "authentication",
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-connect-timeout-ms": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-connection-nonblocking": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-discovery-cache": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-discovery-cache-max-stale-s": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-discovery-cache-strikes": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-discovery-cache-ttl-s": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-oauth-callback-port": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-oauth-client-metadata-url": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-mcp-protocol-negotiation": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-remote-server-connection-batch-size": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-sdk-generation": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-server-connection-batch-size": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-timeout": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-tool-timeout": [
+   "mcp",
+   "documented",
+   "read"
+  ],
+  "env-mcp-truncation-prompt-override": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-mcp-xaa-idp-client-secret": [
+   "authentication",
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-runner-environment": [
+   "undocumented",
+   "read"
+  ],
+  "env-runner-os": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-runner-release-idle-session-min": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-safeuser": [
+   "undocumented",
+   "read"
+  ],
+  "env-sdk-native-bin": [
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-base-dir": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-bg-result-grace-ms": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-self-hosted-runner-client-label": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-configure-git": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-confine-repo-settings": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-debug-dir": [
+   "observability",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-debug-token-dir": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-defer-shutdown-max-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-drain-grace-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-drain-marker-file": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-drain-wait-bg-tasks-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-drain-wait-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-environment-secret": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-exec-path": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-health-port": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-hooks-dir": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-host-config-dir": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-self-hosted-runner-host-config-snapshot": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-idle-shutdown-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-lock-to-account": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-log-file": [
+   "observability",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-max-lifetime-grace-ms": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-self-hosted-runner-max-lifetime-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-pool-secret": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-post-session-hook-timeout-ms": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-post-turn-settle-ms": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-self-hosted-runner-push-outcome-on-release": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-release-idle-session-min": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-remove-session-state": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-retire-at": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-session-idle-min": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-session-idle-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-session-idle-sec": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-session-stop-grace-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-sigkill-grace-ms": [
+   "remote-hosted",
+   "documented",
+   "read"
+  ],
+  "env-self-hosted-runner-sigkill-timeout-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-startup-timeout-ms": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-trust-workspace": [
+   "security-permissions",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-session-ingress-url": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-slash-command-tool-char-budget": [
+   "prompt-instructions",
+   "documented",
+   "read"
+  ],
+  "env-srt-debug": [
+   "undocumented",
+   "read"
+  ],
+  "env-swe-bench-instance-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-swe-bench-run-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-swe-bench-task-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-system-reminder-memory-context": [
+   "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-test-enable-session-persistence": [
+   "undocumented",
+   "read"
+  ],
+  "env-use-api-context-management": [
+   "undocumented",
+   "read"
+  ],
+  "env-use-builtin-ripgrep": [
+   "built-in-tools",
+   "documented",
+   "read"
+  ],
+  "env-use-local-oauth": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-use-staging-oauth": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-vitals-emitter-bin": [
+   "undocumented",
+   "read"
+  ],
+  "env-voice-stream-base-url": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-aws-api-key": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-aws-base-url": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-aws-workspace-id": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-bedrock-base-url": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-bedrock-mantle-base-url": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-bedrock-region-prefix": [
+   "providers",
+   "documented",
+   "read",
+   "fixed-values"
+  ],
+  "env-anthropic-bedrock-service-tier": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-small-fast-model-aws-region": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-aws-access-key-id": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-bearer-token-bedrock": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-aws-config-file": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-container-credentials-full-uri": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-container-credentials-relative-uri": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-default-region": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-endpoint-url": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-endpoint-url-sts": [
+   "undocumented",
+   "read"
+  ],
+  "env-aws-execution-env": [
+   "undocumented",
+   "read"
+  ],
+  "env-aws-lambda-function-name": [
+   "undocumented",
+   "read"
+  ],
+  "env-aws-profile": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-region": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-role-arn": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-secret-access-key": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-session-token": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-shared-credentials-file": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-use-fips-endpoint": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-aws-web-identity-token-file": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-aws-chain-resolve-timeout-ms": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-bedrock-content-type-default": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-bedrock-content-type-guard": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-anthropic-aws-auth": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-aws-cred-cache": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-bedrock-auth": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-mantle-auth": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-use-anthropic-aws": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-use-bedrock": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-use-mantle": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-enable-byte-watchdog-bedrock": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-google-cloud-base-url": [
+   "prompt-caching",
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-google-cloud-location": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-google-cloud-project": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-google-cloud-workspace-id": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-vertex-base-url": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-vertex-project-id": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-anthropic-google-cloud-auth": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-skip-vertex-auth": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-use-anthropic-google-cloud": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-use-vertex": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-cloud-ml-region": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-cloudsdk-config": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-gcloud-project-lowercase": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-gcloud-project": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-google-application-credentials-lowercase": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-google-application-credentials": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-google-cloud-project-lowercase": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-google-cloud-project": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-google-cloud-workstations": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-vertex-region-claude-3-5-haiku": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-3-5-sonnet": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-3-7-sonnet": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-0-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-0-sonnet": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-1-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-5-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-5-sonnet": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-6-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-6-sonnet": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-7-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-4-8-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-5-5-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-5-opus": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-5-sonnet": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-fable-5": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-fable-5-1": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-vertex-region-claude-haiku-4-5": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-foundry-api-key": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-foundry-auth-token": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-foundry-base-url": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-anthropic-foundry-resource": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-azure-client-id": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-azure-functions-environment": [
+   "undocumented",
+   "read"
+  ],
+  "env-azure-tenant-id": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-skip-foundry-auth": [
+   "authentication",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-use-foundry": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-gateway-model-discovery": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-gateway-hint-headers": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-gateway-model-discovery-timeout-ms": [
+   "providers",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-gateway-token-file-descriptor": [
+   "authentication",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-gateway-lineage": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-use-gateway": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-gateway-allow-loopback": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-gateway-drain-timeout-ms": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-gateway-log-level": [
+   "observability",
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-gateway-proxy-is-egress-boundary": [
+   "security-permissions",
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-beta-tracing-endpoint": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-byoc-enable-datadog": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-datadog-flush-interval-ms": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-enable-feedback-survey-for-otel": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-telemetry": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enhanced-telemetry-beta": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-gb-disk-cache-when-telemetry-off": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-otel-content-max-length": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-otel-diag-stderr": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-otel-flush-timeout-ms": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-otel-headers-helper-debounce-ms": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-otel-shutdown-timeout-ms": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-perfetto-trace": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-disable-telemetry": [
+   "privacy-telemetry",
+   "documented",
+   "read",
+   "any-value"
+  ],
+  "env-do-not-track": [
+   "privacy-telemetry",
+   "documented",
+   "read"
+  ],
+  "env-enable-beta-tracing-detailed": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-enable-enhanced-telemetry-beta": [
+   "privacy-telemetry",
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-otel-attribute-value-length-limit": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-family-otel-exporter-otlp-x-endpoint": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-family-otel-exporter-otlp-x-headers": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-family-otel-exporter-otlp-x-insecure": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-endpoint": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-headers": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-logs-protocol": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-metrics-protocol": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-metrics-temporality-preference": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-protocol": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-traces-endpoint": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-exporter-otlp-traces-protocol": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-log-assistant-responses": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-log-managed-settings": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-log-raw-api-bodies": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-log-tool-content": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-log-tool-details": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-log-user-prompts": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-logrecord-attribute-value-length-limit": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-logs-export-interval": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-logs-exporter": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metric-export-interval": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-exporter": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-include-account-uuid": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-include-entrypoint": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-include-repository": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-include-resource-attributes": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-include-session-id": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-metrics-include-version": [
+   "privacy-telemetry",
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-resource-attributes": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-span-attribute-value-length-limit": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-traces-export-interval": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-otel-traces-exporter": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-traceparent": [
+   "observability",
+   "documented",
+   "read"
+  ],
+  "env-tracestate": [
+   "observability",
+   "undocumented",
+   "read"
+  ],
+  "env-agent-proxy-auth-token": [
+   "authentication",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-agent-proxy-url": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-all-proxy-lowercase": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-all-proxy": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-enabled": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-frame-hosts": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-include-hosts": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-no-proxy-local-only": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-receive-gate-disabled": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-relay-mode": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ccr-agent-proxy-upload-gate-disabled": [
+   "security-permissions",
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-agent-proxy-gh-shim": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-agent-proxy-git-config": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-cert-store": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-client-cert": [
+   "authentication",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-client-key": [
+   "authentication",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-client-key-passphrase": [
+   "authentication",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-disable-mtls-reload-on-stale-connection": [
+   "authentication",
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-enable-proxy-auth-helper": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-http-proxy": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-https-proxy": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-proxy-auth-helper-ttl-ms": [
+   "authentication",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-proxy-resolves-hosts": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-claude-code-simulate-proxy-usage": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-webfetch-use-ccr-proxy": [
+   "built-in-tools",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-websearch-ccr-proxy-fast": [
+   "built-in-tools",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-websearch-use-ccr-proxy": [
+   "built-in-tools",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-runner-use-git-proxy": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-grpc-default-ssl-roots-file-path": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-hostaliases": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-http-proxy-lowercase": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-http-proxy": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-https-proxy-lowercase": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-https-proxy": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-localdomain": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-no-proxy-lowercase": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-no-proxy": [
+   "network",
+   "documented",
+   "read"
+  ],
+  "env-node-extra-ca-certs": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-node-tls-reject-unauthorized": [
+   "security-permissions",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-res-options": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-proxy-authorization-command": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-self-hosted-runner-proxy-authorization-file": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-ssl-cert-file": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-cfbundleidentifier": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-alacritty-log": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-allusersprofile": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-android-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-android-sdk-root": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-app-url": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-appdata": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-browser": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-buildkite": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-bun-chrome-path": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-bun-install": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-c9-pid": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-c9-user": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-cf-pages": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-ci": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-circleci": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-coder": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-coder-workspace-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-codespaces": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-colorfgbg": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-colorterm": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-comspec-lowercase": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-comspec": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-conemuansi": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-conemupid": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-conemutask": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-cursor-trace-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-daytona-ws-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-debug": [
+   "documented",
+   "read",
+   "any-value",
+   "os-shell"
+  ],
+  "env-deno-deployment-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-devpod": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-devpod-workspace-uid": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-display": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-dyno": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-editor": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-fly-app-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-fly-machine-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-force-code-terminal": [
+   "undocumented",
+   "read",
+   "any-value",
+   "os-shell"
+  ],
+  "env-force-color": [
+   "terminal-ui",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-force-hyperlink": [
+   "terminal-ui",
+   "documented",
+   "read",
+   "os-shell"
+  ],
+  "env-gcm-interactive": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-gh-enterprise-token": [
+   "authentication",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-gh-host": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-gh-token": [
+   "authentication",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-askpass": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-config-count": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-config-global": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-family-git-config-key-x": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-config-nosystem": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-config-parameters": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-config-system": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-family-git-config-value-x": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-no-lazy-fetch": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-ssh-command": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-terminal-prompt": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-action-inputs": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-action-path": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-actions": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-actor": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-actor-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-enterprise-token": [
+   "authentication",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-env": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-event-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-event-path": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-repository": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-repository-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-repository-owner": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-repository-owner-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-token": [
+   "authentication",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-github-workspace": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-gitlab-ci": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-gitpod-workspace-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-gnome-terminal-service": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-histfile": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-homedrive": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-homepath": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-hostname": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-ink-screen-reader": [
+   "terminal-ui",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-intellij-terminal-command-blocks": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-intellij-terminal-command-blocks-reworked": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-iterm-session-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-java-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-java-tool-options": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-k-service": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-kitty-window-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-konsole-version": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-kubernetes-service-host": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-lang": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-lc-all": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-lc-terminal": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-lc-time": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-localappdata": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-msystem": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-netlify": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-no-color": [
+   "terminal-ui",
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-node-debug": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-node-options": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-p4port": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-path": [
+   "documented",
+   "read",
+   "os-shell"
+  ],
+  "env-pathext": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-prefix": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-programdata-lowercase": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-programdata": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-programfiles": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-project-domain": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-pwd": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-railway-environment-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-railway-service-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-render": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-repl-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-repl-slug": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-sessionname": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-shell": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-space-creator-user-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-ssh-auth-sock": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-ssh-client": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-ssh-connection": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-ssh-tty": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-sty": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-sudo-gid": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-sudo-uid": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-sudo-user": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-systemroot-lowercase": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-systemroot": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-teamcity-version": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-term": [
+   "documented",
+   "read",
+   "os-shell"
+  ],
+  "env-term-program": [
+   "documented",
+   "read",
+   "os-shell"
+  ],
+  "env-term-program-version": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-terminal": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-terminal-emulator": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-terminator-uuid": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-termux-version": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-tilix-id": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-tmpdir": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-tmux": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-tmux-pane": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-user": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-username": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-userprofile": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-uv-threadpool-size": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-vercel": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-visual": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-visualstudioversion": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-vscode-git-askpass-main": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-vte-version": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-wayland-display": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-website-site-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-website-sku": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-windir": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-wsl-distro-name": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-wsl-interop": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-wt-session": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-xdg-cache-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-xdg-config-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-xdg-data-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-xdg-runtime-dir": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-xdg-state-home": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-xterm-version": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-zed-term": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-zellij": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-set-agent-proxy-auth-token": [
+   "authentication",
+   "network",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-agent-proxy-url": [
+   "network",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-ai-agent": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-allow-ant-computer-use-mcp": [
+   "security-permissions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-anthropic-api-key": [
+   "authentication",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-auth-token": [
+   "authentication",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-aws-api-key": [
+   "authentication",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-config-dir": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-anthropic-default-haiku-model": [
+   "models-context",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-default-opus-model": [
+   "models-context",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-default-opus-model-description": [
+   "models-context",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-default-opus-model-name": [
+   "models-context",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-anthropic-default-sonnet-model": [
+   "models-context",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-bash-max-output-length": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-browser": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-bun-options": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-ccr-agent-proxy-include-hosts": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-ccr-agent-proxy-receive-gate-disabled": [
+   "security-permissions",
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-ccr-agent-proxy-relay-mode": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-ccr-agent-proxy-upload-gate-disabled": [
+   "security-permissions",
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-ccr-session-profile": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claubbit": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-afk-countdown-ms": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-afk-timeout-ms": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-after-last-compact": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-agent-sdk-client-app": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-agent-sdk-disable-builtin-agents": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-agent-sdk-disable-mcp-manifests": [
+   "mcp",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-agent-sdk-mcp-no-prefix": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-agent-sdk-version": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-agents-select": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-artifact-host-grant": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-async-agent-stall-timeout-ms": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-auto-background-tasks": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-autocompact-pct-override": [
+   "models-context",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-bash-maintain-project-working-dir": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-bg-auth-snapshot-path": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-backend": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-claim-auth": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-dispatcher-rate-limit-tier": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-dispatcher-subscription-type": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-isolation": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-memory-toggled-off": [
+   "prompt-instructions",
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-post-clear-respawn": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-pty-auth": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-rendezvous-sock": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-rv-auth": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-session-permission-rules": [
+   "security-permissions",
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-socket-tokens-path": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-source": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-startup-wedge-ms": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bg-tcc-disclaimed": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bg-workspace-trusted": [
+   "security-permissions",
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bridge-base-url": [
+   "providers",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bridge-oauth-token": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-bridge-reattach-grouping": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-reattach-no-backfill": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-reattach-outbound-only": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-reattach-owner-acct": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-reattach-owner-org": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-reattach-seq": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-reattach-session": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-bridge-session-ingress-url": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-chrome-paired-device-id": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-chrome-permission-mode": [
+   "security-permissions",
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-client-presence-file": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-3p-probe-wrote-opus-default": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-3p-probe-wrote-sonnet-default": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-action": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-additional-directories-claude-md": [
+   "prompt-instructions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-additional-protection": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-adopt-underivable-parked-permission": [
+   "security-permissions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-agent": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-agent-view-relaunch": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-alt-screen-full-repaint": [
+   "terminal-ui",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-artifact": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-artifact-asset-base-url": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-artifact-auto-open": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-artifact-live-base-url": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-artifact-sync-base-url": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-artifact-viewer-base-url": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-artifacts-api-base-url": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-artifacts-api-token": [
+   "authentication",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-attribution-status-timeout-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-auto-background-worker-checkin-seconds": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-auto-compact-window": [
+   "models-context",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-auto-mode-external-permissions": [
+   "security-permissions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-auto-mode-server": [
+   "security-permissions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-base-ref": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-base-refs": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-blocking-limit-override": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-bridge-child-artifact": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-bridge-child-auto-default": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-bridge-child-machine-settings": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-bridge-mcp-carrier": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-bridge-owner-account-uuid": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-bridge-owner-org-uuid": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-bridge-prompt-sha256": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-bridge-session-id": [
+   "remote-hosted",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-brief": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-brief-upload": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-ccr-surface": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-child-session": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-chrome-mcp-org-denied": [
+   "mcp",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-classifier-summary": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-container-id": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-coordinator-mode": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-coordinator-skill-guidance": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-coordinator-worker-checkin-seconds": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-daemon-cold-start": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-decstbm": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-desktop-app-version": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dev-raw-changelog-url": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dir-sync-chain": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dir-sync-disable-anchoring": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dir-sync-engine": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dir-sync-ffwd": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dir-sync-git": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dir-sync-stream": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-attribution-baseline-reuse": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-bg-shell-pressure-reap": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-disable-claude-mds": [
+   "prompt-instructions",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-disable-dir-sync": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-experimental-betas": [
+   "prompt-caching",
+   "providers",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-disable-hook-forwarding": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-plugin-forwarding": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-turn-handoff": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-vitals-emitter": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-working-sync": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-dont-inherit-env": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-download-deadline-ms-for-testing": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-emit-session-state-events": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-emit-startup-timing": [
+   "observability",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-emit-tool-use-summaries": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-enable-append-subagent-prompt": [
+   "prompt-instructions",
+   "agents-background",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-entrypoint": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-environment-kind": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-environment-runner-version": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-eval-confined": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-eval-interview-session": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-execpath": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-exit-after-first-render": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-exit-after-stop-delay": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-extra-body": [
+   "providers",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-flag-fetch-wait-ms": [
+   "privacy-telemetry",
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-footer-indicator": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-force-bridge": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-force-evaluate-memory": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-force-fullscreen-upsell": [
+   "terminal-ui",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-force-memory-survey": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-force-tip-id": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-gateway-token-file-descriptor": [
+   "authentication",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-git-bash-path": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-glob-timeout-seconds": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-goal-checkin-minutes": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-hide-settings-hint": [
+   "terminal-ui",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-hold-report-park-at-init": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-home-seed-hold-timeout-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-home-seed-verdict-timeout-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-hooks-same-thread": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-host-creds-file": [
+   "authentication",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-host-platform": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-host-session-id": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-ide-host-override": [
+   "remote-hosted",
+   "terminal-ui",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-idle-threshold-minutes": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-idle-token-threshold": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-invoked-skills": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-is-cowork": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-legacy-bundle": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-loop-keepalive": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-loop-persistent": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-managed-settings-path": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-marketplace-name": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-marketplace-url": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-max-concurrent-subagents": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-max-mcp-description-length": [
+   "prompt-instructions",
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-max-subagent-spawn-depth": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-max-web-searches-per-session": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-allowlist-env": [
+   "security-permissions",
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-apps-host": [
+   "mcp",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-auto-background-ms": [
+   "mcp",
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-connector-prewait-ms": [
+   "mcp",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-memory-cgroup": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-server-name": [
+   "mcp",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-mcp-server-url": [
+   "mcp",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-mcp-startup-wait-ms": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-tool-idle-timeout": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-messaging-socket": [
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-messaging-token": [
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-mock-remote-settings": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-mock-trial": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-oauth-token": [
+   "authentication",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-override-date": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-parked-permission-wait-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-parked-run-before-clear": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-parked-stop-retires": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-perforce-mode": [
+   "security-permissions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-plan-v2-agent-count": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-plan-v2-explore-agent-count": [
+   "agents-background",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-plugin-archive-url": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-plugin-attribution": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-plugin-cache-dir": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-plugin-dirs": [
+   "plugins-skills-hooks",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-plugin-git-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-plugin-name": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-plugin-seed-dir": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-post-turn-memory": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-post-turn-memory-config": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-post-turn-memory-sync": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-powerup-onboarding": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-project-dir-name": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-proxy-authenticate": [
+   "authentication",
+   "network",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-proxy-host": [
+   "network",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-proxy-url": [
+   "network",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-pwsh-parse-timeout-ms": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-question-extended": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-question-optional-descriptions": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-question-preview-format": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-rate-limit-tier": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-relaunch-terminal-size": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-remote": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-remote-environment-type": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-hermetic-mode": [
+   "security-permissions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-memory-dir": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-raw-events-file": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-send-keepalives": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-session-id": [
+   "privacy-telemetry",
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-remote-session-origin": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-settings-path": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-remote-settings-poll-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-repl": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-repo-checkouts": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-restricted": [
+   "security-permissions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-resume-from-session": [
+   "prompt-instructions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-resume-interrupted-turn": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-resume-interrupted-turn-max-age-ms": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-resume-prompt": [
+   "prompt-instructions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-resume-reason": [
+   "prompt-instructions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-resume-source-alive": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-resume-threshold-minutes": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-resume-token-threshold": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-resume-tolerates-context-appends": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-safe-mode": [
+   "security-permissions",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-sandboxed": [
+   "security-permissions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-script-caps": [
+   "security-permissions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-scroll-speed": [
+   "terminal-ui",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-session-access-token": [
+   "authentication",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-session-attended": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-session-id": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-session-kind": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-session-name": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-session-origin": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-session-start-announcements-before-prompt": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sessionend-hooks-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-shell": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-shell-prefix": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-simple": [
+   "prompt-instructions",
+   "built-in-tools",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-simple-system-prompt": [
+   "prompt-instructions",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-skill-attribution": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-spawn-timestamp-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sse-port": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-stall-timeout-ms-for-testing": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-startup-failure-results": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-stop-hook-block-cap": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-subprocess-env-scrub": [
+   "security-permissions",
+   "documented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-claude-code-subscription-type": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-supervised": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-plugin-install-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-sync-plugins-buffered-download": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-plugins-download-stall-ms": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-plugins-install-timeout-ms": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-plugins-mcp-timeout-ms": [
+   "mcp",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-reuse-within-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-session-refs": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-sync-skills-install-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-sync-skills-wait-timeout-ms": [
+   "plugins-skills-hooks",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-syntax-highlight": [
+   "terminal-ui",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-system-prompt-gb-feature": [
+   "prompt-instructions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tags": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-task-list-id": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-team-teardown-park-timeout-ms": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-terminal-mcp-tools": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-test-allow-real-network": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-test-fixtures-root": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-test-force-deny": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-test-no-git-bash": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-test-no-pwsh": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tmpdir": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-tmux-prefix": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tmux-prefix-conflicts": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tmux-session": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tmux-truecolor": [
+   "terminal-ui",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-tool-memory-cgroup-exclude": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-tool-memory-limit": [
+   "built-in-tools",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-trigger-id": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tui-just-switched": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-tui-trial": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-ultrareview-preflight-fixture": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-ultrareview-quota-fixture": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-user-dialog-timeout-ms": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-code-version": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-voice-forward-interims-typed": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-worker-epoch": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-workspace-host-paths": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-config-dir": [
+   "documented",
+   "set"
+  ],
+  "env-set-claude-cowork-memory-extra-guidelines": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-cowork-memory-guidelines": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-cowork-memory-index-content": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-cowork-memory-path-override": [
+   "prompt-instructions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-effort": [
+   "models-context",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-env-file": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-force-display-survey": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-internal-assistant-team-name": [
+   "agents-background",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-internal-fc-overrides": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-job-dir": [
+   "agents-background",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-memory-stores": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-pid": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-plugin-data": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-plugin-option-x": [
+   "plugins-skills-hooks",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-plugin-root": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-project-dir": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-project-uuid": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-pty-heartbeat-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-pty-host-exec": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-pty-orphan-check-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-relaunch-session-add-dirs": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-claude-remote-control-session-name-prefix": [
+   "remote-hosted",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-remote-workflow-args": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-remote-workflow-script": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-runner-account-email": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-account-id": [
+   "privacy-telemetry",
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-activity-fd": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-runner-attempt": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-client-platform": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-correlation-id": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-fetch-depth": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-order-id": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-order-server-time": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-pool-id": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-primary-repo-revision": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-primary-repo-url": [
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-repo-sources": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-session-id": [
+   "privacy-telemetry",
+   "observability",
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-session-uuid": [
+   "privacy-telemetry",
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-runner-work-order-file": [
+   "authentication",
+   "remote-hosted",
+   "documented",
+   "set"
+  ],
+  "env-set-claude-securestorage-config-dir": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-serve-drain-timeout-ms": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-snip": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-ssh-local-binary": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-ssh-version": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-stage-file-root": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-test-project-dir": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-tmpdir": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claudecode": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-columns": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-debug": [
+   "observability",
+   "documented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
+  "env-set-disable-autoupdater": [
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-display": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-gcm-interactive": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-gh-enterprise-token": [
+   "authentication",
+   "undocumented",
+   "set"
+  ],
+  "env-set-gh-token": [
+   "authentication",
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-allow-protocol": [
+   "security-permissions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-alternate-object-directories": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-askpass": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-attr-nosystem": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-author-date": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-author-email": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-author-name": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-ceiling-directories": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-committer-date": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-committer-email": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-committer-name": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-config-global": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-config-nosystem": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-config-parameters": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-git-config-system": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-default-ref-format": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-dir": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-editor": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-git-glob-pathspecs": [
+   "built-in-tools",
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-graft-file": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-icase-pathspecs": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-index-file": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-literal-pathspecs": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-no-lazy-fetch": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-no-replace-objects": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-noglob-pathspecs": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-object-directory": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-optional-locks": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-progress-delay": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-proxy-command": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-shallow-file": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-ssh-command": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-terminal-prompt": [
+   "terminal-ui",
+   "undocumented",
+   "set"
+  ],
+  "env-set-git-work-tree": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-github-enterprise-token": [
+   "authentication",
+   "undocumented",
+   "set"
+  ],
+  "env-set-github-token": [
+   "authentication",
+   "undocumented",
+   "set"
+  ],
+  "env-set-gitlab-access-token": [
+   "authentication",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-gitlab-token": [
+   "authentication",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-home": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-homebrew-no-auto-update": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-language": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-lc-all": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-lines": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-local-bridge": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-mcp-connect-timeout-ms": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-connection-nonblocking": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-discovery-cache": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-discovery-cache-max-stale-s": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-discovery-cache-strikes": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-discovery-cache-ttl-s": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-oauth-callback-port": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-oauth-client-metadata-url": [
+   "mcp",
+   "undocumented",
+   "set"
+  ],
+  "env-set-mcp-protocol-negotiation": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-remote-server-connection-batch-size": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-sdk-generation": [
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-server-connection-batch-size": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-timeout": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-tool-timeout": [
+   "mcp",
+   "documented",
+   "set"
+  ],
+  "env-set-mcp-truncation-prompt-override": [
+   "prompt-instructions",
+   "mcp",
+   "undocumented",
+   "set"
+  ],
+  "env-set-node-env": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-node-extra-ca-certs": [
+   "network",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-nodefaultcurrentdirectoryinexepath": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-oauth-token": [
+   "authentication",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-otel-exporter-otlp-metrics-temporality-preference": [
+   "observability",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-path": [
+   "documented",
+   "set"
+  ],
+  "env-set-ps1": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-ps2": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-sdk-native-bin": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-self-hosted-runner-defer-shutdown-max-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-drain-grace-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-drain-marker-file": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-drain-wait-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-environment-secret": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-self-hosted-runner-hooks-dir": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-host-config-dir": [
+   "remote-hosted",
+   "documented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-self-hosted-runner-idle-shutdown-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-max-lifetime-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-pool-secret": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-self-hosted-runner-post-session-hook-timeout-ms": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-proxy-authorization-command": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-self-hosted-runner-proxy-authorization-file": [
+   "authentication",
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "set",
+   "removed-for-children"
+  ],
+  "env-set-self-hosted-runner-retire-at": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-session-idle-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-session-stop-grace-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-self-hosted-runner-startup-timeout-ms": [
+   "remote-hosted",
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-session-ingress-url": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-shell": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-slash-command-tool-char-budget": [
+   "prompt-instructions",
+   "documented",
+   "set"
+  ],
+  "env-set-ssh-askpass": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-system-reminder-memory-context": [
+   "prompt-instructions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-temp": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-term": [
+   "documented",
+   "set"
+  ],
+  "env-set-test-enable-session-persistence": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-tmp": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-tmpdir": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-tmpprefix": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-tmux": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-traceparent": [
+   "observability",
+   "documented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-ultraplan-prompt-file": [
+   "prompt-instructions",
+   "undocumented",
+   "set"
+  ],
+  "env-set-user-type": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-userprofile": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-vcr-record": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-vitals-emitter-bin": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-voice-stream-base-url": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-wayland-display": [
+   "undocumented",
+   "set"
+  ],
+  "env-x-amzn-trace-id": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-account-id": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-container-authorization-token": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-container-authorization-token-file": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-credential-expiration": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-credential-scope": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-ec2-metadata-disabled": [
+   "undocumented",
+   "read",
+   "fixed-values",
+   "third-party"
+  ],
+  "env-aws-lambda-benchmark-mode": [
+   "undocumented",
+   "read",
+   "fixed-values",
+   "third-party"
+  ],
+  "env-aws-lambda-max-concurrency": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-lambda-nodejs-no-global-awslambda": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-login-cache-directory": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-aws-role-session-name": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-additionally-allowed-tenants": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-authority-host": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-client-certificate-password": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-client-certificate-path": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-client-secret": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-client-send-certificate-chain": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-federated-token-file": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-identity-disable-multitenantauth": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-password": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-pod-identity-authority-host": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-regional-authority-name": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-token-credentials": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-azure-username": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-buf-bigint-disable": [
+   "undocumented",
+   "read",
+   "fixed-values",
+   "third-party"
+  ],
+  "env-chokidar-interval": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-chokidar-usepolling": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-cloud-run-job": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-debug-auth": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-detect-gcp-retries": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-function-name": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-function-target": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-gae-module-name": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-gae-service": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-gce-metadata-host": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-gce-metadata-ip": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-git-proxy-command": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-google-cloud-quota-project": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-google-external-account-allow-executables": [
+   "authentication",
+   "undocumented",
+   "read",
+   "fixed-values",
+   "third-party"
+  ],
+  "env-graceful-fs-platform": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-experimental-enable-outlier-detection": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-node-trace": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-node-use-alternative-resolver": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-node-verbosity": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-proxy": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-ssl-cipher-suites": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-trace": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-grpc-verbosity": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-k-configuration": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-lru-cache-ignore-ac-warning": [
+   "undocumented",
+   "read",
+   "fixed-values",
+   "third-party"
+  ],
+  "env-metadata-server-detection": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-msal-force-region": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-no-grpc-proxy": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-ostype": [
+   "undocumented",
+   "read",
+   "fixed-values",
+   "third-party"
+  ],
+  "env-otel-exporter-otlp-certificate": [
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-otel-exporter-otlp-client-certificate": [
+   "authentication",
+   "network",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-otel-exporter-otlp-client-key": [
+   "authentication",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-otel-exporter-otlp-insecure": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-otel-exporter-prometheus-host": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-otel-exporter-prometheus-port": [
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-region-name": [
+   "providers",
+   "undocumented",
+   "read",
+   "third-party"
+  ],
+  "env-test-graceful-fs-global-patch": [
+   "undocumented",
+   "read",
+   "third-party"
+  ]
+ }
+}

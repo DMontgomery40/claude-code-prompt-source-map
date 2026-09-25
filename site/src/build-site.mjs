@@ -1,5 +1,6 @@
 import { copyFile, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { expandFacts } from "./facts.mjs";
 import { renderSite } from "./render.mjs";
 
 // Document pages are regenerated on every build so renamed documents leave no stale pages.
@@ -17,9 +18,16 @@ export async function buildSite({ sourceRoot, outFile, categories }) {
   for (const category of categories) {
     for (const file of category.files) {
       try {
-        const source = await readFile(path.join(sourceRoot, file.path), "utf8");
+        const raw = await readFile(path.join(sourceRoot, file.path), "utf8");
+        const source = file.format === "markdown" ? expandFacts(raw, sourceRoot, file.path) : raw;
         const count = file.data ? JSON.parse(await readFile(path.join(sourceRoot, file.data), "utf8")).items?.length : undefined;
-        documents.push({ ...file, category: category.label, source, count });
+        let filter;
+        if (file.filters) {
+          const records = JSON.parse(await readFile(path.join(sourceRoot, file.filters.records), "utf8")).items;
+          const tags = JSON.parse(await readFile(path.join(sourceRoot, file.filters.tags), "utf8"));
+          filter = { vocabulary: tags.tags, records: records.map(r => ({ group: r.group, title: r.title, tags: tags.items[r.id] ?? [] })) };
+        }
+        documents.push({ ...file, category: category.label, source, count, filter });
       } catch (error) {
         throw new Error(`Unable to read ${file.path}: ${error.message}`, {
           cause: error

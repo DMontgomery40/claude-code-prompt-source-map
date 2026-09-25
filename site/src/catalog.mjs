@@ -22,7 +22,7 @@ export const categories = [
   {
     label: "Configuration",
     files: [
-      { path: "outputs/environment-variables.md", format: "markdown", title: "Environment variables", slug: "env-vars", summary: "Every environment variable Claude Code reads or sets, documented or not.", data: "outputs/environment-variables.json", defaultOpen: false },
+      { path: "outputs/environment-variables.md", format: "markdown", title: "Environment variables", slug: "env-vars", summary: "Every environment variable Claude Code reads or sets, documented or not.", data: "outputs/environment-variables.json", filters: { records: "outputs/environment-variables.json", tags: "outputs/environment-variables-tags.json" }, defaultOpen: false },
       { path: "outputs/settings.md", format: "markdown", title: "Settings", slug: "settings", summary: "Every settings.json key, with types, defaults, and scopes.", data: "outputs/settings.json", defaultOpen: false },
       { path: "outputs/hooks.md", format: "markdown", title: "Hooks", slug: "hooks", summary: "Hook events, payload fields, and handler types.", data: "outputs/hooks.json", defaultOpen: false },
       { path: "outputs/cli.md", format: "markdown", title: "CLI commands and flags", slug: "cli", summary: "Commands and flags, including hidden ones.", data: "outputs/cli.json", defaultOpen: false },

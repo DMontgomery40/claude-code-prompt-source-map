@@ -41,7 +41,17 @@ export function createRoutes(documents) {
     return `../${href.replace(/^\.\//, "")}`;
   }
 
+  // On an index-style home page, links to documents that aren't embedded go to their pages.
+  function homeLinks(html, inline) {
+    return html.replace(/\shref="#([^"]+)"/g, (match, id) => {
+      const target = id.split("--")[0];
+      if (!slugs.has(target) || inline.has(target)) return match;
+      return id === target ? ` href="${slugs.get(target)}/"` : ` href="${slugs.get(target)}/#${localId(id, target)}"`;
+    });
+  }
+
   return {
+    homeLinks,
     slug: anchor => slugs.get(anchor),
     localId,
     localize(html, anchor) {

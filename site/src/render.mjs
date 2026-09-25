@@ -1,6 +1,7 @@
 import { Marked } from "marked";
 import { site } from "./config.mjs";
 import { createRoutes } from "./routes.mjs";
+import { filterBar, filterScript, filterStyles, wrapFilterable } from "./filters.mjs";
 import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } from "./toc.mjs";
 
 export function escapeHtml(value) {
@@ -72,6 +73,13 @@ function renderDocument(document, ids) {
       ? anchorOutline(`<div class="markdown-body">${renderMarkdown(stripEditorialTitle(document.source), { headingOffset: 1, prompt: document.promptText === true })}</div>`, { anchor, ids })
       : { html: `<pre class="source-block"><code>${escapeHtml(document.source)}</code></pre>`, outline: [] };
 
+  let body = content;
+  if (document.filter) {
+    const inner = content.replace(/^<div class="markdown-body">/, "").replace(/<\/div>$/, "");
+    const wrapped = wrapFilterable(inner, document.filter);
+    if (wrapped.matched !== document.filter.records.length) throw new Error(`${document.path}: tagged ${wrapped.matched} of ${document.filter.records.length} entries`);
+    body = `${filterBar(document.filter, wrapped.matched)}<div class="markdown-body">${wrapped.html}</div>`;
+  }
   return {
     path: document.path,
     anchor,
@@ -82,7 +90,7 @@ function renderDocument(document, ids) {
     summary: document.summary,
     count: document.count,
     defaultOpen: document.defaultOpen,
-    content,
+    content: body,
     outline
   };
 }
@@ -295,6 +303,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
     @media(max-width:450px){.follow-link{top:12px;left:12px}.intro{padding:12px}.intro-main{padding:20px 22px 25px}.intro-disc{width:142px;height:142px}.intro-disc-inner b{font-size:37px}.intro-title{font-size:44px}.intro-top span:last-child{display:none}.intro-bottom{gap:10px;font-size:9px}.intro-joke{margin:16px 0 18px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro{display:none}.follow-link,.intro-follow{transition:none}}
 ${tocStyles}
+${filterStyles}
   </style>
 </head>
 <body>
@@ -323,7 +332,7 @@ ${current ? documentArticle(current, routes) : `      <header>
         <h1 class="page-title">${escapeHtml(site.name)}</h1>
         <p class="dek">${escapeHtml(site.dek)}</p>
       </header>
-${indexHome ? `${inline.map(documentPanel).join("\n")}
+${indexHome ? `${routes.homeLinks(inline.map(documentPanel).join("\n"), new Set(inline.map(document => document.anchor)))}
 ${documentIndex(categories, rendered, routes)}` : rendered.map(documentPanel).join("\n")}`}
     </div>
   </main>
@@ -352,6 +361,7 @@ ${documentIndex(categories, rendered, routes)}` : rendered.map(documentPanel).jo
     addEventListener("hashchange", revealHashTarget);
     revealHashTarget();
 ${tocScript}
+${filterScript}
   </script>
 </body>
 </html>`;
