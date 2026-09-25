@@ -488,6 +488,189 @@
     }
    ],
    "constraints": []
+  },
+  {
+   "id": "settings-layers",
+   "title": "Where a setting's value comes from",
+   "group": "Settings files",
+   "question": "Claude Code reads settings from five sources. A single value comes from the highest source that sets it; lists combine across all of them.",
+   "shape": "layered",
+   "observe": "none",
+   "merge_when": [
+    {
+     "type": [
+      "array"
+     ]
+    }
+   ],
+   "context": [
+    {
+     "key": "type",
+     "label": "Value type",
+     "values": [
+      {
+       "value": "scalar",
+       "label": "Single value"
+      },
+      {
+       "value": "array",
+       "label": "List (such as permission rules)"
+      }
+     ]
+    }
+   ],
+   "rungs": [
+    {
+     "verified": "read",
+     "id": "policy",
+     "mechanism": "layer",
+     "knob": null,
+     "label": "Managed policy (managed-settings.json)",
+     "input": "toggle",
+     "note": "Set by an administrator. Always loaded.",
+     "effect": {
+      "value": "managed policy"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174501801,
+       "length": 1358,
+       "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "flag",
+     "mechanism": "layer",
+     "knob": null,
+     "label": "--settings file or JSON",
+     "input": "toggle",
+     "note": "Always loaded when given.",
+     "effect": {
+      "value": "--settings"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174501801,
+       "length": 1358,
+       "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "local",
+     "mechanism": "layer",
+     "knob": null,
+     "label": ".claude/settings.local.json",
+     "input": "toggle",
+     "note": "This project, this machine; not checked in.",
+     "effect": {
+      "value": "local project file"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174501801,
+       "length": 1358,
+       "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "project",
+     "mechanism": "layer",
+     "knob": null,
+     "label": ".claude/settings.json",
+     "input": "toggle",
+     "note": "This project, shared with the team.",
+     "effect": {
+      "value": "shared project file"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174501801,
+       "length": 1358,
+       "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    },
+    {
+     "verified": "read",
+     "id": "user",
+     "mechanism": "layer",
+     "knob": null,
+     "label": "~/.claude/settings.json",
+     "input": "toggle",
+     "note": "All your projects.",
+     "effect": {
+      "value": "user file"
+     },
+     "provenance": [
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174501801,
+       "length": 1358,
+       "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "constraints": [
+    {
+     "id": "policyModels",
+     "label": "Managed policy's availableModels, enforceAvailableModels and modelPicker replace every other source's values.",
+     "provenance": [
+      {
+       "file": "chunk-wqf6nvvb.js",
+       "binary_offset": 174501801,
+       "length": 1358,
+       "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+       "version": "2.1.282",
+       "platform": "darwin-arm64"
+      }
+     ]
+    }
+   ],
+   "details": {
+    "list_exceptions": [
+     "fallbackModel",
+     "modelPicker"
+    ],
+    "keyed_merge": [
+     "extraKnownMarketplaces",
+     "managedMcpServers"
+    ]
+   },
+   "kind": "decision",
+   "text": null,
+   "documented": null,
+   "provenance": [
+    {
+     "file": "chunk-wqf6nvvb.js",
+     "binary_offset": 174501801,
+     "length": 1358,
+     "sha256": "f123690e0b293a69331ea5cb39126143be918919176edef582c3a1e925a01e39",
+     "version": "2.1.282",
+     "platform": "darwin-arm64"
+    }
+   ],
+   "bypasses": []
   }
  ]
 }

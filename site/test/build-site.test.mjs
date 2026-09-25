@@ -406,3 +406,17 @@ test("filterable pages wrap every entry with its tags and fail when an entry has
     await assert.rejects(buildSite({ sourceRoot: root, outFile, categories: catalog }), /tagged 1 of 2 entries/);
   });
 });
+
+test("every env var, settings key and CLI flag feeds a ladder or says why not", async () => {
+  const root = fileURLToPath(new URL("../../", import.meta.url));
+  const index = JSON.parse(await readFile(path.join(root, "outputs/decisions-index.json"), "utf8")).items;
+  const statuses = new Set(["rung", "layered", "standalone", "pending", "third-party", "os-shell", "set-only", "action"]);
+  const covered = new Map(index.map(i => [i.id, i]));
+  for (const area of ["environment-variables", "settings", "cli"]) {
+    for (const r of JSON.parse(await readFile(path.join(root, `outputs/${area}.json`), "utf8")).items) {
+      assert.ok(statuses.has(covered.get(r.id)?.status), `${area}:${r.id} has no ladder and no reason`);
+    }
+  }
+  const decisions = new Set(JSON.parse(await readFile(path.join(root, "outputs/decisions.json"), "utf8")).items.map(d => d.id));
+  for (const i of index) for (const f of i.feeds) assert.ok(decisions.has(f.decision), `${i.id} feeds missing decision ${f.decision}`);
+});
