@@ -410,8 +410,8 @@
      "decision": "bash-output-limit",
      "title": "Bash output limit",
      "rung": "env",
-     "rank": 2,
-     "of": 3
+     "rank": 3,
+     "of": 4
     }
    ]
   },
@@ -626,15 +626,15 @@
      "decision": "permission-rules",
      "title": "Which permission rules apply",
      "rung": "sessionAllow",
-     "rank": 12,
-     "of": 14
+     "rank": 13,
+     "of": 15
     },
     {
      "decision": "permission-rules",
      "title": "Which permission rules apply",
      "rung": "sessionDeny",
-     "rank": 13,
-     "of": 14
+     "rank": 14,
+     "of": 15
     }
    ]
   },
@@ -1013,7 +1013,7 @@
      "title": "Auto-compact window",
      "rung": "envWindow",
      "rank": 1,
-     "of": 8
+     "of": 9
     }
    ]
   },
@@ -1469,7 +1469,7 @@
      "title": "Fast mode",
      "rung": "disableEnv",
      "rank": 0,
-     "of": 14
+     "of": 15
     }
    ]
   },
@@ -2937,8 +2937,8 @@
      "decision": "fast-mode",
      "title": "Fast mode",
      "rung": "skipNetworkErrors",
-     "rank": 13,
-     "of": 14
+     "rank": 14,
+     "of": 15
     }
    ]
   },
@@ -2950,8 +2950,8 @@
      "decision": "fast-mode",
      "title": "Fast mode",
      "rung": "skipOrgCheck",
-     "rank": 14,
-     "of": 14
+     "rank": 15,
+     "of": 15
     }
    ]
   },
@@ -3650,7 +3650,7 @@
      "title": "Auto-compact window",
      "rung": "disableAutoCompact",
      "rank": 0,
-     "of": 8
+     "of": 9
     }
    ]
   },
@@ -3678,7 +3678,7 @@
      "title": "Auto-compact window",
      "rung": "disableCompact",
      "rank": 0,
-     "of": 8
+     "of": 9
     }
    ]
   },
@@ -8662,7 +8662,7 @@
      "title": "Fast mode",
      "rung": "modelAllowlist",
      "rank": 2,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "settings-layers",
@@ -8965,14 +8965,14 @@
      "title": "Fast mode",
      "rung": "managedOff",
      "rank": 3,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "fast-mode",
      "title": "Fast mode",
      "rung": "userSetting",
-     "rank": 11,
-     "of": 14
+     "rank": 12,
+     "of": 15
     },
     {
      "decision": "settings-layers",
@@ -8991,15 +8991,15 @@
      "decision": "fast-mode",
      "title": "Fast mode",
      "rung": "managedPerSession",
-     "rank": 9,
-     "of": 14
+     "rank": 10,
+     "of": 15
     },
     {
      "decision": "fast-mode",
      "title": "Fast mode",
      "rung": "perSession",
-     "rank": 10,
-     "of": 14
+     "rank": 11,
+     "of": 15
     },
     {
      "decision": "settings-layers",
@@ -9058,21 +9058,21 @@
      "title": "Which permission rules apply",
      "rung": "personalAllow",
      "rank": 1,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "permission-rules",
      "title": "Which permission rules apply",
      "rung": "sharedAllow",
      "rank": 2,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "permission-rules",
      "title": "Which permission rules apply",
      "rung": "localAllow",
      "rank": 3,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "settings-layers",
@@ -9092,7 +9092,7 @@
      "title": "Which permission rules apply",
      "rung": "settingsDeny",
      "rank": 4,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "settings-layers",
@@ -9112,7 +9112,7 @@
      "title": "Which permission rules apply",
      "rung": "settingsAsk",
      "rank": 5,
-     "of": 14
+     "of": 15
     },
     {
      "decision": "settings-layers",
@@ -10012,8 +10012,8 @@
      "decision": "bash-output-limit",
      "title": "Bash output limit",
      "rung": "settings",
-     "rank": 1,
-     "of": 3
+     "rank": 2,
+     "of": 4
     },
     {
      "decision": "settings-layers",
@@ -10046,7 +10046,7 @@
      "title": "Auto-compact window",
      "rung": "settingWindow",
      "rank": 2,
-     "of": 8
+     "of": 9
     },
     {
      "decision": "settings-layers",
@@ -10138,7 +10138,7 @@
      "title": "Auto-compact window",
      "rung": "autoCompactSetting",
      "rank": 0,
-     "of": 8
+     "of": 9
     },
     {
      "decision": "settings-layers",
@@ -12981,7 +12981,7 @@
      "title": "Which permission rules apply",
      "rung": "cliAllow",
      "rank": 8,
-     "of": 14
+     "of": 15
     }
    ]
   },
@@ -12993,8 +12993,8 @@
      "decision": "permission-rules",
      "title": "Which permission rules apply",
      "rung": "toolsNarrowing",
-     "rank": 14,
-     "of": 14
+     "rank": 15,
+     "of": 15
     }
    ]
   },
@@ -13012,7 +13012,7 @@
      "title": "Which permission rules apply",
      "rung": "cliDeny",
      "rank": 9,
-     "of": 14
+     "of": 15
     }
    ]
   },
@@ -13248,8 +13248,8 @@
      "decision": "fast-mode",
      "title": "Fast mode",
      "rung": "flagSettings",
-     "rank": 7,
-     "of": 14
+     "rank": 9,
+     "of": 15
     }
    ]
   },

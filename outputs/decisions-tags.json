@@ -10,7 +10,7 @@
    "id": "has-remote",
    "label": "Has a remote source",
    "kind": "status",
-   "count": 18
+   "count": 19
   },
   {
    "id": "silent-skip",
@@ -40,6 +40,7 @@
    "silent-skip"
   ],
   "bash-output-limit": [
+   "has-remote",
    "silent-skip"
   ],
   "effort-level": [

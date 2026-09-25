@@ -15,7 +15,7 @@ Whether the advisor tool, which lets Claude consult a stronger reviewer model, c
 2. **remote** Anthropic's advisor flag turned on: A remote flag that is off by default in code. When Anthropic turns it on for you, the advisor becomes available without the variable. Anthropic can change it without a release. Read from code.
 3. **default** Default: When nothing above turns it on: no advisor. Read from code.
 
-* After the ladder: Not on Anthropic's API. Only on Anthropic's API. With any other provider there is no advisor, whatever is set in the ladder.
+* After the ladder: Not on Anthropic's API. Only on Anthropic's API; a custom ANTHROPIC\_BASE\_URL still counts. With any other provider, including Claude Code's cloud gateway, there is no advisor, whatever is set in the ladder.
 * After the ladder: The API refused the advisor. When the API refuses the advisor during a session, Claude Code stops offering it, for this process or for that host.
 
 Source: `chunk-5ezz9t8y.js` · offset 179701832 · sha256 `1b710058…`
@@ -24,21 +24,21 @@ Source: `chunk-5ezz9t8y.js` · offset 179701832 · sha256 `1b710058…`
 
 How many characters of a Bash or PowerShell command's output Claude receives in the tool result before the rest is saved to a file and replaced by a short preview.
 
-1. **settings** `bashOutputMaxChars`: A whole number, used for both Bash and PowerShell. Values below 4,000 are raised to 4,000 and values above 128,000 are lowered to it; zero, negatives, fractions and non-numbers are dropped without a warning. When set, the environment variable is ignored. Read from code.
-2. **env** `BASH_MAX_OUTPUT_LENGTH`: Used only when the setting is not set. It sizes how much output is read back from the command, so it can shrink the limit below 30,000 but cannot raise it past the 30,000 inline threshold. Zero, negatives and non-numbers fall back to 30,000 with only a debug-log line; values above 150,000 are lowered to it. Read from code.
-3. **default** Built-in default: 30,000 characters. Read from code.
+1. **remote** Anthropic's per-tool threshold: A table Anthropic sends can set the inline threshold for each tool by name, replacing the setting's value or the 30,000 default, even past 128,000. The table is empty in the code, so nothing changes unless Anthropic sends a value, which it can do without a release. Output past the read-back size (the setting, the environment variable up to 150,000, or 30,000) is still saved to a file, so the limit goes no higher than that. Read from code.
+2. **settings** `bashOutputMaxChars`: A whole number, used for both Bash and PowerShell. Values below 4,000 are raised to 4,000 and values above 128,000 are lowered to it; zero, negatives, fractions and non-numbers are dropped without a warning. When set, the environment variable is ignored. Read from code.
+3. **env** `BASH_MAX_OUTPUT_LENGTH`: Used only when the setting is not set. It sizes how much output is read back from the command, so it can shrink the limit below 30,000 but cannot raise it past the 30,000 inline threshold unless Anthropic's per-tool table sets a higher one. Zero, negatives and non-numbers fall back to 30,000 with only a debug-log line; values above 150,000 are lowered to it. Read from code.
+4. **default** Built-in default: 30,000 characters. Read from code.
 
-* After the ladder: Inline size threshold. Output longer than what is read back, or longer than this threshold, is saved to a file, and Claude gets the first 2,000 characters plus the file's path instead. The threshold is the setting's value, at most 128,000, or 30,000 when the setting is not set; the environment variable does not change it.
-* After the ladder: Anthropic's per-tool threshold. A table Anthropic sends can set the inline threshold for each tool by name. The code's default is empty, so nothing changes unless Anthropic sends a value, which it can do without a release. Because output past the read-back size is saved to a file anyway, it can only lower the limit.
+* After the ladder: Inline size threshold. Output longer than what is read back, or longer than this threshold, is saved to a file, and Claude gets the first 2,000 characters plus the file's path instead. The threshold is the setting's value, at most 128,000, or 30,000 when the setting is not set, unless Anthropic's per-tool table replaces it; the environment variable does not change it.
 
-Source: `chunk-7ks9wn7n.js` · offset 180697730 · sha256 `7521a5f0…`
+Source: `chunk-7ks9wn7n.js` · offset 180697784 · sha256 `48f468a0…`
 
 ### MCP output limit
 
 How many tokens of an MCP tool's result Claude receives in the tool result before the result is saved to a file or cut short.
 
 1. **env** `MAX_MCP_OUTPUT_TOKENS`: A whole number of tokens. Zero, negatives and non-numbers are skipped without a warning, and the lookup moves on to Anthropic's value rather than straight to the default. There is no upper cap. Read from code.
-2. **remote** Anthropic's per-tool table (MCP entry): Anthropic can send a token limit for all MCP tools in the same per-tool table that sets the Bash threshold, under its own MCP entry. The code's default table is empty, so nothing changes unless Anthropic sends a positive number, which it can do without a release. Read from code.
+2. **remote** Anthropic's per-tool table (MCP entry): Anthropic can send a token limit for all MCP tools in the same per-tool table that sets the Bash threshold, under its own MCP entry. The code's default table is empty, so this rung answers only when Anthropic sends a positive number, which it can do without a release; zero, negatives and non-numbers are skipped. Read from code.
 3. **default** Built-in default: 25,000 tokens. Read from code.
 
 * After the ladder: Built-in IDE connection. Checked before the ladder. Results from the built-in IDE connection are passed through without this limit.
@@ -51,13 +51,13 @@ Source: `chunk-wq3ev8bt.js` · offset 199518311 · sha256 `5e19b5fa…`
 
 ### Stalled-stream watchdog
 
-Whether Claude Code gives up on a streaming response that goes silent: it sets a deadline for the first byte and aborts the stream when no bytes arrive for the idle timeout (3 minutes by default on Anthropic's API).
+Whether Claude Code gives up on a streaming response that goes silent. On Anthropic's API it sets a deadline for the first byte and aborts the stream when no bytes arrive for the idle timeout (3 minutes by default). Some routes get only the idle abort.
 
-1. **env** `CLAUDE_ENABLE_BYTE_WATCHDOG`: 0, false, no or off turns the watchdog off; 1, true, yes or on turns it on. Case and surrounding spaces are ignored. Any other value counts as unset. Read from code.
+1. **env** `CLAUDE_ENABLE_BYTE_WATCHDOG`: 0, false, no or off turns the watchdog off; 1, true, yes or on turns it on. Case and surrounding spaces are ignored. Any other value counts as unset. On the gateway, a custom base URL or a custom AWS address, on means only the idle abort, with no first-byte deadline. Read from code.
 2. **remote** Anthropic's watchdog flag turned off: A remote flag that is on by default in code, so the watchdog runs unless Anthropic turns it off. Anthropic can change it without a release. Read from code.
-3. **default** Default: When nothing above answers: on. Read from code.
+3. **default** Default: When nothing above answers: on. On the gateway, a custom base URL or a custom AWS address, that means only the idle abort. Read from code.
 
-* After the ladder: Provider without the watchdog. Only for Anthropic's API at its own address and Anthropic on AWS without a custom address. Bedrock also needs CLAUDE\_ENABLE\_BYTE\_WATCHDOG\_BEDROCK set to 1, true, yes or on. Anywhere else the watchdog stays off, whatever the ladder says.
+* After the ladder: Provider without the watchdog. Vertex, Foundry, Mantle, Anthropic on Google Cloud, and Bedrock without CLAUDE\_ENABLE\_BYTE\_WATCHDOG\_BEDROCK (1, true, yes or on) get no watchdog, whatever the ladder says.
 
 Source: `chunk-5ezz9t8y.js` · offset 179777730 · sha256 `6e77a188…`
 
@@ -129,22 +129,23 @@ Which allow, deny and ask rules are in force for a session: every source adds it
 1. **settings** `permissions.allow in ~/.claude/settings.json or --settings`: Allow rules from your user settings file and from --settings. Each file's rules are read on their own and keep their source; --setting-sources can leave the user file out. Read from code.
 2. **settings** `permissions.allow in .claude/settings.json`: Dropped with a warning until the workspace is trusted, unless the project folder is your home folder. Deny and ask rules from the same file still apply. Read from code.
 3. **settings** `permissions.allow in .claude/settings.local.json`: Allow rules from the local project file. In a workspace that is not yet trusted these can be dropped too, depending on how the file is tracked. Read from code.
-4. **settings** `permissions.deny`: Deny rules from the user, project, local and --settings files. Not gated by workspace trust. Read from code.
-5. **settings** `permissions.ask`: Ask rules from the user, project, local and --settings files. Not gated by workspace trust. Read from code.
+4. **settings** `permissions.deny`: Deny rules from the user, project, local and --settings files; --setting-sources can leave the user, project or local file out. Not gated by workspace trust. Read from code.
+5. **settings** `permissions.ask`: Ask rules from the user, project, local and --settings files; --setting-sources can leave the user, project or local file out. Not gated by workspace trust. Read from code.
 6. **managed** permissions.allow in managed settings: Allow rules set by an administrator. Always loaded. Read from code.
 7. **managed** permissions.deny and ask in managed settings: Deny and ask rules set by an administrator. Always loaded. Read from code.
 8. **flag** `--allowedTools, --allowed-tools <tools...>`: Allow rules from the command line. A rule naming a tool that does not exist is skipped with a warning. Read from code.
 9. **flag** `--disallowedTools, --disallowed-tools <tools...>`: Deny rules from the command line. Read from code.
 10. **agent** allowed-tools of managed or bundled skills and most plugins: While a skill or custom command runs, its allowed-tools frontmatter adds allow rules. These origins keep theirs even under managed-only rules. Read from code.
 11. **agent** allowed-tools of user, project or --add-dir skills and commands: Frontmatter from your own, project or --add-dir skills and commands, including plugins found inside those skill folders. Read from code.
-12. **env** `CLAUDE_BG_SESSION_PERMISSION_RULES`: Background sessions only: the allow list from a JSON value that must carry both an allow and a deny list, or the whole value is skipped. Read from code.
-13. **env** `CLAUDE_BG_SESSION_PERMISSION_RULES`: Background sessions only: the deny list from the same JSON value. Read from code.
-14. **flag** `--tools <tools...>`: Built-in tools left out of --tools are withheld as deny rules. Read from code.
+12. **session** Approvals given during this session: Allow rules added when you answer a permission prompt with a don't-ask-again-this-session choice. They last only for this session. Under managed-only rules the prompt does not offer that choice, and reloading settings clears these rules. Read from code.
+13. **env** `CLAUDE_BG_SESSION_PERMISSION_RULES`: Background sessions only: the allow list from a JSON value that must carry both an allow and a deny list, or the whole value is skipped. Read from code.
+14. **env** `CLAUDE_BG_SESSION_PERMISSION_RULES`: Background sessions only: the deny list from the same JSON value. Read from code.
+15. **flag** `--tools <tools...>`: Built-in tools left out of --tools are withheld as deny rules. Read from code.
 
-* After the ladder: `allowManagedPermissionRulesOnly`. allowManagedPermissionRulesOnly, counted only when set in managed settings: rules from every other settings file, --allowedTools, background-session allow rules and user or project skill frontmatter are ignored. Deny rules from the command line and the session still apply.
+* After the ladder: `allowManagedPermissionRulesOnly`. allowManagedPermissionRulesOnly, counted only when set in managed settings: rules from every other settings file, --allowedTools, session allow rules (background-session rules and in-session approvals) and user or project skill frontmatter are ignored. Deny rules from the command line and the session still apply.
 * After the ladder: `CLAUDE_CODE_EVAL_CONFINED`. Drops every allow rule read from a settings file, managed policy included. Command-line and frontmatter allow rules are unaffected.
 
-Source: `chunk-qehhcpvf.js` · offset 177575938 · sha256 `7b2bbff2…`
+Source: `chunk-qehhcpvf.js` · offset 177575853 · sha256 `c8d28884…`
 
 ### Sandbox network proxy
 
@@ -152,12 +153,12 @@ Which proxy a sandboxed command's network traffic is sent to: none, a proxy you 
 
 - Before the ladder: `CLAUDE_CODE_EVAL_CONFINED`. Checked before the ladder: when set, Claude Code ignores both proxy-port settings and uses its built-in proxy.
 
-1. **default** Sandbox without network rules: When the sandbox has no domain list, Claude Code starts no proxy and sets no proxy variables for the command. Read from code.
+1. **default** Sandbox without network rules: When the sandbox has no domain list, no proxy settings reach the command. Read from code.
 2. **settings** `sandbox.network.httpProxyPort`: Sends HTTP traffic to a proxy you already run on this localhost port, and Claude Code adds no proxy credentials to the proxy URLs. On Linux, commands inside the sandbox see localhost:3128, bridged to this port. Read from code.
-3. **settings** `sandbox.network.socksProxyPort`: Sends SOCKS traffic to a proxy you already run on this localhost port. On Linux, commands inside the sandbox see localhost:1080, bridged to this port. Read from code.
+3. **settings** `sandbox.network.socksProxyPort`: Sends SOCKS traffic to a proxy you already run on this localhost port. If the HTTP proxy port is not also set, the SOCKS proxy URLs still carry Claude Code's per-session credentials, so your proxy receives them. On Linux, commands inside the sandbox see localhost:1080, bridged to this port. Read from code.
 4. **default** Claude Code's built-in proxy: Otherwise Claude Code starts one proxy that serves both HTTP and SOCKS on a random localhost port. It adds per-session credentials to the proxy URLs unless the HTTP proxy port setting is set. Read from code.
 
-Source: `chunk-6k4pzp76.js` · offset 178558066 · sha256 `a086218c…`
+Source: `chunk-6k4pzp76.js` · offset 178674048 · sha256 `000c9938…`
 
 ## Prompt caching and context
 
@@ -171,17 +172,18 @@ Whether Claude Code compacts the conversation automatically, and the window it c
 
 1. **env** `CLAUDE_CODE_AUTO_COMPACT_WINDOW`: Any whole number of tokens: below 100,000 is raised to 100,000 and above 1,000,000 is lowered to 1,000,000. A value that is not a positive number is skipped with a debug-log message. Read from code.
 2. **settings** `autoCompactWindow`: The /autocompact command writes this to user settings. A value outside 100,000 to 1,000,000 is dropped when settings load. Read from code.
-3. **remote** Anthropic's per-account window: Anthropic can send a window per model with your account data, or with your organization's startup data when you sign in to Anthropic directly. None is sent by default in code. Anthropic can change it without a release. Read from code.
-4. **remote** Anthropic's Opus 4.8 window experiment: Claude Opus 4.8 only. Two remote flags, empty by default in code, can set a window. Anthropic can change them without a release. Read from code.
-5. **default** Built-in window for Claude Sonnet 5: 1M tokens, or 500K in Cowork and local-agent sessions. Skipped when Anthropic's organization startup data lists the model. Read from code.
-6. **default** Model with a native 1M window: A model whose 1M-token window is native here uses all of it. Skipped when Anthropic's organization startup data lists the model. Read from code.
-7. **default** Unrecognized model: A model Claude Code does not recognize compacts at its full context window. CLAUDE\_CODE\_DISABLE\_UNKNOWN\_MODEL\_WINDOW\_ENFORCEMENT skips this rung. Read from code.
-8. **default** No window configured: Nothing above answers, so there is no threshold: Claude Code compacts when the API rejects a prompt as too long. On Claude Code on the web a remote flag, off by default in code, decides; while it is off, compaction runs at the full context window. Some models whose larger window is not available here get a built-in 200K window instead. Read from code.
+3. **remote** Anthropic's per-account window: Anthropic can send a window per model with your account data, or with your organization's startup data when you use Anthropic's API directly. None is sent by default in code. Anthropic can change it without a release. Read from code.
+4. **remote** Anthropic's Opus 4.8 window experiment: Claude Opus 4.8 in an interactive session only; print mode (-p) and the Agent SDK skip it. Two remote flags, empty by default in code, can set a window. Anthropic can change them without a release. Read from code.
+5. **default** Built-in 200K window: Claude Sonnet 4.6, Opus 4.6, Opus 4.8, Opus 5 and Opus 5.5 compact at 200K when their context window is under 1M. Other 1M-capable models get the same when CLAUDE\_CODE\_DISABLE\_1M\_CONTEXT is set or long-context credits are blocked. Read from code.
+6. **default** Built-in window for Claude Sonnet 5: 1M tokens, or 500K in Cowork and local-agent sessions. Skipped when Anthropic's organization startup data lists the model. Read from code.
+7. **default** Model with a native 1M window: A model whose 1M-token window is native here uses all of it. Skipped when Anthropic's organization startup data lists the model. Read from code.
+8. **default** Unrecognized model: A model Claude Code does not recognize compacts at its full context window. CLAUDE\_CODE\_DISABLE\_UNKNOWN\_MODEL\_WINDOW\_ENFORCEMENT skips this rung. Read from code.
+9. **default** No window configured: Nothing above answers, so there is no threshold: Claude Code compacts when the API rejects a prompt as too long. On Claude Code on the web a remote flag, off by default in code, decides; while it is off, compaction runs at the full context window. Read from code.
 
-- Some models have a built-in 200K window that this ladder does not show: for them, auto-compaction starts near 200K tokens instead of waiting for the API to reject a prompt as too long.
+- The built-in 200K window also applies to other 1M-capable models when CLAUDE\_CODE\_DISABLE\_1M\_CONTEXT is set or long-context credits are blocked, which this ladder does not show: for those models auto-compaction starts near 200K tokens instead of waiting for the API to reject a prompt as too long.
 
 * After the ladder: The model's context window. A window larger than the model's context window is cut down to it.
-* After the ladder: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`. Leaves the window alone but moves the trigger earlier: a percent from 1 to 100 of the window after the reply room, never later than the usual trigger. Other values are ignored.
+* After the ladder: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`. Leaves the window alone but moves the trigger earlier: any percent above 0 and up to 100 of the window after the reply room, never later than the usual trigger. Other values are ignored.
 
 Source: `chunk-x9fwahqm.js` · offset 181929557 · sha256 `f914888e…`
 
@@ -231,13 +233,13 @@ Source: `chunk-x9fwahqm.js` · offset 182833007 · sha256 `b1745a8c…`
 
 The number of tokens the padded-countdown reminder starts from, decided once when the session starts. It is used only when the reminder mode is padded-countdown.
 
-1. **env** `CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET`: A whole number of tokens above zero. Zero, negatives and non-numbers count as unset and the setting below decides. Read from code.
+1. **env** `CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET`: A number of tokens above zero, read from its leading digits: 2000000abc reads as 2,000,000 and fractions are cut off. Zero, negatives and values with no leading digits count as unset and the setting below decides. Read from code.
 2. **settings** `totalTokensReminderBudget`: From any settings file Claude Code loads: a whole number of tokens above zero. The environment variable wins when both are set. Read from code.
 3. **remote** Anthropic's per-account budget: Account data Claude Code downloads can set a whole number above zero. Nothing is set in the code, and any other value is ignored with a warning in the debug log. Anthropic can change it without a release. Read from code.
 4. **remote** Anthropic's budget flag: A remote flag whose default in code is 15,000,000. A value that is not a number above zero also gives 15,000,000. Anthropic can change it without a release. Read from code.
 5. **default** Default: When nothing above answers, 15,000,000 tokens. Read from code.
 
-Source: `chunk-x9fwahqm.js` · offset 182298262 · sha256 `faeb9a47…`
+Source: `chunk-x9fwahqm.js` · offset 182298358 · sha256 `da66b9dd…`
 
 ### Total tokens reminder
 
@@ -252,7 +254,7 @@ Whether Claude is shown a tokens-left reminder, and which number it shows, decid
 4. **remote** Anthropic's reminder flag: A remote flag whose default in code is padded-countdown. A value that is not a mode name also gives padded-countdown. Anthropic can change it without a release. Read from code.
 5. **default** Default: When nothing above answers, padded-countdown: the system prompt shows the budget, and later reminders count down from it as tokens are used. The reminder appears in the system prompt, after each batch of tool results, and after each regular user prompt unless the after-user-turn switch is off. That switch is decided by its environment variable (1, true, yes or on; 0, false, no or off; anything else is unset), then its setting, then Anthropic's per-account data and remote flag, and is on by default. With it on, padded-countdown resets to the full budget at each user prompt; with it off, the count runs down across the whole session. Read from code.
 
-Source: `chunk-x9fwahqm.js` · offset 182297878 · sha256 `d29d4be3…`
+Source: `chunk-x9fwahqm.js` · offset 182297971 · sha256 `966e999a…`
 
 ## Models and reasoning
 
@@ -263,20 +265,22 @@ Whether fast mode is available in a session and, if so, whether requests go out 
 - Before the ladder: `CLAUDE_CODE_DISABLE_FAST_MODE`. Checked before the ladder: fast mode is unavailable, whatever is set below.
 
 1. **remote** Anthropic's fast-mode kill switch: A remote flag that is empty by default in code. When Anthropic sets it, fast mode is unavailable for everyone and the flag's text is shown as the reason. Anthropic can change it without a release. Read from code.
-2. **settings** `availableModels leaves out Opus and the session model`: When availableModels leaves out Opus, fast mode is unavailable unless the session's own model is on the list and supports fast mode. Read from code.
+2. **settings** `availableModels leaves out Opus and the session model`: When availableModels leaves out Opus, fast mode is unavailable unless the session's own model is on the list and supports fast mode and the session isn't driven over Remote Control. Read from code.
 3. **managed** `fastMode`: fastMode set to false in managed settings means your organization turned fast mode off. Nothing below turns it back on. Read from code.
-4. **managed** Anthropic's server says your organization can't use fast mode: Claude Code asks Anthropic whether your organization may use fast mode. A no (no paid plan, turned off by an admin, or no usage credits) makes it unavailable, and a saved fastMode setting is cleared. Read from code.
-5. **default** The organization check failed or hasn't answered: Until the organization check answers, or when it fails on the network, fast mode is unavailable, unless a check once succeeded before. Turning it on with --settings, CLAUDE\_CODE\_SKIP\_FAST\_MODE\_NETWORK\_ERRORS or CLAUDE\_CODE\_SKIP\_FAST\_MODE\_ORG\_CHECK lifts this. Read from code.
-6. **flag** /fast in this session: /fast turns fast mode on or off for the session and saves the choice to your user settings, unless you pick this session only. Turning it on switches to Opus when the current model can't run fast. When managed settings set fastModePerSessionOptIn, the this-session-only choice is refused. Read from code.
-7. **flag** `fastMode: true passed with --settings`: fastMode set to true in the --settings flag is how claude -p and the Agent SDK opt in. It turns fast mode on at startup, even with fastModePerSessionOptIn in your own settings, but not when managed settings set fastModePerSessionOptIn. Read from code.
-8. **default** claude -p or the Agent SDK without the --settings opt-in: In claude -p and the Agent SDK, fast mode is unavailable unless fastMode is passed with --settings. A fastMode setting in a settings file is not enough there. Read from code.
-9. **managed** `fastModePerSessionOptIn`: Set in managed settings, every session starts with fast mode off, and only /fast (saved, not this-session-only) turns it on. Read from code.
-10. **settings** `fastModePerSessionOptIn`: Set in any other settings file, a saved fastMode no longer carries over: each session starts off until you run /fast or pass fastMode with --settings. Read from code.
-11. **settings** `fastMode`: fastMode from the merged settings files. true starts each interactive session with fast mode on; /fast writes this for you. Read from code.
-12. **default** Default: When nothing above answers, fast mode is available but off. Read from code.
-13. **env** `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`: Does not turn fast mode on. It only lifts the failed-organization-check block above, so the settings decide. Ignored in cloud sessions. Read from code.
-14. **env** `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK`: Does not turn fast mode on. It skips the organization check and treats the organization as allowed, which lifts the block above. Ignored in cloud sessions. Read from code.
+4. **default** claude -p or the Agent SDK without the --settings opt-in: In claude -p and the Agent SDK, fast mode is unavailable unless fastMode is passed with --settings, which clears this gate. A fastMode setting in a settings file is not enough there. Checked before the organization check. Read from code.
+5. **managed** Anthropic's server says your organization can't use fast mode: Claude Code asks Anthropic whether your organization may use fast mode. A no (no paid plan, turned off by an admin, or no usage credits) makes it unavailable, and fastMode in your user settings is cleared when that answer changes. Read from code.
+6. **default** The organization check hasn't answered yet: Before the organization check has started, fast mode is unavailable. CLAUDE\_CODE\_SKIP\_FAST\_MODE\_ORG\_CHECK lifts this, and so does fastMode passed with --settings; both are ignored in cloud sessions. CLAUDE\_CODE\_SKIP\_FAST\_MODE\_NETWORK\_ERRORS does not. Read from code.
+7. **default** The organization check failed or is still guessing: When the check fails on the network, or is still running with no earlier answer cached, fast mode is unavailable. CLAUDE\_CODE\_SKIP\_FAST\_MODE\_NETWORK\_ERRORS, CLAUDE\_CODE\_SKIP\_FAST\_MODE\_ORG\_CHECK or fastMode passed with --settings lifts this; all three are ignored in cloud sessions. Read from code.
+8. **flag** /fast in this session: /fast turns fast mode on or off for the session and saves the choice to your user settings, unless you pick this session only. Turning it on switches to Opus when the current model can't run fast. When managed settings set fastModePerSessionOptIn, the this-session-only choice is refused. Read from code.
+9. **flag** `fastMode: true passed with --settings`: fastMode set to true in the --settings flag is how claude -p and the Agent SDK opt in. It turns fast mode on at startup, even with fastModePerSessionOptIn in your own settings, but not when managed settings set fastModePerSessionOptIn. Outside cloud sessions it also lifts the organization-check blocks above. Read from code.
+10. **managed** `fastModePerSessionOptIn`: Set in managed settings, every session starts with fast mode off, and only /fast (saved, not this-session-only) turns it on. Read from code.
+11. **settings** `fastModePerSessionOptIn`: Set in any other settings file, a saved fastMode no longer carries over: each session starts off until you run /fast or pass fastMode with --settings. Read from code.
+12. **settings** `fastMode`: fastMode from the merged settings files. true starts each interactive session with fast mode on; /fast writes this for you. Read from code.
+13. **default** Default: When nothing above answers, fast mode is available but off. Read from code.
+14. **env** `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`: Does not turn fast mode on. It only lifts the failed-check block above, not the wait before the check starts. Ignored in cloud sessions. Read from code.
+15. **env** `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK`: Does not turn fast mode on. It skips the organization check and treats the organization as allowed, which lifts both organization-check blocks above. Ignored in cloud sessions. Read from code.
 
+* After the ladder: fastMode: true passed with --settings. Passing fastMode: true with --settings clears the claude -p and Agent SDK gate, so the rungs below it decide.
 * After the ladder: Not the Anthropic API. Fast mode only runs against the Anthropic API directly. On Bedrock, Vertex, Foundry or a gateway it is unavailable.
 * After the ladder: Model can't run fast. Fast mode only applies to models that support it (Opus 5 family, Opus 4.8, or models the catalog marks as fast-capable). On any other model requests go out at normal speed.
 * After the ladder: Fast-mode cooldown running. While a fast-mode cooldown is running, requests go out at normal speed; fast mode comes back on its own when the cooldown ends.
@@ -323,9 +327,9 @@ Which model id Claude Code sends when it resolves a model family (Opus, Sonnet, 
 2. **env** `ANTHROPIC_DEFAULT_SONNET_MODEL`: Used exactly as written, on every provider, before any lookup. Read from code.
 3. **env** `ANTHROPIC_DEFAULT_HAIKU_MODEL`: Used exactly as written, on every provider, before any lookup. Read from code.
 4. **env** `ANTHROPIC_DEFAULT_FABLE_MODEL`: Used on every provider, before any lookup. Read from code.
-5. **remote** Anthropic's served model catalog: Anthropic API only, with no custom ANTHROPIC\_BASE\_URL, and not for Fable. When the catalog names a model this version knows, that model's id still passes through modelOverrides. Anthropic can change the catalog without a release. Read from code.
+5. **remote** Anthropic's served model catalog: Anthropic API only, with no custom ANTHROPIC\_BASE\_URL, and not for Fable. When the catalog names a model this version knows, that model's id still passes through modelOverrides, so a matching override key replaces it. Anthropic can change the catalog without a release. Read from code.
 6. **settings** `modelOverrides`: The key must be the first-party id of the model this provider uses for the family, such as claude-sonnet-4-5 for Sonnet on Bedrock; the value replaces that model's provider id. A key naming any other model, such as claude-sonnet-5 on Bedrock, leaves this family's default alone. Read from code.
-7. **default** Inference profile found in the AWS account: Bedrock only. Claude Code lists the account's inference profiles and uses the one for this model, preferring the region prefix from ANTHROPIC\_BEDROCK\_REGION\_PREFIX. Read from code.
+7. **default** Inference profile found in the AWS account: Bedrock only. Claude Code lists the account's inference profiles and uses the one for this model, preferring the region prefix from ANTHROPIC\_BEDROCK\_REGION\_PREFIX, otherwise your AWS region's prefix. us-gov regions always use us-gov. Read from code.
 8. **default** Built-in model for this provider: The bundled model catalog names a model for each family and provider, and Claude Code sends that provider's id for it. On Bedrock the id carries a region prefix, and requests made before the profile lookup finishes land here. Read from code.
 
 Source: `chunk-3kj78r2m.js` · offset 176484106 · sha256 `846f9082…`
@@ -400,7 +404,7 @@ Whether Claude Code shows the terminal's own cursor at the input caret instead o
 
 1. **env** `CLAUDE_CODE_ACCESSIBILITY`: 1, true, yes or on (any case) turns the native cursor on, whatever is set below. Any other value counts as unset. Read from code.
 2. **env** `CLAUDE_AX_SCREEN_READER`: Screen reader mode also turns the native cursor on. It comes from --ax-screen-reader, this variable, or the axScreenReader setting; 0, false, no or off here overrides the setting. A remote gate that is on by default in code can still keep screen reader mode off. Read from code.
-3. **env** `CLAUDE_CODE_DECSTBM`: Turning on the scroll-region renderer keeps the drawn cursor. It only takes effect in an interactive terminal that supports it. 0 or false does not turn the renderer off; it leaves the choice to Anthropic's flag below. Read from code.
+3. **env** `CLAUDE_CODE_DECSTBM`: Turning on the scroll-region renderer keeps the drawn cursor. It only takes effect in an interactive terminal that supports it, and when other internal conditions allow. 0 or false does not turn the renderer off; it leaves the choice to Anthropic's flag below. Read from code.
 4. **remote** Anthropic's scroll-region renderer flag turned on: A remote flag that is off by default in code. When Anthropic turns it on, the scroll-region renderer runs in supported terminals and the cursor stays drawn, even with CLAUDE\_CODE\_NATIVE\_CURSOR set. Anthropic can change it without a release. Read from code.
 5. **env** `CLAUDE_CODE_NATIVE_CURSOR`: 1, true, yes or on (any case) turns the native cursor on. Only accessibility or screen reader mode beats it, and the scroll-region renderer above keeps the cursor drawn. Any other value counts as unset. Read from code.
 6. **remote** Anthropic's native cursor flag turned on: A remote flag that is off by default in code. When Anthropic turns it on, you get the native cursor without setting anything. Anthropic can change it without a release. Read from code.
@@ -430,11 +434,11 @@ Whether Claude Code sends the model its built-in git commit and pull request ins
 
 1. **env** `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS`: Checked first, in any letter case. 1, true, yes or on turns off both the instructions and the status snapshot; 0, false, no or off turns them on even when a setting says false. Any other value is ignored. Read from code.
 2. **settings** `includeGitInstructions`: From any settings file Claude Code loads. false turns off both the instructions and the status snapshot. Read from code.
-3. **default** Built-in default: Both are included. The instructions go in the Bash tool's description; the status snapshot (branch, main branch, git user, status and recent commits) goes in the session context. Read from code.
+3. **default** Built-in default: Both are included. The instructions go in the Bash tool's description; the status snapshot (branch, main branch, git user, status and recent commits) goes in the session context. Turning them off also stops the remote-session notice about commit and pull request attribution, unless that notice has something else to report, such as a session link. Read from code.
 
-* After the ladder: `CLAUDE_CODE_REMOTE`. Remote session A remote session never gets the status snapshot. The git instructions still follow the ladder.
-* After the ladder: Custom system prompt. In non-interactive runs (claude -p and the SDK), a system prompt that replaces the default one leaves out the status snapshot.
-* After the ladder: Explore or Plan subagent. The built-in Explore and Plan subagents never get the status snapshot.
+* After the ladder: `CLAUDE_CODE_REMOTE`. Remote session A remote session gets no new status snapshot. The git instructions still follow the ladder. A snapshot already announced earlier in the conversation, for example before a compaction or on resume, is carried forward instead.
+* After the ladder: Custom system prompt. In non-interactive runs (claude -p and the SDK), a system prompt that replaces the default one gets no new status snapshot. A snapshot already announced earlier in the conversation, for example before a compaction or on resume, is carried forward instead.
+* After the ladder: Explore or Plan subagent. The built-in Explore and Plan subagents get no new status snapshot. A snapshot already announced earlier in the conversation, for example before a compaction or on resume, is carried forward instead.
 * After the ladder: Not a git repository. Outside a git repository, or when the git commands fail, there is no status snapshot.
 
 Source: `chunk-x9fwahqm.js` · offset 181565492 · sha256 `628bc4a3…`
@@ -457,19 +461,22 @@ Which size guideline Claude is given for the multi-agent workflows it writes, fi
 2. **settings** Dynamic workflow size in /config: Your choice in /config, saved in the global config file (~/.claude.json). Changing it, or the settings key, during a session reaches Claude as a short note with your next prompt. A hand-edited value outside the four names is ignored. Read from code.
 3. **default** Default by plan: When neither answers: small on the Claude Pro plan, medium for every other sign-in. Claude is told this is the default and that the user can raise or remove it in /config. Read from code.
 
-Source: `chunk-h058ppsw.js` · offset 180927119 · sha256 `0e70baa6…`
+Source: `chunk-h058ppsw.js` · offset 180926990 · sha256 `75641541…`
 
 ## Settings and environment
 
 ### Where a setting's value comes from
 
-Claude Code reads settings from five sources. A single value comes from the highest source that sets it; lists combine across all of them.
+Claude Code reads settings from five sources, over settings that plugins supply as the lowest layer. A single value comes from the highest source that sets it; lists combine across all of them.
 
 1. **file** Managed policy (managed-settings.json): Set by an administrator. Always loaded. Read from code.
-2. **file** --settings file or JSON: Always loaded when given. Read from code.
+2. **file** --settings file or JSON: Loaded even when --setting-sources leaves the other files out. Read from code.
 3. **file** .claude/settings.local.json: This project, this machine; not checked in. Read from code.
 4. **file** .claude/settings.json: This project, shared with the team. Read from code.
 5. **file** ~/.claude/settings.json: All your projects. Read from code.
+
+- Credential-helper keys (apiKeyHelper, awsAuthRefresh, awsCredentialExport, gcpAuthRefresh, otelHeadersHelper, proxyAuthHelper) can be removed from a source before the merge, so for them the highest source that sets one does not always win.
+- Some keys are read from particular sources rather than from this combined value, and can ignore the project files. Permission rules are one: see their own ladder.
 
 * After the ladder: Managed policy's availableModels, enforceAvailableModels and modelPicker replace every other source's values.
 
