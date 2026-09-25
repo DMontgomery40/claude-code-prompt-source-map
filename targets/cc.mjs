@@ -6,7 +6,7 @@ import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
 import { run } from "../lib/run.mjs";
 
-const repo = `${process.env.HOME}/Documents/claude-code-prompt-source-map`;
+const repo = `${process.env.HOME}/claude-code-prompt-source-map`;
 const node = process.execPath;
 const npm = path.join(path.dirname(process.execPath), "npm");
 

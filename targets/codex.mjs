@@ -5,7 +5,7 @@ import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
 import { log, notify, run } from "../lib/run.mjs";
 
-const repo = `${process.env.HOME}/Documents/gpt6-prompt-source-map`;
+const repo = `${process.env.HOME}/gpt6-prompt-source-map`;
 const node = process.execPath;
 
 export const codex = {
