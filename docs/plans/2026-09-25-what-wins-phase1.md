@@ -242,7 +242,7 @@ git commit -m "Add the shared decision-ladder evaluator"
 - Produces:
   - `isDerived(fileName) -> boolean`
   - `knobIndex(root) -> Map<recordId, { area, kind, title }>` over the environment-variables, settings and cli records;
-  - `readDecisions(root) -> Decision[]` and `writeDecisions(root, items)`;
+  - `readDecisions(root) -> Decision[]` and `writeDecisions(root, items, version)`;
   - `validateDecision(record, knobIds) -> string[]` (an empty array means valid).
 
 - [ ] **Step 1: Write the failing test.**
@@ -402,7 +402,7 @@ test("a text anchor spans exactly the found text", () => {
 });
 
 test("ambiguous and missing anchors fail loudly", () => {
-  assert.throws(() => anchorRange(src, { find: "return", span: "text" }), /occurs 4 times/);
+  assert.throws(() => anchorRange(src, { find: "return", span: "text" }), /occurs 3 times/);
   assert.equal(anchorRange(src, { find: "return", span: "text", occurrence: 2 }).length, 2);
   assert.throws(() => anchorRange(src, { find: "nope", span: "text" }), /not found/);
 });
@@ -1181,7 +1181,7 @@ git commit -m "Trace decisions: <ids>"
 - Consumes: `outputs/decisions.json`, and `evaluateLadder` (Task 1) serialized with `toString()`.
 - Produces:
   - `outputs/what-wins.md`: one `##` per group and one `###` per decision title, with the question, a static rung list (`1. **env** \`NAME\`: note. Tested.`), bypass and constraint lines, and a Source line.
-  - Catalog entry: `{ path: "outputs/what-wins.md", format: "markdown", title: "What wins", slug: "what-wins", summary: "For each value Claude Code decides, every source it checks, in order, and which one takes effect.", data: "outputs/decisions.json", ladders: "outputs/decisions.json", filters: { records: "outputs/decisions.json", tags: "outputs/decisions-tags.json" } }`
+  - Catalog entry: `{ path: "outputs/what-wins.md", format: "markdown", title: "What wins", slug: "what-wins", summary: "For each value Claude Code decides, every source it checks, in order, and which one takes effect.", data: "outputs/decisions.json", ladders: "outputs/decisions.json" }` (Task 10 adds `filters: { records: "outputs/decisions.json", tags: "outputs/decisions-tags.json" }` once it creates the tags file)
   - `enhanceLadders(html, decisions) -> html`: after each decision's `h4`, appends `<div class="ladder" data-decision="<id>">` with server-rendered markup and hides the static list with the `.js` class.
 
 - [ ] **Step 1: Write the failing test.**
@@ -1379,7 +1379,7 @@ Each rung's `label` is the knob's display title. The authoring helper fills `lab
   - `build-site.mjs`: when `file.ladders` is set, parse it and store `document.ladders = items`.
   - `render.mjs` `renderDocument`: after the filter wrapping, `if (document.ladders) body = enhanceLadders(body, document.ladders);`, and add `${ladderStyles}` and `${ladderScript}` next to `filterStyles` and `filterScript`.
   - `catalog.mjs`: add the entry from Interfaces as the first item of "Configuration".
-  - Tags: `node extract/tags.mjs decisions` (Task 10 adds the area) writes `outputs/decisions-tags.json`.
+  - No `filters` on this entry yet: Task 10 creates `outputs/decisions-tags.json` and adds them.
 
 - [ ] **Step 6: Run the tests, build, and check at dpr 1.**
   - Run `node extract/decisions-page.mjs && cd site && npm test && npm run build`.
@@ -1425,7 +1425,7 @@ assert.match(html, /<a class="feeds-link" href="\.\.\/what-wins\/#prompt-cache-t
     - cli: documented, undocumented, hidden, command or flag;
     - decisions: tested (any rung tested), has-remote (any remote rung), silent-skip (any `invalid_example` or `skip_when`), merge (shape merge or layered).
     - Write `outputs/<area>-tags.json`.
-  - Catalog: add `filters` to the settings and cli entries.
+  - Catalog: add `filters` to the settings, cli and what-wins entries.
   - A general-purpose Opus agent writes the settings taxonomy, seed and check set, using the cc-env-tags brief with the area swapped. The check set must match at least 85%.
 
 - [ ] **Step 4: Run the tests, build, and check at dpr 1.**
