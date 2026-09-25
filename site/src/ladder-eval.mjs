@@ -57,7 +57,9 @@ export function evaluateLadder(decision, scenario) {
       const capValue = "value" in c.cap ? c.cap.value : c.cap.by_context.find(entry => holds(entry.when ?? {}, result.value))?.value;
       if (capValue !== undefined && Number(result.value) > Number(capValue)) result = { ...result, value: capValue, constrainedBy: c.id };
     }
-    if (c.replace_values && result.value in c.replace_values) result = { ...result, value: c.replace_values[result.value], constrainedBy: c.id };
+    if (c.replace_values && ["string", "number", "boolean"].includes(typeof result.value) && Object.hasOwn(c.replace_values, String(result.value))) {
+      result = { ...result, value: c.replace_values[String(result.value)], constrainedBy: c.id };
+    }
   }
   return result;
 }

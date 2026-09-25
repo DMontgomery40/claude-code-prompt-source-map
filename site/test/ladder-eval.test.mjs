@@ -146,3 +146,18 @@ test("replace_values maps a final value after the ladder", () => {
   assert.equal(evaluateLadder(d, { set: { cli: "plan" }, constraints: { noAuto: true } }).constrainedBy, undefined);
   assert.equal(evaluateLadder(d, { set: { cli: "auto" } }).value, "auto");
 });
+
+test("replace_values does not match inherited prototype property names", () => {
+  const d = { shape: "first-wins", constraints: [{ id: "noAuto", replace_values: { auto: "default" } }], rungs: [
+    { id: "cli", input: "choice", accepts: ["toString", "plan"], effect: { from: "input" } }] };
+  const r = evaluateLadder(d, { set: { cli: "toString" }, constraints: { noAuto: true } });
+  assert.deepEqual([r.value, r.constrainedBy], ["toString", undefined]);
+});
+
+test("replace_values does not match an array result's stringified form", () => {
+  const d = { shape: "merge", constraints: [{ id: "noAuto", replace_values: { "a,b": "x" } }], rungs: [
+    { id: "policy", input: "choice", effect: { from: "input" } },
+    { id: "user", input: "choice", effect: { from: "input" } }] };
+  const r = evaluateLadder(d, { set: { policy: ["a"], user: ["b"] }, constraints: { noAuto: true } });
+  assert.deepEqual([r.value, r.constrainedBy], [["a", "b"], undefined]);
+});
