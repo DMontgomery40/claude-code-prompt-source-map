@@ -109,3 +109,12 @@ test("numeric caps lower a result only when it is above the cap", () => {
   const low = evaluateLadder(d, { context: { model: "sonnet" }, set: { env: 8000 }, constraints: { limit: true } });
   assert.deepEqual([low.value, low.constrainedBy], [8000, undefined]);
 });
+
+test("numeric caps compare string-typed values as numbers and leave non-numbers alone", () => {
+  const d = { shape: "first-wins", constraints: [{ id: "limit", cap: { value: "128000" } }],
+    rungs: [{ id: "env", input: "choice", effect: { from: "input" } }] };
+  const capped = v => evaluateLadder(d, { set: { env: v }, constraints: { limit: true } });
+  assert.deepEqual([capped("8000").value, capped("8000").constrainedBy], ["8000", undefined]);
+  assert.deepEqual([capped("200000").value, capped("200000").constrainedBy], ["128000", "limit"]);
+  assert.equal(capped("remote").value, "remote");
+});

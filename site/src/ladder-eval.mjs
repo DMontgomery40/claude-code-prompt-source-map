@@ -54,7 +54,7 @@ export function evaluateLadder(decision, scenario) {
     if (c.effect) result = { ...result, value: c.effect.value, constrainedBy: c.id };
     if (c.cap) {
       const capValue = "value" in c.cap ? c.cap.value : c.cap.by_context.find(entry => holds(entry.when ?? {}, result.value))?.value;
-      if (capValue !== undefined && result.value > capValue) result = { ...result, value: capValue, constrainedBy: c.id };
+      if (capValue !== undefined && Number(result.value) > Number(capValue)) result = { ...result, value: capValue, constrainedBy: c.id };
     }
   }
   return result;
