@@ -149,13 +149,14 @@ export function unloggedShrinks(agent) {
   return out;
 }
 
-// The site page for a tool, from the reference index's `tools` map: the exact name first, then the
-// name after the last `__` or `.` for namespaced tools (mcp__codex_app__create_worktree -> create_worktree).
+// The site page for a tool, from the reference index's `tools` map: the exact name, then the text after
+// the last `__`, then that text after its last `.` (mcp__codex_app__create_worktree -> create_worktree).
 export function toolSite(tools, name) {
   if (!tools || !name) return null;
-  if (Object.hasOwn(tools, name)) return tools[name];
-  const short = String(name).split(/__|\./).pop();
-  return short && short !== name && Object.hasOwn(tools, short) ? tools[short] : null;
+  const after = (s, sep) => { const i = s.lastIndexOf(sep); return i < 0 ? s : s.slice(i + sep.length); };
+  const n = String(name), a = after(n, "__"), b = after(a, ".");
+  for (const k of [n, a, b]) if (k && Object.hasOwn(tools, k)) return tools[k];
+  return null;
 }
 
 export function siteHref(site) {
