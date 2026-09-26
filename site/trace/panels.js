@@ -254,7 +254,8 @@ export function renderPanel(root, S, A) {
   const { trace, level } = S;
   const agent = S.agent;
   const req = agent && S.reqIdx != null ? agent.requests[S.reqIdx] : null;
-  if ((S.followingMap || (S.mapPinned && S.level === 3)) && req) root.append(el("div", { class: "map-location" },
+  const located = (S.followingMap || (S.mapPinned && S.level === 3)) && req;
+  if (located) root.append(el("div", { class: "map-location" },
     el("p", { class: "kicker", text: S.followingMap ? "AT THE CENTER OF YOUR MAP" : "SELECTED REQUEST" }),
     el("b", { text: `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${req.i + 1}` }),
     el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${fmtTok(req.tokens.context)} context tokens` }),
@@ -262,7 +263,8 @@ export function renderPanel(root, S, A) {
   if (S.inspector === 'action' && req) { root.append(...actionPanel(agent, req, S, A).filter(Boolean)); return; }
   if (level === 0) root.append(...lensPanel(S, A));
   else if (level === 1) root.append(...agentPanel(trace, agent, S, A));
-  else if (level === 2) root.append(...requestPanel(trace, agent, req, S, A).filter(Boolean));
+  // The map card above already offers this request's call; the request panel does not repeat it.
+  else if (level === 2) root.append(...requestPanel(trace, agent, req, S, A, located).filter(Boolean));
   else root.append(...stratumPanel(trace, agent, req, S, A));
 }
 
@@ -544,11 +546,11 @@ function actionPanel(agent, req, S, A) {
   ];
 }
 
-function requestPanel(trace, agent, req, S, A) {
+function requestPanel(trace, agent, req, S, A, callOffered = false) {
   if (!req) return [el("p", { text: "No request selected." })];
   const t = req.tokens;
   const out = [
-    req.action?.kind === "tool" ? btn(`Open ${req.action.tool} call ↗`, () => A.focusAction(agent.id, req.i), "btn action-open") : null,
+    req.action?.kind === "tool" && !callOffered ? btn(`Open ${req.action.tool} call ↗`, () => A.focusAction(agent.id, req.i), "btn action-open") : null,
     el("p", { class: "kicker", text: `${agent.kind === "root" ? "Main thread" : agent.name} · request ${req.i + 1} of ${agent.requests.length}` }),
     el("h2", { text: `${fmtTok(t.context)} tokens in context` }),
     el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${req.model || agent.model || ""}${req.iterations > 1 ? ` · iteration ${req.iteration} of ${req.iterations} in one response` : ""}` }),

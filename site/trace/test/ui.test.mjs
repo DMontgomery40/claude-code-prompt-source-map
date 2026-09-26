@@ -260,6 +260,17 @@ test('map-following sidebar moves through overview, agent, request and source wi
   }
 });
 
+test('a request offers its tool call once, whether or not the map card is showing it', () => {
+  const req = { i: 0, t: 1000, tokens: { context: 811000 }, action: { kind: 'tool', tool: 'Bash', class: 'write' } };
+  const agent = { id: 'root', kind: 'root', requests: [req], blocks: [], asks: [], compactions: [] };
+  for (const extra of [{}, { followingMap: true }, { mapPinned: true, level: 3 }]) {
+    const host = new Element('aside');
+    renderPanel(host, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, ...extra }, { focusAction() {}, focusRequest() {}, focusStratum() {} });
+    const opens = host.all(n => n.tagName === 'BUTTON' && n.textContent === 'Open Bash call ↗');
+    assert.equal(opens.length, 1, `one call button with ${JSON.stringify(extra)}`);
+  }
+});
+
 test('tool inspector opens the actual selected call immediately, including every call in multi-call responses', async () => {
   for (const tool of ['Bash', 'Read', 'mcp__web__search']) {
     const ref = { file: 0, offset: 50, length: 20 }, result = { file: 0, offset: 80, length: 20 };
