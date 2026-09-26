@@ -2,7 +2,7 @@
 // agent-*.jsonl (+ .meta.json) -> the normalized Trace model.
 import {
   readLines, newAgent, addBlock, tokensClaude, imageDims, estEncrypted, estText,
-  classifyClaudeTool, RANK, finalizeAgent, partText, splitReminders,
+  classifyClaudeTool, RANK, finalizeAgent, partText, splitReminders, inheritTraits,
 } from "../model.js";
 
 const ts = (s) => Date.parse(s);
@@ -15,6 +15,73 @@ export function isClaudeRow(row) {
 // instruction files ("you"); tool/file content ("outside"); everything else
 // rendered is harness text inserted between turns ("injected").
 const ATT_KIND = { queued_command: "you", nested_memory: "you", instructions: "you", file: "outside" };
+
+// Home directories shortened for labels; the text itself is shown unchanged.
+export const shortPath = (p) => String(p || "").replace(/^\/(?:Users|home)\/[^/]+\//, "~/");
+const listOf = (xs, n = 3) => (xs || []).slice(0, n).join(", ") + ((xs || []).length > n ? ` +${xs.length - n}` : "");
+
+// Attachments that carry the user's own setup: a label that says what it is, and a source key so a
+// second copy in the same context window shows up as a re-send.
+function ownAttachment(type, a) {
+  switch (type) {
+    case "nested_memory": return { label: `nested memory · ${shortPath(a.path || a.displayPath)}`, source: `file:${a.path || a.displayPath}`, identity: a.content && typeof a.content.content === "string" ? a.content.content : undefined };
+    case "skill_listing": return { label: `skills list${a.skillCount ? ` (${a.skillCount})` : ""}`, source: "skills-list" };
+    case "invoked_skills": return { label: `invoked skills re-sent: ${listOf((a.skills || []).map((x) => (x && x.name) || x))}`, source: null };
+    case "hook_additional_context": return { label: `hook output · ${a.hookEvent || a.hookName || "hook"}`, source: `hook:${a.hookEvent || a.hookName || ""}` };
+    case "mcp_instructions_delta": return { label: `MCP server instructions: ${listOf(a.addedNames)}`, source: null };
+    // instructions whose per-file headers weren't found: still the user's files, as one block
+    case "instructions": return { label: "instructions (CLAUDE.md files and memory)", source: "instructions" };
+    default: return null;
+  }
+}
+
+// Older Claude Code versions log many attachments without `rendered`; the text the model got is
+// then in the row's own fields. One entry per block: { path (under attachment), text, and the
+// label/kind/own/source/identity that differ from the defaults }. Null: no literal text here.
+function fieldBlocks(type, a) {
+  const str = (v) => (typeof v === "string" && v.trim() ? v : null);
+  const strs = (v) => (Array.isArray(v) && v.length && v.every((x) => typeof x === "string") ? v : null);
+  const mine = (extra) => ({ own: true, ...ownAttachment(type, a), ...extra });
+  switch (type) {
+    case "instructions": {
+      const out = (a.files || []).map((f, k) => f && str(f.content) && { path: ["files", k, "content"], text: f.content, kind: "you", own: true,
+        label: `${/mem/i.test(f.type || "") ? "memory index" : "instructions file"} · ${shortPath(f.path)}`, source: `file:${f.path}`, identity: f.content }).filter(Boolean);
+      return out.length ? out : null;
+    }
+    case "nested_memory": { const c = a.content && a.content.content; return str(c) ? [mine({ path: ["content", "content"], text: c, kind: "you", identity: c })] : null; }
+    case "skill_listing": return str(a.content) ? [mine({ path: ["content"], text: a.content })] : null;
+    case "invoked_skills": {
+      const out = (a.skills || []).map((x, k) => x && str(x.content) && { path: ["skills", k, "content"], text: x.content, own: true, label: `invoked skill re-sent · ${x.name}`, source: `skill:${x.name}` }).filter(Boolean);
+      return out.length ? out : null;
+    }
+    case "hook_additional_context": return strs(a.content) || str(a.content) ? [mine({ path: ["content"], text: partText(a.content) })] : null;
+    case "hook_blocking_error": { const t = a.blockingError && a.blockingError.blockingError; return str(t) ? [{ path: ["blockingError", "blockingError"], text: t, own: true, label: `hook blocked · ${a.hookEvent || a.hookName || "hook"}` }] : null; }
+    case "mcp_instructions_delta": return strs(a.addedBlocks) ? [mine({ path: ["addedBlocks"], text: partText(a.addedBlocks) })] : null;
+    case "agent_listing_delta": case "deferred_tools_delta": return strs(a.addedLines) ? [{ path: ["addedLines"], text: partText(a.addedLines) }] : null;
+    case "edited_text_file": return str(a.snippet) ? [{ path: ["snippet"], text: a.snippet }] : null;
+    case "file": { const c = a.content && a.content.file && a.content.file.content; return str(c) ? [{ path: ["content", "file", "content"], text: c }] : null; }
+    case "read_truncation_notice": return str(a.banner) ? [{ path: ["banner"], text: a.banner }] : null;
+    default: return str(a.text) ? [{ path: ["text"], text: a.text }] : null;
+  }
+}
+
+// The instructions attachment holds every CLAUDE.md-style file and the memory index in one
+// reminder, each under "Contents of <path> (…):". One block per file, by range, so each file is
+// labelled by its path; the wrapper text around them is the product's.
+function splitInstructions(content, files) {
+  const heads = [];
+  for (const f of files || []) {
+    const at = f && f.path ? content.indexOf(`Contents of ${f.path}`) : -1;
+    if (at >= 0) heads.push({ at, f });
+  }
+  heads.sort((x, y) => x.at - y.at);
+  if (!heads.length) return null;
+  const close = content.lastIndexOf("</system-reminder>");
+  const out = [{ start: 0, end: heads[0].at, file: null }];
+  heads.forEach((h, k) => out.push({ start: h.at, end: k + 1 < heads.length ? heads[k + 1].at : close > h.at ? close : content.length, file: h.f }));
+  if (close > heads.at(-1).at) out.push({ start: close, end: content.length, file: null });
+  return out.filter((x) => content.slice(x.start, x.end).trim());
+}
 // Attachment rows that never enter the model's context on their own.
 const NOT_IN_CONTEXT = new Set(["hook_success", "thinking_drop", "command_permissions"]);
 const AGENT_TOOLS = new Set(["Agent", "Task", "SendMessage", "TaskOutput"]);
@@ -101,7 +168,12 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
         track(uuid, b);
         continue;
       }
-      if (row.isMeta) { track(uuid, addBlock(agent, { t, kind: "injected", label: row.sourceToolUseID ? "skill content" : "meta", ref, text, render: "literal" })); continue; }
+      if (row.isMeta) {
+        const tu = row.sourceToolUseID ? toolUses.get(row.sourceToolUseID) : null;
+        const skill = tu && tu.name === "Skill" ? tu.skill : null;
+        track(uuid, addBlock(agent, { t, kind: "injected", label: row.sourceToolUseID ? (skill ? `skill · ${skill}` : "skill content") : "meta", ref, text, render: "literal", ...(row.sourceToolUseID ? { own: true, source: skill ? `skill:${skill}` : null } : {}) }));
+        continue;
+      }
       const k = row.origin && row.origin.kind === "task-notification" ? { kind: "agents", label: "task-notification" } : textKind(text, isSub);
       const b = addBlock(agent, { t, kind: k.kind, label: k.label, ref, text });
       track(uuid, b);
@@ -160,7 +232,7 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
           const pres = (cm.preservedMessages && (cm.preservedMessages.allUuids || cm.preservedMessages.uuids)) || [];
           for (const u of pres) for (const bi of uuidBlocks.get(u) || []) {
             const src = agent.blocks[bi];
-            const b = addBlock(agent, { t, kind: src.kind, label: src.label, ref: src.ref, est: src.est, image: src.image, render: src.render, carried: true, site: src.site });
+            const b = inheritTraits(addBlock(agent, { t, kind: src.kind, label: src.label, ref: src.ref, est: src.est, image: src.image, render: src.render, carried: true, site: src.site }), src);
             if (src.rebuilt) b.rebuilt = true;
             b.chars = src.chars;
             if (src.flags) { b.flags = src.flags; b.flagHits = src.flagHits; }
@@ -195,13 +267,37 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
           const text = partText(r.rendered);
           const kind = ATT_KIND[type] || "injected";
           const rm = agent._ix && agent._ix.reminders[type];
-          const b = addBlock(agent, { t, kind, label: type, ref: { ...lineRef, path: ["rendered"] }, text, render: "literal", ...(rm ? { site: { ...rm } } : {}) });
+          const one = r.rendered.length === 1 && r.rendered[0] && typeof r.rendered[0].content === "string";
+          const parts = type === "instructions" && one ? splitInstructions(r.rendered[0].content, a.files) : null;
+          if (parts) {
+            for (const x of parts) {
+              const ref = { ...lineRef, path: ["rendered", 0, "content"], range: [x.start, x.end] };
+              const piece = text.slice(x.start, x.end);
+              if (!x.file) { track(r.uuid, addBlock(agent, { t, kind: "injected", label: "instructions wrapper", ref, text: piece, render: "literal", ...(rm ? { site: { ...rm } } : {}) })); continue; }
+              const what = /mem/i.test(x.file.type || "") ? "memory index" : "instructions file";
+              track(r.uuid, addBlock(agent, { t, kind, label: `${what} · ${shortPath(x.file.path)}`, ref, text: piece, render: "literal", own: true, source: `file:${x.file.path}`, identity: typeof x.file.content === "string" ? x.file.content : undefined }));
+            }
+            tally.literal++;
+            continue;
+          }
+          const mine = ownAttachment(type, a);
+          const b = addBlock(agent, { t, kind, label: mine ? mine.label : type, ref: { ...lineRef, path: ["rendered"] }, text, render: "literal", ...(rm ? { site: { ...rm } } : {}), ...(mine ? { own: true, source: mine.source, identity: mine.identity } : {}) });
           track(r.uuid, b);
           tally.literal++;
           if (type === "queued_command" && (a.humanTurn || (a.origin && a.origin.kind === "human")) && !isSub) agent.asks.push({ t, request: null, block: b.i, from: "human" });
           continue;
         }
         if (NOT_IN_CONTEXT.has(type) || type === "queued_command") { tally.skipped++; continue; }
+        const fields = fieldBlocks(type, a);
+        if (fields) {
+          const rm = agent._ix && agent._ix.reminders[type];
+          for (const f of fields) {
+            const { path, text, label, kind, ...rest } = f;
+            track(r.uuid, addBlock(agent, { t, kind: kind || ATT_KIND[type] || "injected", label: label || type, ref: { ...lineRef, path: ["attachment", ...path] }, text, render: "from the row's fields", ...(rm ? { site: { ...rm } } : {}), ...rest }));
+          }
+          tally.literal++;
+          continue;
+        }
         // Unknown attachment with no rendered text: show its data, labelled structured.
         const rm = agent._ix && agent._ix.reminders[type];
         const b = addBlock(agent, { t, kind: "injected", label: type, ref: { ...lineRef, path: ["attachment"] }, text: JSON.stringify(a), render: "structured", site: rm ? { ...rm } : null });
@@ -273,7 +369,7 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
             track(r.uuid, b);
             const c = classifyClaudeTool(x.name, input);
             const action = { kind: "tool", tool: x.name, target: c.target, class: c.class, args: b.ref, result: null, callId: x.id };
-            toolUses.set(x.id, { name: x.name, action });
+            toolUses.set(x.id, { name: x.name, action, skill: x.name === "Skill" ? input.skill || input.name || null : null });
             if (x.name === "Agent" || x.name === "Task") st.spawnCalls.push({ t, callId: x.id, name: input.name || null, description: input.description || null, subagentType: input.subagent_type || null, request: main ? main.i : null, block: b.i });
             if (main) {
               if (!main.action || main.action.kind === "text") main.action = action;

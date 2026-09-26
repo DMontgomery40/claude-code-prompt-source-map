@@ -226,6 +226,8 @@ button { font: inherit; color: inherit; }
 .lbl.cliff { border-left: 2px solid #eef1f5; font-weight: 600; }
 .lbl.cliff.soft { border-left-style: dotted; font-weight: 500; color: var(--ink-2); }
 .lbl.gap { color: var(--ink-2); font-size: 12px; }
+.lbl.event { border-left: 2px solid #ff5ccd; }
+.lbl.event.mine { border-left-color: var(--you); }
 .lbl.tick { color: var(--ink-2); font-size: 11.5px; padding: 1px 5px; }
 .lbl.tick.cap { color: var(--ink-3); }
 .lbl.row { font-size: 12.5px; font-weight: 650; color: var(--ink); }
@@ -265,6 +267,12 @@ button { font: inherit; color: inherit; }
 .sval { font-variant-numeric: tabular-nums; }
 .spct { color: var(--ink-3); text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; }
 .slist .note { padding: 0 6px 4px 28px; }
+.slist .sown { padding: 0 6px 4px 28px; color: var(--you); font-size: 12.5px; }
+/* the user's own setup: a quiet accent, not a separate category */
+.group.mine .ghead { box-shadow: inset 3px 0 0 var(--you); }
+.items.setup .item .tool { font-weight: 600; overflow-wrap: anywhere; }
+.reader pre.text .tl { color: var(--ink-3); }
+.reader pre.text .ml { color: var(--ink); background: #16210f; }
 .kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 14px; margin: 8px 0; }
 .kv dt { color: var(--ink-3); font-size: 13px; }
 .kv dd { margin: 0; font-variant-numeric: tabular-nums; }

@@ -89,8 +89,19 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
         return;
       }
       if (role === "developer") {
+        // The user's own setup lands where its Claude Code equivalent does: memories with
+        // CLAUDE.md/MEMORY.md under You, the skills list under Injected. Product instructions sent
+        // before the first request are the harness; later ones were injected between turns.
+        const ref = { ...lineRef, path: tpath };
+        const source = kind0 ? `developer:${kind0}` : null;
+        if (kind0 === "memories.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "memories", ref, text, carried, own: true, source })); return; }
+        if (kind0 === "host_skills.instructions") {
+          const n = (text.match(/^- [^\n]+\(file: /gm) || []).length;
+          made.push(addBlock(agent, { t, kind: "injected", label: `skills list${n ? ` (${n})` : ""}`, ref, text, carried, own: true, source }));
+          return;
+        }
         const kind = requestsInWindow === 0 ? "harness" : "injected";
-        made.push(addBlock(agent, { t, kind, label: `developer: ${kind0 || firstLine(text)}`, ref: { ...lineRef, path: tpath }, text, carried }));
+        made.push(addBlock(agent, { t, kind, label: `developer: ${kind0 || firstLine(text)}`, ref, text, carried, source }));
         return;
       }
       // user role
@@ -108,7 +119,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
         if (h.startsWith(">>> APPROVAL REQUEST END")) gs.planned = false;
         return;
       }
-      if (kind0 === "agents_md.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "AGENTS.md", ref: { ...lineRef, path: tpath }, text, carried })); return; }
+      if (kind0 === "agents_md.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "AGENTS.md", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "agents_md" })); return; }
       // The app brackets a pasted image with <image name=… path=…> and </image> text items; they are
       // its markers, not something the user typed.
       if (/^\s*(?:<image\b[^>]*>|<\/image>)\s*$/.test(text)) { made.push(addBlock(agent, { t, kind: "injected", label: "image marker", ref: { ...lineRef, path: tpath }, text, carried })); return; }
@@ -129,6 +140,13 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
         }
         return;
       }
+      // A skill the user picked, and the user's goal objective (wrapped by the product): theirs.
+      if (kind0 === "skills.selected_skill_instructions") {
+        const name = (text.match(/<name>([^<]+)<\/name>/) || [])[1];
+        made.push(addBlock(agent, { t, kind: "injected", label: name ? `skill · ${name}` : "selected skill", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: name ? `skill:${name}` : null }));
+        return;
+      }
+      if (kind0 === "goal.internal_context") { made.push(addBlock(agent, { t, kind: "you", label: "goal (your objective)", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "goal" })); return; }
       const label = kind0 === "environments.environment_context" ? "environment_context" : kind0 || firstLine(text);
       made.push(addBlock(agent, { t, kind: "injected", label, ref: { ...lineRef, path: tpath }, text, carried }));
     });

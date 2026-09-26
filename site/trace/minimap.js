@@ -125,9 +125,11 @@ export function buildLayout(trace) {
 
   let yMax = 1;
   for (const a of trace.agents) for (const r of a.requests) yMax = Math.max(yMax, r.tokens.context || 0);
+  // Clock ticks: hourly, or every 5, 10 or 30 minutes when the active time is short.
+  const step = active <= 25 * 60e3 ? 5 * 60e3 : active <= 80 * 60e3 ? 10 * 60e3 : active <= 4 * 3600e3 ? 30 * 60e3 : 3600e3;
   const hours = [];
-  const start = new Date(t0); start.setMinutes(0, 0, 0);
-  for (let t = start.getTime() + 3600e3; t < t1; t += 3600e3) if (!gaps.some(g => t > g.a && t < g.b)) hours.push(t);
+  const start = new Date(t0); start.setMinutes(step < 3600e3 ? Math.floor(start.getMinutes() / (step / 60e3)) * (step / 60e3) : 0, 0, 0);
+  for (let t = start.getTime() + step; t < t1; t += step) if (!gaps.some(g => t > g.a && t < g.b)) hours.push(t);
   return { t0, t1, X, gaps, info, root, lanes: laneEnd.length, links, yMax, hours, byId };
 }
 

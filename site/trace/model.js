@@ -197,6 +197,23 @@ export function prepareIndex(index) {
   return { site: index.site || null, origin: index.origin || null, pages: index.pages || [], lines: index.lines || {}, harness: index.harness || {}, reminders: index.reminders || {} };
 }
 
+// Characters of `text` on lines that the site publishes (the product's own words).
+export function templateChars(ix, text) {
+  if (!ix || !text) return 0;
+  let n = 0;
+  for (const raw of String(text).split("\n")) {
+    const l = normalizeLine(raw);
+    if (l.length >= MIN_INDEXED_LINE && Object.prototype.hasOwnProperty.call(ix.lines, fnv1a64(utf8.encode(l)))) n += raw.length + 1;
+  }
+  return Math.min(n, String(text).length);
+}
+
+// A copy of a block (carried across a compaction) keeps what the original was.
+export function inheritTraits(b, src) {
+  for (const k of ["own", "ownEst", "source", "hash"]) if (src[k] !== undefined) b[k] = src[k];
+  return b;
+}
+
 // The page holding most of the text's indexed lines: at least 2 matching lines, or
 // all of them when the text has fewer than 2 indexed lines. Otherwise null.
 export function siteForText(ix, text) {
@@ -250,14 +267,25 @@ export function newAgent(fields, ix = null) {
 // Appends a block. `text` is used only to measure and flag it and is not kept.
 // Harness and injected blocks are looked up in the site's reference index, if one
 // was given (agent._ix); `site` passes a known link through (carried copies).
-export function addBlock(agent, { t, kind, label, ref, text = "", est, image, render, carried, flagText, site }) {
+// own: the text comes from the user's own setup (instruction and memory files, their skills list,
+// hook output, their MCP servers). source: what the text is, so a second copy of the same thing in
+// one context window can be flagged as a re-send (see markResends).
+export function addBlock(agent, { t, kind, label, ref, text = "", est, image, render, carried, flagText, site, own, source, identity }) {
   const chars = image ? 0 : text.length;
   const b = { i: agent.blocks.length, t, kind, label, chars, est: est != null ? est : image ? estImage(image) : estText(chars), ref, site: null };
   if (site !== undefined) b.site = site;
-  else if (agent._ix && !image && text && (kind === "harness" || kind === "injected")) b.site = siteForText(agent._ix, text);
+  else if (agent._ix && !image && text && (kind === "harness" || kind === "injected" || own)) b.site = siteForText(agent._ix, text);
   if (image) b.image = image;
   if (render) b.render = render;
   if (carried) b.carried = true;
+  if (source) b.source = source;
+  // identity: the text that makes two copies "the same" (a file's content, not the wrapper around it)
+  if (!image && (identity != null || text) && (source || own)) b.hash = fnv1a64(utf8.encode(identity != null ? String(identity).trim() : text));
+  if (own) {
+    b.own = true;
+    // Lines published on the site are the product's template around the user's text.
+    b.ownEst = text ? Math.round(b.est * (1 - templateChars(agent._ix, text) / text.length)) : b.est;
+  }
   if ((kind === "outside" || kind === "agents") && !image) {
     const hits = instructionLike(flagText != null ? flagText : text);
     if (hits.length) { b.flags = ["instruction-like"]; b.flagHits = hits; }
@@ -303,9 +331,12 @@ export function computeStrata(agent) {
   const P = {};
   for (const k of KINDS) P[k] = new Float64Array(n + 1);
   const PV = new Int32Array(n + 1), PF = new Int32Array(n + 1);
+  const PO = {};
+  for (const k of KINDS) PO[k] = new Float64Array(n + 1);
   for (let j = 0; j < n; j++) {
     const b = agent.blocks[j];
     for (const k of KINDS) P[k][j + 1] = P[k][j] + (b.kind === k ? b.est : 0);
+    for (const k of KINDS) PO[k][j + 1] = PO[k][j] + (b.kind === k && b.own ? b.ownEst : 0);
     const inView = b.kind === "outside" || b.kind === "agents";
     PV[j + 1] = PV[j] + (inView ? 1 : 0);
     PF[j + 1] = PF[j] + (inView && b.flags ? 1 : 0);
@@ -316,11 +347,16 @@ export function computeStrata(agent) {
     const [a, b] = r.window;
     const est = {};
     for (const k of KINDS) est[k] = b >= a ? P[k][b + 1] - P[k][a] : 0;
-    for (const j of r.extra || []) est[agent.blocks[j].kind] += agent.blocks[j].est;
+    const own = {};
+    for (const k of KINDS) own[k] = b >= a ? PO[k][b + 1] - PO[k][a] : 0;
+    for (const j of r.extra || []) { const x = agent.blocks[j]; est[x.kind] += x.est; if (x.own) own[x.kind] += x.ownEst; }
     // harnessSource: "logged" (blocks in the log), "inferred" (reference index size
     // for the logged version), "residual" (default: harness = context − other strata).
     if (agent.harnessSource === "inferred" && agent.harnessEst) est.harness += agent.harnessEst;
     r.strata = scaleStrata(est, r.tokens.context, agent.harnessSource === "residual");
+    // The user's own share of each stratum, on the same scale as the stratum.
+    r.own = null;
+    for (const k of KINDS) if (own[k] > 0 && est[k] > 0) (r.own ||= {})[k] = Math.min(r.strata[k], Math.round(own[k] * r.strata[k] / est[k]));
   }
 }
 
@@ -392,7 +428,25 @@ export function buildCustody(agent, permissionAt) {
   }
 }
 
+// A block whose `source` already has a copy earlier in the same context window is a re-send:
+// both copies are in context. resendSame says whether the text is identical.
+export function markResends(agent) {
+  const starts = [...new Set(agent.requests.filter((r) => r.window).map((r) => r.window[0]))].sort((x, y) => x - y);
+  const last = new Map();
+  let si = 0;
+  for (const b of agent.blocks) {
+    let moved = false;
+    while (si < starts.length && starts[si] <= b.i) { si++; moved = true; }
+    if (moved) last.clear();
+    if (!b.source) continue;
+    const prev = last.get(b.source);
+    if (prev != null && !b.carried) { b.resendOf = prev; b.resendSame = agent.blocks[prev].hash != null && agent.blocks[prev].hash === b.hash; }
+    last.set(b.source, b.i);
+  }
+}
+
 export function finalizeAgent(agent, permissionAt) {
+  markResends(agent);
   computeStrata(agent);
   detectShrinks(agent);
   linkBlocksToRequests(agent);

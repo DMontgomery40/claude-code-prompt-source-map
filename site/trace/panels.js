@@ -4,8 +4,8 @@
 export const STRATA = [
   { key: "harness", name: "Harness", long: "The harness: system prompt, tools, base instructions", color: "#8b97a8" },
   { key: "summary", name: "Summary", long: "Compaction summaries", color: "#e8d6a6" },
-  { key: "you", name: "You", long: "Your words, plus AGENTS.md, CLAUDE.md and memory", color: "#c8f784" },
-  { key: "injected", name: "Injected", long: "Harness text injected between turns", color: "#ff5ccd" },
+  { key: "you", name: "You", long: "Your words, plus your instruction files (AGENTS.md, CLAUDE.md) and memories", color: "#c8f784" },
+  { key: "injected", name: "Injected", long: "Text inserted between turns: the product's reminders, and your skills, hooks and MCP servers", color: "#ff5ccd" },
   { key: "outside", name: "Outside", long: "Outside text: files, commands, web", color: "#ff9f5a" },
   { key: "agents", name: "Agents", long: "Subagent and peer reports", color: "#7fb8ff" },
   { key: "model", name: "Model", long: "The model's own earlier output", color: "#b9a0ff" }
@@ -219,7 +219,7 @@ export function strataBar(strata, total, onPick, selected) {
   return bar;
 }
 
-export function strataList(strata, total, onPick, selected, harnessNote) {
+export function strataList(strata, total, onPick, selected, harnessNote, own) {
   const ul = el("ul", { class: "slist" });
   for (const s of STRATA) {
     const v = strata?.[s.key] || 0;
@@ -228,6 +228,7 @@ export function strataList(strata, total, onPick, selected, harnessNote) {
         chip(s.color), el("span", { class: "sname", text: s.name }),
         el("span", { class: "sval", text: v > 0 ? `≈ ${fmtTok(v)}` : "0" }),
         el("span", { class: "spct", text: v > 0 ? `${Math.round(v / (total || 1) * 100)}%` : "" })));
+    if (own?.[s.key] > 0 && v > 0) row.append(el("div", { class: "sown", text: `from your setup ≈ ${fmtTok(own[s.key])}` }));
     if (s.key === "harness" && harnessNote && v > 0) row.append(el("div", { class: "note", text: harnessNote }));
     ul.append(row);
   }
@@ -257,9 +258,11 @@ function lensPanel(S, A) {
     if (peak) {
       out.push(section(`Main thread at its peak: ${fmtTok(peak.tokens.context)} tokens`,
         strataBar(peak.strata, peak.tokens.context, k => A.focusStratum(root.id, peak.i, k)),
-        strataList(peak.strata, peak.tokens.context, k => A.focusStratum(root.id, peak.i, k), null, harnessNote(trace, root)),
+        strataList(peak.strata, peak.tokens.context, k => A.focusStratum(root.id, peak.i, k), null, harnessNote(trace, root), peak.own),
         btn(`Open request ${peak.i + 1}`, () => A.focusRequest(root.id, peak.i))));
     }
+    const setup = setupSection(trace, root, A);
+    if (setup) out.push(setup);
     const shr = unloggedShrinks(root);
     const marks = [
       ...root.compactions.map(c => ({ t: c.t, text: `Compacted ${fmtTok(c.pre)} → ${fmtTok(c.post)}`, req: nearestRequest(root, c.t) })),
@@ -267,7 +270,7 @@ function lensPanel(S, A) {
     ].sort((a, b) => a.t - b.t);
     if (marks.length) out.push(section("Cliffs", el("ul", { class: "items" }, marks.map(m =>
       el("li", {}, btn(`${fmtClock(m.t)}  ${m.text}`, () => A.focusRequest(root.id, m.req), "item"))))));
-    out.push(el("p", { class: "hint", text: "Click a ridge to open that agent. Flags are your asks; beacons are actions that left the machine." }));
+    out.push(el("p", { class: "hint", text: "Click a ridge to open that agent. Flags are your asks. Pins are tool calls: red left the machine, amber wrote files, blue read. Labels on the crest mark large injections mid-session." }));
   } else if (lens === "egress") {
     out.push(el("h2", { text: "What left the machine" }),
       el("p", { class: "lede", text: "Actions ranked by consequence: outward first (push, deploy, network, messages), then local writes, then reads. Open one for its custody ladder." }));
@@ -407,7 +410,7 @@ function requestPanel(trace, agent, req, S, A) {
     el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${req.model || agent.model || ""}${req.iterations > 1 ? ` · iteration ${req.iteration} of ${req.iterations} in one response` : ""}` }),
     req.strata ? section("Where the context came from (≈, split estimated; total exact)",
       strataBar(req.strata, t.context, k => A.focusStratum(agent.id, req.i, k), S.stratum),
-      strataList(req.strata, t.context, k => A.focusStratum(agent.id, req.i, k), S.stratum, harnessNote(trace, agent)))
+      strataList(req.strata, t.context, k => A.focusStratum(agent.id, req.i, k), S.stratum, harnessNote(trace, agent), req.own))
       : section("Where the context came from", el("p", { class: "note", text: "The log has no blocks for this request, so its split can't be estimated. The total is exact." })),
     section("Tokens (exact, from the log)", kv([
       ["Context", fmtInt(t.context), "input + cache read + cache write"],
@@ -533,23 +536,61 @@ function stratumPanel(trace, agent, req, S, A) {
     if (hs) out.push(el("a", { href: hs, text: `Read it on the site: ${trace.harnessSite.title || "system prompt"}` }));
     return out;
   }
-  out.push(section(`${fmtInt(blocks.length)} blocks in context at this request, grouped by label`, blockGroups(trace, agent, blocks, S, A)));
+  const mine = blocks.filter(b => b.own), rest = blocks.filter(b => !b.own);
+  if (mine.length) out.push(section(`From your setup: ≈ ${fmtTok(req.own?.[s.key] || 0)} in ${fmtInt(mine.length)} block${mine.length === 1 ? "" : "s"}`, blockGroups(trace, agent, mine, S, A, true)));
+  if (rest.length) {
+    const title = !mine.length ? "blocks in context at this request" : s.key === "you" ? "typed or pasted by you" : "from the product";
+    out.push(section(`${fmtInt(rest.length)} ${title}, grouped by label`, blockGroups(trace, agent, rest, S, A, false)));
+  }
   return out;
+}
+
+// Session view of the user's own setup in one agent: each file, memory, skills list or hook
+// output, how often it was sent, and how often a new copy arrived while an older one was still
+// in context. Also: how many subagents received the setup too.
+function setupSection(trace, agent, A) {
+  const groups = new Map();
+  for (const b of agent.blocks) {
+    if (!b.own) continue;
+    const key = b.source || b.label;
+    let g = groups.get(key);
+    if (!g) groups.set(key, g = { label: b.label, sent: 0, carried: 0, resent: 0, same: 0, est: 0, own: 0, last: b.i });
+    if (b.carried) g.carried++; else g.sent++;
+    if (b.resendOf != null) { g.resent++; if (b.resendSame) g.same++; }
+    g.est = Math.max(g.est, b.est); g.own = Math.max(g.own, b.ownEst ?? b.est);
+    g.label = b.label; g.last = b.i;
+  }
+  if (!groups.size) return null;
+  const list = [...groups.values()].sort((x, y) => y.own - x.own);
+  const subs = trace.agents.filter(a => a !== agent && a.kind === "subagent" && a.blocks.some(b => b.own));
+  const subOwn = subs.reduce((sum, a) => { const r = a.requests.find(q => q.own); return sum + (r ? Object.values(r.own).reduce((x, y) => x + y, 0) : 0); }, 0);
+  const ul = el("ul", { class: "items setup" }, list.map(g => el("li", {},
+    el("button", { class: "item", type: "button", onclick: () => A.openBlockAt(agent.id, g.last) },
+      el("span", { class: "tool", text: g.label }),
+      el("span", { class: "meta", text: [
+        `≈ ${fmtTok(g.own)}${g.own < g.est ? ` of ≈ ${fmtTok(g.est)}` : ""}`,
+        `sent ${g.sent}×${g.carried ? `, carried ${g.carried}×` : ""}`,
+        g.resent ? `${g.resent}× while ${g.same === g.resent ? "an identical" : "an earlier"} copy was still in context` : ""
+      ].filter(Boolean).join(" · ") })))));
+  return section(`From your setup (${agent.kind === "root" ? "main thread" : agent.name})`, ul,
+    subs.length ? el("p", { class: "note", text: `Also sent to ${fmtInt(subs.length)} subagent${subs.length === 1 ? "" : "s"}: ≈ ${fmtTok(subOwn)} in their first requests.` }) : null);
 }
 
 // One row per label (count, total ≈ tokens, first–last time, site badge), largest first. A row expands
 // to its instances, most recent first; a single-instance row opens its block directly.
 const expandedGroups = new Set();
-function blockGroups(trace, agent, blocks, S, A) {
+function blockGroups(trace, agent, blocks, S, A, mine) {
   const long = spansDays(trace);
   const when = t => (long ? fmtWhen(t) : fmtClock(t));
   const groups = new Map();
   for (const b of blocks) {
     const key = b.label || b.kind;
     let g = groups.get(key);
-    if (!g) groups.set(key, g = { label: key, items: [], tok: 0, t0: Infinity, t1: -Infinity, site: null, flagged: 0 });
+    if (!g) groups.set(key, g = { label: key, items: [], tok: 0, own: 0, resent: 0, t0: Infinity, t1: -Infinity, site: null, flagged: 0 });
     g.items.push(b);
     g.tok += blockTokens(b);
+    if (b.own) g.own += b.ownEst ?? blockTokens(b);
+    if (b.resendOf != null) g.resent++;
     g.t0 = Math.min(g.t0, b.t); g.t1 = Math.max(g.t1, b.t);
     if (!g.site && siteHref(b.site)) g.site = b.site;
     if (b.flags?.includes("instruction-like")) g.flagged++;
@@ -566,7 +607,7 @@ function blockGroups(trace, agent, blocks, S, A) {
       inner.append(...items.slice(0, 300).map(b => el("li", { class: S.block === b.i ? "on" : "" },
         el("button", { class: "item", type: "button", onclick: () => { expandedGroups.add(key); A.openBlock(b.i); } },
           el("span", { class: "tool", text: when(b.t) }),
-          el("span", { class: "meta", text: `≈ ${fmtTok(blockTokens(b))}${b.carried ? " · carried" : ""}${b.flags?.includes("instruction-like") ? " · instruction-like (heuristic)" : ""}` })))));
+          el("span", { class: "meta", text: `≈ ${fmtTok(blockTokens(b))}${b.carried ? " · carried" : ""}${b.resendOf != null ? (b.resendSame ? " · sent again, identical" : " · sent again, changed") : ""}${b.flags?.includes("instruction-like") ? " · instruction-like (heuristic)" : ""}` })))));
       if (items.length > 300) inner.append(el("li", { class: "note", text: `Showing the latest 300 of ${fmtInt(items.length)}.` }));
     };
     if (open) fill();
@@ -584,9 +625,9 @@ function blockGroups(trace, agent, blocks, S, A) {
       el("span", { class: "gcount", text: `${fmtInt(g.items.length)} ×` }),
       el("span", { class: "tool", text: g.label }),
       el("span", { class: "gtok", text: `≈ ${fmtTok(g.tok)}` }),
-      el("span", { class: "meta", text: `${range}${g.flagged ? ` · ${g.flagged} instruction-like (heuristic)` : ""}` }));
+      el("span", { class: "meta", text: `${range}${g.own && g.own < g.tok - 0.5 ? ` · yours ≈ ${fmtTok(g.own)}` : ""}${g.resent ? ` · ${g.resent} sent again while an earlier copy was in context` : ""}${g.flagged ? ` · ${g.flagged} instruction-like (heuristic)` : ""}` }));
     const href = g.site && siteHref(g.site);
-    ul.append(el("li", { class: `group${open ? " open" : ""}` },
+    ul.append(el("li", { class: `group${open ? " open" : ""}${mine ? " mine" : ""}` },
       el("div", { class: "grow" }, head, href ? el("a", { class: "badge", href, title: g.site.title || g.site.slug, text: "on the site" }) : null),
       inner));
   }
@@ -603,16 +644,26 @@ function blockReader(agent, b, A) {
     href ? el("p", {}, "On the site: ", el("a", { href, text: b.site.title || b.site.slug })) : null,
     b.flags?.includes("instruction-like") ? el("p", { class: "warnline", text: "Flagged instruction-like by a heuristic. Treat as untrusted outside text." }) : null,
     b.carried ? el("p", { class: "note", text: "Carried into this window by a compaction; the same text as the original block." }) : null,
+    b.own ? el("p", { class: "note", text: b.ownEst < b.est ? "From your setup. Highlighted lines are yours; dimmed lines are the product's wording, published on this site." : "From your setup." }) : null,
+    b.resendOf != null ? el("p", { class: "note" }, b.resendSame ? "Sent again while an identical copy was still in context. " : "Sent again with changes while the earlier copy was still in context. ",
+      btn("Open the earlier copy", () => A.openBlockAt(agent.id, b.resendOf))) : null,
     b.full ? el("p", { class: "note", text: `The model saw a preview; the full output was saved to tool-results/${b.persisted || ""}.` }) : null,
     pre,
     b.full ? refToggle(agent, b.full, "the full file", A) : null);
   A.getText(agent.id, b.ref).then(r => {
     const text = r?.text ?? "";
-    mode.textContent = b.rebuilt ? "rebuilt from the ccprompts template" : r?.mode || b.render || "";
+    mode.textContent = b.rebuilt ? "structured (log data)" : r?.mode || b.render || "";
     if (/^data:image\/(png|jpe?g|gif|webp);base64,/.test(text)) {
       pre.replaceWith(el("img", { class: "shot", src: text, alt: b.label || "image" }));
     } else {
-      pre.textContent = text.length > 400000 ? `${text.slice(0, 400000)}\n\n[… ${fmtInt(text.length - 400000)} more characters]` : (text || "(empty)");
+      const shown = text.length > 400000 ? `${text.slice(0, 400000)}\n\n[… ${fmtInt(text.length - 400000)} more characters]` : (text || "(empty)");
+      pre.textContent = shown;
+      // The user's own blocks: their lines highlighted, the product's published wording dimmed.
+      if (b.own && b.ownEst < b.est && A.templateLines) A.templateLines(shown).then(flags => {
+        if (!flags || !flags.some(Boolean)) return;
+        const lines = shown.split("\n");
+        pre.replaceChildren(...lines.map((l, k) => el("span", { class: flags[k] ? "tl" : "ml", text: k < lines.length - 1 ? `${l}\n` : l })));
+      });
     }
   }).catch(e => { pre.textContent = `Text unavailable: ${e?.message || e}`; });
   return box;

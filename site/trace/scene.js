@@ -5,7 +5,7 @@
 import * as THREE from "./vendor/three.module.min.js";
 import { OrbitControls } from "./vendor/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "./vendor/CSS2DRenderer.js";
-import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, freshTokens, unloggedShrinks, agentStats } from "./panels.js";
+import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, freshTokens, unloggedShrinks, agentStats, clip } from "./panels.js";
 
 const W = 220;            // world width of the whole session
 const H = 32;             // world height of the tallest context
@@ -433,7 +433,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   const rootAsks = L.root.asks.map(a => {
     const i = Math.min(Math.max(0, a.request), L.root.requests.length - 1);
-    return { x: xOf(L.root, i), y: crest(L.root, i), z: -0.6, h: 2.6, s: 1 };
+    return { x: xOf(L.root, i), y: crest(L.root, i), z: -0.6, h: 3.6, s: 1 };
   });
   const flags = flagMeshes(rootAsks);
   world.add(flags);
@@ -457,15 +457,18 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     let n = 0;
     beamPick.length = 0;
     for (const act of allActs) {
-      const show = act.cls === "outward" || (lens === "egress" && act.cls === "write");
+      // Every tool call is a pin on the crest: tall red beacons left the machine, amber wrote
+      // locally, short blue read. The egress lens drops reads; the other lenses keep beacons only.
+      const show = act.cls === "outward" || (act.cls === "write" && (lens === "context" || lens === "egress")) || (act.cls === "read" && lens === "context");
       if (!show) continue;
-      const tall = act.cls === "outward" ? (lens === "egress" ? 16 : 11) : 4;
+      const tall = act.cls === "outward" ? (lens === "egress" ? 16 : 11) : act.cls === "write" ? (lens === "egress" ? 5 : 3.4) : 1.9;
+      const r = act.cls === "outward" ? 1.25 : act.cls === "write" ? 0.75 : 0.5;
       const x = xOf(act.a, act.i), y = crest(act.a, act.i), z = zOf(act.a, act.i) - (act.a.kind === "root" ? 0.8 : 0.4);
-      m.makeScale(act.cls === "outward" ? 1.25 : 0.6, tall, act.cls === "outward" ? 1.25 : 0.6).setPosition(x, y, z);
+      m.makeScale(r, tall, r).setPosition(x, y, z);
       beams.setMatrixAt(n, m);
       c.set(STATUS[act.cls].color);
       beams.setColorAt(n, c);
-      const s = act.cls === "outward" ? 1.05 : 0.6;
+      const s = act.cls === "outward" ? 1.05 : act.cls === "write" ? 0.6 : 0.36;
       m.makeScale(s, s, s).setPosition(x, y + 0.25, z);
       caps.setMatrixAt(n, m);
       caps.setColorAt(n, c);
@@ -593,6 +596,41 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     world.add(lines);
   }
 
+  // Mid-session injections on the main thread: large blocks inserted after the first request (a
+  // model switch, a skills list sent again, skills re-sent after a compaction), and any copy of the
+  // user's own setup sent again. The standing harness (system prompt, tools) is not an event.
+  // Labelled where they arrived, the largest first.
+  const events = [];
+  {
+    const byReq = new Map();
+    for (const b of L.root.blocks) {
+      if (b.carried || b.seenBy == null || b.seenBy === 0) continue;
+      if (!(b.kind === "injected" || b.own)) continue;
+      if (!(b.est >= 900 || (b.resendOf != null && b.est >= 150))) continue;
+      let e = byReq.get(b.seenBy);
+      if (!e) byReq.set(b.seenBy, e = { i: b.seenBy, est: 0, top: null, n: 0, own: false });
+      e.est += b.est; e.n++;
+      if (!e.top || b.est > e.top.est) e.top = b;
+      if (b.own) e.own = true;
+    }
+    events.push(...[...byReq.values()].sort((x, y) => y.est - x.est).slice(0, 12));
+  }
+  const eventLines = new THREE.Group();
+  {
+    const pos = [], col = [], c = new THREE.Color();
+    for (const e of events) {
+      const x = xOf(L.root, e.i), y = crest(L.root, e.i);
+      c.set(e.own ? STRATA[STRATUM_INDEX.you].color : STRATA[STRATUM_INDEX.injected].color);
+      pos.push(x, y, 0.12, x, y + 2.2, 0.12);
+      col.push(c.r, c.g, c.b, c.r, c.g, c.b);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    eventLines.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ vertexColors: true, fog: false })));
+  }
+  world.add(eventLines);
+
   // ruler and hour ticks
   const ruler = new THREE.Group();
   {
@@ -616,7 +654,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // ---- labels (pooled per level; only what is in focus) ----
   const labelGroups = { l0: new THREE.Group(), l1: new THREE.Group(), l2: new THREE.Group() };
   Object.values(labelGroups).forEach(g => scene.add(g));
-  const PRIO = { corehead: 9, stratum: 8, cursor: 8, cliff: 7, row: 5, gap: 4, tick: 2 };
+  const PRIO = { corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
   function label(text, cls, pos, center = [0.5, 0.5], group = labelGroups.l0, onClick) {
     const div = document.createElement(onClick ? "button" : "div");
     div.className = `lbl ${cls || ""}`;
@@ -667,6 +705,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   function buildL0Labels() {
     const g = labelGroups.l0;
     for (const m of markLines) label(m.text, m.dashed ? "cliff" : "cliff soft", new THREE.Vector3(m.x, m.y1 + 1.8, 0.1), [0, 1], g);
+    // "developer: model_switch.instructions" reads as "model switch"
+    const name = l => l.replace(/^developer: /, "").replace(/\.instructions$/, "").replace(/_/g, " ");
+    for (const e of events) label(`${clip(name(e.top.label), 34)}${e.n > 1 ? ` +${e.n - 1}` : ""} · ≈ ${fmtTok(e.est)}${e.top.resendOf != null ? " · sent again" : ""}`,
+      `event${e.own ? " mine" : ""}`, new THREE.Vector3(xOf(L.root, e.i), crest(L.root, e.i) + 2.3, 0.12), [xOf(L.root, e.i) > W * 0.8 ? 1 : xOf(L.root, e.i) < W * 0.2 ? 0 : 0.5, 1], g);
     for (const gap of L.gaps) {
       const xm = (gap.x0 + gap.x1) / 2;
       // Gaps at either end of the axis (an idle head or tail) align inward so they stay on screen.
@@ -877,6 +919,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     warnMesh.visible = level === 0 && lens === "inflow";
     labelGroups.l0.visible = level === 0;
     ruler.visible = level === 0;
+    eventLines.visible = level === 0;
     xray.visible = level === 0;
   }
 
