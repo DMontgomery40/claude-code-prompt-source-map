@@ -3,6 +3,7 @@
 import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
+import { parsePaste } from "./paste.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -279,19 +280,6 @@ async function rawLine(trace, sources, ref) {
 // ---------- paste → open ----------
 // Codex thread ids are UUIDv7: the first 48 bits are Unix milliseconds, which name the folder and file.
 const ROOT_DIR = { codex: "~/.codex/sessions", "claude-code": "~/.claude/projects" };
-function parsePaste(v) {
-  v = v.trim();
-  if (!v) return null;
-  const uuid = (v.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [])[0]?.toLowerCase() || null;
-  if (/^codex:\/\//i.test(v) || (uuid && uuid[14] === "7" && !/\.claude\//.test(v))) {
-    if (!uuid) return { error: "That deeplink has no thread id." };
-    const ms = parseInt(uuid.replace(/-/g, "").slice(0, 12), 16);
-    return { product: "codex", id: uuid, ms };
-  }
-  if (uuid || /\.claude\/projects\//.test(v)) return { product: "claude-code", id: uuid, path: /\.jsonl$/.test(v) ? v : null };
-  return { error: "Paste a codex://threads/… link, a thread id, or a Claude Code session id or path." };
-}
-
 let pasted = null;           // the parsed paste the open button acts on
 const pickedRoots = new Map(); // product -> files picked this page load (no File System Access)
 
@@ -301,8 +289,9 @@ function describePaste(v) {
   const info = parsePaste(v);
   pasted = info && !info.error ? info : null;
   pasteRoot = pasted?.id || null;
+  $("#paste").setAttribute("aria-invalid", info?.error ? "true" : "false");
   if (!info) return;
-  if (info.error) return out.append(el("p", { text: info.error }));
+  if (info.error) return out.append(el("p", { class: "paste-error", text: info.error }));
   const p2 = n => String(n).padStart(2, "0");
   const pathRow = p => {
     const b = el("button", { class: "btn small", type: "button", text: "Copy" });
