@@ -1,5 +1,10 @@
 # prompt-watch
 
+**Disabled 2026-09-26 16:11 MDT at David's request: he updates the sites manually now.**
+The LaunchAgent is booted out and disabled; the plist is kept. Do not re-enable it without
+his say-so. To re-enable: `launchctl enable gui/$(id -u)/com.dtmont.prompt-watch && launchctl
+bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dtmont.prompt-watch.plist`.
+
 Keeps gpt6aeon.dtmont.com (Codex desktop / GPT-6 catalog) and ccprompts.dtmont.com
 (Claude Code) current. `com.dtmont.prompt-watch` runs `watch.mjs` hourly at :07.
 
