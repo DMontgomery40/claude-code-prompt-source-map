@@ -79,20 +79,6 @@ export function mapDetail(zoom, previous = 0) {
   return { level, name: ['Overview', 'Agents', 'Requests', 'Layers'][level], cell: [46, 32, 20, 12][level], labelBudget: [0, 16, 30, 44][level] };
 }
 
-// Collapse overlapping map symbols by screen cell and kind. Keep the nearest actual
-// record as the anchor; its count is a cluster size, never a fabricated request.
-export function clusterMapPoints(points, size) {
-  const cells = new Map();
-  for (const point of points) {
-    if (![point.px, point.py, point.depth].every(Number.isFinite) || point.depth <= 0) continue;
-    const key = `${point.kind || ''}:${Math.floor(point.px / size)}:${Math.floor(point.py / size)}`;
-    const cell = cells.get(key);
-    if (!cell) cells.set(key, { point, count: 1 });
-    else { cell.count++; if (point.depth < cell.point.depth) cell.point = point; }
-  }
-  return [...cells.values()];
-}
-
 export function cappedMarkerHeight(worldHeight, projectedPixels, maxPixels = 48) {
   if (!(worldHeight > 0) || !(projectedPixels > 0)) return 0;
   return worldHeight * Math.min(1, maxPixels / projectedPixels);

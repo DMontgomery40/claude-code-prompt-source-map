@@ -327,15 +327,18 @@ export function renderAgentColumns(host, agent, opts) {
     svg.append(S("line", { x1: left, x2: W - right, y1: py(v), y2: py(v), stroke: "#2b313b" }));
     svg.append(S("text", { x: left - 6, y: py(v) + 4, "text-anchor": "end", class: "ax" }, fmtTok(v)));
   }
+  // Columns sit on whole pixels, and only columns wide enough to read keep a gap between them;
+  // narrow ones join into one surface instead of a moiré of 2px bars and 1px gaps.
+  const gap = colW >= 6 ? 1 : 0;
   for (let i = start; i < Math.min(n, start + visible); i++) {
     const r = agent.requests[i];
-    const x = left + (i - start) * colW;
+    const x = Math.round(left + (i - start) * colW), xw = Math.round(left + (i - start + 1) * colW) - x;
     let base = 0;
     const scale = r.tokens.context / (Object.values(r.strata || {}).reduce((s, v) => s + v, 0) || 1);
     for (const s of STRATA) {
       const v = (r.strata?.[s.key] || 0) * scale;
       if (v <= 0) continue;
-      svg.append(S("rect", { x, y: py(base + v), width: Math.max(1, colW - 1), height: Math.max(0.5, py(base) - py(base + v)), fill: s.color }));
+      svg.append(S("rect", { x, y: py(base + v), width: Math.max(1, xw - gap), height: Math.max(0.5, py(base) - py(base + v)), fill: s.color, "shape-rendering": "crispEdges" }));
       base += v;
     }
     const hit = S("rect", { x, y: top, width: colW, height: H - top - bottom, fill: "transparent", "data-i": i, class: "hit" });

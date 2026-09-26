@@ -49,3 +49,32 @@ test('locating a request centers the actual map point without changing zoom or c
     assert.equal(camera.zoom, zoom);
   }
 });
+
+test('the near plane follows the content: nothing visible is clipped, and depth stays precise at any optical zoom', async () => {
+  const { fitNearPlane } = await import('../render-quality.js');
+  // the real session's terrain box, give or take: a wide massif with a field of lanes in front
+  const box = new THREE.Box3(new THREE.Vector3(-6, 0, -70), new THREE.Vector3(236, 50, 110));
+  const resolution = (camera, d) => d * d / (camera.near * 2 ** 24); // world units per 24-bit depth step at distance d
+  for (const [w, h] of [[390, 844], [1920, 1200], [2560, 1440]]) for (const [az, el] of [[-25, 40], [-60, 12], [10, 70]]) {
+    for (const zoom of [0.6, 1, 4, 30, 256]) {
+      const camera = new THREE.PerspectiveCamera(34, w / h, 0.03, 4000);
+      const target = new THREE.Vector3(115, 8, 10), dist = 350;
+      const a = THREE.MathUtils.degToRad(az), e = THREE.MathUtils.degToRad(el);
+      camera.position.set(target.x + dist * Math.sin(a) * Math.cos(e), target.y + dist * Math.sin(e), target.z + dist * Math.cos(a) * Math.cos(e));
+      camera.lookAt(target); camera.zoom = zoom; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+      assert.ok(resolution(camera, dist) > 0.05, 'the old fixed near plane really was too coarse here');
+      fitNearPlane(camera, box, { floor: dist * 0.01 });
+      const view = new THREE.Vector3();
+      for (let k = 0; k < 400; k++) {
+        const p = new THREE.Vector3(box.min.x + (box.max.x - box.min.x) * ((k * 0.618) % 1), box.max.y * ((k * 0.377) % 1), box.min.z + (box.max.z - box.min.z) * ((k * 0.141) % 1));
+        view.copy(p).applyMatrix4(camera.matrixWorldInverse);
+        assert.ok(-view.z >= camera.near, 'no content point is in front of the near plane');
+      }
+      assert.ok(resolution(camera, dist) < 0.002, `depth resolves ${resolution(camera, dist).toFixed(4)} units at the target`);
+    }
+  }
+  // a camera inside the content keeps a small floor rather than clipping what surrounds it
+  const inside = new THREE.PerspectiveCamera(34, 1.5, 0.03, 4000);
+  inside.position.set(100, 20, 0); inside.lookAt(100, 0, -20); inside.updateMatrixWorld();
+  assert.equal(fitNearPlane(inside, box, { floor: 0.2 }), 0.2);
+});
