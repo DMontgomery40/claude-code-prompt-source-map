@@ -1278,7 +1278,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     detail = mapDetail(mapZoom, detail.level);
     host.dataset.mapDetail = detail.name;
     const status = document.querySelector('#zoom-status');
-    if (status) status.textContent = `${mapZoom.toFixed(1)}× · ${level === 0 ? detail.name : 'Detail'}`;
+    if (status) status.textContent = level === 0 ? `${mapZoom.toFixed(1)}× · ${detail.name}` : level === 1 ? 'Agent requests' : 'Request layers';
     if (flags.visible) flags.userData.update();
     if (stage.flags?.visible) stage.flags.userData.update();
     if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; return; }

@@ -4,7 +4,7 @@ import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDu
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 import { parsePaste } from "./paste.js";
-import { requestPosition, stepRequest, mapPanelState, createViewHistory } from "./navigation.js";
+import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -16,6 +16,7 @@ const S = {
 };
 let scene = null;
 let viewHistory = null, viewTimer = null;
+let mapReturn = null; // the landscape camera and selection saved before focused inspection
 let text = null;     // (agentId, ref) => Promise<{text, mode}>
 let worker = null;
 let lastFiles = null; // the dropped files, kept so another session among them can be opened
@@ -71,7 +72,7 @@ function setupLoader() {
 
 // Back to the loader without reloading, so folders picked on this page stay available.
 function backToLoader() {
-  viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer);
+  viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -530,6 +531,7 @@ async function start(trace) {
   viewHistory?.dispose(); viewHistory = null;
   Object.assign(S, { level: 0, agentId: null, reqIdx: null, stratum: null, block: null, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args' });
   S.tools = (await loadIndex())?.tools || null; // tool name -> site page, for the custody ladder's "Guided by"
+  mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
   window.__trace = { S, set };
@@ -735,15 +737,17 @@ function layoutInsets(preserveView = false) {
 }
 
 const VIEW_KEYS = ['level', 'agentId', 'reqIdx', 'stratum', 'block', 'lens', 'mode', 'reading', 'mapFocus', 'mapPinned', 'inspector', 'callIndex', 'callPart'];
-function captureView() {
+function captureSceneView() {
   return { state: Object.fromEntries(VIEW_KEYS.map(k => [k, S[k]])), camera: scene?.getView(), scroll: $('#panel').scrollTop };
 }
+function captureView() { return { ...captureSceneView(), mapReturn }; }
 function saveViewSoon() {
   clearTimeout(viewTimer);
   viewTimer = setTimeout(() => viewHistory?.checkpoint(), 160);
 }
 function restoreView(view) {
   clearTimeout(viewTimer);
+  mapReturn = view.mapReturn || null;
   const modeChanged = S.mode !== view.state.mode;
   Object.assign(S, view.state);
   S.agent = S.agentId ? agentById(S.agentId) : null;
@@ -761,6 +765,7 @@ function restoreView(view) {
 function agentById(id) { return S.trace.agents.find(a => a.id === id); }
 function set(patch, options) {
   const change = () => {
+    if (isLandscape(S) && patch.mapPinned === false && patch.level > 0) mapReturn = captureSceneView();
     applySet(patch);
     if (options?.locate && S.mapPinned) scene?.panToRequest(S.agentId, S.reqIdx, options.reveal);
   };
@@ -786,8 +791,8 @@ function pick(p) {
   const mapPinned = S.mode === '3d' && (S.level === 0 || S.mapPinned);
   if (p.intent === 'locate') return set({mapPinned:true, level:2, agentId:p.agentId, reqIdx:p.reqIdx, stratum:null, block:null}, {locate:true, reveal:true});
   if (p.intent === 'action') return A.focusAction(p.agentId, p.reqIdx);
-  if (p.level === 3) return set({ mapPinned, level: 3, agentId: p.agentId, reqIdx: p.reqIdx, stratum: p.stratum, block: p.block ?? null });
-  if (p.level === 2) return set({ mapPinned, level: 2, agentId: p.agentId, reqIdx: p.reqIdx, stratum: null, block: null });
+  if (p.level === 3) return set({ ...requestInspection(p.agentId, p.reqIdx, p.stratum), block: p.block ?? null });
+  if (p.level === 2) return A.focusRequest(p.agentId, p.reqIdx);
   set({ mapPinned, level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null });
 }
 const A = {
@@ -795,17 +800,17 @@ const A = {
     inspector: 'action', callIndex: null, mapPinned: S.mode === '3d' && (S.level === 0 || S.mapPinned) }),
   showCallPart: part => { S.callPart = part; saveViewSoon(); },
   focusCall: i => set({ inspector: 'action', callIndex: i }),
-  focusAgent: (id, i) => set({ level: 1, agentId: id, reqIdx: i ?? 0, stratum: null, block: null }),
-  focusRequest: (id, i) => set({ mapPinned: S.mapPinned || !!S.mapFocus, level: 2, agentId: id, reqIdx: i, stratum: null, block: null }),
-  focusStratum: (id, i, key) => set({ mapPinned: S.mapPinned || !!S.mapFocus, level: 3, agentId: id, reqIdx: i, stratum: key, block: null }),
-  openBlock: i => { const view = sidebarState(); set({ mapPinned: S.mapPinned || !!S.mapFocus, level: view.level, agentId: view.agentId, reqIdx: view.reqIdx, stratum: view.stratum, block: i }); },
+  focusAgent: (id, i) => set({ mapPinned: false, level: 1, agentId: id, reqIdx: i ?? 0, stratum: null, block: null }),
+  focusRequest: (id, i) => set(requestInspection(id, i)),
+  focusStratum: (id, i, key) => set(requestInspection(id, i, key)),
+  openBlock: i => { const view = sidebarState(); set({ ...requestInspection(view.agentId, view.reqIdx, view.stratum), block: i }); },
   openBlockAt(agentId, bi) {
     const a = agentById(agentId);
     const b = a?.blocks[bi];
     if (!b) return;
     let r = a.requests.findIndex(q => q.window && q.window[0] <= bi && q.window[1] >= bi);
     if (r < 0) r = Math.max(0, a.requests.findIndex(q => q.t >= b.t));
-    set({ mapPinned: S.mapPinned || !!S.mapFocus, level: 3, agentId, reqIdx: r, stratum: b.kind, block: bi });
+    set({ ...requestInspection(agentId, r, b.kind), block: bi });
   },
   openRef(agentId, ref) {
     const a = agentById(agentId);
@@ -834,6 +839,11 @@ function up() {
   if (S.level === 1) return set({ level: 0, agentId: null, reqIdx: null });
 }
 
+function backToMap() {
+  if (!mapReturn) return overview();
+  const destination = { ...structuredClone(mapReturn), mapReturn: null };
+  viewHistory.navigate(() => restoreView(destination));
+}
 function overview() {
   set({ level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
@@ -860,7 +870,10 @@ function onKey(e) {
     moveRequest(step, false);
     return;
   }
-  if (e.key === "Enter" && S.level === 1 && document.activeElement === document.body) { set({ level: 2 }); return; }
+  if (e.key === "Enter" && document.activeElement === document.body) {
+    const view = sidebarState();
+    if (view.agent?.requests[view.reqIdx] && (isLandscape(S) || S.level === 1)) { e.preventDefault(); A.focusRequest(view.agentId, view.reqIdx); return; }
+  }
   // Enter at the session opens the main thread, so the keyboard can get into the landscape.
   if (e.key === "Enter" && S.level === 0 && document.activeElement === document.body) { A.focusAgent(S.layout.root.id, 0); return; }
   const n = Number(e.key);
@@ -939,9 +952,13 @@ function renderMapLocation() {
   const location = $('#map-location');
   location.hidden = S.mode !== '3d' || !r;
   if (!r) return;
+  const onMap = isLandscape(S);
   location.replaceChildren(
-    el('b', { text: `${S.mapPinned ? 'Selected' : 'In view'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
-    el('span', { text: `${fmtWhen(r.t)} · Height = context tokens · Colors = sources` }));
+    el('div', {class:'location-copy'},
+      el('b', { text: `${onMap ? (S.mapPinned ? 'Selected' : 'In view') : 'Inspecting'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
+      el('span', { text: `${fmtWhen(r.t)} · ${onMap ? 'Height = context tokens · Colors = sources' : 'Sources within this request'}` })),
+    el('button', {type:'button',class:'btn inspect-layers',text:onMap?'Inspect layers':'Back to map',
+      onclick:()=>onMap ? A.focusRequest(view.agentId,view.reqIdx) : backToMap()}));
 }
 
 function renderRequestNav() {

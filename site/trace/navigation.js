@@ -29,6 +29,16 @@ export function mapPanelState(state, focus) {
     level: focus.detail === 1 ? 1 : focus.detail >= 3 && stratum ? 3 : 2 };
 }
 
+// Camera presentation is an explicit choice. Map previews may follow zoom, but a
+// request/layer link always opens the focused core regardless of the entry state.
+export function isLandscape(state) {
+  return state.mode === '3d' && (state.level === 0 || state.mapPinned);
+}
+export function requestInspection(agentId, reqIdx, stratum = null) {
+  return { level: stratum ? 3 : 2, agentId, reqIdx, stratum, block: null,
+    mapPinned: false, mapFocus: null, inspector: null, callIndex: null };
+}
+
 // The displayed action can be a summary copy made before results were linked.
 // Resolve through the call ID, never by tool name (a response can call Bash twice).
 export function requestCalls(req) {

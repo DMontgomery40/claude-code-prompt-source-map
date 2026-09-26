@@ -61,3 +61,35 @@ test('one continuous request scrub is one Back step and async view switches capt
   win.history.forward(); assert.equal(state.mode, '2d');
   nav.dispose();
 });
+
+test('explicit request and layer inspection escapes map preview across all entry states', () => {
+  assert.equal(typeof navigation.requestInspection, 'function');
+  assert.equal(typeof navigation.isLandscape, 'function');
+  for (const mode of ['3d','2d']) for (const level of [0,1,2,3]) for (const mapPinned of [false,true]) {
+    const before={mode,level,mapPinned,inspector:'action',mapFocus:{detail:3},stratum:'model',block:12};
+    assert.equal(navigation.isLandscape(before),mode==='3d' && (level===0||mapPinned));
+    for (const stratum of [null,'you','outside']) {
+      const after={...before,...navigation.requestInspection('agent',938,stratum)};
+      assert.equal(after.level,stratum?3:2);
+      assert.equal(after.mapPinned,false,'inspection never inherits the sticky map preview');
+      assert.equal(after.agentId,'agent');assert.equal(after.reqIdx,938);
+      assert.equal(after.stratum,stratum);assert.equal(after.block,null);
+      assert.equal(after.inspector,null);assert.equal(after.mapFocus,null);
+    }
+  }
+});
+
+test('map return point survives request navigation, Back and Forward without replacing the map camera', () => {
+  const {win}=browserHistory();
+  const map={state:{mode:'3d',level:2,mapPinned:true,reqIdx:938},camera:{zoom:6,position:[10,30,100]},scroll:180};
+  let view={...structuredClone(map),mapReturn:null};
+  const nav=navigation.createViewHistory(win,()=>view,s=>{view=s;});
+  nav.navigate(()=>{view={state:{mode:'3d',...navigation.requestInspection('root',938,'you')},camera:{zoom:1,position:[20,8,45]},scroll:0,mapReturn:structuredClone(map)};});
+  nav.navigate(()=>{view.state.reqIdx=939;});
+  assert.deepEqual(view.mapReturn,map);
+  const core=structuredClone(view);
+  nav.navigate(()=>{view={...structuredClone(view.mapReturn),mapReturn:null};});
+  assert.deepEqual(view.camera,map.camera);assert.equal(view.state.reqIdx,938);
+  nav.back();assert.deepEqual(view,core);
+  win.history.forward();assert.equal(view.state.mapPinned,true);assert.equal(view.mapReturn,null);
+});
