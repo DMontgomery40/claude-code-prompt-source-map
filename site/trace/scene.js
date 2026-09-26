@@ -8,11 +8,12 @@ import { CSS2DRenderer, CSS2DObject } from "./vendor/CSS2DRenderer.js";
 import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, freshTokens, unloggedShrinks, agentStats, clip } from "./panels.js";
 import { createMapOverview, overviewAgentData } from "./map-overview.js";
 import { zoomCamera, panCameraTo } from "./map-camera.js";
+import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
-import { BASE_H, landscapeRule, tread, treadAt, crestEvents, placeLabel, modelSwitches, mapDetail, clusterMapPoints, cappedMarkerHeight, terrainPlacement } from "./scene-rules.js";
+import { BASE_H, landscapeRule, tread, treadAt, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement } from "./scene-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
-const ROOT_DEPTH = 7, STAGE_Z = 15;
+const ROOT_DEPTH = 7, STAGE_Z0 = 15;
 const { subDepth: SUB_DEPTH, sideZ: SIDE_Z, laneZ } = terrainPlacement();
 const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); // main ridge: slope depth per unit of height
 const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -25), el: Number(q.get("el") ?? 40), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -32), pel: Number(q.get("pel") ?? 42), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
@@ -25,6 +26,7 @@ const VERT = /* glsl */`
 attribute vec4 aB0;
 attribute vec4 aB1;
 attribute float aAgent;
+attribute float aU;
 uniform highp sampler2D uAgents;
 varying vec4 vB0;
 varying vec4 vB1;
@@ -35,8 +37,9 @@ varying float vDepth;
 varying vec4 vSolid;
 varying vec4 vAg;
 varying float vInst;
+varying float vU;
 void main() {
-  vB0 = aB0; vB1 = aB1;
+  vB0 = aB0; vB1 = aB1; vU = aU;
   vec4 p = vec4(position, 1.0);
   vec3 n = normal;
   vInst = -1.0;
@@ -90,7 +93,13 @@ varying float vDepth;
 varying vec4 vSolid;
 varying vec4 vAg;
 varying float vInst;
+varying float vU;
 uniform float uXray;
+uniform float uReflect;
+float layerEm(int j) {
+  float e = uEm[j];
+  return uSel >= 0.0 && abs(float(j) - uSel) > 0.5 ? e * 0.2 : e;
+}
 void main() {
   if (vAg.y > 0.5) discard;
 #ifdef XRAY
@@ -101,24 +110,51 @@ void main() {
   float tops[7];
   tops[0] = vB0.x; tops[1] = vB0.y; tops[2] = vB0.z; tops[3] = vB0.w;
   tops[4] = vB1.x; tops[5] = vB1.y; tops[6] = vB1.z;
-  int k = 6;
-  for (int j = 0; j < 7; j++) { if (vY <= tops[j]) { k = j; break; } }
-  vec3 base = vB1.w > 0.5 ? vec3(0.62, 0.68, 0.76) : uCol[k];
-  float em = vB1.w > 0.5 ? 1.0 : uEm[k];
-  if (uSel >= 0.0 && abs(float(k) - uSel) > 0.5) em *= 0.2;
   float fw = max(fwidth(vY), 1e-5);
-  float line = 0.0;
-  for (int j = 0; j < 6; j++) {
-    if (tops[j] > 0.0 && tops[j] < tops[6]) line = max(line, 1.0 - smoothstep(0.35, 1.15, abs(vY - tops[j]) / fw));
+  // Stratum colour and emphasis are box-filtered over the pixel's footprint in height: each layer
+  // contributes by how much of the pixel it covers. MSAA smooths polygon edges only, so picking one
+  // layer per fragment leaves every layer edge a staircase and sub-pixel layers as speckle.
+  float a0 = vY - 0.5 * fw, a1 = vY + 0.5 * fw;
+  vec3 base = vec3(0.0);
+  float em = 0.0, wsum = 0.0, bot = -1e6;
+  float lo = 0.0, hi = tops[0], prev = 0.0, line = 0.0;
+  for (int j = 0; j < 7; j++) {
+    float top = j == 6 ? 1e6 : tops[j];
+    float w = max(0.0, min(top, a1) - max(bot, a0));
+    base += uCol[j] * w; em += layerEm(j) * w; wsum += w;
+    bot = top;
+    if (j == 6) break;
+    if (vY > tops[j]) { lo = tops[j]; hi = tops[j + 1]; }
+    // a dark hairline between layers, faded where the layers are only a few pixels thick
+    if (tops[j] > 0.0 && tops[j] < tops[6]) {
+      float room = smoothstep(2.5, 7.0, min(tops[j] - prev, tops[j + 1] - tops[j]) / fw);
+      line = max(line, room * (1.0 - smoothstep(0.35, 1.15, abs(vY - tops[j]) / fw)));
+    }
+    prev = tops[j];
   }
+  base /= max(wsum, 1e-6); em /= max(wsum, 1e-6);
+  // Behind the face the slope is terrain, not data: toward its back foot, where every layer would
+  // squeeze into a thin speckled rim, it weathers to the colour of the layer at its crest.
+  if (vU > 0.0) {
+    vec3 crestCol = uCol[0];
+    float crestEm = layerEm(0), below = 0.0;
+    for (int j = 0; j < 7; j++) { if (tops[j] > below + 1e-4) { crestCol = uCol[j]; crestEm = layerEm(j); } below = max(below, tops[j]); }
+    float wx = smoothstep(0.3, 0.85, vU);
+    base = mix(base, crestCol, wx); em = mix(em, crestEm, wx); line *= 1.0 - wx;
+  }
+  if (vB1.w > 0.5) { base = vec3(0.62, 0.68, 0.76); em = 1.0; lo = 0.0; hi = tops[6]; line = 0.0; }
+  // Each layer is lit a little brighter toward its top, like a bedded stratum, where it is thick
+  // enough on screen to read as a band; distant ridges stay flat rather than turning to stripes.
+  float bed = mix(1.0, 0.88 + 0.18 * clamp((vY - lo) / max(hi - lo, 1e-5), 0.0, 1.0), smoothstep(5.0, 16.0, (hi - lo) / fw));
   vec3 N = normalize(vN);
   if (!gl_FrontFacing) N = -N;
   float diff = max(dot(N, uLight), 0.0);
   float hemi = 0.5 + 0.5 * N.y;
   vec3 V = normalize(cameraPosition - vW);
   float rim = pow(1.0 - max(dot(N, V), 0.0), 3.0);
-  float shade = (0.34 + 0.2 * hemi + 0.6 * diff) * mix(0.62, 1.0, smoothstep(0.0, 2.5, vW.y));
-  vec3 col = base * shade + base * rim * 0.25;
+  float spec = pow(max(dot(N, normalize(uLight + V)), 0.0), 48.0);
+  float shade = (0.34 + 0.2 * hemi + 0.6 * diff) * mix(0.62, 1.0, smoothstep(0.0, 2.5, abs(vW.y))) * bed;
+  vec3 col = base * shade + base * rim * 0.25 + vec3(1.0, 0.96, 0.9) * spec * 0.07;
 #ifdef AGENTS
   // The face carries the data; the slope and cut ends behind it are terrain, a step quieter.
   if (N.z < 0.9) col *= 0.8;
@@ -152,6 +188,9 @@ void main() {
   // Faint fill, crisp crest outline: a hidden ridge reads as an outline behind the one in front.
   float edge = tops[6] > 0.0 ? 1.0 - smoothstep(0.5, 1.5, abs(tops[6] - vY) / fw) : 0.0;
   gl_FragColor = vec4(mix(col, vec3(0.9, 0.94, 1.0), edge * 0.65), max(uXray, edge * 0.92));
+#elif defined(REFLECT)
+  // the polished floor's reflection: clearest at the waterline, gone a few units down
+  gl_FragColor = vec4(col, uReflect * exp(vW.y * 0.75));
 #else
   gl_FragColor = vec4(col, 1.0);
 #endif
@@ -159,7 +198,9 @@ void main() {
 }`;
 
 // Pins and flag poles are drawn in screen space: a shaft of constant pixel width in its class colour
-// with a dark outline (so it holds 3:1 on any stratum), and an optional round head at the top.
+// with a dark outline (so it holds 3:1 on any stratum), and an optional head at the top: a round
+// beacon, or a pennant for the user's asks. Edges are coverage, not discard, so MSAA smooths them
+// (alpha to coverage) and a shaft does not crawl a pixel at a time as the map pans.
 const PIN_VERT = /* glsl */`
 attribute vec3 iBase;
 attribute float iLen;
@@ -172,24 +213,33 @@ uniform float uMaxHeight;
 varying vec3 vC;
 varying vec2 vP;
 varying float vW;
+varying float vHalf;
 void main() {
-  vec4 a = projectionMatrix * viewMatrix * vec4(iBase, 1.0);
-  vec4 b = projectionMatrix * viewMatrix * vec4(iBase + vec3(0.0, iLen, 0.0), 1.0);
+  vec4 va = viewMatrix * vec4(iBase, 1.0);
+  vec4 vb = viewMatrix * vec4(iBase + vec3(0.0, iLen, 0.0), 1.0);
+  vec4 a = projectionMatrix * va;
+  vec4 b = projectionMatrix * vb;
   float heightPx = length((b.xy / b.w - a.xy / a.w) * uRes * 0.5);
   float cap = min(1.0, uMaxHeight * uDpr / max(heightPx, 0.001));
   b.xy = mix(a.xy / a.w, b.xy / b.w, cap) * b.w;
   vC = iColor;
   vP = position.xy;
   if (uHead > 0.5) {
+    // the head sits a fixed world distance in front of its top, never a fixed slice of depth range
+    vec4 bz = projectionMatrix * (vb + vec4(0.0, 0.0, 0.35, 0.0));
     vW = iPx.y * uDpr;
-    gl_Position = b + vec4(position.xy * vW / uRes * 2.0 * b.w, 0.0, 0.0);
-    gl_Position.z -= 0.0004 * gl_Position.w;
+    vec2 off = vec2(0.0);
+    if (uHead > 1.5) { vHalf = vW * 0.62 + 1.5 * uDpr; off = vec2(vW * 0.5, -vW * 0.36); }
+    else vHalf = vW + 5.0 * uDpr;
+    gl_Position = b + vec4((position.xy * vHalf + off) / uRes * 2.0 * b.w, 0.0, 0.0);
+    gl_Position.z = bz.z / bz.w * b.w;
   } else {
     vW = iPx.x * uDpr;
+    vHalf = vW * 0.5 + 1.0 * uDpr;
     vec2 d = (b.xy / b.w - a.xy / a.w) * uRes;
     d = length(d) > 1e-3 ? normalize(d) : vec2(0.0, 1.0);
     vec4 p = mix(a, b, position.y);
-    p.xy += vec2(-d.y, d.x) * position.x * vW / uRes * p.w;
+    p.xy += vec2(-d.y, d.x) * position.x * vHalf * 2.0 / uRes * p.w;
     gl_Position = p;
   }
 }`;
@@ -199,20 +249,48 @@ uniform float uDpr;
 varying vec3 vC;
 varying vec2 vP;
 varying float vW;
+varying float vHalf;
+float sdTri(vec2 p, vec2 p0, vec2 p1, vec2 p2) {
+  vec2 e0 = p1 - p0, e1 = p2 - p1, e2 = p0 - p2, v0 = p - p0, v1 = p - p1, v2 = p - p2;
+  vec2 pq0 = v0 - e0 * clamp(dot(v0, e0) / dot(e0, e0), 0.0, 1.0);
+  vec2 pq1 = v1 - e1 * clamp(dot(v1, e1) / dot(e1, e1), 0.0, 1.0);
+  vec2 pq2 = v2 - e2 * clamp(dot(v2, e2) / dot(e2, e2), 0.0, 1.0);
+  float s = sign(e0.x * e2.y - e0.y * e2.x);
+  vec2 d = min(min(vec2(dot(pq0, pq0), s * (v0.x * e0.y - v0.y * e0.x)), vec2(dot(pq1, pq1), s * (v1.x * e1.y - v1.y * e1.x))), vec2(dot(pq2, pq2), s * (v2.x * e2.y - v2.y * e2.x)));
+  return -sqrt(d.x) * sign(d.y);
+}
 void main() {
-  // distance from the centre in device px: across the shaft, or radially in the head
-  float r = uHead > 0.5 ? length(vP) * vW : abs(vP.x) * vW * 0.5;
-  float edge = uHead > 0.5 ? vW : vW * 0.5;
-  if (r > edge) discard;
-  float o = 1.1 * uDpr;
-  vec3 col = mix(vC, vec3(0.004, 0.005, 0.008), smoothstep(edge - o - 0.6, edge - o + 0.4, r));
-  gl_FragColor = vec4(col, 1.0);
+  // signed distance to the outline in device px: across the shaft, radially in a head, or to a pennant
+  vec2 q = vP * vHalf;
+  float dist;
+  if (uHead > 1.5) {
+    // pennant: attached at the pole's top, pointing right; q is relative to the quad centre
+    vec2 o = vec2(vW * 0.5, -vW * 0.36);
+    vec2 t = q + o;
+    dist = sdTri(t, vec2(0.0, 0.0), vec2(0.0, -vW * 0.72), vec2(vW, -vW * 0.3));
+  } else if (uHead > 0.5) dist = length(q) - vW;
+  else dist = abs(q.x) - vW * 0.5;
+  float cover = clamp(0.5 - dist, 0.0, 1.0);
+  // a hairline dark rim keeps every marker 3:1 on any stratum; beacon heads glow softly beyond it
+  float rim = smoothstep(-0.8 * uDpr - 0.5, -0.8 * uDpr + 0.5, dist);
+  vec3 fill = mix(vC, vec3(0.004, 0.005, 0.008), rim);
+  float d = max(dist, 0.0) / uDpr;
+  float halo = uHead > 0.5 && uHead < 1.5 ? 0.42 * exp(-d * d / 5.0) : 0.0;
+  float a = cover + (1.0 - cover) * halo;
+  vec3 col = (cover * fill + (1.0 - cover) * halo * vC) / max(a, 1e-4);
+  // a stem is a fine line of light, strongest at its beacon and fading into the terrain
+  if (uHead < 0.5) a *= mix(0.72, 1.0, vP.y);
+  if (a < 0.004) discard;
+  gl_FragColor = vec4(col, a);
   #include <colorspace_fragment>
 }`;
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function createScene(host, { trace, layout: L, reducedMotion, onHover, onPick, onMapFocus = () => {}, onViewChange = () => {} }) {
+  // An open agent's cores stand in front of the whole subagent field, so the faded ridges of the
+  // other agents never stand between the camera and the stage.
+  const STAGE_Z = L.lanes ? Math.max(STAGE_Z0, laneZ(L.lanes - 1) + 10) : STAGE_Z0;
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
@@ -268,7 +346,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   };
   const strataMaterial = (defines = {}, own = {}) => new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, defines,
-    uniforms: { ...shared, uSel: { value: -1 }, uCursor: { value: -1 }, uHover: { value: -1 }, uAgentEm: { value: 1 }, uXray: { value: 0.24 }, ...own },
+    uniforms: { ...shared, uSel: { value: -1 }, uCursor: { value: -1 }, uHover: { value: -1 }, uAgentEm: { value: 1 }, uXray: { value: 0.24 }, uReflect: { value: 0.3 }, ...own },
     side: THREE.DoubleSide
   });
 
@@ -300,8 +378,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
 
   function buildRidges() {
-    const front = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [] };
-    const slope = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [] };
+    const front = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [] };
+    const slope = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [] };
     const addSeg = (agent, inf, seg, zF, depthOf, taper) => {
       const ai = agentIndex.get(agent.id);
       const cols = [];
@@ -324,7 +402,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       for (const c of cols) {
         for (const y of [0, c.t[6]]) {
           front.pos.push(c.x, y, zF); front.nor.push(0, 0, 1);
-          front.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); front.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); front.ag.push(ai);
+          front.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); front.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); front.ag.push(ai); front.u.push(0);
         }
       }
       for (let c = 0; c < cols.length - 1; c++) {
@@ -337,7 +415,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         for (let r = 0; r <= RINGS; r++) {
           const u = r / RINGS;
           slope.pos.push(c.x, c.t[6] * profile(u), zF - u * depth); slope.nor.push(0, 1, 0);
-          slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai);
+          slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai); slope.u.push(Math.max(1e-3, u));
         }
       };
       const R = RINGS + 1;
@@ -366,7 +444,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
           const u = r / RINGS;
           for (const y of [0, c.t[6] * profile(u)]) {
             slope.pos.push(c.x, y, zF - u * depth); slope.nor.push(sx, 0, 0);
-            slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai);
+            slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai); slope.u.push(0);
           }
         }
         for (let r = 0; r < RINGS; r++) {
@@ -401,6 +479,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       g.setAttribute("aB0", new THREE.Float32BufferAttribute(d.b0, 4));
       g.setAttribute("aB1", new THREE.Float32BufferAttribute(d.b1, 4));
       g.setAttribute("aAgent", new THREE.Float32BufferAttribute(d.ag, 1));
+      g.setAttribute("aU", new THREE.Float32BufferAttribute(d.u, 1));
       g.setIndex(d.pos.length / 3 > 65535 ? new THREE.Uint32BufferAttribute(d.idx, 1) : new THREE.Uint16BufferAttribute(d.idx, 1));
       if (computeNormals) g.computeVertexNormals();
       return g;
@@ -408,6 +487,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const mat = strataMaterial({ AGENTS: "" });
     const fm = new THREE.Mesh(mk(front, false), mat);
     const sm = new THREE.Mesh(mk(slope, true), mat);
+    // Neighbouring requests differ in height, so the slope's computed normals swing column by column;
+    // at a pixel or less per request that reads as streaks. Keep the fall of the slope, soften the swing.
+    const sn = sm.geometry.getAttribute("normal");
+    for (let v = 0; v < sn.count; v++) {
+      if (slope.nor[v * 3] !== 0) continue; // cut ends keep their true side normal
+      const x = sn.getX(v) * 0.25, y = sn.getY(v), z = sn.getZ(v), l = Math.hypot(x, y, z) || 1;
+      sn.setXYZ(v, x / l, y / l, z / l);
+    }
     fm.frustumCulled = sm.frustumCulled = false;
     return [fm, sm, mat];
   }
@@ -421,6 +508,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   xray.frustumCulled = false;
   xray.renderOrder = 2;
   world.add(xray);
+  // The floor is polished: the terrain stands on its own soft reflection instead of floating in the
+  // dark. The floor writes no depth, so the mirrored copy below it shows through wherever nothing
+  // above the floor is nearer; everything above the floor is always nearer along the same ray.
+  const reflectMat = strataMaterial({ AGENTS: "", REFLECT: "" });
+  Object.assign(reflectMat, { transparent: true, depthWrite: false });
+  const mirror = new THREE.Group();
+  mirror.scale.y = -1;
+  for (const m of [frontMesh, slopeMesh]) { const r = new THREE.Mesh(m.geometry, reflectMat); r.frustumCulled = false; r.renderOrder = -1; mirror.add(r); }
+  world.add(mirror);
   scene.add(world);
 
   const heightAt = (agent, inf, seg, x, taper) => {
@@ -468,11 +564,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       void main(){ vec2 d = (vW.xz - uC.xz) / vec2(${(W * 0.62).toFixed(1)}, ${Math.max(60, (fieldFront - backZ) * 0.6).toFixed(1)});
         float pool = exp(-dot(d,d)*1.6);
         vec3 c = mix(vec3(0.010,0.013,0.019), vec3(0.030,0.040,0.058), pool);
-        gl_FragColor = vec4(mix(c, uFog, haze(vW, vD)), 1.0);
+        // The floor thins out well beyond the terrain, into the stage's own glow: no hard horizon.
+        float edge = 1.0 - smoothstep(1.1, 2.4, length(d));
+        gl_FragColor = vec4(mix(c, uFog, haze(vW, vD)), edge);
         #include <colorspace_fragment>
       }`
   }));
   ground.position.y = -0.02;
+  Object.assign(ground.material, { depthWrite: false, transparent: true });
+  ground.renderOrder = -2;
   scene.add(ground);
 
   const gapMat = new THREE.MeshBasicMaterial({ color: "#2a3444" });
@@ -484,14 +584,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
 
   // ---- landmarks: flags (asks), pins (actions), instruction-like markers, cairns (side calls) ----
-  const pinUniforms = { uRes: { value: new THREE.Vector2(1, 1) }, uDpr: { value: 1 }, uMaxHeight: { value: 58 } };
+  const PIN_CAP = 36; // px: the tallest a beacon is drawn, whatever the zoom
+  const pinUniforms = { uRes: { value: new THREE.Vector2(1, 1) }, uDpr: { value: 1 }, uMaxHeight: { value: PIN_CAP } };
   // Instanced screen-space pins; set(list) with [{ x, y, z, len, color, w (shaft px), r (head px) }].
-  function makePins(cap, withHeads) {
+  // head: "dot" for beacons, "flag" for the pennant on an ask; maxHeight caps the drawn pole in px.
+  function makePins(cap, withHeads, { head: shape = "dot", maxHeight } = {}) {
     const n = Math.max(1, cap);
     const attrs = {
       iBase: new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3), iLen: new THREE.InstancedBufferAttribute(new Float32Array(n), 1),
       iColor: new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3), iPx: new THREE.InstancedBufferAttribute(new Float32Array(n * 2), 2)
     };
+    const own = maxHeight ? { uMaxHeight: { value: maxHeight } } : {};
     const mk = head => {
       const g = new THREE.InstancedBufferGeometry();
       const y0 = head ? -1 : 0;
@@ -499,7 +602,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       g.setIndex([0, 1, 2, 0, 2, 3]);
       for (const [k, a] of Object.entries(attrs)) g.setAttribute(k, a);
       g.instanceCount = 0;
-      const mesh = new THREE.Mesh(g, new THREE.ShaderMaterial({ vertexShader: PIN_VERT, fragmentShader: PIN_FRAG, uniforms: { ...pinUniforms, uHead: { value: head ? 1 : 0 } }, side: THREE.DoubleSide }));
+      const mesh = new THREE.Mesh(g, new THREE.ShaderMaterial({ vertexShader: PIN_VERT, fragmentShader: PIN_FRAG, uniforms: { ...pinUniforms, ...own, uHead: { value: !head ? 0 : shape === "flag" ? 2 : 1 } }, side: THREE.DoubleSide, transparent: true }));
       mesh.frustumCulled = false;
       mesh.renderOrder = head ? 4 : 3;
       return mesh;
@@ -518,34 +621,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     };
     return group;
   }
-  const pennant = new THREE.BufferGeometry();
-  pennant.setAttribute("position", new THREE.Float32BufferAttribute([0, 1, 0, 0, 0.62, 0, 0.95, 0.81, 0], 3));
-  const pennantEdge = new THREE.BufferGeometry();
-  pennantEdge.setAttribute("position", new THREE.Float32BufferAttribute([-0.05, 1.07, 0, -0.05, 0.55, 0, 1.12, 0.81, 0], 3));
   const youHex = STRATA[STRATUM_INDEX.you].color;
-  const flagMats = [new THREE.MeshBasicMaterial({ color: "#07090d", side: THREE.DoubleSide, fog: false }), new THREE.MeshBasicMaterial({ color: youHex, side: THREE.DoubleSide, fog: false })];
+  // The user's asks: a pole with a pennant, grouped by the same world bins as the beacons.
   function flagMeshes(items) { // items: [{x,y,z,h}]
-    const n = Math.max(1, items.length);
-    const edge = new THREE.InstancedMesh(pennantEdge, flagMats[0], n), pen = new THREE.InstancedMesh(pennant, flagMats[1], n);
-    const m = new THREE.Matrix4();
-    const poles = makePins(items.length, false);
-    const g = new THREE.Group(); g.add(edge, pen, poles);
+    const g = makePins(items.length, true, { head: "flag", maxHeight: 40 });
+    const asks = items.map((f, i) => ({ ...f, i, kind: "ask" }));
     g.userData.update = () => {
-      const visible = items.map(f => ({ ...f, ...projectMapPoint(new THREE.Vector3(f.x, f.y, f.z)), kind: 'ask' })).filter(inMap);
-      const kept = clusterMapPoints(visible, detail.cell).map(c => c.point);
-      kept.forEach((f, i) => {
-        const top = projectMapPoint(new THREE.Vector3(f.x, f.y + f.h, f.z));
-        const h = cappedMarkerHeight(f.h, Math.hypot(top.px - f.px, top.py - f.py), 40);
-        m.makeScale(h * 0.55, h * 0.5, 1).setPosition(f.x, f.y + h * 0.5, f.z); pen.setMatrixAt(i, m);
-        m.setPosition(f.x, f.y + h * 0.5, f.z - 0.01); edge.setMatrixAt(i, m);
-        f.visibleHeight = h;
-      });
-      edge.count = pen.count = kept.length;
-      edge.instanceMatrix.needsUpdate = pen.instanceMatrix.needsUpdate = true;
-      poles.userData.set(kept.map(f => ({ x: f.x, y: f.y, z: f.z, len: f.visibleHeight, color: youHex, w: 3.4 })));
+      const kept = clusterStable(asks, mapBin()).map(c => c.point).filter(f => inMap(projectMapPoint(new THREE.Vector3(f.x, f.y, f.z))));
+      g.userData.set(kept.map(f => ({ x: f.x, y: f.y, z: f.z, len: f.h, color: youHex, w: 3, r: 12 })));
     };
-    edge.count = pen.count = 0;
-    edge.frustumCulled = pen.frustumCulled = false;
     return g;
   }
   const rootAsks = L.root.asks.map(a => {
@@ -573,10 +657,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       if (!show) continue;
       const tall = act.cls === "outward" ? (lens === "egress" ? 16 : 11) : act.cls === "write" ? (lens === "egress" ? 5 : 3.4) : 1.9;
       const x = xOf(act.a, act.i), y = crest(act.a, act.i), z = zOf(act.a, act.i) - (act.a.kind === "root" ? 0.8 : 0.4);
-      // shaft px includes a 1px dark outline each side: the class colour itself is at least 3px wide
+      // shaft px include a hairline dark rim each side, so a fine stem still reads on any stratum
       // Only outward pins carry a head in a session with a subagent field, so hundreds of reads stay a fringe, not a fence.
-      const head = act.cls === "outward" ? 6 : !rule.compact ? 0 : act.cls === "write" ? 4.5 : 3.5;
-      list.push({ x, y, z, len: tall, color: STATUS[act.cls].color, w: act.cls === "outward" ? 6.4 : 5.4, r: head });
+      const head = act.cls === "outward" ? 3.6 : !rule.compact ? 0 : act.cls === "write" ? 2.8 : 2.4;
+      list.push({ x, y, z, len: tall, color: STATUS[act.cls].color, w: act.cls === "outward" ? 3.4 : 3.2, r: head });
       beamPick.push({ a: act.a, i: act.i, kind: act.cls, x, y0: y, y1: y + tall, z });
     }
     beamCandidates = list.map((p, i) => ({ ...p, ...beamPick[i], kind: beamPick[i].kind }));
@@ -630,11 +714,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     world.add(cairns);
   }
 
-  // spawn and return links: flat luminous ribbons arcing over the valley
+  // spawn and return links: luminous threads arcing over the valley. They are drawn at a constant
+  // pixel width with an antialiased core and a soft halo, so they stay clean lines at every zoom
+  // instead of sub-pixel strips that break into streaks; each fades in and out at its ends.
   function ribbons(list, widthOf, colorOf) {
-    const pos = [], col = [], idx = [], ag = [];
+    const pos = [], nxt = [], side = [], at = [], wpx = [], col = [], idx = [], ag = [];
     const c = new THREE.Color();
-    const p0 = new THREE.Vector3(), p1 = new THREE.Vector3(), pc = new THREE.Vector3(), q = new THREE.Vector3(), q2 = new THREE.Vector3();
+    const p0 = new THREE.Vector3(), p1 = new THREE.Vector3(), pc = new THREE.Vector3();
+    const bez = (t, out) => { const u = 1 - t; return out.set(u * u * p0.x + 2 * u * t * pc.x + t * t * p1.x, u * u * p0.y + 2 * u * t * pc.y + t * t * p1.y, u * u * p0.z + 2 * u * t * pc.z + t * t * p1.z); };
+    const q = new THREE.Vector3(), qn = new THREE.Vector3();
     for (const l of list) {
       if (l.child.kind !== "subagent") continue;
       const ci = l.type === "spawn" ? l.seg.i0 : l.seg.i1;
@@ -643,44 +731,61 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       pc.set((p0.x + p1.x) / 2, Math.max(p0.y, p1.y) + 0.6, (p0.z + p1.z) / 2);
       const w = widthOf(l);
       c.set(colorOf(l));
-      const N = 20, v0 = pos.length / 3;
+      const ai = agentIndex.get(l.child.id);
+      const N = 32, v0 = pos.length / 3;
       for (let k = 0; k <= N; k++) {
-        const t = k / N, u = 1 - t;
-        q.set(u * u * p0.x + 2 * u * t * pc.x + t * t * p1.x, u * u * p0.y + 2 * u * t * pc.y + t * t * p1.y, u * u * p0.z + 2 * u * t * pc.z + t * t * p1.z);
-        q2.set(2 * u * (pc.x - p0.x) + 2 * t * (p1.x - pc.x), 0, 2 * u * (pc.z - p0.z) + 2 * t * (p1.z - pc.z));
-        const len = Math.hypot(q2.x, q2.z) || 1;
-        const ox = -q2.z / len * w / 2, oz = q2.x / len * w / 2;
-        pos.push(q.x + ox, q.y, q.z + oz, q.x - ox, q.y, q.z - oz);
-        col.push(c.r, c.g, c.b, c.r, c.g, c.b);
-        const ai = agentIndex.get(l.child.id);
-        ag.push(ai, ai);
+        bez(k / N, q);
+        // the next point along the curve gives the screen direction; the last one looks back and flips
+        if (k < N) bez((k + 1) / N, qn); else { bez((k - 1) / N, qn); qn.sub(q).negate().add(q); }
+        for (const sd of [-1, 1]) { pos.push(q.x, q.y, q.z); nxt.push(qn.x, qn.y, qn.z); side.push(sd); at.push(k / N); wpx.push(w); col.push(c.r, c.g, c.b); ag.push(ai); }
         if (k < N) { const a = v0 + k * 2; idx.push(a, a + 2, a + 3, a, a + 3, a + 1); }
       }
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("aNext", new THREE.Float32BufferAttribute(nxt, 3));
+    g.setAttribute("aSide", new THREE.Float32BufferAttribute(side, 1));
+    g.setAttribute("aT", new THREE.Float32BufferAttribute(at, 1));
+    g.setAttribute("aW", new THREE.Float32BufferAttribute(wpx, 1));
     g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
     g.setAttribute("aAgent", new THREE.Float32BufferAttribute(ag, 1));
     g.setIndex(idx);
     const mesh = new THREE.Mesh(g, new THREE.ShaderMaterial({
-      uniforms: { uOpacity: { value: 0.3 }, uHover: linkHover },
-      vertexShader: `attribute vec3 color; attribute float aAgent; uniform float uHover; varying vec3 vC; varying float vOn;
-        void main(){ vC = color; vOn = abs(aAgent - uHover) < 0.5 ? 1.0 : 0.0; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-      fragmentShader: `uniform float uOpacity; varying vec3 vC; varying float vOn;
+      uniforms: { uOpacity: { value: 0.3 }, uHover: linkHover, uRes: pinUniforms.uRes, uDpr: pinUniforms.uDpr },
+      vertexShader: `attribute vec3 color; attribute vec3 aNext; attribute float aSide; attribute float aT; attribute float aW; attribute float aAgent;
+        uniform float uHover; uniform vec2 uRes; uniform float uDpr;
+        varying vec3 vC; varying float vOn; varying float vSide; varying float vT; varying float vHalf; varying float vW;
         void main(){
-          gl_FragColor = vec4(vC * (1.0 + 0.3 * vOn), mix(uOpacity, 1.0, vOn));
+          vC = color; vOn = abs(aAgent - uHover) < 0.5 ? 1.0 : 0.0; vSide = aSide; vT = aT;
+          vec4 a = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          vec4 b = projectionMatrix * modelViewMatrix * vec4(aNext, 1.0);
+          vec2 d = (b.xy / b.w - a.xy / a.w) * uRes;
+          d = length(d) > 1e-4 ? normalize(d) : vec2(1.0, 0.0);
+          vW = aW * uDpr * (1.0 + 0.5 * vOn);
+          vHalf = vW * 0.5 + 2.0 * uDpr;
+          a.xy += vec2(-d.y, d.x) * aSide * vHalf * 2.0 / uRes * a.w;
+          gl_Position = a;
+        }`,
+      fragmentShader: `uniform float uOpacity; varying vec3 vC; varying float vOn; varying float vSide; varying float vT; varying float vHalf; varying float vW;
+        void main(){
+          float d = abs(vSide) * vHalf;
+          float core = clamp(vW * 0.5 + 0.5 - d, 0.0, 1.0);
+          float halo = 0.1 * exp(-d * d / max(1.0, vW * vW));
+          float ends = mix(smoothstep(0.0, 0.14, vT) * smoothstep(1.0, 0.94, vT), 1.0, vOn);
+          float a = max(core, halo) * mix(uOpacity, 1.0, vOn) * ends;
+          if (a <= 0.002) discard;
+          gl_FragColor = vec4(vC * (1.0 + 0.3 * vOn), a);
           #include <colorspace_fragment>
         }`,
       side: THREE.DoubleSide, transparent: true, depthWrite: false
     }));
-    mesh.material.opacity = 0.3;
     mesh.frustumCulled = false;
     return mesh;
   }
   const linkHover = { value: -1 };
   const maxReport = Math.max(1, ...L.links.map(l => l.size || 0));
-  const spawnLinks = ribbons(L.links.filter(l => l.type === "spawn"), () => 0.1, () => "#aab8cc");
-  const returnLinks = ribbons(L.links.filter(l => l.type === "return"), l => 0.1 + 0.5 * Math.sqrt((l.size || 0) / maxReport), () => STRATA[STRATUM_INDEX.agents].color);
+  const spawnLinks = ribbons(L.links.filter(l => l.type === "spawn"), () => 1, () => "#aab8cc");
+  const returnLinks = ribbons(L.links.filter(l => l.type === "return"), l => 1 + 2.4 * Math.sqrt((l.size || 0) / maxReport), () => STRATA[STRATUM_INDEX.agents].color);
   world.add(spawnLinks, returnLinks);
 
   // compaction and shrink markers (root ridge front)
@@ -768,6 +873,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   // Hide lower-priority labels that would overlap others or sit under the HUD and panel.
   const _v = new THREE.Vector3();
+  let lastPlaced = new Set();
   function declutter() {
     const w = host.clientWidth, h = host.clientHeight;
     const items = [];
@@ -781,7 +887,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         items.push({ o, e, px: (_v.x + 1) / 2 * w, py: (1 - _v.y) / 2 * h, w: e._w, h: e._h, cx: o.userData.cx0, cy: o.center.y, flip: !!o.userData.flip, p: o.userData.prio || 0 });
       }
     }
-    items.sort((a, b) => b.p - a.p);
+    // equal priorities: labels already on screen go first, so they are not traded back and forth
+    const was = lastPlaced; lastPlaced = new Set();
+    items.sort((a, b) => b.p - a.p || was.has(b.e.textContent) - was.has(a.e.textContent));
     // In a tall, narrow viewport the landscape keeps only its cliff and row labels.
     const sparse = level === 0 && w < h && detail.level === 0;
     const box = { x0: 2, x1: w - insets.right + 4, y0: insets.top - 8, y1: h - insets.bottom + 8 };
@@ -794,7 +902,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       const hide = !at;
       if ((it.e.style.visibility === "hidden") !== hide) it.e.style.visibility = hide ? "hidden" : "";
       if (!at) continue;
-      placed.push(at);
+      placed.push(at); lastPlaced.add(it.e.textContent);
       if (at.cx !== it.o.center.x) { it.o.center.x = at.cx; moved = true; }
     }
     if (moved) labels.render(scene, camera);
@@ -866,6 +974,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   cores.frustumCulled = false;
   cores.count = 0;
   scene.add(cores);
+  // the cores stand on the same polished floor as the ridges
+  const coreReflectMat = strataMaterial({ REFLECT: "" });
+  Object.assign(coreReflectMat, { transparent: true, depthWrite: false });
+  const coreMirror = new THREE.InstancedMesh(cores.geometry, coreReflectMat, cap);
+  coreMirror.instanceMatrix = cores.instanceMatrix;
+  coreMirror.frustumCulled = false;
+  coreMirror.renderOrder = -1;
+  const coreMirrorGroup = new THREE.Group();
+  coreMirrorGroup.scale.y = -1;
+  coreMirrorGroup.add(coreMirror);
+  scene.add(coreMirrorGroup);
   const stage = { agent: null, n: 0, from: null, to: null, heights: null, t0: 0, dur: 0, lifted: -1, scale: 1, flags: null, beams: null };
   const stageX = i => W / 2 + (i - (stage.n - 1) / 2) * SP;
 
@@ -1148,6 +1267,19 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const p=new THREE.Vector3(s.x,2.4,SIDE_Z+.55);
     terrainBounds.expandByPoint(p);terrainPoints.push(p);
   }
+  // Everything the camera can see, for the near plane: terrain, the tallest beacon above it, and
+  // the L1 stage and lifted core while an agent is open.
+  const depthBox = new THREE.Box3();
+  function fitDepth() {
+    // padded for what hangs off the terrain: ruler and tick labels, the field's label, beacon heads
+    depthBox.copy(terrainBounds).expandByScalar(12);
+    depthBox.max.y += 18;
+    if (level > 0 && stage.agent) {
+      depthBox.expandByPoint(new THREE.Vector3(stageX(0) - 1, 0, STAGE_Z - 1));
+      depthBox.expandByPoint(new THREE.Vector3(stageX(stage.n - 1) + 1, Math.max(H1, LIFT_H + 3), STAGE_Z + 9));
+    }
+    fitNearPlane(camera, depthBox, { floor: Math.max(0.05, camera.position.distanceTo(controls.target) * 0.01) });
+  }
   // The overview shares the very same vertex buffers as the landscape. Its agent
   // texture stays visible when the inspector extracts an individual core.
   const miniData = new Float32Array(agentData.length);
@@ -1251,12 +1383,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     zoomCamera(camera, controls.target, factor, x, y, host.clientWidth, host.clientHeight, anchor);
     controls.update(); dirty = 3;
   }
-  renderer.domElement.addEventListener('wheel', e => {
+  const onWheel = e => {
     e.preventDefault();
     const rect = renderer.domElement.getBoundingClientRect();
     const delta = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? host.clientHeight : 1);
     zoomMap(Math.exp(-Math.max(-400, Math.min(400, delta)) * 0.002), { x: e.clientX - rect.left, y: e.clientY - rect.top });
-  }, { passive: false });
+  };
+  renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
+  // Clickable map labels take pointer events; the wheel over one still zooms the map under it.
+  labels.domElement.addEventListener('wheel', onWheel, { passive: false });
   const touchPoints = new Map();
   let pinchDistance = null;
   renderer.domElement.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') touchPoints.set(e.pointerId, { x: e.clientX, y: e.clientY }); });
@@ -1272,6 +1407,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const mapLines = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: '#c8dfef', transparent: true, opacity: 0.16 }));
   scene.add(mapLines);
   let detailAt = -Infinity, lastFocusKey = '', focusSince = 0, sentFocusKey = '';
+  // World size of one map-symbol cell at the current zoom, as a power of two with hysteresis.
+  let binExp = NaN;
+  const BEAM_RANK = { outward: 0, write: 1, read: 2 };
+  function mapBin() {
+    const upp = unitsPerPixel(camera, camera.position.distanceTo(controls.target), host.clientHeight || 1);
+    binExp = binExponent(detail.cell * upp, binExp);
+    return 2 ** binExp;
+  }
+  let shownRequests = new Set(), shownAgents = new Set(), heldFocus = "";
   function updateMapDetail(now) {
     camera.updateMatrixWorld();
     mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
@@ -1288,12 +1432,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     returnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.95 : 0.14) * linkFade;
     if (now - detailAt < 90) { dirty = Math.max(dirty, 2); return; }
     detailAt = now;
-    const points = beamCandidates.map(b => ({ ...b, ...projectMapPoint(new THREE.Vector3(b.x, b.y0, b.z)) })).filter(inMap);
-    const clusters = clusterMapPoints(points, detail.cell);
+    // Grouped in world bins set by zoom alone: panning moves beacons, it never regroups them.
+    const clusters = clusterStable(beamCandidates, mapBin(), { rank: b => BEAM_RANK[b.kind] ?? 3 })
+      .map(({ point, count }) => ({ count, point: { ...point, ...projectMapPoint(new THREE.Vector3(point.x, point.y0, point.z)) } }))
+      .filter(c => inMap(c.point));
     beamPick.length = 0;
     const draw = clusters.map(({ point: b, count }) => {
       const top = projectMapPoint(new THREE.Vector3(b.x, b.y1, b.z));
-      const ratio = Math.min(1, 58 / Math.max(0.001, Math.hypot(top.px - b.px, top.py - b.py)));
+      const ratio = Math.min(1, PIN_CAP / Math.max(0.001, Math.hypot(top.px - b.px, top.py - b.py)));
       beamPick.push({ ...b, count, tipX: b.px + (top.px - b.px) * ratio, tipY: b.py + (top.py - b.py) * ratio });
       return b;
     });
@@ -1302,7 +1448,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const grouped = beamPick.filter(b => b.count > 1).sort((a, b) => b.count - a.count).slice(0, detail.level ? 18 : 10);
     for (const b of grouped) {
       const top = projectMapPoint(new THREE.Vector3(b.x, b.y1, b.z));
-      const height = cappedMarkerHeight(b.y1 - b.y0, Math.hypot(top.px - b.px, top.py - b.py), 58);
+      const height = cappedMarkerHeight(b.y1 - b.y0, Math.hypot(top.px - b.px, top.py - b.py), PIN_CAP);
       const o = label(String(b.count), 'cluster', new THREE.Vector3(b.x, b.y0 + height, b.z), [0.5, 1.2], g,
         () => zoomMap(1.55, { x: b.px, y: b.py }));
       o.element.title = `${b.count} ${b.kind === 'outward' ? 'external actions' : b.kind === 'write' ? 'file changes' : 'reads'} · zoom to separate`;
@@ -1328,11 +1474,20 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     nearby.sort((a, b) => a.score - b.score || a.depth - b.depth);
     const rect = renderer.domElement.getBoundingClientRect();
     const hit = detail.level ? pickAt(rect.left + center.x, rect.top + center.y) : null;
-    const focus = nearby.find(p => p.agent.id === mapSelection?.agentId && p.i === mapSelection?.reqIdx) || nearby.find(p => p.agent.id === hit?.agentId && p.i === hit?.reqIdx) || nearby[0];
+    let focus = nearby.find(p => p.agent.id === mapSelection?.agentId && p.i === mapSelection?.reqIdx) || nearby.find(p => p.agent.id === hit?.agentId && p.i === hit?.reqIdx) || nearby[0];
+    const keyOf = item => `${item.agent.id}:${item.i}`;
+    // The centre crossing between two neighbouring columns does not flip the focus back and forth.
+    const held = !mapSelection && focus && nearby.find(p => keyOf(p) === heldFocus);
+    if (held && held !== focus && held.score <= focus.score + 14) focus = held;
+    heldFocus = focus ? keyOf(focus) : "";
     if (focus) { nearby.splice(nearby.indexOf(focus), 1); nearby.unshift(focus); }
-    const agentSeen = new Set(), requestCells = new Set();
+    // Labels already on screen keep their place unless another is clearly closer to the centre, and
+    // they are spaced by distance rather than by a screen grid, so a small pan does not swap them.
+    const labelOrder = [focus, ...nearby.slice(1).map(item => ({ item, s: item.score - (shownRequests.has(keyOf(item)) ? 90 : 0) - (shownAgents.has(item.agent.id) ? 40 : 0) })).sort((a, b) => a.s - b.s).map(e => e.item)].filter(Boolean);
+    const agentSeen = new Set(), placedRequests = [];
     const linePoints = [];
-    for (const item of nearby) {
+    shownRequests = new Set();
+    for (const item of labelOrder) {
       const { agent, i, pos } = item, r = agent.requests[i];
       if (detail.level >= 1 && !agentSeen.has(agent.id) && agentSeen.size < 14) {
         agentSeen.add(agent.id);
@@ -1340,9 +1495,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         o.userData.flip = true;
       }
       if (detail.level < 2) continue;
-      const cell = `${Math.floor(item.px / 135)}:${Math.floor(item.py / 48)}`;
-      if (requestCells.has(cell) || requestCells.size >= detail.labelBudget) continue;
-      requestCells.add(cell);
+      if (placedRequests.length >= detail.labelBudget || placedRequests.some(q => Math.abs(q.px - item.px) < 135 && Math.abs(q.py - item.py) < 48)) continue;
+      placedRequests.push(item); shownRequests.add(keyOf(item));
       const action = r.action?.tool ? ` · ${r.action.tool.split('__').at(-1)}` : '';
       const text = detail.level >= 3 && action ? `${r.action.tool.split('__').at(-1)} ↗ · #${i + 1} · ${fmtTok(r.tokens.context)} context` : `#${i + 1} · ${fmtTok(r.tokens.context)} context`;
       const o = label(text, (mapSelection ? mapSelection.agentId === agent.id && mapSelection.reqIdx === i : item === focus) ? 'focus' : 'request', pos, [0.5, 1], g, () => onPick({ level: 2, agentId: agent.id, reqIdx: i, intent: detail.level >= 3 && r.action?.kind === 'tool' ? 'action' : 'request' }));
@@ -1350,6 +1504,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       o.element.title = `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${i + 1} · ${fmtClock(r.t)} · ${fmtTok(r.tokens.context)} tokens in context${r.action?.tool ? ` · Open ${r.action.tool} call` : ''}`;
       linePoints.push(pos.x, 0, pos.z, pos.x, item.top.y, pos.z);
     }
+    shownAgents = agentSeen;
     mapLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
     mapLines.geometry.computeBoundingSphere();
     let stratum = null;
@@ -1503,6 +1658,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     }
     if (bench) { bench.frames.push(now); dirty = 1; controls.target.x += 0; camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.0015); }
     if (dirty > 0) {
+      coreMirror.count = cores.count; coreMirror.visible = cores.visible;
+      // Close in, a mirrored layer is big enough to be read as terrain that is not there: the floor's
+      // reflection is an overview effect and fades out as the map zooms in.
+      reflectMat.uniforms.uReflect.value = coreReflectMat.uniforms.uReflect.value = 0.3 * (1 - THREE.MathUtils.smoothstep(camera.zoom, 1.4, 4));
+      mirror.visible = coreMirrorGroup.visible = reflectMat.uniforms.uReflect.value > 0.004;
+      fitDepth();
       updateMapDetail(now);
       renderer.render(scene, camera);
       labels.render(scene, camera);

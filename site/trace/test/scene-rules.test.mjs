@@ -104,23 +104,35 @@ test('semantic zoom reveals and removes detail with stable transition bands', as
   assert.ok(mapDetail(6).cell < mapDetail(1).cell);
 });
 
-test('map clusters expand as screen space grows and preserve counts and record identity', async () => {
-  const { clusterMapPoints } = await import('../scene-rules.js');
-  const points = [
-    { id: 1, px: 10, py: 20, depth: 100, kind: 'read' },
-    { id: 2, px: 18, py: 20, depth: 80, kind: 'read' },
-    { id: 3, px: 18, py: 20, depth: 90, kind: 'outward' },
-    { id: 4, px: 80, py: 20, depth: 60, kind: 'read' }
-  ];
-  for (const cell of [12, 20, 32, 46]) {
-    const clusters = clusterMapPoints(points, cell);
-    assert.equal(clusters.reduce((n, c) => n + c.count, 0), points.length);
-    assert.ok(clusters.every(c => points.includes(c.point)));
-    assert.equal(clusters.find(c => c.point.kind === 'outward').count, 1);
+test('map symbols group in world bins: panning never regroups them, zooming only splits or merges whole groups', async () => {
+  const { clusterStable, binExponent } = await import('../render-quality.js');
+  // a few hundred beacons on four rows, with duplicate positions and every class
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const kinds = ['outward', 'write', 'read'];
+  const points = Array.from({ length: 400 }, (_, i) => ({ i, x: Math.floor(rnd() * 900) / 4, z: [-0.8, 16.6, 21.8, 27][i % 4], kind: kinds[i % 3] }));
+  const rank = p => kinds.indexOf(p.kind);
+  const key = c => `${c.point.kind}:${c.point.z}:${c.point.i}:${c.count}`;
+  for (const bin of [0.25, 0.5, 1, 2, 4, 8, 16, 64]) {
+    const groups = clusterStable(points, bin, { rank });
+    assert.equal(groups.reduce((n, g) => n + g.count, 0), points.length, 'every record is in exactly one group');
+    assert.ok(groups.every(g => points.includes(g.point)), 'a group stands on an actual record');
+    // input order (and so any camera-driven ordering) does not change groups or their anchors
+    const shuffled = [...points].sort(() => rnd() - 0.5);
+    assert.deepEqual(clusterStable(shuffled, bin, { rank }).map(key).sort(), groups.map(key).sort());
+    // a finer zoom level splits each group; it never moves a record into a different coarse group
+    const fine = clusterStable(points, bin / 2, { rank });
+    const coarseOf = p => `${p.kind}:${p.z}:${Math.floor(p.x / bin)}`;
+    const members = new Map();
+    for (const p of points) { const k = coarseOf(p); members.set(k, (members.get(k) || 0) + 1); }
+    for (const g of groups) assert.equal(g.count, members.get(coarseOf(g.point)));
+    for (const g of fine) assert.ok(members.has(coarseOf(g.point)));
   }
-  assert.equal(clusterMapPoints(points, 46)[0].point.id, 2, 'nearest record anchors the cluster');
-  assert.equal(clusterMapPoints(points.map(p => ({ ...p, px: p.px * 10 })), 46).length, 4);
-  assert.equal(clusterMapPoints([{ px: NaN, py: 0, depth: 1 }, { px: 1, py: 2, depth: -1 }], 20).length, 0);
+  // zoom tier with hysteresis: a wheel hovering at a boundary does not flip the tier back and forth
+  let e = binExponent(2 ** 3.49, NaN);
+  const seen = new Set([e]);
+  for (const w of [3.51, 3.49, 3.6, 3.4, 3.55]) seen.add(e = binExponent(2 ** w, e));
+  assert.equal(seen.size, 1);
+  assert.equal(binExponent(2 ** 4.4, 3), 4, 'a real zoom change still moves the tier');
 });
 
 test('map marker height stays bounded across scale and zoom', async () => {
