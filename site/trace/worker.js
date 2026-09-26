@@ -34,13 +34,21 @@
 //        (substring) applied; a structured Claude Code attachment (ref.rebuild) is rebuilt
 //        from the index's templates. Image blocks return a data: URL.
 //     -> { type: "error", id, message }
+//   postMessage({ type: "find", q, id })   full-text search of the loaded session (find.js); a new
+//     find or { type: "find-cancel" } stops the previous one.
+//     -> { type: "find-hits", id, hits: [{ agentId, block, snippet: { before, match, after } }] }
+//     -> { type: "find-progress", id, done, total }   bytes scanned
+//     -> { type: "find-done", id, hits, truncated, cancelled, error? }
 //
 // Only the files the user dropped are read. No network requests.
 import { loadTrace } from "./loader.js";
 import { readRef } from "./model.js";
+import { findText } from "./find.js";
 
 let sources = [];
 let index = null;
+let loaded = null; // the Trace the sources belong to, for find
+let findGen = 0;
 
 const fileSource = (file) => ({
   name: file.name,
@@ -71,10 +79,28 @@ self.onmessage = async (e) => {
         },
       });
       sources = s;
+      loaded = trace;
+      findGen++;
       self.postMessage({ type: "trace", trace });
     } catch (err) {
       self.postMessage({ type: "error", message: String((err && err.message) || err) });
     }
+  } else if (m.type === "find") {
+    const gen = ++findGen;
+    let last = 0;
+    try {
+      if (!loaded) throw new Error("no session loaded");
+      const res = await findText(loaded, sources, m.q, {
+        index, cancelled: () => gen !== findGen,
+        onHits: (hits) => self.postMessage({ type: "find-hits", id: m.id, hits }),
+        onProgress: (done, total) => { const now = Date.now(); if (done === total || now - last > 80) { last = now; self.postMessage({ type: "find-progress", id: m.id, done, total }); } },
+      });
+      self.postMessage({ type: "find-done", id: m.id, ...res });
+    } catch (err) {
+      self.postMessage({ type: "find-done", id: m.id, hits: 0, truncated: false, cancelled: false, error: String((err && err.message) || err) });
+    }
+  } else if (m.type === "find-cancel") {
+    findGen++;
   } else if (m.type === "text") {
     try {
       const src = sources[m.ref.file];

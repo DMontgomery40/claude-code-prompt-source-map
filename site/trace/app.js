@@ -5,6 +5,7 @@ import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minim
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 import { parsePaste } from "./paste.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
+import { createPalette } from "./palette.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -15,6 +16,7 @@ const S = {
   lens: "context", mode: "3d", custodyFn: null, reading: false, detailedLabels: false, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args'
 };
 let scene = null;
+let palette = null; // search and keyboard shortcuts (palette.js)
 let viewHistory = null, viewTimer = null;
 let mapReturn = null; // the landscape camera and selection saved before focused inspection
 let text = null;     // (agentId, ref) => Promise<{text, mode}>
@@ -72,6 +74,7 @@ function setupLoader() {
 
 // Back to the loader without reloading, so folders picked on this page stay available.
 function backToLoader() {
+  palette?.setTrace(null);
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
   scene?.dispose();
   scene = null;
@@ -534,6 +537,8 @@ async function start(trace) {
   mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
+  palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null) });
+  palette.setTrace(S.trace);
   window.__trace = { S, set };
   $("#loader").hidden = true;
   $("#app").hidden = false;
@@ -861,6 +866,7 @@ function moveRequest(delta, inspect = true) {
 }
 function onKey(e) {
   if ($("#app").hidden || !S.trace) return;
+  if (palette?.handleKey(e)) return;
   if (e.target.closest && e.target.closest("input, textarea, select, [role=separator], [contenteditable=true]")) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === "Escape") { e.preventDefault(); up(); return; }
