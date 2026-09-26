@@ -28,7 +28,7 @@ varying vec3 vN;
 varying vec3 vW;
 varying float vDepth;
 varying vec4 vSolid;
-varying vec2 vAg;
+varying vec3 vAg;
 varying float vInst;
 void main() {
   vB0 = aB0; vB1 = aB1;
@@ -43,10 +43,10 @@ void main() {
   vY = position.y;
 #ifdef AGENTS
   vSolid = texelFetch(uAgents, ivec2(int(aAgent + 0.5), 0), 0);
-  vAg = texelFetch(uAgents, ivec2(int(aAgent + 0.5), 1), 0).xy;
+  vAg = texelFetch(uAgents, ivec2(int(aAgent + 0.5), 1), 0).xyz;
 #else
   vSolid = vec4(0.0);
-  vAg = vec2(1.0, 0.0);
+  vAg = vec3(1.0, 0.0, 0.0);
 #endif
   vec4 wp = modelMatrix * p;
   vW = wp.xyz;
@@ -83,10 +83,16 @@ varying vec3 vN;
 varying vec3 vW;
 varying float vDepth;
 varying vec4 vSolid;
-varying vec2 vAg;
+varying vec3 vAg;
 varying float vInst;
+uniform float uXray;
 void main() {
   if (vAg.y > 0.5) discard;
+#ifdef XRAY
+  // Second pass for subagent ridges, drawn only where something nearer hides them (depthFunc
+  // GreaterDepth): a translucent silhouette through the main ridge, so every agent stays visible.
+  if (vAg.z > 0.5) discard;
+#endif
   float tops[7];
   tops[0] = vB0.x; tops[1] = vB0.y; tops[2] = vB0.z; tops[3] = vB0.w;
   tops[4] = vB1.x; tops[5] = vB1.y; tops[6] = vB1.z;
@@ -131,7 +137,13 @@ void main() {
     else if (abs(vInst - uHover) < 0.5) col = col * 1.18;
   }
   col = mix(col, uFog, haze(vW, vDepth));
+#ifdef XRAY
+  // Faint fill, crisp crest outline: a hidden ridge reads as an outline behind the one in front.
+  float edge = tops[6] > 0.0 ? 1.0 - smoothstep(0.5, 1.5, abs(tops[6] - vY) / fw) : 0.0;
+  gl_FragColor = vec4(mix(col, vec3(0.9, 0.94, 1.0), edge * 0.65), max(uXray, edge * 0.92));
+#else
   gl_FragColor = vec4(col, 1.0);
+#endif
   #include <colorspace_fragment>
 }`;
 
@@ -188,7 +200,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const agentData = new Float32Array(AW * 2 * 4);
   const agentTex = new THREE.DataTexture(agentData, AW, 2, THREE.RGBAFormat, THREE.FloatType);
   agentTex.minFilter = agentTex.magFilter = THREE.NearestFilter;
-  for (let i = 0; i < AW; i++) agentData[(AW + i) * 4] = 1;
+  for (let i = 0; i < AW; i++) {
+    agentData[(AW + i) * 4] = 1;
+    agentData[(AW + i) * 4 + 2] = agents[i].kind === "root" ? 1 : 0; // the x-ray pass skips the root
+  }
   agentTex.needsUpdate = true;
 
   const shared = {
@@ -202,7 +217,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   };
   const strataMaterial = (defines = {}, own = {}) => new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, defines,
-    uniforms: { ...shared, uSel: { value: -1 }, uCursor: { value: -1 }, uHover: { value: -1 }, uAgentEm: { value: 1 }, ...own },
+    uniforms: { ...shared, uSel: { value: -1 }, uCursor: { value: -1 }, uHover: { value: -1 }, uAgentEm: { value: 1 }, uXray: { value: 0.24 }, ...own },
     side: THREE.DoubleSide
   });
 
@@ -303,6 +318,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const [frontMesh, slopeMesh, ridgeMat] = buildRidges();
   const world = new THREE.Group();
   world.add(frontMesh, slopeMesh);
+  // Subagent ridges sit behind a main ridge that can be many times taller, which hides them from most
+  // angles. Their front faces are drawn again where occluded, as translucent silhouettes.
+  const xrayMat = strataMaterial({ AGENTS: "", XRAY: "" });
+  Object.assign(xrayMat, { transparent: true, depthWrite: false, depthFunc: THREE.GreaterDepth, side: THREE.FrontSide });
+  const xray = new THREE.Mesh(frontMesh.geometry, xrayMat);
+  xray.frustumCulled = false;
+  xray.renderOrder = 2;
+  world.add(xray);
   scene.add(world);
 
   const heightAt = (agent, inf, seg, x, taper) => {
@@ -381,7 +404,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   const rootAsks = L.root.asks.map(a => {
     const i = Math.min(Math.max(0, a.request), L.root.requests.length - 1);
-    return { x: L.X(a.t) * W, y: crest(L.root, i), z: -0.6, h: 2.6, s: 1 };
+    return { x: xOf(L.root, i), y: crest(L.root, i), z: -0.6, h: 2.6, s: 1 };
   });
   const flags = flagMeshes(rootAsks);
   world.add(flags);
@@ -704,7 +727,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       cores.setMatrixAt(i, m);
     }
     cores.instanceMatrix.needsUpdate = true;
-    if (stage.flags) stage.flags.visible = p >= 1;
+    if (stage.flags) stage.flags.visible = p >= 1 && level >= 1 && stage.agent != null;
   }
 
   // ---- L2: the lifted core ----
@@ -825,6 +848,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     warnMesh.visible = level === 0 && lens === "inflow";
     labelGroups.l0.visible = level === 0;
     ruler.visible = level === 0;
+    xray.visible = level === 0;
   }
 
   // ---- camera ----
@@ -914,10 +938,11 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (level === 0) {
       focusAgentId = null;
       applyFocusEmphasis(0);
-      cores.count = 0;
-      if (stage.flags) stage.flags.visible = false;
-      stage.agent = null;
       setLifted(null);
+      cores.count = 0;
+      // The L1 stage and its ask flags leave the scene entirely at L0.
+      if (stage.flags) { scene.remove(stage.flags); stage.flags = null; }
+      stage.agent = null;
       clearGroup(labelGroups.l1);
       rulerL1.visible = false;
       if (prevLevel !== 0 || S.refit) frameL0();
@@ -1117,7 +1142,13 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       insets = v;
       if (changed && level === 0 && !fly.on) frameL0(0);
     },
-    refit() { if (level === 0) frameL0(0); dirty = 3; },
+    refit() {
+      // Reframe for the current level after the free area changes (window or panel resized).
+      if (level === 0) frameL0(0);
+      else if (level === 1 && stage.agent) frameL1(cursor, 350);
+      else if (level >= 2 && lifted.visible) frameL2(350);
+      dirty = 3;
+    },
     stats() {
       const gl = renderer.getContext();
       const ext = gl.getExtension("WEBGL_debug_renderer_info");

@@ -70,19 +70,158 @@ export async function findSessions(entries) {
   return sessions;
 }
 
+// ---------------------------------------------------------------- narrowing by id
+//
+// When the page sends a root hint (a pasted thread or session id) with a whole
+// ~/.codex/sessions or ~/.claude/projects folder, pick that session's files from
+// their paths first and sniff as little as possible:
+//   Claude Code: <id>.jsonl, <id>/subagents/*, <id>/tool-results/*; only loose
+//     agent-*.jsonl files (outside any subagents/ folder) are sniffed, to group by content.
+//   Codex: the rollout whose name contains the id; children only among rollouts
+//     created from the root's start (UUIDv7 in the file name; a day's margin) to its
+//     last timestamp plus a day, each sniffed by a small head read for parent_thread_id.
+
+const DAY = 86400000;
+const HEAD = 16384;
+const baseName = (p) => p.split("/").pop();
+const decoder = new TextDecoder();
+
+// Unix ms of a UUIDv7, else null.
+export function uuid7Time(id) {
+  if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-7/i.test(id)) return null;
+  const ms = parseInt(id.replace(/-/g, "").slice(0, 12), 16);
+  return Number.isFinite(ms) ? ms : null;
+}
+const folderDay = (path) => { const m = /(?:^|\/)(\d{4})\/(\d{2})\/(\d{2})\//.exec(path); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null; };
+
+// Latest "timestamp" in the tail of a file (tolerates a partial or huge last line).
+async function lastTimestamp(source) {
+  for (let size = 1 << 16; ; size *= 8) {
+    const a = Math.max(0, source.size - size);
+    const tail = decoder.decode(await source.slice(a, source.size));
+    let max = null;
+    for (const m of tail.matchAll(/"timestamp"\s*:\s*"([^"]+)"/g)) { const t = Date.parse(m[1]); if (Number.isFinite(t) && (max == null || t > max)) max = t; }
+    if (max != null || a === 0 || size >= 1 << 24) return max;
+  }
+}
+
+// Parent thread of a Codex rollout from a small head read; the whole first line
+// only when the head cannot decide.
+async function codexHead(source) {
+  const head = decoder.decode(await source.slice(0, Math.min(HEAD, source.size)));
+  const nl = head.indexOf("\n");
+  const first = nl >= 0 ? head.slice(0, nl) : head;
+  if (!/"session_meta"/.test(first)) return null;
+  const parent = (/"parent_thread_id"\s*:\s*"([^"]*)"/.exec(first) || [])[1] || null;
+  const source_ = (/"thread_source"\s*:\s*"([^"]*)"/.exec(first) || [])[1] || null;
+  if (parent || nl >= 0 || source_ === "user") return { parent, threadSource: source_, fullRead: false };
+  try {
+    const p = JSON.parse(await readFirstLine(source)).payload || {};
+    return { parent: p.parent_thread_id || null, threadSource: p.thread_source || null, fullRead: true };
+  } catch { return null; }
+}
+
+// Returns { session, found } for the hinted id, or null when the hint names no file.
+export async function narrowByHint(entries, hint, onProgress = () => {}) {
+  const id = ((String(hint).match(UUID) || [])[0] || "").toLowerCase();
+  if (!id) return null;
+  const jsonl = entries.filter((e) => /\.jsonl$/.test(e.path));
+  const bytes = (list) => list.reduce((n, f) => n + f.source.size, 0);
+  const inFolder = (e, kind) => new RegExp(`(^|/)${id}/${kind}/`, "i").test(e.path);
+  const report = (done, total, found = null) => onProgress({ phase: "narrow", unit: "files", done, total, found, final: !!found });
+
+  // Claude Code: by path, plus loose subagent files grouped by their sessionId.
+  const ccRoot = jsonl.find((e) => baseName(e.path).toLowerCase() === `${id}.jsonl`);
+  const ccSubs = jsonl.filter((e) => inFolder(e, "subagents"));
+  if (ccRoot || ccSubs.length) {
+    const loose = jsonl.filter((e) => /^agent-[^/]+\.jsonl$/.test(baseName(e.path)) && !/\/subagents\//.test(e.path) && !e.path.startsWith("subagents/"));
+    report(0, loose.length + (ccRoot ? 1 : 0));
+    const root = ccRoot ? { ...ccRoot, row: await sniff(ccRoot).then((s) => (s && s.row) || null) } : null;
+    const subs = ccSubs.map((e) => ({ ...e }));
+    let n = root ? 1 : 0;
+    for (const e of loose) {
+      const s = await sniff(e);
+      report(++n, loose.length + (ccRoot ? 1 : 0));
+      if (s && s.product === "claude-code" && s.row && s.row.isSidechain === true && s.row.agentId && String(s.row.sessionId).toLowerCase() === id) subs.push({ ...e, ...s });
+    }
+    const metas = entries.filter((e) => /\.meta\.json$/.test(e.path) && (inFolder(e, "subagents") || subs.some((s) => !inFolder(s, "subagents") && e.path.endsWith(`agent-${agentIdOf(s)}.meta.json`))));
+    const toolResults = entries.filter((e) => inFolder(e, "tool-results"));
+    const fam = root ? [root, ...subs] : subs;
+    const session = { product: "claude-code", id, name: root ? root.path : id, entries: fam, metas, toolResults, bytes: bytes(fam), ...(root ? {} : { orphan: true }) };
+    const found = { product: "claude-code", id, root: root ? root.path : null, subagents: subs.length, toolResults: toolResults.length, files: fam.length, sniffed: n };
+    report(n, n, found);
+    return { session, found };
+  }
+
+  // Codex: the rollout named with the id, then its descendants in the time window.
+  const cxRoot = jsonl.find((e) => /^rollout-/.test(baseName(e.path)) && baseName(e.path).toLowerCase().includes(id)) || jsonl.find((e) => baseName(e.path).toLowerCase().includes(id));
+  if (!cxRoot) return null;
+  const start = uuid7Time(id) ?? (folderDay(cxRoot.path) != null ? folderDay(cxRoot.path) : null);
+  const end = await lastTimestamp(cxRoot.source);
+  const lo = start == null ? -Infinity : start - DAY;
+  const hi = end == null ? Infinity : end + DAY;
+  const inWindow = (e) => {
+    const t = uuid7Time((baseName(e.path).match(UUID) || [])[0]);
+    if (t != null) return t >= lo && t <= hi;
+    const d = folderDay(e.path);
+    return d == null ? true : d >= lo - DAY && d <= hi;
+  };
+  const cands = jsonl.filter((e) => e !== cxRoot && /^rollout-/.test(baseName(e.path)) && inWindow(e));
+  report(0, cands.length);
+  const heads = new Map();
+  let n = 0, fullReads = 0;
+  for (const e of cands) {
+    const h = await codexHead(e.source);
+    if (h) { heads.set(e, h); if (h.fullRead) fullReads++; }
+    if (++n % 25 === 0) report(n, cands.length);
+  }
+  const idOf = (e) => ((baseName(e.path).match(UUID) || [])[0] || "").toLowerCase();
+  const kids = new Map();
+  for (const e of cands) {
+    const h = heads.get(e);
+    if (!h || !h.parent) continue;
+    const p = h.parent.toLowerCase();
+    if (!kids.has(p)) kids.set(p, []);
+    kids.get(p).push(e);
+  }
+  const fam = [];
+  const seen = new Set();
+  const walk = (e) => { if (seen.has(e)) return; seen.add(e); fam.push(e); for (const k of kids.get(idOf(e) || id) || []) walk(k); };
+  walk(cxRoot);
+  const kinds = fam.slice(1).map((e) => (heads.get(e) || {}).threadSource);
+  const session = { product: "codex", id, name: cxRoot.path, entries: fam, bytes: bytes(fam) };
+  const found = {
+    product: "codex", id, root: cxRoot.path, subagents: kinds.filter((k) => k !== "guardian_review").length, guardians: kinds.filter((k) => k === "guardian_review").length,
+    files: fam.length, sniffed: n, fullReads, window: { from: Number.isFinite(lo) ? lo : null, to: Number.isFinite(hi) ? hi : null },
+  };
+  report(n, cands.length, found);
+  return { session, found };
+}
+
 async function readJson(source) {
   const bytes = await source.slice(0, source.size);
   return JSON.parse(new TextDecoder().decode(bytes));
 }
 
 // Loads one session into a Trace. options: { root, onProgress({ phase, done, total, file }) }.
+// A root containing a UUID narrows the entries by that id first (narrowByHint) and
+// fails with a clear message when no file carries it.
 // Returns { trace, sources } where sources[i] backs trace.files[i] (for text reads).
 export async function loadTrace(entries, { root = null, onProgress = () => {}, index = null } = {}) {
   const ix = prepareIndex(index);
-  onProgress({ phase: "scan", done: 0, total: entries.length });
-  const sessions = await findSessions(entries);
-  if (!sessions.length) throw new Error("No Codex rollout or Claude Code transcript found in the dropped files.");
-  const pick = (root && sessions.find((s) => s.id === root || s.name.includes(root) || s.entries.some((e) => e.path.includes(root)))) || sessions.slice().sort((a, b) => b.bytes - a.bytes)[0];
+  let sessions, pick;
+  if (root && UUID.test(String(root))) {
+    // A hinted id: take its files by path, never sniffing unrelated sessions.
+    const hit = await narrowByHint(entries, root, onProgress);
+    if (!hit) throw new Error(`Session ${root} isn't in the picked folder. Pick ~/.codex/sessions (or ~/.claude/projects)`);
+    pick = hit.session;
+    sessions = [pick];
+  } else {
+    onProgress({ phase: "scan", done: 0, total: entries.length });
+    sessions = await findSessions(entries);
+    if (!sessions.length) throw new Error("No Codex rollout or Claude Code transcript found in the dropped files.");
+    pick = (root && sessions.find((s) => s.id === root || s.name.includes(root) || s.entries.some((e) => e.path.includes(root)))) || sessions.slice().sort((a, b) => b.bytes - a.bytes)[0];
+  }
   const total = pick.entries.reduce((n, e) => n + e.source.size, 0);
   let done = 0;
   const files = [];

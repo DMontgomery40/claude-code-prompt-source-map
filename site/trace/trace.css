@@ -102,6 +102,17 @@ button { font: inherit; color: inherit; }
   border-radius: 6px; color: var(--ink); word-break: break-all; font-size: 13px;
 }
 .paste-out p { margin: 6px 0; }
+.or { margin: 18px 0 8px; color: var(--ink-3); font-size: 13px; }
+.drop { padding: 18px 16px; }
+.drop-big { font-size: 16px; }
+.open-row { display: grid; gap: 8px; margin: 10px 0 4px; }
+.btn.open { justify-content: center; padding: 11px 16px; font-size: 15px; background: #1d3552; border-color: #5b8cc4; }
+.btn.open:hover { background: #244268; }
+.btn.open:disabled { opacity: 1; background: #16202e; color: var(--ink-2); cursor: progress; }
+.open-hint { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+.open-hint kbd { font: 12.5px var(--mono); background: #1a212c; border: 1px solid var(--line-2); border-radius: 4px; padding: 0 4px; color: var(--ink); }
+.paste-out details { margin-top: 8px; }
+.paste-out summary { cursor: pointer; color: var(--ink-2); font-size: 13.5px; }
 .private {
   margin: 22px 0 0; padding: 12px 14px; border-left: 3px solid var(--you); background: #10170f;
   border-radius: 0 8px 8px 0; color: var(--ink-2); display: grid; gap: 4px;
@@ -117,9 +128,10 @@ button { font: inherit; color: inherit; }
 .stage { z-index: 0; }
 .stage canvas.gl { display: block; position: absolute; inset: 0; touch-action: none; }
 .stage .labels { position: absolute; inset: 0; pointer-events: none; }
-.flat { overflow: auto; padding: 178px 420px 24px 24px; }
+.app { --side-w: 392px; }
+.flat { overflow: auto; padding: 178px calc(var(--side-w) + 28px) 24px 24px; }
 .hud {
-  position: absolute; top: 14px; left: 16px; max-width: calc(100% - 440px);
+  position: absolute; top: 14px; left: 16px; max-width: calc(100% - var(--side-w) - 48px);
   display: grid; gap: 8px; pointer-events: none;
 }
 .hud > * { pointer-events: auto; }
@@ -140,7 +152,7 @@ button { font: inherit; color: inherit; }
 .hud-legend { font-size: 12.5px; }
 .hud-legend .k.sym i { border-radius: 50%; }
 .side {
-  position: absolute; top: 14px; right: 16px; bottom: 16px; width: 392px;
+  position: absolute; top: 14px; right: 16px; bottom: 16px; width: var(--side-w);
   display: flex; flex-direction: column; gap: 8px; pointer-events: none;
 }
 .side > * { pointer-events: auto; }
@@ -171,7 +183,7 @@ button { font: inherit; color: inherit; }
 .minimap svg { display: block; cursor: pointer; }
 .crumbs {
   position: absolute; left: 16px; top: 132px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
-  max-width: calc(100% - 460px);
+  max-width: calc(100% - var(--side-w) - 68px);
 }
 .crumbs button {
   background: var(--chip-bg); border: 1px solid var(--line); border-radius: 7px; padding: 3px 9px;
@@ -181,7 +193,22 @@ button { font: inherit; color: inherit; }
 .crumbs button[aria-current=true] { color: #fff; border-color: #5b8cc4; background: #16263b; }
 .crumbs .sep { color: var(--ink-3); font-size: 13px; }
 .crumbs .keys { margin-left: 10px; color: var(--ink-3); font-size: 12px; background: var(--chip-bg); padding: 3px 8px; border-radius: 6px; }
-.viewtools { position: absolute; right: 424px; bottom: 16px; display: flex; gap: 6px; }
+.viewtools { position: absolute; right: calc(var(--side-w) + 32px); bottom: 16px; display: flex; gap: 6px; }
+/* Drag the panel's left edge to resize it; the grip shows on hover and focus. */
+.resizer {
+  position: absolute; left: -11px; top: 0; bottom: 0; width: 14px; cursor: col-resize; touch-action: none;
+  display: flex; justify-content: center; pointer-events: auto; z-index: 2;
+}
+.resizer::after {
+  content: ""; width: 3px; margin: 12px 0; border-radius: 2px; background: var(--line-2);
+  transition: background 0.12s;
+}
+.resizer:hover::after, .resizer:focus-visible::after, .resizer.dragging::after { background: var(--link); }
+.resizer:focus-visible { outline: none; }
+.app.resizing, .app.resizing * { cursor: col-resize !important; user-select: none; }
+.sidebar-tools { display: flex; justify-content: flex-end; flex: none; }
+.widen { font-size: 13px; }
+.widen[aria-pressed=true] { background: #1d3552; border-color: #5b8cc4; }
 .tip {
   position: fixed; z-index: 10; pointer-events: none; max-width: 320px;
   background: rgba(14, 18, 25, 0.96); border: 1px solid var(--line-2); border-radius: 8px;
@@ -298,9 +325,10 @@ button { font: inherit; color: inherit; }
 .rhead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
 .rhead .mode { color: var(--ink-3); font-size: 12.5px; }
 .reader pre.text {
-  margin: 6px 0 0; font: 13px/1.5 var(--mono); white-space: pre-wrap; word-break: break-word;
-  max-height: 52vh; overflow: auto; color: var(--ink);
+  margin: 6px 0 0; font: 13px/1.5 var(--mono); white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
+  max-height: 52vh; overflow-y: auto; overflow-x: hidden; color: var(--ink); max-width: 118ch;
 }
+.app.wide .reader pre.text { max-height: 64vh; font-size: 13.5px; }
 .reader img.shot { max-width: 100%; border-radius: 6px; margin-top: 6px; }
 .warnline { color: #ffc49b; font-size: 13px; }
 .items li.fact { padding: 2px 6px; color: var(--ink); }
@@ -345,6 +373,7 @@ svg.ov .hit:hover { fill: rgba(255, 255, 255, 0.12); }
   .crumbs { top: 136px; left: 12px; max-width: calc(100% - 24px); }
   .crumbs .keys { display: none; }
   .panel { position: absolute; left: 0; right: 0; bottom: 0; flex: none; max-height: 44vh; border-radius: 14px 14px 0 0; padding: 14px 16px 18px; }
+  .resizer, .sidebar-tools { display: none; }
   .app[data-level="0"] .panel { max-height: 34vh; }
   .minimap { display: none; }
   .viewtools { right: 12px; bottom: calc(44% + 10px); }

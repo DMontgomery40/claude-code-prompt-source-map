@@ -23,27 +23,28 @@
     </header>
 
     <section class="load" aria-labelledby="load-h">
-      <h2 id="load-h">Load a session</h2>
+      <h2 id="load-h">Open a session</h2>
+      <div class="find">
+        <label for="paste" class="find-label">Paste a Codex link or thread id, or a Claude Code session id</label>
+        <input id="paste" class="paste" type="text" spellcheck="false" autocomplete="off"
+          placeholder="codex://threads/…, a thread id, or a Claude Code session id or path">
+        <div id="paste-out" class="paste-out" aria-live="polite"></div>
+      </div>
+      <p class="or">Or drop the files yourself</p>
       <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-help">
         <p class="drop-big">Drop a session file or folder here</p>
         <p id="drop-help" class="drop-help">A Codex rollout <code>.jsonl</code>, or a Claude Code session <code>.jsonl</code> with its same-named folder, so subagents come too.</p>
         <div class="drop-buttons">
-          <label class="btn primary">Choose files<input id="pick-files" type="file" multiple accept=".jsonl,.json,application/json"></label>
+          <label class="btn">Choose files<input id="pick-files" type="file" multiple accept=".jsonl,.json,application/json"></label>
           <label class="btn">Choose a folder<input id="pick-folder" type="file" webkitdirectory multiple></label>
         </div>
       </div>
+      <input id="pick-root" type="file" webkitdirectory multiple hidden>
       <div id="progress" class="progress" hidden>
         <div class="bar"><i id="progress-fill"></i></div>
         <p id="progress-text" class="progress-text" aria-live="polite">Reading…</p>
       </div>
       <p id="load-error" class="error" role="alert" hidden></p>
-
-      <div class="find">
-        <label for="paste" class="find-label">Find the file for a session</label>
-        <input id="paste" class="paste" type="text" spellcheck="false" autocomplete="off"
-          placeholder="codex://threads/…, a thread id, or a Claude Code session id or path">
-        <div id="paste-out" class="paste-out" aria-live="polite"></div>
-      </div>
 
       <div class="private">
         <strong>Nothing leaves this browser.</strong>
@@ -71,7 +72,9 @@
     <div id="legend" class="legend hud-legend"></div>
   </header>
   <div class="side">
+    <div id="resizer" class="resizer" role="separator" aria-orientation="vertical" aria-label="Resize the panel" tabindex="0"></div>
     <nav id="lenses" class="lenses" aria-label="Lenses"></nav>
+    <div class="sidebar-tools"><button id="widen" class="btn small widen" type="button" aria-pressed="false">Widen for reading</button></div>
     <aside id="panel" class="panel" aria-live="polite"></aside>
   </div>
   <div id="minimap" class="minimap" aria-label="Session overview"></div>

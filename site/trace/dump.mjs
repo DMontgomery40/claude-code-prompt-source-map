@@ -1,20 +1,24 @@
 #!/usr/bin/env node
 // Runs the Trace adapters on disk files and writes the model JSON (no block text).
-//   node site/trace/dump.mjs <file|dir>... [--root <id>] [--index reference-index.json] [--out model.json] [--roundtrip]
+//   node site/trace/dump.mjs <file|dir>... [--root <id>] [--index reference-index.json] [--out model.json] [--roundtrip] [--narrow-only]
 // Directories are walked recursively. --roundtrip re-reads every BlockRef and
 // checks the bytes decode to one parseable line.
 import { open, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { loadTrace } from "./loader.js";
+import { loadTrace, narrowByHint } from "./loader.js";
 import { readRef, readRefLine } from "./model.js";
 
-export async function nodeSource(path) {
-  const fh = await open(path, "r");
-  const { size } = await fh.stat();
-  return {
+// A lazily opened file: stat is known up front, the handle opens on the first read
+// (so a whole ~/.codex/sessions tree can be listed without thousands of open files).
+export function nodeSource(path, size) {
+  let fhp = null;
+  const src = {
     name: path,
     size,
+    opened: false,
     async slice(a, b) {
+      if (!fhp) { fhp = open(path, "r"); src.opened = true; }
+      const fh = await fhp;
       const len = Math.max(0, Math.min(b, size) - a);
       const buf = new Uint8Array(len);
       let got = 0;
@@ -25,21 +29,22 @@ export async function nodeSource(path) {
       }
       return got === len ? buf : buf.subarray(0, got);
     },
-    close: () => fh.close(),
+    async close() { if (fhp) { const fh = await fhp; fhp = null; await fh.close(); } },
   };
+  return src;
 }
 
 async function walk(p, out) {
   const s = await stat(p);
   if (s.isDirectory()) for (const n of (await readdir(p)).sort()) await walk(join(p, n), out);
-  else if (/\.(jsonl|json|txt)$/.test(p)) out.push(p);
+  else if (/\.(jsonl|json|txt)$/.test(p)) out.push({ path: p, size: s.size });
   return out;
 }
 
 export async function entriesFor(paths) {
   const files = [];
   for (const p of paths) await walk(resolve(p), files);
-  return Promise.all(files.map(async (path) => ({ path, source: await nodeSource(path) })));
+  return files.map(({ path, size }) => ({ path, source: nodeSource(path, size) }));
 }
 
 async function main() {
@@ -50,6 +55,7 @@ async function main() {
     if (args[i] === "--root") opt.root = args[++i];
     else if (args[i] === "--out") opt.out = args[++i];
     else if (args[i] === "--roundtrip") opt.roundtrip = true;
+    else if (args[i] === "--narrow-only") opt.narrowOnly = true;
     else if (args[i] === "--index") opt.index = JSON.parse(await readFile(args[++i], "utf8"));
     else paths.push(args[i]);
   }
@@ -57,6 +63,17 @@ async function main() {
   const t0 = performance.now();
   const entries = await entriesFor(paths);
   const t1 = performance.now();
+  if (opt.narrowOnly) {
+    // Counts and timings only: no file names or content from other sessions.
+    const hit = await narrowByHint(entries, opt.root);
+    const t2 = performance.now();
+    const opened = entries.filter((e) => e.source.opened).length;
+    const f = hit && hit.found;
+    console.error(`entries ${entries.length} (list ${(t1 - t0).toFixed(0)} ms); narrow ${(t2 - t1).toFixed(0)} ms; files opened ${opened}; ` +
+      (f ? `found ${f.product}: ${f.files} files (${f.subagents} subagents${f.guardians != null ? `, ${f.guardians} guardians` : ""}${f.toolResults != null ? `, ${f.toolResults} tool-results` : ""}); sniffed ${f.sniffed}${f.fullReads != null ? `, full first-line reads ${f.fullReads}` : ""}` : "not found"));
+    for (const e of entries) await e.source.close();
+    return;
+  }
   const { trace, sources } = await loadTrace(entries, { root: opt.root, index: opt.index });
   const t2 = performance.now();
   const reqs = trace.agents.reduce((n, a) => n + a.requests.length, 0);

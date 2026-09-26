@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { fnv1a64, lineHash, textLineHashes, siteForText, prepareIndex, KINDS } from "../model.js";
 import { loadTrace } from "../loader.js";
 import { entriesFor } from "../dump.mjs";
-import { CC } from "./fixtures/make.mjs";
+import { CC, CODEX } from "./fixtures/make.mjs";
 
 const FIX = fileURLToPath(new URL("./fixtures/", import.meta.url));
 const enc = new TextEncoder();
@@ -109,7 +109,7 @@ test("worker: index message before load links blocks", async () => {
   const index = makeIndex([{ slug: "base", title: "Base", text: "You are a test agent. Ünïcödé ✓" }]);
   await self.onmessage({ data: { type: "index", index } });
   assert.deepEqual(posted.pop(), { type: "index", ok: true, pages: 1 });
-  const rel = "codex/2026/01/01/rollout-2026-01-01T00-00-00-0190a000-0000-7000-8000-000000000001.jsonl";
+  const rel = `codex/2026/01/01/rollout-2026-01-01T00-00-00-${CODEX.root}.jsonl`;
   await self.onmessage({ data: { type: "load", files: [{ path: rel, file: new File([readFileSync(FIX + rel)], "r.jsonl") }] } });
   const tr = posted.find((m) => m.type === "trace");
   assert.equal(tr.trace.agents[0].blocks[0].site.slug, "base");

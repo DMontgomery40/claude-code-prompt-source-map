@@ -17,10 +17,16 @@ export function pngBase64(w, h) {
   return b.toString("base64") + "AAAA";
 }
 
+// A UUIDv7 whose first 48 bits are `ms`, like Codex thread ids.
+export function uuid7(ms, n) {
+  const h = ms.toString(16).padStart(12, "0");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-7000-8000-${String(n).padStart(12, "0")}`;
+}
+export const CODEX_T0 = Date.parse("2026-01-01T00:00:00Z");
 export const CODEX = {
-  root: "0190a000-0000-7000-8000-000000000001",
-  child: "0190a000-0000-7000-8000-000000000002",
-  guardian: "0190a000-0000-7000-8000-000000000003",
+  root: uuid7(CODEX_T0, 1),
+  child: uuid7(CODEX_T0 + 17000, 2),
+  guardian: uuid7(CODEX_T0 + 18500, 3),
 };
 export const ASK = "Build the thing — café 日本 🎉";
 const JUST = "Publish the branch — 🚀";
@@ -86,7 +92,7 @@ export function codexFiles() {
   return {
     [`codex/2026/01/01/rollout-2026-01-01T00-00-00-${CODEX.root}.jsonl`]: root,
     [`codex/2026/01/01/rollout-2026-01-01T00-00-17-${CODEX.child}.jsonl`]: child,
-    [`codex/2026/01/01/rollout-2026-01-01T00-00-07-${CODEX.guardian}.jsonl`]: guardian,
+    [`codex/2026/01/01/rollout-2026-01-01T00-00-18-${CODEX.guardian}.jsonl`]: guardian,
   };
 }
 

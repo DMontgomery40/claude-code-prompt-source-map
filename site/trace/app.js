@@ -37,6 +37,13 @@ function setupLoader() {
   $("#pick-folder").addEventListener("change", e => loadFiles([...e.target.files].map(f => ({ path: f.webkitRelativePath || f.name, file: f }))));
   drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#pick-files").click(); } });
   $("#paste").addEventListener("input", e => describePaste(e.target.value));
+  $("#pick-root").addEventListener("change", e => {
+    const files = [...e.target.files].map(f => ({ path: f.webkitRelativePath || f.name, file: f }));
+    if (!files.length) return;
+    pickedRoots.set(e.target.dataset.product, files);
+    loadFiles(narrowPicked(files, pasted));
+  });
+  if (params.has("dev")) window.__traceDev = { filesFromHandle, narrowPicked, parsePaste };
   $("#dev-model").addEventListener("change", async e => {
     const f = e.target.files[0];
     if (!f) return;
@@ -47,7 +54,24 @@ function setupLoader() {
       start(trace);
     } catch (err) { showError(`That file isn't a Trace JSON: ${err.message}`); }
   });
-  $("#back-to-load").addEventListener("click", () => location.reload());
+  $("#back-to-load").addEventListener("click", backToLoader);
+}
+
+// Back to the loader without reloading, so folders picked on this page stay available.
+function backToLoader() {
+  scene?.dispose();
+  scene = null;
+  Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
+  $("#app").hidden = true;
+  $("#tip").hidden = true;
+  $("#loader").hidden = false;
+  $("#progress").hidden = true;
+  $("#load-error").hidden = true;
+  $("#paste").value = "";
+  $("#paste-out").replaceChildren();
+  pasted = null;
+  pasteRoot = null;
+  $("#paste").focus();
 }
 
 async function collectDrop(dt) {
@@ -198,44 +222,205 @@ async function rawLine(trace, sources, ref) {
   return { text: line, mode: "raw log line (developer load)" };
 }
 
+// ---------- paste → open ----------
 // Codex thread ids are UUIDv7: the first 48 bits are Unix milliseconds, which name the folder and file.
+const ROOT_DIR = { codex: "~/.codex/sessions", "claude-code": "~/.claude/projects" };
+function parsePaste(v) {
+  v = v.trim();
+  if (!v) return null;
+  const uuid = (v.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [])[0]?.toLowerCase() || null;
+  if (/^codex:\/\//i.test(v) || (uuid && uuid[14] === "7" && !/\.claude\//.test(v))) {
+    if (!uuid) return { error: "That deeplink has no thread id." };
+    const ms = parseInt(uuid.replace(/-/g, "").slice(0, 12), 16);
+    return { product: "codex", id: uuid, ms };
+  }
+  if (uuid || /\.claude\/projects\//.test(v)) return { product: "claude-code", id: uuid, path: /\.jsonl$/.test(v) ? v : null };
+  return { error: "Paste a codex://threads/… link, a thread id, or a Claude Code session id or path." };
+}
+
+let pasted = null;           // the parsed paste the open button acts on
+const pickedRoots = new Map(); // product -> files picked this page load (no File System Access)
+
 function describePaste(v) {
   const out = $("#paste-out");
   out.replaceChildren();
-  v = v.trim();
-  if (!v) return;
-  const pathRow = (p, note) => {
+  const info = parsePaste(v);
+  pasted = info && !info.error ? info : null;
+  pasteRoot = pasted?.id || null;
+  if (!info) return;
+  if (info.error) return out.append(el("p", { text: info.error }));
+  const p2 = n => String(n).padStart(2, "0");
+  const pathRow = p => {
     const b = el("button", { class: "btn small", type: "button", text: "Copy" });
     b.addEventListener("click", () => navigator.clipboard?.writeText(p).then(() => { b.textContent = "Copied"; }, () => { b.textContent = "Select and copy"; }));
-    return note ? [el("div", { class: "path" }, el("code", { text: p }), b), el("p", { text: note })] : [el("div", { class: "path" }, el("code", { text: p }), b)];
+    return el("div", { class: "path" }, el("code", { text: p }), b);
   };
-  const uuid = (v.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [])[0];
-  pasteRoot = uuid ? uuid.toLowerCase() : null;
-  if (uuid) out.append(el("p", { class: "note", text: "When you drop a folder holding several sessions, this one opens." }));
-  if (/^codex:\/\//i.test(v) || (uuid && uuid[14] === "7" && !/\.claude\//.test(v))) {
-    if (!uuid) return out.append(el("p", { text: "That deeplink has no thread id." }));
-    const ms = parseInt(uuid.replace(/-/g, "").slice(0, 12), 16);
-    const d = new Date(ms);
-    const p2 = n => String(n).padStart(2, "0");
+  const where = [];
+  let what;
+  if (info.product === "codex") {
+    const d = new Date(info.ms);
     const day = `${d.getFullYear()}/${p2(d.getMonth() + 1)}/${p2(d.getDate())}`;
     const stamp = `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}-${p2(d.getMinutes())}-${p2(d.getSeconds())}`;
-    out.append(el("p", { text: `Codex thread started ${fmtWhen(ms)}. Its log:` }),
-      ...pathRow(`~/.codex/sessions/${day}/rollout-${stamp}-${uuid.toLowerCase()}.jsonl`),
-      el("p", { text: "Subagents and guardian reviews live in their own files. To bring them too, drop the whole folder:" }),
-      ...pathRow("~/.codex/sessions", "or just the date folders from this day to the session's last day."),
-      el("p", { class: "note", text: "The file name uses local time; if the seconds are off by one, look in the same folder." }));
-    return;
+    what = `Codex thread started ${fmtWhen(info.ms)}.`;
+    where.push(el("p", { text: "Its log (the file name uses local time):" }), pathRow(`~/.codex/sessions/${day}/rollout-${stamp}-${info.id}.jsonl`),
+      el("p", { text: "Subagents and guardian reviews are separate files in the date folders from that day on." }));
+  } else {
+    const file = info.path || `~/.claude/projects/<project>/${info.id}.jsonl`;
+    what = `Claude Code session ${info.id ? info.id.slice(0, 8) : ""}.`;
+    where.push(el("p", { text: "Its log, and the same-named folder that holds its subagents:" }), pathRow(file), pathRow(file.replace(/\.jsonl$/, "/")));
   }
-  if (/\.claude\/projects\//.test(v) || uuid) {
-    let file = v;
-    if (!/\.jsonl$/.test(file)) file = uuid ? `~/.claude/projects/<project>/${uuid}.jsonl` : v;
-    const folder = file.replace(/\.jsonl$/, "/");
-    out.append(el("p", { text: "Claude Code session log:" }), ...pathRow(file),
-      el("p", { text: "Drop it together with its same-named folder, which holds the subagents:" }), ...pathRow(folder),
-      ...(file.includes("<project>") ? [el("p", { class: "note", text: "<project> is the working directory with each / replaced by -, for example -Users-you-code-app." })] : []));
-    return;
+  const hint = el("p", { class: "open-hint", text: "" });
+  const btn = el("button", { class: "btn primary open", type: "button", text: "Open this session and its subagents" });
+  btn.addEventListener("click", () => openPasted(info, btn, hint));
+  out.append(el("p", { text: what }), el("div", { class: "open-row" }, btn, hint),
+    el("details", {}, el("summary", { text: "Where the files are" }), ...where));
+  storedHandle(info.product).then(h => {
+    hint.textContent = pickedRoots.has(info.product) || h ? "Opens from the folder you picked before."
+      : `You'll pick ${ROOT_DIR[info.product]} once; the session and its subagents open from it.`;
+  });
+}
+
+function copiedHint(hint, product) {
+  hint.replaceChildren(`Path copied: in the picker press `, el("kbd", { text: "⌘⇧G" }), `, paste, Enter, then Open. (${ROOT_DIR[product]})`);
+}
+function copyRoot(product) {
+  try { navigator.clipboard?.writeText(ROOT_DIR[product]).catch(() => {}); } catch { /* clipboard unavailable */ }
+}
+
+async function openPasted(info, btn, hint) {
+  pasteRoot = info.id;
+  const mem = pickedRoots.get(info.product);
+  if (mem) return loadFiles(narrowPicked(mem, info));
+  if (typeof window.showDirectoryPicker === "function") {
+    let handle = await storedHandle(info.product);
+    if (handle && !(await readPermission(handle))) handle = null;
+    if (!handle) {
+      copyRoot(info.product);
+      copiedHint(hint, info.product);
+      try {
+        handle = await window.showDirectoryPicker({ id: `trace-${info.product}`, mode: "read" });
+      } catch (e) {
+        if (e && e.name === "AbortError") return;
+        return showError(`The folder picker failed: ${e?.message || e}`);
+      }
+      saveHandle(info.product, handle);
+    }
+    btn.disabled = true;
+    setProgress(0, "Finding the session's files…");
+    try {
+      const files = await filesFromHandle(handle, info);
+      if (!files.length) {
+        btn.disabled = false;
+        return showError(`That folder doesn't hold this session. Pick ${ROOT_DIR[info.product]}.`);
+      }
+      return loadFiles(files);
+    } catch (e) {
+      btn.disabled = false;
+      return showError(`Couldn't read that folder: ${e?.message || e}`);
+    }
   }
-  out.append(el("p", { text: "Paste a codex://threads/… link, a thread id, or a Claude Code session id or path." }));
+  // No File System Access (Brave by default, Firefox, Safari): a folder input, kept for this page.
+  copyRoot(info.product);
+  copiedHint(hint, info.product);
+  const input = $("#pick-root");
+  input.dataset.product = info.product;
+  input.click();
+}
+
+// Keep only what can belong to the session: for Claude Code the files whose path holds its id
+// (the .jsonl, subagents/, tool-results/); for Codex the date folders from the thread's day on.
+// The worker's loader narrows further by id.
+function narrowPicked(files, info) {
+  if (!info?.id) return files;
+  let keep;
+  if (info.product === "claude-code") keep = files.filter(f => f.path.includes(info.id));
+  else {
+    const d = new Date(info.ms), day = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+    keep = files.filter(f => {
+      if (!/\.jsonl$/.test(f.path)) return false;
+      const m = f.path.match(/(?:^|\/)(\d{4})\/(\d{2})\/(\d{2})\//);
+      return !m || Number(m[1] + m[2] + m[3]) >= day;
+    });
+  }
+  return keep.length ? keep : files;
+}
+
+// Walks a picked directory handle to the session's files without listing unrelated sessions.
+async function filesFromHandle(root, info) {
+  const out = [];
+  const child = async (dir, name, kind) => { try { return kind === "dir" ? await dir.getDirectoryHandle(name) : await dir.getFileHandle(name); } catch { return null; } };
+  const walk = async (dir, prefix) => {
+    for await (const [name, h] of dir.entries()) {
+      if (h.kind === "file") out.push({ path: `${prefix}${name}`, file: await h.getFile() });
+      else await walk(h, `${prefix}${name}/`);
+    }
+  };
+  if (info.product === "claude-code") {
+    let base = root;
+    const projects = await child(root, "projects", "dir");
+    if (projects) base = projects;
+    else { const inner = await child(root, ".claude", "dir"); const p = inner && await child(inner, "projects", "dir"); if (p) base = p; }
+    const tryDir = async (dir, prefix) => {
+      const f = await child(dir, `${info.id}.jsonl`, "file");
+      if (!f) return false;
+      out.push({ path: `${prefix}${info.id}.jsonl`, file: await f.getFile() });
+      const folder = await child(dir, info.id, "dir");
+      if (folder) await walk(folder, `${prefix}${info.id}/`);
+      return true;
+    };
+    if (!(await tryDir(base, ""))) {
+      for await (const [name, h] of base.entries()) if (h.kind === "directory" && await tryDir(h, `${name}/`)) break;
+    }
+    return out;
+  }
+  let base = root;
+  const sessions = await child(root, "sessions", "dir");
+  if (sessions) base = sessions;
+  const d = new Date(info.ms), day = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  const num = s => (/^\d+$/.test(s) ? Number(s) : null);
+  for await (const [y, yh] of base.entries()) {
+    if (yh.kind === "file" && /^rollout-.*\.jsonl$/.test(y)) { out.push({ path: y, file: await yh.getFile() }); continue; }
+    if (yh.kind !== "directory" || num(y) == null || num(y) < d.getFullYear()) continue;
+    for await (const [m, mh] of yh.entries()) {
+      if (mh.kind !== "directory" || num(m) == null || num(y) * 100 + num(m) < Math.floor(day / 100)) continue;
+      for await (const [dd, dh] of mh.entries()) {
+        if (dh.kind !== "directory" || num(dd) == null || num(y) * 10000 + num(m) * 100 + num(dd) < day) continue;
+        for await (const [name, fh] of dh.entries()) {
+          if (fh.kind === "file" && /\.jsonl$/.test(name)) out.push({ path: `${y}/${m}/${dd}/${name}`, file: await fh.getFile() });
+        }
+      }
+    }
+  }
+  return out;
+}
+
+// The picked folder's handle is remembered in IndexedDB, so a later paste opens without a picker.
+function idb() {
+  return new Promise((resolve, reject) => {
+    const r = indexedDB.open("trace", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("handles");
+    r.onsuccess = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+  });
+}
+async function storedHandle(product) {
+  try {
+    const db = await idb();
+    return await new Promise(resolve => {
+      const q = db.transaction("handles").objectStore("handles").get(`trace-${product}`);
+      q.onsuccess = () => resolve(q.result || null);
+      q.onerror = () => resolve(null);
+    });
+  } catch { return null; }
+}
+async function saveHandle(product, handle) {
+  try { const db = await idb(); db.transaction("handles", "readwrite").objectStore("handles").put(handle, `trace-${product}`); } catch { /* not remembered */ }
+}
+async function readPermission(handle) {
+  try {
+    if ((await handle.queryPermission({ mode: "read" })) === "granted") return true;
+    return (await handle.requestPermission({ mode: "read" })) === "granted";
+  } catch { return false; }
 }
 
 function drawHero() {
@@ -309,8 +494,10 @@ async function start(trace) {
   await setMode(S.mode);
   if (!started) {
     started = true;
+    setupResizer();
+    afterSideResize();
     window.addEventListener("keydown", onKey);
-    window.addEventListener("resize", () => { layoutInsets(); if (S.mode === "2d") renderFlat(); renderMinimap(); scene?.refit(); });
+    window.addEventListener("resize", () => { applySideWidth(sideW, false); layoutInsets(); if (S.mode === "2d") renderFlat(); renderMinimap(); scene?.refit(); });
   }
 }
 let started = false;
@@ -339,6 +526,63 @@ async function setMode(mode) {
   }
   layoutInsets();
   render(true);
+}
+
+// ---------- resizable side panel ----------
+const SIDE_MIN = 320, SIDE_DEFAULT = 392, SIDE_KEY = "trace.sideWidth";
+let sideW = SIDE_DEFAULT, sideBeforeWiden = SIDE_DEFAULT;
+const sideMax = () => Math.max(SIDE_MIN, Math.round(innerWidth * 0.75));
+function applySideWidth(w, save) {
+  sideW = Math.round(Math.min(sideMax(), Math.max(SIDE_MIN, w)));
+  $("#app").style.setProperty("--side-w", `${sideW}px`);
+  const wide = sideW >= innerWidth * 0.55;
+  $("#app").classList.toggle("wide", wide);
+  $("#widen").setAttribute("aria-pressed", String(wide));
+  $("#widen").textContent = wide ? "Narrow the panel" : "Widen for reading";
+  $("#resizer").setAttribute("aria-valuenow", String(sideW));
+  if (save) try { localStorage.setItem(SIDE_KEY, String(sideW)); } catch { /* storage may be unavailable */ }
+}
+function afterSideResize() {
+  layoutInsets();
+  renderMinimap();
+  if (S.mode === "2d") renderFlat();
+  scene?.refit();
+}
+function setupResizer() {
+  let saved = null;
+  try { saved = Number(localStorage.getItem(SIDE_KEY)) || null; } catch { /* no storage */ }
+  applySideWidth(saved || SIDE_DEFAULT, false);
+  const r = $("#resizer");
+  r.setAttribute("aria-valuemin", String(SIDE_MIN));
+  r.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    r.setPointerCapture(e.pointerId);
+    r.classList.add("dragging");
+    $("#app").classList.add("resizing");
+    const move = ev => applySideWidth(innerWidth - ev.clientX - 16, false);
+    const up = () => {
+      r.removeEventListener("pointermove", move);
+      r.classList.remove("dragging");
+      $("#app").classList.remove("resizing");
+      applySideWidth(sideW, true);
+      afterSideResize();
+    };
+    r.addEventListener("pointermove", move);
+    r.addEventListener("pointerup", up, { once: true });
+    r.addEventListener("pointercancel", up, { once: true });
+  });
+  r.addEventListener("keydown", e => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    applySideWidth(sideW + (e.key === "ArrowLeft" ? 32 : -32), true);
+    afterSideResize();
+  });
+  $("#widen").addEventListener("click", () => {
+    if (sideW >= innerWidth * 0.55) applySideWidth(sideBeforeWiden < innerWidth * 0.55 ? sideBeforeWiden : SIDE_DEFAULT, true);
+    else { sideBeforeWiden = sideW; applySideWidth(innerWidth * 0.6, true); }
+    afterSideResize();
+  });
 }
 
 function buildHud() {
@@ -376,10 +620,12 @@ function buildHud() {
 function clipName(s) { s = String(s); return s.length > 48 ? `${s.slice(0, 47)}…` : s; }
 
 function layoutInsets() {
-  if (!scene) return;
+  if (!scene) { const h = $(".hud").getBoundingClientRect(); if (innerWidth > 760) $("#crumbs").style.top = `${Math.round(h.bottom + 8)}px`; return; }
   const vw = innerWidth, vh = innerHeight;
   const mobile = vw <= 760;
   const hud = $(".hud").getBoundingClientRect();
+  // The HUD wraps when the panel is wide; the breadcrumbs follow its real bottom edge.
+  $("#crumbs").style.top = mobile ? "" : `${Math.round(hud.bottom + 8)}px`;
   const crumbs = $("#crumbs").getBoundingClientRect();
   const panel = $("#panel").getBoundingClientRect();
   const mm = $("#minimap").getBoundingClientRect();
@@ -433,6 +679,7 @@ function up() {
 }
 
 function onKey(e) {
+  if ($("#app").hidden || !S.trace) return;
   if (e.target.closest && e.target.closest("input, textarea, select")) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === "Escape") { e.preventDefault(); up(); return; }
@@ -481,14 +728,14 @@ function renderMinimap() {
   const host = $("#minimap");
   if (S.mode !== "3d" || innerWidth <= 760) { host.hidden = true; return; }
   host.hidden = false;
-  const w = Math.min(520, Math.max(320, innerWidth - 392 - 16 * 4 - 120));
+  const w = Math.min(520, Math.max(280, innerWidth - sideW - 16 * 4 - 120));
   renderOverview(host, S.trace, S.layout, { width: w, height: 132, full: false, lens: S.lens, focus: { agentId: S.agentId, reqIdx: S.level >= 1 ? S.reqIdx : null },
     onPick: p => (p.reqIdx != null ? A.focusRequest(p.agentId, p.reqIdx) : A.focusAgent(p.agentId)) });
 }
 
 function renderFlat() {
   const host = $("#flat");
-  const w = Math.max(300, host.clientWidth - (innerWidth > 760 ? 444 : 24));
+  const w = Math.max(300, host.clientWidth - (innerWidth > 760 ? sideW + 52 : 24));
   const h = Math.max(260, Math.min(640, innerHeight - (innerWidth > 760 ? 200 : 420)));
   const box = el("div");
   if (S.level === 0) {

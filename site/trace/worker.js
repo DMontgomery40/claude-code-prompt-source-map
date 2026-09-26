@@ -11,14 +11,23 @@
 //     (+ block.rebuilt = true when the row is structured, not literal), and a Claude Code
 //     agent with no logged harness uses index.harness[version] (harnessSource "inferred").
 //   postMessage({ type: "load", files: [File | { file: File, path: string }], root?: string })
-//     -> { type: "progress", phase: "scan"|"parse"|"build"|"done", done, total, file?, fileDone? }
-//        (done/total in bytes; parse events at most every 80 ms, plus one at the end of each file)
+//     -> { type: "progress", phase: "narrow"|"scan"|"parse"|"build"|"done", done, total, file?, fileDone? }
+//        parse/build/done: done/total in bytes; parse events at most every 80 ms, plus one
+//        at the end of each file. scan (no root): total = number of dropped files.
+//        narrow (root given): unit "files", done/total = files sniffed of candidates; the
+//        last one has final: true and found = { product, id, root (path), subagents,
+//        guardians (Codex), toolResults (Claude Code), files, sniffed, fullReads?, window? }
+//        -- enough for "found session + N subagents".
+//     -> { type: "error", message }  also when `root` names no file in the pick:
+//        "Session <id> isn't in the picked folder. Pick ~/.codex/sessions (or ~/.claude/projects)"
 //     -> { type: "trace", trace }        the normalized Trace (no block text; see SPEC "Normalized model")
 //     -> { type: "error", message }
 //     Pass { file, path } with the dropped relative path (e.g. from webkitGetAsEntry's
 //     fullPath) so subagent folders are recognized; a bare File uses webkitRelativePath
-//     or its name. `root` picks a session when several are present (a thread/session id);
-//     trace.candidates lists them all.
+//     or its name. `root` (a thread/session id) loads that session: with a whole
+//     ~/.codex/sessions or ~/.claude/projects pick, its files are chosen by path and
+//     only the few candidate children are sniffed (see loader.js narrowByHint). Without
+//     `root`, every .jsonl is sniffed and trace.candidates lists the sessions found.
 //   postMessage({ type: "text", ref, id? })
 //     -> { type: "text", ref, id, text }  the literal text of one block: its source line
 //        read by byte offset, then ref.path (JSON path into the line) and ref.range
@@ -56,7 +65,8 @@ self.onmessage = async (e) => {
         index,
         onProgress: (p) => {
           const now = Date.now();
-          if (p.phase !== "parse" || p.fileDone || now - last > 80) { last = now; self.postMessage({ type: "progress", ...p }); }
+          const frequent = p.phase === "parse" || p.phase === "narrow";
+          if (!frequent || p.fileDone || p.final || now - last > 80) { last = now; self.postMessage({ type: "progress", ...p }); }
         },
       });
       sources = s;

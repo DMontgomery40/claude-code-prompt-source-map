@@ -209,7 +209,8 @@ test("loader: sessions found by first line; a hint picks one", async () => {
   assert.deepEqual(sessions.map((s) => [s.product, s.id, s.entries.length]).sort(), [["claude-code", CC.session, 2], ["codex", CODEX.root, 3]]);
   const { trace } = await loadTrace(entries, { root: CODEX.root });
   assert.equal(trace.product, "codex");
-  assert.equal(trace.candidates.length, 2);
+  // A hinted id narrows the pick to that session before sniffing (narrow.test.mjs).
+  assert.equal(trace.candidates.length, 1);
 });
 
 test("loader: Claude Code files picked loose (no folders) still group their subagents and metadata", async () => {
