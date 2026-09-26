@@ -6,6 +6,14 @@ import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs"
 import { log, notify, run } from "../lib/run.mjs";
 
 const repo = `${process.env.HOME}/gpt6-prompt-source-map`;
+const GENERATED = [
+  { script: "extract/codex/chatgpt-prompts.mjs", diff: "work/chatgpt-prompts-diff.md",
+    outputs: ["conversation", "gpt-builder", "work", "finance-health", "sites-artifacts"].flatMap(p => [`outputs/chatgpt-${p}-prompts.md`, `outputs/chatgpt-${p}-prompts.json`]) },
+  { script: "extract/codex/bundle-resources.mjs", diff: "work/bundle-resources-diff.md",
+    outputs: ["outputs/chatgpt-bundled-plugins.md", "outputs/chatgpt-bundled-plugins.json", "outputs/computer-use-prompts.md", "outputs/computer-use-prompts.json"] },
+  { script: "extract/codex/tool-manifest.mjs", diff: "work/tool-manifest-diff.md",
+    outputs: ["outputs/desktop-tool-manifest.md", "outputs/desktop-tool-manifest.json"] }
+];
 const node = process.execPath;
 
 export const codex = {
@@ -51,6 +59,25 @@ export const codex = {
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
+    // Generated pages beyond the refresh documents: ChatGPT prompts, bundled plugins and
+    // Computer Use prompts, and the live tool manifest. Each is non-fatal: a failure is logged
+    // and its pages are restored; a script not yet on main is skipped. They run before the
+    // sweep, which excludes the texts they publish.
+    const generatedDiffs = [];
+    for (const g of GENERATED) {
+      if (!existsSync(path.join(repo, g.script))) continue;
+      const diffFile = path.join(repo, g.diff);
+      rmSync(diffFile, { force: true });
+      const out = run(node, [g.script], { cwd: repo, timeoutMs: 10 * 60 * 1000 });
+      if (out.status !== 0) {
+        log(`codex ${g.script} failed (${out.status}): ${(out.stderr || out.stdout).slice(-300)}`);
+        if (!dryRun) notify("gpt6aeon generated pages", `${g.script} failed; its pages were left unchanged`);
+        run("git", ["checkout", "--", ...g.outputs.filter(file => existsSync(path.join(repo, file)))], { cwd: repo });
+        continue;
+      }
+      if (existsSync(diffFile)) { generatedDiffs.push(readFileSync(diffFile, "utf8").trim()); rmSync(diffFile, { force: true }); }
+    }
+
     // Model-facing text the inventory doesn't cover; never fails the refresh.
     let sweepDiff = "";
     const sweepDiffFile = path.join(repo, "work/desktop-model-facing-diff.md");
@@ -73,7 +100,7 @@ export const codex = {
     const privateSettings = summary.catalog_settings?.private ?? [];
     if (privateSettings.length && !dryRun) notify("gpt6aeon catalog", `Catalog settings changed (not published, may be account-specific): ${privateSettings.join(", ").slice(0, 300)}`);
     const diffFile = path.join(repo, "work/codex-diff.md");
-    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff, sweepDiff].filter(Boolean).join("\n\n");
+    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff, ...generatedDiffs, sweepDiff].filter(Boolean).join("\n\n");
     const statusFile = path.join(repo, "outputs/status.json");
     const previousLabel = existsSync(statusFile) ? JSON.parse(readFileSync(statusFile, "utf8")).checked : null;
     const labelChanged = previousLabel !== this.checkedLabel(now);
