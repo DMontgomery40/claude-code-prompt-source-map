@@ -1,16 +1,16 @@
 {
   "app": {
     "bundle_id": "com.openai.codex",
-    "version": "26.924.20706",
-    "build": "11431",
-    "asar_sha256": "1acbc007c34d2cb5592cd636712b39feb0d0a064002a95e77bb3bbcdadda5dde"
+    "version": "26.924.22138",
+    "build": "11645",
+    "asar_sha256": "d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80"
   },
   "cli": {
-    "version": "codex-cli 0.158.0-alpha.2",
-    "binary_sha256": "c3e30211bd454da70ceb4d9cbc2e05fe6466812ab05c311c3bbff6addeb14202"
+    "version": "codex-cli 0.158.0-alpha.2.1",
+    "binary_sha256": "3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a"
   },
   "catalog": {
-    "fetched_at": "2026-09-26T01:09:25.362735Z",
+    "fetched_at": "2026-09-26T19:17:00.672469Z",
     "client_version": "0.158.0",
     "models": [
       "gpt-6-astra",
@@ -39,12 +39,12 @@
     ]
   },
   "asar_prompt_files": {
-    ".vite/build/main-BefHSPFJ.js": "7e812bd83ac8d5ab6d1627e086bd367402027b2928159a779e0c953cd47ae45e",
-    ".vite/build/src-Z8EKS_tU.js": "657a03c9b804a07a1c6a32e463e7a3e4375c197431bc64753bd173bf79861fa7",
-    "webview/assets/app-initial-0a6dd402dd72.js": "30e60012a6dc5efe7840000600af30d49697c74152180ee615409e53469b25ef",
-    "webview/assets/app-shared-588591d226f4.js": "32b079f9b575c29a2cf3baa8055c4d0d07506446a2e8cfea5bd9381ab93e06de",
-    "webview/assets/local-conversation-side-chat-fdd6adb30031.js": "6749cb7a952da2d3664e4510588f71eb89413707df2ca09e39a87abf1fb45c63",
-    "webview/assets/review-slash-command-submenu-registration-bc383c4d7f49.js": "790385336022bbb90e160cff990c32b5adac731d15a2dc390f1ef3303a77710f"
+    ".vite/build/main-C5425b_s.js": "91a68c5f690e60033152a34cf0bf5c4234caeb9ddb47586fd3ef5b017bb29d64",
+    ".vite/build/src-BSSLXJxP.js": "50c7cf9c144594cfa6f33298e977f0b144976cc70c579f59fdc7242615c4af98",
+    "webview/assets/app-initial-d817715f10a0.js": "0c24aeb875e80ae2d41532534b227dd976c9a8f5644a4e10a3d2cb4ffa4047ff",
+    "webview/assets/app-shared-36eae88777f2.js": "bc90bb198f29b62bd745aa99dbfae6a81719d9739c22811a12a810f9813d6c43",
+    "webview/assets/local-conversation-side-chat-93f45d4f7312.js": "f55c451c373cd9d69ab28e2e416dc6fe550ee20ac47ca13590dc97647e1e37ab",
+    "webview/assets/review-slash-command-submenu-registration-e98b2fd516c9.js": "12502cc76c6bc904c8f017f8e7ff9975b6a9a991d6dda1d81e0048a1a7d31aa8"
   },
   "documents": {
     "persistent-instructions.md": {
@@ -84,19 +84,19 @@
       "bytes": 5658
     },
     "capture-metadata.json": {
-      "sha256": "9094a8ff6986e922501b5c0e13d6d48cb64fa4bb0b6509e4b07170f7017bfec8",
-      "bytes": 1811
+      "sha256": "d057b93136575060bc974cfda7761df798fe58bf0a230fc7b7fbe78820d4a78e",
+      "bytes": 1813
     },
     "desktop-helper-prompts.md": {
-      "sha256": "e744f7e937e7557f67a06900042bedb307a034da4c64d0ddac5d92660e43f5a0",
+      "sha256": "3380011f7aac72d1d0a4b4c1905df0d1ef3010b1f4c7d2ed8666e90559e43a06",
       "bytes": 59948
     },
     "voice-prompts.md": {
-      "sha256": "0b09c8fb1f0f7db029b8b6c231fdb22e94a6f398111cadd533ea3296f70726ea",
+      "sha256": "c9d693542838b23ae8acc67b03d303afd8e1999f28e0ce633a6aad34eadf5ea2",
       "bytes": 13848
     },
     "prompt-provenance-inventory.json": {
-      "sha256": "d19713f2652285cc3bc18557971cdcae8c7935c5ae8903192c831f1fadfd5d4b",
+      "sha256": "8089ea0d78c16457b69fc6349bdc366660bd2f0cf65bd6de08156151ecdbf6b7",
       "bytes": 38285
     },
     "other-catalog-models.md": {

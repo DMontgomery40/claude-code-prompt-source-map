@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-26 · ChatGPT desktop 26.924.22138 (11645), Codex CLI codex-cli 0.158.0-alpha.2.1
+
+- App version: `26.924.20706` → `26.924.22138`
+- App build: `11431` → `11645`
+- CLI version: `codex-cli 0.158.0-alpha.2` → `codex-cli 0.158.0-alpha.2.1`
+
+Every page was regenerated from this build and checked against the previous one.
+
+- Prompts, model records, instruction modules, the ChatGPT prompt pages, bundled plugins, Computer Use prompts and the model-facing text sweep: no text changed.
+- Config reference: no keys added or removed; every source now cites `rust-v0.158.0-alpha.2.1`.
+- Environment variables: added `MCP_TEST_CONSOLE_STATE_FILE`, read only by the `rmcp-client` test stdio server (not in the macOS binary).
+- Tool manifest: no tools added, removed or changed. In this build the schema code for `fire_confetti`, `archive_worktree`, `reorder_section`, `reorder_sidebar_projects` and `reorder_sidebar_sections` can't be evaluated offline, so their parameters show as approximate tables, with the same names, types and descriptions as before. `create_worktree`'s parameters are now exact.
+
 ## 2026-09-25 · ChatGPT desktop 26.924.20706 (11431), Codex CLI codex-cli 0.158.0-alpha.2
 
 # Codex refresh diff

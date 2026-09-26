@@ -1,6 +1,6 @@
 # Computer Use prompts and tool descriptions
 
-Source: `ChatGPT.app` 26.924.20706 (build 11431). Paths are relative to `ChatGPT.app/Contents/Resources`.
+Source: `ChatGPT.app` 26.924.22138 (build 11645). Paths are relative to `ChatGPT.app/Contents/Resources`.
 
 Source: `cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`, SHA-256 `40ff57cbce8dff6e0e2d4f66fc3df2ec75abd915d9489d67316e4a094cf8307a`.
 

@@ -1,9 +1,9 @@
 {
  "page": "outputs/chatgpt-sites-artifacts-prompts.md",
- "app_version": "26.924.20706",
- "app_build": "11431",
+ "app_version": "26.924.22138",
+ "app_build": "11645",
  "source": {
-  "asar_sha256": "1acbc007c34d2cb5592cd636712b39feb0d0a064002a95e77bb3bbcdadda5dde"
+  "asar_sha256": "d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80"
  },
  "items": [
   {
@@ -11,7 +11,7 @@
    "title": "Sites handoff",
    "label": "exact",
    "message_id": "sitesPreview.handoff.prompt",
-   "source_file": "webview/assets/sites-handoff-f7a8325a811e.js",
+   "source_file": "webview/assets/sites-handoff-d9f3468bebb3.js",
    "byte_offset": 1710,
    "sha256": "ed257996ff58851e27fda3e054b8d506df4c08768f58ece31d7a4c621b609341",
    "text": "@Sites turn the attached HTML file into a working website, preserving its layout, styling, content, and interactions as closely as possible. Make only the changes necessary for it to function and be hosted."
@@ -21,8 +21,8 @@
    "title": "Site automation",
    "label": "assembled",
    "message_id": null,
-   "source_file": "webview/assets/site-automation-create-panel-872bd8f3f2ec.js",
-   "byte_offset": 3997,
+   "source_file": "webview/assets/site-automation-create-panel-21df48d90257.js",
+   "byte_offset": 3998,
    "sha256": "edd8ff616b74c924f5ffe71a2c264ee50bfbefebf8f6e9de622c856dc83067cb",
    "text": "<…>\n\nWork on the existing Site with project_id <…>. Use the Sites tools to inspect its current implementation before making changes."
   },
@@ -31,8 +31,8 @@
    "title": "Site custom domain",
    "label": "exact",
    "message_id": "appgenSettings.customDomains.setupDialog.askChatGptPrompt",
-   "source_file": "webview/assets/appgen-settings-page-c554a2e9ea60.js",
-   "byte_offset": 9423,
+   "source_file": "webview/assets/appgen-settings-page-ca1da3a967d1.js",
+   "byte_offset": 9430,
    "sha256": "f8101b99aa1f993b2feabe7435b9dbae7d6c83054b794d588105a761605087fc",
    "text": "Help me register {hostname} as the custom domain for my site by adding these DNS records at my domain provider. Use the in-app browser if needed.\n{dnsRecords}"
   },
@@ -41,8 +41,8 @@
    "title": "Library file task context",
    "label": "exact",
    "message_id": null,
-   "source_file": "webview/assets/app-primary-620c47f764fe.js",
-   "byte_offset": 831340,
+   "source_file": "webview/assets/app-primary-cca0c1a58f0f.js",
+   "byte_offset": 831685,
    "sha256": "547c8b02467fcade54e6d31d6b42f9ff3d2df1bbbc82d8f6bdf0c8721146e644",
    "text": "The user started this task from ChatGPT Library to create a file. Use the available Library skill or Library access method to save each completed user-facing document, spreadsheet, presentation, or PDF to their ChatGPT Library. Create one Library file for each new deliverable. If the same deliverable is edited later, preserve its Library file identity and update the existing file instead of creating a duplicate."
   },
@@ -51,8 +51,8 @@
    "title": "Open writing block context",
    "label": "assembled",
    "message_id": null,
-   "source_file": "webview/assets/app-primary-620c47f764fe.js",
-   "byte_offset": 1187965,
+   "source_file": "webview/assets/app-primary-cca0c1a58f0f.js",
+   "byte_offset": 1188393,
    "sha256": "b5ffc18bcb8263bf946b0d12790d933f5389a7b1b905ad8a2bf15c82e77213dd",
    "text": "The user currently has the writing block backed by library_file_id <…> open in the writing block editor. Treat the user's current request as referring to this exact writing block. For any requested edits, target that exact Library file."
   },
@@ -61,8 +61,8 @@
    "title": "Writing block selected text",
    "label": "assembled",
    "message_id": null,
-   "source_file": "webview/assets/app-primary-620c47f764fe.js",
-   "byte_offset": 790242,
+   "source_file": "webview/assets/app-primary-cca0c1a58f0f.js",
+   "byte_offset": 790568,
    "sha256": "180c8c4922fc7f72e1eb4960bac516b4158029ee9833cf8b2b92eb0773c16fce",
    "text": "The user's instruction is referring to the following selected text from writing block with ID [<…>]. Apply the user's edit to the selection, and include the complete revised draft in your response."
   },
@@ -71,8 +71,8 @@
    "title": "Revise presentation outline",
    "label": "assembled",
    "message_id": null,
-   "source_file": "webview/assets/writing-block-app-capabilities-457c2a78957b.js",
-   "byte_offset": 80368,
+   "source_file": "webview/assets/writing-block-app-capabilities-8c6d1841254d.js",
+   "byte_offset": 80397,
    "sha256": "1b96fe0ff0263e54d73637874ad340f53546f195256a8a0e095c6b88d16a03ea",
    "text": "Revise this presentation outline to exactly <…> slides total. Preserve its presentation title, cover-slide choice, topic, key facts, and logical flow. Number slides consecutively using \"## Slide N: <slide title>\" headings. If a title slide is present, label it \"## Slide 1 (Title): <presentation title>\", keep it to the title and optional subtitle, and include it in the total. Give each content slide one clear focus and concise dash bullets. Combine closely related ideas when reducing slides; split complex ideas or add meaningful sections when expanding. Do not add filler or invent facts."
   },
@@ -81,8 +81,8 @@
    "title": "Create document",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createDocument.prompt.v5",
-   "source_file": "webview/assets/app-initial-0a6dd402dd72.js",
-   "byte_offset": 2695130,
+   "source_file": "webview/assets/app-initial-d817715f10a0.js",
+   "byte_offset": 2698594,
    "sha256": "36d08f702ce4f26179f8d4b6f6b07233336f6b7ace03bc48f5edf67c499b6adb",
    "text": "Create a new document with {artifact}. Start by asking me what it should be about."
   },
@@ -91,8 +91,8 @@
    "title": "Create presentation",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createPresentation.prompt.v5",
-   "source_file": "webview/assets/app-initial-0a6dd402dd72.js",
-   "byte_offset": 2695362,
+   "source_file": "webview/assets/app-initial-d817715f10a0.js",
+   "byte_offset": 2698826,
    "sha256": "c354f8edcd9c45d0e5eb4cd5d17f670fdc12c9609830ee6719f15869bd3c71e6",
    "text": "Create a new presentation with {artifact}. Start by asking me what it should be about."
   },
@@ -101,8 +101,8 @@
    "title": "Create spreadsheet",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createSpreadsheet.prompt.v5",
-   "source_file": "webview/assets/app-initial-0a6dd402dd72.js",
-   "byte_offset": 2695808,
+   "source_file": "webview/assets/app-initial-d817715f10a0.js",
+   "byte_offset": 2699272,
    "sha256": "4a39abc79643e962f44c0e4df50a272def7f1bb3bf084368c2fd0c2c948c807f",
    "text": "Create a new spreadsheet with {artifact}. Start by asking me what it should be about."
   },
@@ -111,8 +111,8 @@
    "title": "Create site",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createSite.prompt.v5",
-   "source_file": "webview/assets/app-initial-0a6dd402dd72.js",
-   "byte_offset": 2695586,
+   "source_file": "webview/assets/app-initial-d817715f10a0.js",
+   "byte_offset": 2699050,
    "sha256": "e1424780919ff14c5910ff90e6245f9e74a7a82d6077ffc688279f8e4c87e46d",
    "text": "Create a new site with {artifact}. Start by asking me what it should be about."
   },
@@ -121,7 +121,7 @@
    "title": "Create website: product",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createSiteProduct.prompt",
-   "source_file": "webview/assets/home-ambient-suggestions-content-af5b5bc05192.js",
+   "source_file": "webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js",
    "byte_offset": 27663,
    "sha256": "cdfd6a036d7e84992f1ad44b674e63214179fc543af913d4acaf10d6cad9fd92",
    "text": "Create a new website to launch a product with {artifact}. Start by asking me about the product, its audience, and the main action visitors should take."
@@ -131,7 +131,7 @@
    "title": "Create website: portfolio",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createSitePortfolio.prompt",
-   "source_file": "webview/assets/home-ambient-suggestions-content-af5b5bc05192.js",
+   "source_file": "webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js",
    "byte_offset": 28237,
    "sha256": "bde0b7be93891a5510476ff39e33e80bdd2edb7331763334a63ba6758210f651",
    "text": "Create a new website for a portfolio with {artifact}. Start by asking me whose work it should showcase and what projects to include."
@@ -141,7 +141,7 @@
    "title": "Create website: business",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createSiteBusiness.prompt",
-   "source_file": "webview/assets/home-ambient-suggestions-content-af5b5bc05192.js",
+   "source_file": "webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js",
    "byte_offset": 28792,
    "sha256": "639bbab4904bb194d6b2c6e2c4f33c20b46634e9a8c7195731d271a2439b3c64",
    "text": "Create a new website for a business with {artifact}. Start by asking me about the business, its customers, and what the website should help them do."
@@ -151,7 +151,7 @@
    "title": "Create website: event",
    "label": "exact",
    "message_id": "home.newChatPageSuggestions.createSiteEvent.prompt",
-   "source_file": "webview/assets/home-ambient-suggestions-content-af5b5bc05192.js",
+   "source_file": "webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js",
    "byte_offset": 29353,
    "sha256": "3d55bc572ebabd0272a5b6665a6e8c04c0c75ff6486ee1883bba1430861559b1",
    "text": "Create a new website for an event with {artifact}. Start by asking me about the event and what attendees need to know or do."

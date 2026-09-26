@@ -1,6 +1,6 @@
 # Codex/ChatGPT environment variables
 
-This page lists every environment variable that the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.924.20706; `codex-cli 0.158.0-alpha.2`) or the desktop app's own main-process code reads, sets, or compiles in. CLI entries come from `std::env` read sites, clap `env` attributes and indirect name tables in openai/codex at tag `rust-v0.158.0-alpha.2`, and each name was checked against the shipped binary's strings. Desktop entries come from `process.env` reads in `app.asar` (`.vite/build/*.js`). There are 336 entries. 105 are runtime variables read by the CLI. 166 names are read in the desktop main-process bundles; 60 of those are Codex/ChatGPT's own, and the rest are platform or bundled-library names. 32 are set or cleared only for commands Codex/ChatGPT spawns. These categories overlap: for example, `CODEX_HOME` is read by both the CLI and the desktop app. The rest are build-time names, and names present only in source for other platforms or tests. 25 appear in the official Codex docs (the environment-variables table or a code span on another docs page), and 311 are undocumented. "Read as" describes what the code does with the value: `presence` means only set versus unset matters. A `(name)` basis means the kind is inferred from the variable's name, not from the code. Descriptions quote the docs or the nearest source comment, and are left out when neither exists.
+This page lists every environment variable that the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.924.22138; `codex-cli 0.158.0-alpha.2.1`) or the desktop app's own main-process code reads, sets, or compiles in. CLI entries come from `std::env` read sites, clap `env` attributes and indirect name tables in openai/codex at tag `rust-v0.158.0-alpha.2.1`, and each name was checked against the shipped binary's strings. Desktop entries come from `process.env` reads in `app.asar` (`.vite/build/*.js`). There are 337 entries. 105 are runtime variables read by the CLI. 166 names are read in the desktop main-process bundles; 60 of those are Codex/ChatGPT's own, and the rest are platform or bundled-library names. 32 are set or cleared only for commands Codex/ChatGPT spawns. These categories overlap: for example, `CODEX_HOME` is read by both the CLI and the desktop app. The rest are build-time names, and names present only in source for other platforms or tests. 25 appear in the official Codex docs (the environment-variables table or a code span on another docs page), and 312 are undocumented. "Read as" describes what the code does with the value: `presence` means only set versus unset matters. A `(name)` basis means the kind is inferred from the variable's name, not from the code. Descriptions quote the docs or the nearest source comment, and are left out when neither exists.
 
 ## Contents
 
@@ -14,7 +14,7 @@ This page lists every environment variable that the Codex CLI bundled in the Cha
 - [Set or cleared by Codex/ChatGPT for child processes](#set-or-cleared-by-codexchatgpt-for-child-processes) (32)
 - [Build-time variables (compiled in)](#build-time-variables-compiled-in) (7)
 - [Desktop app: platform and bundled-library variables](#desktop-app-platform-and-bundled-library-variables) (106)
-- [In source only (not in this macOS binary: other-platform, test or dev builds)](#in-source-only-not-in-this-macos-binary-other-platform-test-or-dev-builds) (54)
+- [In source only (not in this macOS binary: other-platform, test or dev builds)](#in-source-only-not-in-this-macos-binary-other-platform-test-or-dev-builds) (55)
 
 ## Authentication, providers and network
 
@@ -954,19 +954,19 @@ Source: `codex-rs/network-proxy/src/upstream.rs:47`, `app.asar:.vite/build/worke
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_API_BASE_URL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_API_ENDPOINT`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_APP_SERVER_FORCE_CLI`
 
@@ -990,19 +990,19 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_APP_VERSION`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_BUILD_NUMBER`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_CLI_PATH`
 
@@ -1014,7 +1014,7 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_DESKTOP_RELAUNCH_OPEN_EVENTS`
 
@@ -1026,85 +1026,85 @@ Source: `app.asar:.vite/build/desktop-open-path-queue-BTYn4hio.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_ELECTRON_ARTIFACT_SESSION_RUNTIME_ROOT`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_ELECTRON_DEV_DOCK_ICONS_PATH`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_ELECTRON_DISABLE_QUIT_CONFIRMATION`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_ELECTRON_PRIMARY_RUNTIME_UPDATE_MODE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_ELECTRON_START_IN_BACKGROUND`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_ELECTRON_USER_DATA_PATH`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_MAX_LOG_LEVEL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_MCP_APP_SANDBOX_URL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_OTEL_TRACES_ENDPOINT`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `CODEX_PREFERRED_GIT_EXECUTABLE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_TECTONIC_PATH`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CODEX_TRACE_SHORTCUT`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `ELECTRON_RENDERER_URL`
 
@@ -1116,31 +1116,31 @@ Source: `app.asar:.vite/build/app-protocol-IjFomtpu.js`, `app.asar:.vite/build/b
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `NODE_REPL_HOST_SERVICES_PIPE_PATH`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `SKY_ENABLE_AUDIO`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `SPARKLE_UPDATE_INTERVAL_MINUTES`
 
 Read by: desktop app (Electron main process) · Read as: number · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `VITE_CODEX_DESKTOP_AUTH_ORIGIN`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ## Set or cleared by Codex/ChatGPT for child processes
 
@@ -1480,7 +1480,7 @@ These are generic platform variables, or variables read by third-party libraries
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `APPVEYOR_PULL_REQUEST_HEAD_COMMIT`
 
@@ -1510,7 +1510,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `BITBUCKET_COMMIT`
 
@@ -1558,7 +1558,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/src-DldfpmrL.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CIRCLE_SHA1`
 
@@ -1600,7 +1600,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `CM_COMMIT`
 
@@ -1636,7 +1636,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `ELECTRON_RUN_AS_NODE`
 
@@ -1660,7 +1660,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `FUNCTION_TARGET`
 
@@ -1678,7 +1678,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `GITHUB_SHA`
 
@@ -1696,7 +1696,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `GIT_WORK_TREE`
 
@@ -1720,7 +1720,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `K_SERVICE`
 
@@ -1738,19 +1738,19 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `NODE_ENV`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `NODE_OPTIONS`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/policy-DLF9H4Kq.js`
+Source: `app.asar:.vite/build/policy-BiKjVXeL.js`, `app.asar:.vite/build/policy-DLF9H4Kq.js`
 
 ### `OSTYPE`
 
@@ -1792,19 +1792,19 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `ProgramData`
 
 Read by: desktop app (Electron main process) · Read as: string · Documented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js` · Docs: [enterprise/managed-configuration](https://developers.openai.com/codex/enterprise/managed-configuration)
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js` · Docs: [enterprise/managed-configuration](https://developers.openai.com/codex/enterprise/managed-configuration)
 
 ### `ProgramFiles`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `RAILWAY_GIT_COMMIT_SHA`
 
@@ -1816,7 +1816,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `RENDER_GIT_COMMIT`
 
@@ -1858,7 +1858,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `SENTRY_RELEASE`
 
@@ -1894,7 +1894,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `SOURCE_COMMIT`
 
@@ -1912,25 +1912,25 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `TENCENTCLOUD_REGION`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `TENCENTCLOUD_ZONE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `TESTING_TAR_FAKE_PLATFORM`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `TRAVIS_PULL_REQUEST_SHA`
 
@@ -1942,7 +1942,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `VERCEL_BITBUCKET_COMMIT_SHA`
 
@@ -1972,7 +1972,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `VITEST`
 
@@ -1984,7 +1984,7 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
 
 ### `WSLENV`
 
@@ -2008,43 +2008,43 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/src-DldfpmrL.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `XDG_CURRENT_DESKTOP`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `XDG_DATA_DIRS`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `XDG_DATA_HOME`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `XDG_ICON_THEME`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `XDG_RUNTIME_DIR`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `XDG_STATE_HOME`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/src-Z8EKS_tU.js`
+Source: `app.asar:.vite/build/src-BSSLXJxP.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/src-Z8EKS_tU.js`
 
 ### `ZEIT_BITBUCKET_COMMIT_SHA`
 
@@ -2074,13 +2074,13 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `__FAKE_PLATFORM__`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ### `__MINIMATCH_TESTING_PLATFORM__`
 
@@ -2110,7 +2110,7 @@ Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asa
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
 
 ## In source only (not in this macOS binary: other-platform, test or dev builds)
 
@@ -2392,6 +2392,14 @@ Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:567`
 
 Read by: Rust source only (not compiled into this macOS binary) · Read as: path (name) · Undocumented
 
+Used in: `rmcp-client::GetConsoleWindow`
+
+Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1015`
+
+### `MCP_TEST_CONSOLE_STATE_FILE`
+
+Read by: Rust source only (not compiled into this macOS binary) · Read as: path (name) · Undocumented
+
 Used in: `rmcp-client::main`
 
 Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1006`
@@ -2408,9 +2416,9 @@ Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:82`
 
 Read by: Rust source only (not compiled into this macOS binary) · Read as: path (name) · Undocumented
 
-Used in: `rmcp-client::main`
+Used in: `rmcp-client::GetConsoleWindow`
 
-Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1032`
+Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1041`
 
 ### `MCP_TEST_DESCENDANT_ROLE`
 
@@ -2418,9 +2426,9 @@ Read by: Rust source only (not compiled into this macOS binary) · Read as: numb
 
 Value Codex/ChatGPT sets: `1`
 
-Used in: `rmcp-client::main`
+Used in: `rmcp-client::main`, `rmcp-client::GetConsoleWindow`
 
-Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:996`, `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1014`, `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1034` · Also set for child processes
+Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:996`, `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1023`, `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1043` · Also set for child processes
 
 ### `MCP_TEST_DYNAMIC_SERVER_METADATA`
 
@@ -2444,11 +2452,11 @@ Read by: Rust source only (not compiled into this macOS binary) · Read as: path
 
 > A test can close an initialized transport without killing an arbitrary PID.
 >
-> — `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1047`
+> — `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1056`
 
-Used in: `rmcp-client::main`
+Used in: `rmcp-client::GetConsoleWindow`
 
-Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1047`
+Source: `codex-rs/rmcp-client/src/bin/test_stdio_server.rs:1056`
 
 ### `MCP_TEST_IMAGE_DATA_URL`
 

@@ -1,6 +1,6 @@
 # ChatGPT GPT builder prompts
 
-Source: `app.asar` of the Codex/ChatGPT desktop app 26.924.20706 (build 11431), SHA-256 `1acbc007c34d2cb5592cd636712b39feb0d0a064002a95e77bb3bbcdadda5dde`.
+Source: `app.asar` of the Codex/ChatGPT desktop app 26.924.22138 (build 11645), SHA-256 `d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80`.
 
 Hidden system messages the app adds to the GPT builder conversation (Create a GPT) to tell the builder model the GPT's current fields, direct edits and uploaded files.
 
@@ -12,7 +12,7 @@ Each entry says whether its text is exact (one literal in the bundle) or assembl
 
 ### Current fields: no profile picture
 
-Source: `webview/assets/page-495bef09b5fb.js`, function `_n(gpt)`, offset 3096, SHA-256 `50c9d93a3cdd14049e52e97bb0ccbd5b297352a37d64cebde5e62509e520d561`.
+Source: `webview/assets/page-d3b69e0b642f.js`, function `vn(gpt)`, offset 3097, SHA-256 `50c9d93a3cdd14049e52e97bb0ccbd5b297352a37d64cebde5e62509e520d561`.
 
 Assembled by running the app's builder function with placeholder arguments such as `<NAME>`. Sent as a hidden system message in the GPT builder conversation. Branch for a GPT with no profile picture.
 
@@ -39,7 +39,7 @@ This GPT does not have a profile picture. You must generate a profile picture wh
 
 ### Current fields: with profile picture
 
-Source: `webview/assets/page-495bef09b5fb.js`, function `_n(gpt)`, offset 3096, SHA-256 `fa04926be840d1670593e01cd2f11d495bf42905ba4b5cba3d1310a0db190043`.
+Source: `webview/assets/page-d3b69e0b642f.js`, function `vn(gpt)`, offset 3097, SHA-256 `fa04926be840d1670593e01cd2f11d495bf42905ba4b5cba3d1310a0db190043`.
 
 Assembled by running the app's builder function with placeholder arguments such as `<NAME>`. Sent as a hidden system message in the GPT builder conversation. Branch for a GPT with a profile picture.
 
@@ -68,7 +68,7 @@ The GPT has a profile picture.
 
 ### Settings changed directly
 
-Source: `webview/assets/page-495bef09b5fb.js`, offset 3763, SHA-256 `ea7dce415e54fedafd65dae250ebf5f69c582f95090f34695d878ffe2fd0573c`.
+Source: `webview/assets/page-d3b69e0b642f.js`, offset 3764, SHA-256 `ea7dce415e54fedafd65dae250ebf5f69c582f95090f34695d878ffe2fd0573c`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time. Sent as a hidden system message in the GPT builder conversation. The leading <…> is the current-fields text above.
 
@@ -80,7 +80,7 @@ The user changed these settings directly. Treat these fields, abilities, and fil
 
 ### Files uploaded to the GPT
 
-Source: `webview/assets/page-495bef09b5fb.js`, offset 25130, SHA-256 `a6a36541e762f65f11901f66a3f39b1475aa412558f9b950ecc2cfa72fe71335`.
+Source: `webview/assets/page-d3b69e0b642f.js`, offset 25130, SHA-256 `a6a36541e762f65f11901f66a3f39b1475aa412558f9b950ecc2cfa72fe71335`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time. Sent as a hidden system message in the GPT builder conversation.
 

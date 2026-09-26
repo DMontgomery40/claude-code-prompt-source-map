@@ -1,6 +1,6 @@
 # ChatGPT Work prompts
 
-Source: `app.asar` of the Codex/ChatGPT desktop app 26.924.20706 (build 11431), SHA-256 `1acbc007c34d2cb5592cd636712b39feb0d0a064002a95e77bb3bbcdadda5dde`.
+Source: `app.asar` of the Codex/ChatGPT desktop app 26.924.22138 (build 11645), SHA-256 `d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80`.
 
 Messages ChatGPT Work sends or prefills during onboarding: starter tasks, the daily-briefing next step, the writing-style skill setup, write-like-me requests and the browser-extension Side Chat samples.
 
@@ -12,7 +12,7 @@ Each entry says whether its text is exact (one literal in the bundle) or assembl
 
 ### Starter: personal website
 
-Source: `webview/assets/fallback-cards-1dfc735488f6.js`, offset 8207, SHA-256 `99a1ec242ca96dc22fd75f70ba95c3f4cdbddc07efd98e83feab5d998c263b47`.
+Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 8207, SHA-256 `99a1ec242ca96dc22fd75f70ba95c3f4cdbddc07efd98e83feab5d998c263b47`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.starter.personal_website.prompt`.
 
@@ -24,7 +24,7 @@ Based on everything you know about me and what we’ve discussed in past convers
 
 ### Starter: manage inbox
 
-Source: `webview/assets/fallback-cards-1dfc735488f6.js`, offset 9936, SHA-256 `c6996d589e9368ca25ca3b6a5807521ce92f75c663ed419ea0b502632818fa78`.
+Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 9936, SHA-256 `c6996d589e9368ca25ca3b6a5807521ce92f75c663ed419ea0b502632818fa78`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.starter.manage_inbox.prompt`.
 
@@ -36,7 +36,7 @@ Use my connected email app. If I haven’t connected one, ask which email provid
 
 ### Starter: personalized presentation
 
-Source: `webview/assets/fallback-cards-1dfc735488f6.js`, offset 13415, SHA-256 `3aee7ed7c77e6936ab095df4862457c3088b46716121eb3436edbe6e0f9a2f80`.
+Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 13415, SHA-256 `3aee7ed7c77e6936ab095df4862457c3088b46716121eb3436edbe6e0f9a2f80`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.starter.personalized_presentation.prompt`.
 
@@ -48,7 +48,7 @@ Review our past conversations and choose the topic that would be most useful to 
 
 ### Starter: repeatable-work skill
 
-Source: `webview/assets/fallback-cards-1dfc735488f6.js`, offset 14988, SHA-256 `70c95b76c0daf513a45e3e80b3415b9df59146bb6791b797cde5784537f1cf14`.
+Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 14988, SHA-256 `70c95b76c0daf513a45e3e80b3415b9df59146bb6791b797cde5784537f1cf14`.
 
 Exact text from the bundle.
 
@@ -60,7 +60,7 @@ Only after I explicitly confirm, create it as a reusable skill. Give it a descri
 
 ### Starter selection context
 
-Source: `webview/assets/home-ambient-suggestions-content-af5b5bc05192.js`, offset 18723, SHA-256 `2fca00df9c58d896f7410a511bbdbd087c417d368a57ea14d46dd7835bf04424`.
+Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 18725, SHA-256 `2fca00df9c58d896f7410a511bbdbd087c417d368a57ea14d46dd7835bf04424`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time.
 
@@ -74,7 +74,7 @@ This instruction applies only to the initial request. Later user messages may re
 
 ### Next step: daily briefing
 
-Source: `webview/assets/home-de5048cdb688.js`, offset 83693, SHA-256 `1da19cc520de9aa4f0533e6f5808078f8893f9d356d0881069abee7b6e715c96`.
+Source: `webview/assets/home-9859b126064a.js`, offset 83695, SHA-256 `1da19cc520de9aa4f0533e6f5808078f8893f9d356d0881069abee7b6e715c96`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.personalize.next_steps.daily_briefing.prompt.user_request`. The same text ships at 2 places in the bundle; the first is shown.
 
@@ -88,7 +88,7 @@ Create a daily automation that prepares a concise briefing focused on my connect
 
 ### Writing-style skill: connected apps to check
 
-Source: `webview/assets/home-ambient-suggestions-content-af5b5bc05192.js`, offset 5447, SHA-256 `5081b54dffd7ba85ef9e8d49c1bc45417e5af50973d76932fa7eb5625896d922`.
+Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 5449, SHA-256 `5081b54dffd7ba85ef9e8d49c1bc45417e5af50973d76932fa7eb5625896d922`.
 
 Exact text from the bundle. Message id `home.ambientSuggestions.learnWritingStyle.prompt.connectionUnknown.v15`.
 
@@ -100,7 +100,7 @@ Use $skill-creator to create a personal writing-style skill for each selected wr
 
 ### Writing-style skill: no app connected
 
-Source: `webview/assets/home-ambient-suggestions-content-af5b5bc05192.js`, offset 10565, SHA-256 `ae1ad24dbfdbc9d903f709eeb4da72e032dc1c2f60d052d741b2511c7a5d2728`.
+Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 10567, SHA-256 `ae1ad24dbfdbc9d903f709eeb4da72e032dc1c2f60d052d741b2511c7a5d2728`.
 
 Exact text from the bundle. Message id `home.ambientSuggestions.learnWritingStyle.prompt.noConnections.v15`.
 
@@ -112,7 +112,7 @@ Use $skill-creator to create a personal writing-style skill for each selected wr
 
 ### Writing-style skill: connected apps
 
-Source: `webview/assets/home-ambient-suggestions-content-af5b5bc05192.js`, offset 15497, SHA-256 `1804cf5c6acbe3474003d4a081af3ef7d16239c79467decb6e1e41990ee988cd`.
+Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 15499, SHA-256 `1804cf5c6acbe3474003d4a081af3ef7d16239c79467decb6e1e41990ee988cd`.
 
 Exact text from the bundle. Message id `home.ambientSuggestions.learnWritingStyle.prompt.connectedApps.v14`.
 
@@ -124,7 +124,7 @@ Use $skill-creator to create a personal writing-style skill for each writing con
 
 ### Write-like-me skill usage
 
-Source: `webview/assets/home-de5048cdb688.js`, offset 123464, SHA-256 `a2c0eb8bf7416ac9470101d649035405a469efe11033acf6108e34dd34379e92`.
+Source: `webview/assets/home-9859b126064a.js`, offset 123470, SHA-256 `a2c0eb8bf7416ac9470101d649035405a469efe11033acf6108e34dd34379e92`.
 
 Exact text from the bundle.
 
@@ -134,7 +134,7 @@ Use the write-like-me skill to find relevant examples of the user's own writing 
 
 ### Write-like-me sample: email
 
-Source: `webview/assets/home-de5048cdb688.js`, offset 97287, SHA-256 `0bb195ba64ab21d48c232345a7f9f94efd4e21ac4c18699a2760077ddcd038c1`.
+Source: `webview/assets/home-9859b126064a.js`, offset 97284, SHA-256 `0bb195ba64ab21d48c232345a7f9f94efd4e21ac4c18699a2760077ddcd038c1`.
 
 Exact text from the bundle. Message id `tpp.write_like_me.sample_prompt.email`.
 
@@ -146,7 +146,7 @@ Find a recent email or thread and draft a response using my writing style.
 
 ### Write-like-me sample: messaging
 
-Source: `webview/assets/home-de5048cdb688.js`, offset 97748, SHA-256 `fa25d9061ea7b659bc69e6b91135fb2b0eea3f3600a02ee07651ecf14151c444`.
+Source: `webview/assets/home-9859b126064a.js`, offset 97745, SHA-256 `fa25d9061ea7b659bc69e6b91135fb2b0eea3f3600a02ee07651ecf14151c444`.
 
 Exact text from the bundle. Message id `tpp.write_like_me.sample_prompt.messaging`.
 
@@ -158,7 +158,7 @@ Find a recent message or thread and draft a response using my writing style.
 
 ### Write-like-me sample: documents
 
-Source: `webview/assets/home-de5048cdb688.js`, offset 98245, SHA-256 `74809f4cd2983cd171e5218b714c4ba8d81bea8992654c7c9cf71684efd721d9`.
+Source: `webview/assets/home-9859b126064a.js`, offset 98242, SHA-256 `74809f4cd2983cd171e5218b714c4ba8d81bea8992654c7c9cf71684efd721d9`.
 
 Exact text from the bundle. Message id `tpp.write_like_me.sample_prompt.documents`.
 
@@ -172,7 +172,7 @@ Find a recent document I wrote and draft a new project note based on it, using m
 
 ### Side Chat sample: email reply
 
-Source: `webview/assets/onboarding-ef7d55ad6abf.js`, offset 3083, SHA-256 `fc6808d0a1ede37f8c4eea117854deaa47730e2128089c43593a6c42d75516f4`.
+Source: `webview/assets/onboarding-bd0f6da4a283.js`, offset 3084, SHA-256 `fc6808d0a1ede37f8c4eea117854deaa47730e2128089c43593a6c42d75516f4`.
 
 Exact text from the bundle. Message id `chatgpt.work.chrome.installed.sample_work.email.prompt.sender_name`.
 
@@ -184,7 +184,7 @@ Reply to {senderName}'s message on this page
 
 ### Side Chat sample: report
 
-Source: `webview/assets/onboarding-ef7d55ad6abf.js`, offset 4351, SHA-256 `beec832532f316788ec57b4a9f925c6820c214aa8d1c2de5e006a472f1b09b09`.
+Source: `webview/assets/onboarding-bd0f6da4a283.js`, offset 4352, SHA-256 `beec832532f316788ec57b4a9f925c6820c214aa8d1c2de5e006a472f1b09b09`.
 
 Exact text from the bundle. Message id `chatgpt.work.extension.installed.sample_work.report.prompt`.
 
@@ -196,7 +196,7 @@ Summarize this report
 
 ### Side Chat sample: inventory
 
-Source: `webview/assets/onboarding-ef7d55ad6abf.js`, offset 5560, SHA-256 `ceeb81cd1c48b64bf99f3b60a7082057cefd0285fbab89f9c6111ec94aa598a6`.
+Source: `webview/assets/onboarding-bd0f6da4a283.js`, offset 5561, SHA-256 `ceeb81cd1c48b64bf99f3b60a7082057cefd0285fbab89f9c6111ec94aa598a6`.
 
 Exact text from the bundle. Message id `chatgpt.work.extension.installed.sample_work.inventory.prompt`.
 

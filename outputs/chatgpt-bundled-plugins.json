@@ -1,6 +1,6 @@
 {
-  "app_version": "26.924.20706",
-  "app_build": "11431",
+  "app_version": "26.924.22138",
+  "app_build": "11645",
   "items": [
     {
       "id": "file:plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json",
@@ -10,7 +10,7 @@
       "source": [
         "plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json"
       ],
-      "source_file_sha256": "3309122f3a0b99bf7e12869a70a7b6d81d569c2a2bd781962e6c9229f7651cd2",
+      "source_file_sha256": "3e2e58acd141d791031dfa8f0a6b63608630a50f458b8d66070c0fec44038a74",
       "sha256": "5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24",
       "bytes": 835,
       "text": "Browser / browser-use plugin\n\nAliases: @browser, @browser-use, browser-use, Browser, in-app browser.\n\nUse Browser, the ChatGPT in-app browser, when the user asks to open, inspect, navigate, test, click, type, or screenshot local web targets such as localhost, 127.0.0.1, ::1, file:// URLs, or the current in-app browser tab.\n\nAfter significant frontend changes to a local app, use Browser to open the relevant local target when it is known or obvious, unless the user asks for another browser tool.\n\nFor requests like \"open localhost:3000\" or \"open to localhost:4000\", navigate the in-app browser to http://localhost:3000 or http://localhost:4000.\n\nDo not satisfy explicit @browser or @browser-use requests with macOS `open`, shell commands, or generic web browsing unless the user asks for another browser tool or approves a fallback."
@@ -529,7 +529,7 @@
       "source": [
         "plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json"
       ],
-      "source_file_sha256": "5c1483ce98b043fa8add393d6a988163726ba520018a41d03497c22ce163c775",
+      "source_file_sha256": "053108129d29ecf9aa0b31cfc852f198a8279d0d826f434f29478248d6faa925",
       "sha256": "0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7",
       "bytes": 337,
       "text": "Chrome automation for tasks that depend on the user's existing Chrome state: tabs, logged-in sessions, cookies, extensions, and ChatGPT Chrome Extension setup. Prefer purpose-built connectors, APIs, or CLIs. If one fails due to missing or expired authentication, ask the user to reauthenticate or explicitly approve Chrome as a fallback."
@@ -829,7 +829,7 @@
         "plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json",
         "cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json"
       ],
-      "source_file_sha256": "e777532dec4568a894ae3dfbe1e38056102cd1936307fbac0da9f64810e5baae",
+      "source_file_sha256": "b881d69ac5c34911b3fb7f9016ffe26ad7d9c91afdc159071837e8d86cb333a1",
       "sha256": "d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea",
       "bytes": 39,
       "text": "App-managed browser automation runtime."

@@ -35,7 +35,7 @@
    "label": "Telemetry, logs and storage",
    "kind": "topic",
    "definition": "Settings and environment variables for observability and local state: OpenTelemetry exporters and trace context, analytics and feedback, log levels and formats, transcript/history persistence, rollout and session files, and Codex home or database paths. It applies in any group, including features.* flags and requirements: variants. It does not cover the model's memory of past sessions or lifecycle hooks.",
-   "count": 27
+   "count": 28
   },
   {
    "id": "ui",
@@ -54,7 +54,7 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 311
+   "count": 312
   },
   {
    "id": "desktop-app",
@@ -78,7 +78,7 @@
    "id": "not-in-build",
    "label": "Not in this build",
    "kind": "status",
-   "count": 54
+   "count": 55
   }
  ],
  "items": {
@@ -1525,6 +1525,11 @@
    "undocumented",
    "not-in-build",
    "sandbox-approvals"
+  ],
+  "env:MCP_TEST_CONSOLE_STATE_FILE": [
+   "undocumented",
+   "not-in-build",
+   "telemetry-storage"
   ],
   "env:MCP_TEST_DAYBREAK_READ_ONLY": [
    "undocumented",

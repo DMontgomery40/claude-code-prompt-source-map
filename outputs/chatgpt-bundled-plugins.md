@@ -1,6 +1,6 @@
 # ChatGPT bundled plugins and skills
 
-Source: `ChatGPT.app` 26.924.20706 (build 11431). Paths are relative to `ChatGPT.app/Contents/Resources`.
+Source: `ChatGPT.app` 26.924.22138 (build 11645). Paths are relative to `ChatGPT.app/Contents/Resources`.
 
 Plugin guidance, skills, reference files, MCP launch settings and Computer Use docs that the ChatGPT desktop app ships as text files outside `app.asar`. Each file is shown with its exact bytes. For `plugin.json` only the top-level `description` value is shown, since the rest is interface copy, author details and hooks. A file that is byte-identical at several paths appears once, with the other paths on its source line.
 
@@ -8,7 +8,7 @@ Plugin guidance, skills, reference files, MCP launch settings and Computer Use d
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json` (file SHA-256 `3309122f3a0b99bf7e12869a70a7b6d81d569c2a2bd781962e6c9229f7651cd2`), `description` value SHA-256 `5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24`.
+Source: `plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json` (file SHA-256 `3e2e58acd141d791031dfa8f0a6b63608630a50f458b8d66070c0fec44038a74`), `description` value SHA-256 `5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3247,7 +3247,7 @@ interface:
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json` (file SHA-256 `5c1483ce98b043fa8add393d6a988163726ba520018a41d03497c22ce163c775`), `description` value SHA-256 `0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7`.
+Source: `plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json` (file SHA-256 `053108129d29ecf9aa0b31cfc852f198a8279d0d826f434f29478248d6faa925`), `description` value SHA-256 `0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4349,7 +4349,7 @@ After creating or refining the skill, give the user a concise plain-language sum
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json`, `cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json` (file SHA-256 `e777532dec4568a894ae3dfbe1e38056102cd1936307fbac0da9f64810e5baae`), `description` value SHA-256 `d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea`.
+Source: `plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json`, `cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json` (file SHA-256 `b881d69ac5c34911b3fb7f9016ffe26ad7d9c91afdc159071837e8d86cb333a1`), `description` value SHA-256 `d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea`.
 
 Exact: the decoded JSON `description` value.
 
