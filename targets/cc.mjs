@@ -10,10 +10,11 @@ const repo = `${process.env.HOME}/claude-code-prompt-source-map`;
 const node = process.execPath;
 const npm = path.join(path.dirname(process.execPath), "npm");
 
-// Areas with records still marked "needs_review", in file order.
-function reviewAreas() {
-  return readdirSync(path.join(repo, "outputs")).filter(f => f.endsWith(".json")).sort()
-    .filter(f => JSON.parse(readFileSync(path.join(repo, "outputs", f), "utf8")).items?.some(i => i.needs_review))
+// Areas with records still marked "needs_review", in file order. Only record lists count: the tag
+// files keep `items` as a map from key to tags.
+export function reviewAreas(dir = path.join(repo, "outputs")) {
+  return readdirSync(dir).filter(f => f.endsWith(".json")).sort()
+    .filter(f => { const items = JSON.parse(readFileSync(path.join(dir, f), "utf8")).items; return Array.isArray(items) && items.some(i => i && i.needs_review); })
     .map(f => f.replace(/\.json$/, ""));
 }
 
