@@ -105,6 +105,7 @@ button { font: inherit; color: inherit; }
   border-radius: 6px; color: var(--ink); word-break: break-all; font-size: 13px;
 }
 .paste-out p { margin: 6px 0; }
+.paste-out .paste-error { color: #ffb4b4; }
 .or { margin: 18px 0 8px; color: var(--ink-3); font-size: 13px; }
 .drop { padding: 18px 16px; }
 .drop-big { font-size: 16px; }
