@@ -680,3 +680,14 @@ button:disabled { opacity: .4; cursor: default; }
 .map-window { fill: #a5edcf14; stroke: #b6ead9; stroke-width: 1; stroke-dasharray: 3 2; }
 .map-position { fill: #d1ff91; stroke: #07151d; stroke-width: 1.3; }
 .map-caption { color: var(--ink-3); font-size: 10px; height: 18px; line-height: 18px; max-width: 350px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* A visible bridge between geographic exploration and the focused request core. */
+.map-location-bar { display: flex; align-items: center; gap: 18px; pointer-events: auto; }
+.map-location-bar .location-copy { min-width: 0; }
+.map-location-bar .inspect-layers { flex: 0 0 auto; padding: 8px 12px; font-size: 11px; color: #d7fff0; background: #21483d; border-color: #4c8d76; }
+.map-location-bar .inspect-layers:hover { background: #30614f; }
+.map-location-bar .inspect-layers:focus-visible { outline: 2px solid #c4ffe7; outline-offset: 3px; }
+@media (max-width: 980px) {
+  .map-location-bar { gap: 10px; }
+  .map-location-bar .inspect-layers { padding: 7px 9px; font-size: 10px; }
+}
