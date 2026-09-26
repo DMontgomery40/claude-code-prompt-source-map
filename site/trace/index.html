@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'">
+<title>Trace: see an agent session as a landscape</title>
+<meta name="description" content="Load a Codex or Claude Code session log and explore what filled the model's context, what it did, and every prompt the harness injected between turns. Runs entirely in your browser.">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="trace.css">
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<main id="loader" class="loader">
+  <div class="loader-inner">
+    <header class="intro">
+      <p class="brand"><a href="../">Reference</a> <span aria-hidden="true">/</span> Trace</p>
+      <h1>See one agent session as a landscape.</h1>
+      <p class="lede">Each agent becomes a ridge. Its layers show what filled the model's context, request by request: your words, files and command output, subagent reports, its own output, and the harness text slipped in between turns. Zoom in to read any of it.</p>
+      <div id="hero" class="hero" aria-hidden="true"></div>
+      <div id="hero-legend" class="legend"></div>
+    </header>
+
+    <section class="load" aria-labelledby="load-h">
+      <h2 id="load-h">Load a session</h2>
+      <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-help">
+        <p class="drop-big">Drop a session file or folder here</p>
+        <p id="drop-help" class="drop-help">A Codex rollout <code>.jsonl</code>, or a Claude Code session <code>.jsonl</code> with its same-named folder, so subagents come too.</p>
+        <div class="drop-buttons">
+          <label class="btn primary">Choose files<input id="pick-files" type="file" multiple accept=".jsonl,.json,application/json"></label>
+          <label class="btn">Choose a folder<input id="pick-folder" type="file" webkitdirectory multiple></label>
+        </div>
+      </div>
+      <div id="progress" class="progress" hidden>
+        <div class="bar"><i id="progress-fill"></i></div>
+        <p id="progress-text" class="progress-text" aria-live="polite">Reading…</p>
+      </div>
+      <p id="load-error" class="error" role="alert" hidden></p>
+
+      <div class="find">
+        <label for="paste" class="find-label">Find the file for a session</label>
+        <input id="paste" class="paste" type="text" spellcheck="false" autocomplete="off"
+          placeholder="codex://threads/…, a thread id, or a Claude Code session id or path">
+        <div id="paste-out" class="paste-out" aria-live="polite"></div>
+      </div>
+
+      <div class="private">
+        <strong>Nothing leaves this browser.</strong>
+        <span>Your files are read on this machine. The page's Content-Security-Policy blocks network requests to anywhere but this site's own files, so there's nowhere for them to go.</span>
+      </div>
+
+      <div id="dev" class="dev" hidden>
+        <p><strong>Developer load.</strong> A normalized Trace JSON, with the source logs optional (they enable block text).</p>
+        <label class="btn">Trace JSON<input id="dev-model" type="file" accept=".json,application/json"></label>
+        <label class="btn">Source logs (optional)<input id="dev-sources" type="file" multiple></label>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="app" class="app" hidden>
+  <div id="stage" class="stage"></div>
+  <div id="flat" class="flat" hidden></div>
+  <header class="hud">
+    <div class="hud-title">
+      <button id="back-to-load" class="brandbtn" type="button" title="Load another session">Trace</button>
+      <h1 id="title" class="title"></h1>
+    </div>
+    <div id="stats" class="stats"></div>
+    <div id="legend" class="legend hud-legend"></div>
+  </header>
+  <div class="side">
+    <nav id="lenses" class="lenses" aria-label="Lenses"></nav>
+    <aside id="panel" class="panel" aria-live="polite"></aside>
+  </div>
+  <div id="minimap" class="minimap" aria-label="Session overview"></div>
+  <nav id="crumbs" class="crumbs" aria-label="Level"></nav>
+  <div class="viewtools">
+    <button id="mode" class="btn small" type="button"></button>
+  </div>
+  <div id="tip" class="tip" hidden></div>
+</div>
+</body>
+</html>

@@ -75,9 +75,10 @@ test("GitHub link sits beside the X follow link and survives reduced motion", as
       /class="github-link" href="https:\/\/github\.com\/DMontgomery40\/claude-code-prompt-source-map" target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub"/
     );
     assert.match(html, /<div class="corner-links">/);
+    assert.match(html, /<a class="trace-link" href="\/trace\/" aria-label="Trace a session: explore your own agent session log, in your browser">/);
     assert.match(
       html,
-      /@media\(prefers-reduced-motion:reduce\).*\.follow-link,\.github-link,\.intro-follow[^{]*\{transition:none\}/
+      /@media\(prefers-reduced-motion:reduce\).*\.follow-link,\.github-link,\.trace-link,\.intro-follow[^{]*\{transition:none\}/
     );
   });
 });
