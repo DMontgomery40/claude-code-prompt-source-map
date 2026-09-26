@@ -2,8 +2,9 @@
 // agent-*.jsonl (+ .meta.json) -> the normalized Trace model.
 import {
   readLines, newAgent, addBlock, tokensClaude, imageDims, estEncrypted, estText,
-  classifyClaudeTool, RANK, finalizeAgent, partText, splitReminders, inheritTraits,
+  classifyClaudeTool, RANK, finalizeAgent, partText, splitReminders, inheritTraits, spansOf,
 } from "../model.js";
+import { attachmentText } from "./cc-templates.js";
 
 const ts = (s) => Date.parse(s);
 
@@ -22,13 +23,14 @@ const listOf = (xs, n = 3) => (xs || []).slice(0, n).join(", ") + ((xs || []).le
 
 // Attachments that carry the user's own setup: a label that says what it is, and a source key so a
 // second copy in the same context window shows up as a re-send.
+// parts: the strings in the row that are the user's own, located in the rendered text for userSpans.
 function ownAttachment(type, a) {
   switch (type) {
-    case "nested_memory": return { label: `nested memory · ${shortPath(a.path || a.displayPath)}`, source: `file:${a.path || a.displayPath}`, identity: a.content && typeof a.content.content === "string" ? a.content.content : undefined };
-    case "skill_listing": return { label: `skills list${a.skillCount ? ` (${a.skillCount})` : ""}`, source: "skills-list" };
-    case "invoked_skills": return { label: `invoked skills re-sent: ${listOf((a.skills || []).map((x) => (x && x.name) || x))}`, source: null };
-    case "hook_additional_context": return { label: `hook output · ${a.hookEvent || a.hookName || "hook"}`, source: `hook:${a.hookEvent || a.hookName || ""}` };
-    case "mcp_instructions_delta": return { label: `MCP server instructions: ${listOf(a.addedNames)}`, source: null };
+    case "nested_memory": { const c = a.content && typeof a.content.content === "string" ? a.content.content : undefined; return { label: `nested memory · ${shortPath(a.path || a.displayPath)}`, source: `file:${a.path || a.displayPath}`, identity: c, parts: [c] }; }
+    case "skill_listing": return { label: `skills list${a.skillCount ? ` (${a.skillCount})` : ""}`, source: "skills-list", parts: [a.content] };
+    case "invoked_skills": return { label: `invoked skills re-sent: ${listOf((a.skills || []).map((x) => (x && x.name) || x))}`, source: null, parts: (a.skills || []).map((x) => x && x.content) };
+    case "hook_additional_context": return { label: `hook output · ${a.hookEvent || a.hookName || "hook"}`, source: `hook:${a.hookEvent || a.hookName || ""}`, parts: Array.isArray(a.content) ? a.content : [a.content] };
+    case "mcp_instructions_delta": return { label: `MCP server instructions: ${listOf(a.addedNames)}`, source: null, parts: a.addedBlocks };
     // instructions whose per-file headers weren't found: still the user's files, as one block
     case "instructions": return { label: "instructions (CLAUDE.md files and memory)", source: "instructions" };
     default: return null;
@@ -41,21 +43,21 @@ function ownAttachment(type, a) {
 function fieldBlocks(type, a) {
   const str = (v) => (typeof v === "string" && v.trim() ? v : null);
   const strs = (v) => (Array.isArray(v) && v.length && v.every((x) => typeof x === "string") ? v : null);
-  const mine = (extra) => ({ own: true, ...ownAttachment(type, a), ...extra });
+  const mine = (extra) => { const { parts: _p, ...o } = ownAttachment(type, a) || {}; return { own: true, userWhole: true, ...o, ...extra }; };
   switch (type) {
     case "instructions": {
-      const out = (a.files || []).map((f, k) => f && str(f.content) && { path: ["files", k, "content"], text: f.content, kind: "you", own: true,
+      const out = (a.files || []).map((f, k) => f && str(f.content) && { path: ["files", k, "content"], text: f.content, kind: "you", own: true, userWhole: true,
         label: `${/mem/i.test(f.type || "") ? "memory index" : "instructions file"} · ${shortPath(f.path)}`, source: `file:${f.path}`, identity: f.content }).filter(Boolean);
       return out.length ? out : null;
     }
     case "nested_memory": { const c = a.content && a.content.content; return str(c) ? [mine({ path: ["content", "content"], text: c, kind: "you", identity: c })] : null; }
     case "skill_listing": return str(a.content) ? [mine({ path: ["content"], text: a.content })] : null;
     case "invoked_skills": {
-      const out = (a.skills || []).map((x, k) => x && str(x.content) && { path: ["skills", k, "content"], text: x.content, own: true, label: `invoked skill re-sent · ${x.name}`, source: `skill:${x.name}` }).filter(Boolean);
+      const out = (a.skills || []).map((x, k) => x && str(x.content) && { path: ["skills", k, "content"], text: x.content, own: true, userWhole: true, label: `invoked skill re-sent · ${x.name}`, source: `skill:${x.name}` }).filter(Boolean);
       return out.length ? out : null;
     }
     case "hook_additional_context": return strs(a.content) || str(a.content) ? [mine({ path: ["content"], text: partText(a.content) })] : null;
-    case "hook_blocking_error": { const t = a.blockingError && a.blockingError.blockingError; return str(t) ? [{ path: ["blockingError", "blockingError"], text: t, own: true, label: `hook blocked · ${a.hookEvent || a.hookName || "hook"}` }] : null; }
+    case "hook_blocking_error": { const t = a.blockingError && a.blockingError.blockingError; return str(t) ? [{ path: ["blockingError", "blockingError"], text: t, own: true, userWhole: true, label: `hook blocked · ${a.hookEvent || a.hookName || "hook"}` }] : null; }
     case "mcp_instructions_delta": return strs(a.addedBlocks) ? [mine({ path: ["addedBlocks"], text: partText(a.addedBlocks) })] : null;
     case "agent_listing_delta": case "deferred_tools_delta": return strs(a.addedLines) ? [{ path: ["addedLines"], text: partText(a.addedLines) }] : null;
     case "edited_text_file": return str(a.snippet) ? [{ path: ["snippet"], text: a.snippet }] : null;
@@ -85,6 +87,34 @@ function splitInstructions(content, files) {
 // Attachment rows that never enter the model's context on their own.
 const NOT_IN_CONTEXT = new Set(["hook_success", "thinking_drop", "command_permissions"]);
 const AGENT_TOOLS = new Set(["Agent", "Task", "SendMessage", "TaskOutput"]);
+
+// A user text that opens with <teammate-message> elements (after at most a short harness prefix,
+// "Another Claude session sent a message:") batches several messages: one segment per element,
+// credited to its own sender, the prefix going with the first. Text between and after the elements
+// is reminders or the harness's note on the batch ("This came from another Claude session…"),
+// never the human's; a reminder quoted inside an element stays the sender's. Null when the text is
+// not such a batch.
+function splitTeammates(s) {
+  const open = /<teammate-message\b[^>]*>/g;
+  let m = open.exec(s);
+  if (!m || m.index > 400 || /<system-reminder>/.test(s.slice(0, m.index))) return null;
+  const out = [];
+  const gap = (a, b) => { for (const g of splitReminders(s.slice(a, b))) out.push({ ...g, start: a + g.start, end: a + g.end, note: !g.reminder }); };
+  let last = 0;
+  for (let first = true; m; first = false) {
+    const close = s.indexOf("</teammate-message>", m.index + m[0].length);
+    const end = close < 0 ? s.length : close + "</teammate-message>".length;
+    if (!first) gap(last, m.index);
+    let start = first ? 0 : m.index;
+    while (start < m.index && /\s/.test(s[start])) start++;
+    out.push({ start, end, reminder: false, teammate: (m[0].match(/teammate_id="([^"]+)"/) || [])[1] || "teammate" });
+    last = end;
+    open.lastIndex = end;
+    m = open.exec(s);
+  }
+  gap(last, s.length);
+  return out;
+}
 
 function textKind(s, isSub) {
   const h = s.trimStart();
@@ -155,12 +185,13 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
   }
 
   function textBlocks(s, path, t, uuid, row, forceKind) {
-    const segs = splitReminders(s);
+    const segs = (!forceKind && !row.isMeta && splitTeammates(s)) || splitReminders(s);
     for (const seg of segs) {
       const whole = seg.start === 0 && seg.end === s.length;
       const ref = { ...lineRef, path, ...(whole ? {} : { range: [seg.start, seg.end] }) };
       const text = s.slice(seg.start, seg.end);
       if (seg.reminder) { track(uuid, addBlock(agent, { t, kind: "injected", label: "system-reminder", ref, text, render: "literal" })); continue; }
+      if (seg.note) { track(uuid, addBlock(agent, { t, kind: "injected", label: "cross-session note", ref, text, render: "literal" })); continue; }
       if (forceKind) {
         const b = addBlock(agent, { t, kind: forceKind.kind, label: forceKind.label, ref, text });
         const pm = text.match(/tool-results\/([\w.-]+)/);
@@ -171,15 +202,16 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
       if (row.isMeta) {
         const tu = row.sourceToolUseID ? toolUses.get(row.sourceToolUseID) : null;
         const skill = tu && tu.name === "Skill" ? tu.skill : null;
-        track(uuid, addBlock(agent, { t, kind: "injected", label: row.sourceToolUseID ? (skill ? `skill · ${skill}` : "skill content") : "meta", ref, text, render: "literal", ...(row.sourceToolUseID ? { own: true, source: skill ? `skill:${skill}` : null } : {}) }));
+        track(uuid, addBlock(agent, { t, kind: "injected", label: row.sourceToolUseID ? (skill ? `skill · ${skill}` : "skill content") : "meta", ref, text, render: "literal", ...(row.sourceToolUseID ? { own: true, userWhole: true, source: skill ? `skill:${skill}` : null } : {}) }));
         continue;
       }
-      const k = row.origin && row.origin.kind === "task-notification" ? { kind: "agents", label: "task-notification" } : textKind(text, isSub);
+      const k = seg.teammate ? { kind: "agents", label: `teammate-message from ${seg.teammate}`, teammate: seg.teammate, ask: isSub }
+        : row.origin && row.origin.kind === "task-notification" ? { kind: "agents", label: "task-notification" } : textKind(text, isSub);
       const b = addBlock(agent, { t, kind: k.kind, label: k.label, ref, text });
       track(uuid, b);
       if (k.kind === "agents") st.agentBlocks.push({ t, block: b.i, teammate: k.teammate || null, ids: (text.match(/\b(?:agentId|agent_id|task-id|task_id)["=:>\s]+([A-Za-z0-9_-]{6,})/g) || []).map((x) => x.replace(/^.*[=:>\s"]/, "")) });
       if (k.ask) {
-        agent.asks.push({ t, request: null, block: b.i, from: k.human ? "human" : "agent" });
+        agent.asks.push({ t, request: null, block: b.i, from: k.human ? "human" : "agent", ...(k.teammate ? { by: k.teammate } : {}) });
         if (!st.title && k.human) st.title = text.trim().slice(0, 120);
       }
     }
@@ -233,7 +265,7 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
           for (const u of pres) for (const bi of uuidBlocks.get(u) || []) {
             const src = agent.blocks[bi];
             const b = inheritTraits(addBlock(agent, { t, kind: src.kind, label: src.label, ref: src.ref, est: src.est, image: src.image, render: src.render, carried: true, site: src.site }), src);
-            if (src.rebuilt) b.rebuilt = true;
+            if (src.template) b.template = src.template;
             b.chars = src.chars;
             if (src.flags) { b.flags = src.flags; b.flagHits = src.flagHits; }
           }
@@ -273,15 +305,18 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
             for (const x of parts) {
               const ref = { ...lineRef, path: ["rendered", 0, "content"], range: [x.start, x.end] };
               const piece = text.slice(x.start, x.end);
-              if (!x.file) { track(r.uuid, addBlock(agent, { t, kind: "injected", label: "instructions wrapper", ref, text: piece, render: "literal", ...(rm ? { site: { ...rm } } : {}) })); continue; }
+              // The product's wording around the user's files is part of the harness.
+              if (!x.file) { track(r.uuid, addBlock(agent, { t, kind: "harness", label: "instructions wrapper", ref, text: piece, render: "literal", ...(rm ? { site: { ...rm } } : {}) })); continue; }
               const what = /mem/i.test(x.file.type || "") ? "memory index" : "instructions file";
-              track(r.uuid, addBlock(agent, { t, kind, label: `${what} · ${shortPath(x.file.path)}`, ref, text: piece, render: "literal", own: true, source: `file:${x.file.path}`, identity: typeof x.file.content === "string" ? x.file.content : undefined }));
+              const content = typeof x.file.content === "string" ? x.file.content : undefined;
+              track(r.uuid, addBlock(agent, { t, kind, label: `${what} · ${shortPath(x.file.path)}`, ref, text: piece, render: "literal", own: true, source: `file:${x.file.path}`, identity: content, userSpans: content ? spansOf(piece, [content]) : null }));
             }
             tally.literal++;
             continue;
           }
           const mine = ownAttachment(type, a);
-          const b = addBlock(agent, { t, kind, label: mine ? mine.label : type, ref: { ...lineRef, path: ["rendered"] }, text, render: "literal", ...(rm ? { site: { ...rm } } : {}), ...(mine ? { own: true, source: mine.source, identity: mine.identity } : {}) });
+          const b = addBlock(agent, { t, kind, label: mine ? mine.label : type, ref: { ...lineRef, path: ["rendered"] }, text, render: "literal", ...(rm ? { site: { ...rm } } : {}),
+            ...(mine ? { own: true, source: mine.source, identity: mine.identity, userSpans: mine.parts ? spansOf(text, mine.parts) : null } : {}) });
           track(r.uuid, b);
           tally.literal++;
           if (type === "queued_command" && (a.humanTurn || (a.origin && a.origin.kind === "human")) && !isSub) agent.asks.push({ t, request: null, block: b.i, from: "human" });
@@ -298,10 +333,15 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
           tally.literal++;
           continue;
         }
-        // Unknown attachment with no rendered text: show its data, labelled structured.
+        // No rendered text and no text field: rebuilt from the site's template for this type, filled
+        // from the row's fields; else the fields as "key: value" lines, labelled structured.
         const rm = agent._ix && agent._ix.reminders[type];
-        const b = addBlock(agent, { t, kind: "injected", label: type, ref: { ...lineRef, path: ["attachment"] }, text: JSON.stringify(a), render: "structured", site: rm ? { ...rm } : null });
-        if (rm) b.rebuilt = true;
+        const tpl = agent._ix && agent._ix.templates;
+        const { text, template } = attachmentText(type, a, tpl);
+        const at = template && tpl[template];
+        const site = at && at.slug ? { slug: at.slug, anchor: at.anchor || null, title: at.title || template } : rm ? { ...rm } : null;
+        const b = addBlock(agent, { t, kind: "injected", label: type, ref: { ...lineRef, path: ["attachment"], rebuild: type }, text, render: template ? "rebuilt from the ccprompts template" : "structured", site });
+        if (template) b.template = template;
         track(r.uuid, b);
         tally.structured++;
         continue;

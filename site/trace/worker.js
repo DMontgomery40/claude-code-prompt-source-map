@@ -8,7 +8,7 @@
 //     With an index, harness/injected blocks get block.site = { slug, title, matched, lines }
 //     (the page holding most of the block's indexed lines; >= 2 lines, or all if fewer),
 //     Claude Code attachments mapped in index.reminders get block.site = { slug, anchor, title }
-//     (+ block.rebuilt = true when the row is structured, not literal), and a Claude Code
+//     (a structured row rebuilt from index.templates links its template instead), and a Claude Code
 //     agent with no logged harness uses index.harness[version] (harnessSource "inferred").
 //   postMessage({ type: "load", files: [File | { file: File, path: string }], root?: string })
 //     -> { type: "progress", phase: "narrow"|"scan"|"parse"|"build"|"done", done, total, file?, fileDone? }
@@ -31,7 +31,8 @@
 //   postMessage({ type: "text", ref, id? })
 //     -> { type: "text", ref, id, text }  the literal text of one block: its source line
 //        read by byte offset, then ref.path (JSON path into the line) and ref.range
-//        (substring) applied. Image blocks return a data: URL.
+//        (substring) applied; a structured Claude Code attachment (ref.rebuild) is rebuilt
+//        from the index's templates. Image blocks return a data: URL.
 //     -> { type: "error", id, message }
 //
 // Only the files the user dropped are read. No network requests.
@@ -78,7 +79,7 @@ self.onmessage = async (e) => {
     try {
       const src = sources[m.ref.file];
       if (!src) throw new Error("unknown file index " + m.ref.file);
-      self.postMessage({ type: "text", ref: m.ref, id: m.id, text: await readRef(src, m.ref) });
+      self.postMessage({ type: "text", ref: m.ref, id: m.id, text: await readRef(src, m.ref, index) });
     } catch (err) {
       self.postMessage({ type: "error", id: m.id, message: String((err && err.message) || err) });
     }

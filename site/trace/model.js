@@ -5,6 +5,8 @@
 // A "source" is { name, size, slice(a, b) -> Promise<Uint8Array> } so the same
 // code reads a browser File and a Node file handle.
 
+import { attachmentText } from "./adapters/cc-templates.js";
+
 export const KINDS = ["harness", "injected", "you", "outside", "agents", "model", "summary"];
 
 // ---------------------------------------------------------------- lines & refs
@@ -92,9 +94,12 @@ export function getPath(obj, path) {
 
 // Text of one block, given its source line: follow ref.path into the parsed JSON,
 // convert with partText, then take ref.range if present. No path = the raw line.
-export function extractText(lineText, ref) {
+// ref.rebuild names a structured Claude Code attachment type: its text is rebuilt from the
+// reference index's templates (ix), else listed from its fields (adapters/cc-templates.js).
+export function extractText(lineText, ref, ix = null) {
   if (!ref.path) return ref.range ? lineText.slice(ref.range[0], ref.range[1]) : lineText;
-  const s = partText(getPath(JSON.parse(lineText), ref.path));
+  const v = getPath(JSON.parse(lineText), ref.path);
+  const s = ref.rebuild ? attachmentText(ref.rebuild, v, ix && ix.templates).text : partText(v);
   return ref.range ? s.slice(ref.range[0], ref.range[1]) : s;
 }
 
@@ -102,8 +107,8 @@ export async function readRefLine(source, ref) {
   return decoder.decode(await source.slice(ref.offset, ref.offset + ref.length));
 }
 
-export async function readRef(source, ref) {
-  return extractText(await readRefLine(source, ref), ref);
+export async function readRef(source, ref, ix = null) {
+  return extractText(await readRefLine(source, ref), ref, ix);
 }
 
 // ---------------------------------------------------------------- estimates
@@ -194,7 +199,7 @@ export function textLineHashes(text) {
 
 export function prepareIndex(index) {
   if (!index || typeof index !== "object") return null;
-  return { site: index.site || null, origin: index.origin || null, pages: index.pages || [], lines: index.lines || {}, harness: index.harness || {}, reminders: index.reminders || {} };
+  return { site: index.site || null, origin: index.origin || null, pages: index.pages || [], lines: index.lines || {}, harness: index.harness || {}, reminders: index.reminders || {}, templates: index.templates || {} };
 }
 
 // Characters of `text` on lines that the site publishes (the product's own words).
@@ -210,8 +215,69 @@ export function templateChars(ix, text) {
 
 // A copy of a block (carried across a compaction) keeps what the original was.
 export function inheritTraits(b, src) {
-  for (const k of ["own", "ownEst", "source", "hash"]) if (src[k] !== undefined) b[k] = src[k];
+  for (const k of ["own", "ownEst", "harnessEst", "userSpans", "source", "hash"]) if (src[k] !== undefined) b[k] = src[k];
   return b;
+}
+
+// Sorted, clipped, non-overlapping spans; null when none are usable.
+function cleanSpans(spans, len) {
+  if (!Array.isArray(spans)) return null;
+  const out = [];
+  for (const [x0, y0] of spans.map((p) => [Math.max(0, p[0] | 0), Math.min(len, p[1] | 0)]).filter(([x, y]) => y > x).sort((p, q) => p[0] - q[0])) {
+    const last = out[out.length - 1];
+    if (last && x0 <= last[1]) last[1] = Math.max(last[1], y0);
+    else out.push([x0, y0]);
+  }
+  return out.length ? out : null;
+}
+
+// Where each part (a string the log gives separately) sits in text, searched in order.
+export function spansOf(text, parts) {
+  const out = [];
+  let from = 0;
+  for (const p of parts || []) {
+    if (typeof p !== "string" || !p.trim()) continue;
+    const core = p.trim();
+    const at = text.indexOf(core, from);
+    if (at < 0) continue;
+    out.push([at, at + core.length]);
+    from = at + core.length;
+  }
+  return out;
+}
+
+// A block's estimate within one stratum: the user's share stays in its kind, the product's wording
+// around it (harnessEst) is Harness.
+export function blockPart(b, kind) {
+  const h = b.harnessEst || 0;
+  if (kind === b.kind) return b.est - h;
+  return kind === "harness" ? h : 0;
+}
+
+// Blocks in context at a request: its window plus any `extra` blocks outside it (for example a
+// Claude Code tools snapshot logged after the first request that used it).
+export function windowBlocks(agent, req) {
+  const [s, e] = req.window || [0, -1];
+  const out = agent.blocks.slice(Math.max(0, s), Math.min(agent.blocks.length, e + 1));
+  if (req.extra && req.extra.length) {
+    const have = new Set(out.map((b) => b.i));
+    for (const j of req.extra) if (agent.blocks[j] && !have.has(j)) out.push(agent.blocks[j]);
+    out.sort((a, b) => a.i - b.i);
+  }
+  return out;
+}
+
+// What a stratum holds at a request, on the same scale as request.strata: one row per block part,
+// plus the harness the log doesn't carry (sized by harnessEst). Rows sum to request.strata[kind].
+export function stratumRows(agent, req, kind) {
+  const f = (req.scale && req.scale[kind]) || 0;
+  const rows = [];
+  for (const b of windowBlocks(agent, req)) {
+    const p = blockPart(b, kind);
+    if (p > 0) rows.push({ b, tok: p * f, wrapper: kind !== b.kind });
+  }
+  const unlogged = kind === "harness" && agent.harnessSource !== "logged" ? (agent.harnessEst || 0) * f : 0;
+  return { rows, unlogged };
 }
 
 // The page holding most of the text's indexed lines: at least 2 matching lines, or
@@ -270,7 +336,11 @@ export function newAgent(fields, ix = null) {
 // own: the text comes from the user's own setup (instruction and memory files, their skills list,
 // hook output, their MCP servers). source: what the text is, so a second copy of the same thing in
 // one context window can be flagged as a re-send (see markResends).
-export function addBlock(agent, { t, kind, label, ref, text = "", est, image, render, carried, flagText, site, own, source, identity }) {
+// own blocks: userSpans ([start, end] in text) are the user's own characters, from boundaries the log
+// gives (a file's content, the memory summary, skill entries); userWhole: all of it is theirs.
+// Without either, lines the site publishes are taken as the product's. The product's wording
+// inside an own block counts under Harness (harnessEst); the user's share stays in `kind`.
+export function addBlock(agent, { t, kind, label, ref, text = "", est, image, render, carried, flagText, site, own, source, identity, userSpans, userWhole }) {
   const chars = image ? 0 : text.length;
   const b = { i: agent.blocks.length, t, kind, label, chars, est: est != null ? est : image ? estImage(image) : estText(chars), ref, site: null };
   if (site !== undefined) b.site = site;
@@ -283,8 +353,12 @@ export function addBlock(agent, { t, kind, label, ref, text = "", est, image, re
   if (!image && (identity != null || text) && (source || own)) b.hash = fnv1a64(utf8.encode(identity != null ? String(identity).trim() : text));
   if (own) {
     b.own = true;
-    // Lines published on the site are the product's template around the user's text.
-    b.ownEst = text ? Math.round(b.est * (1 - templateChars(agent._ix, text) / text.length)) : b.est;
+    let share = 1;
+    const spans = userWhole || !text ? null : cleanSpans(userSpans, text.length);
+    if (spans) { share = spans.reduce((n, [x, y]) => n + y - x, 0) / text.length; if (share < 1) b.userSpans = spans; }
+    else if (!userWhole && text) share = 1 - templateChars(agent._ix, text) / text.length;
+    b.ownEst = Math.round(b.est * Math.max(0, Math.min(1, share)));
+    if (b.est - b.ownEst > 0) b.harnessEst = b.est - b.ownEst;
   }
   if ((kind === "outside" || kind === "agents") && !image) {
     const hits = instructionLike(flagText != null ? flagText : text);
@@ -335,28 +409,42 @@ export function computeStrata(agent) {
   for (const k of KINDS) PO[k] = new Float64Array(n + 1);
   for (let j = 0; j < n; j++) {
     const b = agent.blocks[j];
-    for (const k of KINDS) P[k][j + 1] = P[k][j] + (b.kind === k ? b.est : 0);
-    for (const k of KINDS) PO[k][j + 1] = PO[k][j] + (b.kind === k && b.own ? b.ownEst : 0);
+    for (const k of KINDS) P[k][j + 1] = P[k][j] + blockPart(b, k);
+    for (const k of KINDS) PO[k][j + 1] = PO[k][j] + (b.kind === k && b.own ? blockPart(b, k) : 0);
     const inView = b.kind === "outside" || b.kind === "agents";
     PV[j + 1] = PV[j] + (inView ? 1 : 0);
     PF[j + 1] = PF[j] + (inView && b.flags ? 1 : 0);
   }
   agent._prefix = { PV, PF };
+  const raw = (r) => {
+    const [a, b] = r.window;
+    const est = {}, own = {};
+    for (const k of KINDS) { est[k] = b >= a ? P[k][b + 1] - P[k][a] : 0; own[k] = b >= a ? PO[k][b + 1] - PO[k][a] : 0; }
+    for (const j of r.extra || []) { const x = agent.blocks[j]; for (const k of KINDS) { est[k] += blockPart(x, k); if (x.own && k === x.kind) own[k] += blockPart(x, k); } }
+    return { est, own };
+  };
+  // harnessSource: "logged" (the system prompt and tools are blocks in the log); "inferred" (not
+  // logged; harnessEst from the reference index for this version); "residual" (not logged and no
+  // index size) and "partial" (instructions logged, tool definitions not, as in Codex): harnessEst is
+  // the first request's context minus everything the log shows, held for the whole session, so the
+  // missing harness isn't spread over every stratum and later estimation misses don't pile into Harness.
+  if (agent.harnessSource === "residual" || agent.harnessSource === "partial") {
+    const first = agent.requests.find((r) => r.window && r.tokens.context > 0);
+    const e = first ? raw(first).est : null;
+    agent.harnessEst = e ? Math.max(0, first.tokens.context - KINDS.reduce((sum, k) => sum + e[k], 0)) : 0;
+  }
   for (const r of agent.requests) {
     if (!r.window) continue;
-    const [a, b] = r.window;
-    const est = {};
-    for (const k of KINDS) est[k] = b >= a ? P[k][b + 1] - P[k][a] : 0;
-    const own = {};
-    for (const k of KINDS) own[k] = b >= a ? PO[k][b + 1] - PO[k][a] : 0;
-    for (const j of r.extra || []) { const x = agent.blocks[j]; est[x.kind] += x.est; if (x.own) own[x.kind] += x.ownEst; }
-    // harnessSource: "logged" (blocks in the log), "inferred" (reference index size
-    // for the logged version), "residual" (default: harness = context − other strata).
-    if (agent.harnessSource === "inferred" && agent.harnessEst) est.harness += agent.harnessEst;
-    r.strata = scaleStrata(est, r.tokens.context, agent.harnessSource === "residual");
-    // The user's own share of each stratum, on the same scale as the stratum.
+    const { est, own } = raw(r);
+    if (agent.harnessSource !== "logged" && agent.harnessEst) est.harness += agent.harnessEst;
+    r.strata = scaleStrata(est, r.tokens.context, false);
+    // One scale per stratum: every block's share of a stratum is est × scale[kind], so the rows
+    // listed under a stratum add up to its total.
+    r.scale = {};
+    for (const k of KINDS) r.scale[k] = est[k] > 0 ? r.strata[k] / est[k] : 0;
+    // The user's own share of each stratum, on the same scale.
     r.own = null;
-    for (const k of KINDS) if (own[k] > 0 && est[k] > 0) (r.own ||= {})[k] = Math.min(r.strata[k], Math.round(own[k] * r.strata[k] / est[k]));
+    for (const k of KINDS) if (own[k] > 0 && est[k] > 0) (r.own ||= {})[k] = Math.min(r.strata[k], Math.round(own[k] * r.scale[k]));
   }
 }
 
@@ -419,7 +507,7 @@ export function buildCustody(agent, permissionAt) {
     const flagged = [];
     for (let j = b; j >= a && flagged.length < 5; j--) if (agent.blocks[j].flags) flagged.push(j);
     r.action.custody = {
-      askedBy: ask ? { t: ask.t, block: ask.block, from: ask.from } : null,
+      askedBy: ask ? { t: ask.t, block: ask.block, from: ask.from, ...(ask.by ? { by: ask.by } : {}), ...(ask.message ? { message: ask.message } : {}) } : null,
       permittedBy: permissionAt(r),
       guidedBy: { tool: r.action.tool },
       inView: b >= a ? { count: PV[b + 1] - PV[a], tokens: (r.strata ? r.strata.outside + r.strata.agents : 0), flagged: PF[b + 1] - PF[a], flaggedBlocks: flagged } : null,
@@ -490,12 +578,17 @@ export function instructionLike(text) {
 // ---------------------------------------------------------------- action classification
 //
 // Classes: outward (leaves the machine), write (changes local files or local
-// state), read (runs or inspects without a pattern showing a change), internal
-// (harness-internal: planning, agent coordination, tool loading). Patterns are
-// listed in the report; anything unmatched that runs a command is "read".
+// state), blocked (a network attempt the sandbox stopped), read (runs or inspects
+// without a pattern showing a change), internal (harness-internal: planning, agent
+// coordination, tool loading). Patterns are listed in the report; anything
+// unmatched that runs a command is "read". Outward actions also get a kind.
 
-export const RANK = { outward: 3, write: 2, read: 1, internal: 0 };
+export const RANK = { outward: 3, write: 2, blocked: 1.5, read: 1, internal: 0 };
 export const worse = (a, b) => (RANK[a] >= RANK[b] ? a : b);
+// Outward kinds by consequence: deploy, push, message (to people), send (data or a
+// remote change), network (fetches, searches, browsing).
+export const KIND_RANK = { deploy: 5, push: 4, message: 3, send: 2, network: 1 };
+const better = (a, b) => RANK[a.class] - RANK[b.class] || (KIND_RANK[a.kind] || 0) - (KIND_RANK[b.kind] || 0);
 
 const OUT_CMDS = new Set(["curl", "wget", "http", "https", "xh", "httpie", "ssh", "scp", "sftp", "ftp", "nc", "ncat", "telnet", "gh", "aws", "gcloud", "az", "netlify", "vercel", "flyctl", "fly", "firebase", "heroku", "open", "osascript"]);
 const WRITE_CMDS = new Set(["rm", "rmdir", "mv", "cp", "mkdir", "touch", "tee", "ln", "chmod", "chown", "truncate", "dd", "install", "patch", "kill", "pkill", "killall", "launchctl", "crontab", "unzip", "tar", "trash", "apply_patch", "rsync"]);
@@ -540,21 +633,32 @@ const base = (p) => String(p || "").split("/").pop();
 const INLINE_NET = /\b(fetch\s*\(|requests\.(get|post|put|patch|delete|request)\b|urllib\.request|urlopen\s*\(|http\.client|httpx\.|axios[.(]|XMLHttpRequest|WebSocket\s*\(|page\.goto\s*\(|\.createBrowserTab\s*\(|smtplib)/;
 const REDIRECT = /(^|[^0-9&>=<])>>?\s*(?!&|\/dev\/null\b|\s*$)(["']?)[^\s|;&)"']+/m;
 
-function classifyArgv(argv) {
+// argv without wrappers, env assignments and package runners (`sudo X=1 npx wrangler` -> `wrangler`).
+function stripArgv(argv) {
   let a = argv.slice();
   while (a.length && (WRAPPERS.has(a[0]) || /^[A-Za-z_][A-Za-z0-9_]*=/.test(a[0]))) a.shift();
   if (a[0] === "timeout" && a.length > 1) a = a.slice(2);
   while (a.length && RUNNERS.has(base(a[0]))) { a.shift(); while (a.length && a[0].startsWith("-")) a.shift(); }
   if (a.length && (a[0] === "uv" || a[0] === "poetry" || a[0] === "pipenv") && a[1] === "run") { a = a.slice(2); while (a.length && a[0].startsWith("-")) a.shift(); }
+  return a;
+}
+
+// git's subcommand, skipping global options like -C <dir>, -c k=v.
+function gitSub(gs) {
+  let k = 0;
+  while (k < gs.length && gs[k].startsWith("-")) k += gs[k] === "-C" || gs[k] === "-c" ? 2 : 1;
+  return k;
+}
+
+function classifyArgv(argv) {
+  const a = stripArgv(argv);
   if (!a.length) return null;
   const c = base(a[0]);
   const sub = a.slice(1).filter((x) => !x.startsWith("-"));
   const s0 = sub[0], s1 = sub[1];
   if (c === "git") {
     const gs = a.slice(1);
-    // skip global options like -C <dir>, -c k=v
-    let k = 0;
-    while (k < gs.length && gs[k].startsWith("-")) k += gs[k] === "-C" || gs[k] === "-c" ? 2 : 1;
+    const k = gitSub(gs);
     const g = gs[k];
     if (["push", "send-email", "pull", "fetch", "clone", "ls-remote"].includes(g) || (g === "remote" && gs[k + 1] === "update")) return "outward";
     if (["add", "commit", "merge", "rebase", "reset", "checkout", "switch", "stash", "tag", "cherry-pick", "revert", "restore", "clean", "apply", "mv", "rm", "am", "init", "worktree", "branch", "config", "gc", "prune", "update-ref", "notes"].includes(g)) {
@@ -617,7 +721,267 @@ export function classifyCommand(cmd) {
   return cls;
 }
 
-const trunc = (s, n = 400) => (s == null ? null : (s = String(s), s.length > n ? s.slice(0, n) + "…" : s));
+const DEPLOY_SUB = /^(deploy|publish|release|up|rollback|pages|secret|kv|r2|d1|versions|delete|apply|destroy|install|upgrade|create|patch|import|scale|rollout|unpublish|deprecate|dist-tag|upload)$/;
+const moreKind = (a, b) => ((KIND_RANK[b] || 0) > (KIND_RANK[a] || 0) ? b : a);
+
+// Kind of an outward simple command.
+function argvKind(argv) {
+  const a = stripArgv(argv);
+  const c = base(a[0]);
+  const rest = a.slice(1);
+  const sub = rest.filter((x) => !x.startsWith("-"));
+  const has = (re) => rest.some((x) => re.test(x));
+  const method = (flags) => rest.some((x, i) => (flags.test(x) && /^(POST|PUT|PATCH|DELETE)$/i.test(rest[i + 1] || "")) || /^-X(POST|PUT|PATCH|DELETE)$/i.test(x));
+  if (c === "git") {
+    const g = rest[gitSub(rest)];
+    return g === "push" ? "push" : g === "send-email" ? "message" : "network";
+  }
+  if (c === "docker" || c === "podman") return sub[0] === "push" ? "push" : "network";
+  if (c === "gh") {
+    if (sub[0] === "release" || (sub[0] === "workflow" && sub[1] === "run")) return "deploy";
+    if ((sub[0] === "pr" || sub[0] === "issue") && sub[1] === "merge") return "push";
+    if ((sub[0] === "pr" || sub[0] === "issue") && /^(create|comment|review|close|reopen|edit)$/.test(sub[1] || "")) return "message";
+    if (sub[0] === "api" && (has(/^(-f|-F|--field|--raw-field|--input)$/) || method(/^(-X|--method)$/))) return "send";
+    return "network";
+  }
+  if (c === "curl") return has(/^(-d|--data.*|--json|-F|--form.*|-T|--upload-file)$/) || method(/^(-X|--request)$/) ? "send" : "network";
+  if (c === "wget") return has(/^--(post|body)-(data|file)/) ? "send" : "network";
+  if (c === "scp" || c === "rsync" || c === "sftp") return /^[^/\s]+@?[\w.-]+:/.test(sub[sub.length - 1] || "") ? "send" : "network";
+  if (c === "aws" && sub[0] === "s3" && /^(cp|sync|mv)$/.test(sub[1] || "") && /^s3:\/\//.test(sub[sub.length - 1] || "")) return "send";
+  if (["npm", "pnpm", "yarn", "bun"].includes(c) && /^(login|adduser)$/.test(sub[0] || "")) return "network";
+  if (c === "make" || ["npm", "pnpm", "yarn", "bun", "twine", "cargo", "uv", "pip", "pip3", "poetry", "gem", "brew", "go"].includes(c)) return "deploy";
+  if (["netlify", "vercel", "flyctl", "fly", "firebase", "heroku", "wrangler", "kubectl", "helm", "terraform", "pulumi"].includes(c)) return DEPLOY_SUB.test(sub[0] || "") ? "deploy" : "network";
+  return "network";
+}
+
+// Kind of inline network code (python, node): mail is a message, a POST sends data.
+const inlineKind = (s) => (/smtplib|\.send_message\s*\(|sendmail\s*\(/.test(s) ? "message" : /requests\.(post|put|patch|delete)\b|method\s*[:=]\s*["'](POST|PUT|PATCH|DELETE)/i.test(s) ? "send" : "network");
+
+// Scripts a shell command writes itself (`cat > f <<EOF`, `tee f <<EOF`): [{ path, body }].
+export function heredocWrites(cmd) {
+  if (!cmd) return [];
+  const out = [];
+  for (const h of shellCommands(cmd).heredocs) {
+    const m = h.lead.match(/\b(?:cat|tee)\b[^|;&]*?(?:>>?|\btee\s+(?:-a\s+)?)\s*["']?([^\s"'|;&<>]+)/);
+    if (m) out.push({ path: m[1], body: h.body });
+  }
+  return out;
+}
+
+// Files a patch adds or updates, with only the lines it adds: [{ path, added, op }].
+export function patchAdds(text) {
+  const out = [];
+  let cur = null;
+  for (const line of String(text || "").split("\n")) {
+    const m = line.match(/^\*\*\* (Add|Update|Delete) File: (.+)$/);
+    if (m) { cur = m[1] === "Delete" ? null : { path: m[2].trim(), added: [], op: m[1] }; if (cur) out.push(cur); continue; }
+    const mv = line.match(/^\*\*\* Move to: (.+)$/);
+    if (mv && cur) { cur.path = mv[1].trim(); continue; }
+    if (line.startsWith("*** End Patch")) { cur = null; continue; }
+    if (cur && line.startsWith("+")) cur.added.push(line.slice(1));
+  }
+  return out.map((f) => ({ path: f.path, added: f.added.join("\n"), op: f.op }));
+}
+
+// Records written scripts into a path -> text map (an Add replaces, an Update appends).
+// Only files that can run are kept: script extensions, no extension, or a shebang.
+const RUNNABLE = /(\.(py|js|mjs|cjs|ts|mts|sh|bash|zsh|rb|pl|php)|\/[^./]+)$/i;
+export function recordScripts(map, writes) {
+  for (const w of writes) {
+    const text = w.added ?? w.body;
+    if (!RUNNABLE.test("/" + w.path) && !map.has(w.path) && !/^#!/.test(text)) continue;
+    map.set(w.path, w.op === "Update" && map.has(w.path) ? map.get(w.path) + "\n" + text : text);
+  }
+  return map;
+}
+
+const INTERP_RUN = /^(python[\d.]*|node|deno|bun|bash|sh|zsh|ruby|perl|php|tsx|ts-node|osascript)$/;
+const samePath = (a, b) => {
+  a = a.replace(/^\.\//, ""); b = b.replace(/^\.\//, "");
+  return a === b || a.endsWith("/" + b) || b.endsWith("/" + a);
+};
+
+// Files a simple command runs as a script: the command itself, or an interpreter's first file argument.
+function scriptRuns(argv) {
+  const a = stripArgv(argv);
+  if (!a.length) return [];
+  const c = base(a[0]);
+  if (INTERP_RUN.test(c)) {
+    const f = a.slice(1).find((x) => !x.startsWith("-"));
+    return f && /[./]/.test(f) ? [{ path: f, shell: /^(bash|sh|zsh)$/.test(c) }] : [];
+  }
+  return /[./]/.test(a[0]) ? [{ path: a[0], shell: null }] : [];
+}
+
+// A list literal of strings starting at src[i] (just past "["); non-string elements
+// (variables, splats) are skipped. first: whether the first element is a string.
+function stringList(src, i) {
+  const items = [];
+  let first = null;
+  const ws = () => { while (i < src.length && /\s/.test(src[i])) i++; };
+  while (i < src.length) {
+    ws();
+    if (src[i] === "]") break;
+    if (/[rbfuRBFU]/.test(src[i]) && /["']/.test(src[i + 1] || "")) i++;
+    if (src[i] === '"' || src[i] === "'" || src[i] === "`") {
+      const r = readJsString(src, i);
+      items.push(r.value);
+      if (first == null) first = true;
+      i = r.end;
+    } else {
+      if (first == null) first = false;
+      for (let d = 0; i < src.length; i++) {
+        const ch = src[i];
+        if (ch === '"' || ch === "'") i = readJsString(src, i).end - 1;
+        else if ("([{".includes(ch)) d++;
+        else if (")]}".includes(ch)) { if (!d) break; d--; }
+        else if (ch === "," && !d) break;
+      }
+    }
+    ws();
+    if (src[i] !== ",") break;
+    i++;
+  }
+  return { items, first };
+}
+
+const EXEC_CALL = /\b(?:subprocess\.(?:run|call|check_call|check_output|Popen)|os\.(?:system|popen)|execSync|execFileSync|execFile|exec|spawnSync|spawn|system|popen)\s*\(\s*/g;
+
+// Commands a script body runs: string lists like ["git", "push", ...] (argv form) and the
+// string arguments of exec-style calls (shell form).
+export function scriptCommands(body) {
+  const argvs = [], shells = [];
+  for (let i = body.indexOf("["); i >= 0; i = body.indexOf("[", i + 1)) {
+    const r = stringList(body, i + 1);
+    if (r.first && r.items.length) argvs.push(r.items);
+  }
+  let m;
+  EXEC_CALL.lastIndex = 0;
+  while ((m = EXEC_CALL.exec(body))) {
+    const at = m.index + m[0].length;
+    if (/["'`]/.test(body[at] || "")) {
+      const r = readJsString(body, at);
+      const next = body.slice(r.end).match(/^\s*,\s*\[/);
+      if (next) argvs.push([r.value, ...stringList(body, r.end + next[0].length).items]);
+      else shells.push(r.value);
+    }
+  }
+  return { argvs, shells };
+}
+
+const LOOPBACK = /^(localhost|127(?:\.\d+){3}|0\.0\.0\.0|\[::1\])(:\d+)?$/i;
+const urlHosts = (s) => [...String(s).matchAll(/\bhttps?:\/\/([^/\s'"`)?#\\]+)/g)].map((m) => m[1].replace(/^[^@]*@/, ""));
+const firstUrl = (s) => (String(s).match(/\bhttps?:\/\/[^\s'"`)\\]+/g) || []).find((u) => !LOOPBACK.test(urlHosts(u)[0] || "")) || null;
+
+// What a script the agent wrote does when run: { class, kind, target }. Network code that
+// only names loopback URLs (a local test server) stays on the machine.
+export function classifyScript(body, shell) {
+  body = String(body || "");
+  if (shell) {
+    const d = commandDetail(body);
+    const a = d.class === "outward" && !d.via && shellCommands(body).argvs.find((x) => classifyArgv(x) === "outward" && argvKind(x) === d.kind);
+    return a ? { ...d, target: a.join(" ") } : d;
+  }
+  let best = { class: "read", kind: null, target: null };
+  const { argvs, shells } = scriptCommands(body);
+  for (const a of argvs) {
+    const c = classifyArgv(a);
+    const d = { class: c || "read", kind: c === "outward" ? argvKind(a) : null, target: a.join(" ") };
+    if (better(d, best) > 0) best = d;
+  }
+  for (const s of shells) { const d = commandDetail(s); if (better(d, best) > 0) best = d; }
+  if (RANK[best.class] < RANK.outward && INLINE_NET.test(body)) {
+    const hosts = urlHosts(body);
+    if (!hosts.length || !hosts.every((h) => LOOPBACK.test(h))) best = { class: "outward", kind: inlineKind(body), target: firstUrl(body) };
+  }
+  if (RANK[best.class] < RANK.write && /\b(write_text|write_bytes|writeFileSync|writeFile\s*\(|open\([^)]*,\s*['"][wa]b?['"])/.test(body)) best = { class: "write", kind: null, target: null };
+  return best;
+}
+
+// A shell command's most consequential part: { class, kind, target, via }. When it runs a
+// script it wrote (a heredoc here) or one in `files` (path -> text written earlier), the
+// script's contents count, and target is the command inside it, via the run command.
+export function commandDetail(cmd, files = null) {
+  let best = { class: classifyCommand(cmd), kind: null, target: cmd ?? null, via: null };
+  if (!cmd) return best;
+  const { argvs, heredocs } = shellCommands(cmd);
+  if (best.class === "outward") {
+    for (const a of argvs) if (classifyArgv(a) === "outward") best.kind = moreKind(best.kind, argvKind(a));
+    best.kind = best.kind || inlineKind(heredocs.map((h) => h.body).join("\n") + "\n" + cmd);
+  }
+  const own = heredocWrites(cmd);
+  const lookup = (path) => {
+    const h = own.find((w) => samePath(path, w.path));
+    if (h) return { path: h.path, body: h.body };
+    if (files) for (const [p, body] of files) if (samePath(path, p)) return { path: p, body };
+    return null;
+  };
+  if (own.length || (files && files.size)) {
+    for (const a of argvs) for (const run of scriptRuns(a)) {
+      const f = lookup(run.path);
+      if (!f) continue;
+      const d = classifyScript(f.body, run.shell ?? (/\.(sh|bash|zsh)$/.test(f.path) || /^#!.*\b(ba|z)?sh\b/.test(f.body)));
+      if (better(d, best) > 0) best = { class: d.class, kind: d.kind, target: d.target || cmd, via: d.target ? a.join(" ") : null };
+    }
+  }
+  return best;
+}
+
+// What an escalation's justification says the call does outside the sandbox, ignoring
+// negated clauses ("no force-push", "without network").
+export function justificationKind(j) {
+  if (!j) return null;
+  const s = String(j).replace(/\b(?:no|not|without|never|nor|avoid(?:ing)?|don't|do not|won't)\b[^.;!?]*/gi, " ");
+  // Past participles are left out: "the pushed commit" describes, it doesn't act.
+  if (/\b(deploy(s|ing|ment)?|publish(es|ing)?)\b/i.test(s)) return "deploy";
+  if (/\bpush(es|ing)?\b/i.test(s)) return "push";
+  if (/\bupload(s|ing)?\b/i.test(s)) return "send";
+  if (/\b(network|internet|download(s|ing)?|curl|wget)\b/i.test(s)) return "network";
+  return null;
+}
+
+// Output of a shell network attempt that the sandbox stopped.
+const NET_BLOCKED = /Could not resolve (?:host|proxy)|Temporary failure in name resolution|Name or service not known|nodename nor servname provided|[Nn]etwork is unreachable|\bENOTFOUND\b|\bEAI_AGAIN\b/;
+
+// The matched failure when a call's only outward part is sandboxed shell, it wasn't
+// escalated, network was off at the time, and its output shows the lookup failing.
+export function blockedNetwork(c, output, perm) {
+  if (!c || c.class !== "outward" || !c.sandboxed || c.escalated || !perm || perm.network !== false || perm.sandbox === "danger-full-access") return null;
+  const m = String(output || "").match(NET_BLOCKED);
+  return m ? m[0] : null;
+}
+
+// Kind of an outward action from its tool and target, for actions that don't carry one.
+export function egressKind(tool, target) {
+  const t = String(tool || "");
+  if (t === "Artifact") return "deploy";
+  if (t === "ArtifactComments") return "message";
+  if (t === "ArtifactData") return "send";
+  if (t === "WebFetch" || t === "WebSearch" || t.startsWith("mcp__claude-in-chrome__")) return "network";
+  if (t.startsWith("mcp__")) {
+    const op = t.split("__").pop();
+    return /deploy|publish|release/i.test(op) ? "deploy" : /send|post|message|reply|comment|email|notify/i.test(op) ? "message" : /upload|create|update|set|write|delete|place|cancel|exercise|rename/i.test(op) ? "send" : "network";
+  }
+  return commandDetail(target).kind || "network";
+}
+
+// Lens 2's rows: every classified tool call, grouped by class; outward and blocked calls
+// are ranked by kind, then time. Each row: { a, r, x, kind }.
+export function egressGroups(trace) {
+  const g = { outward: [], blocked: [], write: [], read: [] };
+  for (const a of trace.agents) for (const r of a.requests) {
+    if (!r.action) continue;
+    for (const x of r.action.all || [r.action]) {
+      if (!g[x.class]) continue;
+      const kind = x.class === "outward" ? x.egress || egressKind(x.tool, x.target) : x.class === "blocked" ? x.egress || "network" : null;
+      g[x.class].push({ a, r, x, kind });
+    }
+  }
+  for (const k of Object.keys(g)) g[k].sort((p, q) => (KIND_RANK[q.kind] || 0) - (KIND_RANK[p.kind] || 0) || p.r.t - q.r.t);
+  return g;
+}
+
+const trunc =(s, n = 400) => (s == null ? null : (s = String(s), s.length > n ? s.slice(0, n) + "…" : s));
 
 // Claude Code tool_use -> { class, target }.
 export function classifyClaudeTool(name, input = {}) {
@@ -728,46 +1092,82 @@ export function jsCode(src) {
 
 export function parseCodexSource(src) {
   src = String(src || "");
+  // A js call's arguments can arrive as JSON: {"code": "..."}.
+  if (/^\s*\{\s*"code"\s*:/.test(src)) try { const j = JSON.parse(src); if (typeof j.code === "string") src = j.code; } catch { /* JS source */ }
   const code = jsCode(src);
   const cmds = jsProps(src, "cmd").concat(jsProps(src, "command"));
-  const urls = jsStrings(src).filter((s) => /^https?:\/\/\S+$/.test(s));
+  const strings = jsStrings(src);
+  const urls = strings.filter((s) => /^https?:\/\/\S+$/.test(s));
+  const patches = [];
+  for (const s of strings) if (s.includes("*** Begin Patch")) patches.push(...patchAdds(s));
+  for (const c of cmds) patches.push(...heredocWrites(c));
   return {
     cmds,
     urls,
     justification: jsProps(src, "justification")[0] || null,
-    escalated: /sandbox_permissions\s*:\s*["']require_escalated["']/.test(src),
+    escalated: /["']?sandbox_permissions["']?\s*:\s*["']require_escalated["']/.test(src),
     patch: /\bapply_patch\b|\*\*\* Begin Patch/.test(src),
+    patches,
     webSearch: /\b(web_search|web\.search|search_query|image_query)\b/.test(code),
-    browser: /\b(createBrowserTab|\.goto\s*\(|navigate\s*\(|cua\.)/.test(code),
+    webRun: /\bweb__run\s*\(/.test(code),
+    // Opening pages and operating UI; reading tab or app state (cua.getState, tab.screenshot) stays local.
+    browser: /\b(createBrowserTab|\.goto\s*\(|navigate\s*\(|\.reload\s*\(|cua\.(click|double_click|clickPoint|clickDomCuaNode|keypress|type|drag|move)\s*\(|tab\.(click|typeText|pressKey|setValue)\s*\()/.test(code),
   };
 }
 
-export function classifyCodexCall(name, input, completed = []) {
+// Scripts a Codex call writes (patches, heredocs), for classifying later calls that run them.
+export function codexWrites(name, input) {
+  if (name === "exec" || name === "js") return parseCodexSource(input).patches;
+  if (name === "apply_patch") {
+    let s = input;
+    try { const j = typeof input === "string" && /^\s*\{/.test(input) ? JSON.parse(input) : null; if (j) s = j.input || j.patch || s; } catch { /* raw patch */ }
+    return patchAdds(s);
+  }
+  return [];
+}
+
+// A call escalated out of the sandbox whose justification says it pushes, deploys,
+// publishes, uploads or uses the network is outward.
+function escalatedOut(best, escalated, justification) {
+  const jk = escalated ? justificationKind(justification) : null;
+  const d = { class: "outward", kind: jk };
+  return jk && better(d, best) > 0 ? { ...best, ...d } : best;
+}
+
+// files: path -> text of scripts this thread wrote earlier (see codexWrites/recordScripts).
+// Beyond class and target: egress (outward kind), via (the command that ran a script
+// holding the target), sandboxed (false when a tool-level web search or browser left).
+export function classifyCodexCall(name, input, completed = [], files = null) {
   const n = name || "";
   if (n === "exec" || n === "js") {
     const p = parseCodexSource(input);
-    let cls = n === "js" ? "read" : "internal";
-    let target = null;
+    const own = recordScripts(new Map(), p.patches);
+    // This call's own writes first, then the thread's earlier ones, without copying either.
+    const known = own.size ? { size: own.size + (files ? files.size : 0), *[Symbol.iterator]() { yield* own; if (files) yield* files; } } : files;
+    let best = { class: n === "js" ? "read" : "internal", kind: null, target: null, via: null };
+    let toolNet = false;
     const cmds = p.cmds.slice();
     for (const it of completed) if (it.type === "CommandExecution" && Array.isArray(it.command)) cmds.push(it.command[it.command.length - 1]);
     for (const c of cmds) {
-      const k = classifyCommand(c);
-      if (!target || RANK[k] > RANK[cls]) target = c;
-      cls = worse(cls, k);
+      const d = commandDetail(c, known);
+      if (!best.target || better(d, best) > 0) best = d;
     }
     if (p.patch || completed.some((it) => it.type === "FileChange")) {
-      cls = worse(cls, "write");
       const fc = completed.find((it) => it.type === "FileChange");
-      if (fc && RANK[cls] <= RANK.write) target = Object.keys(fc.changes || {}).join(", ") || target;
+      if (RANK[best.class] <= RANK.write) best = { class: "write", kind: null, target: (fc && Object.keys(fc.changes || {}).join(", ")) || best.target, via: null };
     }
-    if (p.urls.length && (p.browser || n === "js")) { cls = "outward"; target = p.urls[0]; }
-    if (p.webSearch || completed.some((it) => it.type === "Extension" && /web/.test(it.kind || ""))) {
-      if (RANK[cls] < RANK.outward) target = (completed.find((it) => it.type === "Extension") || {}).query || "web search";
-      cls = "outward";
+    const netTarget = (t) => { toolNet = true; if (!(best.class === "outward" && KIND_RANK[best.kind] > KIND_RANK.network)) best = { class: "outward", kind: "network", target: t, via: null }; };
+    // A page on this machine (a local dev server) isn't egress.
+    const remote = p.urls.filter((u) => !LOOPBACK.test(urlHosts(u)[0] || ""));
+    if (remote.length && (p.browser || p.webRun || n === "js")) netTarget(remote[0]);
+    if (p.webSearch || p.webRun || completed.some((it) => it.type === "Extension" && /web/.test(it.kind || ""))) {
+      toolNet = true;
+      if (RANK[best.class] < RANK.outward) best = { class: "outward", kind: "network", target: (completed.find((it) => it.type === "Extension") || {}).query || "web search", via: null };
     }
-    if (p.browser && !p.urls.length && RANK[cls] < RANK.outward) { cls = "outward"; target = target || "browser"; }
-    if (cls === "internal" && cmds.length === 0) cls = "read";
-    return { class: cls, target: trunc(target || (p.cmds[0] ?? null)), justification: p.justification, escalated: p.escalated, cmds: cmds.map((c) => trunc(c, 300)) };
+    if (p.browser && !p.urls.length && RANK[best.class] < RANK.outward) { toolNet = true; best = { class: "outward", kind: "network", target: best.target || "browser", via: null }; }
+    best = escalatedOut(best, p.escalated, p.justification);
+    if (best.class === "internal" && cmds.length === 0) best.class = "read";
+    return { class: best.class, target: trunc(best.target || (p.cmds[0] ?? null)), justification: p.justification, escalated: p.escalated, cmds: cmds.map((c) => trunc(c, 300)), egress: best.class === "outward" ? best.kind || "network" : null, via: trunc(best.via), sandboxed: !toolNet };
   }
   let args = null;
   try { args = typeof input === "string" ? JSON.parse(input) : input; } catch { args = null; }
@@ -776,7 +1176,9 @@ export function classifyCodexCall(name, input, completed = []) {
     return { class: n === "view_image" ? "read" : "internal", target: trunc(args.task_name || args.recipient || args.path || args.target || null) };
   if (n === "shell" || n === "exec_command" || n === "local_shell" || n === "container.exec") {
     const cmd = Array.isArray(args.command) ? args.command[args.command.length - 1] : args.cmd || args.command;
-    return { class: classifyCommand(cmd), target: trunc(cmd), justification: args.justification || null, escalated: args.sandbox_permissions === "require_escalated" };
+    const escalated = args.sandbox_permissions === "require_escalated";
+    const d = escalatedOut(commandDetail(cmd, files), escalated, args.justification);
+    return { class: d.class, target: trunc(d.target), justification: args.justification || null, escalated, egress: d.class === "outward" ? d.kind || "network" : null, via: trunc(d.via), sandboxed: true };
   }
   if (n === "apply_patch") return { class: "write", target: trunc((String(input).match(/\*\*\* (?:Update|Add|Delete) File: (.+)/) || [])[1] || null) };
   if (/web_search|search/.test(n)) return { class: "outward", target: trunc(args.query || JSON.stringify(args)) };

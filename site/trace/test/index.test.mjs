@@ -76,14 +76,14 @@ test("codex: harness and injected blocks link to the page holding their lines; c
   assert.ok(bare.agents[0].blocks.every((b) => b.site === null));
 });
 
-test("claude-code: reminder types map to their page; structured rows are marked rebuilt", async () => {
+test("claude-code: reminder types map to their page; a structured row without a template stays structured", async () => {
   const index = makeIndex([], { reminders: { date: { slug: "reminders", anchor: "date", title: "Date" }, mystery_type: { slug: "reminders", anchor: "mystery", title: "Mystery" } } });
   const { trace } = await loadTrace(await entriesFor([FIX + "claude"]), { index });
   const root = trace.agents[0];
   const date = root.blocks.find((b) => b.label === "date");
-  assert.deepEqual([date.site, date.render, date.rebuilt], [{ slug: "reminders", anchor: "date", title: "Date" }, "literal", undefined]);
+  assert.deepEqual([date.site, date.render, date.template], [{ slug: "reminders", anchor: "date", title: "Date" }, "literal", undefined]);
   const mys = root.blocks.find((b) => b.label === "mystery_type");
-  assert.deepEqual([mys.site.anchor, mys.render, mys.rebuilt], ["mystery", "structured", true]);
+  assert.deepEqual([mys.site.anchor, mys.render, mys.template], ["mystery", "structured", undefined]);
 });
 
 test("claude-code: with no logged harness, index size for the version is used (inferred), else the residual default", async () => {
