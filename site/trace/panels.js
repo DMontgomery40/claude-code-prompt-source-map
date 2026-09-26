@@ -1,5 +1,6 @@
 // Shared vocabulary (strata, statuses, formatting) and the HTML side panels for every level.
 // All trace strings are untrusted: they reach the DOM through textContent only, never innerHTML.
+import { peakRequestIndex, requestCalls, selectedCall } from "./navigation.js";
 import { stratumRows, blockPart, windowBlocks as modelWindowBlocks, egressGroups } from "./model.js";
 
 export const STRATA = [
@@ -237,12 +238,12 @@ export function strataList(strata, total, onPick, selected, harnessNote, own) {
   for (const s of STRATA) {
     const v = strata?.[s.key] || 0;
     const row = el("li", { class: `${v > 0 ? "" : "zero"}${selected === s.key ? " on" : ""}` },
-      el("button", { type: "button", class: "srow", disabled: v > 0 ? null : true, onclick: onPick ? () => onPick(s.key) : null },
+      el("button", { type: "button", class: "srow", style: `--share:${Math.min(100, Math.max(0, v / (total || 1) * 100))}%;--layer:${s.color}`, disabled: v > 0 ? null : true, onclick: onPick ? () => onPick(s.key) : null },
         chip(s.color), el("span", { class: "sname", text: s.name }),
         el("span", { class: "sval", text: v > 0 ? `≈ ${fmtTok(v)}` : "0" }),
         el("span", { class: "spct", text: v > 0 ? `${Math.round(v / (total || 1) * 100)}%` : "" })));
     if (own?.[s.key] > 0 && v > 0) row.append(el("div", { class: "sown", text: `from your setup ≈ ${fmtTok(own[s.key])}` }));
-    if (s.key === "harness" && harnessNote && v > 0) row.append(el("div", { class: "note", text: harnessNote }));
+    if (s.key === "harness" && harnessNote && v > 0) row.append(el("details", { class: "layer-method" }, el("summary", { text: "How this is estimated" }), el("p", { class: "note", text: harnessNote })));
     ul.append(row);
   }
   return ul;
@@ -253,9 +254,15 @@ export function renderPanel(root, S, A) {
   const { trace, level } = S;
   const agent = S.agent;
   const req = agent && S.reqIdx != null ? agent.requests[S.reqIdx] : null;
+  if ((S.followingMap || (S.mapPinned && S.level === 3)) && req) root.append(el("div", { class: "map-location" },
+    el("p", { class: "kicker", text: S.followingMap ? "AT THE CENTER OF YOUR MAP" : "SELECTED REQUEST" }),
+    el("b", { text: `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${req.i + 1}` }),
+    el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${fmtTok(req.tokens.context)} context tokens` }),
+    req.action?.kind === 'tool' ? btn(`Open ${req.action.tool} call ↗`, () => A.focusAction(agent.id, req.i), 'btn small') : null));
+  if (S.inspector === 'action' && req) { root.append(...actionPanel(agent, req, S, A).filter(Boolean)); return; }
   if (level === 0) root.append(...lensPanel(S, A));
   else if (level === 1) root.append(...agentPanel(trace, agent, S, A));
-  else if (level === 2) root.append(...requestPanel(trace, agent, req, S, A));
+  else if (level === 2) root.append(...requestPanel(trace, agent, req, S, A).filter(Boolean));
   else root.append(...stratumPanel(trace, agent, req, S, A));
 }
 
@@ -264,31 +271,35 @@ function lensPanel(S, A) {
   const out = [];
   const root = trace.agents.find(a => a.kind === "root") || trace.agents[0];
   if (lens === "context") {
-    let peak = root.requests[0];
-    for (const r of root.requests) if (r.tokens.context > peak.tokens.context) peak = r;
+    const peak = root.requests[peakRequestIndex(root)];
     out.push(el("h2", { text: "What filled its context" }),
-      el("p", { class: "lede", text: `${S.mode === "2d" ? "The chart's height" : "Ridge height"} is the exact context of each request. The coloured layers split it by source, estimated from characters (≈).` }));
+      el("p", { class: "lede", text: "Explore the layers, then open the words behind them." }));
     if (peak) {
-      out.push(section(`Main thread at its peak: ${fmtTok(peak.tokens.context)} tokens`,
+      out.push(el("div", { class: "context-peak" },
+        el("span", { class: "eyebrow", text: "Peak context · main thread" }),
+        el("div", {}, el("strong", { text: fmtTok(peak.tokens.context) }), el("span", { text: " tokens" }))),
+        el("div", { class: "explore-actions" },
+          btn("Explore main thread ↗", () => A.focusAgent(root.id, 0), "btn primary"),
+          btn("Jump to peak", () => A.focusRequest(root.id, peak.i), "btn")),
+        peak.strata?.injected > 0 ? btn("What was injected at this point? →", () => A.focusStratum(root.id, peak.i, "injected"), "linkbtn injection-entry") : null);
+      out.push(section("Context by source · estimated",
         strataBar(peak.strata, peak.tokens.context, k => A.focusStratum(root.id, peak.i, k)),
         strataList(peak.strata, peak.tokens.context, k => A.focusStratum(root.id, peak.i, k), null, harnessNote(trace, root), peak.own),
         btn(`Open request ${peak.i + 1}`, () => A.focusRequest(root.id, peak.i))));
     }
     const setup = setupSection(trace, root, A, peak);
-    if (setup) out.push(setup);
+    if (setup) out.push(el("details", { class: "setup-disclosure" }, el("summary", { text: "Your instructions, skills & memory" }), setup));
     const shr = unloggedShrinks(root);
     const marks = [
       ...root.compactions.map(c => ({ t: c.t, text: `Compacted ${fmtTok(c.pre)} → ${fmtTok(c.post)}`, req: nearestRequest(root, c.t) })),
       ...shr.map(s => ({ t: s.t, text: `Context shrank ${fmtTok(s.from)} → ${fmtTok(s.to)}; not logged as a compaction`, req: s.request }))
     ].sort((a, b) => a.t - b.t);
-    if (marks.length) out.push(section("Cliffs", el("ul", { class: "items" }, marks.map(m =>
+    if (marks.length) out.push(section("Context resets", el("ul", { class: "items" }, marks.map(m =>
       el("li", {}, btn(`${fmtClock(m.t)}  ${m.text}`, () => A.focusRequest(root.id, m.req), "item"))))));
-    out.push(el("p", { class: "hint", text: S.mode === "2d"
-      ? `${TAP} the chart to open the main thread at that request, or a subagent lane to open that agent. Ticks along the top are your asks; red dots left the machine.`
-      : `${TAP} a ridge to open that agent. Flags are your asks. Pins are tool calls: red left the machine, amber wrote files, blue read. Labels on the crest mark large injections mid-session.` }));
+    out.push(el("p", { class: "note", text: `${TAP} any ${S.mode === "2d" ? "lane" : "ridge"} to explore an agent.` }));
   } else if (lens === "egress") {
     out.push(el("h2", { text: "What left the machine" }),
-      el("p", { class: "lede", text: "Every tool call, ranked by consequence: what left the machine (deploys, pushes, messages, data sent, then network), attempts the sandbox blocked, local writes, then reads. Open one for its custody ladder." }));
+      el("p", { class: "lede", text: "Explore external actions, local changes, and reads. Open a call to see what led to it." }));
     const groups = egressGroups(trace);
     const row = ({ a, r, x, kind }) => el("li", {},
       el("button", { class: "item act", type: "button", onclick: () => A.focusRequest(a.id, r.i) },
@@ -338,7 +349,7 @@ function lensPanel(S, A) {
     out.push(section("Largest inflows", el("ul", { class: "items" }, big.slice(0, 25).map(x => item(x, `≈ ${fmtTok(x.tok)}`)))));
   } else if (lens === "agents") {
     out.push(el("h2", { text: "Subagents, spend and return" }),
-      el("p", { class: "lede", text: "Fresh tokens each agent spent (uncached input + cache write + output), its requests, and the size of the report that came back. Open one to focus its ridge." }));
+      el("p", { class: "lede", text: "Compare each agent’s work and the report it returned. Select an agent to explore its ridge." }));
     const others = trace.agents.filter(a => a.kind !== "root");
     if (!others.some(a => a.kind === "subagent")) out.push(el("p", { class: "empty", text: others.length ? "No subagents in this session. Its side calls and reviews:" : "No subagents in this session." }));
     if (others.length) out.push(agentTable(trace, others, S, A));
@@ -362,16 +373,31 @@ export function reportTokens(trace, agent) {
   return found ? sum : null;
 }
 
-function agentTable(trace, agents, S, A) {
+export function agentTable(trace, agents, S, A) {
   const rows = agents.map(a => ({ a, s: agentStats(a), rep: reportTokens(trace, a) })).sort((x, y) => y.s.fresh - x.s.fresh);
   const max = rows[0]?.s.fresh || 1;
-  return el("table", { class: "atable" },
+  const table = el("table", { class: "atable" },
     el("thead", {}, el("tr", {}, el("th", { text: "Agent" }), el("th", { text: "Fresh" }), el("th", { text: "Req." }), el("th", { text: "Report" }))),
     el("tbody", {}, rows.map(({ a, s, rep }) => el("tr", { class: S.agentId === a.id ? "on" : "" },
       el("td", {}, el("button", { class: "linkbtn", type: "button", text: a.name || a.id, onclick: () => A.focusAgent(a.id) }),
         el("span", { class: "meta", text: `${a.kind === "subagent" ? modelFamily(a.model) : a.kind}${a.depth > 1 ? ` · depth ${a.depth}` : ""}` }),
         el("span", { class: "spend", style: `width:${Math.max(2, s.fresh / max * 100)}%` })),
       el("td", { text: fmtTok(s.fresh) }), el("td", { text: fmtInt(s.requests) }), el("td", { text: rep == null ? "–" : `≈ ${fmtTok(rep)}` })))));
+  if (rows.length < 8) return table;
+  const search = el("input", { type: "search", class: "agent-search", placeholder: "Find an agent…", "aria-label": "Find an agent", autocomplete: "off" });
+  const count = el("p", { class: "note agent-count", role: "status", text: `${rows.length} agents · most fresh tokens first` });
+  const bodyRows = table.children[1].children;
+  search.addEventListener("input", () => {
+    const q = search.value.trim().toLocaleLowerCase();
+    let visible = 0;
+    rows.forEach(({ a }, i) => {
+      const match = `${a.name || a.id} ${a.model || ""} ${a.kind}`.toLocaleLowerCase().includes(q);
+      bodyRows[i].hidden = !match;
+      if (match) visible++;
+    });
+    count.textContent = q ? `${visible} of ${rows.length} agents${visible ? "" : " · try another name"}` : `${rows.length} agents · most fresh tokens first`;
+  });
+  return el("div", { class: "agent-browser" }, search, count, table);
 }
 
 function harnessNote(trace, agent) {
@@ -406,13 +432,16 @@ export function askWhere(agent, a) {
 
 // Ask previews read when they scroll into view and kept, so moving between requests doesn't read
 // them again. One observer per panel render.
+export function askPreviewText(text) {
+  return clip(String(text || "").replace(/<\/?teammate-message\b[^>]*>/gi, " ").replace(/<\/?[a-z][\w-]*>/gi, " "), 90) || "(empty)";
+}
 const askPreviews = new Map();
 function askPreviewer(agent, A) {
   const load = (b, span) => {
     const key = `${agent.id}|${b.i}`;
     if (askPreviews.has(key)) { span.textContent = askPreviews.get(key); return; }
     A.getText(agent.id, b.ref).then(r => {
-      const t = clip(String(r?.text || "").replace(/<\/?[a-z][\w-]*>/gi, " "), 90) || "(empty)";
+      const t = askPreviewText(r?.text);
       askPreviews.set(key, t);
       span.textContent = t;
     }).catch(() => { span.textContent = ""; });
@@ -436,16 +465,17 @@ function agentPanel(trace, agent, S, A) {
     el("h2", { class: "aname", text: (agent.kind === "root" && trace.title) || agent.name || agent.id }),
     kv([["Model", modelsUsed(agent)], ["Requests", fmtInt(s.requests)], ["Peak context", fmtTok(s.peak)], ["Fresh tokens", fmtTok(s.fresh)],
       ["Bursts", fmtInt(agent.bursts?.length || 1)], ...(agent.spawn ? [["Spawned at", `${fmtWhen(agent.spawn.t)}`]] : [])]),
-    el("p", { class: "hint", text: TOUCH ? "Each column is one request; its height is the exact context. Tap one to open it."
+    el("p", { class: "hint", text: S.followingMap ? "Zoom closer to explore this agent’s requests." : TOUCH ? "Each column is one request; its height is the exact context. Tap one to open it."
       : "Each column is one request; its height is the exact context. ← → move between requests, Enter opens one, Esc goes back." })
   ];
   if (agent.spawn && agent.parentId) {
     const p = trace.agents.find(a => a.id === agent.parentId);
     if (p) out.push(btn(`Spawned by ${p.kind === "root" ? "the main thread" : p.name}, request ${agent.spawn.parentRequest + 1}`, () => A.focusRequest(p.id, agent.spawn.parentRequest)));
   }
-  if (agent.asks.length) {
+  const visibleAsks = S.followingMap ? agent.asks.filter(a => a.request <= S.reqIdx).slice(-2) : agent.asks;
+  if (visibleAsks.length) {
     const preview = askPreviewer(agent, A);
-    out.push(section(`Asks (${agent.asks.length})`, el("ul", { class: "items asks" }, agent.asks.map(a => {
+    out.push(section(S.followingMap ? "Recent asks" : `Asks (${agent.asks.length})`, el("ul", { class: "items asks" }, visibleAsks.map(a => {
       const b = agent.blocks[a.block];
       const where = askWhere(agent, a);
       const text = el("span", { class: "ask-text", text: b?.ref ? "…" : "" });
@@ -457,7 +487,7 @@ function agentPanel(trace, agent, S, A) {
   }
   const shr = unloggedShrinks(agent);
   if (agent.compactions.length || shr.length) {
-    out.push(section("Cliffs", el("ul", { class: "items" },
+    out.push(section("Context resets", el("ul", { class: "items" },
       agent.compactions.map(c => el("li", {}, btn(`${fmtClock(c.t)}  compacted ${fmtTok(c.pre)} → ${fmtTok(c.post)}`, () => A.focusRequest(agent.id, nearestRequest(agent, c.t)), "item"))),
       shr.map(x => el("li", {}, btn(`${fmtClock(x.t)}  context shrank ${fmtTok(x.from)} → ${fmtTok(x.to)}; not logged as a compaction`, () => A.focusRequest(agent.id, x.request), "item"))))));
   }
@@ -465,10 +495,60 @@ function agentPanel(trace, agent, S, A) {
   return out;
 }
 
+// A tool marker opens its literal input immediately. Context is a separate destination.
+function actionPanel(agent, req, S, A) {
+  const calls = requestCalls(req), call = selectedCall(req, S.callIndex);
+  if (!call) return [el("p", { text: "No call recorded for this request." })];
+  const tool = call.tool || "Text reply";
+  const pre = el("pre", { class: "text call-text", tabindex: "0", text: "Reading…" });
+  const label = el("span", { class: "kicker", text: "CALL INPUT" });
+  const input = btn("Call", () => read('args'), "btn small");
+  const result = btn("Result", () => read('result'), "btn small");
+  result.disabled = !call.result;
+  let readVersion = 0;
+  async function read(part) {
+    const version = ++readVersion;
+    A.showCallPart?.(part);
+    input.setAttribute('aria-pressed', String(part === 'args'));
+    result.setAttribute('aria-pressed', String(part === 'result'));
+    label.textContent = part === 'args' ? 'CALL INPUT' : 'RETURNED RESULT';
+    pre.textContent = 'Reading…';
+    try {
+      if (!call[part]) { pre.textContent = part === 'result' ? 'No result recorded.' : call.target || 'No input recorded.'; return; }
+      const data = await A.getText(agent.id, call[part]);
+      if (version !== readVersion) return;
+      let body = data?.text || '(empty)';
+      // Bash commands read as shell, preserving the complete input below when it has options.
+      if (part === 'args') {
+        try {
+          const value = JSON.parse(body);
+          if (typeof value?.command === 'string') {
+            const { command, ...options } = value;
+            body = command + (Object.keys(options).length ? `\n\n—— Call options ——\n${JSON.stringify(options, null, 2)}` : '');
+          } else if (value && typeof value === 'object') body = JSON.stringify(value, null, 2);
+        } catch { /* already literal text */ }
+      }
+      pre.textContent = body;
+    } catch (e) { if (version === readVersion) pre.textContent = `Text unavailable: ${e?.message || e}`; }
+  }
+  read(S.callPart || 'args');
+  return [
+
+    el('p', { class: 'kicker', text: `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${req.i + 1} of ${agent.requests.length}` }),
+    el('h2', { text: tool }),
+    el('p', { class: 'meta', text: `${fmtWhen(req.t)} · ${STATUS[call.class]?.label || 'Tool call'}` }),
+    calls.length > 1 ? el('div', { class: 'call-picker', 'aria-label': 'Calls in this response' }, calls.map((c, i) => btn(`${i + 1}. ${c.tool || 'Reply'}`, () => A.focusCall(i), `btn small${c === call ? ' on' : ''}`))) : null,
+    el('div', { class: 'call-tabs' }, input, result, !call.result ? el('span', { class: 'meta', text: 'No result recorded' }) : null),
+    el('div', { class: 'call-reader' }, label, pre),
+    btn(`Explore context · ${fmtInt(req.tokens.context)} tokens →`, () => A.focusRequest(agent.id, req.i), 'btn context-link')
+  ];
+}
+
 function requestPanel(trace, agent, req, S, A) {
   if (!req) return [el("p", { text: "No request selected." })];
   const t = req.tokens;
   const out = [
+    req.action?.kind === "tool" ? btn(`Open ${req.action.tool} call ↗`, () => A.focusAction(agent.id, req.i), "btn action-open") : null,
     el("p", { class: "kicker", text: `${agent.kind === "root" ? "Main thread" : agent.name} · request ${req.i + 1} of ${agent.requests.length}` }),
     el("h2", { text: `${fmtTok(t.context)} tokens in context` }),
     el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${req.model || agent.model || ""}${req.iterations > 1 ? ` · iteration ${req.iteration} of ${req.iterations} in one response` : ""}` }),

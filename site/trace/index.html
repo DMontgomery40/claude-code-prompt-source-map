@@ -17,7 +17,7 @@
     <header class="intro">
       <p class="brand"><a href="../">Reference</a> <span aria-hidden="true">/</span> Trace</p>
       <h1>See one agent session as a landscape.</h1>
-      <p class="lede">Each agent becomes a ridge. Its layers show what filled the model's context, request by request: your words, files and command output, subagent reports, its own output, and the harness text slipped in between turns. Zoom in to read any of it.</p>
+      <p class="lede">Follow the shape of a conversation. Explore every agent, see what filled its context, and dive into the exact words behind each layer.</p>
       <div id="hero" class="hero" aria-hidden="true"></div>
       <div id="hero-legend" class="legend"></div>
     </header>
@@ -48,7 +48,7 @@
 
       <div class="private">
         <strong>Nothing leaves this browser.</strong>
-        <span>Your files are read on this machine. The page's Content-Security-Policy blocks network requests to anywhere but this site's own files, so there's nowhere for them to go.</span>
+        <span>Session files stay on your device.</span>
       </div>
 
       <div id="dev" class="dev" hidden>
@@ -65,21 +65,31 @@
   <div id="flat" class="flat" hidden></div>
   <header class="hud">
     <div class="hud-title">
-      <button id="back-to-load" class="brandbtn" type="button" title="Load another session">Trace</button>
-      <h1 id="title" class="title"></h1>
+      <button id="back-to-load" class="brandbtn" type="button" title="Load another session"><span class="brand-mark" aria-hidden="true">≋</span> Trace</button>
+      <div class="session-heading"><span id="session-kind" class="eyebrow"></span><h1 id="title" class="title"></h1></div>
     </div>
     <div id="stats" class="stats"></div>
     <div id="legend" class="legend hud-legend"></div>
   </header>
   <div class="side">
     <div id="resizer" class="resizer" role="separator" aria-orientation="vertical" aria-label="Resize the panel" tabindex="0"></div>
-    <nav id="lenses" class="lenses" aria-label="Lenses"></nav>
-    <div class="sidebar-tools"><button id="widen" class="btn small widen" type="button" aria-pressed="false">Widen for reading</button></div>
+    <div class="side-heading"><span class="eyebrow">Explore session</span><button id="overview" class="text-control" type="button">↖ Overview</button></div>
+    <nav id="lenses" class="lenses" aria-label="Explore session"></nav>
+    <div id="request-nav" class="request-nav" hidden></div>
+    <div class="sidebar-tools"><button id="inspect-back" class="text-control" type="button" hidden>← Back</button><span id="selection-label" class="selection-label">Session overview</span><button id="widen" class="btn small widen" type="button" aria-pressed="false">Widen for reading</button></div>
     <aside id="panel" class="panel" aria-live="polite"></aside>
   </div>
   <div id="minimap" class="minimap" aria-label="Session overview"></div>
   <nav id="crumbs" class="crumbs" aria-label="Level"></nav>
-  <div class="viewtools">
+  <div id="map-location" class="map-location-bar" hidden></div>
+  <div id="map-zoom" class="map-zoom" aria-label="Map zoom">
+    <button id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button>
+    <output id="zoom-status" aria-label="Map detail">1.0× · Overview</output>
+    <button id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button>
+  </div>
+  <div class="viewtools" aria-label="View controls">
+    <button id="reset-view" class="btn small" type="button" title="Reset camera to the current selection">↺ <span>Reset view</span></button>
+    <button id="label-detail" class="btn small" type="button" aria-pressed="false" title="Show injection labels on the landscape">Landmarks</button>
     <button id="mode" class="btn small" type="button"></button>
   </div>
   <div id="tip" class="tip" hidden></div>
