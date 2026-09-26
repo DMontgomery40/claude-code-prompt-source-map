@@ -10,11 +10,12 @@ import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spans
 const W = 220;            // world width of the whole session
 const H = 32;             // world height of the tallest context
 const ROOT_DEPTH = 7, SUB_DEPTH = 3.4, VALLEY = 9, LANE = 4.2, SIDE_Z = 5.5, STAGE_Z = 15;
-const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -42), el: Number(q.get("el") ?? 26), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -66), pel: Number(q.get("pel") ?? 38) }; })();
+const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); // main ridge: slope depth per unit of height
+const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -42), el: Number(q.get("el") ?? 30), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -50), pel: Number(q.get("pel") ?? 32) }; })();
 const SP = 0.62, CORE_R = 0.24, H1 = 12, LIFT_R = 1.25, LIFT_H = 13;
 const RINGS = 9;
 const FOG = new THREE.Color("#0d121a");
-const LIGHT = new THREE.Vector3(-0.42, 0.78, 0.46).normalize();
+const LIGHT = new THREE.Vector3(-0.38, 0.62, 0.69).normalize();
 
 const VERT = /* glsl */`
 attribute vec4 aB0;
@@ -114,6 +115,10 @@ void main() {
   float rim = pow(1.0 - max(dot(N, V), 0.0), 3.0);
   float shade = (0.34 + 0.2 * hemi + 0.6 * diff) * mix(0.62, 1.0, smoothstep(0.0, 2.5, vW.y));
   vec3 col = base * shade + base * rim * 0.25;
+#ifdef AGENTS
+  // The face carries the data; the slope and cut ends behind it are terrain, a step quieter.
+  if (N.z < 0.9) col *= 0.8;
+#endif
   col *= 1.0 - 0.3 * line;
   // a bright crest line along the top edge of each front face
   if (N.z > 0.9 && tops[6] > 0.0) col = mix(col, vec3(1.0, 0.97, 0.92), 0.55 * (1.0 - smoothstep(0.6, 1.6, (tops[6] - vY) / fw)));
@@ -222,10 +227,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   });
 
   // ---- row geometry ----
-  const rows = []; // for picking: { z, depth, segs: [{ agent, inf, i0, i1, x0, x1, taper }] }
-  const rowZ = new Map(); // agent id -> [{ seg, zFront, depth }]
-  const laneZ = k => -(ROOT_DEPTH + VALLEY) - k * LANE;
-  const profile = u => 1 - Math.pow(u, 2.3);
+  // Each segment is a block: the front face is the data (exact context, layered by stratum), the
+  // back slope and cut ends give it volume. The main ridge is a massif whose slope runs back in
+  // proportion to its height; subagent ridges are shallow blocks in lanes behind it.
+  const rows = []; // for picking: { z, depthOf(h), maxDepth, segs: [{ agent, inf, i0, i1, x0, x1, taper }] }
+  const rowZ = new Map(); // agent id -> [{ seg, zFront }]
+  const rootDepth = h => Math.max(ROOT_DEPTH, h * MASSIF);
+  const subDepth = () => SUB_DEPTH;
+  const rootBack = rootDepth(Math.max(0, ...L.root.requests.map(r => (r.tokens.context || 0) * yScale)));
+  const laneZ = k => -(rootBack + VALLEY) - k * LANE;
+  // a broad rounded shoulder behind the crest, falling away steeply at the back
+  const profile = u => 1 - Math.pow(Math.min(1, Math.max(0, u)), 2.3);
 
   function topsOf(r, scale) {
     const st = r.strata || {};
@@ -243,13 +255,13 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   function buildRidges() {
     const front = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [] };
     const slope = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [] };
-    const addSeg = (agent, inf, seg, zF, depth, taper) => {
+    const addSeg = (agent, inf, seg, zF, depthOf, taper) => {
       const ai = agentIndex.get(agent.id);
       const cols = [];
-      const zero = new Float32Array(8);
-      cols.push({ x: inf.xs[seg.i0] * W - taper, t: zero });
       for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: inf.xs[i] * W, t: topsOf(agent.requests[i], yScale) });
-      cols.push({ x: inf.xs[seg.i1] * W + taper, t: zero });
+      // flat ends a little past the first and last request, so a one-request segment still has width
+      cols.unshift({ x: cols[0].x - taper, t: cols[0].t });
+      cols.push({ x: cols.at(-1).x + taper, t: cols.at(-1).t });
       // front face
       let v0 = front.pos.length / 3;
       for (const c of cols) {
@@ -265,6 +277,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       // slope rings behind the face
       v0 = slope.pos.length / 3;
       for (const c of cols) {
+        const depth = depthOf(c.t[6]);
         for (let r = 0; r <= RINGS; r++) {
           const u = r / RINGS;
           slope.pos.push(c.x, c.t[6] * profile(u), zF - u * depth); slope.nor.push(0, 1, 0);
@@ -278,21 +291,37 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
           slope.idx.push(a, b, b + 1, a, b + 1, a + 1);
         }
       }
+      // cut ends: the massif's cross-section, strata banded by height like the face
+      for (const [c, sx] of [[cols[0], -1], [cols.at(-1), 1]]) {
+        const depth = depthOf(c.t[6]);
+        v0 = slope.pos.length / 3;
+        for (let r = 0; r <= RINGS; r++) {
+          const u = r / RINGS;
+          for (const y of [0, c.t[6] * profile(u)]) {
+            slope.pos.push(c.x, y, zF - u * depth); slope.nor.push(sx, 0, 0);
+            slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai);
+          }
+        }
+        for (let r = 0; r < RINGS; r++) {
+          const a = v0 + r * 2, b = a + 2;
+          slope.idx.push(a, b, b + 1, a, b + 1, a + 1);
+        }
+      }
     };
     const rootSegs = [];
-    for (const seg of rootInfo.segments) { addSeg(L.root, rootInfo, seg, 0, ROOT_DEPTH, 0.18); rootSegs.push({ ...seg, inf: rootInfo, taper: 0.18 }); }
-    rows.push({ z: 0, depth: ROOT_DEPTH, segs: rootSegs });
-    rowZ.set(L.root.id, rootInfo.segments.map(s => ({ seg: s, zFront: 0, depth: ROOT_DEPTH })));
+    for (const seg of rootInfo.segments) { addSeg(L.root, rootInfo, seg, 0, rootDepth, 0.18); rootSegs.push({ ...seg, inf: rootInfo, taper: 0.18 }); }
+    rows.push({ z: 0, depthOf: rootDepth, maxDepth: rootBack, segs: rootSegs });
+    rowZ.set(L.root.id, rootInfo.segments.map(s => ({ seg: s, zFront: 0 })));
     const laneRows = [];
-    for (let k = 0; k < L.lanes; k++) laneRows.push({ z: laneZ(k), depth: SUB_DEPTH, segs: [] });
+    for (let k = 0; k < L.lanes; k++) laneRows.push({ z: laneZ(k), depthOf: subDepth, maxDepth: SUB_DEPTH, segs: [] });
     for (const [id, inf] of L.info) {
       if (inf.agent.kind !== "subagent") continue;
       const list = [];
       for (const seg of inf.segments) {
         const z = laneZ(seg.lane);
-        addSeg(inf.agent, inf, seg, z, SUB_DEPTH, 0.3);
+        addSeg(inf.agent, inf, seg, z, subDepth, 0.3);
         laneRows[seg.lane].segs.push({ ...seg, inf, taper: 0.3 });
-        list.push({ seg, zFront: z, depth: SUB_DEPTH });
+        list.push({ seg, zFront: z });
       }
       rowZ.set(id, list);
     }
@@ -332,8 +361,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const xs = inf.xs;
     const x0 = xs[seg.i0] * W, x1 = xs[seg.i1] * W;
     const ctx = i => (agent.requests[i].tokens.context || 0) * yScale;
-    if (x < x0) return x0 - x > taper ? -1 : ctx(seg.i0) * (1 - (x0 - x) / taper);
-    if (x > x1) return x - x1 > taper ? -1 : ctx(seg.i1) * (1 - (x - x1) / taper);
+    if (x < x0) return x0 - x > taper ? -1 : ctx(seg.i0);
+    if (x > x1) return x - x1 > taper ? -1 : ctx(seg.i1);
     let lo = seg.i0, hi = seg.i1;
     while (hi - lo > 1) { const m = (lo + hi) >> 1; if (xs[m] * W <= x) lo = m; else hi = m; }
     const xa = xs[lo] * W, xb = xs[hi] * W;
@@ -360,7 +389,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const xOf = (agent, i) => (L.info.get(agent.id)?.xs[i] ?? 0) * W;
 
   // ---- ground, gaps, ticks, ruler ----
-  const backZ = laneZ(Math.max(0, L.lanes - 1)) - 8;
+  const backZ = (L.lanes ? laneZ(L.lanes - 1) : -rootBack) - 8;
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(W * 6, 1600).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({
     uniforms: { uFog: shared.uFog, uFocusDist: shared.uFocusDist, uC: { value: new THREE.Vector3(W / 2, 0, backZ / 2) } },
     vertexShader: `varying vec3 vW; varying float vD; void main(){ vec4 w = modelMatrix*vec4(position,1.); vW=w.xyz; vec4 mv=viewMatrix*w; vD=-mv.z; gl_Position=projectionMatrix*mv; }`,
@@ -860,17 +889,19 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     }
     Object.assign(fly, { on: true, t0: performance.now(), dur, p0: camera.position.clone(), p1: pos.clone(), q0: controls.target.clone(), q1: tgt.clone() });
   }
-  const safeNdc = () => {
+  // pad: extra px kept clear on each side, for HTML labels that hang off the fitted points
+  const safeNdc = (pad = {}) => {
     const w = host.clientWidth || 1, h = host.clientHeight || 1;
-    return { x0: -1 + 2 * insets.left / w, x1: 1 - 2 * insets.right / w, y0: -1 + 2 * insets.bottom / h, y1: 1 - 2 * insets.top / h };
+    const l = insets.left + (pad.l || 0), r = insets.right + (pad.r || 0), t = insets.top + (pad.t || 0), b = insets.bottom + (pad.b || 0);
+    return { x0: -1 + 2 * l / w, x1: 1 - 2 * r / w, y0: -1 + 2 * b / h, y1: 1 - 2 * t / h };
   };
   // Fit a box into the safe part of the viewport from a given view direction.
-  function fit(box, dir, center, extra = []) {
+  function fit(box, dir, center, extra = [], pad) {
     const cam = camera.clone();
     const tgt = center.clone();
     const pts = [...extra];
     if (box) for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) pts.push(new THREE.Vector3(x, y, z));
-    const safe = safeNdc();
+    const safe = safeNdc(pad);
     const place = d => { cam.position.copy(tgt).addScaledVector(dir, d); cam.lookAt(tgt); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); };
     const bounds = () => {
       let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
@@ -901,15 +932,31 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     return new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
   };
   function frameL0(dur) {
-    // The tall main ridge in front, the low subagent field behind it.
-    const back = laneZ(Math.max(0, Math.min(L.lanes - 1, 5))) - SUB_DEPTH;
+    // Fit what is actually there: the main ridge's crest and slope foot, the time labels in front,
+    // and the nearest subagent lanes behind (none when the session has no subagents).
     const pts = [];
-    const hi = H * 0.8, lo = Math.min(H * 0.35, 8);
-    for (const x of [-6, W + 3]) {
-      pts.push(new THREE.Vector3(x, 0, SIDE_Z + 8), new THREE.Vector3(x, hi, 0), new THREE.Vector3(x, 0, back), new THREE.Vector3(x, lo, back));
+    const reqs = L.root.requests;
+    const step = Math.max(1, Math.floor(reqs.length / 48));
+    for (const s of rootInfo.segments) {
+      for (let i = s.i0; ; i = Math.min(s.i1, i + step)) {
+        const x = rootInfo.xs[i] * W, h = crest(L.root, i);
+        pts.push(new THREE.Vector3(x, h, 0), new THREE.Vector3(x, 0, -rootDepth(h)));
+        if (i === s.i1) break;
+      }
     }
-    const portrait = host.clientWidth < host.clientHeight;
-    const f = fit(null, dirFrom(portrait ? VIEW.paz : VIEW.az, portrait ? VIEW.pel : VIEW.el), new THREE.Vector3(W / 2, 4, back / 2), pts);
+    for (const x of [-6, W + 3]) pts.push(new THREE.Vector3(x, 0, SIDE_Z + 8));
+    pts.push(new THREE.Vector3(-3, Math.min(H, Math.max(...pts.map(p => p.y)) + 3), 0));
+    if (L.lanes) {
+      const back = laneZ(Math.min(L.lanes - 1, 5)) - SUB_DEPTH;
+      for (const x of [-6, W + 3]) pts.push(new THREE.Vector3(x, 0, back), new THREE.Vector3(x, Math.min(H * 0.35, 8), back));
+    }
+    // Portrait means the free area left beside the panel, not the whole canvas.
+    const w = host.clientWidth - insets.left - insets.right, h = host.clientHeight - insets.top - insets.bottom;
+    const portrait = w < h;
+    const box = new THREE.Box3().setFromPoints(pts);
+    // room for the ruler's tick labels and the row label on the left, flags and cliff labels on top
+    const pad = { l: 60, r: 8, t: 26, b: 22 };
+    const f = fit(null, dirFrom(portrait ? VIEW.paz : VIEW.az, portrait ? VIEW.pel : VIEW.el), box.getCenter(new THREE.Vector3()), pts, pad);
     flyTo(f.pos, f.tgt, dur);
   }
   function frameL1(i, dur) {
@@ -1036,22 +1083,26 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       if (best) return { kind: "action", agentId: best.a.id, reqIdx: best.i };
     }
     let best = null;
-    const test = (z, depthFrac, depth, seg, row) => {
-      const zz = z - depth * depthFrac;
-      const t = (zz - o.z) / d.z;
+    // Slice each row with planes parallel to its face; a point on a slice is inside the block when it
+    // is under the slope's height at that distance behind the face (the slope's depth varies with height).
+    const test = (row, back, seg) => {
+      const t = (row.z - back - o.z) / d.z;
       if (!(t > 0)) return;
       const x = o.x + d.x * t, y = o.y + d.y * t;
       if (x < seg.x0 * W - seg.taper || x > seg.x1 * W + seg.taper) return;
       const h = heightAt(seg.agent, seg.inf, seg, x, seg.taper);
-      if (h < 0 || y < -0.1 || y > h * profile(depthFrac) + 0.05) return;
+      if (h < 0 || y < -0.1) return;
+      const u = back / row.depthOf(h);
+      if (u > 1 || y > h * profile(u) + 0.05) return;
       if (!best || t < best.t) best = { t, kind: "ridge", agentId: seg.agent.id, reqIdx: nearestReq(seg.inf, seg, x) };
     };
     for (const row of rows) {
       const t0 = (row.z - o.z) / d.z;
       const xr = o.x + d.x * t0;
+      const reach = 30 + row.maxDepth * 3;
       for (const seg of row.segs) {
-        if (xr < seg.x0 * W - 30 || xr > seg.x1 * W + 30) continue;
-        for (const f of [0, 0.25, 0.5, 0.75]) test(row.z, f, row.depth, seg, row);
+        if (xr < seg.x0 * W - reach || xr > seg.x1 * W + reach) continue;
+        for (const f of [0, 0.1, 0.2, 0.32, 0.45, 0.6, 0.78]) test(row, row.maxDepth * f, seg);
       }
     }
     for (const s of sideReqs) {

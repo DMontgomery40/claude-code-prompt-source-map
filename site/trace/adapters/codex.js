@@ -27,6 +27,17 @@ function splitLeadingTags(s) {
     out.push({ start: i, end, tag: m[1] });
     i = end;
   }
+  // The Codex app wraps a message that carries attachments or ambient UI state: a file list,
+  // an instruction, maybe a context tag, then "## My request:" and what the user typed.
+  const req = /(^|\n)## My request:[ \t]*\n/.exec(s.slice(i));
+  if (req) {
+    const pre = s.slice(i, i + req.index).trim();
+    if (!pre || pre.startsWith("# Files mentioned by the user:")) {
+      const end = i + req.index + req[0].length;
+      out.push({ start: i, end, tag: pre ? "files-mentioned" : "my-request-header" });
+      i = end;
+    }
+  }
   let a = i, b = s.length;
   while (a < b && /\s/.test(s[a])) a++;
   while (b > a && /\s/.test(s[b - 1])) b--;
@@ -98,6 +109,9 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
         return;
       }
       if (kind0 === "agents_md.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "AGENTS.md", ref: { ...lineRef, path: tpath }, text, carried })); return; }
+      // The app brackets a pasted image with <image name=… path=…> and </image> text items; they are
+      // its markers, not something the user typed.
+      if (/^\s*(?:<image\b[^>]*>|<\/image>)\s*$/.test(text)) { made.push(addBlock(agent, { t, kind: "injected", label: "image marker", ref: { ...lineRef, path: tpath }, text, carried })); return; }
       if (kind0 === "user.text" || (!kind0 && !text.trimStart().startsWith("<"))) {
         for (const seg of splitLeadingTags(text)) {
           const st = text.slice(seg.start, seg.end);

@@ -32,11 +32,11 @@ export const ASK = "Build the thing — café 日本 🎉";
 const JUST = "Publish the branch — 🚀";
 const enc = (n) => "gAAAA" + "x".repeat(n);
 
-function rows(list, t0) {
+export function rows(list, t0) {
   return list.map((r, i) => JSON.stringify({ timestamp: new Date(t0 + i * 1000).toISOString(), ordinal: i, ...r })).join("\n") + "\n";
 }
-const msg = (role, texts, kinds, extra = {}) => ({ type: "response_item", payload: { type: "message", role, content: texts.map((x) => (typeof x === "string" ? { type: role === "assistant" ? "output_text" : "input_text", text: x } : x)), internal_chat_message_metadata_passthrough: { content_item_kinds: kinds }, ...extra } });
-const usage = (response_id, input, cached, output = 50) => ({ type: "token_usage_record", payload: { response_id, usage: { input_tokens: input, cached_input_tokens: cached, cache_write_input_tokens: 0, output_tokens: output, reasoning_output_tokens: 10, total_tokens: input + output } } });
+export const msg = (role, texts, kinds, extra = {}) => ({ type: "response_item", payload: { type: "message", role, content: texts.map((x) => (typeof x === "string" ? { type: role === "assistant" ? "output_text" : "input_text", text: x } : x)), internal_chat_message_metadata_passthrough: { content_item_kinds: kinds }, ...extra } });
+export const usage = (response_id, input, cached, output = 50) => ({ type: "token_usage_record", payload: { response_id, usage: { input_tokens: input, cached_input_tokens: cached, cache_write_input_tokens: 0, output_tokens: output, reasoning_output_tokens: 10, total_tokens: input + output } } });
 
 export function codexFiles() {
   const t0 = Date.parse("2026-01-01T00:00:00Z");
