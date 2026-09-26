@@ -41,7 +41,8 @@ function setupLoader() {
     const files = [...e.target.files].map(f => ({ path: f.webkitRelativePath || f.name, file: f }));
     if (!files.length) return;
     pickedRoots.set(e.target.dataset.product, files);
-    loadFiles(narrowPicked(files, pasted));
+    loadFiles(narrowPicked(files, pasted), pasted?.id || null);
+    e.target.value = "";
   });
   if (params.has("dev")) window.__traceDev = { filesFromHandle, narrowPicked, parsePaste };
   $("#dev-model").addEventListener("change", async e => {
@@ -121,6 +122,16 @@ function getWorker() {
     if (data.type === "progress") {
       const frac = data.total ? data.done / data.total : null;
       const mb = n => `${(n / 1048576).toFixed(n > 1e8 ? 0 : 1)} MB`;
+      if (data.phase === "narrow") {
+        // With a root hint the loader first narrows the picked tree to that session (counts are files).
+        const f = data.found;
+        if (data.final && f) {
+          const kids = [f.subagents ? `${fmtInt(f.subagents)} subagent${f.subagents === 1 ? "" : "s"}` : null,
+            f.guardians ? `${fmtInt(f.guardians)} guardian review${f.guardians === 1 ? "" : "s"}` : null].filter(Boolean);
+          setProgress(0.08, `Found the ${f.product === "codex" ? "Codex" : "Claude Code"} session${kids.length ? ` + ${kids.join(" and ")}` : ""}. Reading…`);
+        } else setProgress(data.total ? 0.08 * data.done / data.total : null, `Finding the session: ${fmtInt(data.done)} of ${fmtInt(data.total)} files checked`);
+        return;
+      }
       const what = { scan: "Finding sessions", parse: "Reading", build: "Building the landscape", done: "Done" }[data.phase] || "Reading";
       const file = data.file ? ` · ${String(data.file).split("/").pop()}` : "";
       setProgress(frac, data.total ? `${what}: ${mb(data.done)} of ${mb(data.total)}${file}` : `${what}…`);
@@ -170,14 +181,17 @@ async function parseInWorker(files, root) {
   });
 }
 
-async function loadFiles(files) {
+// `root` is the pasted session id when the open button made this load. A plain drop or file pick
+// sends the pasted id only if some dropped path names it, so a stale paste can't block a drop.
+async function loadFiles(files, root) {
   if (!files || !files.length) return;
   const logs = files.filter(f => /\.(jsonl|json)$/i.test(f.path));
   if (!logs.length) return showError("No .jsonl session logs in what was dropped.");
+  if (root === undefined) root = pasteRoot && files.some(f => f.path.includes(pasteRoot)) ? pasteRoot : null;
   setProgress(0, `Reading ${fmtInt(files.length)} files…`);
   lastFiles = files;
   try {
-    const trace = await parseInWorker(files, pasteRoot);
+    const trace = await parseInWorker(files, root);
     text = workerText;
     start(trace);
   } catch (e) {
@@ -290,7 +304,7 @@ function copyRoot(product) {
 async function openPasted(info, btn, hint) {
   pasteRoot = info.id;
   const mem = pickedRoots.get(info.product);
-  if (mem) return loadFiles(narrowPicked(mem, info));
+  if (mem) return loadFiles(narrowPicked(mem, info), info.id);
   if (typeof window.showDirectoryPicker === "function") {
     let handle = await storedHandle(info.product);
     if (handle && !(await readPermission(handle))) handle = null;
@@ -313,7 +327,7 @@ async function openPasted(info, btn, hint) {
         btn.disabled = false;
         return showError(`That folder doesn't hold this session. Pick ${ROOT_DIR[info.product]}.`);
       }
-      return loadFiles(files);
+      return loadFiles(files, info.id);
     } catch (e) {
       btn.disabled = false;
       return showError(`Couldn't read that folder: ${e?.message || e}`);
