@@ -6,16 +6,19 @@ import * as THREE from "./vendor/three.module.min.js";
 import { OrbitControls } from "./vendor/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "./vendor/CSS2DRenderer.js";
 import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, freshTokens, unloggedShrinks, agentStats, clip } from "./panels.js";
+import { createMapOverview, overviewAgentData } from "./map-overview.js";
+import { zoomCamera, panCameraTo } from "./map-camera.js";
 import { blockPart } from "./model.js";
-import { BASE_H, landscapeRule, tread, treadAt, crestEvents, placeLabel, modelSwitches } from "./scene-rules.js";
+import { BASE_H, landscapeRule, tread, treadAt, crestEvents, placeLabel, modelSwitches, mapDetail, clusterMapPoints, cappedMarkerHeight, terrainPlacement } from "./scene-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
-const ROOT_DEPTH = 7, SUB_DEPTH = 3.4, VALLEY = 9, LANE = 4.2, SIDE_Z = 5.5, STAGE_Z = 15;
+const ROOT_DEPTH = 7, STAGE_Z = 15;
+const { subDepth: SUB_DEPTH, sideZ: SIDE_Z, laneZ } = terrainPlacement();
 const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); // main ridge: slope depth per unit of height
-const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -42), el: Number(q.get("el") ?? 30), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -50), pel: Number(q.get("pel") ?? 32), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
+const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -25), el: Number(q.get("el") ?? 40), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -32), pel: Number(q.get("pel") ?? 42), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
 const SP = 0.62, CORE_R = 0.24, H1 = 12, LIFT_R = 1.25, LIFT_H = 13;
 const RINGS = 9;
-const FOG = new THREE.Color("#0d121a");
+const FOG = new THREE.Color("#0a141e");
 const LIGHT = new THREE.Vector3(-0.38, 0.62, 0.69).normalize();
 
 const VERT = /* glsl */`
@@ -165,12 +168,16 @@ attribute vec2 iPx;
 uniform vec2 uRes;
 uniform float uDpr;
 uniform float uHead;
+uniform float uMaxHeight;
 varying vec3 vC;
 varying vec2 vP;
 varying float vW;
 void main() {
   vec4 a = projectionMatrix * viewMatrix * vec4(iBase, 1.0);
   vec4 b = projectionMatrix * viewMatrix * vec4(iBase + vec3(0.0, iLen, 0.0), 1.0);
+  float heightPx = length((b.xy / b.w - a.xy / a.w) * uRes * 0.5);
+  float cap = min(1.0, uMaxHeight * uDpr / max(heightPx, 0.001));
+  b.xy = mix(a.xy / a.w, b.xy / b.w, cap) * b.w;
   vC = iColor;
   vP = position.xy;
   if (uHead > 0.5) {
@@ -205,7 +212,7 @@ void main() {
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export function createScene(host, { trace, layout: L, reducedMotion, onHover, onPick }) {
+export function createScene(host, { trace, layout: L, reducedMotion, onHover, onPick, onMapFocus = () => {}, onViewChange = () => {} }) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
@@ -216,12 +223,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   host.append(labels.domElement);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(VIEW.fov, 1, 0.5, 4000);
+  const camera = new THREE.PerspectiveCamera(VIEW.fov, 1, 0.03, 4000);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = !reducedMotion;
   controls.dampingFactor = 0.09;
   controls.maxPolarAngle = Math.PI * 0.49;
-  controls.minDistance = 4;
+  controls.minDistance = 0.35;
+  controls.enableZoom = false; // optical map zoom below never drives the camera inside a ridge
+  controls.zoomSpeed = 1.25;
+  controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
+  controls.mouseButtons.RIGHT = THREE.MOUSE.ROTATE;
+  controls.touches.ONE = THREE.TOUCH.PAN;
   controls.maxDistance = 900;
   controls.screenSpacePanning = true;
 
@@ -263,13 +275,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // ---- row geometry ----
   // Each segment is a block: the front face is the data (exact context, layered by stratum), the
   // back slope and cut ends give it volume. The main ridge is a massif whose slope runs back in
-  // proportion to its height; subagent ridges are shallow blocks in lanes behind it.
+  // proportion to its height; subagent ridges are shallow blocks in the field in front of it.
   const rows = []; // for picking: { z, depthOf(h), maxDepth, segs: [{ agent, inf, i0, i1, x0, x1, taper }] }
   const rowZ = new Map(); // agent id -> [{ seg, zFront }]
   const rootDepth = h => Math.max(ROOT_DEPTH, h * massif);
   const subDepth = () => SUB_DEPTH;
   const rootBack = rootDepth(Math.max(0, ...L.root.requests.map(r => (r.tokens.context || 0) * yScale)));
-  const laneZ = k => -(rootBack + VALLEY) - k * LANE;
   // a broad rounded shoulder behind the crest, falling away steeply at the back; a single massif keeps
   // a flatter plateau, so its request-by-request terraces run back from the face where they can be seen
   const shoulder = rule.compact ? 3.5 : 2.3;
@@ -403,8 +414,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const [frontMesh, slopeMesh, ridgeMat] = buildRidges();
   const world = new THREE.Group();
   world.add(frontMesh, slopeMesh);
-  // Subagent ridges sit behind a main ridge that can be many times taller, which hides them from most
-  // angles. Their front faces are drawn again where occluded, as translucent silhouettes.
+  // Keep occluded agent crests legible when the user orbits behind another row.
   const xrayMat = strataMaterial({ AGENTS: "", XRAY: "" });
   Object.assign(xrayMat, { transparent: true, depthWrite: false, depthFunc: THREE.GreaterDepth, side: THREE.FrontSide });
   const xray = new THREE.Mesh(frontMesh.geometry, xrayMat);
@@ -449,12 +459,13 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const xOf = (agent, i) => (L.info.get(agent.id)?.xs[i] ?? 0) * W;
 
   // ---- ground, gaps, ticks, ruler ----
-  const backZ = (L.lanes ? laneZ(L.lanes - 1) : -rootBack) - 8;
+  const backZ = -rootBack - 8;
+  const fieldFront = L.lanes ? laneZ(L.lanes - 1) + 8 : SIDE_Z + 8;
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(W * 6, 1600).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({
-    uniforms: { uFog: shared.uFog, uFocusDist: shared.uFocusDist, uC: { value: new THREE.Vector3(W / 2, 0, backZ / 2) } },
+    uniforms: { uFog: shared.uFog, uFocusDist: shared.uFocusDist, uC: { value: new THREE.Vector3(W / 2, 0, (backZ + fieldFront) / 2) } },
     vertexShader: `varying vec3 vW; varying float vD; void main(){ vec4 w = modelMatrix*vec4(position,1.); vW=w.xyz; vec4 mv=viewMatrix*w; vD=-mv.z; gl_Position=projectionMatrix*mv; }`,
     fragmentShader: `${HAZE} uniform vec3 uFog; uniform vec3 uC; varying vec3 vW; varying float vD;
-      void main(){ vec2 d = (vW.xz - uC.xz) / vec2(${(W * 0.62).toFixed(1)}, ${Math.max(60, -backZ * 0.8).toFixed(1)});
+      void main(){ vec2 d = (vW.xz - uC.xz) / vec2(${(W * 0.62).toFixed(1)}, ${Math.max(60, (fieldFront - backZ) * 0.6).toFixed(1)});
         float pool = exp(-dot(d,d)*1.6);
         vec3 c = mix(vec3(0.010,0.013,0.019), vec3(0.030,0.040,0.058), pool);
         gl_FragColor = vec4(mix(c, uFog, haze(vW, vD)), 1.0);
@@ -473,7 +484,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
 
   // ---- landmarks: flags (asks), pins (actions), instruction-like markers, cairns (side calls) ----
-  const pinUniforms = { uRes: { value: new THREE.Vector2(1, 1) }, uDpr: { value: 1 } };
+  const pinUniforms = { uRes: { value: new THREE.Vector2(1, 1) }, uDpr: { value: 1 }, uMaxHeight: { value: 58 } };
   // Instanced screen-space pins; set(list) with [{ x, y, z, len, color, w (shaft px), r (head px) }].
   function makePins(cap, withHeads) {
     const n = Math.max(1, cap);
@@ -517,15 +528,24 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const n = Math.max(1, items.length);
     const edge = new THREE.InstancedMesh(pennantEdge, flagMats[0], n), pen = new THREE.InstancedMesh(pennant, flagMats[1], n);
     const m = new THREE.Matrix4();
-    items.forEach((f, i) => {
-      m.makeScale(f.h * 0.55, f.h * 0.5, 1).setPosition(f.x, f.y + f.h * 0.5, f.z); pen.setMatrixAt(i, m);
-      m.setPosition(f.x, f.y + f.h * 0.5, f.z - 0.04); edge.setMatrixAt(i, m);
-    });
-    edge.count = pen.count = items.length;
-    edge.frustumCulled = pen.frustumCulled = false;
     const poles = makePins(items.length, false);
-    poles.userData.set(items.map(f => ({ x: f.x, y: f.y, z: f.z, len: f.h, color: youHex, w: 5.4 })));
     const g = new THREE.Group(); g.add(edge, pen, poles);
+    g.userData.update = () => {
+      const visible = items.map(f => ({ ...f, ...projectMapPoint(new THREE.Vector3(f.x, f.y, f.z)), kind: 'ask' })).filter(inMap);
+      const kept = clusterMapPoints(visible, detail.cell).map(c => c.point);
+      kept.forEach((f, i) => {
+        const top = projectMapPoint(new THREE.Vector3(f.x, f.y + f.h, f.z));
+        const h = cappedMarkerHeight(f.h, Math.hypot(top.px - f.px, top.py - f.py), 40);
+        m.makeScale(h * 0.55, h * 0.5, 1).setPosition(f.x, f.y + h * 0.5, f.z); pen.setMatrixAt(i, m);
+        m.setPosition(f.x, f.y + h * 0.5, f.z - 0.01); edge.setMatrixAt(i, m);
+        f.visibleHeight = h;
+      });
+      edge.count = pen.count = kept.length;
+      edge.instanceMatrix.needsUpdate = pen.instanceMatrix.needsUpdate = true;
+      poles.userData.set(kept.map(f => ({ x: f.x, y: f.y, z: f.z, len: f.visibleHeight, color: youHex, w: 3.4 })));
+    };
+    edge.count = pen.count = 0;
+    edge.frustumCulled = pen.frustumCulled = false;
     return g;
   }
   const rootAsks = L.root.asks.map(a => {
@@ -541,6 +561,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     a.requests.forEach((r, i) => { if (r.action && STATUS[r.action.class]) allActs.push({ a, i, cls: r.action.class }); });
   }
   const pins = makePins(allActs.length, true);
+  let beamCandidates = [];
   const beamPick = []; // [{a, i, x, y0, y1, z}]
   function layoutBeams(lens) {
     const list = [];
@@ -556,9 +577,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       // Only outward pins carry a head in a session with a subagent field, so hundreds of reads stay a fringe, not a fence.
       const head = act.cls === "outward" ? 6 : !rule.compact ? 0 : act.cls === "write" ? 4.5 : 3.5;
       list.push({ x, y, z, len: tall, color: STATUS[act.cls].color, w: act.cls === "outward" ? 6.4 : 5.4, r: head });
-      beamPick.push({ a: act.a, i: act.i, x, y0: y, y1: y + tall, z });
+      beamPick.push({ a: act.a, i: act.i, kind: act.cls, x, y0: y, y1: y + tall, z });
     }
-    pins.userData.set(list);
+    beamCandidates = list.map((p, i) => ({ ...p, ...beamPick[i], kind: beamPick[i].kind }));
   }
   world.add(pins);
 
@@ -727,9 +748,11 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   world.add(ruler);
 
   // ---- labels (pooled per level; only what is in focus) ----
-  const labelGroups = { l0: new THREE.Group(), l1: new THREE.Group(), l2: new THREE.Group() };
+  let detailedLabels = false;
+  let overviewDistance = 1, detail = mapDetail(1), mapZoom = 1;
+  const labelGroups = { l0: new THREE.Group(), l1: new THREE.Group(), l2: new THREE.Group(), map: new THREE.Group() };
   Object.values(labelGroups).forEach(g => scene.add(g));
-  const PRIO = { corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
+  const PRIO = { focus: 10, request: 6, agent: 5, cluster: 4, corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
   function label(text, cls, pos, center = [0.5, 0.5], group = labelGroups.l0, onClick) {
     const div = document.createElement(onClick ? "button" : "div");
     div.className = `lbl ${cls || ""}`;
@@ -760,13 +783,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     }
     items.sort((a, b) => b.p - a.p);
     // In a tall, narrow viewport the landscape keeps only its cliff and row labels.
-    const sparse = level === 0 && w < h;
-    const box = { x0: 2, x1: w - insets.right + 4, y0: insets.top - 8, y1: h - 2 };
+    const sparse = level === 0 && w < h && detail.level === 0;
+    const box = { x0: 2, x1: w - insets.right + 4, y0: insets.top - 8, y1: h - insets.bottom + 8 };
     const placed = [];
     let moved = false;
     for (const it of items) {
       // its own anchor first; a landmark label mirrors its anchor before it gives up its place
-      const at = sparse && it.p < 5 ? null : placeLabel(it, box, placed);
+      const quietEvent = level === 0 && !detailedLabels && detail.level < 2 && it.e.classList.contains("event");
+      const at = quietEvent || (sparse && it.p < 5) ? null : placeLabel(it, box, placed);
       const hide = !at;
       if ((it.e.style.visibility === "hidden") !== hide) it.e.style.visibility = hide ? "hidden" : "";
       if (!at) continue;
@@ -825,12 +849,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const r0 = rootInfo.segments[0];
     if (r0) label(L.root.kind === "root" ? "main thread" : L.root.name, "row", new THREE.Vector3(rootInfo.xs[r0.i0] * W, crest(L.root, r0.i0) + 4, -1), [0.5, 1], g);
     const nSub = agents.filter(a => a.kind === "subagent").length;
-    // One quiet label behind the subagent field. A shallow field sits right behind the main ridge,
-    // so its label is raised above the ridge's crest to stay clear of the ridge face.
+    // A quiet label along the front edge of the subagent field.
     if (L.lanes) {
-      let rise = 0;
-      if (L.lanes < 4) rootInfo.xs.forEach((x, i) => { if (x > 0.35 && x < 0.65) rise = Math.max(rise, crest(L.root, i) * 1.05 + 1.5); });
-      label(`subagents (${nSub})`, "row quiet", new THREE.Vector3(W * 0.5, rise, laneZ(L.lanes - 1) - SUB_DEPTH - 2), [0.5, 1], g);
+      label(`subagents (${nSub})`, "row quiet", new THREE.Vector3(W * 0.5, 0, fieldFront), [0.5, 1], g);
     }
   }
   buildL0Labels();
@@ -992,6 +1013,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       agentData[(AW + i) * 4] = next === "agents" && a.kind === "root" ? 0.35 : baseEm(a);
     });
     agentTex.needsUpdate = true;
+    miniTex.image.data.set(overviewAgentData(agentData, agents, next));
+    miniTex.needsUpdate = true;
     layoutBeams(next);
     flags.visible = next === "context" || next === "egress";
     warnMesh.visible = next === "inflow";
@@ -1017,7 +1040,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     labelGroups.l0.visible = level === 0;
     ruler.visible = level === 0;
     eventLines.visible = level === 0;
-    xray.visible = level === 0;
+    xray.visible = level === 0 && detail.level < 2;
+    labelGroups.map.visible = level === 0;
     cliffLines.visible = level === 0;
   }
 
@@ -1038,6 +1062,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   };
   // Fit a box into the safe part of the viewport from a given view direction.
   function fit(box, dir, center, extra = [], pad) {
+    camera.zoom = 1; camera.updateProjectionMatrix();
     const cam = camera.clone();
     const tgt = center.clone();
     const pts = [...extra];
@@ -1046,7 +1071,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const place = d => { cam.position.copy(tgt).addScaledVector(dir, d); cam.lookAt(tgt); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); };
     const bounds = () => {
       let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
-      for (const p of pts) { const v = p.clone().project(cam); x0 = Math.min(x0, v.x); x1 = Math.max(x1, v.x); y0 = Math.min(y0, v.y); y1 = Math.max(y1, v.y); }
+      const v = new THREE.Vector3();
+      for (const p of pts) { v.copy(p).project(cam); x0 = Math.min(x0, v.x); x1 = Math.max(x1, v.x); y0 = Math.min(y0, v.y); y1 = Math.max(y1, v.y); }
       return { x0, x1, y0, y1 };
     };
     let d = 50;
@@ -1073,24 +1099,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     return new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
   };
   function frameL0(dur) {
-    // Fit what is actually there: the main ridge's crest and slope foot, the time labels in front,
-    // and the nearest subagent lanes behind (none when the session has no subagents).
-    const pts = [];
-    const reqs = L.root.requests;
-    const step = Math.max(1, Math.floor(reqs.length / 48));
-    for (const s of rootInfo.segments) {
-      for (let i = s.i0; ; i = Math.min(s.i1, i + step)) {
-        const x = rootInfo.xs[i] * W, h = crest(L.root, i);
-        pts.push(new THREE.Vector3(x, h, 0), new THREE.Vector3(x, 0, -rootDepth(h)));
-        if (i === s.i1) break;
-      }
-    }
+    // Every vertex contributes to these bounds, including every subagent lane.
+    const pts = [...terrainPoints];
     for (const x of [-6, W + 3]) pts.push(new THREE.Vector3(x, 0, SIDE_Z + 8));
-    pts.push(new THREE.Vector3(RX, Math.min(H, Math.max(...pts.map(p => p.y)) + 3), 0));
-    if (L.lanes) {
-      const back = laneZ(Math.min(L.lanes - 1, 5)) - SUB_DEPTH;
-      for (const x of [-6, W + 3]) pts.push(new THREE.Vector3(x, 0, back), new THREE.Vector3(x, Math.min(H * 0.35, 8), back));
-    }
+    pts.push(new THREE.Vector3(RX, terrainBounds.max.y + 3, 0));
     // Portrait means the free area left beside the panel, not the whole canvas.
     const w = host.clientWidth - insets.left - insets.right, h = host.clientHeight - insets.top - insets.bottom;
     const portrait = w < h;
@@ -1100,6 +1112,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // A single massif is seen nearly side-on, so its stepped profile reads the way the 2D chart does.
     const [az, el] = rule.compact ? (portrait ? [VIEW.cpaz, VIEW.cpel] : [VIEW.caz, VIEW.cel]) : (portrait ? [VIEW.paz, VIEW.pel] : [VIEW.az, VIEW.el]);
     const f = fit(null, dirFrom(az, el), box.getCenter(new THREE.Vector3()), pts, pad);
+    overviewDistance = f.pos.distanceTo(f.tgt);
     flyTo(f.pos, f.tgt, dur);
   }
   function frameL1(i, dur) {
@@ -1120,11 +1133,43 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     flyTo(f.pos, f.tgt, dur);
   }
 
+  frontMesh.geometry.computeBoundingBox(); slopeMesh.geometry.computeBoundingBox();
+  const terrainBounds = frontMesh.geometry.boundingBox.clone().union(slopeMesh.geometry.boundingBox);
+  const terrainPoints = [];
+  for (const row of rows) for (const seg of row.segs) {
+    for (let i=seg.i0; i<=seg.i1; i++) {
+      const h=crest(seg.agent,i), x=xOf(seg.agent,i);
+      for (const edge of i===seg.i0 || i===seg.i1 ? [x-seg.taper,x+seg.taper] : [x]) {
+        terrainPoints.push(new THREE.Vector3(edge,h,row.z),new THREE.Vector3(edge,0,row.z-row.depthOf(h)),new THREE.Vector3(edge,0,row.z));
+      }
+    }
+  }
+  for (const s of sideReqs) {
+    const p=new THREE.Vector3(s.x,2.4,SIDE_Z+.55);
+    terrainBounds.expandByPoint(p);terrainPoints.push(p);
+  }
+  // The overview shares the very same vertex buffers as the landscape. Its agent
+  // texture stays visible when the inspector extracts an individual core.
+  const miniData = new Float32Array(agentData.length);
+  for (let i=0; i<AW; i++) miniData[(AW+i)*4]=1;
+  const miniTex = new THREE.DataTexture(miniData, AW, 2, THREE.RGBAFormat, THREE.FloatType);
+  miniTex.needsUpdate=true;
+  const miniMat = strataMaterial({AGENTS:''}, {uAgents:{value:miniTex},uFocusDist:{value:10000}});
+  const miniCairns = cairns.clone();
+  miniCairns.userData.pickInstance = i => sideReqs[i] ? {agentId:sideReqs[i].a.id,reqIdx:sideReqs[i].i} : null;
+  const navigator = createMapOverview({
+    meshes:[new THREE.Mesh(frontMesh.geometry,miniMat),new THREE.Mesh(slopeMesh.geometry,miniMat),miniCairns],
+    bounds:terrainBounds, points:terrainPoints, direction:dirFrom(rule.compact?VIEW.caz:VIEW.az,rule.compact?VIEW.cel:VIEW.el),
+    layout:L, agents, width:W, onPick:p=>onPick({...p,intent:'locate'})
+  });
+
   // ---- state ----
-  let level = 0, cursor = -1;
+  let level = 0, cursor = -1, mapSelection = null;
   function show(S) {
+    mapSelection = S.mapSelection || null;
     const agent = S.agentId ? agents[agentIndex.get(S.agentId)] : null;
     const prevLevel = level;
+    if (S.level === 0 || S.level !== level || S.lens !== lens) sentFocusKey = "";
     level = S.level;
     selStratum = S.level >= 3 ? S.stratum : null;
     if (S.lens !== lens) setLens(S.lens);
@@ -1187,6 +1232,151 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   rulerL1.visible = false;
   scene.add(rulerL1);
 
+  // ---- map zoom: screen density, progressive labels and a stable viewport focus ----
+  function projectMapPoint(v) {
+    const local = v.clone().applyMatrix4(camera.matrixWorldInverse), p = v.clone().project(camera);
+    return { px: (p.x + 1) * host.clientWidth / 2, py: (1 - p.y) * host.clientHeight / 2, depth: -local.z };
+  }
+  function inMap(p) {
+    return p.depth > camera.near && p.px >= insets.left + 8 && p.px <= host.clientWidth - insets.right - 8 && p.py >= insets.top + 8 && p.py <= host.clientHeight - insets.bottom - 8;
+  }
+  function zoomMap(factor, screen) {
+    onViewChange();
+    fly.on = false;
+    const x = screen?.x ?? (insets.left + host.clientWidth - insets.right) / 2;
+    const y = screen?.y ?? (insets.top + host.clientHeight - insets.bottom) / 2;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const hit = level === 0 ? pickAt(rect.left + x, rect.top + y) : null;
+    const anchor = hit?.t ? ray.ray.at(hit.t, new THREE.Vector3()) : undefined;
+    zoomCamera(camera, controls.target, factor, x, y, host.clientWidth, host.clientHeight, anchor);
+    controls.update(); dirty = 3;
+  }
+  renderer.domElement.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = renderer.domElement.getBoundingClientRect();
+    const delta = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? host.clientHeight : 1);
+    zoomMap(Math.exp(-Math.max(-400, Math.min(400, delta)) * 0.002), { x: e.clientX - rect.left, y: e.clientY - rect.top });
+  }, { passive: false });
+  const touchPoints = new Map();
+  let pinchDistance = null;
+  renderer.domElement.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') touchPoints.set(e.pointerId, { x: e.clientX, y: e.clientY }); });
+  renderer.domElement.addEventListener('pointermove', e => {
+    if (!touchPoints.has(e.pointerId)) return;
+    touchPoints.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (touchPoints.size !== 2) { pinchDistance = null; return; }
+    const [a, b] = [...touchPoints.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinchDistance && d) { const rect = renderer.domElement.getBoundingClientRect(); zoomMap(d / pinchDistance, { x: (a.x + b.x) / 2 - rect.left, y: (a.y + b.y) / 2 - rect.top }); }
+    pinchDistance = d;
+  });
+  for (const event of ['pointerup', 'pointercancel']) renderer.domElement.addEventListener(event, e => { touchPoints.delete(e.pointerId); pinchDistance = null; });
+  const mapLines = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: '#c8dfef', transparent: true, opacity: 0.16 }));
+  scene.add(mapLines);
+  let detailAt = -Infinity, lastFocusKey = '', focusSince = 0, sentFocusKey = '';
+  function updateMapDetail(now) {
+    camera.updateMatrixWorld();
+    mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
+    detail = mapDetail(mapZoom, detail.level);
+    host.dataset.mapDetail = detail.name;
+    const status = document.querySelector('#zoom-status');
+    if (status) status.textContent = `${mapZoom.toFixed(1)}× · ${level === 0 ? detail.name : 'Detail'}`;
+    if (flags.visible) flags.userData.update();
+    if (stage.flags?.visible) stage.flags.userData.update();
+    if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; return; }
+    xray.visible = detail.level < 2;
+    const linkFade = lens === "agents" ? 1 : Math.min(1, 1 / (mapZoom * mapZoom));
+    spawnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.85 : 0.1) * linkFade;
+    returnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.95 : 0.14) * linkFade;
+    if (now - detailAt < 90) { dirty = Math.max(dirty, 2); return; }
+    detailAt = now;
+    const points = beamCandidates.map(b => ({ ...b, ...projectMapPoint(new THREE.Vector3(b.x, b.y0, b.z)) })).filter(inMap);
+    const clusters = clusterMapPoints(points, detail.cell);
+    beamPick.length = 0;
+    const draw = clusters.map(({ point: b, count }) => {
+      const top = projectMapPoint(new THREE.Vector3(b.x, b.y1, b.z));
+      const ratio = Math.min(1, 58 / Math.max(0.001, Math.hypot(top.px - b.px, top.py - b.py)));
+      beamPick.push({ ...b, count, tipX: b.px + (top.px - b.px) * ratio, tipY: b.py + (top.py - b.py) * ratio });
+      return b;
+    });
+    pins.userData.set(draw);
+    const g = labelGroups.map; clearGroup(g); g.visible = true;
+    const grouped = beamPick.filter(b => b.count > 1).sort((a, b) => b.count - a.count).slice(0, detail.level ? 18 : 10);
+    for (const b of grouped) {
+      const top = projectMapPoint(new THREE.Vector3(b.x, b.y1, b.z));
+      const height = cappedMarkerHeight(b.y1 - b.y0, Math.hypot(top.px - b.px, top.py - b.py), 58);
+      const o = label(String(b.count), 'cluster', new THREE.Vector3(b.x, b.y0 + height, b.z), [0.5, 1.2], g,
+        () => zoomMap(1.55, { x: b.px, y: b.py }));
+      o.element.title = `${b.count} ${b.kind === 'outward' ? 'external actions' : b.kind === 'write' ? 'file changes' : 'reads'} · zoom to separate`;
+      o.element.setAttribute('aria-label', o.element.title);
+    }
+    mapLines.visible = detail.level >= 2;
+    const center = { x: (insets.left + host.clientWidth - insets.right) / 2, y: (insets.top + host.clientHeight - insets.bottom) / 2 };
+    const nearby = [];
+    for (const agent of detail.level ? agents : []) {
+      if (!rowZ.has(agent.id)) continue;
+      for (let i = 0; i < agent.requests.length; i++) {
+        const top = new THREE.Vector3(xOf(agent, i), crest(agent, i), zOf(agent, i) + 0.1);
+        const base = top.clone().setY(0), a = projectMapPoint(base), b = projectMapPoint(top);
+        if (a.depth <= camera.near || b.depth <= camera.near) continue;
+        const dx = b.px - a.px, dy = b.py - a.py;
+        const t = Math.max(0, Math.min(1, ((center.x - a.px) * dx + (center.y - a.py) * dy) / (dx * dx + dy * dy || 1)));
+        const u = t * b.depth / ((1 - t) * a.depth + t * b.depth);
+        const pos = base.lerp(top, u), p = projectMapPoint(pos);
+        if (!inMap(p)) continue;
+        nearby.push({ agent, i, pos, top, ...p, score: Math.hypot(p.px - center.x, p.py - center.y) + p.depth * 0.025 });
+      }
+    }
+    nearby.sort((a, b) => a.score - b.score || a.depth - b.depth);
+    const rect = renderer.domElement.getBoundingClientRect();
+    const hit = detail.level ? pickAt(rect.left + center.x, rect.top + center.y) : null;
+    const focus = nearby.find(p => p.agent.id === mapSelection?.agentId && p.i === mapSelection?.reqIdx) || nearby.find(p => p.agent.id === hit?.agentId && p.i === hit?.reqIdx) || nearby[0];
+    if (focus) { nearby.splice(nearby.indexOf(focus), 1); nearby.unshift(focus); }
+    const agentSeen = new Set(), requestCells = new Set();
+    const linePoints = [];
+    for (const item of nearby) {
+      const { agent, i, pos } = item, r = agent.requests[i];
+      if (detail.level >= 1 && !agentSeen.has(agent.id) && agentSeen.size < 14) {
+        agentSeen.add(agent.id);
+        const o = label(agent.kind === 'root' ? 'Main thread' : agent.name || agent.id, 'agent', pos.clone().add(new THREE.Vector3(0, 0.4, 0)), [0.5, 1.8], g, () => onPick({ level: 1, agentId: agent.id, reqIdx: i }));
+        o.userData.flip = true;
+      }
+      if (detail.level < 2) continue;
+      const cell = `${Math.floor(item.px / 135)}:${Math.floor(item.py / 48)}`;
+      if (requestCells.has(cell) || requestCells.size >= detail.labelBudget) continue;
+      requestCells.add(cell);
+      const action = r.action?.tool ? ` · ${r.action.tool.split('__').at(-1)}` : '';
+      const text = detail.level >= 3 && action ? `${r.action.tool.split('__').at(-1)} ↗ · #${i + 1} · ${fmtTok(r.tokens.context)} context` : `#${i + 1} · ${fmtTok(r.tokens.context)} context`;
+      const o = label(text, (mapSelection ? mapSelection.agentId === agent.id && mapSelection.reqIdx === i : item === focus) ? 'focus' : 'request', pos, [0.5, 1], g, () => onPick({ level: 2, agentId: agent.id, reqIdx: i, intent: detail.level >= 3 && r.action?.kind === 'tool' ? 'action' : 'request' }));
+      o.userData.flip = true;
+      o.element.title = `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${i + 1} · ${fmtClock(r.t)} · ${fmtTok(r.tokens.context)} tokens in context${r.action?.tool ? ` · Open ${r.action.tool} call` : ''}`;
+      linePoints.push(pos.x, 0, pos.z, pos.x, item.top.y, pos.z);
+    }
+    mapLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
+    mapLines.geometry.computeBoundingSphere();
+    let stratum = null;
+    if (detail.level >= 3 && focus) {
+      const r = focus.agent.requests[focus.i], tops = topsOf(r, yScale);
+      let bottom = 0, best = Infinity;
+      STRATA.forEach((s, j) => {
+        const top = tops[j], pos = new THREE.Vector3(focus.pos.x, (bottom + top) / 2, focus.pos.z + 0.05);
+        bottom = top;
+        if (!(r.strata?.[s.key] > 0)) return;
+        const p = projectMapPoint(pos);
+        if (!inMap(p)) return;
+        const score = Math.hypot(p.px - center.x, p.py - center.y);
+        if (score < best) { best = score; stratum = s.key; }
+        const o = label(`${s.name} · ≈ ${fmtTok(r.strata[s.key])}`, `stratum s-${s.key}`, pos, [0, 0.5], g, () => onPick({ level: 3, agentId: focus.agent.id, reqIdx: focus.i, stratum: s.key }));
+        o.element.style.setProperty('--c', s.color); o.userData.flip = true;
+      });
+    }
+    const state = detail.level && focus ? { detail: detail.level, agentId: focus.agent.id, reqIdx: focus.i, stratum } : null;
+    const key = state ? `${state.detail}:${state.agentId}:${state.detail > 1 ? state.reqIdx : ''}:${state.stratum || ''}` : 'overview';
+    if (key !== lastFocusKey) { lastFocusKey = key; focusSince = now; }
+    if (key !== sentFocusKey) {
+      if (now - focusSince >= 180) { sentFocusKey = key; onMapFocus(state); }
+      else dirty = Math.max(dirty, 2);
+    }
+  }
+
   // ---- picking ----
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
@@ -1221,7 +1411,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (pins.visible) {
       let best = null, bd = 9;
       for (const b of beamPick) {
-        const [ax, ay] = toScreen(new THREE.Vector3(b.x, b.y0, b.z)), [bx, by] = toScreen(new THREE.Vector3(b.x, b.y1, b.z));
+        const [ax, ay] = toScreen(new THREE.Vector3(b.x, b.y0, b.z));
+        const bx = b.tipX, by = b.tipY;
         if (py > ay - 2) continue; // only the beam above the crest; the ridge face below belongs to the ridge
         const dd = segDist(px, py, ax, ay, bx, by);
         if (dd < bd) { bd = dd; best = b; }
@@ -1276,6 +1467,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (!hit) return;
     if (hit.kind === "stratum") onPick({ level: 3, agentId: hit.agentId, reqIdx: hit.reqIdx, stratum: hit.stratum });
     else if (hit.kind === "core") onPick({ level: 2, agentId: hit.agentId, reqIdx: hit.reqIdx });
+    else if (hit.kind === "action") onPick({ level: 2, agentId: hit.agentId, reqIdx: hit.reqIdx, intent: 'action' });
     // A pin on the main thread opens its request; a subagent's pins belong to its ridge, which opens at L1 on that request.
     else if (hit.kind === "side" || (hit.kind === "action" && agents[agentIndex.get(hit.agentId)]?.kind !== "subagent")) onPick({ level: 2, agentId: hit.agentId, reqIdx: hit.reqIdx });
     else onPick({ level: 1, agentId: hit.agentId, reqIdx: hit.reqIdx });
@@ -1285,7 +1477,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   // ---- loop ----
   let dirty = 3, raf = 0, bench = null;
-  controls.addEventListener("change", () => { dirty = Math.max(dirty, 2); });
+  controls.addEventListener("start", () => { fly.on = false; });
+  controls.addEventListener("change", () => { dirty = Math.max(dirty, 2); onViewChange(); });
   function frame(now) {
     raf = requestAnimationFrame(frame);
     if (fly.on) {
@@ -1310,8 +1503,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     }
     if (bench) { bench.frames.push(now); dirty = 1; controls.target.x += 0; camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.0015); }
     if (dirty > 0) {
+      updateMapDetail(now);
       renderer.render(scene, camera);
       labels.render(scene, camera);
+      navigator.render(camera, safeNdc());
       measure();
       declutter();
       dirty--;
@@ -1337,10 +1532,43 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   return {
     show,
-    setInsets(v) {
+    getView() { return { position: camera.position.toArray(), target: controls.target.toArray(), zoom: camera.zoom, overviewDistance }; },
+    restoreView(view) {
+      fly.on = false;
+      const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
+      controls.enableDamping = damping;
+      camera.position.fromArray(view.position); controls.target.fromArray(view.target);
+      camera.zoom = view.zoom; overviewDistance = view.overviewDistance;
+      camera.updateProjectionMatrix(); controls.update();
+      detailAt = -Infinity; sentFocusKey = ''; dirty = 3;
+    },
+    panToRequest(agentId, index, reveal = false) {
+      resize();
+      const agent = agents[agentIndex.get(agentId)];
+      if (level !== 0 || !agent?.requests[index]) return;
+      fly.on = false;
+      const damping = controls.enableDamping; controls.enableDamping = false; controls.update(); controls.enableDamping = damping;
+      if (reveal) {
+        const currentZoom = camera.zoom * overviewDistance / camera.position.distanceTo(controls.target);
+        const wanted = agent.kind === 'subagent' ? 5.8 : 3.2;
+        camera.zoom *= Math.max(1, wanted / currentZoom); camera.updateProjectionMatrix();
+      }
+      const point = new THREE.Vector3(xOf(agent, index), crest(agent, index) * 0.55, zOf(agent, index) + 0.1);
+      panCameraTo(camera, controls.target, point, (insets.left + host.clientWidth - insets.right) / 2, (insets.top + host.clientHeight - insets.bottom) / 2, host.clientWidth, host.clientHeight);
+      controls.update(); detailAt = -Infinity; dirty = 3; onViewChange();
+    },
+    mountMinimap(host, width, height, selection) {
+      const a = selection?.agentId && agents[agentIndex.get(selection.agentId)];
+      const i = selection?.reqIdx;
+      const point = a?.requests[i] ? new THREE.Vector3(xOf(a,i),crest(a,i),zOf(a,i)) : null;
+      navigator.mount(host,width,height,point); dirty=3;
+    },
+    zoom: zoomMap,
+    setLabelDetail(value) { detailedLabels = !!value; dirty = 3; },
+    setInsets(v, preserveView = false) {
       const changed = JSON.stringify(v) !== JSON.stringify(insets);
       insets = v;
-      if (changed && level === 0 && !fly.on) frameL0(0);
+      if (changed && level === 0 && !fly.on && !preserveView) frameL0(0);
     },
     refit() {
       // Reframe for the current level after the free area changes (window or panel resized).
@@ -1364,7 +1592,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         }, ms);
       });
     },
-    dispose() { cancelAnimationFrame(raf); ro.disconnect(); renderer.dispose(); host.replaceChildren(); }
+    dispose() { cancelAnimationFrame(raf); ro.disconnect(); navigator.dispose(); miniMat.dispose(); miniTex.dispose(); renderer.dispose(); host.replaceChildren(); }
   };
 }
 

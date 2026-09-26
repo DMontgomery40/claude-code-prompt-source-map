@@ -51,7 +51,11 @@ const FIX = fileURLToPath(new URL("./fixtures/", import.meta.url));
 
 async function fixtureTraces() {
   const out = [];
-  for (const sub of ["codex", "claude"]) out.push([sub, (await loadTrace(await entriesFor([FIX + sub]))).trace]);
+  for (const sub of ["codex", "claude"]) {
+    const entries = await entriesFor([FIX + sub]);
+    try { out.push([sub, (await loadTrace(entries)).trace]); }
+    finally { await Promise.all(entries.map(e => e.source.close())); }
+  }
   return out;
 }
 
@@ -154,4 +158,157 @@ test("modelsUsed names every model in order; labels break after . _ : and /", ()
   const parts = breakable("developer: model_switch.instructions");
   assert.deepEqual(parts.filter(p => typeof p === "string"), ["developer:", " model_", "switch.", "instructions"]);
   assert.equal(parts.filter(p => p instanceof Element).length, 3);
+});
+
+// Navigation must work across long real sessions, one-request agents and empty logs.
+const { requestPosition, stepRequest, peakRequestIndex } = await import("../navigation.js");
+const { agentTable, askPreviewText, renderPanel } = await import("../panels.js");
+test("request navigation clamps every entry point and never crosses an agent boundary", () => {
+  for (const count of [0, 1, 2, 17, 172, 1701]) {
+    for (const index of [null, -10, 0, 1, count - 1, count, 9000, NaN]) {
+      const p = requestPosition(count, index);
+      assert.ok(p.index >= 0 && p.index <= Math.max(0, count - 1));
+      assert.equal(p.canPrevious, count > 0 && p.index > 0);
+      assert.equal(p.canNext, p.index < count - 1);
+      assert.ok(p.progress >= 0 && p.progress <= 1);
+      for (const delta of [-100, -10, -1, 0, 1, 10, 100]) {
+        const to = stepRequest(count, index, delta);
+        assert.ok(to >= 0 && to < Math.max(1, count));
+        assert.equal(stepRequest(count, to, 0), to);
+      }
+    }
+  }
+});
+test("peak navigation handles empty, one-request, tied and sparse token records", () => {
+  for (const [values, expected] of [[[], -1], [[0], 0], [[4, 9, 9, 3], 1], [[3, 2, 8], 2], [[null, 4], 1]]) {
+    assert.equal(peakRequestIndex({ requests: values.map(v => ({ tokens: v == null ? null : { context: v } })) }), expected);
+  }
+  assert.equal(peakRequestIndex(null), -1);
+});
+test("real agent-message wrappers stay out of previews while their task text remains", () => {
+  for (const opening of ['<teammate-message>', '<teammate-message teammate_id="lead" summary="Task">', '<teammate-message color="blue"\n summary="Follow-up">']) {
+    assert.equal(askPreviewText(opening + '\nBuild the three.js viewer.\n</teammate-message>'), 'Build the three.js viewer.');
+  }
+  assert.equal(askPreviewText('Check x < y and y > z'), 'Check x < y and y > z');
+  assert.equal(askPreviewText(''), '(empty)');
+  assert.ok(askPreviewText('a'.repeat(300)).length <= 90);
+});
+test("agent search filters names, models and kinds without losing the open action", async () => {
+  const [, trace] = (await fixtureTraces())[0];
+  const base = trace.agents[0];
+  const agents = Array.from({ length: 12 }, (_, i) => ({ ...base, id: `search-${i}`, name: i === 3 ? 'Trace Viewer' : `Worker ${i}`, kind: i === 0 ? 'side' : 'subagent', model: i % 2 ? 'opus' : 'sonnet', parentId: base.id }));
+  let opened;
+  const widget = agentTable(trace, agents, {}, { focusAgent: id => { opened = id; } });
+  const search = widget.all(n => n.tagName === 'INPUT')[0];
+  const status = widget.all(n => n.getAttribute('role') === 'status')[0];
+  const rows = widget.all(n => n.tagName === 'TR').slice(1);
+  for (const [value, count] of [[' trace VIEWER ', 1], ['OPUS', 6], ['side', 1], ['no-such-agent', 0], ['', 12]]) {
+    search.value = value; search.dispatch('input');
+    assert.equal(rows.filter(r => !r.hidden).length, count);
+    assert.ok(status.textContent.startsWith(String(count)));
+  }
+  const target = widget.all(n => n.tagName === 'BUTTON' && n.textContent === 'Trace Viewer')[0];
+  target.dispatch('click'); assert.equal(opened, 'search-3');
+});
+test("overview entry points open the correct peak request and layer for both products", async () => {
+  for (const [, trace] of await fixtureTraces()) {
+    const root = trace.agents.find(a => a.kind === 'root') || trace.agents[0];
+    const peak = root.requests[peakRequestIndex(root)];
+    const host = new Element('aside');
+    let selected;
+    renderPanel(host, { trace, level: 0, lens: 'context', mode: '3d' }, {
+      focusRequest: (id, i) => { selected = ['request', id, i]; },
+      focusStratum: (id, i, key) => { selected = ['layer', id, i, key]; }
+    });
+    host.all(n => n.tagName === 'BUTTON' && n.textContent === 'Jump to peak')[0].dispatch('click');
+    assert.deepEqual(selected, ['request', root.id, peak.i]);
+    const injection = host.all(n => n.tagName === 'BUTTON' && n.textContent.startsWith('What was injected'))[0];
+    if (peak.strata?.injected > 0) {
+      assert.ok(injection); injection.dispatch('click');
+      assert.deepEqual(selected, ['layer', root.id, peak.i, 'injected']);
+    } else assert.equal(injection, undefined);
+  }
+});
+
+test('map-following sidebar moves through overview, agent, request and source without changing selection', async () => {
+  const { mapPanelState } = await import('../navigation.js');
+  for (const [, trace] of await fixtureTraces()) {
+    const state = { trace, level: 0, mode: '3d', lens: 'context', agentId: null, reqIdx: null };
+    for (const agent of trace.agents.filter(a => a.requests.length)) {
+      for (const reqIdx of [0, agent.requests.length - 1]) {
+        const req = agent.requests[reqIdx], stratum = Object.keys(req.strata || {}).find(k => req.strata[k] > 0);
+        for (const detail of [1, 2, 3, 2, 1, 0]) {
+          const view = mapPanelState(state, { detail, agentId: agent.id, reqIdx, stratum });
+          assert.equal(state.level, 0); assert.equal(state.agentId, null);
+          if (!detail) { assert.equal(view, state); continue; }
+          assert.equal(view.agent, agent); assert.equal(view.reqIdx, reqIdx);
+          assert.equal(view.level, detail === 3 && !stratum ? 2 : detail);
+        }
+      }
+    }
+    const focus = { detail: 3, agentId: trace.agents[0].id, reqIdx: 999999, stratum: 'missing' };
+    const view = mapPanelState(state, focus);
+    assert.equal(view.reqIdx, view.agent.requests.length - 1);
+    assert.equal(view.level, 2); assert.equal(view.stratum, null);
+    for (const level of [1, 2, 3]) {
+      const pinned = { ...state, level, block: 0 };
+      assert.equal(mapPanelState(pinned, focus), pinned, 'explicit reader is not replaced while reading');
+    }
+    const flat = { ...state, mode: '2d' };
+    assert.equal(mapPanelState(flat, focus), flat);
+    assert.equal(mapPanelState(state, { ...focus, agentId: 'missing' }), state);
+  }
+});
+
+test('tool inspector opens the actual selected call immediately, including every call in multi-call responses', async () => {
+  for (const tool of ['Bash', 'Read', 'mcp__web__search']) {
+    const ref = { file: 0, offset: 50, length: 20 }, result = { file: 0, offset: 80, length: 20 };
+    const action = { kind: 'tool', tool, callId: 'selected', args: ref, result: null, class: 'read' };
+    action.all = [{ kind: 'tool', tool: 'Other', callId: 'other', args: { offset: 1 } }, { ...action, result }];
+    const req = { i: 0, t: 1000, tokens: { context: 810750 }, action };
+    const agent = { id: 'root', kind: 'root', requests: [req], blocks: [], asks: [], compactions: [] };
+    const host = new Element('aside');
+    let selected;
+    renderPanel(host, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, inspector: 'action', callIndex: null }, {
+      getText: async (_id, r) => ({ text: r === ref ? '{"command":"printf hello"}' : r === result ? 'hello' : 'other input' }),
+      focusCall: i => { selected = i; }, focusRequest() {}, up() {}
+    });
+    await new Promise(resolve => setImmediate(resolve));
+    const pre = host.all(n => n.tagName === 'PRE')[0];
+    assert.ok(pre, `${tool}: literal input is open without another click`);
+    assert.ok(pre.textContent.includes('printf hello'));
+    const resultTab = host.all(n => n.tagName === 'BUTTON' && n.textContent === 'Result')[0];
+    assert.ok(resultTab, 'matched multi-call result is available');
+    resultTab.dispatch('click');
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(pre.textContent, 'hello');
+    const other = host.all(n => n.tagName === 'BUTTON' && n.textContent.includes('Other'))[0];
+    assert.ok(other); other.dispatch('click'); assert.equal(selected, 0);
+    assert.ok(host.textContent.includes('810,750'), 'the exact context total remains labeled separately');
+  }
+});
+
+test('tool inspector handles missing text, reader errors and competing async reads without showing the wrong result', async () => {
+  const req = { i: 0, t: 1000, tokens: { context: 900 }, action: { kind: 'tool', tool: 'Bash', target: 'echo fallback', args: null, result: null } };
+  const agent = { id: 'root', kind: 'root', requests: [req], blocks: [], asks: [], compactions: [] };
+  const state = { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, inspector: 'action' };
+  let host = new Element('aside');
+  renderPanel(host, state, { focusRequest() {} });
+  assert.equal(host.all(n => n.tagName === 'PRE')[0].textContent, 'echo fallback');
+  assert.equal(host.all(n => n.tagName === 'BUTTON' && n.textContent === 'Result')[0].disabled, true);
+  assert.ok(!host.textContent.includes('null'), 'absent controls do not leak placeholders into the interface');
+  req.action.args = { offset: 1 }; req.action.result = { offset: 2 };
+  let resolveInput;
+  host = new Element('aside');
+  renderPanel(host, state, { focusRequest() {}, getText: async (_id, ref) => ref.offset === 1 ? new Promise(r => { resolveInput = r; }) : { text: '<script>literal output</script>' } });
+  host.all(n => n.tagName === 'BUTTON' && n.textContent === 'Result')[0].dispatch('click');
+  await new Promise(resolve => setImmediate(resolve));
+  resolveInput({ text: 'old input' });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(host.all(n => n.tagName === 'PRE')[0].textContent, '<script>literal output</script>');
+  assert.equal(host.all(n => n.tagName === 'SCRIPT').length, 0);
+  host = new Element('aside');
+  renderPanel(host, state, { focusRequest() {}, getText: async () => { throw new Error('source missing'); } });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.ok(host.all(n => n.tagName === 'PRE')[0].textContent.includes('source missing'));
 });

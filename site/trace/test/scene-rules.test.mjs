@@ -92,3 +92,55 @@ test("model switches are listed where the model changes", () => {
   assert.deepEqual(modelSwitches(reqs), [{ i: 3, from: "astra", to: "sol" }, { i: 5, from: "sol", to: "astra" }]);
   assert.deepEqual(modelSwitches([]), []);
 });
+
+test('semantic zoom reveals and removes detail with stable transition bands', async () => {
+  const { mapDetail } = await import('../scene-rules.js');
+  for (const [zoom, expected] of [[0.2, 0], [1, 0], [1.8, 1], [3.2, 2], [6, 3], [80, 3]]) {
+    assert.equal(mapDetail(zoom).level, expected);
+  }
+  for (const [level, zoom] of [[1, 1.5], [2, 2.7], [3, 4.8]]) assert.equal(mapDetail(zoom, level).level, level);
+  assert.equal(mapDetail(1, 3).level, 0, 'zooming out removes all fine detail');
+  assert.equal(mapDetail(NaN).level, 0);
+  assert.ok(mapDetail(6).cell < mapDetail(1).cell);
+});
+
+test('map clusters expand as screen space grows and preserve counts and record identity', async () => {
+  const { clusterMapPoints } = await import('../scene-rules.js');
+  const points = [
+    { id: 1, px: 10, py: 20, depth: 100, kind: 'read' },
+    { id: 2, px: 18, py: 20, depth: 80, kind: 'read' },
+    { id: 3, px: 18, py: 20, depth: 90, kind: 'outward' },
+    { id: 4, px: 80, py: 20, depth: 60, kind: 'read' }
+  ];
+  for (const cell of [12, 20, 32, 46]) {
+    const clusters = clusterMapPoints(points, cell);
+    assert.equal(clusters.reduce((n, c) => n + c.count, 0), points.length);
+    assert.ok(clusters.every(c => points.includes(c.point)));
+    assert.equal(clusters.find(c => c.point.kind === 'outward').count, 1);
+  }
+  assert.equal(clusterMapPoints(points, 46)[0].point.id, 2, 'nearest record anchors the cluster');
+  assert.equal(clusterMapPoints(points.map(p => ({ ...p, px: p.px * 10 })), 46).length, 4);
+  assert.equal(clusterMapPoints([{ px: NaN, py: 0, depth: 1 }, { px: 1, py: 2, depth: -1 }], 20).length, 0);
+});
+
+test('map marker height stays bounded across scale and zoom', async () => {
+  const { cappedMarkerHeight } = await import('../scene-rules.js');
+  for (const world of [1.5, 3.6, 11, 16]) for (const pixels of [2, 20, 48, 100, 500, 2000]) {
+    const height = cappedMarkerHeight(world, pixels, 48);
+    assert.ok(height <= world);
+    assert.ok(pixels * height / world <= 48 + 1e-9);
+  }
+  assert.equal(cappedMarkerHeight(2, 0), 0);
+});
+
+test('subagent terrain sits in front of the main massif, with disjoint rows at every depth', async () => {
+  const { terrainPlacement } = await import('../scene-rules.js');
+  assert.equal(typeof terrainPlacement, 'function');
+  for (const lanes of [0, 1, 6, 17, 80]) {
+    const p = terrainPlacement({ lanes });
+    for (let i = 0; i < lanes; i++) {
+      assert.ok(p.laneZ(i) - p.subDepth > p.sideZ + 2, 'the main ridge cannot conceal the field');
+      if (i) assert.ok(p.laneZ(i) - p.subDepth > p.laneZ(i - 1), 'rows do not intersect');
+    }
+  }
+});

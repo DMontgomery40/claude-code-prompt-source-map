@@ -4,6 +4,7 @@ import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDu
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 import { parsePaste } from "./paste.js";
+import { requestPosition, stepRequest, mapPanelState, createViewHistory } from "./navigation.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -11,9 +12,10 @@ const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const S = {
   trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null,
-  lens: "context", mode: "3d", custodyFn: null, reading: false
+  lens: "context", mode: "3d", custodyFn: null, reading: false, detailedLabels: false, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args'
 };
 let scene = null;
+let viewHistory = null, viewTimer = null;
 let text = null;     // (agentId, ref) => Promise<{text, mode}>
 let worker = null;
 let lastFiles = null; // the dropped files, kept so another session among them can be opened
@@ -69,6 +71,7 @@ function setupLoader() {
 
 // Back to the loader without reloading, so folders picked on this page stay available.
 function backToLoader() {
+  viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer);
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -524,6 +527,8 @@ function normalize(trace) {
 }
 
 async function start(trace) {
+  viewHistory?.dispose(); viewHistory = null;
+  Object.assign(S, { level: 0, agentId: null, reqIdx: null, stratum: null, block: null, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args' });
   S.tools = (await loadIndex())?.tools || null; // tool name -> site page, for the custody ladder's "Guided by"
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
@@ -539,25 +544,49 @@ async function start(trace) {
   if (!started) {
     started = true;
     setupResizer();
+    $("#overview").addEventListener("click", overview);
+    $("#reset-view").addEventListener("click", () => viewHistory.navigate(() => { followMap(null); scene?.refit(); }));
+    $("#zoom-in").addEventListener("click", () => scene?.zoom(1.55));
+    $("#zoom-out").addEventListener("click", () => scene?.zoom(1 / 1.55));
+    $("#label-detail").addEventListener("click", () => {
+      S.detailedLabels = !S.detailedLabels;
+      $("#label-detail").setAttribute("aria-pressed", String(S.detailedLabels));
+      scene?.setLabelDetail(S.detailedLabels);
+    });
     afterSideResize();
+    $("#panel").addEventListener("scroll", saveViewSoon, { passive: true });
+    $("#inspect-back").addEventListener("click", up);
     window.addEventListener("keydown", onKey);
-    window.addEventListener("resize", () => { applySideWidth(sideW, false); layoutInsets(); if (S.mode === "2d") renderFlat(); renderMinimap(); scene?.refit(); });
+    window.addEventListener("resize", () => {
+      applySideWidth(sideW, false); placeCrumbs(); layoutInsets(S.mapPinned || !!S.mapFocus);
+      if (S.mode === "2d") renderFlat();
+      renderMinimap();
+      if (S.mapPinned) scene?.panToRequest(S.agentId, S.reqIdx);
+      else if (S.mapFocus) scene?.panToRequest(S.mapFocus.agentId, S.mapFocus.reqIdx);
+      else scene?.refit();
+    });
   }
+  viewHistory = createViewHistory(window, captureView, restoreView);
 }
 let started = false;
 
 async function setMode(mode) {
   S.mode = mode;
   $("#mode").textContent = mode === "3d" ? "2D view" : "3D view";
-  $("#mode").onclick = () => setMode(S.mode === "3d" ? "2d" : "3d");
+  $("#reset-view").hidden = mode !== "3d";
+  $("#label-detail").hidden = mode !== "3d";
+  $("#map-zoom").hidden = mode !== "3d";
+  S.mapFocus = null;
+  $("#mode").onclick = () => viewHistory.navigate(() => setMode(S.mode === "3d" ? "2d" : "3d"));
   if (mode === "3d") {
     try {
       const { createScene } = await import("./scene.js");
       $("#flat").hidden = true;
       $("#stage").hidden = false;
       if (!scene) {
-        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick });
+        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon });
         window.__trace.scene = scene;
+        scene.setLabelDetail(S.detailedLabels);
       }
     } catch (e) {
       console.warn("3D view unavailable, using the 2D view", e);
@@ -574,7 +603,7 @@ async function setMode(mode) {
 }
 
 // ---------- resizable side panel ----------
-const SIDE_MIN = 320, SIDE_DEFAULT = 392, SIDE_KEY = "trace.sideWidth";
+const SIDE_MIN = 340, SIDE_DEFAULT = 420, SIDE_KEY = "trace.sideWidth";
 let sideW = SIDE_DEFAULT, sideBeforeWiden = SIDE_DEFAULT;
 const sideMax = () => Math.max(SIDE_MIN, Math.round(innerWidth * 0.75));
 function applySideWidth(w, save) {
@@ -583,15 +612,16 @@ function applySideWidth(w, save) {
   const wide = sideW >= innerWidth * 0.55;
   $("#app").classList.toggle("wide", wide);
   $("#widen").setAttribute("aria-pressed", String(wide));
-  $("#widen").textContent = wide ? "Narrow the panel" : "Widen for reading";
+  $("#widen").textContent = wide ? "Compact panel" : "Expand reader";
   $("#resizer").setAttribute("aria-valuenow", String(sideW));
   if (save) try { localStorage.setItem(SIDE_KEY, String(sideW)); } catch { /* storage may be unavailable */ }
 }
 function afterSideResize() {
-  layoutInsets();
+  const keepMap = S.mapPinned || !!S.mapFocus;
+  layoutInsets(keepMap);
   renderMinimap();
   if (S.mode === "2d") renderFlat();
-  scene?.refit();
+  if (!keepMap) scene?.refit();
   showReader();
 }
 function setupResizer() {
@@ -634,6 +664,7 @@ function setupResizer() {
 function buildHud() {
   const t = S.trace;
   const st = sessionStats(t);
+  $("#session-kind").textContent = `${t.product === "codex" ? "Codex" : "Claude Code"} / Session landscape`;
   $("#title").textContent = t.title || (t.product === "codex" ? "Codex session" : "Claude Code session");
   // More than one session among the dropped files: offer the others.
   const cands = (t.candidates || []).filter(c => c && c.id);
@@ -649,17 +680,17 @@ function buildHud() {
   const stat = (b, s) => el("span", {}, el("b", { text: b }), s);
   // Only what the session has: no subagent slots for a single-agent session.
   $("#stats").replaceChildren(...[
-    stat(fmtDur(st.wall), "wall clock"),
-    stat(fmtInt(st.rootRequests), "main-thread requests"),
+    stat(fmtDur(st.wall), "Duration"),
+    stat(fmtInt(st.rootRequests), "Main requests"),
     st.subagents ? stat(fmtInt(st.subagents), `subagents, ${fmtInt(st.subRequests)} requests`) : null,
-    st.subFresh ? stat(`${fmtTok(st.rootFresh)} vs ${fmtTok(st.subFresh)}`, "fresh tokens, main vs subagents") : stat(fmtTok(st.rootFresh), "fresh tokens"),
-    stat(`${Math.round(st.cacheShare * 100)}%`, "of context read from cache"),
-    st.sideFresh ? stat(fmtTok(st.sideFresh), "fresh tokens, side calls and reviews") : null].filter(Boolean));
+    st.subFresh ? stat(`${fmtTok(st.rootFresh)} vs ${fmtTok(st.subFresh)}`, "Fresh · main / agents") : stat(fmtTok(st.rootFresh), "fresh tokens"),
+    stat(`${Math.round(st.cacheShare * 100)}%`, "Context from cache"),
+    st.sideFresh ? stat(fmtTok(st.sideFresh), "Side calls & reviews") : null].filter(Boolean));
   symbolLegend();
   $("#lenses").replaceChildren(...LENSES.map((l, i) => el("button", {
-    type: "button", "aria-pressed": String(S.lens === l.key), "data-lens": l.key,
-    onclick: () => { S.lens = l.key; render(); }
-  }, el("b", { text: String(i + 1), "aria-hidden": "true" }), l.q)));
+    type: "button", "aria-pressed": String(S.lens === l.key), "data-lens": l.key, title: `${l.q} · ${i + 1}`,
+    onclick: () => selectLens(l.key)
+  }, el("span", { class: "lens-icon", "aria-hidden": "true", text: ["▱", "↗", "↙", "⋈"][i] }), el("span", { class: "lens-name", text: l.q }), el("kbd", { text: String(i + 1), "aria-hidden": "true" }))));
 }
 
 // The strata plus the marks the current view draws: the 3D view's flags and pins, the 2D chart's
@@ -683,26 +714,67 @@ function symbolLegend() {
 
 function clipName(s) { s = String(s); return s.length > 48 ? `${s.slice(0, 47)}…` : s; }
 
-function layoutInsets() {
-  if (!scene) { const h = $(".hud").getBoundingClientRect(); if (innerWidth > 760) $("#crumbs").style.top = `${Math.round(h.bottom + 8)}px`; return; }
+function layoutInsets(preserveView = false) {
+  if (!scene) { const h = $(".hud").getBoundingClientRect(); if (innerWidth > 980) $("#crumbs").style.top = `${Math.round(h.bottom + 8)}px`; return; }
   const vw = innerWidth, vh = innerHeight;
-  const mobile = vw <= 760;
+  const mobile = vw <= 980;
   const hud = $(".hud").getBoundingClientRect();
   // The HUD wraps when the panel is wide; the breadcrumbs follow its real bottom edge.
   $("#crumbs").style.top = mobile ? "" : `${Math.round(hud.bottom + 8)}px`;
   const crumbs = $("#crumbs").getBoundingClientRect();
   const panel = $("#panel").getBoundingClientRect();
   const mm = $("#minimap").getBoundingClientRect();
-  const top = Math.max(hud.bottom, crumbs.bottom, mobile ? $("#lenses").getBoundingClientRect().bottom : 0) + 12;
+  const place = $('#map-location');
+  place.style.top = `${Math.round(crumbs.bottom + 8)}px`;
+  const placeBottom = place.hidden ? 0 : place.getBoundingClientRect().bottom;
+  const top = Math.max(hud.bottom, crumbs.bottom, placeBottom, mobile ? $("#lenses").getBoundingClientRect().bottom : 0) + 12;
+  const controlsTop = Math.min(...["#map-zoom", ".viewtools", "#request-nav"].map(s => $(s)).filter(e => e && !e.hidden).map(e => e.getBoundingClientRect().top), panel.top);
   scene.setInsets(mobile
-    ? { top, right: 8, left: 8, bottom: vh - panel.top + 8 }
-    : { top, right: vw - panel.left + 12, left: 16, bottom: (mm.height ? mm.height + 24 : 16) });
+    ? { top, right: 8, left: 8, bottom: vh - Math.min(panel.top, controlsTop) + 12 }
+    : { top, right: vw - panel.left + 12, left: 16, bottom: (mm.height ? mm.height + 24 : 16) }, preserveView);
+}
+
+const VIEW_KEYS = ['level', 'agentId', 'reqIdx', 'stratum', 'block', 'lens', 'mode', 'reading', 'mapFocus', 'mapPinned', 'inspector', 'callIndex', 'callPart'];
+function captureView() {
+  return { state: Object.fromEntries(VIEW_KEYS.map(k => [k, S[k]])), camera: scene?.getView(), scroll: $('#panel').scrollTop };
+}
+function saveViewSoon() {
+  clearTimeout(viewTimer);
+  viewTimer = setTimeout(() => viewHistory?.checkpoint(), 160);
+}
+function restoreView(view) {
+  clearTimeout(viewTimer);
+  const modeChanged = S.mode !== view.state.mode;
+  Object.assign(S, view.state);
+  S.agent = S.agentId ? agentById(S.agentId) : null;
+  const finish = () => {
+    Object.assign(S, view.state);
+    render(true, false, true);
+    if (view.camera) scene?.restoreView(view.camera);
+    $('#panel').scrollTop = view.scroll || 0;
+  };
+  if (modeChanged) setMode(S.mode).then(finish);
+  else finish();
 }
 
 // ---------- state ----------
 function agentById(id) { return S.trace.agents.find(a => a.id === id); }
-function set(patch) {
+function set(patch, options) {
+  const change = () => {
+    applySet(patch);
+    if (options?.locate && S.mapPinned) scene?.panToRequest(S.agentId, S.reqIdx, options.reveal);
+  };
+  if (viewHistory) viewHistory.navigate(change, options);
+  else change();
+}
+function applySet(patch) {
   const prev = { level: S.level, agentId: S.agentId };
+  if (patch.level != null || patch.callIndex != null) S.callPart = 'args';
+  if (patch.level != null) {
+    S.mapFocus = null;
+    S.inspector = null; S.callIndex = null;
+    if (patch.level === 0) S.mapPinned = false;
+  }
   Object.assign(S, patch);
   S.agent = S.agentId ? agentById(S.agentId) : null;
   if (S.agent && !S.agent.requests.length && S.level > 0) S.level = 1;
@@ -711,22 +783,29 @@ function set(patch) {
   render(prev.level !== S.level || prev.agentId !== S.agentId, patch.block != null);
 }
 function pick(p) {
-  if (p.level === 3) return set({ level: 3, agentId: p.agentId, reqIdx: p.reqIdx, stratum: p.stratum, block: p.block ?? null });
-  if (p.level === 2) return set({ level: 2, agentId: p.agentId, reqIdx: p.reqIdx, stratum: null, block: null });
-  set({ level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null });
+  const mapPinned = S.mode === '3d' && (S.level === 0 || S.mapPinned);
+  if (p.intent === 'locate') return set({mapPinned:true, level:2, agentId:p.agentId, reqIdx:p.reqIdx, stratum:null, block:null}, {locate:true, reveal:true});
+  if (p.intent === 'action') return A.focusAction(p.agentId, p.reqIdx);
+  if (p.level === 3) return set({ mapPinned, level: 3, agentId: p.agentId, reqIdx: p.reqIdx, stratum: p.stratum, block: p.block ?? null });
+  if (p.level === 2) return set({ mapPinned, level: 2, agentId: p.agentId, reqIdx: p.reqIdx, stratum: null, block: null });
+  set({ mapPinned, level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null });
 }
 const A = {
+  focusAction: (id, i) => set({ level: 2, agentId: id, reqIdx: i, stratum: null, block: null,
+    inspector: 'action', callIndex: null, mapPinned: S.mode === '3d' && (S.level === 0 || S.mapPinned) }),
+  showCallPart: part => { S.callPart = part; saveViewSoon(); },
+  focusCall: i => set({ inspector: 'action', callIndex: i }),
   focusAgent: (id, i) => set({ level: 1, agentId: id, reqIdx: i ?? 0, stratum: null, block: null }),
-  focusRequest: (id, i) => set({ level: 2, agentId: id, reqIdx: i, stratum: null, block: null }),
-  focusStratum: (id, i, key) => set({ level: 3, agentId: id, reqIdx: i, stratum: key, block: null }),
-  openBlock: i => set({ block: i }),
+  focusRequest: (id, i) => set({ mapPinned: S.mapPinned || !!S.mapFocus, level: 2, agentId: id, reqIdx: i, stratum: null, block: null }),
+  focusStratum: (id, i, key) => set({ mapPinned: S.mapPinned || !!S.mapFocus, level: 3, agentId: id, reqIdx: i, stratum: key, block: null }),
+  openBlock: i => { const view = sidebarState(); set({ mapPinned: S.mapPinned || !!S.mapFocus, level: view.level, agentId: view.agentId, reqIdx: view.reqIdx, stratum: view.stratum, block: i }); },
   openBlockAt(agentId, bi) {
     const a = agentById(agentId);
     const b = a?.blocks[bi];
     if (!b) return;
     let r = a.requests.findIndex(q => q.window && q.window[0] <= bi && q.window[1] >= bi);
     if (r < 0) r = Math.max(0, a.requests.findIndex(q => q.t >= b.t));
-    set({ level: 3, agentId, reqIdx: r, stratum: b.kind, block: bi });
+    set({ mapPinned: S.mapPinned || !!S.mapFocus, level: 3, agentId, reqIdx: r, stratum: b.kind, block: bi });
   },
   openRef(agentId, ref) {
     const a = agentById(agentId);
@@ -746,6 +825,8 @@ const A = {
   up
 };
 function up() {
+  if (viewHistory?.back()) return;
+  if (S.level === 0 && S.mapFocus) return overview();
   if (S.reading) { S.reading = false; return render(false, true); }
   if (S.level === 3 && S.block != null) return set({ block: null });
   if (S.level === 3) return set({ level: 2, stratum: null });
@@ -753,38 +834,57 @@ function up() {
   if (S.level === 1) return set({ level: 0, agentId: null, reqIdx: null });
 }
 
+function overview() {
+  set({ level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
+  scene?.refit();
+}
+function selectLens(key) {
+  // Each tab opens its session-wide exploration. Retaining a deep layer would
+  // otherwise change the scene but leave an unrelated source reader on screen.
+  set({ lens: key, level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
+  scene?.refit();
+}
+function moveRequest(delta, inspect = true) {
+  const view = sidebarState();
+  if (!view.agent?.requests.length) return;
+  set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: inspect ? Math.max(2, view.level) : view.level, agentId: view.agentId, stratum: view.stratum, reqIdx: stepRequest(view.agent.requests.length, view.reqIdx, delta), block: null }, { locate: true });
+}
 function onKey(e) {
   if ($("#app").hidden || !S.trace) return;
-  if (e.target.closest && e.target.closest("input, textarea, select")) return;
+  if (e.target.closest && e.target.closest("input, textarea, select, [role=separator], [contenteditable=true]")) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === "Escape") { e.preventDefault(); up(); return; }
   if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && S.level >= 1 && S.agent) {
     e.preventDefault();
     const step = (e.key === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 10 : 1);
-    set({ reqIdx: (S.reqIdx ?? 0) + step, block: null });
+    moveRequest(step, false);
     return;
   }
   if (e.key === "Enter" && S.level === 1 && document.activeElement === document.body) { set({ level: 2 }); return; }
   // Enter at the session opens the main thread, so the keyboard can get into the landscape.
   if (e.key === "Enter" && S.level === 0 && document.activeElement === document.body) { A.focusAgent(S.layout.root.id, 0); return; }
   const n = Number(e.key);
-  if (n >= 1 && n <= 4) { S.lens = LENSES[n - 1].key; render(); }
+  if (n >= 1 && n <= 4) selectLens(LENSES[n - 1].key);
 }
 
 // ---------- render ----------
-function render(levelChanged, readerOpened) {
+function render(levelChanged, readerOpened, restoring = false) {
   $("#app").dataset.level = String(S.level);
   $("#app").classList.toggle("reading", S.reading);
+  $("#app").classList.toggle("map-following", !!S.mapFocus && S.level === 0);
   if (levelChanged) $("#tip").hidden = true;
   document.querySelectorAll("#lenses button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lens === S.lens)));
   renderCrumbs();
+  renderRequestNav();
   placeCrumbs();
-  renderPanel($("#panel"), S, A);
+  renderPanel($("#panel"), sidebarState(), A);
   if (levelChanged) $("#panel").scrollTop = 0;
   if (readerOpened) showReader();
   renderMinimap();
-  layoutInsets();
-  if (S.mode === "3d" && scene) scene.show({ level: S.level, agentId: S.agentId, reqIdx: S.reqIdx, stratum: S.stratum, lens: S.lens });
+  renderMapLocation();
+  layoutInsets(S.mapPinned || restoring);
+  if (S.mode === "3d" && scene) scene.show({ level: S.mapPinned ? 0 : S.level, agentId: S.agentId, reqIdx: S.reqIdx, stratum: S.stratum, lens: S.lens, mapSelection: S.mapPinned ? { agentId: S.agentId, reqIdx: S.reqIdx } : null });
+  renderMapLocation();
   if (S.mode === "2d") renderFlat();
 }
 
@@ -798,39 +898,105 @@ function showReader() {
 
 function renderCrumbs() {
   const c = $("#crumbs");
-  const parts = [["Session", () => set({ level: 0, agentId: null, reqIdx: null, stratum: null, block: null })]];
+  const parts = [["Session", overview]];
   if (S.level >= 1 && S.agent) parts.push([S.agent.kind === "root" ? "Main thread" : S.agent.name || S.agent.id, () => set({ level: 1, stratum: null, block: null })]);
   if (S.level >= 2 && S.reqIdx != null) parts.push([`Request ${S.reqIdx + 1}`, () => set({ level: 2, stratum: null, block: null })]);
   if (S.level >= 3 && S.stratum) parts.push([STRATA[STRATUM_INDEX[S.stratum]].name, () => set({ block: null })]);
   if (S.level >= 3 && S.block != null && S.agent?.blocks[S.block]) parts.push([S.agent.blocks[S.block].label || "block", () => {}]);
   const kids = [];
+  if (S.level > 0) kids.push(el("button", { type: "button", class: "mobile-back", text: "← Back", onclick: up }));
   parts.forEach(([name, fn], i) => {
     if (i) kids.push(el("span", { class: "sep", "aria-hidden": "true", text: "›" }));
     kids.push(el("button", { type: "button", text: name, onclick: fn, "aria-current": String(i === parts.length - 1) }));
   });
-  if (!TOUCH) kids.push(el("span", { class: "keys", text: S.level === 0 ? (S.mode === "3d" ? "click a ridge · drag to orbit · Enter main thread · 1–4 lenses" : "click the chart · Enter main thread · 1–4 lenses") : "Esc up · ← → requests" }));
+  if (!TOUCH && S.level === 0) kids.push(el("span", { class: "keys", text: S.mode === "3d" ? "Drag to pan · scroll to zoom · Shift-drag to orbit" : "Select a point to explore" }));
   c.replaceChildren(...kids);
 }
 
 function renderMinimap() {
   const host = $("#minimap");
-  if (S.mode !== "3d" || innerWidth <= 760) { host.hidden = true; return; }
+  if (S.mode !== "3d" || innerWidth <= 980) { host.hidden = true; return; }
   host.hidden = false;
-  const w = Math.min(520, Math.max(280, innerWidth - sideW - 16 * 4 - 120));
-  renderOverview(host, S.trace, S.layout, { width: w, height: 132, full: false, lens: S.lens, focus: { agentId: S.agentId, reqIdx: S.level >= 1 ? S.reqIdx : null },
-    // From the session, a lane opens that agent with the cursor on the request; inside an open agent it opens the request.
-    onPick: p => (p.reqIdx != null && S.level >= 2 && p.agentId === S.agentId ? A.focusRequest(p.agentId, p.reqIdx) : A.focusAgent(p.agentId, p.reqIdx)) });
+  const w = Math.min(350, Math.max(220, innerWidth - sideW - 350));
+  scene?.mountMinimap(host, w, 128, {agentId:S.agentId, reqIdx:S.level>=1?S.reqIdx:null});
+}
+
+function sidebarState() { return mapPanelState(S, S.mapFocus); }
+function followMap(focus) {
+  if (S.level !== 0 || S.mode !== "3d") return;
+  S.mapFocus = focus;
+  renderRequestNav();
+  renderPanel($("#panel"), sidebarState(), A);
+  $("#panel").scrollTop = 0;
+  $("#app").classList.toggle("map-following", !!focus);
+  renderMapLocation();
+  layoutInsets(true);
+  saveViewSoon();
+}
+
+function renderMapLocation() {
+  const view = sidebarState(), r = view.agent?.requests[view.reqIdx];
+  const location = $('#map-location');
+  location.hidden = S.mode !== '3d' || !r;
+  if (!r) return;
+  location.replaceChildren(
+    el('b', { text: `${S.mapPinned ? 'Selected' : 'In view'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
+    el('span', { text: `${fmtWhen(r.t)} · Height = context tokens · Colors = sources` }));
+}
+
+function renderRequestNav() {
+  const view = sidebarState();
+  $("#inspect-back").hidden = S.level === 0;
+  const host = $("#request-nav"), count = view.agent?.requests.length || 0;
+  host.hidden = !view.level || !count;
+  $("#overview").hidden = view.level === 0;
+  $("#selection-label").textContent = `${S.mapPinned ? "Selected · " : S.mapFocus && S.level === 0 ? "In view · " : ""}${S.inspector === "action" ? "Tool call" : view.level === 0 ? "Session overview" : view.level === 1 ? "Agent overview" : view.level === 2 ? "Request detail" : "Layer detail"}`;
+  if (host.hidden) { host.replaceChildren(); return; }
+  const pos = requestPosition(count, view.reqIdx);
+  // Keep the slider node alive while it is being dragged or operated by keyboard.
+  if (!host.children.length) {
+    const range = el("input", { type: "range", id: "request-range", min: "1", step: "1", "aria-label": "Request" });
+    let scrubbing = false;
+    const go = (value, replace = false) => {
+      const current = sidebarState();
+      set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: Math.max(2, current.level), agentId: current.agentId, stratum: current.stratum, reqIdx: requestPosition(current.agent.requests.length, Number(value) - 1).index, block: null }, { replace, locate: true });
+    };
+    range.addEventListener("input", () => { go(range.value, scrubbing); scrubbing = true; });
+    range.addEventListener("change", () => { scrubbing = false; });
+    const number = el('input', { type: 'number', id: 'request-number', min: '1', step: '1', 'aria-label': 'Go to request' });
+    const commitNumber = () => {
+      if (number.value !== '' && Number(number.value) - 1 !== sidebarState().reqIdx) go(number.value);
+      number.value = String(sidebarState().reqIdx + 1);
+    };
+    number.addEventListener('change', commitNumber);
+    number.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commitNumber(); number.blur(); } });
+    host.append(el("div", { class: "request-nav-head" },
+      el("label", { class: "request-address" }, "Request ", number, el("span", { id: "request-position" })),
+      el("div", { class: "request-steps" },
+        el("button", { type: "button", id: "request-prev", "aria-label": "Previous request", title: "Previous request · ←", text: "←", onclick: () => moveRequest(-1) }),
+        el("button", { type: "button", id: "request-next", "aria-label": "Next request", title: "Next request · →", text: "→", onclick: () => moveRequest(1) }))), range);
+  }
+  $("#request-position").textContent = `of ${fmtInt(pos.count)}`;
+  const number = $('#request-number');
+  if (document.activeElement !== number) number.value = String(pos.index + 1);
+  number.max = String(pos.count);
+  $("#request-prev").disabled = !pos.canPrevious;
+  $("#request-next").disabled = !pos.canNext;
+  const range = $("#request-range");
+  range.max = String(pos.count); range.value = String(pos.index + 1); range.disabled = pos.count < 2;
+  range.setAttribute("aria-valuetext", `Request ${pos.index + 1} of ${pos.count}`);
+  range.style.setProperty("--progress", `${pos.progress * 100}%`);
 }
 
 // The free area the 2D view can use: below the HUD, crumbs and (on phones) the lens row; left of the
 // side panel, or above the bottom panel and the view button on phones.
 // Phones: the crumbs sit under the lens grid, whatever its height.
 function placeCrumbs() {
-  if (innerWidth <= 760) $("#app").style.setProperty("--crumbs-top", `${Math.round($("#lenses").getBoundingClientRect().bottom + 8)}px`);
+  if (innerWidth <= 980) $("#app").style.setProperty("--crumbs-top", `${Math.round($("#lenses").getBoundingClientRect().bottom + 8)}px`);
 }
 
 function flatInsets() {
-  const mobile = innerWidth <= 760;
+  const mobile = innerWidth <= 980;
   placeCrumbs();
   const bottomOf = s => $(s)?.getBoundingClientRect().bottom || 0;
   const top = Math.max(bottomOf(".hud"), bottomOf("#crumbs"), mobile ? bottomOf("#lenses") : 0) + 12;

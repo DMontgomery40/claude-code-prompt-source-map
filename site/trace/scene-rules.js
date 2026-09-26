@@ -68,3 +68,39 @@ export function modelSwitches(requests) {
   });
   return out;
 }
+
+// Semantic map zoom, with hysteresis so tiny wheel movements do not flicker labels.
+export function mapDetail(zoom, previous = 0) {
+  const thresholds = [1.55, 2.8, 5];
+  const z = Number.isFinite(zoom) ? Math.max(0, zoom) : 1;
+  let level = Math.max(0, Math.min(3, Math.trunc(previous) || 0));
+  while (level < 3 && z >= thresholds[level] * 1.08) level++;
+  while (level > 0 && z < thresholds[level - 1] * 0.88) level--;
+  return { level, name: ['Overview', 'Agents', 'Requests', 'Layers'][level], cell: [46, 32, 20, 12][level], labelBudget: [0, 16, 30, 44][level] };
+}
+
+// Collapse overlapping map symbols by screen cell and kind. Keep the nearest actual
+// record as the anchor; its count is a cluster size, never a fabricated request.
+export function clusterMapPoints(points, size) {
+  const cells = new Map();
+  for (const point of points) {
+    if (![point.px, point.py, point.depth].every(Number.isFinite) || point.depth <= 0) continue;
+    const key = `${point.kind || ''}:${Math.floor(point.px / size)}:${Math.floor(point.py / size)}`;
+    const cell = cells.get(key);
+    if (!cell) cells.set(key, { point, count: 1 });
+    else { cell.count++; if (point.depth < cell.point.depth) cell.point = point; }
+  }
+  return [...cells.values()];
+}
+
+export function cappedMarkerHeight(worldHeight, projectedPixels, maxPixels = 48) {
+  if (!(worldHeight > 0) || !(projectedPixels > 0)) return 0;
+  return worldHeight * Math.min(1, maxPixels / projectedPixels);
+}
+
+// Keep the shallow agent field on the viewer's side of the main massif. Its rows
+// are shared by terrain, links and picking; no separate minimap lane arrangement.
+export function terrainPlacement() {
+  const subDepth = 3.4, sideZ = 5.5, spacing = 5.2;
+  return { subDepth, sideZ, laneZ: lane => 17 + lane * spacing };
+}

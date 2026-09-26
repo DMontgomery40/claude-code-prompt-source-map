@@ -1,6 +1,6 @@
 // The shared session layout (compressed time axis, subagent lanes, spawn/return links) and the
-// 2D SVG overview drawn from it. The overview is the corner minimap, and the main view when
-// motion is reduced or WebGL is unavailable.
+// 2D SVG overview used when motion is reduced or WebGL is unavailable.
+// The 3D corner navigator shares the actual scene meshes (map-overview.js).
 import { STRATA, STATUS, MODEL_COLORS, modelFamily, freshTokens, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, blockTokens, unloggedShrinks, el } from "./panels.js";
 
 const GAP_MS = 20 * 60e3;   // idle stretches longer than this are compressed
@@ -62,7 +62,7 @@ export function buildLayout(trace) {
     if (a.kind === "subagent") segs.push(...segments);
   }
 
-  // Pack subagent bursts into lanes behind the root; an agent keeps its lane when it can.
+  // Pack subagent bursts into lanes; an agent keeps its lane when it can.
   segs.sort((p, q) => p.x0 - q.x0);
   const laneEnd = [];
   const pad = 0.006;
