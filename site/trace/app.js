@@ -1,6 +1,6 @@
 // Trace viewer: loading, state, levels, keyboard, and wiring between the scene, minimap and panels.
 // Everything runs locally. The only network requests are this page's own static files.
-import { STRATA, STRATUM_INDEX, STATUS, LENSES, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily } from "./panels.js";
+import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 
@@ -10,7 +10,7 @@ const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const S = {
   trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null,
-  lens: "context", mode: "3d", custodyFn: null
+  lens: "context", mode: "3d", custodyFn: null, reading: false
 };
 let scene = null;
 let text = null;     // (agentId, ref) => Promise<{text, mode}>
@@ -38,12 +38,19 @@ function setupLoader() {
   $("#pick-folder").addEventListener("change", e => loadFiles([...e.target.files].map(f => ({ path: f.webkitRelativePath || f.name, file: f }))));
   drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#pick-files").click(); } });
   $("#paste").addEventListener("input", e => describePaste(e.target.value));
+  $("#paste").addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const open = $("#paste-out .btn.open");
+    if (open && !open.disabled) open.click();
+  });
   $("#pick-root").addEventListener("change", e => {
     const files = [...e.target.files].map(f => ({ path: f.webkitRelativePath || f.name, file: f }));
     if (!files.length) return;
+    e.target.value = "";
+    if (pasted?.id && !holdsPaste(files, pasted.id)) return missingPaste(files);
     pickedRoots.set(e.target.dataset.product, files);
     loadFiles(narrowPicked(files, pasted), pasted?.id || null);
-    e.target.value = "";
   });
   if (params.has("dev")) window.__traceDev = { filesFromHandle, narrowPicked, parsePaste };
   $("#dev-model").addEventListener("change", async e => {
@@ -188,7 +195,10 @@ async function loadFiles(files, root) {
   if (!files || !files.length) return;
   const logs = files.filter(f => /\.(jsonl|json)$/i.test(f.path));
   if (!logs.length) return showError("No .jsonl session logs in what was dropped.");
-  if (root === undefined) root = pasteRoot && files.some(f => f.path.includes(pasteRoot)) ? pasteRoot : null;
+  if (root === undefined) {
+    if (pasteRoot && !holdsPaste(files, pasteRoot)) return missingPaste(files);
+    root = pasteRoot;
+  }
   setProgress(0, `Reading ${fmtInt(files.length)} files…`);
   lastFiles = files;
   try {
@@ -198,6 +208,35 @@ async function loadFiles(files, root) {
   } catch (e) {
     showError(e.message || String(e));
   }
+}
+
+// A pasted id is in the files when some path names it (the session's .jsonl, a rollout file name).
+function holdsPaste(files, id) {
+  return files.some(f => f.path.toLowerCase().includes(id));
+}
+
+// The files don't hold the pasted session: say so, and let the user pick again or open what they picked.
+function missingPaste(files) {
+  const id = pasteRoot || pasted?.id || "";
+  const product = pasted?.product;
+  const e = $("#load-error");
+  $("#progress").hidden = true;
+  const again = el("button", { class: "btn small", type: "button", text: "Pick again" });
+  again.addEventListener("click", () => {
+    e.hidden = true;
+    if (pasted) openPasted(pasted, $("#paste-out .btn.open") || again, $("#paste-out .open-hint") || el("p"), true);
+    else $("#pick-folder").click();
+  });
+  const clear = el("button", { class: "btn small", type: "button", text: "Clear the pasted id" });
+  clear.addEventListener("click", () => {
+    e.hidden = true;
+    $("#paste").value = "";
+    describePaste("");
+    loadFiles(files, null);
+  });
+  e.replaceChildren(el("span", { text: `Session ${id.slice(0, 8)}… isn't in these files${product ? `. Pick ${ROOT_DIR[product]}` : ""}.` }),
+    el("span", { class: "error-actions" }, again, clear));
+  e.hidden = false;
 }
 
 // Several sessions were dropped: reload the worker's parse with the chosen one as `root`.
@@ -296,18 +335,19 @@ function describePaste(v) {
 }
 
 function copiedHint(hint, product) {
+  if (TOUCH) return hint.replaceChildren(`Pick ${ROOT_DIR[product]} in the file picker.`);
   hint.replaceChildren(`Path copied: in the picker press `, el("kbd", { text: "⌘⇧G" }), `, paste, Enter, then Open. (${ROOT_DIR[product]})`);
 }
 function copyRoot(product) {
   try { navigator.clipboard?.writeText(ROOT_DIR[product]).catch(() => {}); } catch { /* clipboard unavailable */ }
 }
 
-async function openPasted(info, btn, hint) {
+async function openPasted(info, btn, hint, fresh = false) {
   pasteRoot = info.id;
-  const mem = pickedRoots.get(info.product);
-  if (mem) return loadFiles(narrowPicked(mem, info), info.id);
+  const mem = !fresh && pickedRoots.get(info.product);
+  if (mem) return holdsPaste(mem, info.id) ? loadFiles(narrowPicked(mem, info), info.id) : missingPaste(mem);
   if (typeof window.showDirectoryPicker === "function") {
-    let handle = await storedHandle(info.product);
+    let handle = fresh ? null : await storedHandle(info.product);
     if (handle && !(await readPermission(handle))) handle = null;
     if (!handle) {
       copyRoot(info.product);
@@ -324,9 +364,9 @@ async function openPasted(info, btn, hint) {
     setProgress(0, "Finding the session's files…");
     try {
       const files = await filesFromHandle(handle, info);
-      if (!files.length) {
+      if (!holdsPaste(files, info.id)) {
         btn.disabled = false;
-        return showError(`That folder doesn't hold this session. Pick ${ROOT_DIR[info.product]}.`);
+        return missingPaste(files);
       }
       return loadFiles(files, info.id);
     } catch (e) {
@@ -539,6 +579,7 @@ async function setMode(mode) {
     $("#stage").hidden = true;
     $("#flat").hidden = false;
   }
+  symbolLegend();
   layoutInsets();
   render(true);
 }
@@ -562,6 +603,7 @@ function afterSideResize() {
   renderMinimap();
   if (S.mode === "2d") renderFlat();
   scene?.refit();
+  showReader();
 }
 function setupResizer() {
   let saved = null;
@@ -616,22 +658,38 @@ function buildHud() {
     $(".hud-title").append(sel);
   }
   const stat = (b, s) => el("span", {}, el("b", { text: b }), s);
-  $("#stats").replaceChildren(
+  // Only what the session has: no subagent slots for a single-agent session.
+  $("#stats").replaceChildren(...[
     stat(fmtDur(st.wall), "wall clock"),
     stat(fmtInt(st.rootRequests), "main-thread requests"),
-    stat(fmtInt(st.subagents), `subagents, ${fmtInt(st.subRequests)} requests`),
-    stat(`${fmtTok(st.rootFresh)} vs ${fmtTok(st.subFresh)}`, "fresh tokens, main vs subagents"),
-    stat(`${Math.round(st.cacheShare * 100)}%`, "of context read from cache"));
-  const lg = $("#legend");
-  legend(lg);
-  lg.append(el("span", { class: "k sym" }, el("i", { style: `background:${STRATA[STRATUM_INDEX.you].color}` }), "flag: your ask"),
-    el("span", { class: "k sym" }, el("i", { style: `background:${STATUS.outward.color}` }), "left the machine"),
-    el("span", { class: "k sym" }, el("i", { style: `background:${STATUS.write.color}` }), "wrote"),
-    el("span", { class: "k sym" }, el("i", { style: `background:${STATUS.read.color}` }), "read"));
+    st.subagents ? stat(fmtInt(st.subagents), `subagents, ${fmtInt(st.subRequests)} requests`) : null,
+    st.subFresh ? stat(`${fmtTok(st.rootFresh)} vs ${fmtTok(st.subFresh)}`, "fresh tokens, main vs subagents") : stat(fmtTok(st.rootFresh), "fresh tokens"),
+    stat(`${Math.round(st.cacheShare * 100)}%`, "of context read from cache"),
+    st.sideFresh ? stat(fmtTok(st.sideFresh), "fresh tokens, side calls and reviews") : null].filter(Boolean));
+  symbolLegend();
   $("#lenses").replaceChildren(...LENSES.map((l, i) => el("button", {
     type: "button", "aria-pressed": String(S.lens === l.key), "data-lens": l.key,
     onclick: () => { S.lens = l.key; render(); }
   }, el("b", { text: String(i + 1), "aria-hidden": "true" }), l.q)));
+}
+
+// The strata plus the marks the current view draws: the 3D view's flags and pins, the 2D chart's
+// ask ticks and outward dots (writes show under lens 2).
+// The legend: the layers and landmarks this session has, in the words of the current view.
+function symbolLegend() {
+  const lg = $("#legend");
+  legend(lg);
+  const t = S.trace, has = new Set(), acts = new Set();
+  if (t) for (const a of t.agents) for (const r of a.requests) {
+    for (const k in r.strata || {}) if (r.strata[k] > 0) has.add(k);
+    if (r.action?.class) acts.add(r.action.class);
+  }
+  // legend() lists every stratum first, in STRATA order.
+  if (t) [...lg.children].forEach((c, j) => { if (STRATA[j] && !has.has(STRATA[j].key)) c.remove(); });
+  const sym = (color, text) => el("span", { class: "k sym" }, el("i", { style: `background:${color}` }), text);
+  const asks = !t || t.agents.some(a => a.asks.length), got = k => !t || acts.has(k);
+  if (S.mode === "2d") lg.append(...[asks ? sym(STRATA[STRATUM_INDEX.you].color, "tick: your ask") : null, got("outward") ? sym(STATUS.outward.color, "left the machine") : null, got("write") ? sym(STATUS.write.color, "wrote (lens 2)") : null].filter(Boolean));
+  else lg.append(...[asks ? sym(STRATA[STRATUM_INDEX.you].color, "flag: your ask") : null, got("outward") ? sym(STATUS.outward.color, "left the machine") : null, got("write") ? sym(STATUS.write.color, "wrote") : null, got("read") ? sym(STATUS.read.color, "read") : null].filter(Boolean));
 }
 
 function clipName(s) { s = String(s); return s.length > 48 ? `${s.slice(0, 47)}…` : s; }
@@ -660,10 +718,11 @@ function set(patch) {
   S.agent = S.agentId ? agentById(S.agentId) : null;
   if (S.agent && !S.agent.requests.length && S.level > 0) S.level = 1;
   if (S.agent && S.reqIdx != null) S.reqIdx = Math.max(0, Math.min(S.agent.requests.length - 1, S.reqIdx));
-  render(prev.level !== S.level || prev.agentId !== S.agentId);
+  if (S.level < 3 || S.block == null) S.reading = false;
+  render(prev.level !== S.level || prev.agentId !== S.agentId, patch.block != null);
 }
 function pick(p) {
-  if (p.level === 3) return set({ level: 3, agentId: p.agentId, reqIdx: p.reqIdx, stratum: p.stratum, block: null });
+  if (p.level === 3) return set({ level: 3, agentId: p.agentId, reqIdx: p.reqIdx, stratum: p.stratum, block: p.block ?? null });
   if (p.level === 2) return set({ level: 2, agentId: p.agentId, reqIdx: p.reqIdx, stratum: null, block: null });
   set({ level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null });
 }
@@ -686,6 +745,9 @@ const A = {
     if (bi >= 0) A.openBlockAt(agentId, bi);
   },
   getText: (agentId, ref) => (text ? text(agentId, ref) : Promise.reject(new Error("no text source"))),
+  // Narrow screens: the reader can take the whole screen.
+  reading: () => S.reading,
+  toggleReading() { S.reading = !S.reading; render(false, true); },
   // Per line of `text`: true when the site publishes that line (the product's wording). Null without an index.
   async templateLines(text) {
     const ix = await loadIndex();
@@ -695,6 +757,7 @@ const A = {
   up
 };
 function up() {
+  if (S.reading) { S.reading = false; return render(false, true); }
   if (S.level === 3 && S.block != null) return set({ block: null });
   if (S.level === 3) return set({ level: 2, stratum: null });
   if (S.level === 2) return set({ level: 1 });
@@ -713,22 +776,35 @@ function onKey(e) {
     return;
   }
   if (e.key === "Enter" && S.level === 1 && document.activeElement === document.body) { set({ level: 2 }); return; }
+  // Enter at the session opens the main thread, so the keyboard can get into the landscape.
+  if (e.key === "Enter" && S.level === 0 && document.activeElement === document.body) { A.focusAgent(S.layout.root.id, 0); return; }
   const n = Number(e.key);
   if (n >= 1 && n <= 4) { S.lens = LENSES[n - 1].key; render(); }
 }
 
 // ---------- render ----------
-function render(levelChanged) {
+function render(levelChanged, readerOpened) {
   $("#app").dataset.level = String(S.level);
+  $("#app").classList.toggle("reading", S.reading);
   if (levelChanged) $("#tip").hidden = true;
   document.querySelectorAll("#lenses button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lens === S.lens)));
   renderCrumbs();
+  placeCrumbs();
   renderPanel($("#panel"), S, A);
   if (levelChanged) $("#panel").scrollTop = 0;
+  if (readerOpened) showReader();
   renderMinimap();
   layoutInsets();
   if (S.mode === "3d" && scene) scene.show({ level: S.level, agentId: S.agentId, reqIdx: S.reqIdx, stratum: S.stratum, lens: S.lens });
   if (S.mode === "2d") renderFlat();
+}
+
+// The reader opens above the block list: bring its top into the panel's view. (Set scrollTop rather
+// than scrollIntoView, which would also scroll the fixed app shell.)
+function showReader() {
+  const panel = $("#panel"), reader = panel.querySelector(".reader");
+  if (!reader) return;
+  panel.scrollTop += reader.getBoundingClientRect().top - panel.getBoundingClientRect().top - 8;
 }
 
 function renderCrumbs() {
@@ -743,7 +819,7 @@ function renderCrumbs() {
     if (i) kids.push(el("span", { class: "sep", "aria-hidden": "true", text: "›" }));
     kids.push(el("button", { type: "button", text: name, onclick: fn, "aria-current": String(i === parts.length - 1) }));
   });
-  kids.push(el("span", { class: "keys", text: S.level === 0 ? (S.mode === "3d" ? "click a ridge · drag to orbit · 1–4 lenses" : "click the chart · 1–4 lenses") : "Esc up · ← → requests" }));
+  if (!TOUCH) kids.push(el("span", { class: "keys", text: S.level === 0 ? (S.mode === "3d" ? "click a ridge · drag to orbit · Enter main thread · 1–4 lenses" : "click the chart · Enter main thread · 1–4 lenses") : "Esc up · ← → requests" }));
   c.replaceChildren(...kids);
 }
 
@@ -753,27 +829,50 @@ function renderMinimap() {
   host.hidden = false;
   const w = Math.min(520, Math.max(280, innerWidth - sideW - 16 * 4 - 120));
   renderOverview(host, S.trace, S.layout, { width: w, height: 132, full: false, lens: S.lens, focus: { agentId: S.agentId, reqIdx: S.level >= 1 ? S.reqIdx : null },
-    onPick: p => (p.reqIdx != null ? A.focusRequest(p.agentId, p.reqIdx) : A.focusAgent(p.agentId)) });
+    // From the session, a lane opens that agent with the cursor on the request; inside an open agent it opens the request.
+    onPick: p => (p.reqIdx != null && S.level >= 2 && p.agentId === S.agentId ? A.focusRequest(p.agentId, p.reqIdx) : A.focusAgent(p.agentId, p.reqIdx)) });
+}
+
+// The free area the 2D view can use: below the HUD, crumbs and (on phones) the lens row; left of the
+// side panel, or above the bottom panel and the view button on phones.
+// Phones: the crumbs sit under the lens grid, whatever its height.
+function placeCrumbs() {
+  if (innerWidth <= 760) $("#app").style.setProperty("--crumbs-top", `${Math.round($("#lenses").getBoundingClientRect().bottom + 8)}px`);
+}
+
+function flatInsets() {
+  const mobile = innerWidth <= 760;
+  placeCrumbs();
+  const bottomOf = s => $(s)?.getBoundingClientRect().bottom || 0;
+  const top = Math.max(bottomOf(".hud"), bottomOf("#crumbs"), mobile ? bottomOf("#lenses") : 0) + 12;
+  if (!mobile) {
+    $(".viewtools").style.bottom = "";
+    return { top, right: innerWidth - $("#panel").getBoundingClientRect().left + 12, bottom: 56, left: 24 };
+  }
+  const panelTop = $("#panel").getBoundingClientRect().top;
+  $(".viewtools").style.bottom = `${Math.round(innerHeight - panelTop + 8)}px`;
+  return { top, right: 12, bottom: innerHeight - panelTop + 52, left: 12 };
 }
 
 function renderFlat() {
   const host = $("#flat");
-  const w = Math.max(300, host.clientWidth - (innerWidth > 760 ? sideW + 52 : 24));
-  const h = Math.max(260, Math.min(640, innerHeight - (innerWidth > 760 ? 200 : 420)));
+  const ins = flatInsets();
+  host.style.padding = `${ins.top}px ${ins.right}px ${ins.bottom}px ${ins.left}px`;
+  const w = Math.max(280, innerWidth - ins.left - ins.right);
   const box = el("div");
+  const svgHost = el("div");
+  const caption = el("h2", { text: S.level === 0 ? "Main-thread context over time, with outward actions and subagent lanes"
+    : S.agent ? `${S.agent.kind === "root" ? "Main thread" : S.agent.name}: one column per request, height = exact context` : "" });
+  box.append(caption, svgHost);
+  host.replaceChildren(box);
+  // The chart takes what the caption leaves of the free area.
+  const h = Math.max(140, Math.min(640, innerHeight - ins.top - ins.bottom - caption.offsetHeight - 14));
   if (S.level === 0) {
-    box.append(el("h2", { text: "Main-thread context over time, with outward actions and subagent lanes" }));
-    const svgHost = el("div");
     renderOverview(svgHost, S.trace, S.layout, { width: w, height: h, full: true, lens: S.lens,
       onPick: p => (p.reqIdx != null ? A.focusAgent(p.agentId, p.reqIdx) : A.focusAgent(p.agentId)) });
-    box.append(svgHost);
   } else if (S.agent) {
-    box.append(el("h2", { text: `${S.agent.kind === "root" ? "Main thread" : S.agent.name}: one column per request, height = exact context` }));
-    const svgHost = el("div");
     renderAgentColumns(svgHost, S.agent, { width: w, height: h, reqIdx: S.reqIdx, onPick: i => A.focusRequest(S.agent.id, i) });
-    box.append(svgHost);
   }
-  host.replaceChildren(box);
 }
 
 function showTip(hit) {
@@ -782,7 +881,7 @@ function showTip(hit) {
   const a = agentById(hit.agentId);
   const r = a?.requests[hit.reqIdx];
   if (!r) { tip.hidden = true; return; }
-  const who = a.kind === "root" ? "Main thread" : `${a.name}${a.kind === "side" ? " (side call)" : a.kind === "guardian" ? " (guardian review)" : ""}`;
+  const who = a.kind === "root" ? "Main thread" : `${a.name}${a.kind === "side" ? " (side call)" : a.kind === "guardian" && !/^guardian/i.test(a.name || "") ? " (guardian review)" : ""}`;
   const kids = [el("b", { text: `${who} · request ${hit.reqIdx + 1}` }), el("div", { class: "m", text: `${fmtWhen(r.t)} · ${fmtTok(r.tokens.context)} tokens in context` })];
   if (a.kind === "subagent" && S.level === 0) {
     // A subagent ridge: who it is and what it cost, rather than one request's detail.
@@ -796,9 +895,8 @@ function showTip(hit) {
     const s = STRATA[STRATUM_INDEX[hit.stratum]];
     kids.push(el("div", { text: `${s.name}: ≈ ${fmtTok(r.strata?.[hit.stratum] || 0)} · click to list its blocks` }));
   } else {
-    let top = null;
-    for (const s of STRATA) if (!top || (r.strata?.[s.key] || 0) > (r.strata?.[top.key] || 0)) top = s;
-    if (top) kids.push(el("div", { class: "m", text: `largest layer: ${top.name} ≈ ${fmtTok(r.strata?.[top.key] || 0)}` }));
+    const top = largestLayer(r);
+    kids.push(el("div", { class: "m", text: top ? `largest layer: ${top.name} ≈ ${fmtTok(top.tokens)}` : "split unknown: the log has no blocks for this request" }));
     if (r.action && r.action.kind === "tool") kids.push(el("div", { text: `${r.action.tool}${r.action.target ? `: ${r.action.target.slice(0, 80)}` : ""}` }));
   }
   tip.replaceChildren(...kids.filter(Boolean));

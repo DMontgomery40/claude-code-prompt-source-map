@@ -39,7 +39,7 @@ export async function buildTrace({ siteRoot, sourceRoot, categories, siteId, ori
     const index = pages.push({ slug: file.slug, title: file.title }) - 1;
     for (const hash of textLineHashes(await readFile(full, "utf8"))) if (!(hash in lines)) lines[hash] = index;
   }
-  const index = { site: siteId, origin, pages, lines, harness: {}, reminders: {}, tools: {} };
+  const index = { site: siteId, origin, pages, lines, harness: {}, reminders: {}, templates: {}, tools: {} };
   // Tools: every identifier-like heading on the site's tool page (ccprompts "tools", gpt6aeon "tool-manifest").
   for (const slug of ["tools", "tool-manifest"]) {
     const page = pages.find(p => p.slug === slug);
@@ -74,6 +74,17 @@ export async function buildTrace({ siteRoot, sourceRoot, categories, siteId, ori
       if (type && !index.reminders[type]) index.reminders[type] = { slug: page.slug, anchor: ids.get(item.title) ?? null, title: item.title };
     }
   }
+  // Templates the viewer fills from a structured attachment row's fields (Claude Code versions that
+  // log some attachments without their text): published template text only, by id, from the
+  // reminders page and the system prompt page (environment, session context and date live there).
+  const { TEMPLATE_IDS } = await import(pathToFileURL(path.join(src, "adapters", "cc-templates.js")).href);
+  for (const [slug, file] of [["system-reminders", reminders], ["system-prompt", path.join(sourceRoot, "outputs/system-prompt.json")]]) {
+    if (!existsSync(file)) continue;
+    const ids = await headingIds(siteRoot, slug);
+    for (const item of JSON.parse(await readFile(file, "utf8")).items ?? []) {
+      if (TEMPLATE_IDS.includes(item.id) && typeof item.text === "string" && !index.templates[item.id]) index.templates[item.id] = { text: item.text, slug, anchor: ids.get(item.title) ?? null, title: item.title };
+    }
+  }
   await writeFile(path.join(out, "reference-index.json"), JSON.stringify(index));
-  return { pages: pages.length, lines: Object.keys(lines).length, reminders: Object.keys(index.reminders).length, tools: Object.keys(index.tools).length, bytes: (await stat(path.join(out, "reference-index.json"))).size };
+  return { pages: pages.length, lines: Object.keys(lines).length, reminders: Object.keys(index.reminders).length, templates: Object.keys(index.templates).length, tools: Object.keys(index.tools).length, bytes: (await stat(path.join(out, "reference-index.json"))).size };
 }

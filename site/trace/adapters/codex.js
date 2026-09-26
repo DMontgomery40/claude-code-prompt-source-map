@@ -2,7 +2,7 @@
 // spawned subagents, guardian reviews) -> the normalized Trace model.
 import {
   readLines, newAgent, addBlock, tokensCodex, imageDims, estEncrypted, estText,
-  classifyCodexCall, RANK, finalizeAgent, partText,
+  classifyCodexCall, RANK, finalizeAgent, partText, codexWrites, recordScripts, blockedNetwork,
 } from "../model.js";
 
 const ts = (s) => Date.parse(s);
@@ -45,6 +45,15 @@ function splitLeadingTags(s) {
   return out;
 }
 
+// The text between two markers, as one span; null when either marker is missing.
+function between(text, open, close) {
+  const a = open.exec(text);
+  if (!a) return null;
+  const from = a.index + a[0].length;
+  const b = close.exec(text.slice(from));
+  return b ? [[from, from + b.index]] : null;
+}
+
 const firstLine = (s) => (s.match(/^\s*(?:<([\w-]+)|#+\s*(.+)|(.{0,60}))/) || []).slice(1).find(Boolean) || "";
 
 // Parses one rollout file. Returns a thread record: { meta, agent, ... } with the
@@ -60,6 +69,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
   let outStart = null;
   let pendingCalls = [];
   const calls = new Map(); // callId -> call record
+  const scripts = new Map(); // path -> text of scripts this thread wrote, for calls that run them
   let openCall = null;
   let model = null;
   let harnessBase = null;
@@ -94,10 +104,10 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
         // before the first request are the harness; later ones were injected between turns.
         const ref = { ...lineRef, path: tpath };
         const source = kind0 ? `developer:${kind0}` : null;
-        if (kind0 === "memories.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "memories", ref, text, carried, own: true, source })); return; }
+        if (kind0 === "memories.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "memories", ref, text, carried, own: true, source, userSpans: between(text, /=+ MEMORY_SUMMARY BEGINS =+\n?/, /\n?=+ MEMORY_SUMMARY ENDS =+/) })); return; }
         if (kind0 === "host_skills.instructions") {
-          const n = (text.match(/^- [^\n]+\(file: /gm) || []).length;
-          made.push(addBlock(agent, { t, kind: "injected", label: `skills list${n ? ` (${n})` : ""}`, ref, text, carried, own: true, source }));
+          const entries = [...text.matchAll(/^- [^\n]+\(file: [^\n]*$/gm)].map((m) => [m.index, m.index + m[0].length]);
+          made.push(addBlock(agent, { t, kind: "injected", label: `skills list${entries.length ? ` (${entries.length})` : ""}`, ref, text, carried, own: true, source, userSpans: entries }));
           return;
         }
         const kind = requestsInWindow === 0 ? "harness" : "injected";
@@ -119,7 +129,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
         if (h.startsWith(">>> APPROVAL REQUEST END")) gs.planned = false;
         return;
       }
-      if (kind0 === "agents_md.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "AGENTS.md", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "agents_md" })); return; }
+      if (kind0 === "agents_md.instructions") { made.push(addBlock(agent, { t, kind: "you", label: "AGENTS.md", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "agents_md", userSpans: between(text, /<INSTRUCTIONS>\n?/, /\n?<\/INSTRUCTIONS>/) || [[0, text.length]] })); return; }
       // The app brackets a pasted image with <image name=… path=…> and </image> text items; they are
       // its markers, not something the user typed.
       if (/^\s*(?:<image\b[^>]*>|<\/image>)\s*$/.test(text)) { made.push(addBlock(agent, { t, kind: "injected", label: "image marker", ref: { ...lineRef, path: tpath }, text, carried })); return; }
@@ -143,10 +153,10 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       // A skill the user picked, and the user's goal objective (wrapped by the product): theirs.
       if (kind0 === "skills.selected_skill_instructions") {
         const name = (text.match(/<name>([^<]+)<\/name>/) || [])[1];
-        made.push(addBlock(agent, { t, kind: "injected", label: name ? `skill · ${name}` : "selected skill", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: name ? `skill:${name}` : null }));
+        made.push(addBlock(agent, { t, kind: "injected", label: name ? `skill · ${name}` : "selected skill", ref: { ...lineRef, path: tpath }, text, carried, own: true, userWhole: true, source: name ? `skill:${name}` : null }));
         return;
       }
-      if (kind0 === "goal.internal_context") { made.push(addBlock(agent, { t, kind: "you", label: "goal (your objective)", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "goal" })); return; }
+      if (kind0 === "goal.internal_context") { made.push(addBlock(agent, { t, kind: "you", label: "goal (your objective)", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "goal", userSpans: between(text, /<objective>\n?/, /\n?<\/objective>/) })); return; }
       const label = kind0 === "environments.environment_context" ? "environment_context" : kind0 || firstLine(text);
       made.push(addBlock(agent, { t, kind: "injected", label, ref: { ...lineRef, path: tpath }, text, carried }));
     });
@@ -172,9 +182,16 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
 
   function finishCall(call) {
     if (call.classified) return;
-    const c = classifyCodexCall(call.name, call.input, call.completed);
+    const c = classifyCodexCall(call.name, call.input, call.completed, scripts);
     call.classified = true;
-    Object.assign(call.action, { class: c.class, target: c.target });
+    let perm = null;
+    for (const x of th.perms) if (x.t <= call.t) perm = x;
+    const blocked = blockedNetwork(c, call.output, perm);
+    call.output = null;
+    Object.assign(call.action, { class: blocked ? "blocked" : c.class, target: c.target });
+    if (c.egress) call.action.egress = c.egress;
+    if (c.via) call.action.via = c.via;
+    if (blocked) call.action.blocked = blocked;
     const patchFiles = typeof call.input === "string" ? [...call.input.matchAll(/\*\*\* (?:Add|Update|Delete) File: ([^\n\\"'`]+)/g)].map((m) => m[1].trim()) : [];
     if (c.justification || patchFiles.length) th.escalations.push({ justification: c.justification || null, cmds: c.cmds || [], patchFiles, request: call.request, callId: call.callId, t: call.t });
     const req = agent.requests[call.request];
@@ -298,7 +315,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       if (p.role === "assistant" && th.reviews.length) {
         const rv = th.reviews[th.reviews.length - 1];
         const txt = (p.content || []).map((c) => c.text || "").join("");
-        try { const j = JSON.parse(txt); rv.outcome = j.outcome || null; rv.risk = j.risk_level || null; rv.userAuthorization = j.user_authorization || null; } catch { /* free text */ }
+        try { const j = JSON.parse(txt); rv.outcome = j.outcome || null; rv.risk = j.risk_level || null; rv.userAuthorization = j.user_authorization || null; rv.rationale = j.rationale || null; } catch { /* free text */ }
         rv.result = agent.blocks.length - 1;
       }
       continue;
@@ -316,6 +333,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       const b = addBlock(agent, { t, kind: "model", label: `${p.namespace ? p.namespace + "." : ""}${p.name} call`, ref: { ...lineRef, path: ["payload", p.type === "custom_tool_call" ? "input" : "arguments"] }, text: typeof input === "string" ? input : partText(input), carried: inherited });
       const action = { kind: "tool", tool: p.namespace ? `${p.namespace}.${p.name}` : p.name, target: null, class: "read", args: b.ref, result: null, callId: p.call_id };
       const call = { callId: p.call_id, name: p.name, namespace: p.namespace || null, input, completed: [], action, request: null, t, classified: false };
+      recordScripts(scripts, codexWrites(p.name, input));
       if (!inherited) { calls.set(p.call_id, call); pendingCalls.push(call); openCall = call; }
       continue;
     }
@@ -325,6 +343,8 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       if (inherited) made.forEach((b) => (b.carried = true));
       if (call) {
         call.action.result = made[0] ? made[0].ref : null;
+        const o = typeof p.output === "string" ? p.output : partText(p.output);
+        call.output = o.length > 20000 ? o.slice(0, 10000) + "\n" + o.slice(-10000) : o;
         finishCall(call);
         if (openCall === call) openCall = null;
       }
@@ -334,10 +354,15 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       const content = Array.isArray(p.content) ? p.content : [];
       const header = content.filter((c) => typeof c.text === "string").map((c) => c.text).join("\n");
       const enc = content.filter((c) => c.encrypted_content).reduce((s, c) => s + c.encrypted_content.length, 0);
-      const b = addBlock(agent, { t, kind: "agents", label: `message from ${p.author || "agent"}`, ref: { ...lineRef, path: ["payload", "content"] }, text: header, est: estText(header.length) + estEncrypted(enc), carried: inherited });
+      // Only the header (message type, task name, sender) is readable; the payload is encrypted. A single
+      // text item is the block's text, so the encrypted part is counted but never shown.
+      const texts = content.map((c, k) => (typeof c.text === "string" ? k : -1)).filter((k) => k >= 0);
+      const path = texts.length === 1 ? ["payload", "content", texts[0], "text"] : ["payload", "content"];
+      const b = addBlock(agent, { t, kind: "agents", label: `message from ${p.author || "agent"}`, ref: { ...lineRef, path }, text: header, est: estText(header.length) + estEncrypted(enc), carried: inherited });
       th.agentMessages.push({ author: p.author, recipient: p.recipient, block: b.i, t });
       const me = th.meta && (th.meta.agent_path || (th.meta.source && th.meta.source.subagent && th.meta.source.subagent.thread_spawn && th.meta.source.subagent.thread_spawn.agent_path));
-      if (!inherited && me && p.recipient === me) agent.asks.push({ t, request: null, block: b.i, from: "agent" });
+      const type = (header.match(/^Message Type:[ \t]*(\S+)/m) || [])[1];
+      if (!inherited && me && p.recipient === me) agent.asks.push({ t, request: null, block: b.i, from: "agent", by: p.author || null, ...(type ? { message: type } : {}) });
       continue;
     }
   }
@@ -352,7 +377,7 @@ function permissionAtFor(th) {
     let block = null;
     const [a, b] = req.window || [0, -1];
     for (let j = b; j >= a; j--) if (/permissions/.test(th.agent.blocks[j].label)) { block = j; break; }
-    return { approvalPolicy: perm && perm.approvalPolicy, reviewer: perm && perm.reviewer, sandbox: perm && perm.sandbox, network: perm && perm.network, profile: perm && perm.profile, permissionsBlock: block, guardian: null };
+    return { approvalPolicy: perm && perm.approvalPolicy, reviewer: perm && perm.reviewer, sandbox: perm && perm.sandbox, network: perm && perm.network, profile: perm && perm.profile, permissionsBlock: block, reviews: [] };
   };
 }
 
@@ -370,9 +395,13 @@ export function buildCodexTrace(threads, files) {
     a.name = th === root ? th.title || "root" : a.kind === "guardian" ? "guardian" : [m.agent_nickname || (spawn && spawn.agent_nickname), m.agent_path || (spawn && spawn.agent_path)].filter(Boolean).join(" ") || m.id;
     a.path = m.agent_path || (spawn && spawn.agent_path) || (th === root ? "/root" : null);
     a.model = (a.requests.find((r) => r.model) || {}).model || null;
-    a.harnessSource = "logged";
+    // Base and developer instructions are logged; the tool definitions are not ("partial": the
+    // missing part is sized at the first request and held, see model.js computeStrata).
+    a.harnessSource = "partial";
     finalizeAgent(a, permissionAtFor(th));
   }
+  // A short handle for a thread: its nickname, else its path (root's name is the user's title).
+  const handle = (th) => { const sp = th.meta.source && th.meta.source.subagent && th.meta.source.subagent.thread_spawn; return th.meta.agent_nickname || (sp && sp.agent_nickname) || th.agent.path || th.meta.id; };
   const depthOf = (th, seen = new Set()) => {
     if (th === root || seen.has(th)) return 0;
     seen.add(th);
@@ -384,6 +413,7 @@ export function buildCodexTrace(threads, files) {
     a.depth = depthOf(th);
     const parent = byId.get(th.meta.parent_thread_id);
     if (!parent || th === root) continue;
+    if (a.kind === "guardian") a.name = `guardian for ${parent === root ? parent.agent.path : handle(parent)}`;
     if (a.kind === "subagent") {
       const sp = parent.spawns.find((s) => s.threadId === a.id);
       if (sp) a.spawn = { t: sp.t, parentRequest: parent.callIndex.get(sp.callId) ?? null, callId: sp.callId };
@@ -400,19 +430,23 @@ export function buildCodexTrace(threads, files) {
         if (!cands.length && cmd) { cands = parent.escalations.filter((e) => e.cmds.some((c) => c === cmd || (c && c.endsWith("…") && cmd.startsWith(c.slice(0, -1))))); how = "command"; }
         const before = cands.filter((e) => e.t <= rv.t + 1000);
         const e = before.slice(-1)[0] || null;
-        const joined = { t: rv.t, block: rv.block, result: rv.result, outcome: rv.outcome, risk: rv.risk, userAuthorization: rv.userAuthorization || null, command: cmd || (pl.files ? `apply_patch ${pl.files.join(", ")}` : null), parentRequest: e ? e.request : null, callId: e ? e.callId : null, joinedBy: e ? how : null };
+        const joined = { t: rv.t, block: rv.block, result: rv.result, outcome: rv.outcome, risk: rv.risk, userAuthorization: rv.userAuthorization || null, rationale: rv.rationale || null, command: cmd || (pl.files ? `apply_patch ${pl.files.join(", ")}` : null), parentRequest: e ? e.request : null, callId: e ? e.callId : null, joinedBy: e ? how : null };
         a.reviews.push(joined);
         if (e) {
+          // Every review of a call is kept, in time order. The ladder follows a response's headline
+          // call, so it also lists the reviews of the response's other calls (forCall).
+          const review = { agentId: a.id, outcome: rv.outcome, risk: rv.risk, userAuthorization: joined.userAuthorization, rationale: joined.rationale, t: rv.t, block: rv.block, result: rv.result };
           const req = parent.agent.requests[e.request];
           const act = req && req.action && (req.action.callId === e.callId ? req.action : (req.action.all || []).find((x) => x.callId === e.callId));
           const target = act || (req && req.action);
-          if (target && target.custody) target.custody.permittedBy.guardian = { agentId: a.id, outcome: rv.outcome, risk: rv.risk, t: rv.t, block: rv.block };
-          else if (target) target.guardian = { agentId: a.id, outcome: rv.outcome, risk: rv.risk, t: rv.t, block: rv.block };
-          if (req && req.action && req.action !== target && req.action.custody && req.action.custody.permittedBy) req.action.custody.permittedBy.guardian = req.action.custody.permittedBy.guardian || { agentId: a.id, outcome: rv.outcome, risk: rv.risk, t: rv.t, block: rv.block, forCall: e.callId };
+          if (target && target.custody) target.custody.permittedBy.reviews.push(review);
+          else if (target) (target.reviews = target.reviews || []).push(review);
+          if (req && req.action && req.action !== target && req.action.custody) req.action.custody.permittedBy.reviews.push({ ...review, forCall: e.callId });
         }
       }
       const first = a.reviews.find((x) => x.parentRequest != null);
       if (first) a.spawn = { t: first.t, parentRequest: first.parentRequest, callId: first.callId };
+      for (const req of parent.agent.requests) if (req.action && req.action.custody) req.action.custody.permittedBy.reviews.sort((x, y) => x.t - y.t);
       const unjoined = a.reviews.filter((x) => x.parentRequest == null).length;
       if (unjoined) notes.push(`guardian ${a.id}: ${unjoined} of ${a.reviews.length} reviews not joined to a parent call`);
     }

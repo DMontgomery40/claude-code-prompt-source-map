@@ -200,8 +200,8 @@ test("codex: guardian reviews join by justification and by patch file, not by or
   const g = trace.agents.find((a) => a.kind === "guardian");
   assert.equal(g.parentId, CODEX.root);
   assert.deepEqual(g.reviews.map((r) => [r.parentRequest, r.joinedBy, r.outcome, r.risk]), [[0, "justification", "allow", "medium"], [2, "patch file", "allow", "medium"]]);
-  assert.equal(root.requests[0].action.custody.permittedBy.guardian.outcome, "allow");
-  assert.equal(root.requests[2].action.custody.permittedBy.guardian.agentId, CODEX.guardian);
+  assert.deepEqual(root.requests[0].action.custody.permittedBy.reviews.map((r) => [r.outcome, r.rationale]), [["allow", "ok"]]);
+  assert.equal(root.requests[2].action.custody.permittedBy.reviews[0].agentId, CODEX.guardian);
   assert.deepEqual(g.asks.map((a) => a.from), ["harness", "harness"]);
   assert.ok(g.blocks.some((b) => b.label === "reviewed transcript" && b.kind === "outside"));
   assert.ok(g.blocks.some((b) => b.label === "planned action" && b.kind === "outside"));
@@ -257,7 +257,8 @@ test("claude-code: instructions split per file, own setup labelled, nested memor
   assert.ok((await readRef(sources[0], claude.ref)).startsWith(`Contents of ${files[0].path}`));
   assert.ok((await readRef(sources[0], claude.ref)).includes("No emojis — naïve ☃"));
   assert.ok((await readRef(sources[0], mem.ref)).includes("a memory"));
-  assert.equal(root.blocks.find((b) => b.label === "instructions wrapper").kind, "injected");
+  // the product's wording around the user's files is part of the harness
+  assert.equal(root.blocks.find((b) => b.label === "instructions wrapper").kind, "harness");
   assert.deepEqual([root.blocks.find((b) => b.label === "skills list (2)").kind, root.blocks.find((b) => b.label === "skills list (2)").own], ["injected", true]);
   const nested = root.blocks.find((b) => b.label === "nested memory · ~/.claude/CLAUDE.md");
   assert.equal(nested.resendOf, claude.i);

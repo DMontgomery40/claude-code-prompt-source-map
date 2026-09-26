@@ -6,12 +6,13 @@ import * as THREE from "./vendor/three.module.min.js";
 import { OrbitControls } from "./vendor/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "./vendor/CSS2DRenderer.js";
 import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, freshTokens, unloggedShrinks, agentStats, clip } from "./panels.js";
+import { blockPart } from "./model.js";
+import { BASE_H, landscapeRule, tread, treadAt, crestEvents, placeLabel, modelSwitches } from "./scene-rules.js";
 
-const W = 220;            // world width of the whole session
-const H = 32;             // world height of the tallest context
+const H = BASE_H;         // world height of the tallest context
 const ROOT_DEPTH = 7, SUB_DEPTH = 3.4, VALLEY = 9, LANE = 4.2, SIDE_Z = 5.5, STAGE_Z = 15;
 const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); // main ridge: slope depth per unit of height
-const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -42), el: Number(q.get("el") ?? 30), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -50), pel: Number(q.get("pel") ?? 32) }; })();
+const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -42), el: Number(q.get("el") ?? 30), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -50), pel: Number(q.get("pel") ?? 32), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
 const SP = 0.62, CORE_R = 0.24, H1 = 12, LIFT_R = 1.25, LIFT_H = 13;
 const RINGS = 9;
 const FOG = new THREE.Color("#0d121a");
@@ -29,7 +30,7 @@ varying vec3 vN;
 varying vec3 vW;
 varying float vDepth;
 varying vec4 vSolid;
-varying vec3 vAg;
+varying vec4 vAg;
 varying float vInst;
 void main() {
   vB0 = aB0; vB1 = aB1;
@@ -44,10 +45,10 @@ void main() {
   vY = position.y;
 #ifdef AGENTS
   vSolid = texelFetch(uAgents, ivec2(int(aAgent + 0.5), 0), 0);
-  vAg = texelFetch(uAgents, ivec2(int(aAgent + 0.5), 1), 0).xyz;
+  vAg = texelFetch(uAgents, ivec2(int(aAgent + 0.5), 1), 0);
 #else
   vSolid = vec4(0.0);
-  vAg = vec3(1.0, 0.0, 0.0);
+  vAg = vec4(1.0, 0.0, 0.0, 0.0);
 #endif
   vec4 wp = modelMatrix * p;
   vW = wp.xyz;
@@ -84,7 +85,7 @@ varying vec3 vN;
 varying vec3 vW;
 varying float vDepth;
 varying vec4 vSolid;
-varying vec3 vAg;
+varying vec4 vAg;
 varying float vInst;
 uniform float uXray;
 void main() {
@@ -142,6 +143,8 @@ void main() {
     else if (abs(vInst - uHover) < 0.5) col = col * 1.18;
   }
   col = mix(col, uFog, haze(vW, vDepth));
+  // ridges other than the focused agent's recede almost to the ground while one agent is open
+  col = mix(col, uFog, 0.85 * vAg.w);
 #ifdef XRAY
   // Faint fill, crisp crest outline: a hidden ridge reads as an outline behind the one in front.
   float edge = tops[6] > 0.0 ? 1.0 - smoothstep(0.5, 1.5, abs(tops[6] - vY) / fw) : 0.0;
@@ -152,24 +155,51 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-const BEAM_VERT = /* glsl */`
-varying float vH;
+// Pins and flag poles are drawn in screen space: a shaft of constant pixel width in its class colour
+// with a dark outline (so it holds 3:1 on any stratum), and an optional round head at the top.
+const PIN_VERT = /* glsl */`
+attribute vec3 iBase;
+attribute float iLen;
+attribute vec3 iColor;
+attribute vec2 iPx;
+uniform vec2 uRes;
+uniform float uDpr;
+uniform float uHead;
 varying vec3 vC;
+varying vec2 vP;
+varying float vW;
 void main() {
-  vH = position.y;
-  vC = vec3(1.0);
-#ifdef USE_INSTANCING_COLOR
-  vC = instanceColor;
-#endif
-  gl_Position = projectionMatrix * viewMatrix * modelMatrix * instanceMatrix * vec4(position, 1.0);
+  vec4 a = projectionMatrix * viewMatrix * vec4(iBase, 1.0);
+  vec4 b = projectionMatrix * viewMatrix * vec4(iBase + vec3(0.0, iLen, 0.0), 1.0);
+  vC = iColor;
+  vP = position.xy;
+  if (uHead > 0.5) {
+    vW = iPx.y * uDpr;
+    gl_Position = b + vec4(position.xy * vW / uRes * 2.0 * b.w, 0.0, 0.0);
+    gl_Position.z -= 0.0004 * gl_Position.w;
+  } else {
+    vW = iPx.x * uDpr;
+    vec2 d = (b.xy / b.w - a.xy / a.w) * uRes;
+    d = length(d) > 1e-3 ? normalize(d) : vec2(0.0, 1.0);
+    vec4 p = mix(a, b, position.y);
+    p.xy += vec2(-d.y, d.x) * position.x * vW / uRes * p.w;
+    gl_Position = p;
+  }
 }`;
-const BEAM_FRAG = /* glsl */`
-uniform float uGain;
-varying float vH;
+const PIN_FRAG = /* glsl */`
+uniform float uHead;
+uniform float uDpr;
 varying vec3 vC;
+varying vec2 vP;
+varying float vW;
 void main() {
-  float a = pow(1.0 - clamp(vH, 0.0, 1.0), 1.2) * uGain;
-  gl_FragColor = vec4(vC * a, a);
+  // distance from the centre in device px: across the shaft, or radially in the head
+  float r = uHead > 0.5 ? length(vP) * vW : abs(vP.x) * vW * 0.5;
+  float edge = uHead > 0.5 ? vW : vW * 0.5;
+  if (r > edge) discard;
+  float o = 1.1 * uDpr;
+  vec3 col = mix(vC, vec3(0.004, 0.005, 0.008), smoothstep(edge - o - 0.6, edge - o + 0.4, r));
+  gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }`;
 
@@ -195,12 +225,16 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   controls.maxDistance = 900;
   controls.screenSpacePanning = true;
 
+  // World width of the whole session: a single-agent session is a compact massif, at most 3:1.
+  const rule = landscapeRule(L);
+  const W = rule.width;
+  const massif = rule.compact ? Math.min(MASSIF, 1.4) : MASSIF;
   const yScale = H / (L.yMax * 1.02);
   const agents = trace.agents;
   const agentIndex = new Map(agents.map((a, i) => [a.id, i]));
   const rootInfo = L.info.get(L.root.id);
 
-  // ---- per-agent state texture: row 0 = solid colour (rgb) + mix (a); row 1 = emphasis, hidden ----
+  // ---- per-agent state texture: row 0 = solid colour (rgb) + mix (a); row 1 = emphasis, hidden, x-ray skip, fade ----
   const AW = Math.max(1, agents.length);
   const agentData = new Float32Array(AW * 2 * 4);
   const agentTex = new THREE.DataTexture(agentData, AW, 2, THREE.RGBAFormat, THREE.FloatType);
@@ -232,12 +266,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // proportion to its height; subagent ridges are shallow blocks in lanes behind it.
   const rows = []; // for picking: { z, depthOf(h), maxDepth, segs: [{ agent, inf, i0, i1, x0, x1, taper }] }
   const rowZ = new Map(); // agent id -> [{ seg, zFront }]
-  const rootDepth = h => Math.max(ROOT_DEPTH, h * MASSIF);
+  const rootDepth = h => Math.max(ROOT_DEPTH, h * massif);
   const subDepth = () => SUB_DEPTH;
   const rootBack = rootDepth(Math.max(0, ...L.root.requests.map(r => (r.tokens.context || 0) * yScale)));
   const laneZ = k => -(rootBack + VALLEY) - k * LANE;
-  // a broad rounded shoulder behind the crest, falling away steeply at the back
-  const profile = u => 1 - Math.pow(Math.min(1, Math.max(0, u)), 2.3);
+  // a broad rounded shoulder behind the crest, falling away steeply at the back; a single massif keeps
+  // a flatter plateau, so its request-by-request terraces run back from the face where they can be seen
+  const shoulder = rule.compact ? 3.5 : 2.3;
+  const profile = u => 1 - Math.pow(Math.min(1, Math.max(0, u)), shoulder);
 
   function topsOf(r, scale) {
     const st = r.strata || {};
@@ -258,10 +294,20 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const addSeg = (agent, inf, seg, zF, depthOf, taper) => {
       const ai = agentIndex.get(agent.id);
       const cols = [];
-      for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: inf.xs[i] * W, t: topsOf(agent.requests[i], yScale) });
-      // flat ends a little past the first and last request, so a one-request segment still has width
-      cols.unshift({ x: cols[0].x - taper, t: cols[0].t });
-      cols.push({ x: cols.at(-1).x + taper, t: cols.at(-1).t });
+      const stepped = rule.stepped && agent === L.root;
+      if (stepped) {
+        // one flat tread per request, a riser between: the crest reads request by request
+        const xAt = i => inf.xs[i] * W;
+        for (let i = seg.i0; i <= seg.i1; i++) {
+          const t = topsOf(agent.requests[i], yScale), [a, b] = tread(xAt, seg.i0, seg.i1, i, taper);
+          cols.push({ x: a, t }, { x: b, t });
+        }
+      } else {
+        for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: inf.xs[i] * W, t: topsOf(agent.requests[i], yScale) });
+        // flat ends a little past the first and last request, so a one-request segment still has width
+        cols.unshift({ x: cols[0].x - taper, t: cols[0].t });
+        cols.push({ x: cols.at(-1).x + taper, t: cols.at(-1).t });
+      }
       // front face
       let v0 = front.pos.length / 3;
       for (const c of cols) {
@@ -275,20 +321,30 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         front.idx.push(a, b, b + 1, a, b + 1, a + 1);
       }
       // slope rings behind the face
-      v0 = slope.pos.length / 3;
-      for (const c of cols) {
+      const ring = c => {
         const depth = depthOf(c.t[6]);
         for (let r = 0; r <= RINGS; r++) {
           const u = r / RINGS;
           slope.pos.push(c.x, c.t[6] * profile(u), zF - u * depth); slope.nor.push(0, 1, 0);
           slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai);
         }
-      }
+      };
       const R = RINGS + 1;
-      for (let c = 0; c < cols.length - 1; c++) {
-        for (let r = 0; r < RINGS; r++) {
-          const a = v0 + c * R + r, b = a + R;
-          slope.idx.push(a, b, b + 1, a, b + 1, a + 1);
+      if (stepped) {
+        // each tread and riser keeps its own vertices, so terraces stay crisp under the light
+        for (let c = 0; c < cols.length - 1; c++) {
+          v0 = slope.pos.length / 3;
+          ring(cols[c]); ring(cols[c + 1]);
+          for (let r = 0; r < RINGS; r++) { const a = v0 + r, b = a + R; slope.idx.push(a, b, b + 1, a, b + 1, a + 1); }
+        }
+      } else {
+        v0 = slope.pos.length / 3;
+        for (const c of cols) ring(c);
+        for (let c = 0; c < cols.length - 1; c++) {
+          for (let r = 0; r < RINGS; r++) {
+            const a = v0 + c * R + r, b = a + R;
+            slope.idx.push(a, b, b + 1, a, b + 1, a + 1);
+          }
         }
       }
       // cut ends: the massif's cross-section, strata banded by height like the face
@@ -359,6 +415,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   const heightAt = (agent, inf, seg, x, taper) => {
     const xs = inf.xs;
+    if (rule.stepped && agent === L.root) {
+      const i = treadAt(k => xs[k] * W, seg.i0, seg.i1, x, taper);
+      return i < 0 ? -1 : (agent.requests[i].tokens.context || 0) * yScale;
+    }
     const x0 = xs[seg.i0] * W, x1 = xs[seg.i1] * W;
     const ctx = i => (agent.requests[i].tokens.context || 0) * yScale;
     if (x < x0) return x0 - x > taper ? -1 : ctx(seg.i0);
@@ -412,49 +472,78 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     world.add(plane);
   }
 
-  // ---- landmarks: flags (asks), beacons (actions), instruction-like markers, cairns (side calls) ----
-  const flagPole = new THREE.BoxGeometry(0.07, 1, 0.07).translate(0, 0.5, 0);
+  // ---- landmarks: flags (asks), pins (actions), instruction-like markers, cairns (side calls) ----
+  const pinUniforms = { uRes: { value: new THREE.Vector2(1, 1) }, uDpr: { value: 1 } };
+  // Instanced screen-space pins; set(list) with [{ x, y, z, len, color, w (shaft px), r (head px) }].
+  function makePins(cap, withHeads) {
+    const n = Math.max(1, cap);
+    const attrs = {
+      iBase: new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3), iLen: new THREE.InstancedBufferAttribute(new Float32Array(n), 1),
+      iColor: new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3), iPx: new THREE.InstancedBufferAttribute(new Float32Array(n * 2), 2)
+    };
+    const mk = head => {
+      const g = new THREE.InstancedBufferGeometry();
+      const y0 = head ? -1 : 0;
+      g.setAttribute("position", new THREE.Float32BufferAttribute([-1, y0, 0, 1, y0, 0, 1, 1, 0, -1, 1, 0], 3));
+      g.setIndex([0, 1, 2, 0, 2, 3]);
+      for (const [k, a] of Object.entries(attrs)) g.setAttribute(k, a);
+      g.instanceCount = 0;
+      const mesh = new THREE.Mesh(g, new THREE.ShaderMaterial({ vertexShader: PIN_VERT, fragmentShader: PIN_FRAG, uniforms: { ...pinUniforms, uHead: { value: head ? 1 : 0 } }, side: THREE.DoubleSide }));
+      mesh.frustumCulled = false;
+      mesh.renderOrder = head ? 4 : 3;
+      return mesh;
+    };
+    const group = new THREE.Group();
+    const parts = withHeads ? [mk(false), mk(true)] : [mk(false)];
+    group.add(...parts);
+    const c = new THREE.Color();
+    group.userData.set = list => {
+      list.forEach((p, k) => {
+        attrs.iBase.setXYZ(k, p.x, p.y, p.z); attrs.iLen.setX(k, p.len);
+        c.set(p.color); attrs.iColor.setXYZ(k, c.r, c.g, c.b); attrs.iPx.setXY(k, p.w, p.r || 0);
+      });
+      for (const a of Object.values(attrs)) a.needsUpdate = true;
+      for (const m of parts) m.geometry.instanceCount = list.length;
+    };
+    return group;
+  }
   const pennant = new THREE.BufferGeometry();
   pennant.setAttribute("position", new THREE.Float32BufferAttribute([0, 1, 0, 0, 0.62, 0, 0.95, 0.81, 0], 3));
-  const youColor = new THREE.Color(STRATA[STRATUM_INDEX.you].color);
-  const flagMats = [new THREE.MeshBasicMaterial({ color: youColor, fog: false }), new THREE.MeshBasicMaterial({ color: youColor, side: THREE.DoubleSide, fog: false })];
-  function flagMeshes(items) { // items: [{x,y,z,s}]
+  const pennantEdge = new THREE.BufferGeometry();
+  pennantEdge.setAttribute("position", new THREE.Float32BufferAttribute([-0.05, 1.07, 0, -0.05, 0.55, 0, 1.12, 0.81, 0], 3));
+  const youHex = STRATA[STRATUM_INDEX.you].color;
+  const flagMats = [new THREE.MeshBasicMaterial({ color: "#07090d", side: THREE.DoubleSide, fog: false }), new THREE.MeshBasicMaterial({ color: youHex, side: THREE.DoubleSide, fog: false })];
+  function flagMeshes(items) { // items: [{x,y,z,h}]
     const n = Math.max(1, items.length);
-    const pole = new THREE.InstancedMesh(flagPole, flagMats[0], n), pen = new THREE.InstancedMesh(pennant, flagMats[1], n);
+    const edge = new THREE.InstancedMesh(pennantEdge, flagMats[0], n), pen = new THREE.InstancedMesh(pennant, flagMats[1], n);
     const m = new THREE.Matrix4();
     items.forEach((f, i) => {
-      m.makeScale(f.s, f.h, f.s).setPosition(f.x, f.y, f.z); pole.setMatrixAt(i, m);
-      m.makeScale(f.h * 0.5, f.h * 0.5, 1).setPosition(f.x, f.y + f.h * 0.5, f.z); pen.setMatrixAt(i, m);
+      m.makeScale(f.h * 0.55, f.h * 0.5, 1).setPosition(f.x, f.y + f.h * 0.5, f.z); pen.setMatrixAt(i, m);
+      m.setPosition(f.x, f.y + f.h * 0.5, f.z - 0.04); edge.setMatrixAt(i, m);
     });
-    pole.count = pen.count = items.length;
-    pole.frustumCulled = pen.frustumCulled = false;
-    const g = new THREE.Group(); g.add(pole, pen);
+    edge.count = pen.count = items.length;
+    edge.frustumCulled = pen.frustumCulled = false;
+    const poles = makePins(items.length, false);
+    poles.userData.set(items.map(f => ({ x: f.x, y: f.y, z: f.z, len: f.h, color: youHex, w: 5.4 })));
+    const g = new THREE.Group(); g.add(edge, pen, poles);
     return g;
   }
   const rootAsks = L.root.asks.map(a => {
     const i = Math.min(Math.max(0, a.request), L.root.requests.length - 1);
-    return { x: xOf(L.root, i), y: crest(L.root, i), z: -0.6, h: 3.6, s: 1 };
+    return { x: xOf(L.root, i), y: crest(L.root, i), z: -0.6, h: rule.compact ? 4.6 : 3.6 };
   });
   const flags = flagMeshes(rootAsks);
   world.add(flags);
 
-  const beamGeo = new THREE.CylinderGeometry(0.2, 0.2, 1, 12, 1, true).translate(0, 0.5, 0);
-  const beamMat = new THREE.ShaderMaterial({ vertexShader: BEAM_VERT, fragmentShader: BEAM_FRAG, uniforms: { uGain: { value: 1 } },
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
-  const capGeo = new THREE.OctahedronGeometry(0.5);
-  const capMat = new THREE.MeshBasicMaterial({ fog: false });
   const allActs = [];
   for (const a of agents) {
     if (a.kind === "side" || a.kind === "guardian") continue;
     a.requests.forEach((r, i) => { if (r.action && STATUS[r.action.class]) allActs.push({ a, i, cls: r.action.class }); });
   }
-  const beams = new THREE.InstancedMesh(beamGeo, beamMat, Math.max(1, allActs.length));
-  const caps = new THREE.InstancedMesh(capGeo, capMat, Math.max(1, allActs.length));
-  beams.frustumCulled = caps.frustumCulled = false;
+  const pins = makePins(allActs.length, true);
   const beamPick = []; // [{a, i, x, y0, y1, z}]
   function layoutBeams(lens) {
-    const m = new THREE.Matrix4(), c = new THREE.Color();
-    let n = 0;
+    const list = [];
     beamPick.length = 0;
     for (const act of allActs) {
       // Every tool call is a pin on the crest: tall red beacons left the machine, amber wrote
@@ -462,25 +551,16 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       const show = act.cls === "outward" || (act.cls === "write" && (lens === "context" || lens === "egress")) || (act.cls === "read" && lens === "context");
       if (!show) continue;
       const tall = act.cls === "outward" ? (lens === "egress" ? 16 : 11) : act.cls === "write" ? (lens === "egress" ? 5 : 3.4) : 1.9;
-      const r = act.cls === "outward" ? 1.25 : act.cls === "write" ? 0.75 : 0.5;
       const x = xOf(act.a, act.i), y = crest(act.a, act.i), z = zOf(act.a, act.i) - (act.a.kind === "root" ? 0.8 : 0.4);
-      m.makeScale(r, tall, r).setPosition(x, y, z);
-      beams.setMatrixAt(n, m);
-      c.set(STATUS[act.cls].color);
-      beams.setColorAt(n, c);
-      const s = act.cls === "outward" ? 1.05 : act.cls === "write" ? 0.6 : 0.36;
-      m.makeScale(s, s, s).setPosition(x, y + 0.25, z);
-      caps.setMatrixAt(n, m);
-      caps.setColorAt(n, c);
-      beamPick.push({ a: act.a, i: act.i, x, y0: y, y1: y + tall * 0.6, z });
-      n++;
+      // shaft px includes a 1px dark outline each side: the class colour itself is at least 3px wide
+      // Only outward pins carry a head in a session with a subagent field, so hundreds of reads stay a fringe, not a fence.
+      const head = act.cls === "outward" ? 6 : !rule.compact ? 0 : act.cls === "write" ? 4.5 : 3.5;
+      list.push({ x, y, z, len: tall, color: STATUS[act.cls].color, w: act.cls === "outward" ? 6.4 : 5.4, r: head });
+      beamPick.push({ a: act.a, i: act.i, x, y0: y, y1: y + tall, z });
     }
-    beams.count = caps.count = n;
-    beams.instanceMatrix.needsUpdate = caps.instanceMatrix.needsUpdate = true;
-    if (beams.instanceColor) beams.instanceColor.needsUpdate = true;
-    if (caps.instanceColor) caps.instanceColor.needsUpdate = true;
+    pins.userData.set(list);
   }
-  world.add(beams, caps);
+  world.add(pins);
 
   // instruction-like inflow markers (lens 3)
   const flagged = [];
@@ -584,6 +664,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   // compaction and shrink markers (root ridge front)
   const markLines = [];
+  let cliffLines = null;
   for (const c of L.root.compactions) markLines.push({ x: L.X(c.t) * W, y0: c.post * yScale, y1: c.pre * yScale, dashed: true, text: `compacted ${fmtTok(c.pre)} → ${fmtTok(c.post)}` });
   for (const s of unloggedShrinks(L.root)) markLines.push({ x: rootInfo.xs[s.request] * W, y0: s.to * yScale, y1: s.from * yScale, dashed: false, text: "context shrank; not logged as a compaction" });
   {
@@ -591,36 +672,29 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     for (const m of markLines) pts.push(m.x, m.y0, 0.08, m.x, m.y1 + 1.6, 0.08);
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-    const lines = new THREE.LineSegments(g, new THREE.LineDashedMaterial({ color: "#eef1f5", dashSize: 0.5, gapSize: 0.35, fog: false }));
-    lines.computeLineDistances();
-    world.add(lines);
+    cliffLines = new THREE.LineSegments(g, new THREE.LineDashedMaterial({ color: "#eef1f5", dashSize: 0.5, gapSize: 0.35, fog: false }));
+    cliffLines.computeLineDistances();
+    world.add(cliffLines);
   }
 
   // Mid-session injections on the main thread: large blocks inserted after the first request (a
   // model switch, a skills list sent again, skills re-sent after a compaction), and any copy of the
   // user's own setup sent again. The standing harness (system prompt, tools) is not an event.
   // Labelled where they arrived, the largest first.
-  const events = [];
-  {
-    const byReq = new Map();
-    for (const b of L.root.blocks) {
-      if (b.carried || b.seenBy == null || b.seenBy === 0) continue;
-      if (!(b.kind === "injected" || b.own)) continue;
-      if (!(b.est >= 900 || (b.resendOf != null && b.est >= 150))) continue;
-      let e = byReq.get(b.seenBy);
-      if (!e) byReq.set(b.seenBy, e = { i: b.seenBy, est: 0, top: null, n: 0, own: false });
-      e.est += b.est; e.n++;
-      if (!e.top || b.est > e.top.est) e.top = b;
-      if (b.own) e.own = true;
-    }
-    events.push(...[...byReq.values()].sort((x, y) => y.est - x.est).slice(0, 12));
-  }
+  // Sized as its row in that request's stratum list: the block's part in its own stratum (the product's
+  // wording around the user's setup is Harness), on the scale of the request that first saw it.
+  const events = crestEvents(L.root.blocks, b => blockPart(b, b.kind) * (L.root.requests[b.seenBy]?.scale?.[b.kind] ?? 1));
+  for (const e of events) e.own = !!L.root.blocks[e.top].own;
+  // A model switch is a landmark whether or not the log carries an instruction block for it.
+  const switches = modelSwitches(L.root.requests);
+  const switchAt = new Map(switches.map(s => [s.i, s]));
+  const bareSwitches = switches.filter(s => !events.some(e => e.i === s.i)).slice(0, 6);
   const eventLines = new THREE.Group();
   {
     const pos = [], col = [], c = new THREE.Color();
-    for (const e of events) {
+    for (const e of [...events, ...bareSwitches]) {
       const x = xOf(L.root, e.i), y = crest(L.root, e.i);
-      c.set(e.own ? STRATA[STRATUM_INDEX.you].color : STRATA[STRATUM_INDEX.injected].color);
+      c.set(e.own ? STRATA[STRATUM_INDEX.you].color : e.top == null ? "#eef1f5" : STRATA[STRATUM_INDEX.injected].color);
       pos.push(x, y, 0.12, x, y + 2.2, 0.12);
       col.push(c.r, c.g, c.b, c.r, c.g, c.b);
     }
@@ -631,19 +705,20 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   world.add(eventLines);
 
-  // ruler and hour ticks
+  // ruler and hour ticks; the ruler stands at the main ridge's left end, wherever that starts
+  const RX = (rootInfo.xs[rootInfo.segments[0]?.i0 ?? 0] || 0) * W - 3;
   const ruler = new THREE.Group();
   {
-    const pts = [-3, 0, 0, -3, H, 0];
+    const pts = [RX, 0, 0, RX, H, 0];
     const ticks = rulerTicks(L.yMax);
-    for (const v of ticks) pts.push(-3.6, v * yScale, 0, -3, v * yScale, 0);
+    for (const v of ticks) pts.push(RX - 0.6, v * yScale, 0, RX, v * yScale, 0);
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
     ruler.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: "#8d97a6", fog: false })));
     if (trace.contextWindow && trace.contextWindow <= L.yMax * 1.2) {
       const y = trace.contextWindow * yScale;
       const cg = new THREE.BufferGeometry();
-      cg.setAttribute("position", new THREE.Float32BufferAttribute([-3, y, 0.05, W + 2, y, 0.05], 3));
+      cg.setAttribute("position", new THREE.Float32BufferAttribute([RX, y, 0.05, W + 2, y, 0.05], 3));
       const cl = new THREE.Line(cg, new THREE.LineDashedMaterial({ color: "#6f7a8a", dashSize: 1.2, gapSize: 0.9, fog: false }));
       cl.computeLineDistances();
       ruler.add(cl);
@@ -679,21 +754,26 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         const e = o.element;
         if (!e._w || e.style.display === "none") continue;
         _v.setFromMatrixPosition(o.matrixWorld).project(camera);
-        const x = (_v.x + 1) / 2 * w - o.center.x * e._w, y = (1 - _v.y) / 2 * h - o.center.y * e._h;
-        items.push({ e, x, y, w: e._w, h: e._h, p: o.userData.prio || 0 });
+        if (o.userData.cx0 === undefined) o.userData.cx0 = o.center.x;
+        items.push({ o, e, px: (_v.x + 1) / 2 * w, py: (1 - _v.y) / 2 * h, w: e._w, h: e._h, cx: o.userData.cx0, cy: o.center.y, flip: !!o.userData.flip, p: o.userData.prio || 0 });
       }
     }
     items.sort((a, b) => b.p - a.p);
     // In a tall, narrow viewport the landscape keeps only its cliff and row labels.
     const sparse = level === 0 && w < h;
+    const box = { x0: 2, x1: w - insets.right + 4, y0: insets.top - 8, y1: h - 2 };
     const placed = [];
+    let moved = false;
     for (const it of items) {
-      const off = it.x < 2 || it.x + it.w > w - insets.right + 4 || it.y < insets.top - 8 || it.y + it.h > h - 2;
-      const hit = placed.some(q => it.x < q.x + q.w + 6 && q.x < it.x + it.w + 6 && it.y < q.y + q.h + 3 && q.y < it.y + it.h + 3);
-      const hide = off || hit || (sparse && it.p < 5);
+      // its own anchor first; a landmark label mirrors its anchor before it gives up its place
+      const at = sparse && it.p < 5 ? null : placeLabel(it, box, placed);
+      const hide = !at;
       if ((it.e.style.visibility === "hidden") !== hide) it.e.style.visibility = hide ? "hidden" : "";
-      if (!hide) placed.push(it);
+      if (!at) continue;
+      placed.push(at);
+      if (at.cx !== it.o.center.x) { it.o.center.x = at.cx; moved = true; }
     }
+    if (moved) labels.render(scene, camera);
   }
   const measure = () => {
     for (const g of Object.values(labelGroups)) g.traverse(o => {
@@ -704,18 +784,35 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   };
   function buildL0Labels() {
     const g = labelGroups.l0;
-    for (const m of markLines) label(m.text, m.dashed ? "cliff" : "cliff soft", new THREE.Vector3(m.x, m.y1 + 1.8, 0.1), [0, 1], g);
+    // Cliff labels near the right end hang inward; declutter may still mirror any of these before hiding it.
+    for (const m of markLines) label(m.text, m.dashed ? "cliff" : "cliff soft", new THREE.Vector3(m.x, m.y1 + 1.8, 0.1), [m.x > W * 0.8 ? 1 : 0, 1], g).userData.flip = true;
     // "developer: model_switch.instructions" reads as "model switch"
     const name = l => l.replace(/^developer: /, "").replace(/\.instructions$/, "").replace(/_/g, " ");
-    for (const e of events) label(`${clip(name(e.top.label), 34)}${e.n > 1 ? ` +${e.n - 1}` : ""} · ≈ ${fmtTok(e.est)}${e.top.resendOf != null ? " · sent again" : ""}`,
-      `event${e.own ? " mine" : ""}`, new THREE.Vector3(xOf(L.root, e.i), crest(L.root, e.i) + 2.3, 0.12), [xOf(L.root, e.i) > W * 0.8 ? 1 : xOf(L.root, e.i) < W * 0.2 ? 0 : 0.5, 1], g);
+    const models = s => `${s.from} → ${s.to}`;
+    const cxAt = x => (x > W * 0.8 ? 1 : x < W * 0.2 ? 0 : 0.5);
+    for (const e of events) {
+      const b = L.root.blocks[e.top], sw = switchAt.get(e.i);
+      const head = sw && /model.?switch/i.test(b.label || "") ? `model switch · ${models(sw)}` : clip(name(b.label || "block"), 34);
+      const x = xOf(L.root, e.i), at = new THREE.Vector3(x, crest(L.root, e.i) + 2.3, 0.12);
+      // Click: that request's stratum list with this block open.
+      label(`${head} · ≈ ${fmtTok(e.topSize)}${b.resendOf != null ? (b.resendSame ? " · sent again, identical" : " · sent again, changed") : ""}`,
+        `event${e.own ? " mine" : ""}`, at, [cxAt(x), 1], g, () => onPick({ level: 3, agentId: L.root.id, reqIdx: e.i, stratum: b.kind, block: e.top })).userData.flip = true;
+      // The other blocks that arrived with it are counted, never folded into its number; shown only where there is room.
+      if (e.n > 1) label(`+ ${e.n - 1} more · ≈ ${fmtTok(e.total - e.topSize)} in this request`, "event more", at, [cxAt(x), 2.12], g,
+        () => onPick({ level: 2, agentId: L.root.id, reqIdx: e.i })).userData.prio = 4.5;
+    }
+    for (const s of bareSwitches) {
+      const x = xOf(L.root, s.i);
+      label(`model switch · ${models(s)}`, "event", new THREE.Vector3(x, crest(L.root, s.i) + 2.3, 0.12), [cxAt(x), 1], g,
+        () => onPick({ level: 2, agentId: L.root.id, reqIdx: s.i })).userData.flip = true;
+    }
     for (const gap of L.gaps) {
       const xm = (gap.x0 + gap.x1) / 2;
       // Gaps at either end of the axis (an idle head or tail) align inward so they stay on screen.
       label(`≈ ${fmtDur(gap.b - gap.a)} idle`, "gap", new THREE.Vector3(xm * W, 0, SIDE_Z + 3.2), [xm > 0.9 ? 1 : xm < 0.1 ? 0 : 0.5, 0], g);
     }
-    for (const v of rulerTicks(L.yMax)) label(fmtTok(v), "tick", new THREE.Vector3(-4, v * yScale, 0), [1, 0.5], g);
-    label("context tokens", "tick cap", new THREE.Vector3(-3, H + 1.2, 0), [0.5, 1], g);
+    for (const v of rulerTicks(L.yMax)) label(fmtTok(v), "tick", new THREE.Vector3(RX - 1, v * yScale, 0), [1, 0.5], g);
+    label("context tokens", "tick cap", new THREE.Vector3(RX, H + 1.2, 0), [0.5, 1], g);
     if (trace.contextWindow && trace.contextWindow <= L.yMax * 1.2) label(`context window ${fmtTok(trace.contextWindow)}`, "tick", new THREE.Vector3(W + 2.5, trace.contextWindow * yScale, 0), [0, 0.5], g);
     const long = spansDays(trace);
     let last = -1e9;
@@ -778,7 +875,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (stage.flags) { cores.parent.remove(stage.flags); stage.flags = null; }
     stage.flags = flagMeshes(agent.asks.map(a => {
       const i = Math.min(Math.max(0, a.request), n - 1);
-      return { x: stageX(i), y: (agent.requests[i]?.tokens.context || 0) * stage.scale + 0.3, z: STAGE_Z, h: 1.5, s: 0.7 };
+      return { x: stageX(i), y: (agent.requests[i]?.tokens.context || 0) * stage.scale, z: STAGE_Z, h: 1.5 };
     }));
     scene.add(stage.flags);
     placeCores(reducedMotion ? 1 : 0);
@@ -896,7 +993,6 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     });
     agentTex.needsUpdate = true;
     layoutBeams(next);
-    beamMat.uniforms.uGain.value = next === "egress" ? 1.2 : 0.95;
     flags.visible = next === "context" || next === "egress";
     warnMesh.visible = next === "inflow";
     // Arcs stay faint until their agent is hovered, except in the subagents lens.
@@ -910,17 +1006,19 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     agents.forEach((a, i) => {
       agentData[(AW + i) * 4] = level === 0 ? (lens === "agents" && a.kind === "root" ? 0.35 : 1) : 0.1;
       agentData[(AW + i) * 4 + 1] = level > 0 && a.id === focusAgentId ? 1 : 0;
+      agentData[(AW + i) * 4 + 3] = level > 0 && a.id !== focusAgentId ? 1 : 0;
     });
     agentTex.needsUpdate = true;
     cairns.visible = level === 0;
     spawnLinks.visible = returnLinks.visible = level === 0;
-    beams.visible = caps.visible = level === 0;
+    pins.visible = level === 0;
     flags.visible = level === 0 && (lens === "context" || lens === "egress");
     warnMesh.visible = level === 0 && lens === "inflow";
     labelGroups.l0.visible = level === 0;
     ruler.visible = level === 0;
     eventLines.visible = level === 0;
     xray.visible = level === 0;
+    cliffLines.visible = level === 0;
   }
 
   // ---- camera ----
@@ -988,7 +1086,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       }
     }
     for (const x of [-6, W + 3]) pts.push(new THREE.Vector3(x, 0, SIDE_Z + 8));
-    pts.push(new THREE.Vector3(-3, Math.min(H, Math.max(...pts.map(p => p.y)) + 3), 0));
+    pts.push(new THREE.Vector3(RX, Math.min(H, Math.max(...pts.map(p => p.y)) + 3), 0));
     if (L.lanes) {
       const back = laneZ(Math.min(L.lanes - 1, 5)) - SUB_DEPTH;
       for (const x of [-6, W + 3]) pts.push(new THREE.Vector3(x, 0, back), new THREE.Vector3(x, Math.min(H * 0.35, 8), back));
@@ -999,15 +1097,20 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const box = new THREE.Box3().setFromPoints(pts);
     // room for the ruler's tick labels and the row label on the left, flags and cliff labels on top
     const pad = { l: 60, r: 8, t: 26, b: 22 };
-    const f = fit(null, dirFrom(portrait ? VIEW.paz : VIEW.az, portrait ? VIEW.pel : VIEW.el), box.getCenter(new THREE.Vector3()), pts, pad);
+    // A single massif is seen nearly side-on, so its stepped profile reads the way the 2D chart does.
+    const [az, el] = rule.compact ? (portrait ? [VIEW.cpaz, VIEW.cpel] : [VIEW.caz, VIEW.cel]) : (portrait ? [VIEW.paz, VIEW.pel] : [VIEW.az, VIEW.el]);
+    const f = fit(null, dirFrom(az, el), box.getCenter(new THREE.Vector3()), pts, pad);
     flyTo(f.pos, f.tgt, dur);
   }
   function frameL1(i, dur) {
     const x = stageX(i);
     const h = (stage.agent.requests[i]?.tokens.context || 0) * stage.scale;
     const span = host.clientWidth < 700 ? 16 : 34;
-    const box = new THREE.Box3(new THREE.Vector3(x - span / 2, 0, STAGE_Z - 1), new THREE.Vector3(x + span / 2, Math.max(H1, h) + 1, STAGE_Z + 1));
-    const f = fit(box, dirFrom(-6, 16), new THREE.Vector3(x, H1 / 2, STAGE_Z));
+    // A short agent is fitted whole in the free area; a long one is framed around the cursor.
+    const whole = (stage.n - 1) * SP + 2.4;
+    const [x0, x1] = whole <= span ? [W / 2 - Math.max(whole, 14) / 2, W / 2 + Math.max(whole, 14) / 2] : [x - span / 2, x + span / 2];
+    const box = new THREE.Box3(new THREE.Vector3(x0, 0, STAGE_Z - 1), new THREE.Vector3(x1, Math.max(H1, h) + 1, STAGE_Z + 1));
+    const f = fit(box, dirFrom(-6, 16), new THREE.Vector3((x0 + x1) / 2, H1 / 2, STAGE_Z));
     flyTo(f.pos, f.tgt, dur);
   }
   function frameL2(dur) {
@@ -1115,7 +1218,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // L0: beacons and flags in screen space first, then rows front to back
     const px = (clientX - rect.left), py = (clientY - rect.top);
     const toScreen = v => { const p = v.clone().project(camera); return [(p.x + 1) / 2 * rect.width, (1 - p.y) / 2 * rect.height]; };
-    if (beams.visible) {
+    if (pins.visible) {
       let best = null, bd = 9;
       for (const b of beamPick) {
         const [ax, ay] = toScreen(new THREE.Vector3(b.x, b.y0, b.z)), [bx, by] = toScreen(new THREE.Vector3(b.x, b.y1, b.z));
@@ -1173,7 +1276,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (!hit) return;
     if (hit.kind === "stratum") onPick({ level: 3, agentId: hit.agentId, reqIdx: hit.reqIdx, stratum: hit.stratum });
     else if (hit.kind === "core") onPick({ level: 2, agentId: hit.agentId, reqIdx: hit.reqIdx });
-    else if (hit.kind === "action" || hit.kind === "side") onPick({ level: 2, agentId: hit.agentId, reqIdx: hit.reqIdx });
+    // A pin on the main thread opens its request; a subagent's pins belong to its ridge, which opens at L1 on that request.
+    else if (hit.kind === "side" || (hit.kind === "action" && agents[agentIndex.get(hit.agentId)]?.kind !== "subagent")) onPick({ level: 2, agentId: hit.agentId, reqIdx: hit.reqIdx });
     else onPick({ level: 1, agentId: hit.agentId, reqIdx: hit.reqIdx });
   });
   cv.addEventListener("pointermove", e => { hoverQueued = { x: e.clientX, y: e.clientY }; });
@@ -1218,6 +1322,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     renderer.setSize(w, h, false);
     renderer.domElement.style.width = `${w}px`; renderer.domElement.style.height = `${h}px`;
     labels.setSize(w, h);
+    renderer.getDrawingBufferSize(pinUniforms.uRes.value);
+    pinUniforms.uDpr.value = renderer.getPixelRatio();
     camera.aspect = w / Math.max(1, h);
     camera.updateProjectionMatrix();
     dirty = 3;
