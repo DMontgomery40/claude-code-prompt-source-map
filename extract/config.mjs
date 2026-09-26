@@ -351,7 +351,7 @@ function settings() {
       lines.push(`- Feature modules: ${Object.entries(d.featureModules).map(([k, v]) => `\`${k}\` (buildGate ${v.buildGate})`).join(", ")}`);
     } else {
       lines.push(it.when);
-      if (d.names) lines.push(`Names (exact, ${d.names.length}):\n\n${d.names.map(n => `- \`${n}\``).join("\n")}`);
+      if (d.names) lines.push(`Names (exact):\n\n${d.names.map(n => `- \`${n}\``).join("\n")}`);
       if (d.sensitiveHeaderNameParts) lines.push(`Sensitive header-name pattern parts: ${d.sensitiveHeaderNameParts.map(n => `\`${n}\``).join(", ")}`);
     }
     return lines.join("\n\n");
@@ -407,7 +407,8 @@ function safeEnvItems() {
     if (r.condition !== "always") provs.push(prov(r.condition.m.name, r.condition.node.start, r.condition.node.end));
     setItems.push({
       id: `settings-safe-env-set-${kebab(r.set)}`,
-      title: `Safe env names: ${r.condition === "always" ? "any value" : r.condition.values.includes("true") ? "truthy value only" : "falsy value only"} (${sv.values.length})`,
+      // No member count in the title: it would go stale on refresh, and the names list is exhaustive.
+      title: `Safe env names: ${r.condition === "always" ? "any value" : r.condition.values.includes("true") ? "truthy value only" : "falsy value only"}`,
       group: "Safe env keys (settings `env`)", kind: "other", text: null,
       when: `Names in this set are ${cond}; names are compared upper-cased (from code).`,
       documented: null,

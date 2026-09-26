@@ -36,7 +36,7 @@ const key = (m, node) => `${m.name}:${node.start}`;
 
 // Find the functions an anchor describes: `own` tests the function's text (length <= max),
 // `deep` lists strings the function or its direct callees must contain.
-function find(index, a) {
+export function find(index, a) {
   const hits = index.filter(e => e.len <= (a.max ?? 400) && a.own.test(srcOf(e)) && (a.deep ?? []).every(s => deepOf(e).includes(s)));
   if (!hits.length) fail(`anchor not found: ${a.what} (pattern ${a.own}${a.deep ? `, calls into code containing ${a.deep.join(", ")}` : ""})`);
   if (hits.length > (a.most ?? 1)) fail(`anchor ambiguous: ${a.what} matched ${hits.length} functions (${hits.slice(0, 5).map(h => `${h.m.name}:${h.name}`).join(", ")})`);
@@ -68,10 +68,11 @@ export const GATE_ANCHORS = [
 
 // Functions whose facts the "How the tool list is built" section reports. The registry exports
 // an object {getAllBaseTools, getTools, assembleToolPool}; the deferral decision is pinned by
-// its checks (alwaysLoad first, MCP tools deferred, shouldDefer last).
+// its checks (alwaysLoad first, MCP tools deferred, shouldDefer last). The MCP and shouldDefer
+// checks sit either in the function itself or in a helper it ends by returning.
 const REGISTRY_KEYS = { "pipeline-get-all-base-tools": "getAllBaseTools", "pipeline-get-tools": "getTools", "pipeline-assemble-tool-pool": "assembleToolPool" };
 export const PIPELINE_ANCHORS = {
-  "pipeline-deferral": { what: "the deferral decision", own: /\.alwaysLoad===!0\)return!1;[\s\S]*\.isMcp===!0\)return!0;[\s\S]*\.shouldDefer===!0\}$/, max: 600 },
+  "pipeline-deferral": { what: "the deferral decision", own: /\{if\(([\w$]+)\.alwaysLoad===!0\)return!1;[\s\S]*(?:\.shouldDefer===!0|return [\w$]+\(\1\))\}$/, deep: [".isMcp===!0)return!0;", ".shouldDefer===!0}"], max: 600 },
 };
 
 export function findGates(index) {

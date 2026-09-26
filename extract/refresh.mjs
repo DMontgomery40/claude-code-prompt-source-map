@@ -96,6 +96,9 @@ const backup = path.join(work, `outputs-before-${version}`);
 rmSync(backup, { recursive: true, force: true });
 cpSync(path.join(root, "outputs"), backup, { recursive: true });
 const sections = [];
+const currentFile = path.join(work, "current.json");
+const currentBefore = existsSync(currentFile) ? readFileSync(currentFile, "utf8") : null;
+let swapped = false;
 try {
   // 1. The exact release package, integrity-checked.
   mkdirSync(release, { recursive: true });
@@ -105,6 +108,15 @@ try {
     const digest = `sha512-${createHash("sha512").update(readFileSync(path.join(release, tgzName))).digest("base64")}`;
     if (digest !== integrity) throw Object.assign(new Error(`integrity mismatch: registry ${integrity}, download ${digest}`), { code: 1 });
     run("tar", ["-xzf", tgzName], { cwd: release });
+  }
+  // The wrapper package's sdk-tools.d.ts lets tools.mjs cross-check input types (sdk_types).
+  const wrapper = path.join(release, "wrapper");
+  if (!existsSync(path.join(wrapper, "package/sdk-tools.d.ts"))) {
+    try {
+      mkdirSync(wrapper, { recursive: true });
+      const wrapperTgz = JSON.parse(run(npm, ["pack", `@anthropic-ai/claude-code@${version}`, "--json"], { cwd: wrapper }))[0].filename;
+      run("tar", ["-xzf", wrapperTgz, "package/package.json", "package/sdk-tools.d.ts"], { cwd: wrapper });
+    } catch (error) { log(`no wrapper package, so tools records omit sdk_types: ${error.message}`); }
   }
   const binarySha = createHash("sha256").update(readFileSync(binary)).digest("hex");
 
@@ -131,6 +143,7 @@ try {
   renameSync(path.join(work, "extracted"), path.join(work, "previous", "extracted"));
   renameSync(path.join(work, "embedded-manifest.json"), path.join(work, "previous", "embedded-manifest.json"));
   renameSync(path.join(release, "extracted"), path.join(work, "extracted"));
+  swapped = true;
   cpSync(path.join(release, "embedded-manifest.json"), path.join(work, "embedded-manifest.json"));
   writeFileSync(path.join(work, "current.json"), JSON.stringify({ version, binary_sha256: binarySha }));
   // Numbers on "What a request contains" come from this summary of the new captures.
@@ -193,10 +206,17 @@ try {
   // Restore the previous release's outputs and extraction so the next run starts clean.
   rmSync(path.join(root, "outputs"), { recursive: true, force: true });
   cpSync(backup, path.join(root, "outputs"), { recursive: true });
+  // Once the new extraction is current, a failure must swap it back: otherwise the next run
+  // relocates from the new build and step 4 deletes the only copy of the previous one.
+  if (swapped && existsSync(path.join(work, "extracted"))) {
+    rmSync(path.join(release, "extracted"), { recursive: true, force: true });
+    renameSync(path.join(work, "extracted"), path.join(release, "extracted"));
+  }
   if (existsSync(path.join(work, "previous", "extracted")) && !existsSync(path.join(work, "extracted"))) {
     renameSync(path.join(work, "previous", "extracted"), path.join(work, "extracted"));
     renameSync(path.join(work, "previous", "embedded-manifest.json"), path.join(work, "embedded-manifest.json"));
   }
+  if (swapped) currentBefore === null ? rmSync(currentFile, { force: true }) : writeFileSync(currentFile, currentBefore);
   process.exit(error.code ?? 1);
 }
 

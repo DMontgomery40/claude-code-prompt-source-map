@@ -33,17 +33,17 @@ The token line and two tail slots follow. A section that returns nothing is drop
 
 ### Billing header block
 
-Source: `chunk-b4y911xg.js` · offset 177141897 · sha256 `98248663…`
+Source: `chunk-9m6e1078.js` · offset 179050746 · sha256 `281a3842…`
 
 When: Always the first system block, sent without cache_control, unless `CLAUDE_CODE_ATTRIBUTION_HEADER` is set to a false value (0/false/no/off). `{{FINGERPRINT}}` is the first 3 hex digits of sha256(fixed salt + characters 4, 7 and 20 of the first non-meta user message + version). `cch=00000;` is appended for the first-party provider with a first-party base URL (`ANTHROPIC_BASE_URL` unset or api.anthropic.com, or `_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL`) and on Vertex. `cc_workload=…;` when a workload value is set, `cc_is_subagent=true;` for non-main-session agents, and `cc_prev_req=…;`, `cc_prompt_id=…;`, `cc_turn_origin=…;` only for the first-party provider with a first-party base URL (from code).
 
 ~~~~~~text
-x-anthropic-billing-header: cc_version=2.1.282.{{FINGERPRINT}}; cc_entrypoint={{ENTRYPOINT}};{{CCH}}{{WORKLOAD}}{{IS_SUBAGENT}}{{PREV_REQ}}{{PROMPT_ID}}{{TURN_ORIGIN}}
+x-anthropic-billing-header: cc_version=2.1.283.{{FINGERPRINT}}; cc_entrypoint={{ENTRYPOINT}};{{CCH}}{{WORKLOAD}}{{IS_SUBAGENT}}{{PREV_REQ}}{{PROMPT_ID}}{{TURN_ORIGIN}}
 ~~~~~~
 
 ### Identity line: cli
 
-Source: `chunk-h2jpx4xr.js` · offset 181068165 · sha256 `362e3116…`
+Source: `chunk-n7e3q3fg.js` · offset 183022129 · sha256 `362e3116…`
 
 When: Second system block. Every session on the Vertex provider. Otherwise a prefix already recorded for the session is reused. Otherwise interactive sessions and side queries get this line.
 
@@ -53,7 +53,7 @@ You are Claude Code, Anthropic's official CLI for Claude.
 
 ### Identity line: sdk-append
 
-Source: `chunk-h2jpx4xr.js` · offset 181068229 · sha256 `cca76bb4…`
+Source: `chunk-n7e3q3fg.js` · offset 183022193 · sha256 `cca76bb4…`
 
 When: Second system block. Non-interactive sessions (for example `claude -p` or the Agent SDK) that pass an appended system prompt (`--append-system-prompt`), unless the provider is Vertex.
 
@@ -63,7 +63,7 @@ You are Claude Code, Anthropic's official CLI for Claude, running within the Cla
 
 ### Identity line: sdk
 
-Source: `chunk-h2jpx4xr.js` · offset 181068330 · sha256 `3ae95071…`
+Source: `chunk-n7e3q3fg.js` · offset 183022294 · sha256 `3ae95071…`
 
 When: Second system block. Non-interactive sessions without an appended system prompt, unless the provider is Vertex.
 
@@ -73,7 +73,7 @@ You are a Claude agent, built on Anthropic's Claude Agent SDK.
 
 ### Simple mode prompt
 
-Source: `chunk-x9fwahqm.js` · offset 182337515 · sha256 `e322d76d…`
+Source: `chunk-wyjbafrm.js` · offset 184317655 · sha256 `1caf8a21…`
 
 When: `CLAUDE_CODE_SIMPLE` is set: the whole main prompt is replaced by these two lines (nothing when dynamic sections are excluded). The token-count footer is also suppressed.
 
@@ -84,7 +84,7 @@ Date: {{DATE}}
 
 ### Reporting outcomes block (not emitted)
 
-Source: `chunk-h2jpx4xr.js` · offset 179303539 · sha256 `93ad5ad6…`
+Source: `chunk-n7e3q3fg.js` · offset 181218434 · sha256 `93ad5ad6…`
 
 Status: not emitted in 2.1.280
 
@@ -98,7 +98,7 @@ Report what actually happened, not what you intended. When you say something is 
 
 ### Layout selection (lean vs classic)
 
-Source: `chunk-n4d3xtp1.js` · offset 177270959 · sha256 `9d42a51a…` (+1 more source range)
+Source: `chunk-erjm8tsb.js` · offset 179180683 · sha256 `8292acb7…` (+1 more source range)
 
 When: Lean when the prompt model is set and: `CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT` is a true value (a false value forces classic); or the model is not an older model; or flag `tengu_velvet_tide` (default false) is on; or client-data key `simple_system_prompt` has a true entry whose key is a substring of the model ID. Otherwise classic. Older models: those without capability `lean_prompt` whose ID contains `claude-3-`, `haiku` or `sonnet`, or is `claude-opus-4-0`, `-4-1`, `-4-5`, `-4-6` or `-4-7`; also IDs outside the catalog when the provider is not `firstParty`, `anthropicAws`, `anthropicGoogleCloud` or `gateway`. `claude-mythos-5` and `-eap` IDs are never older models. The prompt model is the main-loop model, except that `CLAUDE_CODE_BREEZY_HORIZON` set to a model ID replaces it for every main-loop model (a false value turns remapping off), and otherwise client-data key `breezy_horizon` can map specific model IDs to another model ID. Model checks are capability lookups in the built-in model catalog (after alias resolution and dropping a `[1m]` suffix). `CLAUDE_CODE_MODEL_CAPABILITIES` can add or remove a capability (`model=cap,-cap;…`, `*` suffix globs the model), and a server-served capability lookup can also grant one.
 
@@ -106,9 +106,9 @@ Text: not in the binary or not rendered here (see When).
 
 ### System blocks and cache breakpoints
 
-Source: `chunk-x9fwahqm.js` · offset 181069184 · sha256 `416cfe00…` (+2 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 183023148 · sha256 `a8d746a7…` (+2 more source ranges)
 
-When: The billing header, identity line and prompt pieces are grouped into system blocks. Default: header (no cache_control), identity (`{"type":"ephemeral"}`), then every other piece joined with a blank line into one block (`{"type":"ephemeral"}`). When global prompt caching applies (first-party or anthropicAws provider, first-party base URL, plus a client gate read at chunk-2393h2ax.js offset 497837), a boundary marker is placed after the layout sections: the identity block is then sent without cache_control, the layout part gets `{"type":"ephemeral","scope":"global"}` and the named sections get `{"type":"ephemeral"}`. `ttl: "1h"` is added when the query uses a one-hour cache TTL. cache_control is attached only when prompt caching is on for the query.
+When: The billing header, identity line and prompt pieces are grouped into system blocks. Default: header (no cache_control), identity (`{"type":"ephemeral"}`), then every other piece joined with a blank line into one block (`{"type":"ephemeral"}`). When global prompt caching applies (first-party or anthropicAws provider, first-party base URL, plus a client gate read at chunk-9r9kpwh0.js offset 497837), a boundary marker is placed after the layout sections: the identity block is then sent without cache_control, the layout part gets `{"type":"ephemeral","scope":"global"}` and the named sections get `{"type":"ephemeral"}`. `ttl: "1h"` is added when the query uses a one-hour cache TTL. cache_control is attached only when prompt caching is on for the query.
 
 Text: not in the binary or not rendered here (see When).
 
@@ -116,7 +116,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### Lean layout: intro, security policy and # Harness
 
-Source: `chunk-x9fwahqm.js` · offset 182333114 · sha256 `db6e9e83…` (+5 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184313254 · sha256 `86b54759…` (+5 more source ranges)
 
 Layout: lean
 
@@ -139,7 +139,7 @@ IMPORTANT: Assist with authorized security testing, defensive security, CTF chal
 
 ### Intro line: default
 
-Source: `chunk-x9fwahqm.js` · offset 182333004 · sha256 `c4b8a858…`
+Source: `chunk-wyjbafrm.js` · offset 184313144 · sha256 `c4b8a858…`
 
 When: First line of both layouts when no output style is active and the intro-frame arm is off. The classic layout appends " Use the instructions below and the tools available to you to assist the user."
 
@@ -149,7 +149,7 @@ You are an interactive agent that helps users with software engineering tasks.
 
 ### Intro line: output style active
 
-Source: `chunk-x9fwahqm.js` · offset 182317855 · sha256 `ca8e8db8…`
+Source: `chunk-wyjbafrm.js` · offset 184297995 · sha256 `ca8e8db8…`
 
 When: Replaces the intro line in both layouts when an output style is configured (the output-style loader returns a style).
 
@@ -159,7 +159,7 @@ You are an interactive agent that helps users according to your "Output Style", 
 
 ### Intro line: intro frame arm
 
-Source: `chunk-x9fwahqm.js` · offset 182317751 · sha256 `8734a3e8…`
+Source: `chunk-wyjbafrm.js` · offset 184297891 · sha256 `8734a3e8…`
 
 When: Replaces the intro line when no output style is active and `CLAUDE_CODE_INTRO_FRAME` is set (it wins when set), otherwise when flag `tengu_ochre_wren` (default false) is on. Evaluated once per process.
 
@@ -169,7 +169,7 @@ You are an agent working with the user toward their goals, using your own judgme
 
 ### Security policy line
 
-Source: `chunk-x9fwahqm.js` · offset 182304460 · sha256 `475566ef…`
+Source: `chunk-wyjbafrm.js` · offset 184284600 · sha256 `475566ef…`
 
 When: Always present in both layouts, right after the intro line.
 
@@ -179,7 +179,7 @@ IMPORTANT: Assist with authorized security testing, defensive security, CTF chal
 
 ### System-tags sentence: mid-conversation system turns
 
-Source: `chunk-x9fwahqm.js` · offset 182318435 · sha256 `8ca066d5…`
+Source: `chunk-wyjbafrm.js` · offset 184298575 · sha256 `8ca066d5…`
 
 When: Used in the lean Harness bullet and the classic # System bullet when the model takes mid-conversation system messages and is not `claude-sonnet-5` or `claude-opus-4-8`. Models with capability `mid_conv_system`: claude-sonnet-5, claude-opus-4-8, claude-opus-5, claude-opus-5-5, claude-fable-5, claude-fable-5-1, claude-mythos-5-1; also `claude-mythos-5`. `CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM` forces it on; HIPAA mode forces it off. Model checks are capability lookups in the built-in model catalog (after alias resolution and dropping a `[1m]` suffix). `CLAUDE_CODE_MODEL_CAPABILITIES` can add or remove a capability (`model=cap,-cap;…`, `*` suffix globs the model), and a server-served capability lookup can also grant one.
 
@@ -189,7 +189,7 @@ The system may send updates, reminders, or modifications to rules via mid-conver
 
 ### System-tags sentence: lean
 
-Source: `chunk-x9fwahqm.js` · offset 182318955 · sha256 `e4cbaf13…`
+Source: `chunk-wyjbafrm.js` · offset 184299095 · sha256 `e4cbaf13…`
 
 Layout: lean
 
@@ -201,7 +201,7 @@ When: Lean Harness bullet when the mid-conversation sentence does not apply.
 
 ### Pasted-content bullet
 
-Source: `chunk-x9fwahqm.js` · offset 182299301 · sha256 `627d2d45…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184279434 · sha256 `5d771a45…` (+1 more source range)
 
 When: Added as a bullet in the lean Harness list and the classic # System list when flag `tengu_virtual_pancake` (default false) is on; the value is pinned for the session.
 
@@ -213,7 +213,7 @@ Text inside <pasted_content> tags was pasted into the message by the user from s
 
 ### Classic layout: intro
 
-Source: `chunk-x9fwahqm.js` · offset 182318015 · sha256 `ede1c1c1…` (+2 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184298155 · sha256 `4180d2ce…` (+2 more source ranges)
 
 Layout: classic
 
@@ -229,7 +229,7 @@ IMPORTANT: You must NEVER generate or guess URLs for the user unless you are con
 
 ### Classic layout: # System
 
-Source: `chunk-x9fwahqm.js` · offset 182319077 · sha256 `7652742a…` (+5 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184299217 · sha256 `7652742a…` (+5 more source ranges)
 
 Layout: classic
 
@@ -247,7 +247,7 @@ When: Classic layout only. Shown for a model without mid-conversation system mes
 
 ### Classic layout: # Doing tasks
 
-Source: `chunk-x9fwahqm.js` · offset 182322337 · sha256 `9c3f661f…` (+13 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184302477 · sha256 `9c3f661f…` (+13 more source ranges)
 
 Layout: classic
 
@@ -273,7 +273,7 @@ When: Classic layout only, and only when no output style is active or the active
 
 ### Doing tasks: verified-vs-assumed bullet
 
-Source: `chunk-x9fwahqm.js` · offset 182323892 · sha256 `30cfc749…`
+Source: `chunk-wyjbafrm.js` · offset 184304032 · sha256 `30cfc749…`
 
 Layout: classic
 
@@ -285,7 +285,7 @@ When reporting results, be accurate about what you verified vs. what you assumed
 
 ### Classic layout: # Executing actions with care
 
-Source: `chunk-x9fwahqm.js` · offset 182324275 · sha256 `74ebbc2e…`
+Source: `chunk-wyjbafrm.js` · offset 184304415 · sha256 `74ebbc2e…`
 
 Layout: classic
 
@@ -307,7 +307,7 @@ When you encounter an obstacle, do not use destructive actions as a shortcut to 
 
 ### Classic layout: # Using your tools
 
-Source: `chunk-x9fwahqm.js` · offset 182328429 · sha256 `55f331ae…` (+2 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184308569 · sha256 `55f331ae…` (+2 more source ranges)
 
 Layout: classic
 
@@ -322,7 +322,7 @@ When: Classic layout only. Shown as captured for `claude-sonnet-4-6` with `claud
 
 ### Using your tools: task bullet
 
-Source: `chunk-x9fwahqm.js` · offset 182328534 · sha256 `0cbce71c…`
+Source: `chunk-wyjbafrm.js` · offset 184308674 · sha256 `0cbce71c…`
 
 Layout: classic
 
@@ -334,7 +334,7 @@ Use TaskCreate to plan and track work. Mark each task completed as soon as it's 
 
 ### Classic layout: # Tone and style
 
-Source: `chunk-x9fwahqm.js` · offset 182332353 · sha256 `f41b2d64…` (+3 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184312493 · sha256 `f41b2d64…` (+3 more source ranges)
 
 Layout: classic
 
@@ -352,7 +352,7 @@ When: Classic layout only; unconditional there.
 
 ### communication: turn-updates variant
 
-Source: `chunk-x9fwahqm.js` · offset 182305570 · sha256 `d061cfcd…`
+Source: `chunk-wyjbafrm.js` · offset 184285710 · sha256 `d061cfcd…`
 
 Section key: `communication`
 
@@ -364,7 +364,7 @@ Before you start, say in a line what you're about to do; brief updates while you
 
 ### communication: # Communicating with the user
 
-Source: `chunk-x9fwahqm.js` · offset 182305993 · sha256 `c1b1a428…`
+Source: `chunk-wyjbafrm.js` · offset 184286133 · sha256 `c1b1a428…`
 
 Section key: `communication`
 
@@ -387,7 +387,7 @@ Only write a code comment to state a constraint the code itself can't show, neve
 
 ### communication: # Communicating with the user (final-message variant)
 
-Source: `chunk-x9fwahqm.js` · offset 182305993 · sha256 `c1b1a428…`
+Source: `chunk-wyjbafrm.js` · offset 184286133 · sha256 `c1b1a428…`
 
 Section key: `communication`
 
@@ -412,7 +412,7 @@ Only write a code comment to state a constraint the code itself can't show, neve
 
 ### communication: lean
 
-Source: `chunk-x9fwahqm.js` · offset 182308607 · sha256 `2418f2af…`
+Source: `chunk-wyjbafrm.js` · offset 184288747 · sha256 `2418f2af…`
 
 Section key: `communication:L` · Layout: lean
 
@@ -424,7 +424,7 @@ Write code that reads like the surrounding code: match its comment density, nami
 
 ### communication: # Text output (classic)
 
-Source: `chunk-x9fwahqm.js` · offset 182308710 · sha256 `77f787d8…`
+Source: `chunk-wyjbafrm.js` · offset 184288850 · sha256 `77f787d8…`
 
 Section key: `communication` · Layout: classic
 
@@ -447,7 +447,7 @@ In code: default to writing no comments. Never write multi-paragraph docstrings 
 
 ### pronouns
 
-Source: `chunk-x9fwahqm.js` · offset 182312701 · sha256 `8bd460f8…`
+Source: `chunk-wyjbafrm.js` · offset 184292841 · sha256 `8bd460f8…`
 
 Section key: `pronouns`
 
@@ -459,7 +459,7 @@ When you use a pronoun for someone — the user or anyone else you mention — a
 
 ### action_caution
 
-Source: `chunk-x9fwahqm.js` · offset 182310122 · sha256 `4294b6b2…`
+Source: `chunk-wyjbafrm.js` · offset 184290262 · sha256 `4294b6b2…`
 
 Section key: `action_caution:L` · Layout: lean
 
@@ -471,7 +471,7 @@ For actions that are hard to reverse or outward-facing, confirm first unless dur
 
 ### task_continuity (not emitted)
 
-Source: `chunk-x9fwahqm.js` · offset 182310690 · sha256 `729ace28…`
+Source: `chunk-wyjbafrm.js` · offset 184290830 · sha256 `729ace28…`
 
 Section key: `task_continuity` · Status: not emitted in 2.1.280
 
@@ -483,7 +483,7 @@ When a task has been agreed, the approval covers it end to end — in-scope step
 
 ### fable_identity: Claude Fable 5.1
 
-Source: `chunk-x9fwahqm.js` · offset 182311184 · sha256 `30f93ba3…`
+Source: `chunk-wyjbafrm.js` · offset 184291324 · sha256 `30f93ba3…`
 
 Section key: `fable_identity`
 
@@ -495,7 +495,7 @@ This iteration of Claude is Claude Fable 5.1, the newest model in Anthropic's Cl
 
 ### fable_identity: Claude Fable 5
 
-Source: `chunk-x9fwahqm.js` · offset 182311876 · sha256 `5b66ddaa…`
+Source: `chunk-wyjbafrm.js` · offset 184292016 · sha256 `5b66ddaa…`
 
 Section key: `fable_identity`
 
@@ -507,11 +507,11 @@ This iteration of Claude is Claude Fable 5, the first model in Anthropic's new C
 
 ### tool_param_json
 
-Source: `chunk-x9fwahqm.js` · offset 182312572 · sha256 `7fd64c7e…`
+Source: `chunk-wyjbafrm.js` · offset 184292712 · sha256 `7fd64c7e…`
 
 Section key: `tool_param_json`
 
-When: Emitted when the runtime config key `juniper_shoal.bracken_spool` is true (undocumented config source; read at chunk-3kj78r2m.js offset 342470), or when flag `tengu_silent_harbor` (default false) is on and the model is a fable-mitigations model (`claude-fable-5`, `claude-fable-5-1`, `claude-mythos-5-1` (capability `fable_5_mitigations`) or `claude-mythos-5`) or equals `ANTHROPIC_DEFAULT_FABLE_MODEL`.
+When: Emitted when the runtime config key `juniper_shoal.bracken_spool` is true (undocumented config source; read at chunk-1vt3h958.js offset 342470), or when flag `tengu_silent_harbor` (default false) is on and the model is a fable-mitigations model (`claude-fable-5`, `claude-fable-5-1`, `claude-mythos-5-1` (capability `fable_5_mitigations`) or `claude-mythos-5`) or equals `ANTHROPIC_DEFAULT_FABLE_MODEL`.
 
 ~~~~~~text
 Object and array parameter values must be a single JSON value — never write parameter-tag markup inside a JSON value.
@@ -519,7 +519,7 @@ Object and array parameter values must be a single JSON value — never write pa
 
 ### session_guidance: # Session-specific guidance
 
-Source: `chunk-x9fwahqm.js` · offset 182330692 · sha256 `e9f60912…` (+2 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184310832 · sha256 `e9f60912…` (+2 more source ranges)
 
 Section key: `session_guidance`
 
@@ -533,7 +533,7 @@ When: Emitted when at least one bullet applies; each bullet has its own conditio
 
 ### session_guidance bullet: user-run shell command
 
-Source: `chunk-x9fwahqm.js` · offset 182330692 · sha256 `e9f60912…`
+Source: `chunk-wyjbafrm.js` · offset 184310832 · sha256 `e9f60912…`
 
 Section key: `session_guidance`
 
@@ -545,7 +545,7 @@ If you need the user to run a shell command themselves (e.g., an interactive log
 
 ### session_guidance bullet: cloud session files
 
-Source: `chunk-x9fwahqm.js` · offset 182330961 · sha256 `623a2fd5…`
+Source: `chunk-wyjbafrm.js` · offset 184311101 · sha256 `623a2fd5…`
 
 Section key: `session_guidance`
 
@@ -557,11 +557,11 @@ The user follows this cloud session in the Claude app, which can open only files
 
 ### session_guidance bullet: fork subagents
 
-Source: `chunk-x9fwahqm.js` · offset 182329269 · sha256 `a7fe8fa5…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184309409 · sha256 `7391eaa5…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
-When: Classic layout, Agent tool available, and fork subagents enabled: on by default in interactive sessions, forced on by `CLAUDE_CODE_FORK_SUBAGENT` true and off when it is false, off in non-interactive sessions, with one further disabling check (read at chunk-x9fwahqm.js offset 1430038).
+When: Classic layout, Agent tool available, and fork subagents enabled: on by default in interactive sessions, forced on by `CLAUDE_CODE_FORK_SUBAGENT` true and off when it is false, off in non-interactive sessions, with one further disabling check (read at chunk-wyjbafrm.js offset 1430038).
 
 ~~~~~~text
 Calling Agent with subagent_type: "fork" creates a fork — it inherits your full conversation context, runs in the background, and keeps its tool output out of your context — so you can keep chatting with the user while it works. Reach for it when research or multi-step implementation work would otherwise fill your context with raw output you won't need again. Other subagent_type values start fresh agents with no context. **If you ARE the fork** — execute directly; do not re-delegate.
@@ -569,7 +569,7 @@ Calling Agent with subagent_type: "fork" creates a fork — it inherits your ful
 
 ### session_guidance bullet: Agent tool (default steer)
 
-Source: `chunk-x9fwahqm.js` · offset 182329799 · sha256 `e86f9cea…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184309939 · sha256 `99f57533…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
@@ -581,7 +581,7 @@ Use the Agent tool with specialized agents when the task at hand matches the age
 
 ### session_guidance bullet: Agent tool (non-default steer)
 
-Source: `chunk-x9fwahqm.js` · offset 182330242 · sha256 `4b7a48db…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184310382 · sha256 `32b9db3f…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
@@ -593,7 +593,7 @@ Use the Agent tool with specialized agents when the task at hand matches the age
 
 ### session_guidance bullet: Explore agent
 
-Source: `chunk-x9fwahqm.js` · offset 182331393 · sha256 `d8bd56f0…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184311533 · sha256 `2840e510…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
@@ -605,7 +605,7 @@ For broad codebase exploration or research that'll take more than 3 queries, spa
 
 ### session_guidance bullet: slash skills
 
-Source: `chunk-x9fwahqm.js` · offset 182331564 · sha256 `3a7cdbde…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184311704 · sha256 `40913d57…` (+1 more source range)
 
 Section key: `session_guidance`
 
@@ -617,11 +617,11 @@ When the user types `/<skill-name>`, invoke it via Skill. Only use skills listed
 
 ### session_guidance bullet: ultrareview
 
-Source: `chunk-x9fwahqm.js` · offset 182331720 · sha256 `0e1aecab…`
+Source: `chunk-wyjbafrm.js` · offset 184311860 · sha256 `0e1aecab…`
 
 Section key: `session_guidance`
 
-When: Dynamic sections not excluded, flag `tengu_review_bughunter_config` (default null) has `enabled: true`, first-party provider, not a remote session (`CLAUDE_CODE_REMOTE`), and flag `tengu_ccr_bridge` (default false) on together with further account checks (read at chunk-5ezz9t8y.js offset 561605).
+When: Dynamic sections not excluded, flag `tengu_review_bughunter_config` (default null) has `enabled: true`, first-party provider, not a remote session (`CLAUDE_CODE_REMOTE`), and flag `tengu_ccr_bridge` (default false) on together with further account checks (read at chunk-hzevqd7x.js offset 561605).
 
 ~~~~~~text
 If the user asks about "ultrareview" or how to run it, explain that /code-review ultra launches a multi-agent cloud review of the current branch (or /code-review ultra <PR#> for a GitHub PR); /ultrareview is a deprecated alias for the same command. It is user-triggered and billed; you cannot launch it yourself, so do not attempt to via Bash or otherwise. It needs a git repository (offer to "git init" if not in one); the no-arg form bundles the local branch and does not need a GitHub remote.
@@ -629,7 +629,7 @@ If the user asks about "ultrareview" or how to run it, explain that /code-review
 
 ### memory: lean (# Memory)
 
-Source: `chunk-qehhcpvf.js` · offset 177631507 · sha256 `632f28aa…` (+8 more source ranges)
+Source: `chunk-4f79m39g.js` · offset 179542703 · sha256 `d232fa55…` (+8 more source ranges)
 
 Section key: `memory:L` · Layout: lean
 
@@ -662,7 +662,7 @@ Before saving, check for an existing file that already covers it. Update that fi
 
 ### memory: classic (# auto memory)
 
-Source: `chunk-qehhcpvf.js` · offset 177595753 · sha256 `f212cc86…` (+23 more source ranges)
+Source: `chunk-4f79m39g.js` · offset 179506946 · sha256 `26a559c4…` (+23 more source ranges)
 
 Section key: `memory` · Layout: classic
 
@@ -806,7 +806,7 @@ Memory is one of several persistence mechanisms available to you as you assist t
 
 ### memory: CLAUDE_COWORK_MEMORY_GUIDELINES override
 
-Source: `chunk-qehhcpvf.js` · offset 177654464 · sha256 `0cfcd7ab…`
+Source: `chunk-4f79m39g.js` · offset 179565662 · sha256 `0cfcd7ab…`
 
 Section key: `memory`
 
@@ -819,7 +819,7 @@ When: Auto memory enabled and `CLAUDE_COWORK_MEMORY_GUIDELINES` set: the section
 
 ### memory: stone_shell variant (# auto memory)
 
-Source: `chunk-qehhcpvf.js` · offset 177638653 · sha256 `72994c76…` (+2 more source ranges)
+Source: `chunk-4f79m39g.js` · offset 179549850 · sha256 `72994c76…` (+2 more source ranges)
 
 Section key: `memory`
 
@@ -861,7 +861,7 @@ metadata:
 
 ### memory: static (dynamic sections excluded)
 
-Source: `chunk-qehhcpvf.js` · offset 177595753 · sha256 `f212cc86…` (+23 more source ranges)
+Source: `chunk-4f79m39g.js` · offset 179506946 · sha256 `26a559c4…` (+23 more source ranges)
 
 Layout: classic
 
@@ -1005,17 +1005,17 @@ Memory is one of several persistence mechanisms available to you as you assist t
 
 ### memory: team (text not rendered)
 
-Source: `chunk-qehhcpvf.js` · offset 177642536 · sha256 `53c6b05e…`
+Source: `chunk-4f79m39g.js` · offset 179553733 · sha256 `fa82dd01…`
 
 Section key: `memory` · Status: text not rendered
 
-When: Classic layout with a team memory store (team directories alongside the private one); a sibling builder at chunk-qehhcpvf.js offset 129919 (within the file) handles the case without per-mount settings. The lean layout folds team directories into the lean text's location sentence. Text not rendered in this reference.
+When: Classic layout with a team memory store (team directories alongside the private one); a sibling builder at chunk-4f79m39g.js offset 130114 (within the file) handles the case without per-mount settings. The lean layout folds team directories into the lean text's location sentence. Text not rendered in this reference.
 
 Text: not in the binary or not rendered here (see When).
 
 ### memory: connected-stores (text not rendered)
 
-Source: `chunk-qehhcpvf.js` · offset 177620053 · sha256 `22b4817d…`
+Source: `chunk-4f79m39g.js` · offset 179531248 · sha256 `3011074d…`
 
 Section key: `memory` · Status: text not rendered
 
@@ -1025,7 +1025,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### env_info: # Environment (system prompt part)
 
-Source: `chunk-x9fwahqm.js` · offset 181051589 · sha256 `50c2bbca…` (+3 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 183004136 · sha256 `50c2bbca…` (+3 more source ranges)
 
 Section key: `env_info_simple`
 
@@ -1040,7 +1040,7 @@ When: Always. With dynamic sections excluded the key is `env_info_static` and th
 
 ### bg-session: # Background Session (shared)
 
-Source: `chunk-x9fwahqm.js` · offset 182343796 · sha256 `601edec9…` (+3 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184323940 · sha256 `40146c22…` (+3 more source ranges)
 
 Section key: `bg-session`
 
@@ -1062,7 +1062,7 @@ End the job with a report the user can act on: what you did, where it lives — 
 
 ### bg-session: # Background Session (worktree)
 
-Source: `chunk-x9fwahqm.js` · offset 182343796 · sha256 `601edec9…` (+3 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 184323940 · sha256 `40146c22…` (+3 more source ranges)
 
 Section key: `bg-session`
 
@@ -1084,7 +1084,7 @@ End the job with a report the user can act on: what you did, where it lives — 
 
 ### bg-session: # Background Session (in-place)
 
-Source: `chunk-x9fwahqm.js` · offset 182343796 · sha256 `601edec9…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184323940 · sha256 `40146c22…` (+1 more source range)
 
 Section key: `bg-session`
 
@@ -1104,7 +1104,7 @@ End the job with a report the user can act on: what you did, where it lives — 
 
 ### context_management
 
-Source: `chunk-x9fwahqm.js` · offset 182344705 · sha256 `3f0d5056…`
+Source: `chunk-wyjbafrm.js` · offset 184324849 · sha256 `3f0d5056…`
 
 Section key: `context_management`
 
@@ -1117,7 +1117,7 @@ When the conversation grows long, some or all of the current context is summariz
 
 ### brief: ## Talking to the user
 
-Source: `chunk-b0zy7se4.js` · offset 175092029 · sha256 `b72e296b…`
+Source: `chunk-9qdhmqfy.js` · offset 176991020 · sha256 `b72e296b…`
 
 Section key: `brief`
 
@@ -1139,7 +1139,7 @@ Keep messages tight — the decision, the file:line, the PR number. Second perso
 
 ### focus_mode: lean
 
-Source: `chunk-x9fwahqm.js` · offset 182345492 · sha256 `b5951a2a…`
+Source: `chunk-wyjbafrm.js` · offset 184325636 · sha256 `b5951a2a…`
 
 Section key: `focus_mode:L` · Layout: lean
 
@@ -1152,7 +1152,7 @@ The user has focus mode enabled. They only see your final text message in each r
 
 ### focus_mode: classic
 
-Source: `chunk-x9fwahqm.js` · offset 182345063 · sha256 `a54fbb35…`
+Source: `chunk-wyjbafrm.js` · offset 184325207 · sha256 `a54fbb35…`
 
 Section key: `focus_mode` · Layout: classic
 
@@ -1165,7 +1165,7 @@ The user has focus mode enabled. In focus mode, the user only sees your final te
 
 ### act_dont_rederive
 
-Source: `chunk-x9fwahqm.js` · offset 182333859 · sha256 `ee2bf0a7…`
+Source: `chunk-wyjbafrm.js` · offset 184313999 · sha256 `ee2bf0a7…`
 
 Section key: `act_dont_rederive`
 
@@ -1177,7 +1177,7 @@ When you have enough information to act, act. Do not re-derive facts already est
 
 ### delivering_work_max: # Delivering work
 
-Source: `chunk-x9fwahqm.js` · offset 182334143 · sha256 `5d07bd51…`
+Source: `chunk-wyjbafrm.js` · offset 184314283 · sha256 `5d07bd51…`
 
 Section key: `delivering_work_max`
 
@@ -1194,7 +1194,7 @@ If you raise a concern about a request and the user repeats or reaffirms it, tre
 
 ### overcorrection: # Corrections
 
-Source: `chunk-x9fwahqm.js` · offset 182336192 · sha256 `c03533a6…`
+Source: `chunk-wyjbafrm.js` · offset 184316332 · sha256 `c03533a6…`
 
 Section key: `overcorrection`
 
@@ -1209,7 +1209,7 @@ A follow-up question about your earlier work is not, by itself, a signal that yo
 
 ### subagent_steer_delegation: ## Delegating to subagents
 
-Source: `chunk-3kj78r2m.js` · offset 176284107 · sha256 `2cecc98b…`
+Source: `chunk-1vt3h958.js` · offset 178183149 · sha256 `2cecc98b…`
 
 Section key: `subagent_steer_delegation`
 
@@ -1231,7 +1231,7 @@ Delegate for work that is genuinely independent, large enough to justify a fresh
 
 ### opus5_reduced_delegation
 
-Source: `chunk-x9fwahqm.js` · offset 182315770 · sha256 `c7d62618…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184295910 · sha256 `350e332b…` (+1 more source range)
 
 Section key: `opus5_reduced_delegation`
 
@@ -1243,7 +1243,7 @@ Do not use the Agent tool, workflows, or deep-research unless the user, a CLAUDE
 
 ### heron_brook (server-supplied text)
 
-Source: `chunk-x9fwahqm.js` · offset 182313456 · sha256 `0d9f533d…`
+Source: `chunk-wyjbafrm.js` · offset 184293596 · sha256 `a4909e64…`
 
 Section key: `heron_brook` · Status: text supplied at runtime
 
@@ -1253,7 +1253,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### brook_heron (server-supplied text)
 
-Source: `chunk-x9fwahqm.js` · offset 182301258 · sha256 `bb2f2201…`
+Source: `chunk-wyjbafrm.js` · offset 184281392 · sha256 `5d1075b8…`
 
 Section key: `brook_heron` · Status: text supplied at runtime
 
@@ -1263,7 +1263,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### willow_tern: # Writing for the user
 
-Source: `chunk-x9fwahqm.js` · offset 182313834 · sha256 `858a7d89…`
+Source: `chunk-wyjbafrm.js` · offset 184293974 · sha256 `858a7d89…`
 
 Section key: `willow_tern`
 
@@ -1288,7 +1288,7 @@ Rules for that message:
 
 ### autonomy_append
 
-Source: `chunk-x9fwahqm.js` · offset 182316186 · sha256 `600cbb21…`
+Source: `chunk-wyjbafrm.js` · offset 184296326 · sha256 `600cbb21…`
 
 Section key: `autonomy_append`
 
@@ -1306,11 +1306,11 @@ Before running a command that changes system state (such as restarts, deletes, o
 
 ### endconv_deferred_hint
 
-Source: `chunk-kmzqwpjq.js` · offset 195136417 · sha256 `164d422b…` (+1 more source range)
+Source: `chunk-89mfa9y7.js` · offset 197139599 · sha256 `48276dd3…` (+1 more source range)
 
 Section key: `endconv_deferred_hint`
 
-When: The EndConversation tool is in the tool set, the main-loop model is known, the end-conversation config flag `tengu_umber_kestrel` (default false) enables it for the current entrypoint, and further checks pass (read at chunk-kmzqwpjq.js offset 6853).
+When: The EndConversation tool is in the tool set, the main-loop model is known, the end-conversation config flag `tengu_umber_kestrel` (default false) enables it for the current entrypoint, and further checks pass (read at chunk-89mfa9y7.js offset 6853).
 
 ~~~~~~text
 EndConversation (deferred tool): use only for sustained user abuse directed at the assistant, or when the user explicitly asks to see it demonstrated. Load the full guidance via ToolSearch("select:EndConversation") before using it.
@@ -1318,7 +1318,7 @@ EndConversation (deferred tool): use only for sustained user abuse directed at t
 
 ### Token budget line
 
-Source: `chunk-x9fwahqm.js` · offset 182299078 · sha256 `2801eed1…`
+Source: `chunk-wyjbafrm.js` · offset 184279211 · sha256 `2f6146bb…`
 
 When: Appended after the named sections, unless `CLAUDE_CODE_DISABLE_ATTACHMENTS` or `CLAUDE_CODE_SIMPLE` is set or the mode is `off`. Mode: `CLAUDE_CODE_TOTAL_TOKENS_REMINDER`, else settings `totalTokensReminder`, else client-data key `tengu_lapis_anchor` (false means off), else flag `tengu_lapis_anchor` (default `padded-countdown`). `{{TOKENS_LEFT}}` is `Infinite` in `infinite` mode, 5000000 in `fixed` mode, the budget in `padded-countdown` mode (`CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET`, settings `totalTokensReminderBudget`, client-data key or flag `tengu_lapis_anchor_budget`, default 15000000), and a per-model value otherwise. (Both captures had the flag served as `off`.)
 
@@ -1328,7 +1328,7 @@ When: Appended after the named sections, unless `CLAUDE_CODE_DISABLE_ATTACHMENTS
 
 ### Tail slots (not emitted)
 
-Source: `chunk-x9fwahqm.js` · offset 182327879 · sha256 `86688de0…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 184308019 · sha256 `0cd97d73…` (+1 more source range)
 
 Status: not emitted in 2.1.280
 
@@ -1340,7 +1340,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### Environment block
 
-Source: `chunk-x9fwahqm.js` · offset 181051589 · sha256 `50c2bbca…` (+6 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 183004136 · sha256 `50c2bbca…` (+6 more source ranges)
 
 When: Environment attachment. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture. Extra bullets, in order: the two worktree lines after the working directory when it is a git worktree; "Additional working directories:" with a nested list; the scratchpad line after OS Version when a scratchpad exists (not for `bg` sessions); a proxy note when one is set. `{{SHELL}}` is `zsh`, `bash`, the raw `SHELL` value, or `unknown` when `SHELL` is unset.
 
@@ -1356,7 +1356,7 @@ You have been invoked in the following environment:
 
 ### Environment bullet: git worktree
 
-Source: `chunk-x9fwahqm.js` · offset 181052249 · sha256 `f49ca66c…`
+Source: `chunk-wyjbafrm.js` · offset 183004796 · sha256 `f49ca66c…`
 
 When: Bullet after the working directory when it is a git worktree.
 
@@ -1366,7 +1366,7 @@ This is a git worktree — an isolated copy of the repository. Run all commands 
 
 ### Environment bullet: shared stash warning
 
-Source: `chunk-x9fwahqm.js` · offset 181051695 · sha256 `35f27a67…`
+Source: `chunk-wyjbafrm.js` · offset 183004242 · sha256 `35f27a67…`
 
 When: Bullet after the working directory when it is a git worktree.
 
@@ -1376,7 +1376,7 @@ The git stash stack is shared with the main checkout and all other worktrees, an
 
 ### Environment bullet: scratchpad
 
-Source: `chunk-x9fwahqm.js` · offset 181053755 · sha256 `267e6a92…`
+Source: `chunk-wyjbafrm.js` · offset 183006435 · sha256 `267e6a92…`
 
 When: Bullet when a scratchpad directory is available (not in `bg` sessions).
 
@@ -1386,7 +1386,7 @@ Scratchpad directory: {{SCRATCHPAD_DIR}} — always use it for temporary files (
 
 ### Model line
 
-Source: `chunk-x9fwahqm.js` · offset 181057690 · sha256 `1e5edea8…` (+1 more source range)
+Source: `chunk-wyjbafrm.js` · offset 183011654 · sha256 `1e5edea8…` (+1 more source range)
 
 When: Model attachment. The marketing-name form is used when a marketing name is known for the model ID, otherwise the plain form (`You are powered by the model {{MODEL_ID}}.`). The cutoff sentence is added when the catalog has one. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1396,7 +1396,7 @@ You are powered by the model named {{MODEL_NAME}}. The exact model ID is {{MODEL
 
 ### Agent listing
 
-Source: `chunk-x9fwahqm.js` · offset 184765584 · sha256 `8c594939…` (+2 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 186773499 · sha256 `8c594939…` (+2 more source ranges)
 
 When: Agent-listing attachment when agent types are available. `{{AGENT_LINES}}` holds one `- type: description (Tools: …)` line per agent. The concurrency sentence follows on the initial listing when enabled. Later changes use "New agent types are now available for the Agent tool:" or "The following agent types are no longer available:". On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1409,7 +1409,7 @@ When you launch multiple agents for independent work, send them in a single mess
 
 ### Skill listing
 
-Source: `chunk-x9fwahqm.js` · offset 184734253 · sha256 `1d8bc92a…`
+Source: `chunk-wyjbafrm.js` · offset 186742149 · sha256 `1d8bc92a…`
 
 When: Skill-listing attachment when any skills are listed. `{{SKILL_LINES}}` holds one `- name: description` line per skill. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1421,7 +1421,7 @@ The following skills are available for use with the Skill tool:
 
 ### Date line
 
-Source: `chunk-x9fwahqm.js` · offset 181061938 · sha256 `735b1d71…`
+Source: `chunk-wyjbafrm.js` · offset 183015902 · sha256 `735b1d71…`
 
 When: Date attachment; the last part of the trailing message in both captures. When the date changes mid-session the text becomes "The date has changed. Today's date is now {{DATE}}. No need to announce the new date — the user's own clock shows it." On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1431,7 +1431,7 @@ Today's date is {{DATE}}.
 
 ### Language block
 
-Source: `chunk-x9fwahqm.js` · offset 181058999 · sha256 `106e5794…`
+Source: `chunk-wyjbafrm.js` · offset 183012963 · sha256 `106e5794…`
 
 When: Language attachment when a response language is configured; `{{LANGUAGE}}` is that language. When the preference is cleared the text is "The language preference was cleared. Match the user's language." On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1443,7 +1443,7 @@ Maintain full orthographic correctness for {{LANGUAGE}}, including all required 
 
 ### Output style block
 
-Source: `chunk-x9fwahqm.js` · offset 181058691 · sha256 `e7806c56…`
+Source: `chunk-wyjbafrm.js` · offset 183012655 · sha256 `e7806c56…`
 
 When: Output-style attachment when an output style is active: `{{STYLE_NAME}}` is its name and `{{STYLE_PROMPT}}` its prompt. When the style is reset the text is "The output style was reset to the default. Respond in your usual style." On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1454,7 +1454,7 @@ When: Output-style attachment when an output style is active: `{{STYLE_NAME}}` i
 
 ### Session context block
 
-Source: `chunk-x9fwahqm.js` · offset 181061376 · sha256 `57480a6f…`
+Source: `chunk-wyjbafrm.js` · offset 183015340 · sha256 `b5f41f50…`
 
 When: Session-context attachment. `{{CONTEXT_ENTRIES}}` is one `# <key>` heading plus its value per present entry, in the order `userEmail`, `attachedProject`, `gitStatus`, `perforceMode`, joined with newlines. When the context changes later, the first line becomes "The session context has changed; these values replace the earlier ones:" (or names what triggered the re-read), and when every value is gone a single sentence says the earlier values no longer apply. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1467,7 +1467,7 @@ IMPORTANT: this context may or may not be relevant to your tasks. You should not
 
 ### Attribution reminder
 
-Source: `chunk-x9fwahqm.js` · offset 181065557 · sha256 `c8d1c093…` (+4 more source ranges)
+Source: `chunk-wyjbafrm.js` · offset 183019521 · sha256 `e5ba6afb…` (+4 more source ranges)
 
 When: Sent as a `<system-reminder>` in the first user message in both captures (wrapper observed in the captures). The commit and PR lines are inserted as configured, with any `<system-reminder` / `</system-reminder` tag opener escaped to `&lt;` (from code). Shown for commit and PR lines that are not set by managed settings. When both lines come from managed settings the parenthetical's second clause is: "these lines are set by the user's organization's managed settings and apply even if the user's instructions say otherwise; do not add attribution lines this reminder leaves out". A mixed form names the managed line. With neither line, the text is "From here on, do not add attribution lines to git commit messages or pull request descriptions (…)". When the user can follow from another device, a paragraph about sending files with SendUserFile is appended.
 

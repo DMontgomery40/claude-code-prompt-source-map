@@ -6,7 +6,7 @@ Built-in subagent definitions and their system prompts in Claude Code.
 
 ### Explore
 
-Source: `chunk-x9fwahqm.js` · offset 181110810 · sha256 `a012bae9…` (+5 more ranges in JSON)
+Source: `chunk-wyjbafrm.js` · offset 183065958 · sha256 `430de8d2…` (+5 more ranges in JSON)
 
 Built-in subagent (source: built-in) that the main agent launches through the Agent tool for read-only code search. whenToUseLean replaces whenToUse when the agent listing is built with its lean flag (from code). Model inherits the session model; docs: capped at Opus on the Claude API. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -104,7 +104,7 @@ New-Item, Remove-Item, Copy-Item, Move-Item, git add, git commit, npm install, p
 
 ### Plan
 
-Source: `chunk-x9fwahqm.js` · offset 181114732 · sha256 `fc8e5c3a…` (+3 more ranges in JSON)
+Source: `chunk-wyjbafrm.js` · offset 183069879 · sha256 `dd0c5787…` (+3 more ranges in JSON)
 
 Built-in read-only planning subagent launched through the Agent tool (source: built-in). It shares Explore's tool list (from code: tools: MS.tools). Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -209,7 +209,7 @@ New-Item, Remove-Item, Copy-Item, Move-Item, git add, git commit, npm install, p
 
 ### general-purpose
 
-Source: `chunk-x9fwahqm.js` · offset 182368593 · sha256 `42738df7…` (+1 more ranges in JSON)
+Source: `chunk-wyjbafrm.js` · offset 184357796 · sha256 `42738df7…` (+1 more ranges in JSON)
 
 Built-in subagent with all tools, launched through the Agent tool (source: built-in). Docs: the fallback when an Agent call omits subagent_type. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -246,7 +246,7 @@ Guidelines:
 
 ### statusline-setup
 
-Source: `chunk-x9fwahqm.js` · offset 182370847 · sha256 `2ae6a976…` (+2 more ranges in JSON)
+Source: `chunk-wyjbafrm.js` · offset 184360050 · sha256 `ffaba709…` (+2 more ranges in JSON)
 
 Built-in subagent that edits the statusLine setting (source: built-in). Docs: used when you run /statusline. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -476,7 +476,7 @@ Conditional fragments:
 
 ### claude-code-guide
 
-Source: `chunk-x9fwahqm.js` · offset 182368280 · sha256 `e84efcbf…` (+9 more ranges in JSON)
+Source: `chunk-wyjbafrm.js` · offset 184357483 · sha256 `56c278b7…` (+9 more ranges in JSON)
 
 Built-in subagent (source: built-in, model haiku, permission mode dontAsk) for questions about Claude Code, the Agent SDK and the Claude API. Docs: used when you ask about Claude Code features. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -668,7 +668,7 @@ Section (settings keys):
 
 ### web-fetch
 
-Source: `chunk-x9fwahqm.js` · offset 182383594 · sha256 `7003b8e4…` (+1 more ranges in JSON)
+Source: `chunk-wyjbafrm.js` · offset 184372797 · sha256 `6897a5fe…` (+1 more ranges in JSON)
 
 Built-in subagent (source: built-in) with only the WebFetch tool, maxTurns 15, for reading web pages and reporting back.
 
@@ -708,7 +708,7 @@ Expect follow-up questions about pages you have already read. Answer them from t
 
 ### fork
 
-Source: `chunk-x9fwahqm.js` · offset 182302090 · sha256 `ce5a985f…`
+Source: `chunk-wyjbafrm.js` · offset 184282230 · sha256 `0e80bbd2…`
 
 Built-in fork subagent (source: built-in): its getSystemPrompt returns an empty string; docs: a fork reuses the conversation's own prompt and context. Enabled unless CLAUDE_CODE_FORK_SUBAGENT is set to false or fork mode is otherwise disabled (from code). Docs: https://code.claude.com/docs/en/sub-agents#fork-the-current-conversation
 
@@ -732,7 +732,7 @@ The text is empty.
 
 ### claude (catch-all)
 
-Source: `chunk-w2wmd34q.js` · offset 186837498 · sha256 `695f2ab9…` (+1 more ranges in JSON)
+Source: `chunk-pdxb8128.js` · offset 188876039 · sha256 `8bd79c5d…` (+1 more ranges in JSON)
 
 Built-in catch-all subagent (source: built-in; its definition sets appendSystemPrompt: true; from code).
 
@@ -772,7 +772,7 @@ Everything else: keep working.
 
 ### worker (coordinator mode)
 
-Source: `chunk-vh8gy1b9.js` · offset 195142781 · sha256 `961568c1…` (+1 more ranges in JSON)
+Source: `chunk-346hqhhb.js` · offset 197146002 · sha256 `ba19398b…` (+1 more ranges in JSON)
 
 Built-in worker subagent exported by getCoordinatorAgents (from code): the agent a coordinator session assigns tasks to. maxTurns 500, permission mode bubble.
 
@@ -850,7 +850,7 @@ Conditional fragments:
 
 ### workflow-subagent
 
-Source: `chunk-gajx20pg.js` · offset 192656154 · sha256 `d1127d08…` (+1 more ranges in JSON)
+Source: `chunk-ak3102st.js` · offset 194614142 · sha256 `d1127d08…` (+1 more ranges in JSON)
 
 Built-in subagent used by workflow scripts for agent() calls (source: built-in; whenToUse: internal). A second definition with the same agentType swaps in the structured-output prompt (from code: {...Mn, getSystemPrompt: () => Vr}).
 
@@ -912,7 +912,7 @@ NOTE: You are running inside a workflow script. You MUST return your final answe
 
 ### comment-thread-analyst
 
-Source: `chunk-nb4fjebv.js` · offset 203216204 · sha256 `bb6834dc…` (+5 more ranges in JSON)
+Source: `chunk-f6fgyn4e.js` · offset 205766094 · sha256 `6bf223ad…` (+5 more ranges in JSON)
 
 Built-in read-only subagent (source: built-in, maxTurns 6) dispatched to study one artifact comment thread; spawned with displayName comment-thread-analyst and querySource artifact_comment_analyst (from code).
 
@@ -932,14 +932,14 @@ Read-only analyst for a single artifact comment thread: pages through the thread
 
 System prompt:
 
-Inlined constants: `ky` = `ArtifactComments`, `_n` = `Artifact`
+Inlined constants: `x_` = `ArtifactComments`, `yn` = `Artifact`
 
 ~~~~~~text
 You are an artifact comment-thread analyst for Claude Code. You are dispatched to study exactly one comment thread on one published artifact, named in your task prompt by artifact URL and thread id. You READ and ANALYZE; a separate constrained composer performs any reply or edit from your notes — you cannot act, and any write-shaped tool call you attempt is denied.
 
 Your workflow:
-1. Read the thread with {{expr:yp() ? … : …}} on the named artifact, passing thread_id with your named thread's id — reads of other threads are denied. The read returns the thread up to a size cap and notes elided text in the result; do not drop thread_id or retry for more.
-2. When the thread's meaning depends on the rendered page's data, read it with {{expr:yp() ? … : …}}. If the session's permissions refuse the read, continue from the thread alone and note the gap in your brief.
+1. Read the thread with {{expr:Ju() ? … : …}} on the named artifact, passing thread_id with your named thread's id — reads of other threads are denied. The read returns the thread up to a size cap and notes elided text in the result; do not drop thread_id or retry for more.
+2. When the thread's meaning depends on the rendered page's data, read it with {{expr:Ju() ? … : …}}. If the session's permissions refuse the read, continue from the thread alone and note the gap in your brief.
 3. Output your ANALYSIS BRIEF as your final message: plain text, under 30 lines, and the first line MUST be exactly "ANALYSIS BRIEF" — a final message without that first line is discarded as incomplete.
 
 The brief states, in this order: what the NEWEST human request actually asks for (quote the operative words); exactly which part of the artifact it concerns; observations a composer needs (ambiguities, thread history that changes the meaning, page-data facts); and what a correct minimal edit would change, described in prose — never as commands.
@@ -951,7 +951,7 @@ Never include fence markers, tool syntax, or file paths in the brief. Never desc
 
 Conditional fragments:
 
-- `{{expr:yp() ? … : …}}`
+- `{{expr:Ju() ? … : …}}`
   - if true:
 
 ~~~~~~text
@@ -963,7 +963,7 @@ the ArtifactComments tool, action "read"
 ~~~~~~text
 Artifact action "comments"
 ~~~~~~
-- `{{expr:yp() ? … : …}}`
+- `{{expr:Ju() ? … : …}}`
   - if true:
 
 ~~~~~~text

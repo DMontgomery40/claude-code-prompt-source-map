@@ -1327,6 +1327,8 @@ function annotations() {
     CronDelete: { group: SCHED, availableIn: both, doc: ref(), when: "Same gate as CronCreate." },
     CronList: { group: SCHED, availableIn: both, doc: ref(), when: "Same gate as CronCreate." },
     ScheduleWakeup: { group: SCHED, availableIn: both, doc: ref(), when: "Always in the built-in list; no isEnabled gate. Never deferred (deferral check)." },
+    GetTask: { group: SCHED, availableIn: "conditional (absent from both captures)",
+      when: "Always in the built-in list; isEnabled: flag `tengu_violin_rosin` (default false), background tasks not disabled (CLAUDE_CODE_DISABLE_BACKGROUND_TASKS or the session's backgroundTasksDisabled), the strictToolResultPairing launch option off, and neither CLAUDE_CODE_SIMPLE nor --bare set. Undocumented; read at @def." },
     ReadNotifications: { group: SCHED, availableIn: "conditional",
       when: "isEnabled: CLAUDE_CODE_REMOTE in a non-interactive session, or Remote Control bridge active with flag `tengu_saffron_kite` (default true). Undocumented; read at @def." },
     FetchInboxMessage: { group: SCHED, availableIn: "conditional",

@@ -282,7 +282,8 @@ export function render(file, node, opts = {}, ctx = null, env = []) {
         const a = litValue(node.test.left), b = litValue(node.test.right);
         if (a && b) { const eq = a.v === b.v; render(file, (node.test.operator === "===") === eq ? node.consequent : node.alternate, opts, ctx, env); return ctx; }
       }
-      const a = render(file, node.consequent, opts, null, env), b = render(file, node.alternate, opts, null, env);
+      const branch = () => ({ parts: [], prov: [], placeholders: {}, constants: {}, conditionals: [], variants: [], unresolved: [], depth: ctx.depth, seen: new Set() });
+      const a = render(file, node.consequent, opts, branch(), env), b = render(file, node.alternate, opts, branch(), env);
       const name = `expr:${abbrev(t)} ? … : …`;
       ph(name);
       ctx.conditionals.push({ placeholder: `{{${name}}}`, condition_expr: abbrev(t), if_true: joinParts(a.parts), if_false: joinParts(b.parts) });
@@ -348,7 +349,10 @@ export function render(file, node, opts = {}, ctx = null, env = []) {
         const ret = singleReturn(fnNode);
         if (ret && STRINGISH.has(ret.type)) {
           const bind = new Map();
-          fnNode.params.forEach((p, i) => { if (p.type === "Identifier" && node.arguments[i]) bind.set(p.name, { file, node: node.arguments[i], env, depth: ctx.depth }); });
+          fnNode.params.forEach((p, i) => {
+            if (p.type === "Identifier" && node.arguments[i]) bind.set(p.name, { file, node: node.arguments[i], env, depth: ctx.depth });
+            else if (p.type === "AssignmentPattern" && p.left.type === "Identifier") bind.set(p.left.name, node.arguments[i] ? { file, node: node.arguments[i], env, depth: ctx.depth } : { file: fnFile, node: p.right, env: [], depth: ctx.depth });
+          });
           const e2 = [{ fn: fnNode, bind }, ...(fnFile === file ? env : fnEnv)];
           ctx.depth++; if (fnFile !== file || fnNode !== c) prov(fnFile, ret, "inlined"); render(fnFile, ret, opts, ctx, e2); ctx.depth--;
           return ctx;
