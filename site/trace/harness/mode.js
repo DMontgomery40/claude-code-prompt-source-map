@@ -74,6 +74,7 @@ export function createHarnessMode({ S, A, transport, request }) {
     view.show();
     place();
     if (!(await ensureModel()) || S.mode !== "harness") return;
+    say("");                                            // a model built earlier (a second opening, or c) says nothing itself
     present();
     sync(true);
   }
