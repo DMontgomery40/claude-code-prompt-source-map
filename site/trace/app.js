@@ -6,6 +6,8 @@ import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 import { parsePaste } from "./paste.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
 import { createPalette } from "./palette.js";
+import { createPlayback } from "./playback.js";
+import { createTransport, playheadForRequest } from "./transport.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -23,6 +25,9 @@ let text = null;     // (agentId, ref) => Promise<{text, mode}>
 let worker = null;
 let lastFiles = null; // the dropped files, kept so another session among them can be opened
 let pasteRoot = null; // the thread or session id from the paste box, sent as the worker's `root`
+// The playback transport (transport.js). Its clock lives outside S: playing never calls set(), and
+// each history entry carries the playhead's P beside the view.
+let transport = null;
 
 // ---------- loader ----------
 setupLoader();
@@ -76,6 +81,8 @@ function setupLoader() {
 function backToLoader() {
   palette?.setTrace(null);
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
+  transport?.load(null);
+  $("#playback").hidden = true;
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -537,9 +544,17 @@ async function start(trace) {
   mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
-  palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null) });
+  transport ||= createTransport($("#playback"), { onPlayhead: p => scene?.setPlayhead(p) });
+  transport.load(playbackFor(S.layout));
+  palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
+    playback: {
+      toggle: () => playbackShown() && transport.toggle(),
+      step: d => playbackShown() && transport.step(d),
+      slower: () => playbackShown() && transport.slower(),
+      faster: () => playbackShown() && transport.faster()
+    } });
   palette.setTrace(S.trace);
-  window.__trace = { S, set };
+  window.__trace = { S, set, transport };
   $("#loader").hidden = true;
   $("#app").hidden = false;
   buildHud();
@@ -594,6 +609,7 @@ async function setMode(mode) {
         scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon });
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
+        if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false, sweep: null });
       }
     } catch (e) {
       console.warn("3D view unavailable, using the 2D view", e);
@@ -604,6 +620,7 @@ async function setMode(mode) {
     $("#stage").hidden = true;
     $("#flat").hidden = false;
   }
+  showPlayback();
   symbolLegend();
   layoutInsets();
   render(true);
@@ -721,8 +738,52 @@ function symbolLegend() {
 
 function clipName(s) { s = String(s); return s.length > 48 ? `${s.slice(0, 47)}…` : s; }
 
+// ---------- playback ----------
+// The session's clock over the main thread's requests, parked at the last one (the whole landscape,
+// where the scene starts). Null when there is nothing to play through.
+function playbackFor(L) {
+  const reqs = L.root?.requests || [];
+  if (reqs.length < 2) return null;
+  const pb = createPlayback({ times: reqs.map(r => r.t), X: L.X });
+  pb.setP(pb.n - 1);
+  return pb;
+}
+// The transport shows in the 3D view only; hiding it stops playback.
+function showPlayback() {
+  const on = S.mode === "3d" && !!scene && !!transport?.playback;
+  if (!on) transport?.pause();
+  $("#playback").hidden = !on;
+}
+function playbackShown() { return !$("#playback").hidden; }
+// The transport sits on the bottom row, centred between the minimap and the view controls; where that
+// row is too narrow it sits above the minimap. Phones: full width, above the stacked bottom controls.
+function placePlayback() {
+  const host = $("#playback");
+  if (host.hidden) return;
+  const box = s => { const e = $(s); return e && !e.hidden ? e.getBoundingClientRect() : null; };
+  if (innerWidth <= 980) {
+    const tops = ["#map-zoom", ".viewtools", "#request-nav", "#panel"].map(box).filter(r => r?.height).map(r => r.top);
+    Object.assign(host.style, { left: "", width: "", bottom: `${Math.round(innerHeight - Math.min(...tops) + 8)}px` });
+    host.classList.add("compact");
+    return;
+  }
+  const H = 72, GAP = 14; // room for the two-row layout, so the choice does not flip with it
+  const mm = box("#minimap"), side = $(".side").getBoundingClientRect();
+  const others = ["#map-zoom", ".viewtools"].map(box).filter(r => r?.height);
+  const rightEdge = (top, left) => Math.min(side.left, ...others.filter(r => r.top < top + H && r.bottom > top && r.right > left).map(r => r.left)) - GAP;
+  let bottom = 22, left = (mm?.width ? mm.right : 14) + GAP, right = rightEdge(innerHeight - bottom - H, left), centred = true;
+  if (right - left < 440 && mm?.width) {
+    bottom = innerHeight - mm.top + 10; left = mm.left; centred = false;
+    right = rightEdge(mm.top - 10 - H, left);
+  }
+  const width = Math.max(0, Math.min(640, right - left));
+  Object.assign(host.style, { bottom: `${Math.round(bottom)}px`, left: `${Math.round(centred ? left + (right - left - width) / 2 : left)}px`, width: `${Math.round(width)}px` });
+  host.classList.toggle("compact", width < 520);
+}
+
 function layoutInsets(preserveView = false) {
   if (!scene) { const h = $(".hud").getBoundingClientRect(); if (innerWidth > 980) $("#crumbs").style.top = `${Math.round(h.bottom + 8)}px`; return; }
+  placePlayback();
   const vw = innerWidth, vh = innerHeight;
   const mobile = vw <= 980;
   const hud = $(".hud").getBoundingClientRect();
@@ -735,7 +796,7 @@ function layoutInsets(preserveView = false) {
   place.style.top = `${Math.round(crumbs.bottom + 8)}px`;
   const placeBottom = place.hidden ? 0 : place.getBoundingClientRect().bottom;
   const top = Math.max(hud.bottom, crumbs.bottom, placeBottom, mobile ? $("#lenses").getBoundingClientRect().bottom : 0) + 12;
-  const controlsTop = Math.min(...["#map-zoom", ".viewtools", "#request-nav"].map(s => $(s)).filter(e => e && !e.hidden).map(e => e.getBoundingClientRect().top), panel.top);
+  const controlsTop = Math.min(...["#map-zoom", ".viewtools", "#request-nav", "#playback"].map(s => $(s)).filter(e => e && !e.hidden).map(e => e.getBoundingClientRect().top), panel.top);
   scene.setInsets(mobile
     ? { top, right: 8, left: 8, bottom: vh - Math.min(panel.top, controlsTop) + 12 }
     : { top, right: vw - panel.left + 12, left: 16, bottom: (mm.height ? mm.height + 24 : 16) }, preserveView);
@@ -745,7 +806,8 @@ const VIEW_KEYS = ['level', 'agentId', 'reqIdx', 'stratum', 'block', 'lens', 'mo
 function captureSceneView() {
   return { state: Object.fromEntries(VIEW_KEYS.map(k => [k, S[k]])), camera: scene?.getView(), scroll: $('#panel').scrollTop };
 }
-function captureView() { return { ...captureSceneView(), mapReturn }; }
+// The playhead rides on history entries but not on mapReturn: "Back to map" keeps where focusing put it.
+function captureView() { return { ...captureSceneView(), mapReturn, P: transport?.playback?.P ?? null }; }
 function saveViewSoon() {
   clearTimeout(viewTimer);
   viewTimer = setTimeout(() => viewHistory?.checkpoint(), 160);
@@ -753,6 +815,8 @@ function saveViewSoon() {
 function restoreView(view) {
   clearTimeout(viewTimer);
   mapReturn = view.mapReturn || null;
+  const pb = transport?.playback;
+  if (pb && Number.isFinite(view.P) && view.P !== pb.P) transport.seek(view.P);
   const modeChanged = S.mode !== view.state.mode;
   Object.assign(S, view.state);
   S.agent = S.agentId ? agentById(S.agentId) : null;
@@ -771,6 +835,8 @@ function agentById(id) { return S.trace.agents.find(a => a.id === id); }
 function set(patch, options) {
   const change = () => {
     if (isLandscape(S) && patch.mapPinned === false && patch.level > 0) mapReturn = captureSceneView();
+    // Inside the change, so the entry being left keeps its own playhead.
+    if (options?.playhead != null) transport?.seek(options.playhead);
     applySet(patch);
     if (options?.locate && S.mapPinned) scene?.panToRequest(S.agentId, S.reqIdx, options.reveal);
   };
@@ -806,7 +872,8 @@ const A = {
   showCallPart: part => { S.callPart = part; saveViewSoon(); },
   focusCall: i => set({ inspector: 'action', callIndex: i }),
   focusAgent: (id, i) => set({ mapPinned: false, level: 1, agentId: id, reqIdx: i ?? 0, stratum: null, block: null }),
-  focusRequest: (id, i) => set(requestInspection(id, i)),
+  // Focusing a request moves the playhead there (paused).
+  focusRequest: (id, i) => set(requestInspection(id, i), { playhead: playheadForRequest(transport?.playback, S.layout, id, i) }),
   focusStratum: (id, i, key) => set(requestInspection(id, i, key)),
   openBlock: i => { const view = sidebarState(); set({ ...requestInspection(view.agentId, view.reqIdx, view.stratum), block: i }); },
   openBlockAt(agentId, bi) {
@@ -938,6 +1005,7 @@ function renderMinimap() {
   host.hidden = false;
   const w = Math.min(350, Math.max(220, innerWidth - sideW - 350));
   scene?.mountMinimap(host, w, 128, {agentId:S.agentId, reqIdx:S.level>=1?S.reqIdx:null});
+  placePlayback();
 }
 
 function sidebarState() { return mapPanelState(S, S.mapFocus); }

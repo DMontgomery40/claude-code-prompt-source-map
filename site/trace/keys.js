@@ -19,16 +19,28 @@ export const KEYS = [
   { id: "reset", group: "View", keys: ["r"], label: "Reset the camera", command: "Reset the camera", bind: { r: 0 } },
   { id: "mode", group: "View", keys: ["v"], label: "Switch between the 3D and 2D view", command: "Switch 3D / 2D view", bind: { v: 0 } },
   { id: "landmarks", group: "View", keys: ["l"], label: "Show or hide landmark labels", command: "Show / hide landmarks", bind: { l: 0 } },
-  { id: "widen", group: "View", keys: ["w"], label: "Expand or compact the reader", command: "Expand / compact the reader", bind: { w: 0 } }
+  { id: "widen", group: "View", keys: ["w"], label: "Expand or compact the reader", command: "Expand / compact the reader", bind: { w: 0 } },
+  { id: "play", group: "Playback", keys: ["Space"], label: "Play or pause", command: "Play or pause", detail: "Playback", bind: { " ": 0 } },
+  { id: "stepBack", group: "Playback", keys: [","], label: "Previous request", command: "Previous request", detail: "Playback", bind: { ",": -1 } },
+  { id: "stepOn", group: "Playback", keys: ["."], label: "Next request", command: "Next request", detail: "Playback", bind: { ".": 1 } },
+  { id: "slower", group: "Playback", keys: ["<"], label: "Slower", command: "Slower", detail: "Playback", bind: { "<": -1 } },
+  { id: "faster", group: "Playback", keys: [">"], label: "Faster", command: "Faster", detail: "Playback", bind: { ">": 1 } }
 ];
 
 const BY_KEY = new Map();
 for (const row of KEYS) for (const [key, arg] of Object.entries(row.bind || {})) BY_KEY.set(key, { row, arg });
 
-// The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null.
+// The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null. Space belongs to the
+// focused control or field when there is one (a button presses, a disclosure opens).
 export function keyFor(e) {
   if (e.metaKey || e.ctrlKey || e.altKey) return null;
+  if (e.key === " " && takesSpace(e.target)) return null;
   return BY_KEY.get(e.key) || null;
+}
+
+const SPACE_TAKERS = "input, textarea, select, button, summary, a[href], [contenteditable]:not([contenteditable=false]), [role=button], [role=checkbox], [role=switch], [role=tab], [role=option], [role=menuitem], [role=slider], [role=separator]";
+export function takesSpace(target) {
+  return !!(target && target.closest && target.closest(SPACE_TAKERS));
 }
 
 // ⌘K on a Mac, Ctrl+K elsewhere (either works everywhere).

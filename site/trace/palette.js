@@ -15,7 +15,8 @@ const MIN_TEXT = 3;
 const HIGHLIGHT = "trace-find";
 
 // ctx: { state() -> the app's S, A (the app's actions), overview(), selectLens(key),
-//        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref) }
+//        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref),
+//        playback: { toggle(), step(d), slower(), faster() } for the transport's keys }
 export function createPalette(ctx) {
   let trace = null, index = null, commands = [], largest = [];
   let q = "", scope = "all", active = 0, shown = [], sections = new Map();
@@ -104,7 +105,7 @@ export function createPalette(ctx) {
       ...LENSES.map((l, i) => cmd(l.q, () => ctx.selectLens(l.key), String(i + 1), "Question")),
       root?.requests.length ? cmd("Open the main thread", () => ctx.A.focusAgent(root.id, 0), null, `${fmtInt(root.requests.length)} requests`) : null,
       peak >= 0 ? cmd("Jump to peak context", () => ctx.A.focusRequest(root.id, peak), null, `Request ${peak + 1} · ${fmtTok(root.requests[peak].tokens.context)} in context`) : null,
-      ...KEYS.filter(k => k.command).map(k => cmd(k.command, () => ACTIONS[k.id](0), k.keys[0])),
+      ...KEYS.filter(k => k.command).map(k => cmd(k.command, () => ACTIONS[k.id](0), k.keys[0], k.detail)),
       cmd("Load another session", () => $("#back-to-load")?.click(), null, "Back to the loader")
     ];
     return out.filter(Boolean);
@@ -464,7 +465,12 @@ export function createPalette(ctx) {
     reset: () => click("#reset-view"),
     mode: () => click("#mode"),
     landmarks: () => click("#label-detail"),
-    widen: () => click("#widen")
+    widen: () => click("#widen"),
+    play: () => ctx.playback?.toggle(),
+    stepBack: () => ctx.playback?.step(-1),
+    stepOn: () => ctx.playback?.step(1),
+    slower: () => ctx.playback?.slower(),
+    faster: () => ctx.playback?.faster()
   };
   function agentsInOrder() { return trace.agents.filter(a => a.requests.length); }
   function stepAgent(d) {

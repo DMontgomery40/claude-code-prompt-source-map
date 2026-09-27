@@ -323,3 +323,156 @@ test('tool inspector handles missing text, reader errors and competing async rea
   await new Promise(resolve => setImmediate(resolve));
   assert.ok(host.all(n => n.tagName === 'PRE')[0].textContent.includes('source missing'));
 });
+
+// ---------- the playback transport ----------
+const { createPlayback } = await import("../playback.js");
+const { createTransport, playheadLabel, playheadForRequest, nextSpeed } = await import("../transport.js");
+const { fmtClock } = await import("../panels.js");
+
+// A long main thread: 1,701 requests 20 s apart, with 3-hour idle stretches before requests 501, 1,001
+// and 1,501 (the layout squeezes them) and a 40-minute wait before request 1,302 that one subagent's
+// whole run fills. A second subagent's single request sits inside an idle stretch, splitting it.
+function longSession() {
+  const t0 = Date.UTC(2026, 8, 25, 7, 0), req = t => ({ t, tokens: { context: 1000 } });
+  const agent = (id, kind, extra = {}) => ({ id, kind, name: id, requests: [], blocks: [], asks: [], compactions: [], ...extra });
+  const root = agent("root", "root");
+  let t = t0;
+  for (let i = 0; i < 1701; i++) {
+    if (i) t += i % 500 === 0 ? 3 * 3600e3 : i === 1301 ? 40 * 60e3 : 20e3;
+    root.requests.push(req(t));
+  }
+  const worker = agent("worker", "subagent", { parentId: "root" });
+  for (let k = 0; k < 50; k++) worker.requests.push(req(root.requests[1300].t + 30e3 + k * 48e3));
+  const late = agent("late", "subagent", { parentId: "root" });
+  late.requests.push(req(root.requests[999].t + 2 * 3600e3));
+  return { agents: [root, worker, late], started: t0, ended: t };
+}
+function transportFixture() {
+  const L = buildLayout(longSession());
+  const pb = createPlayback({ times: L.root.requests.map(r => r.t), X: L.X });
+  pb.setP(pb.n - 1);
+  const frames = new Map(), pushed = [];
+  let id = 0;
+  const host = new Element("div");
+  const tr = createTransport(host, { onPlayhead: p => pushed.push(p), raf: f => { frames.set(++id, f); return id; }, caf: i => frames.delete(i), now: () => 0 });
+  tr.load(pb);
+  // Runs the queued animation frame at time t.
+  const frame = t => { const [[k, f]] = frames; frames.delete(k); f(t); };
+  const [play, scrub, readout, speed] = host.children;
+  return { L, pb, tr, host, frames, frame, pushed, play, scrub, readout, speed };
+}
+
+test("the transport renders play, scrub, readout and speed; the readout names the request and its time", () => {
+  const { pb, tr, host, pushed, play, scrub, readout, speed } = transportFixture();
+  assert.deepEqual(host.children.map(c => `${c.tagName}.${c.className}`), ["BUTTON.play", "INPUT.scrub", "OUTPUT.readout", "BUTTON.speed"]);
+  assert.deepEqual(["type", "min", "max", "step", "aria-label"].map(k => scrub.getAttribute(k)), ["range", "0", "1", "0.0005", "Session time"]);
+  assert.equal(readout.getAttribute("aria-live"), "off", "the readout is not announced every frame");
+  assert.deepEqual([play.getAttribute("aria-label"), play.getAttribute("aria-pressed"), host.getAttribute("data-playing")], ["Play", "false", "false"]);
+  assert.equal(speed.textContent, "4×");
+  assert.equal(pushed.length, 0, "loading a session pushes nothing: the scene starts at the same end");
+  assert.equal(readout.textContent, `req 1,701 · ${playheadLabel(pb).split(" · ").slice(1).join(" · ")}`);
+  tr.seek(1233.5);
+  const t = pb.timeAt(1233.5);
+  assert.ok(t > pb.timeAt(1233) && t < pb.timeAt(1234), "the time the playhead has reached, between the two requests");
+  const day = new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  assert.equal(readout.textContent, `req 1,234 · ${day} · ${fmtClock(t)}`);
+  assert.match(readout.textContent, /^req 1,234 · Sep 2[56] · \d{1,2}:\d\d [ap]m$/);
+  assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
+  assert.deepEqual(pushed.at(-1), { P: 1233.5, playing: false, sweep: null });
+  // Halfway through the 40-minute wait the clock reads 20 minutes on, not the request's own time.
+  tr.seek(1300.5);
+  const mid = pb.timeAt(1300) + 20 * 60e3;
+  assert.equal(pb.timeAt(1300.5), mid);
+  assert.equal(readout.textContent, `req 1,301 · ${new Date(mid).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${fmtClock(mid)}`);
+  assert.notEqual(fmtClock(mid), fmtClock(pb.timeAt(1300)));
+  // The scrub is the playhead's compressed-time x, and dragging it moves the playhead to that x.
+  for (const P of [0, 1, 499.5, 500, 1000.25, 1301, pb.n - 1]) { tr.seek(P); assert.equal(Number(scrub.value), pb.xAt(P), `scrub at P ${P}`); }
+  for (const P of [12.75, 700.25, 1300.5]) {
+    scrub.value = String(pb.xAt(P));
+    scrub.dispatch("input");
+    assert.ok(Math.abs(pb.P - P) < 1e-9, `scrubbing to x(${P}) lands on ${pb.P}`);
+    assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
+  }
+});
+
+test("play runs one frame loop that pushes P and the sweep; pause, step and scrubbing stop it", () => {
+  const { pb, tr, host, frames, frame, pushed, play, scrub } = transportFixture();
+  tr.seek(100.2);
+  assert.equal(frames.size, 0, "paused: no frame is scheduled");
+  play.dispatch("click");
+  assert.deepEqual([host.getAttribute("data-playing"), play.getAttribute("aria-pressed"), play.getAttribute("aria-label")], ["true", "true", "Pause"]);
+  assert.equal(frames.size, 1);
+  assert.deepEqual(pushed.at(-1), { P: 100.2, playing: true, sweep: 100.2 - 100 });
+  for (const t of [16, 33, 50]) {
+    const before = pb.P;
+    frame(t);
+    const p = pushed.at(-1);
+    assert.ok(p.playing && p.P > before, `frame ${t} moves the playhead`);
+    assert.equal(p.sweep, p.P - Math.floor(p.P));
+    assert.equal(Number(scrub.value), pb.xAt(p.P));
+    assert.equal(frames.size, 1, "one frame queued at a time");
+  }
+  const x0 = pb.xAt(pb.P);
+  frame(5050);
+  assert.ok(Math.abs(pb.xAt(pb.P) - x0 - 4 / (pb.n - 1) * 0.1) < 1e-9, "a 5 s gap between frames (a hidden tab) advances only 100 ms");
+  play.dispatch("click");
+  assert.deepEqual([host.getAttribute("data-playing"), play.getAttribute("aria-label"), frames.size], ["false", "Play", 0]);
+  assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
+  tr.play();
+  assert.equal(frames.size, 1);
+  tr.step(1);
+  assert.deepEqual([frames.size, pb.playing, Number.isInteger(pb.P)], [0, false, true], "stepping pauses on a request");
+  tr.play();
+  scrub.dispatch("pointerdown");
+  assert.deepEqual([frames.size, pb.playing], [0, false], "grabbing the scrub pauses");
+});
+
+test("playing to the end stops the loop and resets the button; play again starts over", () => {
+  const { pb, tr, host, frames, frame, pushed, play } = transportFixture();
+  tr.seek(pb.n - 3.5);
+  tr.setSpeed(16);
+  play.dispatch("click");
+  let t = 0, guard = 0;
+  while (pb.playing && guard++ < 10000) frame(t += 100);
+  assert.ok(guard < 10000);
+  assert.equal(frames.size, 0, "the frame that reaches the end schedules no other");
+  assert.deepEqual([pb.P, pb.playing, host.getAttribute("data-playing"), play.getAttribute("aria-label")], [pb.n - 1, false, "false", "Play"]);
+  assert.deepEqual(pushed.at(-1), { P: pb.n - 1, playing: false, sweep: null });
+  play.dispatch("click");
+  assert.equal(pb.P, 0, "play at the end starts from the first request");
+  assert.equal(frames.size, 1);
+});
+
+test("the speed button cycles 4× → 8× → 16× → 1×; the keys' faster and slower stop at the ends", () => {
+  const { pb, tr, speed } = transportFixture();
+  const seen = [speed.textContent];
+  for (let i = 0; i < 5; i++) { speed.dispatch("click"); seen.push(speed.textContent); }
+  assert.deepEqual(seen, ["4×", "8×", "16×", "1×", "2×", "4×"]);
+  assert.equal(pb.speed, 4);
+  assert.equal(nextSpeed({ speeds: [1, 2, 4, 8, 16], speed: 3 }), 4, "an off-list speed goes to the next listed one");
+  for (let i = 0; i < 4; i++) tr.faster();
+  assert.equal(speed.textContent, "16×");
+  for (let i = 0; i < 6; i++) tr.slower();
+  assert.equal(speed.textContent, "1×");
+});
+
+test("focusing a request puts the playhead on it: the root's own index, a subagent's exact x", () => {
+  const { L, pb } = transportFixture();
+  assert.equal(playheadForRequest(pb, L, "root", 1234), 1234);
+  assert.equal(playheadForRequest(pb, L, "root", 99999), null);
+  assert.equal(playheadForRequest(pb, L, "nobody", 0), null);
+  assert.equal(playheadForRequest(null, L, "root", 3), null);
+  const worker = L.byId.get("worker");
+  let prev = -1;
+  worker.requests.forEach((r, i) => {
+    const P = playheadForRequest(pb, L, "worker", i);
+    assert.ok(P > 1300 && P < 1301 && P > prev, `worker request ${i}: P ${P} is fractional, inside the wait, in order`);
+    assert.ok(Math.abs(pb.xAt(P) - L.X(r.t)) < 1e-12, `worker request ${i}: the cut lands on it`);
+    prev = P;
+  });
+  // Inside a squeezed idle stretch, time and compressed x disagree: the playhead follows x.
+  const t = L.byId.get("late").requests[0].t, P = playheadForRequest(pb, L, "late", 0);
+  assert.ok(P > 999 && P < 1000);
+  assert.ok(Math.abs(pb.xAt(P) - L.X(t)) < 1e-12);
+  assert.ok(Math.abs(pb.xAt(pb.PAtTime(t)) - L.X(t)) > 1e-3, "PAtTime alone would put the cut off the request here");
+});

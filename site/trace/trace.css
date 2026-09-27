@@ -640,6 +640,27 @@ button:disabled { opacity: .4; cursor: default; }
   .app:not([data-level="0"]) .map-zoom { bottom: calc(36vh + 89px); }
 }
 
+/* The playback transport, in the zoom control's material. app.js places it (placePlayback): bottom
+   centre on wide screens, above the minimap when that row is narrow, above the controls on phones. */
+.playback { position: absolute; bottom: 22px; display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border: 1px solid #3b5564; border-radius: 12px; background: #0b1925f5; box-shadow: 0 8px 25px #0004; }
+.playback button { flex: none; height: 32px; padding: 0; border: 0; border-radius: 7px; background: #1c3342; color: #c6f3e3; cursor: pointer; }
+.playback button:hover { background: #315445; }
+.playback .play { width: 32px; display: grid; place-items: center; }
+.playback .play i { width: 11px; height: 13px; margin-left: 2px; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.playback[data-playing=true] .play { background: #2b5c4c; color: #e8fff6; }
+.playback[data-playing=true] .play i { margin-left: 0; clip-path: none; background: linear-gradient(90deg, currentColor 0 36%, transparent 36% 64%, currentColor 64%); }
+.playback .speed { min-width: 44px; padding: 0 9px; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.playback .readout { flex: none; min-width: 14.5em; color: #d6e6f2; font-size: 13px; line-height: 1.3; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.playback .scrub { flex: 1; min-width: 60px; appearance: none; height: 4px; margin: 0 6px; border-radius: 4px; cursor: pointer; background: linear-gradient(to right, #91d6c6 var(--progress, 100%), #56738a var(--progress, 100%)); }
+.playback .scrub::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border: 3px solid #c5f8e8; background: #366e62; border-radius: 50%; }
+.playback .scrub::-moz-range-thumb { width: 10px; height: 10px; border: 3px solid #c5f8e8; background: #366e62; border-radius: 50%; }
+.playback.compact { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; row-gap: 3px; padding-right: 5px; }
+.playback.compact .readout { grid-column: 1 / -1; grid-row: 2; min-width: 0; padding: 0 0 2px 6px; }
+@media (max-width: 980px) {
+  .playback { left: 16px; right: 16px; }
+  .playback button { height: 30px; }
+}
+
 
 .lbl.cluster { border-radius: 20px; padding: 3px 7px; min-width: 23px; text-align: center; color: #dcebf4; background: #162836f2; border: 1px solid #7393a7; font-size: 10px; font-weight: 700; }
 
