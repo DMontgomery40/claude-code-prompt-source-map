@@ -1145,7 +1145,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     let moved = false;
     for (const it of items) {
       // its own anchor first; a landmark label mirrors its anchor before it gives up its place
-      const quietEvent = level === 0 && !detailedLabels && detail.level < 2 && it.e.classList.contains("event");
+      const quietEvent = level === 0 && !detailedLabels && detail.level < 2 && it.e.classList.contains("event") && !it.e.classList.contains("sweep");
       const at = quietEvent || it.beyond || (sparse && it.p < 5) ? null : placeLabel(it, box, placed);
       const hide = !at;
       if ((it.e.style.visibility === "hidden") !== hide) it.e.style.visibility = hide ? "hidden" : "";
