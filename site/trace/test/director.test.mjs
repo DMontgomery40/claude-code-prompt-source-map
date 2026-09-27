@@ -252,18 +252,32 @@ test("the follow zoom through the app's camera moves: a pull-back, a pause, a re
   assert.deepEqual(at(fz.engage()), [3.2, 2], "run 1 reads the user's Requests zoom");
   camera = 1.5; // the director pulls back for a spawns group; nothing is sent for its moves
   fz.camera("pan"); // paused, a request step on the slider pans to the next request at the zoom it finds
+  fz.camera("drag"); // and the user drags the map a little
   fz.camera("restore"); // and Back restores a view the director may have framed
   assert.deepEqual([...at(fz.engage()), reads], [3.2, 2, 1], "run 2 still follows at Requests, not the pulled-back 1.5 (level 0: none)");
   const run = play(sorted([spawn(30, "a")]), 25, 200, { zoom: fz.latch.zoom, level: fz.latch.level });
   assert.deepEqual([run.shots[0].shot.kind, run.shots[0].shot.followZoom], ["follow", 3.2]);
-  for (const [source, zoom, level] of [["hands", 5.8, 3], ["reveal", 3.3, 2], ["refit", 1, 0]]) {
+  for (const [source, zoom, level] of [["zoom", 5.8, 3], ["reveal", 3.3, 2], ["refit", 1, 0]]) {
     camera = zoom;
     fz.camera(source);
     assert.deepEqual(at(fz.engage()), [zoom, level], `${source} chooses the zoom`);
   }
   assert.equal(reads, 4);
-  for (const s of ["hands", "refit", "reveal"]) assert.equal(choosesZoom(s), true, s);
-  for (const s of ["pan", "restore", "director", "view", "resize", undefined]) assert.equal(choosesZoom(s), false, String(s));
+  for (const s of ["zoom", "refit", "reveal"]) assert.equal(choosesZoom(s), true, s);
+  for (const s of ["drag", "hands", "pan", "restore", "director", "view", "resize", undefined]) assert.equal(choosesZoom(s), false, String(s));
+});
+
+test("a drag during a wide shot keeps the follow zoom: Follow resumes at the zoom from before the shot", () => {
+  let camera = 5.8;
+  const fz = createFollowZoom(() => camera);
+  assert.equal(fz.engage().zoom, 5.8, "Layers");
+  camera = 1.94; // a spawns box pulled the camera out to Agents
+  fz.camera("drag"); fz.camera("hands"); // the user drags the map (the app's stage listener and the scene's onUserCamera)
+  assert.deepEqual([fz.engage().zoom, fz.latch.level], [5.8, 3], "f: follow at Layers again, not at the box's 1.94");
+  const f = nextShot(state([], 30, { zoom: fz.latch.zoom, level: fz.latch.level }), null, 0);
+  assert.deepEqual([f.kind, f.followZoom], ["follow", 5.8]);
+  fz.camera("zoom"); // the user wheels: that zoom is theirs
+  assert.equal(fz.engage().zoom, 1.94);
 });
 
 test("a tick with no finite cut moves nothing and leaves the next ticks sound", () => {

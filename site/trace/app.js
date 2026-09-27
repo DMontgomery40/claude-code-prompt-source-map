@@ -588,15 +588,19 @@ async function start(trace) {
     started = true;
     setupResizer();
     $("#overview").addEventListener("click", overview);
-    $("#reset-view").addEventListener("click", () => { userCamera(); viewHistory.navigate(() => { followMap(null); scene?.refit(); }); });
-    $("#zoom-in").addEventListener("click", () => { userCamera(); scene?.zoom(1.55); });
-    $("#zoom-out").addEventListener("click", () => { userCamera(); scene?.zoom(1 / 1.55); });
-    // The user's hands on the landscape camera: a wheel or pinch, or a drag of more than 5 px.
-    const stage = $("#stage");
-    stage.addEventListener("wheel", userCamera, { passive: true, capture: true });
+    $("#reset-view").addEventListener("click", () => { userCamera("refit"); viewHistory.navigate(() => { followMap(null); scene?.refit(); }); });
+    $("#zoom-in").addEventListener("click", () => { userCamera("zoom"); scene?.zoom(1.55); });
+    $("#zoom-out").addEventListener("click", () => { userCamera("zoom"); scene?.zoom(1 / 1.55); });
+    // The user's hands on the landscape camera: a wheel or a pinch (a zoom), or a drag of more than 5 px
+    // (a pan or orbit, which keeps the zoom).
+    const stage = $("#stage"), pointers = new Set();
+    stage.addEventListener("wheel", () => userCamera("zoom"), { passive: true, capture: true });
+    for (const t of ["pointerup", "pointercancel"]) stage.addEventListener(t, e => pointers.delete(e.pointerId), true);
     stage.addEventListener("pointerdown", e => {
+      pointers.add(e.pointerId);
+      if (pointers.size > 1) { userCamera("zoom"); return; } // a second finger: a pinch
       const x0 = e.clientX, y0 = e.clientY;
-      const move = ev => { if (Math.hypot(ev.clientX - x0, ev.clientY - y0) > 5) { userCamera(); done(); } };
+      const move = ev => { if (pointers.size === 1 && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 5) { userCamera("drag"); done(); } };
       const done = () => { stage.removeEventListener("pointermove", move, true); stage.removeEventListener("pointerup", done, true); stage.removeEventListener("pointercancel", done, true); };
       stage.addEventListener("pointermove", move, true);
       stage.addEventListener("pointerup", done, true);
@@ -643,7 +647,7 @@ async function setMode(mode) {
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
         if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false, sweep: null });
-        scene.onUserCamera?.(userCamera);
+        scene.onUserCamera?.(() => userCamera("hands"));
       }
     } catch (e) {
       console.warn("3D view unavailable, using the 2D view", e);
@@ -838,9 +842,10 @@ function mapZoomNow() {
 // Camera moves the app makes or hears of, by source (director.js choosesZoom decides which choose the
 // follow zoom). The scene's onViewChange is not one of them: it fires for the director's framing too.
 function cameraMove(source) { (followZoom ||= scene && createFollowZoom(mapZoomNow))?.camera(source); }
-// The user's hands on the camera: the scene's onUserCamera, and until it reports them a wheel or a drag on
-// the stage, the zoom controls and Reset view. While playing the director lets go (Follow manual).
-function userCamera() { cameraMove("hands"); transport?.userCamera(); }
+// The user's hands on the camera, by source: "zoom" (the wheel, a pinch, the zoom buttons and keys), "refit"
+// (Reset view), "drag" (a pan or orbit), "hands" (the scene's onUserCamera, which does not say which).
+// While playing the director lets go (Follow manual); only a zoom or a refit chooses the follow zoom.
+function userCamera(source) { cameraMove(source); transport?.userCamera(); }
 // The transport sits on the bottom row, centred between the minimap and the view controls; where that
 // row is too narrow it sits above the minimap. Phones: full width, above the stacked bottom controls.
 function placePlayback() {

@@ -34,12 +34,12 @@ export function followLatch(latch, moved, readZoom) {
   return { zoom, level: mapDetail(zoom).level };
 }
 
-// Which camera moves choose that zoom. The user's hands (a wheel, pinch, drag, the zoom controls, reset,
-// the scene's onUserCamera), the overview or a lens refitting the map, and a request located with a reveal
-// zoom do. The director's framing does not, nor a plain pan to a request (it keeps whatever zoom it finds,
-// perhaps one the director left), a history restore (the saved view may be one the director framed), a
-// resize or any other change the scene reports.
-const CHOOSES_ZOOM = new Set(["hands", "refit", "reveal"]);
+// Which camera moves choose that zoom. A zoom by the user (the wheel, a pinch, the zoom buttons and keys),
+// Reset view, the overview or a lens refitting the map, and a request located with a reveal zoom do. A drag
+// (a pan or an orbit keeps whatever zoom it finds, perhaps one the director left), the user's hands
+// unspecified (the scene's onUserCamera), the director's framing, a plain pan to a request, a history
+// restore (the saved view may be one the director framed), a resize or any other change do not.
+const CHOOSES_ZOOM = new Set(["zoom", "refit", "reveal"]);
 export const choosesZoom = source => CHOOSES_ZOOM.has(source);
 
 // One session's follow zoom: camera(source) for every camera move the app makes or hears of, engage() as
