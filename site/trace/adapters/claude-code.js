@@ -87,6 +87,9 @@ function splitInstructions(content, files) {
 // Attachment rows that never enter the model's context on their own.
 const NOT_IN_CONTEXT = new Set(["hook_success", "thinking_drop", "command_permissions"]);
 const AGENT_TOOLS = new Set(["Agent", "Task", "SendMessage", "TaskOutput"]);
+// The ids a notification names: its <task-id> and <tool-use-id>, and agentId-style mentions.
+const noteIds = (s) => [...s.matchAll(/<(?:task-id|tool-use-id)>\s*([^<\s]+)/g)].map((x) => x[1])
+  .concat((s.match(/\b(?:agentId|agent_id|task_id)["=:>\s]+([A-Za-z0-9_-]{6,})/g) || []).map((x) => x.replace(/^.*[=:>\s"]/, "")));
 
 // A user text that opens with <teammate-message> elements (after at most a short harness prefix,
 // "Another Claude session sent a message:") batches several messages: one segment per element,
@@ -202,14 +205,18 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
       if (row.isMeta) {
         const tu = row.sourceToolUseID ? toolUses.get(row.sourceToolUseID) : null;
         const skill = tu && tu.name === "Skill" ? tu.skill : null;
-        track(uuid, addBlock(agent, { t, kind: "injected", label: row.sourceToolUseID ? (skill ? `skill · ${skill}` : "skill content") : "meta", ref, text, render: "literal", ...(row.sourceToolUseID ? { own: true, userWhole: true, source: skill ? `skill:${skill}` : null } : {}) }));
+        const b = addBlock(agent, { t, kind: "injected", label: row.sourceToolUseID ? (skill ? `skill · ${skill}` : "skill content") : "meta", ref, text, render: "literal", ...(row.sourceToolUseID ? { own: true, userWhole: true, source: skill ? `skill:${skill}` : null } : {}) });
+        track(uuid, b);
+        // A background subagent's final report can come back as <agent-message from="<agent id>">.
+        const hand = /<agent-message from="([^"]+)"/.exec(text);
+        if (hand) st.agentBlocks.push({ t, block: b.i, teammate: null, notification: true, handBack: true, ids: [hand[1]] });
         continue;
       }
       const k = seg.teammate ? { kind: "agents", label: `teammate-message from ${seg.teammate}`, teammate: seg.teammate, ask: isSub }
         : row.origin && row.origin.kind === "task-notification" ? { kind: "agents", label: "task-notification" } : textKind(text, isSub);
       const b = addBlock(agent, { t, kind: k.kind, label: k.label, ref, text });
       track(uuid, b);
-      if (k.kind === "agents") st.agentBlocks.push({ t, block: b.i, teammate: k.teammate || null, ids: (text.match(/\b(?:agentId|agent_id|task-id|task_id)["=:>\s]+([A-Za-z0-9_-]{6,})/g) || []).map((x) => x.replace(/^.*[=:>\s"]/, "")) });
+      if (k.kind === "agents") st.agentBlocks.push({ t, block: b.i, teammate: k.teammate || null, notification: k.label === "task-notification", ids: noteIds(text) });
       if (k.ask) {
         agent.asks.push({ t, request: null, block: b.i, from: k.human ? "human" : "agent", ...(k.teammate ? { by: k.teammate } : {}) });
         if (!st.title && k.human) st.title = text.trim().slice(0, 120);
@@ -319,9 +326,13 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
             ...(mine ? { own: true, source: mine.source, identity: mine.identity, userSpans: mine.parts ? spansOf(text, mine.parts) : null } : {}) });
           track(r.uuid, b);
           tally.literal++;
+          if (type === "queued_command" && a.commandMode === "task-notification") st.agentBlocks.push({ t, block: b.i, teammate: null, notification: true, ids: noteIds(partText(a.prompt)) });
           if (type === "queued_command" && (a.humanTurn || (a.origin && a.origin.kind === "human")) && !isSub) agent.asks.push({ t, request: null, block: b.i, from: "human" });
           continue;
         }
+        // A task-notification queued mid-turn without rendered text: no block, but still where a
+        // background agent came back (buildClaudeTrace returns).
+        if (type === "queued_command" && a.commandMode === "task-notification") st.agentBlocks.push({ t, block: null, teammate: null, notification: true, ids: noteIds(partText(a.prompt)) });
         if (NOT_IN_CONTEXT.has(type) || type === "queued_command") { tally.skipped++; continue; }
         const fields = fieldBlocks(type, a);
         if (fields) {
@@ -383,7 +394,7 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
               tu.workflow.result = partText(x.content);
               tu.workflow.runId = (r.toolUseResult && r.toolUseResult.runId) || null;
             }
-            if (kind === "agents" && first) st.agentBlocks.push({ t, block: first.i, callId: x.tool_use_id, teammate: null, ids: [] });
+            if (kind === "agents" && first) st.agentBlocks.push({ t, block: first.i, callId: x.tool_use_id, teammate: null, ids: [], status: (r.toolUseResult && r.toolUseResult.status) || null });
           } else if (x.type === "text") textBlocks(x.text || "", path.concat(["text"]), t, r.uuid, r);
           else if (x.type === "image") track(r.uuid, addBlock(agent, { t, kind: isSub ? "agents" : "you", label: "image", ref: { ...lineRef, path: path.concat(["source"]) }, image: imageDims(x.source && x.source.data) || {} }));
           else track(r.uuid, addBlock(agent, { t, kind: "outside", label: x.type || "item", ref: { ...lineRef, path }, text: partText(x) }));
@@ -540,14 +551,37 @@ export function buildClaudeTrace(parsed, files) {
     let d = 0, q = p;
     for (; q && q !== root && q.fixedDepth == null && d < 20; q = q.parent) d++;
     p.agent.depth = d + (q && q.fixedDepth != null ? q.fixedDepth : 0);
-    const parent = p.parent;
-    const name = p.meta && p.meta.name;
-    for (const ab of parent.agentBlocks) {
-      const byCall = p.agent.spawn && ab.callId && ab.callId === p.agent.spawn.callId;
-      const byName = name && ab.teammate === name;
-      const byId = ab.ids && ab.ids.includes(p.agent.id);
-      if (byCall || byName || byId) p.agent.returns.push({ t: ab.t, block: ab.block, parentRequest: parent.agent.blocks[ab.block].seenBy, via: byCall ? "tool_result" : byName ? "teammate-message" : "task-notification" });
+  }
+  // Returns: where a subagent's work landed in its parent, one per burst: the first signal after the
+  // burst's last request, else the last inside it, never before the agent's first request after the
+  // spawn (a fork's earlier requests are its parent's, replayed). Signals: the spawn call's own result
+  // when the call waited for the agent (not a launch acknowledgement); a task-notification naming the
+  // agent or its spawn call (background agents, and a Workflow run's agents when the run reports), or
+  // the agent's hand-back message; a teammate's message.
+  const LAUNCHED = new Set(["teammate_spawned", "async_launched"]);
+  for (const p of parsed) {
+    if (p === root) continue;
+    const a = p.agent, parent = p.parent, name = p.meta && p.meta.name;
+    const callId = a.spawn && a.spawn.callId;
+    const via = a.spawn && a.spawn.linkedBy === "workflow" ? "workflow" : "task-notification";
+    const t0 = (a.requests.find((r) => !a.spawn || r.t > a.spawn.t) || {}).t;
+    const after = t0 == null ? [] : parent.agentBlocks.filter((ab) => ab.t >= t0);
+    // A notification logged without a block lands in the parent's first request after it.
+    const landed = (ab) => (ab.block != null ? parent.agent.blocks[ab.block].seenBy : (parent.agent.requests.find((r) => r.t >= ab.t) || {}).i) ?? null;
+    const ret = (ab, v) => a.returns.push({ t: ab.t, block: ab.block, parentRequest: landed(ab), via: v });
+    const signals = [];
+    for (const ab of after) {
+      if (callId && ab.callId === callId && !LAUNCHED.has(ab.status)) signals.push([ab, "tool_result"]);
+      else if (ab.notification && (ab.ids.includes(a.id) || (callId && ab.ids.includes(callId)))) signals.push([ab, ab.handBack ? "agent-message" : via]);
+      else if (name && ab.teammate === name) signals.push([ab, "teammate-message"]);
     }
+    signals.sort((x, y) => x[0].t - y[0].t);
+    a.bursts.forEach((b, k) => {
+      const next = a.bursts[k + 1];
+      const inBurst = signals.filter(([ab]) => ab.t >= b.a && (!next || ab.t < next.a));
+      const hit = inBurst.find(([ab]) => ab.t >= b.b - 1000) || inBurst.at(-1);
+      if (hit) ret(...hit);
+    });
   }
   // Side calls (advisor iterations): one side agent per calling agent and model.
   const sides = [];

@@ -172,6 +172,14 @@ export function claudeFiles() {
 //   rv1 (regular, spawnDepth 1, toolUseId of the first "review" call); g1 (regular, spawnDepth 2), spawned by rv1
 //   x1 (regular, spawnDepth 1): its call is not in any transcript
 //   w1 under workflows/wf_1 (with a journal.jsonl beside it), w2 under workflows/wf_12
+// Returns, as real logs have them: every spawn call's own result is a launch acknowledgement
+// (teammate_spawned, async_launched) except g1's, which rv1 waited for (completed); rv1 (background)
+// and the wf_1 run come back in task-notifications on the root (a user row; a queued_command attachment
+// with rendered text), x1 in a queued one without it (no block) while it is still working; rv1 also hands
+// back early, inside its burst, before its notification; c1 reports to b1 in a teammate-message
+// batch (its report, then an idle notification), its first request logged with its acknowledgement;
+// a0fk hands back to b1 in an <agent-message>; e1 works in two bursts 11 minutes apart and reports only
+// after the second; the wf_12 run was stopped and never reports.
 export const CCN = { session: "33333333-3333-4333-8333-333333333333", t0: Date.parse("2026-01-04T00:00:00Z") };
 export function claudeNestedFiles() {
   const sid = CCN.session;
@@ -183,42 +191,55 @@ export function claudeNestedFiles() {
   const call = (s, rid, id, name, input, extra) => asst(s, rid, [{ type: "tool_use", id, name, input }], extra);
   const result = (s, id, content, extra = {}, more = {}) => ({ ...base(s, extra), type: "user", message: { role: "user", content: [{ type: "tool_result", tool_use_id: id, content }] }, ...more });
   const ask = (s, text, extra) => ({ ...base(s, extra), type: "user", message: { role: "user", content: text } });
+  const tn = (task, call) => `<task-notification>\n<task-id>${task}</task-id>\n<tool-use-id>${call}</tool-use-id>\n<status>completed</status>\n<summary>done</summary>\n</task-notification>`;
+  const note = (s, task, call) => ({ ...base(s), type: "user", origin: { kind: "task-notification" }, message: { role: "user", content: tn(task, call) } });
+  // the same notification queued mid-turn, as an attachment, with or without rendered text
+  const queued = (s, task, call, rendered) => ({ ...base(s), type: "attachment", attachment: { type: "queued_command", commandMode: "task-notification", prompt: tn(task, call) },
+    ...(rendered ? { rendered: [{ content: `<system-reminder>\n[SYSTEM NOTIFICATION - NOT USER INPUT]\n${tn(task, call)}\n</system-reminder>` }] } : {}) });
   const dir = `/tmp/proj/${sid}`;
   const root = [
     ask(1, "go"),
     call(2, "r1", "tuMid", "Agent", { name: "mid", description: "middle", prompt: "do mid" }),
     result(3, "tuMid", "Spawned mid"),
     call(10, "r1b", "tuRev", "Agent", { description: "review", subagent_type: "general-purpose", prompt: "review" }),
-    result(11, "tuRev", "Spawned"),
+    result(11, "tuRev", "Async agent launched successfully.", {}, { toolUseResult: { status: "async_launched" } }),
     call(12, "r1c", "tuRev2", "Agent", { description: "review", subagent_type: "general-purpose", prompt: "review again" }),
     result(13, "tuRev2", "Spawned"),
     call(20, "r2", "wfB", "Workflow", { script: "export const meta = { name: 'two' }" }),
     result(21, "wfB", `Workflow launched in background.\nTranscript dir: ${dir}/subagents/workflows/wf_12\n`, {}, { toolUseResult: { status: "async_launched", runId: "wf_12" } }),
     call(22, "r3", "wfA", "Workflow", { script: "export const meta = { name: 'one' }" }),
     result(23, "wfA", `Workflow launched in background.\nTranscript dir: ${dir}/subagents/workflows/wf_1\n`),
+    { ...base(25), type: "user", isMeta: true, origin: { kind: "peer" }, message: { role: "user", content: 'Another Claude session sent a message:\n<agent-message from="rv1">[Subagent hand-back] early word</agent-message>' } },
+    note(31, "rv1", "tuRev"),
+    queued(40, "tsk1", "wfA", true),
+    queued(85, "x1", "tuGone", false),
     asst(90, "r4", [{ type: "text", text: "done" }]),
   ];
   const sb = (id) => ({ isSidechain: true, agentId: id });
   const b1Rows = (id) => [
     ask(4, "do mid", sb(id)),
     call(5, "q1", "tuLeaf", "Agent", { name: "leaf", description: "leafy", prompt: "do leaf" }, sb(id)),
-    result(6, "tuLeaf", "Spawned leaf", sb(id)),
+    result(6, "tuLeaf", "Spawned successfully.", sb(id), { toolUseResult: { status: "teammate_spawned" } }),
     asst(7, "q2", [{ type: "text", text: "waiting" }], sb(id)),
     call(8, "q2b", "tuForkB", "Agent", { name: "forkb", description: "fork of mid", subagent_type: "fork", prompt: "fork" }, sb(id)),
   ];
   const b1 = [
     ...b1Rows("b1"),
     result(9, "tuForkB", "Spawned forkb", sb("b1")),
+    ask(12, '<teammate-message teammate_id="leaf" color="blue">leaf: all done</teammate-message>\n<teammate-message teammate_id="leaf" color="blue">{"type":"idle_notification","from":"leaf"}</teammate-message>', sb("b1")),
+    { ...ask(13, 'Another Claude session sent a message:\n<agent-message from="a0fk">[Subagent hand-back] forked work done</agent-message>', sb("b1")), isMeta: true, origin: { kind: "peer" } },
     call(50, "q3", "tuAnon", "Agent", { description: "unlabelled", prompt: "do anon" }, sb("b1")),
     result(51, "tuAnon", "Spawned", sb("b1")),
     call(60, "q4", "tuZed", "Agent", { name: "zed", description: "zed", prompt: "do zed" }, sb("b1")),
     result(61, "tuZed", "Spawned zed", sb("b1")),
+    ask(760, '<teammate-message teammate_id="anon" color="green">anon: second pass done</teammate-message>', sb("b1")),
+    asst(770, "q5", [{ type: "text", text: "thanks" }], sb("b1")),
   ];
   const fork = [...b1Rows("a0fk"), asst(10, "fkq1", [{ type: "text", text: "forked" }], sb("a0fk"))];
   const rv1 = [
     ask(14, "review", sb("rv1")),
     call(15, "rq1", "tuG", "Agent", { description: "deeper", subagent_type: "general-purpose", prompt: "go deeper" }, sb("rv1")),
-    result(16, "tuG", "Spawned", sb("rv1")),
+    result(19, "tuG", "deeper: all done", sb("rv1"), { toolUseResult: { status: "completed" } }),
     asst(30, "rq2", [{ type: "text", text: "reviewed" }], sb("rv1")),
   ];
   const leafRows = (id, s) => [ask(s, "task", sb(id)), asst(s + 1, `${id}q1`, [{ type: "text", text: "ok" }], sb(id))];
@@ -232,9 +253,9 @@ export function claudeNestedFiles() {
     [`${S}/subagents/agent-a0fk.meta.json`]: meta({ agentType: "fork", isFork: true, name: "forkb", description: "fork of mid", toolUseId: "tuForkB", spawnDepth: 1 }),
     [`${S}/subagents/agent-b1.jsonl`]: J(b1),
     [`${S}/subagents/agent-b1.meta.json`]: mate({ agentType: "mid", name: "mid", description: "middle", spawnDepth: 0 }),
-    [`${S}/subagents/agent-c1.jsonl`]: J(leafRows("c1", 6)),
+    [`${S}/subagents/agent-c1.jsonl`]: J(leafRows("c1", 5)),
     [`${S}/subagents/agent-c1.meta.json`]: mate({ agentType: "leaf", name: "leaf", description: "leafy", spawnDepth: 1 }),
-    [`${S}/subagents/agent-e1.jsonl`]: J(leafRows("e1", 52)),
+    [`${S}/subagents/agent-e1.jsonl`]: J([...leafRows("e1", 52), ask(752, "again", sb("e1")), asst(753, "e1q2", [{ type: "text", text: "ok" }], sb("e1"))]),
     [`${S}/subagents/agent-e1.meta.json`]: mate({ agentType: "anon", name: "anon", description: "no such call", spawnDepth: 1 }),
     [`${S}/subagents/agent-d1.jsonl`]: J(leafRows("d1", 18)),
     [`${S}/subagents/agent-d1.meta.json`]: mate({ agentType: "lost", name: "lost", description: "no such call", spawnDepth: 1 }),
@@ -244,7 +265,7 @@ export function claudeNestedFiles() {
     [`${S}/subagents/agent-rv1.meta.json`]: meta({ agentType: "general-purpose", description: "review", toolUseId: "tuRev", spawnDepth: 1 }),
     [`${S}/subagents/agent-g1.jsonl`]: J(leafRows("g1", 17)),
     [`${S}/subagents/agent-g1.meta.json`]: meta({ agentType: "general-purpose", description: "deeper", toolUseId: "tuG", spawnDepth: 2 }),
-    [`${S}/subagents/agent-x1.jsonl`]: J(leafRows("x1", 80)),
+    [`${S}/subagents/agent-x1.jsonl`]: J([...leafRows("x1", 80), asst(95, "x1q2", [{ type: "text", text: "still going" }], sb("x1"))]),
     [`${S}/subagents/agent-x1.meta.json`]: meta({ agentType: "general-purpose", description: "gone", toolUseId: "tuGone", spawnDepth: 1 }),
     [`${S}/subagents/workflows/wf_1/journal.jsonl`]: J([{ type: "launched" }, { type: "started", key: "v2:k", agentId: "w1", label: "r:one", phase: "Test" }]),
     [`${S}/subagents/workflows/wf_1/agent-w1.jsonl`]: J(leafRows("w1", 35)),

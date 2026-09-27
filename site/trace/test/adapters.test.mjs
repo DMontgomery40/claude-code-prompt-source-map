@@ -406,7 +406,8 @@ test("claude-code: subagent linked by name and time, bursts, returns", async () 
   assert.deepEqual([sub.id, sub.name, sub.parentId, sub.depth], [CC.agent, "helper", CC.session, 1]);
   assert.deepEqual([sub.spawn.callId, sub.spawn.parentRequest, sub.spawn.linkedBy], ["tu2", 2, "name"]);
   assert.equal(sub.bursts.length, 2);
-  assert.deepEqual(sub.returns.map((x) => x.via), ["tool_result", "teammate-message"]);
+  // "Spawned helper" landed before helper's first request: a launch acknowledgement, not a return
+  assert.deepEqual(sub.returns.map((x) => x.via), ["teammate-message"]);
   assert.deepEqual(sub.asks.map((a) => a.from), ["agent"]);
   assert.equal(sub.blocks[sub.asks[0].block].kind, "agents");
 });
@@ -474,6 +475,35 @@ test("claude-code: Workflow-spawned agents link to the Workflow call that launch
   assert.deepEqual([by.w2.parentId, by.w2.depth, by.w2.spawn.t, by.w2.spawn.callId, by.w2.spawn.linkedBy], [CCN.session, 1, at(20), "wfB", "workflow"]);
   assert.equal(trace.agents[0].requests[by.w1.spawn.parentRequest].action.callId, "wfA");
   assert.deepEqual([...subNotes(trace, "w1"), ...subNotes(trace, "w2")], []);
+});
+
+test("claude-code: returns are the result a spawn waited for, a task-notification, or a teammate's first message after each burst", async () => {
+  const { trace, by } = await loadNested();
+  const at = (s) => CCN.t0 + s * 1000;
+  const root = trace.agents[0];
+  // rv1 waited for g1: the call's own result, in rv1's request that first saw it
+  assert.equal(by.g1.returns.length, 1);
+  const [g] = by.g1.returns;
+  assert.deepEqual([g.t, g.parentRequest, g.via, by.rv1.blocks[g.block].label], [at(19), 1, "tool_result", "Agent result"]);
+  assert.equal(g.parentRequest, by.rv1.blocks[g.block].seenBy);
+  // rv1 ran in the background: its launch acknowledgement is not a return; of its early hand-back and
+  // its task-notification after its last request, the notification is the burst's one return
+  assert.deepEqual(by.rv1.returns.map((r) => [r.t, r.parentRequest, r.via, root.blocks[r.block].label]), [[at(31), 5, "task-notification", "task-notification"]]);
+  // a teammate: one return per burst, the first message after its last request (not the idle notice after it)
+  assert.deepEqual(by.c1.returns.map((r) => [r.t, r.parentRequest, r.via, r.block]), [[at(12), 3, "teammate-message", by.b1.blocks.findIndex((b) => b.label === "teammate-message from leaf")]]);
+  // a Workflow run's agents come back when the run reports; a stopped run never does
+  assert.deepEqual(by.w1.returns.map((r) => [r.t, r.parentRequest, r.via, root.blocks[r.block].label]), [[at(40), 5, "workflow", "queued_command"]]);
+  // queued without rendered text: no block to point at; it lands in the root's next request. It came
+  // while x1 was still working, the only signal of that burst, so it is still the burst's return
+  assert.deepEqual(by.x1.returns, [{ t: at(85), block: null, parentRequest: 5, via: "task-notification" }]);
+  assert.deepEqual(by.w2.returns, []);
+  // a background fork's hand-back message
+  assert.deepEqual(by.a0fk.returns.map((r) => [r.t, r.parentRequest, r.via]), [[at(13), 3, "agent-message"]]);
+  // two bursts, a report only after the second: one return, for that burst
+  assert.equal(by.e1.bursts.length, 2);
+  assert.deepEqual(by.e1.returns.map((r) => [r.t, r.parentRequest, r.via]), [[at(760), 5, "teammate-message"]]);
+  // nothing came back from these
+  for (const id of ["d1", "n1"]) assert.deepEqual(by[id].returns, [], id);
 });
 
 test("loader: a session hint loads workflow run folders the same (their metas read, the journal not an agent)", async () => {
