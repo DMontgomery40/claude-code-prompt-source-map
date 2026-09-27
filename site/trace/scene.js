@@ -12,7 +12,7 @@ import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./rende
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
 import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor } from "./scene-rules.js";
-import { createGrains, GRAIN_DEPTH } from "./grains.js";
+import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
 import { KERNEL } from "./grain-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
@@ -130,6 +130,20 @@ uniform float uGrainOn;
 uniform float uGrainAgent;
 uniform float uGhostX0;
 #endif
+#ifdef SWEEP
+// The re-read sweep's band where it crosses solid ground: the cap (the wall where the focused ridge
+// steps back into its grain trench) and the lifted core. uSweepY and uSweepW are in the material's own
+// vY units (world y on the ridge, 0..1 up the lifted core); x outside [uSweepX0, uSweepX1] and other
+// agents than uSweepAgent (-1 = any) get nothing.
+uniform float uSweepOn;
+uniform float uSweepY;
+uniform float uSweepW;
+uniform float uSweepX0;
+uniform float uSweepX1;
+uniform float uSweepAgent;
+uniform vec3 uAccent;
+uniform float uAccentMax;
+#endif
 uniform float uReflect;
 float layerEm(int j) {
   float e = uEm[j];
@@ -232,6 +246,10 @@ void main() {
     g = mix(g, base, 0.35 * crestLine);
     col = mix(col, g, ghost);
   }
+#endif
+#ifdef SWEEP
+  if (uSweepOn > 0.5 && vW.x >= uSweepX0 && vW.x <= uSweepX1 && (uSweepAgent < -0.5 || abs(vAgentId - uSweepAgent) < 0.5))
+    col += uAccent * min(exp(-abs(vY - uSweepY) / uSweepW), uAccentMax);
 #endif
   col = mix(col, uFog, haze(vW, vDepth));
   // ridges other than the focused agent's recede almost to the ground while one agent is open
@@ -407,6 +425,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     uCutX: { value: NO_CUT }, uGrainOn: { value: 0 }, uGrainAgent: { value: -1 }, uGrainX0: { value: NO_CUT }, uGrainX1: { value: -NO_CUT },
     uGhostX0: { value: NO_CUT }, uGrainZ: { value: 0 }, uRecess: { value: Math.max(GRAIN_DEPTH, KERNEL.puckRadius) + 0.2 }
   };
+  // The sweep's band on solid ground (FRAG under SWEEP): the ridge's cap and the lifted core, each with
+  // its own units. The accent is the "your ask" green (see sweepFraction).
+  const ACCENT = new THREE.Color(STRATA[STRATUM_INDEX.you].color);
+  const sweepUniforms = () => ({
+    uSweepOn: { value: 0 }, uSweepY: { value: 0 }, uSweepW: { value: 1 }, uSweepX0: { value: 0 }, uSweepX1: { value: -1 }, uSweepAgent: { value: -1 },
+    uAccent: { value: ACCENT }, uAccentMax: { value: accentGain(ACCENT) }
+  });
+  const capSweep = sweepUniforms(), liftSweep = sweepUniforms();
   const strataMaterial = (defines = {}, own = {}) => new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, defines,
     uniforms: { ...shared, uSel: { value: -1 }, uCursor: { value: -1 }, uHover: { value: -1 }, uAgentEm: { value: 1 }, uXray: { value: 0.24 }, uReflect: { value: 0.3 }, ...own },
@@ -523,7 +549,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       if (computeNormals) g.computeVertexNormals();
       return g;
     };
-    const mat = strataMaterial({ AGENTS: "", CUT: "" }, cutU);
+    const mat = strataMaterial({ AGENTS: "", CUT: "", SWEEP: "" }, { ...cutU, ...capSweep });
     const fm = new THREE.Mesh(mk(front, false), mat);
     const sm = new THREE.Mesh(mk(slope, true), mat);
     // Neighbouring requests differ in height, so the slope's computed normals swing column by column;
@@ -568,9 +594,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const softwareGpu = /SwiftShader|llvmpipe|Basic Render|softpipe/i.test(gpuName);
   const rootN = L.root.requests.length;
   const play = { P: Math.max(0, rootN - 1), playing: false, sweep: null };
-  const grainOpts = { enabled: !softwareGpu, density: null, square: false, columns: null, emissive: 0 };
+  const grainOpts = { enabled: !softwareGpu, density: null, square: false, columns: null, emissive: 1 };
   const governor = createDensityGovernor();
-  const grains = createGrains({ THREE, renderer, shared, geom, yScale, reducedMotion });
+  const grains = createGrains({ THREE, renderer, shared, geom, yScale, reducedMotion, accent: STRATA[STRATUM_INDEX.you].color });
   grains.group.renderOrder = 1;
   world.add(grains.group);
   let grainAgent = L.root, grainK = 0, grainUP = play.P, lastRenderAt = 0;
@@ -633,12 +659,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       const ghostX0 = stepped ? x0 + 1e-4 : xOf(agent, iFirst);
       // a collapse into the puck at the next request: the trench makes room for the whole spiral
       const e = grains.tables.requests.epochs.find(q => q.start === iLead + 1);
+      let jWall = iFirst;
       if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) {
         const r = KERNEL.puckRadius + 0.1;
-        for (let j = iFirst; j > 0 && x0 > e.puck[0] - r;) x0 = wallX(--j);
+        while (jWall > 0 && x0 > e.puck[0] - r) x0 = wallX(--jWall);
         x1 = Math.max(x1, e.puck[0] + r);
       }
-      Object.assign(grainState, { grainX0: x0, grainX1: x1, ghostX0 });
+      // the cap: the stretch of face that steps back into the trench (sloped) or the riser (stepped)
+      const capX0 = stepped ? x0 - 1e-3 : Math.min(xOf(agent, Math.max(0, jWall - 1)), x0), capX1 = stepped ? x0 + 1e-3 : xOf(agent, jWall);
+      Object.assign(grainState, { grainX0: x0, grainX1: x1, ghostX0, capX0, capX1 });
       cutU.uGrainX0.value = x0; cutU.uGrainX1.value = x1; cutU.uGhostX0.value = ghostX0;
       cutU.uGrainZ.value = zOf(agent, iLead); cutU.uGrainAgent.value = agentIndex.get(agent.id); cutU.uGrainOn.value = 1;
     } else {
@@ -646,16 +675,56 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       cutU.uGrainOn.value = 0; cutU.uGrainX0.value = NO_CUT; cutU.uGrainX1.value = -NO_CUT; cutU.uGhostX0.value = NO_CUT;
     }
   }
+  // How far the sweep has climbed through the focused agent's current request (0..1), or null when it
+  // is not running: only while playing, and never for reduced motion (the stepped playback has no sweep).
+  function sweepFraction() {
+    if (!play.playing || play.sweep == null || reducedMotion) return null;
+    return grainAgent === L.root ? play.sweep : grainUP - Math.floor(grainUP);
+  }
+  // The sweep's band on solid ground: the cap of the focused ridge's grain trench, and the lifted core
+  // while it is the request the playhead is in. Band depth is 2.5 px in each material's own units.
+  function updateSweepSolids() {
+    const frac = sweepFraction();
+    const capOn = frac != null && grainK > 0 && level === 0;
+    capSweep.uSweepOn.value = capOn ? 1 : 0;
+    if (capOn) {
+      const agent = grainAgent, i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
+      const y = crest(agent, i) * frac, x = (grainState.capX0 + grainState.capX1) / 2, z = zOf(agent, i);
+      _pa.set(x, y, z).project(camera); _pb.set(x, y + 1, z).project(camera);
+      const px = Math.hypot((_pb.x - _pa.x) * host.clientWidth, (_pb.y - _pa.y) * host.clientHeight) / 2;
+      capSweep.uSweepY.value = y;
+      capSweep.uSweepW.value = 2.5 / Math.max(px, 1e-6);
+      capSweep.uSweepX0.value = grainState.capX0; capSweep.uSweepX1.value = grainState.capX1;
+      capSweep.uSweepAgent.value = agentIndex.get(agent.id);
+    }
+    let liftOn = false;
+    if (play.playing && play.sweep != null && !reducedMotion && lifted.visible && stage.agent && stage.lifted >= 0) {
+      const a = stage.agent, ap = agentP(a, play.P, cutXOf(play.P));
+      if (Math.floor(ap) === stage.lifted) {
+        liftOn = true;
+        const f = a === L.root ? play.sweep : ap - Math.floor(ap);
+        lifted.updateMatrixWorld();
+        _pa.set(0, f, 0).applyMatrix4(lifted.matrixWorld).project(camera); _pb.set(0, f + 0.05, 0).applyMatrix4(lifted.matrixWorld).project(camera);
+        const px = Math.hypot((_pb.x - _pa.x) * host.clientWidth, (_pb.y - _pa.y) * host.clientHeight) / 2 / 0.05;
+        liftSweep.uSweepY.value = f; liftSweep.uSweepW.value = 2.5 / Math.max(px, 1e-6);
+        liftSweep.uSweepX0.value = -NO_CUT; liftSweep.uSweepX1.value = NO_CUT;
+      }
+    }
+    liftSweep.uSweepOn.value = liftOn ? 1 : 0;
+  }
   function updateGrains(now) {
     const K = grainK;
     if (K > 0 && grains.group.visible && lastRenderAt) governor.push(now - lastRenderAt);
     const density = grainOpts.density != null ? Math.min(1, Math.max(0.01, grainOpts.density)) : governor.density;
     const agent = grainAgent, ai = agentIndex.get(agent.id);
+    // The re-read sweep climbs the leading column once per request while playing: at sweep (0..1 through
+    // the request; for a subagent, through its own request) of that request's context.
     let sweep = null;
-    if (play.sweep != null && K > 0) {
+    const frac = sweepFraction();
+    if (frac != null && K > 0) {
       const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
-      const [t0, t1] = geom.tread(agent, i); // grains stand across the tread, centred on its middle
-      sweep = { on: true, x: (t0 + t1) / 2, y: crest(agent, i) * Math.min(1, Math.max(0, play.sweep)) };
+      const [t0, t1] = geom.tread(agent, i);
+      sweep = { y: crest(agent, i) * frac, x0: t0, x1: t1, z: zOf(agent, i) + 0.02 };
     }
     grains.update({
       camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),
@@ -1180,7 +1249,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const liftVerts = liftGeo.getAttribute("position").count;
   liftGeo.setAttribute("aB0", new THREE.Float32BufferAttribute(new Float32Array(liftVerts * 4), 4));
   liftGeo.setAttribute("aB1", new THREE.Float32BufferAttribute(new Float32Array(liftVerts * 4), 4));
-  const liftMat = strataMaterial();
+  const liftMat = strataMaterial({ SWEEP: "" }, liftSweep);
   const lifted = new THREE.Mesh(liftGeo, liftMat);
   lifted.visible = false;
   scene.add(lifted);
@@ -1813,6 +1882,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       updateMapDetail(now);
       updatePlayhead();
       updateGrains(now);
+      updateSweepSolids();
       renderer.render(scene, camera);
       lastRenderAt = now;
       labels.render(scene, camera);
@@ -1901,10 +1971,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     },
     // enabled: grains on or off (off: the cut still works). density: fixed 0.01..1, or null for the
     // frame-time governor. square: square grains, no coverage (A/B). columns: fixed K, or null for the
-    // zoom rule. emissive: strength of the sweep's glow on grains (0 = none; Task 5).
+    // zoom rule. emissive: strength of the re-read sweep (1 default, 0 = off).
     setGrainOptions(o = {}) {
       for (const k of ["enabled", "square"]) if (o[k] !== undefined) grainOpts[k] = !!o[k];
-      for (const k of ["density", "columns", "emissive"]) if (o[k] !== undefined) grainOpts[k] = o[k] == null ? (k === "emissive" ? 0 : null) : +o[k];
+      for (const k of ["density", "columns", "emissive"]) if (o[k] !== undefined) grainOpts[k] = o[k] == null ? (k === "emissive" ? 1 : null) : +o[k];
       if (grainOpts.enabled && !grains.tables && rowZ.has(grainAgent.id)) grains.setAgent(grainAgent);
       dirty = Math.max(dirty, 2);
       return { ...grainOpts };

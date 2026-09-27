@@ -113,7 +113,8 @@ test("the grain shader fills the tread and GRAIN_DEPTH, and sizes grains by grai
   assert.match(GRAIN_VERT, /vec3 rest = vec3\(A0\.x \+ \(2\.0 \* hx - 1\.0\) \* halfW,/);
   assert.match(GRAIN_VERT, /zF - hz \* A0\.z\);/);
   assert.match(GRAIN_VERT, /float ctx = mix\(A0\.y, A1\.y, f\), halfW = A0\.w;/);
-  assert.match(GRAIN_VERT, /float tilePx = uTile \* sqrt\(max\(\(2\.0 \* halfW \+ A0\.z \* abs\(V\.x\)\) \* B0\.z \* scaleK \* uYScale, 0\.0\)\) \* projectionMatrix\[1\]\[1\] \* 0\.5 \* uRes\.y \/ clip\.w;/);
+  assert.match(GRAIN_VERT, /float pxPerWorld = projectionMatrix\[1\]\[1\] \* 0\.5 \* uRes\.y \/ clip\.w;/);
+  assert.match(GRAIN_VERT, /float tilePx = uTile \* sqrt\(max\(\(2\.0 \* halfW \+ A0\.z \* abs\(V\.x\)\) \* B0\.z \* scaleK \* uYScale, 0\.0\)\) \* pxPerWorld;/);
   assert.match(GRAIN_VERT, /float rad = 0\.5 \* clamp\(tilePx, uMinPx, uMaxPx\) \* uSizeScale;/);
 });
 
@@ -152,7 +153,7 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
   assert.equal(renders.length, 1);
   assert.equal(renders[0][0], g.group); assert.equal(renders[0][1], false, "no clear"); assert.equal(renders[0][2], 1);
   assert.equal(renderer.autoClear, true); assert.equal(g.group.visible, false);
-  assert.ok(g.group.children.every((m) => !m.visible && m.geometry.drawRange.count === 0));
+  assert.ok(g.group.children.every((m) => !m.visible && (m.material !== g.material || m.geometry.drawRange.count === 0)));
   assert.equal(inits, 4, "the warm-up uploads nothing");
 
   const n = agent.requests.length, iLead = n - 1, K = Math.min(8, n);
@@ -209,5 +210,59 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
     big.dispose();
   }
   assert.equal(inits, 12, "updates never upload");
+  g.dispose();
+});
+
+// The re-read sweep: the shader's band and afterglow are sweepGain, the added light stays within 0.35
+// luminance, only the leading column takes it, and the sweep plane follows the update's sweep with no
+// upload.
+test("the re-read sweep: band, afterglow on injected and re-sent grains, luminance cap, plane", async () => {
+  const THREE = await import("../vendor/three.module.min.js");
+  const { createGrains, sweepGain, accentGain, SWEEP_VERT, SWEEP_FRAG } = await import("../grains.js");
+  const accent = new THREE.Color("#c8f784"), max = accentGain(accent);
+  const lum = (c, k) => k * (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b);
+  assert.ok(Math.abs(lum(accent, max) - 0.35) < 1e-12, "the cap is 0.35 luminance");
+  const base = { sweepY: 10, pxPerWorld: 30, contextWorld: 30, max };
+  assert.equal(sweepGain({ ...base, y: 10 }), Math.min(1, max), "on the band");
+  assert.ok(Math.abs(sweepGain({ ...base, y: 10 + 2.5 / 30 }) - Math.exp(-1)) < 1e-12, "falls to 1/e 2.5 px away");
+  assert.ok(sweepGain({ ...base, y: 5 }) < 1e-6, "plain grains far below: nothing");
+  const inj = sweepGain({ ...base, y: 5, flags: 1 }), res = sweepGain({ ...base, y: 5, flags: 2 });
+  assert.ok(Math.abs(inj - 0.6 * Math.exp(-5 / 7.5)) < 1e-6 && inj === res, "injected and re-sent grains glow below the band");
+  assert.ok(sweepGain({ ...base, y: 15, flags: 1 }) < 1e-6, "no afterglow above the sweep");
+  for (let y = 0; y < 20; y += 0.05) for (const flags of [0, 1, 2, 3]) assert.ok(lum(accent, sweepGain({ ...base, y, flags })) <= 0.35 + 1e-12);
+  assert.equal(sweepGain({ ...base, y: 10, emissive: 0 }), 0);
+  // the shader has the same expressions, on the leading column only
+  assert.match(GRAIN_VERT, /if \(lead && uSweepOn > 0\.5\) \{/);
+  assert.match(GRAIN_VERT, /float band = exp\(-abs\(w\.y - uSweepY\) \* pxPerWorld \/ \(2\.5 \* uDpr\)\);/);
+  assert.match(GRAIN_VERT, /float glow = \(fl & 3\) != 0 && w\.y < uSweepY \? 0\.6 \* exp\(-\(uSweepY - w\.y\) \/ max\(0\.25 \* ctx \* uYScale, 1e-4\)\) : 0\.0;/);
+  assert.match(GRAIN_VERT, /colr \+= uAccent \* min\(\(band \+ glow\) \* uEmissive, uAccentMax\);/);
+  assert.match(SWEEP_VERT, /float ext = vHalf \+ uDpr;/);
+  assert.match(SWEEP_VERT, /vHalf = 1\.5 \* uDpr;/, "3 px tall");
+  assert.ok(!/\bdiscard\b/.test(SWEEP_FRAG));
+  // the plane follows the sweep; the grain uniforms carry it; nothing uploads
+  const { loadTrace } = await import("../loader.js");
+  const { entriesFor } = await import("../dump.mjs");
+  const fix = new URL("./fixtures/codex", import.meta.url).pathname;
+  const agent = (await loadTrace(await entriesFor([fix]))).trace.agents.find((a) => a.kind === "root");
+  const geom = { x: (a, i) => i * 0.13, tread: (a, i) => [i * 0.13 - 0.065, i * 0.13 + 0.065], z: () => 0, lane: () => -1 };
+  let inits = 0;
+  const renderer = { autoClear: true, getContext: () => ({ colorMask() {} }), initTexture() { inits++; }, render() {} };
+  const shared = { uCol: { value: [] }, uEm: { value: [] }, uFog: { value: new THREE.Color() }, uLight: { value: new THREE.Vector3() }, uFocusDist: { value: 100 } };
+  const g = createGrains({ THREE, renderer, shared, geom, yScale: 1e-4, accent: "#c8f784" });
+  g.setAgent(agent);
+  const n = agent.requests.length, cam = new THREE.PerspectiveCamera(34, 1.6, 0.1, 4000);
+  cam.position.set((n - 1) * 0.13, 1, 30); cam.lookAt((n - 1) * 0.13, 1, 0); cam.updateMatrixWorld();
+  const frame = (o) => ({ camera: cam, uP: n - 1, columns: 4, density: 1, res: new THREE.Vector2(1920, 1200), dpr: 1, ...o });
+  g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02 } }));
+  assert.equal(g.uniforms.uSweepOn.value, 1); assert.equal(g.uniforms.uSweepY.value, 1.5);
+  assert.equal(g.sweepPlane.visible, true);
+  const pu = g.sweepPlane.material.uniforms;
+  assert.deepEqual([pu.uX0.value, pu.uX1.value, pu.uY.value, pu.uZ.value], [1, 1.13, 1.5, 0.02]);
+  assert.ok(Math.abs(g.uniforms.uAccentMax.value - max) < 1e-12);
+  g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02 }, emissive: 0 }));
+  assert.equal(g.sweepPlane.visible, false, "emissive 0 turns the sweep off");
+  g.update(frame({ sweep: null }));
+  assert.equal(g.uniforms.uSweepOn.value, 0); assert.equal(g.sweepPlane.visible, false, "paused: no plane");
+  assert.equal(inits, 4, "the sweep uploads nothing");
   g.dispose();
 });

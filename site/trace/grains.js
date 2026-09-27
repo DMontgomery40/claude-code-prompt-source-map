@@ -89,9 +89,10 @@ uniform float uAgentEm;
 uniform vec3 uFog;
 uniform vec3 uLight;
 uniform float uSweepOn;
-uniform float uSweepX;
 uniform float uSweepY;
 uniform float uEmissive;
+uniform vec3 uAccent;
+uniform float uAccentMax;
 out vec3 vColor;
 out vec2 vQ;
 out float vR;
@@ -166,14 +167,22 @@ void main() {
   vec3 colr = base * shade + base * rim * 0.25 + vec3(1.0, 0.96, 0.9) * spec * 0.07;
   float lum = dot(colr, vec3(0.2126, 0.7152, 0.0722));
   colr = mix(mix(uFog * 1.5, vec3(lum), 0.24), colr, clamp(uEm[k] * uAgentEm, 0.0, 1.0));
-  // the re-read sweep's slot (Task 5): an emissive band around uSweepY on the column at uSweepX
-  colr += uSweepOn * uEmissive * exp(-abs(w.y - uSweepY) * 2.0) * step(abs(w.x - uSweepX), halfW * 1.5) * vec3(1.0, 0.95, 0.85);
   vec4 mv = viewMatrix * wp;
-  vColor = mix(colr, uFog, haze(w, -mv.z));
   vec4 clip = projectionMatrix * mv;
+  float pxPerWorld = projectionMatrix[1][1] * 0.5 * uRes.y / clip.w; // device px per world unit here
+  // The re-read sweep, on the leading column only: a band of the accent around uSweepY (world y), 2.5 px
+  // deep, and below the band an afterglow on injected and re-sent grains that fades over a quarter of
+  // the column. The light added never exceeds 0.35 in luminance (uAccentMax), so nothing washes out.
+  if (lead && uSweepOn > 0.5) {
+    float band = exp(-abs(w.y - uSweepY) * pxPerWorld / (2.5 * uDpr));
+    int fl = int(B1.y + 0.5);
+    float glow = (fl & 3) != 0 && w.y < uSweepY ? 0.6 * exp(-(uSweepY - w.y) / max(0.25 * ctx * uYScale, 1e-4)) : 0.0;
+    colr += uAccent * min((band + glow) * uEmissive, uAccentMax);
+  }
+  vColor = mix(colr, uFog, haze(w, -mv.z));
   // grainSizePx: the face area this grain stands for, as a square, grown by uTile, clamped to
   // [uMinPx, uMaxPx] device px, then grown by sqrt(1 / density)
-  float tilePx = uTile * sqrt(max((2.0 * halfW + A0.z * abs(V.x)) * B0.z * scaleK * uYScale, 0.0)) * projectionMatrix[1][1] * 0.5 * uRes.y / clip.w;
+  float tilePx = uTile * sqrt(max((2.0 * halfW + A0.z * abs(V.x)) * B0.z * scaleK * uYScale, 0.0)) * pxPerWorld;
   float rad = 0.5 * clamp(tilePx, uMinPx, uMaxPx) * uSizeScale;
   // grains of 3 px and more each take a slightly different tone (+-5%), so the slab's front reads as
   // sand; smaller grains stay the flat layer colour (at 2 px a tone per grain would be pixel noise)
@@ -204,9 +213,62 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
+// The sweep plane: one additive quad across the leading tread at the sweep's height, 3 px tall with an
+// analytic soft edge, in front of the face. The quad's ends come from uniforms, so moving it uploads
+// nothing; position.x picks the end (-1, 1), position.y the side of the line (-1, 1).
+export const SWEEP_VERT = /* glsl */`
+uniform float uX0;
+uniform float uX1;
+uniform float uY;
+uniform float uZ;
+uniform vec2 uRes;
+uniform float uDpr;
+out float vD;
+out float vHalf;
+void main() {
+  vec4 a = projectionMatrix * viewMatrix * vec4(uX0, uY, uZ, 1.0);
+  vec4 b = projectionMatrix * viewMatrix * vec4(uX1, uY, uZ, 1.0);
+  vec4 p = position.x < 0.0 ? a : b;
+  vec2 d = (b.xy / b.w - a.xy / a.w) * uRes;
+  d = length(d) > 1e-3 ? normalize(d) : vec2(1.0, 0.0);
+  vHalf = 1.5 * uDpr;
+  float ext = vHalf + uDpr;
+  p.xy += vec2(-d.y, d.x) * position.y * ext * 2.0 / uRes * p.w;
+  vD = position.y * ext;
+  gl_Position = p;
+}`;
+export const SWEEP_FRAG = /* glsl */`
+precision highp float;
+uniform vec3 uAccent;
+uniform float uStrength;
+in float vD;
+in float vHalf;
+layout(location = 0) out highp vec4 sweepOut;
+#define gl_FragColor sweepOut
+void main() {
+  float cover = clamp(vHalf + 0.5 - abs(vD), 0.0, 1.0);
+  gl_FragColor = vec4(uAccent * uStrength, cover);
+  #include <colorspace_fragment>
+}`;
+
+// The sweep's light on one grain of the leading column, as a multiple of the accent colour (the vertex
+// shader's rule): a 2.5 px band around the sweep plus, for injected (1) and re-sent (2) grains below it,
+// an afterglow over a quarter of the column; capped so the added luminance stays within 0.35.
+export function sweepGain({ y, sweepY, pxPerWorld, dpr = 1, flags = 0, contextWorld, emissive = 1, max }) {
+  const band = Math.exp(-Math.abs(y - sweepY) * pxPerWorld / (2.5 * dpr));
+  const glow = (flags & 3) !== 0 && y < sweepY ? 0.6 * Math.exp(-(sweepY - y) / Math.max(0.25 * contextWorld, 1e-4)) : 0;
+  return Math.min((band + glow) * emissive, max);
+}
+
+// The largest multiple of an accent colour whose luminance (linear) stays within `limit`.
+export function accentGain(color, limit = 0.35) {
+  const lum = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+  return lum > 0 ? limit / lum : 0;
+}
+
 // createGrains: the three.js side. frame (update) = { camera, uP, columns, density, square, res, dpr,
 // agentEm, focusDist, sweep: { on, x, y }, emissive }.
-export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload = () => {}, reducedMotion = false }) {
+export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload = () => {}, reducedMotion = false, accent = "#c8f784" }) {
   const group = new THREE.Group();
   group.name = "grains";
   group.visible = false;
@@ -223,8 +285,10 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uK1: { value: new THREE.Vector4(KERNEL.jitterX, KERNEL.jitterZ, KERNEL.puckRadius, KERNEL.spiralTurns) },
     uCol: shared.uCol, uEm: shared.uEm, uFog: shared.uFog, uLight: shared.uLight, uFocusDist: shared.uFocusDist,
     uAgentEm: { value: 1 },
-    uSweepOn: { value: 0 }, uSweepX: { value: 0 }, uSweepY: { value: 0 }, uEmissive: { value: 0 }
+    uSweepOn: { value: 0 }, uSweepY: { value: 0 }, uEmissive: { value: 1 },
+    uAccent: { value: new THREE.Color(accent) }, uAccentMax: { value: 0 }
   };
+  uniforms.uAccentMax.value = accentGain(uniforms.uAccent.value);
   const material = new THREE.ShaderMaterial({
     glslVersion: THREE.GLSL3, vertexShader: GRAIN_VERT, fragmentShader: GRAIN_FRAG, uniforms,
     side: THREE.DoubleSide, alphaToCoverage: true
@@ -234,6 +298,22 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
   // page makes the additive composite equal to "over" within a level).
   const maskOn = () => gl.colorMask(true, true, true, false);
   const maskOff = () => gl.colorMask(true, true, true, true);
+  const planeU = {
+    uX0: { value: 0 }, uX1: { value: 0 }, uY: { value: 0 }, uZ: { value: 0 }, uRes: uniforms.uRes, uDpr: uniforms.uDpr,
+    uAccent: uniforms.uAccent, uStrength: { value: 0.75 }
+  };
+  const planeGeo = new THREE.BufferGeometry();
+  planeGeo.setAttribute("position", new THREE.Float32BufferAttribute([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, -1, 1, 0], 3));
+  const sweepPlane = new THREE.Mesh(planeGeo, new THREE.ShaderMaterial({
+    glslVersion: THREE.GLSL3, vertexShader: SWEEP_VERT, fragmentShader: SWEEP_FRAG, uniforms: planeU,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+  }));
+  sweepPlane.frustumCulled = false;
+  sweepPlane.visible = false;
+  sweepPlane.renderOrder = 3;
+  sweepPlane.onBeforeRender = maskOn;
+  sweepPlane.onAfterRender = maskOff;
+  group.add(sweepPlane);
 
   let cur = null; // { agent, tables, textures, chunks, meta, ... }
   let uploads = 0, builds = 0, lastBuildMs = 0;
@@ -388,10 +468,16 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uniforms.uRes.value.copy(f.res);
     uniforms.uSquare.value = f.square ? 1 : 0;
     uniforms.uAgentEm.value = f.agentEm ?? 1;
+    // the sweep: sw = { y (world), x0, x1 (the leading tread), z (its face) } while playing, else null
     const sw = f.sweep;
-    uniforms.uSweepOn.value = sw && sw.on ? 1 : 0;
-    if (sw) { uniforms.uSweepX.value = sw.x || 0; uniforms.uSweepY.value = sw.y || 0; }
-    uniforms.uEmissive.value = f.emissive || 0;
+    uniforms.uSweepOn.value = sw ? 1 : 0;
+    uniforms.uEmissive.value = f.emissive ?? 1;
+    sweepPlane.visible = !!sw && uniforms.uEmissive.value > 0;
+    if (sw) {
+      uniforms.uSweepY.value = sw.y;
+      planeU.uX0.value = sw.x0; planeU.uX1.value = sw.x1; planeU.uY.value = sw.y; planeU.uZ.value = sw.z;
+      planeU.uStrength.value = 0.75 * Math.min(1, uniforms.uEmissive.value);
+    }
     for (const c of cur.chunks) {
       const on = c.minSeen <= iLead && c.maxLast >= iLo && frustum.intersectsSphere(sph.copy(c.mesh.geometry.boundingSphere));
       c.mesh.visible = on;
@@ -457,7 +543,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
   }
 
   return {
-    group, material, uniforms,
+    group, material, uniforms, sweepPlane,
     setAgent,
     update,
     warmUp,
@@ -472,6 +558,6 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       };
     },
     liveCount,
-    dispose() { clear(); material.dispose(); dummyF.dispose(); dummyU.dispose(); }
+    dispose() { clear(); material.dispose(); sweepPlane.geometry.dispose(); sweepPlane.material.dispose(); dummyF.dispose(); dummyU.dispose(); }
   };
 }
