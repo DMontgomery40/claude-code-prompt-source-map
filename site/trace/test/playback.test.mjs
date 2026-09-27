@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createPlayback } from '../playback.js';
+import { createPlayback, COMPLETE } from '../playback.js';
 import { buildLayout } from '../minimap.js';
 
 const T0 = 1.75e12; // realistic epoch milliseconds
@@ -69,21 +69,35 @@ test('timeAt and PAtTime round trip to well under a millisecond with epoch times
   }
 });
 
-test('integer P maps exactly to X(times[i]) and times[i]', () => {
+test('integer P maps exactly to X(times[i]) and times[i]; the last request\'s x and time are the end', () => {
   const times = [sec(0), sec(5), sec(9), sec(30)];
   const X = layoutFor(times);
   const pb = createPlayback({ times, X });
   times.forEach((t, i) => {
     assert.equal(pb.xAt(i), X(t));
     assert.equal(pb.timeAt(i), t);
-    assert.equal(pb.PAtX(X(t)), i);
-    assert.equal(pb.PAtTime(t), i);
+    assert.equal(pb.PAtX(X(t)), i < 3 ? i : pb.end, `the x of request ${i}`);
+    assert.equal(pb.PAtTime(t), i < 3 ? i : pb.end);
   });
   assert.equal(pb.xAt(1.5), (X(times[1]) + X(times[2])) / 2);
   assert.equal(pb.PAtX(-1), 0);
-  assert.equal(pb.PAtX(2), 3);
+  assert.equal(pb.PAtX(2), pb.end, "the scrub's right edge is the end");
   assert.equal(pb.PAtTime(0), 0);
-  assert.equal(pb.PAtTime(sec(9999)), 3);
+  assert.equal(pb.PAtTime(sec(9999)), pb.end);
+});
+
+test('the end is the last request complete: n - 1 + COMPLETE, at the last request\'s x and time', () => {
+  const times = [sec(0), sec(5), sec(9), sec(30)];
+  const X = layoutFor(times);
+  const pb = createPlayback({ times, X });
+  assert.equal(COMPLETE, 0.65);
+  assert.equal(pb.end, 3.65);
+  pb.setP(3.65);
+  assert.deepEqual([pb.P, pb.atEnd], [3.65, true]);
+  pb.setP(3);
+  assert.deepEqual([pb.P, pb.atEnd], [3, false], "request 3 not yet complete is not the end");
+  assert.deepEqual([pb.xAt(3.65), pb.timeAt(3.65), pb.xAt(3.3)], [X(times[3]), times[3], X(times[3])], "past the last request x and time stand still");
+  assert.equal(pb.PAtX(pb.xAt(pb.end)), pb.end, "round trip at the end");
 });
 
 test('1 s at speed 4 advances x by exactly 4/(n-1) on both sides of a squeezed 3-hour gap', () => {
@@ -152,11 +166,11 @@ test('reaching the end reports the last request, clamps, pauses and sets atEnd',
   pb.setP(3.5);
   pb.play();
   const res = pb.tick(1000);
-  assert.equal(res.P, 5);
+  assert.equal(res.P, 5 + COMPLETE, "the end: the last request complete");
   assert.deepEqual(res.crossed, [4, 5]);
   assert.equal(pb.playing, false);
   assert.equal(pb.atEnd, true);
-  assert.deepEqual(pb.tick(1000), { P: 5, crossed: [] });
+  assert.deepEqual(pb.tick(1000), { P: 5 + COMPLETE, crossed: [] });
   // Playing again from the end restarts from the first request.
   pb.play();
   assert.equal(pb.P, 0);
@@ -206,19 +220,19 @@ test('step moves to the next or previous integer and pauses', () => {
   assert.equal(pb.P, 0);
   pb.setP(5);
   pb.step(1);
-  assert.equal(pb.P, 5);
+  assert.equal(pb.P, pb.end, "past the last request: the end");
 });
 
-test('setP clamps to [0, n-1], ignores non-finite values and never plays', () => {
+test('setP clamps to [0, end], ignores non-finite values and never plays', () => {
   const times = Array.from({ length: 6 }, (_, i) => sec(i * 10));
   const pb = createPlayback({ times, X: layoutFor(times) });
   pb.setP(-3);
   assert.equal(pb.P, 0);
   pb.setP(99);
-  assert.equal(pb.P, 5);
+  assert.equal(pb.P, 5 + COMPLETE);
   assert.equal(pb.atEnd, true);
   pb.setP(NaN);
-  assert.equal(pb.P, 5);
+  assert.equal(pb.P, 5 + COMPLETE);
   assert.equal(pb.playing, false);
   pb.toggle();
   assert.equal(pb.playing, true);
@@ -283,7 +297,7 @@ test('a session whose requests all share one timestamp still plays to the end', 
   const pb = createPlayback({ times, X: () => 0.5 });
   pb.play();
   const res = pb.tick(16);
-  assert.equal(res.P, 2);
+  assert.equal(res.P, 2 + COMPLETE);
   assert.deepEqual(res.crossed, [1, 2]);
   assert.equal(pb.atEnd, true);
   assert.equal(pb.playing, false);
@@ -298,7 +312,7 @@ test('empty and single-request sessions are inert', () => {
     assert.deepEqual(pb.tick(1000), { P: 0, crossed: [] });
     assert.equal(pb.playing, false);
     pb.step(1);
-    assert.equal(pb.P, 0);
+    assert.equal(pb.P, times.length ? COMPLETE : 0, "one request: its end is request 0 complete");
     assert.ok(Number.isFinite(pb.PAtX(0.3)));
     assert.ok(Number.isFinite(pb.PAtTime(sec(3))));
   }

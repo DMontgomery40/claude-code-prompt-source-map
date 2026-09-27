@@ -3,6 +3,7 @@
 // clock (playback.js) while playing, and reports every change through onPlayhead so the app can
 // hand it to the scene. Paused, nothing runs. The playhead never touches the app's view state.
 import { el, fmtInt, fmtClock } from "./panels.js";
+import { COMPLETE } from "./playback.js";
 
 // "req 1,234 · Sep 25 · 3:02 am": the request the playhead is in and the session time it has reached.
 export function playheadLabel(pb, P = pb.P) {
@@ -12,13 +13,14 @@ export function playheadLabel(pb, P = pb.P) {
 }
 
 // Where a focused request puts the playhead within it: request i has poured in by i + 0.6 and a
-// column before a compaction starts to collapse at i + 0.7, so i + FOCUS shows request i complete.
-export const FOCUS = 0.65;
+// column before a compaction starts to collapse at i + 0.7, so i + FOCUS shows request i complete
+// (playback.js COMPLETE, which is also where the session ends).
+export const FOCUS = COMPLETE;
 
 // Where focusing request i puts the playhead: i + FOCUS on the root. For any other agent, the root-space
 // P whose cut lands at that agent's own i + FOCUS in compressed-time x (a subagent's whole run can sit
 // between two root requests, so this is fractional, never rounded; its last request is complete at its
-// own x). Past the root's last request the playback clamps to the end. Null when unknown.
+// own x). The root's last request complete is the end. Null when unknown.
 export function playheadForRequest(pb, layout, agentId, i) {
   const agent = layout.byId.get(agentId), r = agent?.requests[i];
   if (!pb || !r) return null;
@@ -28,9 +30,10 @@ export function playheadForRequest(pb, layout, agentId, i) {
 }
 
 // `,` and `.`: the previous or next request, complete (floor(P) -/+ 1, plus FOCUS), so the readout's
-// request number moves by exactly one. Never below FOCUS (request 0 stays poured), never past n - 1.
+// request number moves by exactly one. Never below FOCUS (request 0 stays poured), never past the end
+// (the last request complete).
 export function focusStep(P, d, n) {
-  return Math.min(n - 1, Math.max(FOCUS, Math.floor(P) + (d < 0 ? -1 : 1) + FOCUS));
+  return Math.min(n - 1 + FOCUS, Math.max(FOCUS, Math.floor(P) + (d < 0 ? -1 : 1) + FOCUS));
 }
 
 // The next speed of the button's cycle (the keys' faster and slower stop at the ends instead).

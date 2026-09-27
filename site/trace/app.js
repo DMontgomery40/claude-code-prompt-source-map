@@ -776,13 +776,13 @@ function symbolLegend() {
 function clipName(s) { s = String(s); return s.length > 48 ? `${s.slice(0, 47)}…` : s; }
 
 // ---------- playback ----------
-// The session's clock over the main thread's requests, parked at the last one (the whole landscape,
-// where the scene starts). Null when there is nothing to play through.
+// The session's clock over the main thread's requests, parked at the end, the last request complete
+// (the whole landscape, where the scene starts). Null when there is nothing to play through.
 function playbackFor(L) {
   const reqs = L.root?.requests || [];
   if (reqs.length < 2) return null;
   const pb = createPlayback({ times: reqs.map(r => r.t), X: L.X });
-  pb.setP(pb.n - 1);
+  pb.setP(pb.end);
   return pb;
 }
 // The transport shows in the 3D view only; hiding it stops playback.

@@ -12,7 +12,7 @@ import { buildEvents } from "./director.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
-import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, collapseWidens, sweepColumns, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
+import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, collapseWidens, sweepColumns, sweepLabelBands, sweepLabelOpacity, playheadEnd, cutXAt, agentPlayhead, subagentSweep } from "./scene-rules.js";
 import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
 import { KERNEL, bandsForRequest } from "./grain-rules.js";
 import { createBlockText } from "./block-text.js";
@@ -596,14 +596,16 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   // ---- playhead and grains ----
   // P is a float in the root's request space (1234.37 is 37% through request 1234); it defaults to the
-  // last request, where nothing is cut and the landscape is exactly today's. The focused agent (the
-  // root unless the view focuses a subagent) shows its last K request columns before the playhead as
-  // grains (grains.js); K comes from the zoom (grainColumns) and is 0 at overview.
+  // end, the last request complete (playheadEnd), where nothing is cut and the landscape is exactly
+  // today's. The focused agent (the root unless the view focuses a subagent) shows its last K request
+  // columns before the playhead as grains (grains.js); K comes from the zoom (grainColumns) and is 0 at
+  // overview.
   const glInfo = renderer.getContext().getExtension("WEBGL_debug_renderer_info");
   const gpuName = glInfo ? String(renderer.getContext().getParameter(glInfo.UNMASKED_RENDERER_WEBGL)) : "unknown";
   const softwareGpu = /SwiftShader|llvmpipe|Basic Render|softpipe/i.test(gpuName);
   const rootN = L.root.requests.length;
-  const play = { P: Math.max(0, rootN - 1), playing: false, sweep: null, speed: null };
+  const rootEnd = playheadEnd(rootN);
+  const play = { P: rootEnd, playing: false, sweep: null, speed: null };
   const grainOpts = { enabled: !softwareGpu, density: null, square: false, columns: null, emissive: 1 };
   const governor = createDensityGovernor();
   const grains = createGrains({ THREE, renderer, shared, geom, yScale, reducedMotion, accent: STRATA[STRATUM_INDEX.you].color });
@@ -614,25 +616,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const grainState = { K: 0, uP: play.P, cutX: NO_CUT, grainX0: NO_CUT, grainX1: -NO_CUT, ghostX0: NO_CUT, pxPerColumn: 0 };
   // the root's tables are built at load, so the first zoom-in does not stall; a subagent's on focus
   if (grainOpts.enabled && rowZ.has(L.root.id)) { grains.setAgent(L.root); grains.warmUp(camera); }
-  const clampP = (P) => Math.max(0, Math.min(Math.max(0, rootN - 1), P));
-  // The cut's world x: root request x interpolated to the next request; no cut at the last request.
-  function cutXOf(P) {
-    if (!(rootN > 1) || P >= rootN - 1 - 1e-9) return NO_CUT;
-    const i = Math.floor(P), f = P - i;
-    return xOf(L.root, i) + (xOf(L.root, i + 1) - xOf(L.root, i)) * f;
-  }
-  // The focused agent's own request-space playhead: the root's P, or for a subagent the request its
-  // ridge has reached at the cut's x (-1 before its first request).
+  const clampP = (P) => Math.max(0, Math.min(rootEnd, P));
+  // The cut's world x (scene-rules cutXAt): no cut from the last request on.
+  const rootX = i => xOf(L.root, i);
+  const cutXOf = P => cutXAt(P, rootN, rootX, NO_CUT);
+  // The focused agent's own request-space playhead (scene-rules agentPlayhead): a subagent past its last
+  // request, or with no cut, stands at its end, the last request complete. agentView is reused, so the
+  // per-frame call allocates nothing.
+  const agentView = { agent: null, isRoot: false, n: 0, xAt: i => xOf(agentView.agent, i) };
   function agentP(agent, P, cutX) {
-    if (agent === L.root) return P;
-    const n = agent.requests.length;
-    if (cutX >= NO_CUT) return n - 1;
-    if (!n || xOf(agent, 0) > cutX) return -1;
-    let lo = 0, hi = n - 1;
-    while (lo < hi) { const m = (lo + hi + 1) >> 1; if (xOf(agent, m) <= cutX) lo = m; else hi = m - 1; }
-    if (lo >= n - 1) return n - 1;
-    const x0 = xOf(agent, lo), x1 = xOf(agent, lo + 1);
-    return lo + (x1 > x0 ? Math.min(1, Math.max(0, (cutX - x0) / (x1 - x0))) : 0);
+    if (agentView.agent !== agent) Object.assign(agentView, { agent, isRoot: agent === L.root, n: agent.requests.length });
+    return agentPlayhead(P, cutX, agentView, NO_CUT);
   }
   const _pa = new THREE.Vector3(), _pb = new THREE.Vector3();
   // Uniforms for this frame: the cut everywhere, and the grain trench and columns on the focused agent.
@@ -690,7 +684,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // is not running: only while playing, and never for reduced motion (the stepped playback has no sweep).
   function sweepFraction() {
     if (!play.playing || play.sweep == null || reducedMotion) return null;
-    return grainAgent === L.root ? play.sweep : grainUP - Math.floor(grainUP);
+    return grainAgent === L.root ? play.sweep : subagentSweep(grainUP, grainAgent.requests.length);
   }
   // The sweep's band on solid ground: the cap of the focused ridge's grain trench, and the lifted core
   // while it is the request the playhead is in. Band depth is 2.5 px in each material's own units.
@@ -2327,7 +2321,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       else if (level >= 2 && lifted.visible) frameL2(350);
       dirty = 3;
     },
-    // The playhead. P: root request space, clamped to [0, n - 1] (n - 1 = the end: nothing cut). playing:
+    // The playhead. P: root request space, clamped to [0, end] (the end, n - 1 + COMPLETE, is the last
+    // request complete: nothing cut). playing:
     // keep rendering every frame. sweep: 0..1 through the current request, or null. Cheap and idempotent:
     // it stores state and asks for a frame; the cut, trench and grain columns follow in frame().
     setPlayhead({ P, playing, sweep, speed } = {}) {

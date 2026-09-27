@@ -519,3 +519,41 @@ test("grain rules: the JS kernel places grains across the tread and depth, as th
   }
   assert.ok(checked > 300, `checked ${checked}`);
 });
+
+// The end of the timeline is the last request complete (playback.js COMPLETE): at the root's end, and for a
+// focused subagent once the cut has passed its last request, every block in context at that last request is
+// in its column, settled. At the old end (n - 1) the last request had not started to pour, so its new blocks
+// had no grains while the trench had already cut the solid face away.
+test("grain rules: at an agent's end its last request's blocks are all in the column, settled", async () => {
+  const { playheadEnd, agentPlayhead } = await import("../scene-rules.js");
+  const syn = syntheticTrace().trace;
+  const sets = [["synthetic", syn], ...(await fixtureTraces())];
+  const NO = 1e30, x = i => i * 0.13;
+  let agents = 0, hiddenAtOldEnd = 0;
+  for (const [name, trace] of sets) {
+    const rootN = trace.agents.find((a) => a.kind === "root").requests.length;
+    for (const a of trace.agents.filter((a) => a.requests.length && a.blocks.length && (a.kind === "root" || a.kind === "subagent"))) {
+      const T = buildTables(a, stubGeom), n = T.requests.count, m = T.blocks.meta;
+      const view = { isRoot: a.kind === "root", n, xAt: x };
+      // the root at its end; a subagent with no cut (the session end) and with the cut past its last request
+      const ends = view.isRoot ? [agentPlayhead(playheadEnd(rootN), NO, view, NO)] : [agentPlayhead(playheadEnd(rootN), NO, view, NO), agentPlayhead(3, x(n - 1) + 0.5, view, NO)];
+      for (const uT of ends) {
+        assert.equal(uT, n - 1 + 0.65, `${name} ${a.id}: its end`);
+        let rows = 0;
+        for (let row = 0; row < T.blocks.count; row++) {
+          if (!(m.seenBy[row] <= n - 1 && n - 1 <= m.lastReq[row]) || !(T.requests.sum[n - 1] > 0)) continue;
+          rows++;
+          for (let s = 0; s < Math.min(m.nSlots[row], 24); s++) {
+            const g = grainPosition(T, row, s, uT);
+            assert.ok(!g.hidden && g.kIn === 1 && g.kC === 0, `${name} ${a.id} row ${row} slot ${s} at ${uT}: hidden ${g.hidden}, kIn ${g.kIn}, kC ${g.kC}`);
+            if (grainPosition(T, row, s, n - 1).hidden) hiddenAtOldEnd++;
+          }
+        }
+        assert.ok(rows > 0, `${name} ${a.id}: rows in context at its last request`);
+      }
+      agents++;
+    }
+  }
+  assert.ok(agents >= 4, `${agents} agents checked`);
+  assert.ok(hiddenAtOldEnd > 0, `at the old end (n - 1) ${hiddenAtOldEnd} of these grains were hidden`);
+});

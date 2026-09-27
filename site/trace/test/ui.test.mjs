@@ -427,6 +427,7 @@ test('tool inspector handles missing text, reader errors and competing async rea
 // ---------- the playback transport ----------
 const { createPlayback } = await import("../playback.js");
 const { createTransport, playheadLabel, playheadForRequest, nextSpeed, focusStep, FOCUS } = await import("../transport.js");
+const { cutXAt, agentPlayhead } = await import("../scene-rules.js");
 const { fmtClock } = await import("../panels.js");
 
 // A long main thread: 1,701 requests 20 s apart, with 3-hour idle stretches before requests 501, 1,001
@@ -450,7 +451,7 @@ function longSession() {
 function transportFixture() {
   const L = buildLayout(longSession());
   const pb = createPlayback({ times: L.root.requests.map(r => r.t), X: L.X });
-  pb.setP(pb.n - 1);
+  pb.setP(pb.end); // parked where app.js parks it: the end, the last request complete
   const frames = new Map(), pushed = [];
   let id = 0;
   const host = new Element("div");
@@ -540,8 +541,10 @@ test("playing to the end stops the loop and resets the button; play again starts
   while (pb.playing && guard++ < 10000) frame(t += 100);
   assert.ok(guard < 10000);
   assert.equal(frames.size, 0, "the frame that reaches the end schedules no other");
-  assert.deepEqual([pb.P, pb.playing, host.getAttribute("data-playing"), play.getAttribute("aria-label")], [pb.n - 1, false, "false", "Play"]);
-  assert.deepEqual(pushed.at(-1), { P: pb.n - 1, playing: false, sweep: null });
+  assert.equal(pb.end, pb.n - 1 + FOCUS, "the end is the last request complete");
+  assert.deepEqual([pb.P, pb.playing, host.getAttribute("data-playing"), play.getAttribute("aria-label")], [pb.end, false, "false", "Play"]);
+  assert.deepEqual(pushed.at(-1), { P: pb.end, playing: false, sweep: null });
+  assert.match(host.children[2].textContent, /^req 1,701 · /, "the readout names the last request");
   play.dispatch("click");
   assert.equal(pb.P, 0, "play at the end starts from the first request");
   assert.equal(frames.size, 1);
@@ -552,13 +555,13 @@ test("playing to the end stops the loop and resets the button; play again starts
 // being left must keep the playhead it had, or Back shows that inspection fully ghosted.
 test("a run's onStart sees the playhead before the clock moves, even when a play at the end starts over", () => {
   const { pb, tr, starts, frames } = transportFixture();
-  tr.seek(pb.n - 1);
+  tr.seek(pb.end);
   tr.play();
-  assert.deepEqual(starts, [pb.n - 1], "the view being left still has the end");
+  assert.deepEqual(starts, [pb.end], "the view being left still has the end");
   assert.equal(pb.P, 0, "then the run starts from request 1");
   assert.equal(frames.size, 1);
   tr.pause(); tr.seek(40.65); tr.play();
-  assert.deepEqual(starts, [pb.n - 1, 40.65]);
+  assert.deepEqual(starts, [pb.end, 40.65]);
   const one = createPlayback({ times: [0], X: () => 1 });
   tr.load(one); tr.play();
   assert.deepEqual([starts.length, one.playing], [2, false], "a clock of one request never plays, so no run starts");
@@ -582,7 +585,7 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
   assert.equal(FOCUS, 0.65, "past the pour (i + 0.6), before a collapse starts (i + 0.7)");
   assert.equal(playheadForRequest(pb, L, "root", 1234), 1234.65);
   assert.equal(playheadForRequest(pb, L, "root", 0), 0.65);
-  assert.equal(playheadForRequest(pb, L, "root", pb.n - 1), pb.n - 1 + FOCUS, "past the end: the playback clamps it");
+  assert.equal(playheadForRequest(pb, L, "root", pb.n - 1), pb.n - 1 + FOCUS, "the last request complete: the end");
   assert.equal(playheadForRequest(pb, L, "root", 99999), null);
   assert.equal(playheadForRequest(pb, L, "nobody", 0), null);
   assert.equal(playheadForRequest(null, L, "root", 3), null);
@@ -593,7 +596,8 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
   assert.match(readout.textContent, /^req 900 · /, "request index 899 is the 900th, as the request slider shows it");
   assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
   tr.seek(playheadForRequest(pb, L, "root", pb.n - 1));
-  assert.equal(pb.P, pb.n - 1, "the last request complete is the end: the whole landscape");
+  assert.deepEqual([pb.P, pb.atEnd], [pb.n - 1 + FOCUS, true], "the last request complete is the end: the whole landscape");
+  assert.match(readout.textContent, /^req 1,701 · /);
   // A map pin (the Selected card) on root request 849, then on a subagent's request, while playing.
   tr.seek(100.2); tr.play();
   tr.seek(playheadForRequest(pb, L, "root", 849));
@@ -602,16 +606,20 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
   assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [848.65, "req 849"], ", from 849.65 gives 848.65");
   tr.seek(playheadForRequest(pb, L, "worker", 10));
   assert.ok(pb.P > 1300 && pb.P < 1301 && !pb.playing, "a pin on a subagent's request moves the playhead into its run");
-  // A subagent's request: the cut lands where that agent's own playhead reads i + 0.65 (its last at its own x).
-  const worker = L.byId.get("worker"), xs = worker.requests.map(r => L.X(r.t));
+  // A subagent's request: the cut lands where that agent's own playhead reads i + 0.65, its last request
+  // included (there the cut sits on its own x, by way of root space). The scene's side is scene-rules: the
+  // cut in world x (the layout's x times the world width, as landscape-geometry places requests) and the
+  // agent's playhead at that cut.
+  const worker = L.byId.get("worker"), W = 220, rootXs = L.info.get("root").xs, workerXs = L.info.get("worker").xs;
+  const own = P => agentPlayhead(P, cutXAt(P, pb.n, i => rootXs[i] * W, Infinity), { isRoot: false, n: workerXs.length, xAt: i => workerXs[i] * W }, Infinity);
   let prev = -1;
   worker.requests.forEach((r, i) => {
-    const P = playheadForRequest(pb, L, "worker", i), cut = pb.xAt(P);
+    const P = playheadForRequest(pb, L, "worker", i);
     assert.ok(P > 1300 && P < 1301 && P > prev, `worker request ${i}: P ${P} is fractional, inside the wait, in order`);
-    const own = i < xs.length - 1 ? i + (cut - xs[i]) / (xs[i + 1] - xs[i]) : (Math.abs(cut - xs[i]) < 1e-12 ? i : NaN);
-    assert.ok(Math.abs(own - (i < xs.length - 1 ? i + FOCUS : i)) < 1e-6, `worker request ${i}: its own playhead reads ${own}`);
+    assert.ok(Math.abs(own(P) - (i + FOCUS)) < 1e-6, `worker request ${i}: its own playhead reads ${own(P)}`);
     prev = P;
   });
+  assert.equal(own(pb.end), worker.requests.length - 1 + FOCUS, "at the session end the finished worker stands at its end");
   // Inside a squeezed idle stretch, time and compressed x disagree: the playhead follows x.
   const t = L.byId.get("late").requests[0].t, P = playheadForRequest(pb, L, "late", 0);
   assert.ok(P > 999 && P < 1000);
@@ -622,7 +630,8 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
 test(", and . move the readout's request number by exactly one, to that request complete", () => {
   const n = 1701;
   for (const [P, back, on] of [[849.65, 848.65, 850.65], [899.65, 898.65, 900.65], [900, 899.65, 901.65], [900.4, 899.65, 901.65], [900.95, 899.65, 901.65],
-    [0, FOCUS, 1.65], [0.65, FOCUS, 1.65], [0.3, FOCUS, 1.65], [n - 1, n - 2 + FOCUS, n - 1], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1]]) {
+    [0, FOCUS, 1.65], [0.65, FOCUS, 1.65], [0.3, FOCUS, 1.65], [n - 1, n - 2 + FOCUS, n - 1 + FOCUS], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1 + FOCUS],
+    [n - 1 + FOCUS, n - 2 + FOCUS, n - 1 + FOCUS]]) {
     assert.deepEqual([focusStep(P, -1, n), focusStep(P, 1, n)], [back, on], `from ${P}`);
   }
   const { pb, tr, readout } = transportFixture();

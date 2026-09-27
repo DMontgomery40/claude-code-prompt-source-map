@@ -377,3 +377,34 @@ test("navigator: redraws when its content changed, at most 10 Hz while playing",
   assert.deepEqual(shouldRedrawNavigator(last, { t: 1000 + DETAIL_PLAY_MS - 1, key: "context|80.5", playing: true }), { redraw: false, pending: true });
   assert.deepEqual(shouldRedrawNavigator(last, { t: 1000 + DETAIL_PLAY_MS, key: "context|80.5", playing: true }), { redraw: true, pending: false });
 });
+
+// The playhead on the landscape: the root's end is its last request complete, and a focused subagent stands at
+// its own end once the cut has reached its last request (or there is no cut).
+test("playhead rules: the end is the last request complete; a finished subagent stands at its end", async () => {
+  const { playheadEnd, cutXAt, agentPlayhead, subagentSweep } = await import("../scene-rules.js");
+  const { COMPLETE } = await import("../playback.js");
+  const { KERNEL, collapseStart } = await import("../grain-rules.js");
+  assert.equal(COMPLETE, 0.65);
+  assert.ok(KERNEL.pourWindow + KERNEL.fallDur <= COMPLETE, "every block of the last request has settled at the end");
+  assert.ok(COMPLETE < collapseStart(0), "and no column has started to collapse");
+  assert.deepEqual([playheadEnd(0), playheadEnd(1), playheadEnd(1701)], [0, 0.65, 1700.65]);
+  const NO = 1e30, x = i => i * 2;
+  assert.equal(cutXAt(3.25, 10, x, NO), 6.5);
+  for (const P of [9, 9.65, 12]) assert.equal(cutXAt(P, 10, x, NO), NO, `no cut at P ${P}`);
+  assert.equal(cutXAt(0.5, 1, x, NO), NO, "a one-request root is never cut");
+  const sub = { isRoot: false, n: 5, xAt: i => 10 + i }; // its requests at x 10 .. 14
+  const cases = [
+    ["the root reads the root's P", 1700.65, 3, { isRoot: true, n: 1701, xAt: x }, 1700.65],
+    ["no requests", 7, 12, { isRoot: false, n: 0, xAt: x }, -1],
+    ["before its first request", 7, 9.5, sub, -1],
+    ["on its first request", 7, 10, sub, 0],
+    ["mid-run", 7, 12.25, sub, 2.25],
+    ["on its last request", 7, 14, sub, 4.65],
+    ["within float error below its last request", 7, 14 - 1e-13, sub, 4.65],
+    ["past its last request", 7, 20, sub, 4.65],
+    ["no cut (the session end)", 1700.65, NO, sub, 4.65]
+  ];
+  for (const [what, P, cut, agent, want] of cases) assert.equal(agentPlayhead(P, cut, agent, NO), want, what);
+  assert.equal(subagentSweep(2.25, 5), 0.25, "mid-run the sweep climbs its current request");
+  assert.equal(subagentSweep(4.65, 5), null, "a finished subagent has no sweep band");
+});
