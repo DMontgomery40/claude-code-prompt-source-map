@@ -1,6 +1,6 @@
 /* Words at max zoom (block-text.js): the text of the blocks in the playhead's leading column, on an
-   opaque panel beside the ridge face. Legibility floor: 13 px body, 11.5 px caption, both at least 7:1
-   over the panel. Heights are whole even pixels (26 + 2 + 18 per line) so a pane centred on its band
+   opaque panel beside the ridge face. Legibility floor: 14 px body, 11.5 px caption, both at least 7:1
+   over the panel. Heights are whole even pixels (26 + 2 + 20 per line) so a pane centred on its band
    lands on whole pixels; block-text.js mirrors these sizes. Colours stay literal: the test reads them. */
 .word-pane {
   --word-bg: #0d1720;
@@ -14,7 +14,7 @@
   background: #0d1720f0;
   box-shadow: 0 2px 10px #00000059;
   color: var(--word-ink);
-  font: 13px/18px var(--sans, system-ui, sans-serif);
+  font: 14px/20px var(--sans, system-ui, sans-serif);
   text-align: left;
   pointer-events: none;
 }

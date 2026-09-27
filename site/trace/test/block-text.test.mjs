@@ -94,15 +94,15 @@ test("block text: the pool never grows past 24 panes, however many bands qualify
   assert.equal(group.children.length, 0, "dispose removes every pane");
 });
 
-test("block text: a band under 40 px on screen is hidden, one at 40 px or more is shown", () => {
+test("block text: a band under 24 px on screen is hidden, one at 24 px or more is shown", () => {
   const { bt, group } = setup();
   const { camera, viewport } = view();
-  const { agent, bands } = scene([[100, 139], [400, 441], [700, 740]]);
+  const { agent, bands } = scene([[100, 123], [400, 424], [700, 725]]);
   for (const pxPerUnit of [undefined, 1]) {
     const r = bt.update({ camera, agent, bands, geom, i: 0, pxPerUnit, viewport });
     assert.equal(r.shown, 2);
     const ys = shown(group).map(o => o.position.y).sort((a, b) => a - b);
-    assert.deepEqual(ys, [420.5, 720], "the 41 and 40 px bands, anchored at their centres");
+    assert.deepEqual(ys, [412, 712.5], "the 24 and 25 px bands, anchored at their centres");
   }
   // the anchor sits on the column's centre line; the pane hangs right of the grains
   const o = shown(group)[0];
@@ -111,7 +111,7 @@ test("block text: a band under 40 px on screen is hidden, one at 40 px or more i
   assert.equal(o.center.x, 0);
   assert.equal(o.element.style.marginLeft, "5px");
   group.updateMatrixWorld(true);
-  assert.deepEqual(bt.rects(camera, 1000, 1000).map(r => [r.x, r.y + r.h / 2]).sort((a, b) => a[1] - b[1]), [[505, 280], [505, 579.5]], "rects for the scene's declutter");
+  assert.deepEqual(bt.rects(camera, 1000, 1000).map(r => [r.x, r.y + r.h / 2]).sort((a, b) => a[1] - b[1]), [[505, 287.5], [505, 588]], "rects for the scene's declutter");
   // without a ridge depth the column is GRAIN_DEPTH deep
   const { depth, ...flat } = geom;
   bt.update({ camera, agent, bands, geom: flat, i: 0, viewport });
@@ -151,13 +151,13 @@ test("block text: panes hide when the face is seen from behind or the anchor is 
 test("block text: declutter keeps the tallest band where panes would overlap, and flips at the right edge", () => {
   const { bt, group } = setup();
   const { camera, viewport } = view();
-  // a 45 px band right under a 100 px band: the 100 px band's 4-line pane fills it and meets the small
-  // band's pane, so the tall one wins
-  const { agent, bands } = scene([[300, 345], [345, 445], [800, 900]]);
+  // a 30 px band right under a 100 px band: the 100 px band's 3-line pane (88 px) meets the small band's
+  // 48 px pane, so the tall one wins
+  const { agent, bands } = scene([[300, 330], [330, 430], [800, 900]]);
   bt.update({ camera, agent, bands, geom, i: 0, viewport });
-  assert.deepEqual(shown(group).map(o => o.position.y).sort((a, b) => a - b), [395, 850]);
+  assert.deepEqual(shown(group).map(o => o.position.y).sort((a, b) => a - b), [380, 850]);
   // apart, both show
-  const apart = scene([[100, 145], [345, 445]]);
+  const apart = scene([[100, 130], [330, 430]]);
   bt.update({ camera, agent: apart.agent, bands: apart.bands, geom, i: 0, viewport });
   assert.equal(shown(group).length, 2);
   // a column wider than the room beside it (deep zoom): the pane lies on its face from the front edge
@@ -167,6 +167,30 @@ test("block text: declutter keeps the tallest band where panes would overlap, an
   const edge = { ...geom, tread: () => [898, 902] };
   bt.update({ camera, agent, bands, geom: edge, i: 0, viewport });
   assert.ok(shown(group).length > 0 && shown(group).every(o => o.center.x === 1 && o.element.style.marginLeft === "-5px"));
+  bt.dispose();
+});
+
+test("block text: no pane runs under a control listed in viewport.avoid (zoom, transport)", () => {
+  const { bt, group } = setup();
+  const { camera, viewport } = view();
+  // one 200 px band centred 800 px up (200 px down the screen): its 5-line pane stands right of x 505
+  const { agent, bands } = scene([[700, 900]]);
+  bt.update({ camera, agent, bands, geom, i: 0, viewport });
+  assert.equal(shown(group)[0].center.x, 0);
+  // a control on the right of it: the pane moves to the left of the column
+  const zoom = { x: 700, y: 180, w: 200, h: 44 };
+  bt.update({ camera, agent, bands, geom, i: 0, viewport: { ...viewport, avoid: [zoom] } });
+  assert.equal(shown(group).length, 1);
+  assert.equal(shown(group)[0].center.x, 1);
+  assert.equal(shown(group)[0].element.style.marginLeft, "-5px");
+  // controls on both sides: no pane at all rather than one under a control
+  const transport = { x: 150, y: 180, w: 200, h: 44 };
+  assert.equal(bt.update({ camera, agent, bands, geom, i: 0, viewport: { ...viewport, avoid: [zoom, transport] } }).shown, 0);
+  assert.equal(shown(group).length, 0);
+  // and the rects the scene's own labels avoid never include the controls
+  bt.update({ camera, agent, bands, geom, i: 0, viewport: { ...viewport, avoid: [zoom] } });
+  group.updateMatrixWorld(true);
+  assert.equal(bt.rects(camera, 1000, 1000).length, 1);
   bt.dispose();
 });
 
@@ -326,9 +350,9 @@ test("block text: rules for keys, lines and sizes", () => {
   assert.equal(refKey({ file: 1, offset: 5 }), "1:5");
   assert.notEqual(refKey({ file: 1, offset: 5, path: ["a"] }), refKey({ file: 1, offset: 5, path: ["b"] }));
   assert.notEqual(refKey({ file: 1, offset: 5, range: [0, 4] }), refKey({ file: 1, offset: 5, range: [4, 8] }));
-  assert.equal(paneLines(40), 1);
-  assert.equal(paneLines(46), 1);
-  assert.equal(paneLines(64), 2);
+  assert.equal(paneLines(24), 1);
+  assert.equal(paneLines(48), 1);
+  assert.equal(paneLines(68), 2);
   assert.equal(paneLines(1000), 5);
   assert.equal(paneText({ text: "" }).text, "(empty)");
   assert.equal(OUTSIDE >= 0, true);
@@ -369,16 +393,16 @@ test("block text CSS: pane text is at least 7:1 over #0d1720, painted at 92% or 
   assert.doesNotMatch(css, /opacity/, "no opacity on text");
 });
 
-test("block text CSS: 13 px body, 11.5 px caption, whole even pixel heights mirrored in PANE", () => {
+test("block text CSS: 14 px body, 11.5 px caption, whole even pixel heights mirrored in PANE", () => {
   const pane = rule(".word-pane"), cap = rule(".word-cap"), body = rule(".word-body");
-  assert.match(pane, /font:\s*13px\/18px/);
+  assert.match(pane, /font:\s*14px\/20px/);
   assert.match(cap, /font:\s*600 11\.5px\/16px/);
   assert.match(pane, /max-width:\s*46ch/);
   assert.match(body, /-webkit-line-clamp:\s*var\(--lines, 5\)/);
   const pad = /padding:\s*(\d+)px \d+px (\d+)px/.exec(pane);
   assert.equal(Number(pad[1]) + Number(pad[2]) + 16, PANE.chromePx, "caption line + padding");
   assert.equal(Number(/margin-top:\s*(\d+)px/.exec(body)[1]), PANE.bodyGapPx);
-  assert.equal(PANE.linePx, 18);
+  assert.equal(PANE.linePx, 20, "the body's 20 px line");
   for (let n = 0; n <= 5; n++) assert.equal((PANE.chromePx + (n ? PANE.bodyGapPx + n * PANE.linePx : 0)) % 2, 0, "even: a centred pane lands on whole pixels");
   assert.doesNotMatch(css, /font-smoothing/, "no antialiasing override at dpr 1");
 });

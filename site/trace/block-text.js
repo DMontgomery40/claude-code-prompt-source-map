@@ -1,8 +1,9 @@
 // Words at max zoom. At the Layers zoom the blocks of the playhead's leading grain column get HTML
-// panes with their own text: the ridge is made of words. One pooled CSS2D pane per band tall enough
-// to hold a line (40 px on screen), level with the band's centre and just beside the leading column's
-// grains on screen, so a pane never covers the grains it describes; the tallest bands win the room. Text comes from the worker on demand (cached, at most 4 reads at a time) and reaches
-// the DOM through textContent only: log text is untrusted.
+// panes with their own text: the ridge is made of words. One pooled CSS2D pane per band at least 24 px
+// tall on screen, level with the band's centre and just beside the leading column's grains, so a pane
+// never covers the grains it describes; the tallest bands win the room, and no pane runs under the HUD
+// controls. Text comes from the worker on demand (cached, at most 4 reads at a time) and reaches the
+// DOM through textContent only: log text is untrusted.
 import { Vector3 } from "./vendor/three.module.min.js";
 import { CSS2DObject } from "./vendor/CSS2DRenderer.js";
 import { STRATA, STRATUM_INDEX, fmtTok, clip } from "./panels.js";
@@ -10,10 +11,10 @@ import { placeLabel } from "./scene-rules.js";
 import { FLAGS } from "./grain-rules.js";
 import { GRAIN_DEPTH } from "./grains.js";
 
-// Pixel sizes mirror block-text.css: caption line 16 + padding 5 + 5, body lines 18 after a 2 px gap.
+// Pixel sizes mirror block-text.css: caption line 16 + padding 5 + 5, body lines 20 after a 2 px gap.
 export const PANE = {
-  minBandPx: 40, maxLines: 5, maxChars: 400, fetches: 4, timeoutMs: 15000, cacheSize: 600,
-  chromePx: 26, bodyGapPx: 2, linePx: 18, widthPx: 360, charsPerLine: 46, gapPx: 3
+  minBandPx: 24, maxLines: 5, maxChars: 400, fetches: 4, timeoutMs: 15000, cacheSize: 600,
+  chromePx: 26, bodyGapPx: 2, linePx: 20, widthPx: 380, charsPerLine: 46, gapPx: 3
 };
 const NOTE = { none: "not in the log", image: "image", empty: "(empty)", failed: "text unavailable" };
 
@@ -149,8 +150,10 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
   // tread, z, depth and yScale (landscape-geometry.js). column (optional) is the leading column's grain
   // box in world units { x0, x1, z0, z1 }; by default the one grains.js fills: the request's tread, and
   // GRAIN_DEPTH (or the ridge's own depth, if less) behind the face.
-  // viewport = { width, height, insets: { top, right, bottom, left } } in CSS px; pxPerUnit (optional)
-  // is screen px per world unit up the column, used only to skip bands that cannot reach 40 px.
+  // viewport = { width, height, insets: { top, right, bottom, left }, avoid: [{ x, y, w, h }] } in CSS
+  // px; avoid lists controls floating inside the insets (zoom, transport) that no pane may run under.
+  // pxPerUnit (optional) is screen px per world unit up the column, used only to skip bands that
+  // cannot reach 24 px.
   function update({ camera, agent, agentId = agent?.id, bands, geom, i, column, pxPerUnit, viewport }) {
     if (disposed) return { shown: 0, candidates: 0 };
     const ins = viewport.insets || {};
@@ -170,7 +173,7 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
         const tok = b.y1 - b.y0;
         if (pxPerUnit > 0 && tok * ys * pxPerUnit < PANE.minBandPx * 0.5) continue;
         const lo = project(camera, viewport, x, b.y0 * ys, z), hi = project(camera, viewport, x, b.y1 * ys, z);
-        const px = Math.round(Math.hypot(hi.px - lo.px, hi.py - lo.py) * 100) / 100; // no float noise at 40 px
+        const px = Math.round(Math.hypot(hi.px - lo.px, hi.py - lo.py) * 100) / 100; // no float noise at 24 px
         if (!(px >= PANE.minBandPx)) continue;
         const at = project(camera, viewport, x, (b.y0 + b.y1) / 2 * ys, z);
         if (at.z < -1 || at.z > 1 || at.px < box.x0 || at.px > box.x1 || at.py < box.y0 || at.py > box.y1) continue;
@@ -180,6 +183,7 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
     // declutter along the column: the tallest bands first (ties bottom to top), each pane right of the
     // column's grains on screen or, where that runs out of room, left of them
     items.sort((p, q) => q.px - p.px || p.b.y0 - q.b.y0);
+    const avoid = viewport.avoid || [];
     const placed = [], chosen = [];
     for (const it of items) {
       if (chosen.length >= maxPanes) break;
@@ -196,11 +200,12 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
         const d = project(camera, viewport, bx, it.yc, bz).px - at.px;
         right = Math.max(right, d); left = Math.max(left, -d);
       }
-      // right of the column (over the ghost); where the viewport ends first, left of it (over the trail);
-      // when the column fills the view (deep zoom), on its face from the front edge
+      // right of the column (over the ghost); where the viewport or a control is in the way, left of it
+      // (over the trail); when the column fills the view (deep zoom), on its face from the front edge.
+      // Only the view and the controls choose the side: another pane in the way hides this one.
       const front = project(camera, viewport, col.x0, it.yc, col.z1).px - at.px;
       const side = [[Math.round(right + PANE.gapPx), 0], [-Math.round(left + PANE.gapPx), 1], [Math.round(front + PANE.gapPx), 0]]
-        .find(([m, cx]) => at.px + m - cx * w >= box.x0 && at.px + m + (1 - cx) * w <= box.x1);
+        .find(([m, cx]) => placeLabel({ px: at.px + m, py: at.py, w, h, cx, cy: 0.5 }, box, avoid));
       if (!side) continue;
       const [margin, cx] = side;
       const spot = placeLabel({ px: at.px + margin, py: at.py, w, h, cx, cy: 0.5 }, box, placed);
