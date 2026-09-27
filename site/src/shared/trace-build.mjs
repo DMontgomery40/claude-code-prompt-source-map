@@ -114,7 +114,8 @@ export async function buildLiteralIndex({ productId, sourceRoot, version }) {
       const walk = (dir) => {
         for (const e of readdirSync(dir, { withFileTypes: true })) {
           const full = path.join(dir, e.name);
-          if (e.isDirectory()) { if (!/^(\.git|target|node_modules|tests?|fixtures|snapshots)$/.test(e.name)) walk(full); continue; }
+          // Dot folders (.github, .codex) are the repository's own tooling, not what ships.
+          if (e.isDirectory()) { if (!/^(\..*|target|node_modules|tests?|fixtures|snapshots)$/.test(e.name)) walk(full); continue; }
           if (!/\.(rs|md|txt|jinja|j2)$/.test(e.name) || /_tests?\.rs$|tests\.rs$/.test(e.name) || statSync(full).size > 2e6) continue;
           // A Rust file's own test module (#[cfg(test)] mod tests { … }, by convention last) is not shipped code.
           const rel = path.relative(srcDir, full), all = readFileSync(full, "latin1"), cut = /\.rs$/.test(e.name) ? all.search(/\n#\[cfg\(test\)\]\s*\n\s*(?:pub(?:\([^)]*\))?\s+)?mod \w+\s*\{/) : -1;
