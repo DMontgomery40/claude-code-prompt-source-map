@@ -55,11 +55,20 @@ on 2026-09-27.
   - One hero callout; hover shows a tip, and a pick sends a pulse along the wire.
   - Racks fold repeats into one "×n" plate and frame only as many rows as stay readable; the wheel walks
     the rest.
+- **The hero instrument (4c0ba2f).** The hero preset frames one object instead of the board:
+  - provenance sockets (the library, and the shipped code: binary, app bundle or source), lit or dark
+    by rung;
+  - the piece's own words;
+  - recipients × time: one row per agent and a lit tick per delivery, with rows that never got it left
+    dark, and a readout ("102 of 105 agents got it", "23 times over 2.4 h").
+  With the caption hidden, a fresh reader stated the count and "in the shipped code, not in the library"
+  for all four private sessions at 1920×1080.
+- **Walking copies (8d6a1b2).** `c` / `⇧C` put every copy of the open harness text on the palette's
+  trail, and `n` / `⇧N` walk it.
 - **Open.**
-  - **The hero graphic doesn't carry the claim.** The caption does. A cold read called the wires mostly
-    decoration, and next to Ryan Sael's frames at the same scale it is still behind on materials and on
-    having one designed object. This is a concept question, not a craft one.
-  - **At 1280×800,** Trace's own chrome leaves the layer about 240 px of height.
+  - **At 1280×800** the location digits (offsets, lines) are too small to read reliably.
+  - **Only the least-explained piece** has the instrument so far. The found-nowhere, library, linked,
+    composite and outside states are tested as logic but not yet seen.
   - **Text on linked plates** is lower contrast than on the red and amber ones.
   - **Size.** The literal index is 1.7 MB (Claude Code) and 1.2 MB (Codex/ChatGPT) gzipped, and loads
     only when the layer opens.
