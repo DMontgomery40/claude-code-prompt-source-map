@@ -78,3 +78,56 @@ test('the near plane follows the content: nothing visible is clipped, and depth 
   inside.position.set(100, 20, 0); inside.lookAt(100, 0, -20); inside.updateMatrixWorld();
   assert.equal(fitNearPlane(inside, box, { floor: 0.2 }), 0.2);
 });
+
+// The playback director's goals keep the view direction and the orbit distance (so the map zoom is the
+// optical zoom times a constant), and move nothing until applied.
+const applied = (camera, g) => {
+  const c = camera.clone();
+  c.position.copy(g.position); c.zoom = g.zoom; c.lookAt(g.target); c.updateProjectionMatrix(); c.updateMatrixWorld();
+  return c;
+};
+const orbitCamera = (w, h, zoom) => {
+  const camera = new THREE.PerspectiveCamera(34, w / h, 0.03, 4000), target = new THREE.Vector3(110, 10, -30);
+  camera.position.set(-70, 140, 230); camera.lookAt(target); camera.zoom = zoom; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+  return { camera, target };
+};
+
+test('follow: the column top lands on the anchor pixel at the asked zoom; direction and orbit distance kept', async () => {
+  const { anchorView } = await import('../map-camera.js');
+  for (const [w, h] of [[390, 844], [1920, 1200]]) for (const zoom0 of [1, 5.8]) for (const want of [3.7, 5.8, 12.8, 400]) {
+    const { camera, target } = orbitCamera(w, h, zoom0);
+    const before = camera.position.clone(), dir = camera.getWorldDirection(new THREE.Vector3()), dist = camera.position.distanceTo(target);
+    const point = new THREE.Vector3(150, 22, 4), x = 0.42 * w, y = 0.35 * h;
+    const g = anchorView(camera, target, point, x, y, w, h, want);
+    assert.ok(camera.position.equals(before) && camera.zoom === zoom0, 'the camera itself does not move');
+    assert.equal(g.zoom, Math.min(256, want));
+    const c = applied(camera, g), p = point.clone().project(c);
+    assert.ok(Math.abs((p.x + 1) / 2 * w - x) < 0.5 && Math.abs((1 - p.y) / 2 * h - y) < 0.5, 'within half a pixel of the anchor');
+    assert.ok(Math.abs(g.position.distanceTo(g.target) - dist) < 1e-7, 'orbit distance kept');
+    assert.ok(c.getWorldDirection(new THREE.Vector3()).distanceTo(dir) < 1e-9, 'view direction kept');
+  }
+  assert.equal(anchorView(new THREE.PerspectiveCamera(), new THREE.Vector3(), new THREE.Vector3(), 0, 0, 0, 100, 2), null);
+});
+
+test('fit: every corner of the box inside the safe rect, tight on one axis, centred; direction and distance kept', async () => {
+  const { fitView } = await import('../map-camera.js');
+  const boxes = [[140, 160, 0, 30, -2, 6], [100, 101, 0, 40, -1, 1], [60, 200, 0, 12, -3, 20], [149.9, 150.1, 0, 0.3, 0, 0.2]];
+  for (const [w, h] of [[390, 844], [1920, 1200]]) for (const zoom0 of [1, 5.8]) for (const [x0, x1, y0, y1, z0, z1] of boxes) {
+    const { camera, target } = orbitCamera(w, h, zoom0);
+    const dir = camera.getWorldDirection(new THREE.Vector3()), dist = camera.position.distanceTo(target);
+    const pts = [];
+    for (const x of [x0, x1]) for (const y of [y0, y1]) for (const z of [z0, z1]) pts.push(new THREE.Vector3(x, y, z));
+    const safe = { x0: -1 + 2 * 0.05, x1: 1 - 2 * 0.2, y0: -1 + 2 * 0.12, y1: 1 - 2 * 0.04 }; // insets 5% left, 20% right, 4% top, 12% bottom
+    const g = fitView(camera, target, pts, safe);
+    assert.ok(g.zoom > 0.4 && g.zoom <= 256, `zoom ${g.zoom}`);
+    assert.equal(camera.zoom, zoom0, 'the camera itself does not change');
+    const c = applied(camera, g);
+    let bx0 = Infinity, bx1 = -Infinity, by0 = Infinity, by1 = -Infinity;
+    for (const p of pts) { const q = p.clone().project(c); bx0 = Math.min(bx0, q.x); bx1 = Math.max(bx1, q.x); by0 = Math.min(by0, q.y); by1 = Math.max(by1, q.y); }
+    const eps = 2 / w; // a pixel
+    assert.ok(bx0 >= safe.x0 - eps && bx1 <= safe.x1 + eps && by0 >= safe.y0 - eps && by1 <= safe.y1 + eps, JSON.stringify({ bx0, bx1, by0, by1, safe }));
+    if (g.zoom < 256) assert.ok(Math.abs((bx1 - bx0) - (safe.x1 - safe.x0)) < eps || Math.abs((by1 - by0) - (safe.y1 - safe.y0)) < eps, 'tight on one axis');
+    assert.ok(Math.abs((bx0 + bx1) - (safe.x0 + safe.x1)) < 2 * eps || Math.abs((by0 + by1) - (safe.y0 + safe.y1)) < 2 * eps, 'centred');
+    assert.ok(Math.abs(g.position.distanceTo(g.target) - dist) < 1e-7 && c.getWorldDirection(new THREE.Vector3()).distanceTo(dir) < 1e-9);
+  }
+});

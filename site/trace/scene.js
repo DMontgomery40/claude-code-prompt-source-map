@@ -7,7 +7,8 @@ import { OrbitControls } from "./vendor/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "./vendor/CSS2DRenderer.js";
 import { STRATA, STRATUM_INDEX, STATUS, fmtTok, fmtClock, fmtDur, fmtTick, spansDays, freshTokens, unloggedShrinks, agentStats, clip } from "./panels.js";
 import { createMapOverview, overviewAgentData } from "./map-overview.js";
-import { zoomCamera, panCameraTo } from "./map-camera.js";
+import { zoomCamera, panCameraTo, anchorView, fitView } from "./map-camera.js";
+import { buildEvents } from "./director.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
@@ -1435,12 +1436,75 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   // ---- camera ----
   let insets = { top: 0, right: 0, bottom: 0, left: 0 };
-  const fly = { on: false };
-  function flyTo(pos, tgt, dur = 950) {
+  const fly = { on: false, director: false, z1: null };
+  // zoom: the optical zoom to end at (eased geometrically), or null to leave it. director: the playback
+  // director's move, which user input cancels only once it really moves the camera (see userCamera).
+  function flyTo(pos, tgt, dur = 950, zoom = null, director = false) {
+    fly.director = director;
     if (reducedMotion || dur === 0) {
-      camera.position.copy(pos); controls.target.copy(tgt); fly.on = false; controls.update(); dirty = 3; return;
+      camera.position.copy(pos); controls.target.copy(tgt);
+      if (zoom != null) { camera.zoom = zoom; camera.updateProjectionMatrix(); }
+      fly.on = false; controls.update(); dirty = 3; return;
     }
-    Object.assign(fly, { on: true, t0: performance.now(), dur, p0: camera.position.clone(), p1: pos.clone(), q0: controls.target.clone(), q1: tgt.clone() });
+    Object.assign(fly, { on: true, t0: performance.now(), dur, p0: camera.position.clone(), p1: pos.clone(), q0: controls.target.clone(), q1: tgt.clone(), z0: camera.zoom, z1: zoom });
+  }
+
+  // ---- the playback director (director.js decides the shot; this applies it) ----
+  // A shot eases the camera through flyTo, keeping its view direction and orbit distance: a follow shot
+  // puts the leading column's top at its anchor in the free area at the zoom the director engaged at, a
+  // box shot fits its box into the free area. The same id again, or a follow shot while a follow move
+  // runs (the director re-aims at the moving column until the camera arrives), retargets: the move keeps
+  // its timeline and its current position and heads for the new end; after the move has ended it is a
+  // short RETARGET ms move. Manual and none stop any director move and leave the camera. User input (a
+  // drag past 5 px, the wheel, a pinch, the zoom buttons and keys) stops the move and tells the app
+  // (onUserCamera); the director's own moves never do.
+  const RETARGET = 250, SHOT_PAD = { l: 20, r: 20, t: 26, b: 22 };
+  let directorId = null, directorKind = null, onUserCam = null, directorEvents = null;
+  // Aim the running move at a new end without a jump: re-base its start so that, at the current eased
+  // fraction e, it still gives the camera's current state (in log zoom for the zoom).
+  function retarget(goal, now) {
+    const e = ease(Math.min(1, (now - fly.t0) / fly.dur));
+    if (e > 0.97) { flyTo(goal.position, goal.target, RETARGET, goal.zoom, true); return; }
+    const r = 1 / (1 - e);
+    fly.p0.copy(camera.position).addScaledVector(goal.position, -e).multiplyScalar(r); fly.p1.copy(goal.position);
+    fly.q0.copy(controls.target).addScaledVector(goal.target, -e).multiplyScalar(r); fly.q1.copy(goal.target);
+    fly.z0 = Math.exp((Math.log(camera.zoom) - e * Math.log(goal.zoom)) * r); fly.z1 = goal.zoom;
+  }
+  function userCamera() {
+    if (fly.on && fly.director) fly.on = false;
+    directorId = directorKind = null;
+    onUserCam?.();
+  }
+  function applyShot(shot) {
+    if (!shot || !shot.box || shot.kind === "manual" || shot.kind === "none") { if (fly.director) fly.on = false; directorId = directorKind = null; return; }
+    const w = host.clientWidth, h = host.clientHeight;
+    if (level !== 0 || !(w > 0 && h > 0)) return;
+    const b = shot.box;
+    let goal;
+    if (shot.zoom === "follow") {
+      const [x, y, z] = shot.target || [b.x0, b.yTop, b.z0], [ax, ay] = shot.anchor || [0.5, 0.5];
+      const fw = w - insets.left - insets.right, fh = h - insets.top - insets.bottom;
+      const zoom = (shot.followZoom ?? mapZoom) * camera.position.distanceTo(controls.target) / overviewDistance;
+      goal = anchorView(camera, controls.target, _pa.set(x, y, z), insets.left + ax * fw, insets.top + ay * fh, w, h, zoom);
+    } else {
+      const pts = [];
+      for (const x of [b.x0, b.x1]) for (const y of [0, b.yTop]) for (const z of [b.z0, b.z1]) pts.push(new THREE.Vector3(x, y, z));
+      goal = fitView(camera, controls.target, pts, safeNdc(SHOT_PAD));
+    }
+    if (!goal) return;
+    const running = fly.on && fly.director && !reducedMotion, same = shot.id === directorId;
+    if (running && (same || (shot.kind === "follow" && directorKind === "follow"))) retarget(goal, performance.now());
+    else flyTo(goal.position, goal.target, same ? RETARGET : shot.ease ?? 600, goal.zoom, true);
+    directorId = shot.id; directorKind = shot.kind;
+  }
+  // The leading column's top as a fraction across the free area (NaN off to the camera's side or behind).
+  function leadScreenX() {
+    const cx = cutXOf(play.P), agent = grainAgent, aP = agentP(agent, play.P, cx);
+    const w = host.clientWidth - insets.left - insets.right;
+    if (!(aP >= 0) || !(w > 0) || cx >= NO_CUT) return NaN;
+    const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(aP)));
+    _pa.set(cx, crest(agent, i), zOf(agent, i)).project(camera);
+    return _pa.z < -1 || _pa.z > 1 ? NaN : ((_pa.x + 1) / 2 * host.clientWidth - insets.left) / w;
   }
   // pad: extra px kept clear on each side, for HTML labels that hang off the fitted points
   const safeNdc = (pad = {}) => {
@@ -1651,6 +1715,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   function zoomMap(factor, screen) {
     onViewChange();
+    userCamera();
     fly.on = false;
     const x = screen?.x ?? (insets.left + host.clientWidth - insets.right) / 2;
     const y = screen?.y ?? (insets.top + host.clientHeight - insets.bottom) / 2;
@@ -1937,7 +2002,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
 
   // ---- loop ----
   let dirty = 3, raf = 0, bench = null;
-  controls.addEventListener("start", () => { fly.on = false; });
+  // a press cancels a level's flight at once; a director move only once the pointer really moves
+  controls.addEventListener("start", () => { if (!fly.director) fly.on = false; });
+  cv.addEventListener("pointermove", e => { if (down && !down.moved && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) { down.moved = true; userCamera(); } });
   controls.addEventListener("change", () => { dirty = Math.max(dirty, 2); onViewChange(); });
   function frame(now) {
     raf = requestAnimationFrame(frame);
@@ -1945,6 +2012,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       const k = ease(Math.min(1, (now - fly.t0) / fly.dur));
       camera.position.lerpVectors(fly.p0, fly.p1, k);
       controls.target.lerpVectors(fly.q0, fly.q1, k);
+      if (fly.z1 != null) { camera.zoom = fly.z0 * Math.pow(fly.z1 / fly.z0, k); camera.updateProjectionMatrix(); }
       if (k >= 1) fly.on = false;
       dirty = 2;
     }
@@ -2006,6 +2074,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   return {
     show,
     getView() { return { position: camera.position.toArray(), target: controls.target.toArray(), zoom: camera.zoom, overviewDistance }; },
+    // The playback director (Task 10): see applyShot. getEvents is director.js's buildEvents on this
+    // scene's own placement, built once.
+    setDirectorShot: applyShot,
+    onUserCamera(cb) { onUserCam = typeof cb === "function" ? cb : null; },
+    leadScreenX,
+    getEvents() { return directorEvents ??= buildEvents(L, geom); },
     restoreView(view) {
       fly.on = false;
       const damping = controls.enableDamping; controls.enableDamping = false; controls.update();
