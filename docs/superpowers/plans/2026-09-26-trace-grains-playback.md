@@ -136,9 +136,9 @@ Definitions the implementer must honour:
 **Interfaces:** Produces `createPlayback` as above. Consumes nothing from the scene.
 
 Behaviour:
-- `P` is clamped to `[0, n - 1]`. `setP` never emits events; `tick` does.
+- `P` is clamped to `[0, end]`, where the end is `n - 1 + 0.65`, the last request complete (amended in the final fix wave: at `n - 1` the last request had not started to pour). `setP` never emits events; `tick` does.
 - `xAt(P)` interpolates `X(times[i])` linearly between integer requests; `PAtX` is its inverse (monotone piecewise-linear search); `timeAt(P)` interpolates times; `PAtTime` inverts.
-- `tick(dtMs)` while playing moves x forward by `speed / (n - 1)` per second (so the playhead crosses the compressed ruler at a constant screen speed regardless of idle gaps) and returns the integer request indices crossed, in order; when `P` reaches `n - 1` it pauses and `atEnd` is true. Speed changes cycle through `speeds`.
+- `tick(dtMs)` while playing moves x forward by `speed / (n - 1)` per second (so the playhead crosses the compressed ruler at a constant screen speed regardless of idle gaps) and returns the integer request indices crossed, in order; when x reaches the last request's x, `P` goes to the end, it pauses and `atEnd` is true. Speed changes cycle through `speeds`.
 - `step(+1|-1)` moves to the next or previous integer and pauses.
 
 - [ ] **Step 1: Write failing tests:** round trips `PAtX(xAt(P))` and `PAtTime(timeAt(P))` within 1e-9 for 100 random `P`; with times containing a 3-hour idle gap and an `X` that squeezes it, 1 s of ticking at speed 4 advances x by exactly `4 / (n - 1)` on both sides of the gap; crossing from `P = 3.2` to `5.7` returns `[4, 5]`, crossing backwards (implement `tick` with negative speed for the test via `setSpeed(-4)`? no: add a `direction` field defaulting to 1) returns `[5, 4]`; reaching the end pauses; `step` pauses.
