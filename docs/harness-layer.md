@@ -65,11 +65,16 @@ on 2026-09-27.
   for all four private sessions at 1920×1080.
 - **Walking copies (8d6a1b2).** `c` / `⇧C` put every copy of the open harness text on the palette's
   trail, and `n` / `⇧N` walk it.
+- **The instrument for any piece (0c37b56, bf04441).**
+  - Picking a wire, a plate, or a block in Trace shows that piece's instrument. Hero returns to the
+    least-explained piece.
+  - At 1280×800 the location has lines of its own. A masked cold read got every digit right.
+  - A composite says the library has it in parts.
 - **Open.**
-  - **At 1280×800** the location digits (offsets, lines) are too small to read reliably.
-  - **Only the least-explained piece** has the instrument so far. The found-nowhere, library, linked,
-    composite and outside states are tested as logic but not yet seen.
-  - **Text on linked plates** is lower contrast than on the red and amber ones.
+  - **Linked-plate contrast.** Text on linked plates is lower contrast than on the red and amber ones.
+  - **The "Picked:" button** truncates at 22 characters.
+  - **The instrument** has no hover tips.
+  - **A block carrying several pieces:** `c` walks the first one.
   - **Size.** The literal index is 1.7 MB (Claude Code) and 1.2 MB (Codex/ChatGPT) gzipped, and loads
     only when the layer opens.
 
