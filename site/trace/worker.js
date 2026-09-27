@@ -40,12 +40,14 @@ import { localFileSource } from "./local-session.js";
 //     -> { type: "find-hits", id, hits: [{ agentId, block, snippet: { before, match, after } }] }
 //     -> { type: "find-progress", id, done, total }   bytes scanned
 //     -> { type: "find-done", id, hits, truncated, cancelled, error? }
-//   postMessage({ type: "harness", literals? })   the harness layer's model of the loaded session
+//   postMessage({ type: "literals", literals })   optional: the site's literal-index.json ({ byProduct }), hashes
+//     of the shipped binaries' literal text with chunk/file and offset. Picked by the session's product.
+//   postMessage({ type: "harness", id })   the harness layer's model of the loaded session
 //     (harness/pieces.js buildHarnessModel), computed the first time it is asked for and kept until the
-//     next load. `literals` is the literal index (literal-index.json, { byProduct }) when the page has it.
-//     -> { type: "harness-progress", done, total }   non-model blocks read
-//     -> { type: "harness", model, ms }               ms: time to compute (0 when cached)
-//     -> { type: "harness-error", message }
+//     next load (or new literals).
+//     -> { type: "harness-progress", id, done, total, phase }   non-model blocks read, at most every 80 ms
+//     -> { type: "harness", id, model, ms }                     ms: time to compute (0 when cached)
+//     -> { type: "harness", id, error }
 //
 // Only the files the user dropped are read. No network requests.
 import { fileSource } from "./file-source.js";
@@ -59,6 +61,7 @@ let index = null;
 let loaded = null; // the Trace the sources belong to, for find
 let findGen = 0;
 let harness = null; // { trace, promise, ms } for the loaded session
+let literalIndex = null;
 
 // A block's exact text, as the reader shows it (ref.path and ref.range applied), reading each log line once
 // for the blocks that share it.
@@ -118,6 +121,9 @@ self.onmessage = async (e) => {
     } catch (err) {
       self.postMessage({ type: "find-done", id: m.id, hits: 0, truncated: false, cancelled: false, error: String((err && err.message) || err) });
     }
+  } else if (m.type === "literals") {
+    literalIndex = m.literals || null;
+    harness = null;
   } else if (m.type === "harness") {
     try {
       if (!loaded) throw new Error("no session loaded");
@@ -128,15 +134,15 @@ self.onmessage = async (e) => {
         fresh = true;
         harness = { trace, ms: 0 };
         harness.promise = buildHarnessModel({
-          trace, index: ix, literals: indexFor(m.literals || null, trace.product), readText: blockReader(trace, ix),
-          onProgress: (p) => { const now = Date.now(); if (p.done === p.total || now - last > 80) { last = now; self.postMessage({ type: "harness-progress", done: p.done, total: p.total }); } },
+          trace, index: ix, literals: indexFor(literalIndex, trace.product), readText: blockReader(trace, ix),
+          onProgress: (p) => { const now = Date.now(); if (p.done === p.total || now - last > 80) { last = now; self.postMessage({ type: "harness-progress", id: m.id, done: p.done, total: p.total, phase: p.phase }); } },
         }).then((model) => { harness.ms = Date.now() - t0; return model; });
       }
       const model = await harness.promise;
-      self.postMessage({ type: "harness", model, ms: fresh ? harness.ms : 0 });
+      self.postMessage({ type: "harness", id: m.id, model, ms: fresh ? harness.ms : 0 });
     } catch (err) {
       harness = null;
-      self.postMessage({ type: "harness-error", message: String((err && err.message) || err) });
+      self.postMessage({ type: "harness", id: m.id, error: String((err && err.message) || err) });
     }
   } else if (m.type === "find-cancel") {
     findGen++;

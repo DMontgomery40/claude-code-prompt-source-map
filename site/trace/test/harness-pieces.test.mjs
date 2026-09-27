@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { buildLiteralIndex, codeLiterals } from "../../src/shared/trace-build.mjs";
@@ -308,13 +308,34 @@ test("literal index: code literals key by fragment and template prefix, and hold
   writeFileSync(join(root, "work", "extracted", "chunk-t.js"), js);
   writeFileSync(join(root, "work", "embedded-manifest.json"), JSON.stringify({ files: [{ name: "/$bunfs/root/chunk-t.js", file_offset: 5000 }] }));
   const lit = await buildLiteralIndex({ productId: "claude-code", sourceRoot: root, version: "9.9.9" });
-  assert.deepEqual(lit.shelves, ["claude.exe 9.9.9"]);
+  assert.deepEqual([lit.shelves, lit.kinds], [["claude.exe 9.9.9 (extracted chunks)"], ["binary"]]);
   // A runtime line whose value differs meets the literal by its prefix; the offset is absolute.
   const hit = lookupKeys("Other agents active in this session, addressable via SendMessage({to: name}): main, a, b.").map((k) => lit.keys[k]).find(Boolean);
   assert.ok(hit && hit[2] > 5000);
+  assertNoText(lit, "fixture");
   const json = JSON.stringify(lit);
   for (const k of Object.keys(lit.keys)) assert.match(k, /^[0-9a-f]{16}$/);
   for (const v of Object.values(lit.keys)) assert.ok(v.length === 3 && v.every(Number.isInteger));
   assert.ok(!/Other agents|teammates|model reads/.test(json), "no literal text is stored");
   assert.equal(await buildLiteralIndex({ productId: "claude-code", sourceRoot: join(root, "missing") }), null);
+});
+
+// Every value in a literal index is a hash, a number, or a shelf, kind, file or version name: no text.
+function assertNoText(lit, where) {
+  for (const [k, v] of Object.entries(lit.keys)) {
+    assert.match(k, /^[0-9a-f]{16}$/, where);
+    assert.ok(Array.isArray(v) && v.length === 3 && v.every((n) => Number.isInteger(n) && n >= 0), where);
+  }
+  for (const f of lit.files) assert.match(f, /^[\w@+\-]+(\/[\w@+.\-]+)*\.[a-z0-9]{1,5}$/i, `${where}: file ${f}`);
+  for (const k of lit.kinds) assert.ok(["binary", "bundle", "source"].includes(k), where);
+  for (const s of lit.shelves) assert.ok(s.length <= 80 && !/\n/.test(s), where);
+  assert.deepEqual(Object.keys(lit).sort(), ["files", "keys", "kinds", "shelves", "version"], where);
+}
+
+test("the built literal index (when the site has been built) holds only hashes, numbers and names", (t) => {
+  const file = fileURLToPath(new URL("../../dist/trace/literal-index.json", import.meta.url));
+  if (!existsSync(file)) { t.skip("site not built"); return; }
+  const all = JSON.parse(readFileSync(file, "utf8"));
+  assert.deepEqual(Object.keys(all), ["byProduct"]);
+  for (const [product, lit] of Object.entries(all.byProduct)) assertNoText(lit, product);
 });

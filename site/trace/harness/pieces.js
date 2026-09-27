@@ -191,7 +191,7 @@ export function literalHit(literals, text) {
   for (const raw of String(text).split("\n")) {
     for (const h of lookupKeys(raw)) {
       const hit = literals.keys[h];
-      if (hit) return { shelf: literals.shelves[hit[0]], key: literals.files[hit[1]], pos: hit[2], line: !!(literals.lineShelves && literals.lineShelves.includes(hit[0])) };
+      if (hit) return { shelf: literals.shelves[hit[0]], kind: (literals.kinds && literals.kinds[hit[0]]) || "binary", key: literals.files[hit[1]], pos: hit[2] };
     }
   }
   return null;
@@ -421,11 +421,11 @@ export async function buildHarnessModel({ trace, readText, index, literals = nul
       note = rung === "linked" ? "Trace links this page by its lines; no single record holds the text" : "lines match this page, but no single record";
     } else {
       const hit = literalHit(literals, stripTags(g.text));
-      if (hit) { rung = "binary-only"; where = { shelf: hit.shelf, key: hit.key, pos: hit.pos, label: hit.line ? `${hit.key}:${hit.pos}` : `${hit.key} @${hit.pos.toLocaleString("en-US")}` }; note = `not in the library; in ${hit.shelf}`; }
+      if (hit) { rung = "binary-only"; where = { shelf: hit.shelf, kind: hit.kind, key: hit.key, pos: hit.pos, label: hit.kind === "source" ? `${hit.key}:${hit.pos}` : `${hit.key} @${hit.pos.toLocaleString("en-US")}` }; note = `not in the library; in ${hit.shelf}`; }
       else { rung = "found-nowhere"; origin = "unknown"; note = literals ? "not in the library, and not in the literal index" : "not in the library"; }
     }
     const ri = record && record.anchor != null ? recByAnchor.get(record.page + "#" + record.anchor) : undefined;
-    if (!where && ri !== undefined && recs[ri].offset != null) where = { shelf: shelfName(ix, product), key: recs[ri].file, pos: recs[ri].offset, label: `${recs[ri].file} @${recs[ri].offset.toLocaleString("en-US")}` };
+    if (!where && ri !== undefined && recs[ri].offset != null) where = { shelf: shelfName(ix, product), kind: "binary", key: recs[ri].file, pos: recs[ri].offset, label: `${recs[ri].file} @${recs[ri].offset.toLocaleString("en-US")}` };
     const dv = g.dv.sort((x, y) => x.t - y.t);
     const vias = count(dv.map((d) => d.vehicle));
     const reach = new Set(dv.map((d) => d.ai)).size;
@@ -515,6 +515,7 @@ export async function buildHarnessModel({ trace, readText, index, literals = nul
     pieces,
     births,
     lookAlikes,
+    literals: !!(literals && literals.keys),
     triggerNote: TRIGGER_NOTE,
   };
 }
@@ -547,7 +548,7 @@ function count(list) { const m = new Map(); for (const x of list) m.set(x, (m.ge
 function fileName(trace, i) { const n = (trace.files && trace.files[i] && trace.files[i].name) || ""; return n.split(/[\\/]/).pop(); }
 function shelfName(ix, product) {
   const v = ix && (ix.libVersion || Object.keys(ix.harness || {})[0]);
-  return product === "claude-code" ? `claude.exe${v ? " " + v : ""}` : `${(ix && ix.site) || "library"} sources${v ? " " + v : ""}`;
+  return product === "claude-code" ? `claude.exe${v ? " " + v : ""} (extracted chunks)` : `${(ix && ix.site) || "library"} sources${v ? " " + v : ""}`;
 }
 function nameOf(g, record, composite) {
   const b = g.b;
@@ -563,6 +564,8 @@ function nameOf(g, record, composite) {
 // ------------------------------------------------------------------ one request's assembly
 
 const plateMaps = new WeakMap();
+// A plate's excerpt: its piece's first copy (the exact copy is read by its block).
+const sampleOf = (model, id) => { const p = model.pieces.find((q) => q.id === id); return p ? p.sample.slice(0, 150) : ""; };
 function blockPieces(model) {
   let m = plateMaps.get(model);
   if (m) return m;
@@ -587,7 +590,7 @@ export function rackFor(model, trace, agentIdx, reqIdx) {
     latest.set((b.label || "").replace(/ \(\d+\)$/, ""), bi);
   }
   for (const [label, bi] of [...latest].sort((x, y) => x[1] - y[1])) {
-    for (const id of map.get(agentIdx + ":" + bi) || [null]) plates.push({ zone: TOOLS_SLOT.test(label) ? "tools" : "system", piece: id, block: bi, label: a.blocks[bi].label, n: 1 });
+    for (const id of map.get(agentIdx + ":" + bi) || [null]) plates.push({ zone: TOOLS_SLOT.test(label) ? "tools" : "system", piece: id, block: bi, label: a.blocks[bi].label, n: 1, excerpt: id == null ? "" : sampleOf(model, id) });
   }
   const [s, e] = req.window || [0, -1];
   const idx = [];
@@ -606,7 +609,7 @@ export function rackFor(model, trace, agentIdx, reqIdx) {
     for (const id of ids) {
       const last = plates[plates.length - 1];
       if (last && last.piece === id && !last.core) { last.n++; continue; }
-      plates.push({ zone: "messages", piece: id, block: bi, label: b.label, n: 1 });
+      plates.push({ zone: "messages", piece: id, block: bi, label: b.label, n: 1, excerpt: sampleOf(model, id) });
     }
   }
   return { agent: agentIdx, req: reqIdx, t: minutes(req.t, trace.started), plates };

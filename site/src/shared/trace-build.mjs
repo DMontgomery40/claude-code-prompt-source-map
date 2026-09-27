@@ -28,15 +28,34 @@ async function headingIds(siteRoot, slug, section) {
 // needs no parser: a quote inside a regex or comment only shifts which side of a boundary a fragment lands on.
 // Yields [text, byteOffset, templateEnd]. `src` is latin1, so string positions are byte offsets.
 const codePoint = (n, e) => (n >= 0 && n <= 0x10ffff ? String.fromCodePoint(n) : e);
+const decode = (raw) => Buffer.from(raw, "latin1").toString("utf8").replace(/\\(u\{[0-9a-fA-F]+\}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{2}|.)/g, (_, e) =>
+  e.length > 1 && e[0] === "u" ? codePoint(parseInt(e[1] === "{" ? e.slice(2, -1) : e.slice(1), 16), e) : e.length > 1 && e[0] === "x" ? String.fromCharCode(parseInt(e.slice(1), 16)) : e === "n" ? "\n" : e === "t" ? " " : e);
+
+// Rust string literals only ("…" and raw r#"…"#), split at their {…} format holes. Yields [text, byteOffset, holeAfter].
+export function* rustLiterals(src) {
+  const re = /r(#*)"|"/g;
+  let m;
+  while ((m = re.exec(src))) {
+    const start = m.index + m[0].length;
+    let end;
+    if (m[0][0] === "r") { end = src.indexOf('"' + m[1], start); if (end < 0) return; re.lastIndex = end + 1 + m[1].length; }
+    else { let j = start; while (j < src.length && src[j] !== '"') j += src[j] === "\\" ? 2 : 1; end = j; re.lastIndex = j + 1; }
+    const body = src.slice(start, end);
+    const hole = /\{[^{}\s]*\}/g;
+    let at = 0, h;
+    const out = (a, b, after) => { if (b - a >= 24) return [decode(body.slice(a, b)), start + a, after]; return null; };
+    while ((h = hole.exec(body))) { const p = out(at, h.index, true); if (p) yield p; at = h.index + h[0].length; }
+    const p = out(at, body.length, false);
+    if (p) yield p;
+  }
+}
 export function* codeLiterals(src) {
   const re = /["'`]|\$\{|\}/g;
   let at = 0, m;
   const piece = (a, b, end) => {
     const raw = src.slice(a, b);
     if (raw.length < 24) return null;
-    const text = Buffer.from(raw, "latin1").toString("utf8").replace(/\\(u\{[0-9a-fA-F]+\}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{2}|.)/g, (_, e) =>
-      e.length > 1 && e[0] === "u" ? codePoint(parseInt(e[1] === "{" ? e.slice(2, -1) : e.slice(1), 16), e) : e.length > 1 && e[0] === "x" ? String.fromCharCode(parseInt(e.slice(1), 16)) : e === "n" ? "\n" : e === "t" ? " " : e);
-    return [text, a, end];
+    return [decode(raw), a, end];
   };
   while ((m = re.exec(src))) {
     // A value follows: a template hole, or a literal left open for concatenation ("… via "+x).
@@ -48,11 +67,17 @@ export function* codeLiterals(src) {
   if (p) yield p;
 }
 
-// { shelves, files, keys: { hash: [shelf, file, offset or line] }, lineShelves } for one product, from its
-// gitignored work folder; null when the folder is not there (a clean checkout builds without it).
+// { shelves, kinds, files, keys: { hash: [shelf, file, offset or line] } } for one product, from its gitignored
+// work folder; null when the folder is not there (a clean checkout builds without it). kinds[shelf] is "binary"
+// (offsets into a shipped binary), "bundle" (offsets into an app bundle file) or "source" (file:line).
+// Only model-facing literals are kept, to keep the index small: text the library's inventory judged
+// model-facing or publishes, prompt files, and literals a value is filled into (templates, "…: "+x) or long
+// prose, which is how short unnamed notices are built. Error and UI strings, docs and tests are left out.
 export async function buildLiteralIndex({ productId, sourceRoot, version }) {
   const { literalEntryKeys } = await import(pathToFileURL(path.join(path.dirname(new URL(import.meta.url).pathname), "..", "..", "trace", "harness", "pieces.js")).href);
-  const shelves = [], files = [], keys = {}, lineShelves = [];
+  const shelves = [], kinds = [], files = [], keys = {};
+  const shelfOf = (name, kind) => { kinds.push(kind); return shelves.push(name) - 1; };
+  const prose = (t) => t.length >= 60 && (t.match(/[\p{L}]+/gu) || []).length >= 8;
   const fileIdx = new Map();
   const add = (shelf, file, pos, literal, end) => {
     for (const k of literalEntryKeys(literal, end)) {
@@ -65,11 +90,23 @@ export async function buildLiteralIndex({ productId, sourceRoot, version }) {
   if (productId === "claude-code") {
     const manifest = path.join(work, "embedded-manifest.json");
     if (!existsSync(manifest)) return null;
-    const shelf = shelves.push(`claude.exe${version ? " " + version : ""}`) - 1;
+    const shelf = shelfOf(`claude.exe${version ? " " + version : ""} (extracted chunks)`, "binary");
+    // Byte ranges of the literals the inventory judged model-facing, or that a page publishes.
+    const ranges = [];
+    try {
+      for (const it of JSON.parse(readFileSync(path.join(sourceRoot, "outputs", "inventory.json"), "utf8")).items ?? []) {
+        const d = it.details || {}, pv = (it.provenance || [])[0];
+        if (pv && (d.audience === "model" || d.published_in)) ranges.push([pv.binary_offset, pv.binary_offset + pv.length]);
+      }
+    } catch { /* no inventory: templates only */ }
+    ranges.sort((a, b) => a[0] - b[0]);
+    const inRange = (o) => { let lo = 0, hi = ranges.length - 1; while (lo <= hi) { const m = (lo + hi) >> 1; if (ranges[m][1] < o) lo = m + 1; else if (ranges[m][0] > o + 1) hi = m - 1; else return true; } return false; };
     for (const f of JSON.parse(readFileSync(manifest, "utf8")).files) {
       const name = path.basename(f.name), full = path.join(work, "extracted", name);
       if (!name.endsWith(".js") || !existsSync(full)) continue;
-      for (const [text, pos, end] of codeLiterals(readFileSync(full, "latin1"))) add(shelf, name, f.file_offset + pos, text, end);
+      for (const [text, pos, end] of codeLiterals(readFileSync(full, "latin1"))) {
+        if (end || inRange(f.file_offset + pos)) add(shelf, name, f.file_offset + pos, text, end);
+      }
     }
   } else if (productId === "codex") {
     let tag = null;
@@ -77,31 +114,33 @@ export async function buildLiteralIndex({ productId, sourceRoot, version }) {
     const srcDir = tag && path.join(work, `codex-src-${tag}`);
     if (srcDir && existsSync(srcDir)) {
       // The CLI source at the library's tag: shipped code and prompt files, by file and line; tests left out.
-      const shelf = shelves.push(`Codex CLI source · openai/codex ${tag}`) - 1;
-      lineShelves.push(shelf);
+      const shelf = shelfOf(`Codex CLI source · openai/codex ${tag}`, "source");
       const walk = (dir) => {
         for (const e of readdirSync(dir, { withFileTypes: true })) {
           const full = path.join(dir, e.name);
-          if (e.isDirectory()) { if (!/^(\.git|target|node_modules|tests?|fixtures|snapshots)$/.test(e.name)) walk(full); continue; }
+          // Dot folders (.github, .codex) are the repository's own tooling, not what ships.
+          if (e.isDirectory()) { if (!/^(\..*|target|node_modules|tests?|fixtures|snapshots)$/.test(e.name)) walk(full); continue; }
           if (!/\.(rs|md|txt|jinja|j2)$/.test(e.name) || /_tests?\.rs$|tests\.rs$/.test(e.name) || statSync(full).size > 2e6) continue;
           const rel = path.relative(srcDir, full), text = readFileSync(full, "latin1");
           const lineAt = (i) => { let n = 1; for (let j = text.indexOf("\n"); j >= 0 && j < i; j = text.indexOf("\n", j + 1)) n++; return n; };
-          if (/\.rs$/.test(e.name)) { for (const [lit, pos, end] of codeLiterals(text)) add(shelf, rel, lineAt(pos), lit, end); }
-          else Buffer.from(text, "latin1").toString("utf8").split("\n").forEach((l, i) => add(shelf, rel, i + 1, l, false));
+          if (/\.rs$/.test(e.name)) { for (const [lit, pos, end] of rustLiterals(text)) if (end || prose(lit)) add(shelf, rel, lineAt(pos), lit, end); }
+          // Prompt files (templates the CLI embeds), not READMEs, changelogs or docs.
+          else if (/(prompt|template|instruction|guardian|review|agent|policy|compact|collab|personality)/i.test(rel) && !/(^|\/)(README|CHANGELOG|docs?)\b/i.test(rel))
+            Buffer.from(text, "latin1").toString("utf8").split("\n").forEach((l, i) => add(shelf, rel, i + 1, l, false));
         }
       };
       walk(srcDir);
     }
     const asar = path.join(work, "asar-build");
     if (existsSync(asar)) {
-      const shelf = shelves.push("ChatGPT desktop app.asar") - 1;
+      const shelf = shelfOf("ChatGPT desktop app.asar", "bundle");
       for (const name of readdirSync(asar).filter((n) => n.endsWith(".js")).sort()) {
-        for (const [text, pos, end] of codeLiterals(readFileSync(path.join(asar, name), "latin1"))) add(shelf, name, pos, text, end);
+        for (const [text, pos, end] of codeLiterals(readFileSync(path.join(asar, name), "latin1"))) if (end || prose(text)) add(shelf, name, pos, text, end);
       }
     }
     if (!shelves.length) return null;
   } else return null;
-  return { version: version || null, shelves, files, keys, lineShelves };
+  return { version: version || null, shelves, kinds, files, keys };
 }
 
 // The product version the published records were read from.
