@@ -16,7 +16,7 @@ const HIGHLIGHT = "trace-find";
 
 // ctx: { state() -> the app's S, A (the app's actions), overview(), selectLens(key),
 //        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref),
-//        playback: { toggle(), step(d), slower(), faster() } for the transport's keys, each
+//        playback: { toggle(), step(d), slower(), faster(), follow() } for the transport's keys, each
 //        returning false when the transport is hidden }
 export function createPalette(ctx) {
   let trace = null, index = null, commands = [], largest = [];
@@ -471,7 +471,8 @@ export function createPalette(ctx) {
     stepBack: () => ctx.playback?.step(-1),
     stepOn: () => ctx.playback?.step(1),
     slower: () => ctx.playback?.slower(),
-    faster: () => ctx.playback?.faster()
+    faster: () => ctx.playback?.faster(),
+    follow: () => ctx.playback?.follow()
   };
   function agentsInOrder() { return trace.agents.filter(a => a.requests.length); }
   function stepAgent(d) {

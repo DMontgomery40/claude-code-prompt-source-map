@@ -41,13 +41,20 @@ export function nextSpeed(pb) {
 
 // host: the #playback element. onPlayhead({ P, playing, sweep }) runs on every change of the playhead
 // or its playing state; sweep is the progress through the current request while playing, else null.
-export function createTransport(host, { onPlayhead = () => {}, raf = f => requestAnimationFrame(f), caf = id => cancelAnimationFrame(id), now = () => performance.now(), maxDt = 100 } = {}) {
+// onStart() runs as playback starts, before the first push. onFollow('auto'|'manual') runs when the
+// Follow chip's state changes.
+export function createTransport(host, { onPlayhead = () => {}, onStart = () => {}, onFollow = () => {}, raf = f => requestAnimationFrame(f), caf = id => cancelAnimationFrame(id), now = () => performance.now(), maxDt = 100 } = {}) {
   let pb = null, frame = 0, last = 0, label = "";
+  // Follow: the director moves the camera while playing unless the user turned Follow off (off) or moved
+  // the camera during this run (held). forced: the user asked for Follow, so it follows at the overview too.
+  let off = false, held = false, forced = false;
   const play = el("button", { type: "button", class: "play", "aria-pressed": "false", "aria-label": "Play", title: "Play · Space" }, el("i", { "aria-hidden": "true" }));
   const scrub = el("input", { type: "range", class: "scrub", min: "0", max: "1", step: "0.0005", value: "1", "aria-label": "Session time" });
   const readout = el("output", { class: "readout", "aria-live": "off" });
   const speed = el("button", { type: "button", class: "speed", title: "Speed · < >" });
-  host.replaceChildren(play, scrub, readout, speed);
+  const followState = el("span", { class: "state", text: "auto" });
+  const follow = el("button", { type: "button", class: "follow", "aria-pressed": "true", title: "The camera follows the playhead · f" }, "Follow ", followState);
+  host.replaceChildren(play, scrub, readout, speed, follow);
   host.setAttribute("data-playing", "false");
 
   play.addEventListener("click", () => api.toggle());
@@ -55,6 +62,7 @@ export function createTransport(host, { onPlayhead = () => {}, raf = f => reques
   scrub.addEventListener("pointerdown", () => { if (pb?.playing) api.pause(); });
   scrub.addEventListener("input", () => { if (pb) api.seek(pb.PAtX(Number(scrub.value))); });
   speed.addEventListener("click", () => { if (pb) api.setSpeed(nextSpeed(pb)); });
+  follow.addEventListener("click", () => api.toggleFollow());
 
   function push() {
     if (pb) onPlayhead({ P: pb.P, playing: pb.playing, sweep: pb.playing ? pb.P - Math.floor(pb.P) : null });
@@ -93,6 +101,12 @@ export function createTransport(host, { onPlayhead = () => {}, raf = f => reques
       speed.textContent = s;
       speed.setAttribute("aria-label", `Speed ${s}: ${pb.speed} requests a second`);
     }
+    syncFollow();
+  }
+  function syncFollow() {
+    const auto = !off && !held;
+    follow.setAttribute("aria-pressed", String(auto));
+    if (followState.textContent !== (auto ? "auto" : "manual")) followState.textContent = auto ? "auto" : "manual";
   }
 
   const api = {
@@ -101,7 +115,15 @@ export function createTransport(host, { onPlayhead = () => {}, raf = f => reques
     get playback() { return pb; },
     get playing() { return !!pb?.playing; },
     toggle() { if (pb?.playing) api.pause(); else api.play(); },
-    play() { if (!pb) return; pb.play(); if (pb.playing) run(); push(); sync(); },
+    // Starting a run follows again, unless the user turned Follow off.
+    play() {
+      if (!pb) return;
+      const was = pb.playing;
+      pb.play();
+      if (pb.playing && !was) { held = false; onStart(); }
+      if (pb.playing) run();
+      push(); sync();
+    },
     pause() { if (!pb) return; const was = pb.playing; pb.pause(); stop(); if (was) push(); sync(); },
     // Jump to P and stay paused (scrubbing, focusing a request, history).
     seek(P) { if (!pb) return; pb.pause(); stop(); pb.setP(P); push(); sync(); },
@@ -109,8 +131,23 @@ export function createTransport(host, { onPlayhead = () => {}, raf = f => reques
     setSpeed(v) { if (!pb) return; pb.setSpeed(v); sync(); },
     faster() { if (!pb) return; pb.faster(); sync(); },
     slower() { if (!pb) return; pb.slower(); sync(); },
+    // The Follow chip and the f key: back to auto (asked for, so the overview follows too), or off.
+    get follow() { return off || held ? "manual" : "auto"; },
+    get forced() { return forced && !off && !held; },
+    toggleFollow() {
+      if (off || held) { off = held = false; forced = true; } else off = true;
+      syncFollow();
+      onFollow(api.follow);
+    },
+    // The user moved the camera: while playing, the director lets go until Follow is asked for again.
+    userCamera() {
+      if (!pb?.playing || off || held) return;
+      held = true;
+      syncFollow();
+      onFollow("manual");
+    },
     sync,
-    controls: { play, scrub, readout, speed }
+    controls: { play, scrub, readout, speed, follow }
   };
   return api;
 }

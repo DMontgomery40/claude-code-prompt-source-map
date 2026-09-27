@@ -391,17 +391,19 @@ function transportFixture() {
   const frames = new Map(), pushed = [];
   let id = 0;
   const host = new Element("div");
-  const tr = createTransport(host, { onPlayhead: p => pushed.push(p), raf: f => { frames.set(++id, f); return id; }, caf: i => frames.delete(i), now: () => 0 });
+  const starts = [], follows = [];
+  const tr = createTransport(host, { onPlayhead: p => pushed.push(p), onStart: () => starts.push(pb.P), onFollow: f => follows.push(f),
+    raf: f => { frames.set(++id, f); return id; }, caf: i => frames.delete(i), now: () => 0 });
   tr.load(pb);
   // Runs the queued animation frame at time t.
   const frame = t => { const [[k, f]] = frames; frames.delete(k); f(t); };
   const [play, scrub, readout, speed] = host.children;
-  return { L, pb, tr, host, frames, frame, pushed, play, scrub, readout, speed };
+  return { L, pb, tr, host, frames, frame, pushed, starts, follows, play, scrub, readout, speed, follow: tr.controls.follow };
 }
 
 test("the transport renders play, scrub, readout and speed; the readout names the request and its time", () => {
   const { pb, tr, host, pushed, play, scrub, readout, speed } = transportFixture();
-  assert.deepEqual(host.children.map(c => `${c.tagName}.${c.className}`), ["BUTTON.play", "INPUT.scrub", "OUTPUT.readout", "BUTTON.speed"]);
+  assert.deepEqual(host.children.map(c => `${c.tagName}.${c.className}`), ["BUTTON.play", "INPUT.scrub", "OUTPUT.readout", "BUTTON.speed", "BUTTON.follow"]);
   assert.deepEqual(["type", "min", "max", "step", "aria-label"].map(k => scrub.getAttribute(k)), ["range", "0", "1", "0.0005", "Session time"]);
   assert.equal(readout.getAttribute("aria-live"), "off", "the readout is not announced every frame");
   assert.deepEqual([play.getAttribute("aria-label"), play.getAttribute("aria-pressed"), host.getAttribute("data-playing")], ["Play", "false", "false"]);
@@ -553,6 +555,37 @@ test(", and . move the readout's request number by exactly one, to that request 
   assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [0.65, "req 1"], ", from 0.65 stays at 0.65: request 0 is never un-poured");
 });
 
+test("the Follow chip: auto by default; moving the camera during a run makes it manual; the chip or f asks for it again", () => {
+  const { pb, tr, follow, follows, starts, frame, frames } = transportFixture();
+  const chip = () => [follow.getAttribute("aria-pressed"), follow.textContent, tr.follow, tr.forced];
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false]);
+  assert.equal(follow.getAttribute("title"), "The camera follows the playhead · f");
+  tr.userCamera();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "panning while paused leaves Follow alone");
+  tr.seek(100.65);
+  tr.play();
+  assert.deepEqual(starts, [100.65], "a run starts once");
+  frame(16);
+  tr.play();
+  assert.deepEqual(starts, [100.65], "play while playing is not a new run");
+  tr.userCamera();
+  assert.deepEqual(chip(), ["false", "Follow manual", "manual", false]);
+  assert.deepEqual(follows, ["manual"]);
+  tr.pause(); tr.play();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "a new run follows again");
+  tr.userCamera();
+  follow.dispatch("click");
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", true], "asked for: it follows at the overview too");
+  follow.dispatch("click");
+  assert.deepEqual(chip(), ["false", "Follow manual", "manual", false], "turned off");
+  tr.pause(); tr.play();
+  assert.equal(tr.follow, "manual", "off stays off across runs");
+  tr.toggleFollow();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", true]);
+  assert.deepEqual(follows, ["manual", "manual", "auto", "manual", "auto"]);
+  assert.ok(frames.size <= 1);
+});
+
 // ---------- where Space plays ----------
 const { createPalette } = await import("../palette.js");
 
@@ -584,7 +617,7 @@ function spacePage() {
   const calls = [];
   const act = name => (...a) => shown && void calls.push([name, ...a].join(" "));
   const palette = createPalette({ state: () => ({}), A: {}, overview() {}, selectLens() {}, moveRequest() {}, getText: async () => ({ text: "" }), finder: () => null,
-    playback: { toggle: act("toggle"), step: act("step"), slower: act("slower"), faster: act("faster") } });
+    playback: { toggle: act("toggle"), step: act("step"), slower: act("slower"), faster: act("faster"), follow: act("follow") } });
   palette.setTrace({ agents: [agent] });
   // One keydown through the palette's handler: [handled, prevented, what playback did].
   const press = (target, key = " ", mods = {}) => {
@@ -604,12 +637,15 @@ test("Space plays from the page, the landscape and the scrub; a reader, the pane
     assert.deepEqual(p.press(target), [true, true, "toggle"], `Space on ${where} plays`);
   }
   const keeps = [["the call reader", p.reader], ["the panel", p.panel], ["the 2D view", p.flat], ["the play button (it presses itself)", play], ["the speed button", speed],
-    ["a landscape label button", p.label], ...p.fields.map(f => [`${f.tagName} ${f.getAttribute("type") || f.getAttribute("contenteditable") || ""}`, f]),
+    ["the Follow chip", p.tr.controls.follow], ["a landscape label button", p.label], ...p.fields.map(f => [`${f.tagName} ${f.getAttribute("type") || f.getAttribute("contenteditable") || ""}`, f]),
     ...p.controls.map(c => [`${c.tagName} ${c.getAttribute("role") || ""}`, c])];
   for (const [where, target] of keeps) assert.deepEqual(p.press(target), [false, false, ""], `Space on ${where} is left to it, not prevented`);
   // The scrub still answers the other playback keys; other fields and range inputs do not.
   assert.deepEqual(p.press(scrub, ","), [true, true, "step -1"]);
   assert.deepEqual(p.press(scrub, ">", { shiftKey: true }), [true, true, "faster"]);
+  assert.deepEqual(p.press(scrub, "f"), [true, true, "follow"]);
+  assert.deepEqual(p.press(p.body, "f"), [true, true, "follow"]);
+  assert.deepEqual(p.press(p.fields[0], "f"), [false, false, ""], "typing an f is typing");
   assert.deepEqual(p.press(scrub, "Home"), [false, false, ""], "Home stays with the range");
   assert.deepEqual(p.press(p.fields[0], ","), [false, false, ""], "typing a comma is typing");
   assert.deepEqual(p.press(p.fields[1], "."), [false, false, ""], "the request slider keeps its keys");
@@ -620,7 +656,7 @@ test("Space plays from the page, the landscape and the scrub; a reader, the pane
 test("while the transport is hidden, playback keys decline and the page keeps them unprevented", () => {
   const p = spacePage();
   p.hide(true);
-  for (const [key, mods] of [[" ", {}], [",", {}], [".", {}], ["<", { shiftKey: true }], [">", { shiftKey: true }]]) {
+  for (const [key, mods] of [[" ", {}], [",", {}], [".", {}], ["<", { shiftKey: true }], [">", { shiftKey: true }], ["f", {}]]) {
     for (const target of [p.body, p.canvas]) assert.deepEqual(p.press(target, key, mods), [false, false, ""], `"${key}" with the transport hidden`);
   }
   p.hide(false);

@@ -9,6 +9,9 @@ import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLands
 import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
 import { createTransport, playheadForRequest } from "./transport.js";
+import { buildEvents, nextShot, agentPAt } from "./director.js";
+import { createGeometry } from "./landscape-geometry.js";
+import { mapDetail } from "./scene-rules.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -29,6 +32,7 @@ let pasteRoot = null; // the thread or session id from the paste box, sent as th
 // The playback transport (transport.js). Its clock lives outside S: playing never calls set(), and
 // each history entry carries the playhead's P beside the view.
 let transport = null;
+let dir = null;       // the playback director's per-session state (direct() below)
 
 // ---------- loader ----------
 setupLoader();
@@ -84,6 +88,7 @@ function backToLoader() {
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
   transport?.load(null);
   $("#playback").hidden = true;
+  dir = null;
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -264,6 +269,7 @@ async function switchSession(root) {
     const trace = await parseInWorker(lastFiles, root);
     transport?.load(null);
     $("#playback").hidden = true;
+    dir = null;
     scene?.dispose();
     scene = null;
     Object.assign(S, { level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -550,14 +556,20 @@ async function start(trace) {
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
   // the speed rides along so the scene can skip sweep labels at 16 requests a second and faster
-  transport ||= createTransport($("#playback"), { onPlayhead: p => scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }) });
+  transport ||= createTransport($("#playback"), {
+    onPlayhead: p => { scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }); direct(p); },
+    onStart: playFromMap,
+    onFollow: () => { if (dir) { dir.prev = null; dir.prevCutX = null; } }
+  });
   transport.load(playbackFor(S.layout));
+  dir = null;
   palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
     playback: {
       toggle: () => playbackShown() && transport.toggle(),
       step: d => playbackShown() && transport.step(d),
       slower: () => playbackShown() && transport.slower(),
-      faster: () => playbackShown() && transport.faster()
+      faster: () => playbackShown() && transport.faster(),
+      follow: () => playbackShown() && transport.toggleFollow()
     } });
   palette.setTrace(S.trace);
   window.__trace = { S, set, transport };
@@ -617,6 +629,7 @@ async function setMode(mode) {
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
         if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false, sweep: null });
+        scene.onUserCamera?.(() => transport.userCamera());
       }
     } catch (e) {
       console.warn("3D view unavailable, using the 2D view", e);
@@ -762,6 +775,48 @@ function showPlayback() {
   $("#playback").hidden = !on;
 }
 function playbackShown() { return !$("#playback").hidden; }
+// Playing from an inspection (a request's core, an agent's requests) goes back to the map at that request,
+// where the landscape plays. On the map the camera stays where the user put it.
+function playFromMap() {
+  if (S.mode !== "3d" || !scene || isLandscape(S) || !S.agent?.requests[S.reqIdx]) return;
+  set({ mapPinned: true, level: 2, agentId: S.agentId, reqIdx: S.reqIdx, stratum: null, block: null, inspector: null, callIndex: null }, { locate: true, reveal: true });
+}
+
+// ---------- the director (director.js) ----------
+// Built on a session's first run: the landscape's placement and its events (the scene's own list when it
+// offers one). prev is the last shot; level and span are the map zoom the run started at, so the
+// director's own framing never changes the level it works at. Nothing here allocates per tick but the
+// shots the director returns.
+function direct(p) {
+  if (!scene || S.mode !== "3d") return;
+  if (!p.playing) { if (dir) { dir.prev = null; dir.prevCutX = null; } return; }
+  const pb = transport.playback;
+  if (!dir) {
+    const geom = createGeometry({ trace: S.trace, layout: S.layout });
+    dir = { geom, events: scene.getEvents?.() || buildEvents(S.layout, geom), prev: null, prevCutX: null, level: 0, span: 0,
+      lead: { agentId: null, P: 0, x: 0, z: 0, yTop: 0 }, state: {} };
+  }
+  const d = dir, g = d.geom, s = d.state, root = S.layout.root, cutX = g.W * pb.xAt(p.P);
+  if (d.prevCutX == null) { // a run starts, or Follow was asked for again: the zoom to follow at
+    const v = scene.getView();
+    const dist = Math.hypot(v.position[0] - v.target[0], v.position[1] - v.target[1], v.position[2] - v.target[2]);
+    const zoom = v.zoom * v.overviewDistance / Math.max(1e-6, dist);
+    d.level = mapDetail(zoom).level;
+    d.span = g.W / Math.max(1e-6, zoom);
+  }
+  // The leading column: the focused subagent's ridge when one is focused (as the scene's grains are), else the main thread's.
+  const agent = S.agent?.kind === "subagent" && g.rowZ.has(S.agent.id) ? S.agent : root;
+  const aP = agent === root ? p.P : agentPAt(g, agent, cutX), i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(aP)));
+  const lead = d.lead;
+  lead.agentId = agent.id; lead.P = aP; lead.x = cutX; lead.z = g.z(agent, i); lead.yTop = g.crest(agent, i);
+  const landscape = isLandscape(S);
+  s.P = p.P; s.playing = true; s.speed = pb.speed; s.n = pb.n; s.W = g.W; s.cutX = cutX; s.prevCutX = d.prevCutX ?? cutX;
+  s.level = landscape ? d.level : 0; s.override = transport.follow === "manual"; s.forced = landscape && transport.forced;
+  s.lead = lead; s.events = d.events; s.span = d.span; s.leadFx = scene.leadScreenX?.();
+  d.prevCutX = cutX;
+  const shot = nextShot(s, d.prev, performance.now());
+  if (shot) { d.prev = shot; scene.setDirectorShot?.(shot); }
+}
 // The transport sits on the bottom row, centred between the minimap and the view controls; where that
 // row is too narrow it sits above the minimap. Phones: full width, above the stacked bottom controls.
 function placePlayback() {

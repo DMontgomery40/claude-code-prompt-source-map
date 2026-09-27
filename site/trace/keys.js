@@ -24,7 +24,8 @@ export const KEYS = [
   { id: "stepBack", group: "Playback", keys: [","], label: "Previous request", command: "Previous request", detail: "Playback", bind: { ",": -1 } },
   { id: "stepOn", group: "Playback", keys: ["."], label: "Next request", command: "Next request", detail: "Playback", bind: { ".": 1 } },
   { id: "slower", group: "Playback", keys: ["<"], label: "Slower", command: "Slower", detail: "Playback", bind: { "<": -1 } },
-  { id: "faster", group: "Playback", keys: [">"], label: "Faster", command: "Faster", detail: "Playback", bind: { ">": 1 } }
+  { id: "faster", group: "Playback", keys: [">"], label: "Faster", command: "Faster", detail: "Playback", bind: { ">": 1 } },
+  { id: "follow", group: "Playback", keys: ["f"], label: "Camera follows the playhead, or stops following", command: "Follow the playhead", detail: "Playback", bind: { f: 0 } }
 ];
 
 const BY_KEY = new Map();
