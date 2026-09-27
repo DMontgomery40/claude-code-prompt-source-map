@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-const { DIRECTOR, buildEvents, nextShot, agentPAt } = await import("../director.js");
+const { DIRECTOR, buildEvents, nextShot, agentPAt, followLatch } = await import("../director.js");
 const { buildLayout } = await import("../minimap.js");
 const { createGeometry } = await import("../landscape-geometry.js");
 
@@ -207,6 +207,37 @@ test("every shot carries the zoom the director engaged at; a new engage carries 
   assert.deepEqual([f.kind, f.followZoom], ["follow", 3.7], "re-engaged after the user zoomed: the new zoom");
   // The follow box is the bare column top (not padded); the anchor places `target`.
   assert.deepEqual([f.box.x0, f.box.x1, f.box.yTop, f.target], [21, 21, 20, [21, 20, 0]]);
+});
+
+// The app's lifecycle around followLatch: a run reads the camera's zoom only if something other than the
+// director moved it since the last read.
+test("the zoom a run follows at is the user's: a spawns pull-back and a pause do not change it; the user's wheel does", () => {
+  let camera = 3.2, moved = true, reads = 0;
+  const read = () => { reads++; return camera; };
+  let latch = followLatch(null, moved, read); moved = false;
+  assert.deepEqual([latch.zoom, latch.level, reads], [3.2, 2, 1], "the first run reads the user's zoom (Requests)");
+  const ev = sorted([spawn(20, "a", 5)]);
+  const run1 = play(ev, 19.5, 800, { zoom: latch.zoom, level: latch.level });
+  assert.deepEqual(kinds(run1), ["follow", "spawns"]);
+  camera = 1.5; // the spawns box pulls the camera out; the director moved it, so nothing marks it moved
+  // pause, scrub a little, play again: the latch stands, and the director follows at Requests, not "none"
+  latch = followLatch(latch, moved, read);
+  assert.deepEqual([latch.zoom, latch.level, reads], [3.2, 2, 1]);
+  const run2 = play(ev, 23, 300, { zoom: latch.zoom, level: latch.level });
+  assert.deepEqual([run2.shots[0].shot.kind, run2.shots[0].shot.followZoom], ["follow", 3.2]);
+  assert.equal(nextShot(state(ev, 23, { zoom: 1.5, level: 0 }), null, 0).kind, "none", "what latching the pulled-back camera would have done");
+  // the user wheels in: the next run reads again
+  camera = 5.8; moved = true;
+  latch = followLatch(latch, moved, read); moved = false;
+  assert.deepEqual([latch.zoom, latch.level, reads], [5.8, 3, 2]);
+  assert.equal(play(ev, 23, 100, { zoom: latch.zoom, level: latch.level }).shots[0].shot.followZoom, 5.8);
+});
+
+test("a tick with no finite cut moves nothing and leaves the next ticks sound", () => {
+  const ev = sorted([spawn(20, "a")]);
+  const f = nextShot(state(ev, 19.9), null, 0);
+  assert.equal(nextShot(state(ev, NaN, { prevCutX: 19.9, lead: { agentId: "root", P: NaN, x: NaN, z: 0, yTop: 20 } }), f, 16), null);
+  assert.equal(nextShot(state(ev, 20.05, { prevCutX: 19.9 }), f, 32).kind, "spawns", "the spawn after it is still found");
 });
 
 test("rule 9: the same inputs give the same shots", () => {

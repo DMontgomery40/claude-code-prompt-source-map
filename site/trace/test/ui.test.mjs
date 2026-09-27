@@ -595,7 +595,12 @@ test("the Follow chip: auto by default; moving the camera during a run makes it 
   assert.equal(tr.follow, "manual", "off stays off across runs");
   tr.toggleFollow();
   assert.deepEqual(chip(), ["true", "Follow auto", "auto", true]);
-  assert.deepEqual(follows, ["manual", "manual", "auto", "manual", "auto"]);
+  tr.pause();
+  tr.userCamera();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "the user took the camera: no longer asked to follow at the overview");
+  tr.toggleFollow(); tr.toggleFollow();
+  assert.equal(tr.forced, true);
+  assert.deepEqual(follows, ["manual", "manual", "auto", "manual", "auto", "manual", "auto"]);
   assert.ok(frames.size <= 1);
 });
 

@@ -140,7 +140,9 @@ export function createTransport(host, { onPlayhead = () => {}, onStart = () => {
       onFollow(api.follow);
     },
     // The user moved the camera: while playing, the director lets go until Follow is asked for again.
+    // Either way an earlier "follow at the overview too" no longer holds.
     userCamera() {
+      forced = false;
       if (!pb?.playing || off || held) return;
       held = true;
       syncFollow();

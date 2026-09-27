@@ -12,6 +12,8 @@
 // nextShot returns a new shot (move the camera), the current shot with the same id and new fields (the
 // box grew or the hold changed: retarget without restarting the ease), or null (leave the camera).
 
+import { mapDetail } from "./scene-rules.js";
+
 export const DIRECTOR = {
   anchor: [0.42, 0.35], // the leading column's top: 42% across (the past left, the ghost future right)
   deadBand: 0.08,       // follow moves only when the column drifts this far (fraction of the width)
@@ -20,6 +22,17 @@ export const DIRECTOR = {
   spawnHold: 2500, returnHold: 1500, release: 500,
   pad: 0.12, minHalf: 1.5, cap: 12, fast: 16, waitFactor: 3
 };
+
+// ---------- the zoom a run follows at ----------
+// The camera's map zoom (camera.zoom · overviewDistance / orbit distance), read as a run starts or Follow
+// is asked for again, but only when the camera has moved by other hands than the director's since the
+// last read (or nothing was read yet); otherwise the last read stands. So a pause after the director
+// pulled back for a spawns group never makes that pulled-back zoom, or its level, the one it follows at.
+export function followLatch(latch, moved, readZoom) {
+  if (latch && !moved) return latch;
+  const zoom = readZoom();
+  return { zoom, level: mapDetail(zoom).level };
+}
 
 // ---------- events (once per trace) ----------
 // Epoch starts, as the grain kernel reads them: a request whose context window starts after the
@@ -87,7 +100,7 @@ export function buildEvents(L, geom) {
     out.push({ kind: "ask", x: geom.x(root, ask.request), t: ask.t, rootReq: ask.request, z: 0, yTop: geom.crest(root, ask.request) });
   }
   out.push(...waitsOf(L, geom));
-  return out.sort((a, b) => a.x - b.x || a.t - b.t);
+  return out.filter(e => Number.isFinite(e.x)).sort((a, b) => a.x - b.x || a.t - b.t);
 }
 
 function waitsOf(L, geom) {
@@ -228,7 +241,7 @@ function follow(s, prev, now) {
 //   column), events (buildEvents or the scene's list) }. Rules 1-9 of the brief, in priority order.
 export function nextShot(s, prev, now) {
   const D = DIRECTOR;
-  if (!s.playing) return null;
+  if (!s.playing || !Number.isFinite(s.cutX) || !Number.isFinite(s.lead?.x)) return null; // a bad tick moves nothing and poisons nothing
   // 1. the user's camera wins; the overview stays still unless Follow was asked for
   if (s.override) return prev?.kind === "manual" ? null : make("manual", "manual", s, now, prev, { ease: 0 });
   if (!s.forced && !(s.level >= 1)) return prev?.kind === "none" ? null : make("none", "none", s, now, prev, { ease: 0 });
