@@ -475,7 +475,10 @@ export function heroFacts(model, p) {
   const kind = p.where ? whereKind(p.where) : null;
   const at = p.where ? (kind === "source" ? `${p.where.key}${Number.isFinite(p.where.pos) ? `:${p.where.pos}` : ""}` : `${p.where.key ?? p.where.shelf}${Number.isFinite(p.where.pos) ? ` @ ${num(p.where.pos)}` : ""}`) : "";
   const title = p.record?.title || p.record?.page || "";
-  const codeLit = { state: "lit", title: `SHIPPED CODE · ${PLACE_CAPS[kind] || PLACE_CAPS.binary}`, text: at };
+  // The location in lines of its own: the file, then the offset or line, exactly; the folder as a quiet context line.
+  const w = p.where, file = w ? String(w.key ?? w.shelf ?? "") : "", base = file.split("/").pop(), dir = file.slice(0, file.length - base.length);
+  const big = !w ? [] : kind === "source" ? (Number.isFinite(w.pos) ? [`${base}:${w.pos}`] : [base]) : Number.isFinite(w.pos) ? [base, `@ ${num(w.pos)}`] : [base];
+  const codeLit = { state: "lit", title: `SHIPPED CODE · ${PLACE_CAPS[kind] || PLACE_CAPS.binary}`, text: at, big, context: dir ? `in ${dir}` : "" };
   const codeDark = text => ({ state: "dark", title: "SHIPPED CODE", text });
   const libDark = text => ({ state: "dark", title: `LIBRARY · ${lib}`, text });
   let library, code;
@@ -498,7 +501,8 @@ export function heroFacts(model, p) {
   return { library, code, readout, didNot, words, label: `${sameName ? "" : `${p.name} · `}${trigWord(p.trigger)} (observed)`, cls: RUNG_CLASS[p.rung] || "linked" };
 }
 export const HERO_PANEL = { w: 16, h: 6.8, y: 3.9, z: -1.4, tilt: -0.1 };
-const HP = HERO_PANEL, SOCK = { x: -6.75, lib: 0.25, code: -1.75 }, GRID = { x0: -0.55, x1: 7.4, y0: -2.75, y1: 0.05 }, SPEC = { x0: -7.5, x1: 7.5, y0: 1.3, y1: 3.05 };
+export const heroLocation = facts => facts.code.big?.length ? facts.code.big : [facts.code.text];
+const HP = HERO_PANEL, SOCK = { x: -6.75, lib: 0.45, code: -1.3 }, GRID = { x0: -0.55, x1: 7.4, y0: -2.75, y1: 0.05 }, SPEC = { x0: -7.5, x1: 7.5, y0: 1.3, y1: 3.05 };
 const LIT = { lit: 0xdfe8f2, amber: 0xf2a93a, typed: 0xd8bc82, paper: 0xe6ebf1 };
 export function buildHero(L, p, facts, SEL) {
   const g = new THREE.Group(); g.name = "hv:hero";
@@ -543,7 +547,7 @@ export function buildHero(L, p, facts, SEL) {
   const tw = Math.max(0.035, Math.min(0.09, (GRID.x1 - GRID.x0) / 400)), th = Math.max(0.018, rowH * 0.8);
   p.ev.forEach(([ai, t], k) => { _m.compose(new THREE.Vector3(tx(t), rowY(L.rank.get(ai)), 0.19), _q, new THREE.Vector3(tw, th, 0.04)); ticks.setMatrixAt(k, _m); });
   ticks.count = p.ev.length; ticks.name = "hv:hero-ticks"; g.add(ticks);
-  g.userData = { facts, rowH, rows: NA, face };
+  g.userData = { facts, rowH, rows: NA, face, piece: p, tx, rowY: ai => rowY(L.rank.get(ai)), tw, th };
   return g;
 }
 
@@ -558,7 +562,8 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 300);
   let model = null, trace = null, L = null, board = null, racks = [], hero = null, words = null;
   let preset = "session", sel = null, focusAgent = null, picked = null, rackKey = null, shown = false, pending = false, tween = null, disposed = false;
-  let heroG = null;
+  let heroG = null, pickedP = null, lastRack = null;   // pickedP: the piece a pick put on the instrument (the "piece" preset)
+  const INSTR = new Set(["hero", "piece"]);
   let deferred = null, frames = 0, flowUntil = 0, hoverAt = null, hoverQueued = false, rackScroll = 0;
   // A pick sends light down its wire and out to the agents that got it, for a few seconds, then the layer is still again.
   const startFlow = () => { flowUntil = performance.now() + 6500; requestRender(); };   // deferred: Trace's latest selection while hidden, applied on show()
@@ -642,7 +647,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const [, fh] = size(), ins = insets(), capBottom = caption ? caption.offsetTop + caption.offsetHeight : ins.top;
     const [fw] = size();
     const free = { v: fh > 0 ? (fh - capBottom - camBottom(ins)) / fh : 1, h: fw > 0 ? (fw - ins.right - 60) / fw : 1, aspect: fw > 0 && fh > 0 ? fw / fh : 16 / 9 };
-    const c = RACKED.has(name) ? fitRacks(name, racks, free, rackScroll, visibleRows()) : name === "hero" && heroG ? fitPanel(free) : PRESETS[name] || PRESETS.session;
+    const c = RACKED.has(name) ? fitRacks(name, racks, free, rackScroll, visibleRows()) : INSTR.has(name) && heroG ? fitPanel(free) : PRESETS[name] || PRESETS.session;
     const to = { p: new THREE.Vector3(...c.p), t: new THREE.Vector3(...c.t), fov: c.fov };
     if (instant || !controls) { camera.position.copy(to.p); (controls?.target || new THREE.Vector3()).copy(to.t); camera.lookAt(to.t); camera.fov = to.fov; applyCamera(c); controls?.update(); return; }
     tween = { from: { p: camera.position.clone(), t: controls.target.clone(), fov: camera.fov }, to, t0: performance.now(), dur: 1200 };
@@ -747,15 +752,33 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     g.font = `500 ${0.44 * S}px ${sans}`; g.fillStyle = "#eef1f5";
     wrap(`“${facts.words}”`, SPEC.x1 - SPEC.x0 - 0.7, 2).forEach((line, k) => g.fillText(line, X(SPEC.x0 + 0.3), Y(SPEC.y1 - 0.85 - k * 0.56)));
     // where it comes from
-    g.font = `500 ${0.17 * S}px ${mono}`; g.fillStyle = ink(0.42); g.fillText("WHERE THIS TEXT LIVES", X(SOCK.x - 0.45), Y(SOCK.lib + 0.8));
+    g.font = `500 ${0.17 * S}px ${mono}`; g.fillStyle = ink(0.42); g.fillText("WHERE THIS TEXT LIVES", X(SOCK.x - 0.45), Y(SOCK.lib + 0.68));
     for (const [key, y] of [["library", SOCK.lib], ["code", SOCK.code]]) {
       const f = facts[key], lit = f.state !== "dark", tx0 = SOCK.x + 0.68, maxW = GRID.x0 - 0.5 - tx0;
-      g.font = `500 ${0.2 * S}px ${mono}`; g.fillStyle = ink(0.6); g.fillText(clip(f.title.toUpperCase(), maxW), X(tx0), Y(y + 0.3));
+      g.font = `500 ${0.2 * S}px ${mono}`; g.fillStyle = ink(0.6); g.fillText(clip(f.title.toUpperCase(), maxW), X(tx0), Y(y + 0.28));
       const hot = lit ? "#eef1f5" : key === "library" || f.text.startsWith("not found") ? "#ff6a4d" : ink(0.5);
-      const sz = fit(f.text, `600 SZpx ${mono}`, 0.36, 0.22, maxW); g.font = `600 ${sz * S}px ${mono}`; g.fillStyle = hot;
-      const lines = g.measureText(f.text).width > maxW * S ? wrap(f.text, maxW, 2) : [f.text];
-      lines.forEach((line, k) => g.fillText(line, X(tx0), Y(y - 0.08 - k * (sz + 0.06))));
-      if (f.sub) { g.font = `400 ${0.17 * S}px ${sans}`; g.fillStyle = ink(0.55); g.fillText(clip(f.sub, maxW), X(tx0), Y(y - 0.08 - lines.length * (sz + 0.06) - 0.06)); }
+      // A place (file, offset or line) is set big on lines of its own so its digits survive small screens; a long
+      // file name is shortened in the middle, never its numbers.
+      const lines = f.big?.length ? f.big : null;
+      let sz, out;
+      if (lines) {
+        sz = Math.min(...lines.map(l => fit(l, `650 SZpx ${mono}`, 0.46, 0.34, maxW)));
+        g.font = `650 ${sz * S}px ${mono}`;
+        const midClip = l => {   // shorten a long file name in the middle; its ":line" tail and every digit stay
+          if (g.measureText(l).width <= maxW * S) return l;
+          const tail = (/(:\d+|@ [\d,]+)$/.exec(l) || [""])[0], head = l.slice(0, l.length - tail.length);
+          for (let cut = 1; cut < head.length - 4; cut++) { const a = Math.ceil((head.length - cut) / 2), t = head.slice(0, a) + "…" + head.slice(a + cut) + tail; if (g.measureText(t).width <= maxW * S) return t; }
+          return head.slice(0, 3) + "…" + tail;
+        };
+        out = lines.map(midClip);
+      } else {
+        sz = fit(f.text, `600 SZpx ${mono}`, 0.36, 0.22, maxW); g.font = `600 ${sz * S}px ${mono}`;
+        out = g.measureText(f.text).width > maxW * S ? wrap(f.text, maxW, 2) : [f.text];
+      }
+      g.fillStyle = hot; out.forEach((line, k) => g.fillText(line, X(tx0), Y(y - 0.12 - k * (sz + 0.08))));
+      const below = y - 0.12 - out.length * (sz + 0.08) - 0.04;
+      if (f.context) { g.font = `400 ${0.18 * S}px ${mono}`; g.fillStyle = ink(0.5); g.fillText(clip(f.context, maxW), X(tx0), Y(below)); }
+      if (f.sub) { g.font = `400 ${0.18 * S}px ${sans}`; g.fillStyle = ink(0.55); g.fillText(clip(f.sub, maxW), X(tx0), Y(below)); }
     }
     // who got it, and when
     g.font = `650 ${0.52 * S}px ${sans}`; g.fillStyle = "#eef1f5"; g.fillText(clip(facts.readout.big, GRID.x1 - GRID.x0), X(GRID.x0), Y(GRID.y1 + 0.76));
@@ -770,6 +793,21 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (facts.didNot) { g.font = `500 ${0.16 * S}px ${mono}`; g.fillStyle = ink(0.58); g.fillText(clip(facts.didNot, GRID.x1 - GRID.x0), X(GRID.x0), Y(GRID.y0 - 0.5)); }
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16;
     return t;
+  }
+  function instrumentFor(p) {
+    if (!p || heroG?.userData.piece === p) return;
+    if (heroG) { heroG.removeFromParent(); heroG.traverse(o => { o.geometry?.dispose(); o.material?.map?.dispose?.(); }); }
+    const facts = heroFacts(model, p); heroG = buildHero(L, p, facts, SEL); heroG.visible = false; scene.add(heroG);
+    if (root) { const t = heroFace(facts, p), mat = heroG.userData.face.material; mat.map = t; mat.emissiveMap = t; mat.emissive = new THREE.Color(0xffffff); mat.emissiveIntensity = 0.6; mat.color.set(0xffffff); mat.needsUpdate = true; }
+  }
+  // The copy open in Trace's reader, marked on the instrument's rows (c / shift-C walk these).
+  function markCopy(ai, block) {
+    heroG?.getObjectByName("hv:hero-copy")?.removeFromParent();
+    const u = heroG?.userData, p = u?.piece; if (!p || ai == null || block == null) return;
+    const k = (p.blocks || []).findIndex(b => b[0] === ai && b[1] === block), e = k >= 0 && p.ev.length === p.blocks.length ? p.ev[k] : p.ev.find(v => v[0] === ai);
+    if (!e) return;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(u.tw * 2.6, Math.max(0.12, u.th * 2.2), 0.05), new THREE.MeshStandardMaterial({ color: 0x0b0e12, emissive: 0xffffff, emissiveIntensity: 2.2, transparent: true, opacity: 0.85 }));
+    m.position.set(u.tx(e[1]), u.rowY(e[0]), 0.22); m.name = "hv:hero-copy"; heroG.add(m); requestRender();
   }
   function fitPanel(free) {
     const c = PRESETS.hero, center = new THREE.Vector3(0, HP.y, HP.z), dir = new THREE.Vector3(-0.14, 0.2, 1).normalize();
@@ -872,6 +910,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const r = racks[0]?.userData.rack, an = ai => esc(model.agents[ai]?.kind === "root" ? "main thread" : model.agents[ai]?.name ?? "");
     const text = {
       hero: hero ? `<p class="hv-kicker">The least-explained harness text in this session · click the panel to read it in full</p>` : "",
+      piece: pickedP ? `<p class="hv-kicker">Picked: ${esc(pickedP.name)} · <b>Hero</b> returns to the least-explained piece</p>` : "",
       session: `<h3>What the harness put in front of the model</h3><p>${esc(model.product)} ${esc(model.session.version ?? "")} · ${L.NA} agent${L.NA > 1 ? "s" : ""}. Each wire runs from where its text is anchored, through what put it there, to the agents that got it and when.</p>`,
       rack: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, assembled</h3><p>The harness pieces in this request, in the order they first arrived; repeats fold into one plate (×n).${walkHint()}</p>` : "",
       later: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, later in the session</h3><p>Pieces that events added since the first request carry a NEW tag.${walkHint()}</p>` : "",
@@ -879,6 +918,9 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       close: `<h3>Where it came from</h3><p>Terminals where each text is anchored. Amber wires hover over records Trace's own link misses.</p>`,
     }[preset] || "";
     caption.innerHTML = preset === "hero" ? text : text + `<div class="hv-stats">${stats}</div>`;
+    let pb = nav.querySelector('button[data-preset="piece"]');
+    if (pickedP && !pb) { pb = document.createElement("button"); pb.type = "button"; pb.dataset.preset = "piece"; pb.onclick = () => setPreset("piece"); nav.insertBefore(pb, nav.children[1] || null); }
+    if (pb) { pb.hidden = !pickedP; pb.textContent = pickedP ? `Picked: ${pickedP.name.length > 22 ? pickedP.name.slice(0, 21) + "…" : pickedP.name}` : ""; }
     for (const b of nav.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.preset === preset));
   }
   function walkHint() {
@@ -915,7 +957,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     });
     if (marks.instanceColor) marks.instanceColor.needsUpdate = true; marks.instanceMatrix.needsUpdate = true;
     for (const l of labs) { l.el.classList.toggle("sel", sel === l.p); l.el.classList.toggle("dim", !!sel && sel !== l.p); l.el.dataset.cls = l.p.cls; }
-    showCard(preset === "hero" ? null : sel);   // the hero's callouts already say where, what, who and when
+    showCard(INSTR.has(preset) ? null : sel);   // the hero's callouts already say where, what, who and when
     requestRender();
   }
   // Which copy to open: the one in the rack clicked, else the one the selected agent got, else the first.
@@ -925,10 +967,12 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     return (focusAgent != null && bl.find(b => b[0] === focusAgent)) || bl[0] || null;
   }
   function pick(p, at) {
-    sel = p || null; paint();
-    if (!p) return;
-    startFlow();
-    const d = delivery(p, at); if (!d) return;
+    sel = p || null;
+    if (!p) { paint(); return; }
+    const d = delivery(p, at);
+    if (!(INSTR.has(preset) && heroG?.userData.piece === p)) { pickedP = p; setPreset("piece").then(() => d && markCopy(d[0], d[1])); }
+    else { paint(); startFlow(); if (d) markCopy(d[0], d[1]); }
+    if (!d) return;
     picked = d;
     onPick(model.agents[d[0]].id, d[1]);
   }
@@ -952,10 +996,10 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     tip.style.left = `${Math.min(e.clientX - rr.left + 14, rr.width - insets().right - 340)}px`; tip.style.top = `${e.clientY - rr.top + 14}px`; tip.hidden = false;
   }
   function onCanvasClick(e) {
-    if (preset === "hero" && heroG && hero) {   // a click on the instrument opens the hero's text in the reader
+    if (INSTR.has(preset) && heroG) {   // a click on the instrument opens its piece's text in the reader
       const r = canvas.getBoundingClientRect(), ray = new THREE.Raycaster();
       ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
-      if (ray.intersectObject(heroG, true)[0]) pick(hero);
+      if (ray.intersectObject(heroG, true)[0]) pick(heroG.userData.piece);
       return;
     }
     const r = canvas.getBoundingClientRect(), ndc = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
@@ -977,11 +1021,12 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   }
   async function setPreset(name, { agent = null, req = null, instant = false } = {}) {
     if (!model) return;
-    preset = PRESET_NAMES.includes(name) ? name : "session";
+    if (rackKey && !RACKED.has(name)) lastRack = rackKey;
+    preset = PRESET_NAMES.includes(name) || (name === "piece" && pickedP) ? name : "session";
     clearRacks(); sel = null; rackScroll = 0; if (root) measureChrome();
     if (controls) controls.enableZoom = !RACKED.has(preset);
     const rootAi = Math.max(0, model.agents.findIndex(a => a.kind === "root"));
-    if (preset === "rack") { rackKey = [agent ?? focusAgent ?? rootAi, req ?? 0]; await showRack(rackKey[0], rackKey[1]); }
+    if (preset === "rack") { rackKey = agent == null && req == null && lastRack ? lastRack : [agent ?? focusAgent ?? rootAi, req ?? 0]; await showRack(rackKey[0], rackKey[1]); }
     else rackKey = null;
     if (preset === "later") {
       const l = laterRequest(model, trace), rf = await getRackFor(), first = rf(model, trace, l.agent, 0);
@@ -991,14 +1036,15 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       const sub = compareAgent(model, trace, focusAgent);
       if (sub != null) { await showRack(rootAi, 0, { x0: -3.35, columns: 1, other: birthSet(model, trace, sub) }); await showRack(sub, 0, { x0: 3.35, columns: 1, other: birthSet(model, trace, rootAi) }); }
     }
-    if (preset === "hero" && hero) { sel = hero; startFlow(); }
-    board.visible = preset !== "hero"; if (heroG) heroG.visible = preset === "hero";
+    if (preset === "hero" && hero) { instrumentFor(hero); sel = hero; startFlow(); }
+    if (preset === "piece") { instrumentFor(pickedP); sel = pickedP; startFlow(); }
+    board.visible = !INSTR.has(preset); if (heroG) heroG.visible = INSTR.has(preset);
     if (preset === "close" && overlay) {
       const eye = new THREE.Vector3(...PRESETS.close.p);
       for (const p of L.P.filter(p => p.kind === "rail" && ["unnamed", "unlinked", "typed"].includes(p.cls)).sort((a, b) => a.end.distanceTo(eye) - b.end.distanceTo(eye)).slice(0, 5))
         callout(`${esc(p.name.length > 34 ? p.name.slice(0, 32) + "…" : p.name)}<span class="m">${esc(p.rung === "binary-only" ? whereText(p) : `${words[p.rung]} · ${whereText(p)}`)}</span>`, p.end.clone().add(new THREE.Vector3(0, 0.3, 0)), CSS_COL[p.cls]);
     }
-    if (PRESETS[preset].dof && renderer) { await ensurePost(); const c = PRESETS[preset]; bokeh.uniforms.focus.value = new THREE.Vector3(...c.p).distanceTo(new THREE.Vector3(...c.t)) * (preset === "hero" ? 0.95 : 1); bokeh.uniforms.aperture.value = c.dof; }
+    if (PRESETS[preset]?.dof && renderer) { await ensurePost(); const c = PRESETS[preset]; bokeh.uniforms.focus.value = new THREE.Vector3(...c.p).distanceTo(new THREE.Vector3(...c.t)) * (preset === "hero" ? 0.95 : 1); bokeh.uniforms.aperture.value = c.dof; }
     setCaption();
     goCam(preset, instant);
     paint();
@@ -1011,10 +1057,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     L = layoutBoard(m); board = buildBoard(L, SEL); scene.add(board);
     const h = pickHero(m); hero = h ? L.byId.get(h.id) : null;
     if (heroG) { heroG.removeFromParent(); heroG.traverse(o => { o.geometry?.dispose(); }); heroG = null; }
-    if (hero) {
-      const facts = heroFacts(m, hero); heroG = buildHero(L, hero, facts, SEL); heroG.visible = false; scene.add(heroG);
-      if (root) { const t = heroFace(facts, hero), mat = heroG.userData.face.material; mat.map = t; mat.emissiveMap = t; mat.emissive = new THREE.Color(0xffffff); mat.emissiveIntensity = 0.6; mat.color.set(0xffffff); mat.needsUpdate = true; }
-    }
+    pickedP = null; instrumentFor(hero);
     silkscreen(); buildLabels();
     return setPreset(hero ? "hero" : "session", { instant: true });
   }
@@ -1031,11 +1074,15 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const ai = agentId == null ? -1 : model.agents.findIndex(a => a.id === agentId);
     focusAgent = ai >= 0 ? ai : null;
     if (picked && picked[0] === ai && picked[1] === block) { picked = null; return; }
+    const hit = block != null && ai >= 0 ? L.P.find(p => (p.blocks || []).some(b => b[0] === ai && b[1] === block)) : null;
+    if (hit) {
+      if (!(INSTR.has(preset) && heroG?.userData.piece === hit)) { pickedP = hit; await setPreset("piece"); }
+      if (level >= 2 && trace?.agents?.[ai]) lastRack = [ai, reqIdx];   // One request returns to this block's request
+      sel = hit; paint(); markCopy(ai, block); return;
+    }
     if (level >= 2 && ai >= 0) { if (preset !== "rack" || !rackKey || rackKey[0] !== ai || rackKey[1] !== reqIdx) await setPreset("rack", { agent: ai, req: reqIdx }); }
     else if (preset === "rack" || preset === "later" || preset === "compare") await setPreset("session");
-    const hit = block != null && ai >= 0 ? L.P.find(p => (p.blocks || []).some(b => b[0] === ai && b[1] === block)) : null;
-    if (hit) { sel = hit; paint(); }
-    else if (block == null) { sel = preset === "hero" ? hero : null; paint(); }   // the hero keeps its piece until Trace opens a block
+    if (block == null) { sel = preset === "hero" ? hero : preset === "piece" ? pickedP : null; paint(); }   // the hero keeps its piece until Trace opens a block
   }
   function playhead(minutes) {
     if (!board) return;
