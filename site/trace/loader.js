@@ -5,7 +5,7 @@
 // entries: [{ path, source }] where path is the dropped relative path (or an
 // absolute path in Node) and source is { name, size, slice(a, b) }.
 import { readFirstLine, prepareIndex } from "./model.js";
-import { isCodexFirstLine, parseCodexThread, buildCodexTrace } from "./adapters/codex.js";
+import { isCodexFirstLine, parseCodexThread, buildCodexTrace, codexMeta } from "./adapters/codex.js";
 import { isClaudeRow, parseClaudeFile, buildClaudeTrace } from "./adapters/claude-code.js";
 
 const stem = (p) => p.split("/").pop().replace(/\.jsonl$/, "");
@@ -19,9 +19,9 @@ const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 async function sniff(entry) {
   try {
     const first = JSON.parse(await readFirstLine(entry.source));
-    if (isCodexFirstLine(first)) return { product: "codex", meta: first.payload };
+    if (isCodexFirstLine(first)) return { product: "codex", meta: codexMeta(first.payload) };
     if (isClaudeRow(first) || SUB_PATH.test(entry.path)) return { product: "claude-code", row: first };
-  } catch { /* not a log we know */ }
+  } catch (error) { if (!(error instanceof SyntaxError)) throw error; /* not JSON */ }
   return null;
 }
 
@@ -117,9 +117,9 @@ async function codexHead(source) {
   const source_ = (/"thread_source"\s*:\s*"([^"]*)"/.exec(first) || [])[1] || null;
   if (parent || nl >= 0 || source_ === "user") return { parent, threadSource: source_, fullRead: false };
   try {
-    const p = JSON.parse(await readFirstLine(source)).payload || {};
+    const p = codexMeta(JSON.parse(await readFirstLine(source)).payload || {});
     return { parent: p.parent_thread_id || null, threadSource: p.thread_source || null, fullRead: true };
-  } catch { return null; }
+  } catch (error) { if (!(error instanceof SyntaxError)) throw error; return null; }
 }
 
 // Returns { session, found } for the hinted id, or null when the hint names no file.
@@ -161,42 +161,56 @@ export async function narrowByHint(entries, hint, onProgress = () => {}) {
   const start = uuid7Time(id) ?? (folderDay(cxRoot.path) != null ? folderDay(cxRoot.path) : null);
   const end = await lastTimestamp(cxRoot.source);
   const lo = start == null ? -Infinity : start - DAY;
-  const hi = end == null ? Infinity : end + DAY;
+  let hi = end == null ? Infinity : end + DAY;
   const inWindow = (e) => {
     const t = uuid7Time((baseName(e.path).match(UUID) || [])[0]);
     if (t != null) return t >= lo && t <= hi;
     const d = folderDay(e.path);
     return d == null ? true : d >= lo - DAY && d <= hi;
   };
-  const cands = jsonl.filter((e) => e !== cxRoot && /^rollout-/.test(baseName(e.path)) && inWindow(e));
-  report(0, cands.length);
-  const heads = new Map();
-  let n = 0, fullReads = 0;
-  for (const e of cands) {
-    const h = await codexHead(e.source);
-    if (h) { heads.set(e, h); if (h.fullRead) fullReads++; }
-    if (++n % 25 === 0) report(n, cands.length);
-  }
+  const candidates = jsonl.filter((e) => e !== cxRoot && /^rollout-/.test(baseName(e.path)));
+  const heads = new Map(), checked = new Set(), extended = new Set();
   const idOf = (e) => ((baseName(e.path).match(UUID) || [])[0] || "").toLowerCase();
-  const kids = new Map();
-  for (const e of cands) {
-    const h = heads.get(e);
-    if (!h || !h.parent) continue;
-    const p = h.parent.toLowerCase();
-    if (!kids.has(p)) kids.set(p, []);
-    kids.get(p).push(e);
+  let n = 0, fullReads = 0, fam = [];
+  // A child can keep working (and spawn grandchildren) after the root's last turn.
+  // Extend the search using only confirmed family members, never unrelated sessions.
+  for (;;) {
+    const batch = candidates.filter(e => !checked.has(e) && inWindow(e));
+    const batchTotal = n + batch.length;
+    report(n, batchTotal);
+    for (const e of batch) {
+      checked.add(e);
+      const h = await codexHead(e.source);
+      if (h) { heads.set(e, h); if (h.fullRead) fullReads++; }
+      if (++n % 25 === 0) report(n, batchTotal);
+    }
+    const kids = new Map();
+    for (const [e, h] of heads) {
+      if (!h.parent) continue;
+      const p = h.parent.toLowerCase();
+      if (!kids.has(p)) kids.set(p, []);
+      kids.get(p).push(e);
+    }
+    fam = [];
+    const seen = new Set();
+    const walk = e => { if (seen.has(e)) return; seen.add(e); fam.push(e); for (const k of kids.get(idOf(e) || id) || []) walk(k); };
+    walk(cxRoot);
+    const before = hi;
+    for (const e of fam.slice(1)) {
+      if (extended.has(e)) continue;
+      extended.add(e);
+      const t = await lastTimestamp(e.source);
+      if (t != null) hi = Math.max(hi, t + DAY);
+    }
+    if (hi === before) break;
   }
-  const fam = [];
-  const seen = new Set();
-  const walk = (e) => { if (seen.has(e)) return; seen.add(e); fam.push(e); for (const k of kids.get(idOf(e) || id) || []) walk(k); };
-  walk(cxRoot);
   const kinds = fam.slice(1).map((e) => (heads.get(e) || {}).threadSource);
   const session = { product: "codex", id, name: cxRoot.path, entries: fam, bytes: bytes(fam) };
   const found = {
     product: "codex", id, root: cxRoot.path, subagents: kinds.filter((k) => k !== "guardian_review").length, guardians: kinds.filter((k) => k === "guardian_review").length,
     files: fam.length, sniffed: n, fullReads, window: { from: Number.isFinite(lo) ? lo : null, to: Number.isFinite(hi) ? hi : null },
   };
-  report(n, cands.length, found);
+  report(n, n, found);
   return { session, found };
 }
 
@@ -224,6 +238,8 @@ export async function loadTrace(entries, { root = null, onProgress = () => {}, i
     if (!sessions.length) throw new Error("No Codex rollout or Claude Code transcript found in the dropped files.");
     pick = (root && sessions.find((s) => s.id === root || s.name.includes(root) || s.entries.some((e) => e.path.includes(root)))) || sessions.slice().sort((a, b) => b.bytes - a.bytes)[0];
   }
+  // Keep byte references stable while the source session continues to grow.
+  await Promise.all([...pick.entries, ...(pick.metas || []), ...(pick.toolResults || [])].map(e => e.source.snapshot?.()));
   const total = pick.entries.reduce((n, e) => n + e.source.size, 0);
   let done = 0;
   const files = [];

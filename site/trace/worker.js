@@ -41,6 +41,7 @@
 //     -> { type: "find-done", id, hits, truncated, cancelled, error? }
 //
 // Only the files the user dropped are read. No network requests.
+import { fileSource } from "./file-source.js";
 import { loadTrace } from "./loader.js";
 import { readRef } from "./model.js";
 import { findText } from "./find.js";
@@ -49,12 +50,6 @@ let sources = [];
 let index = null;
 let loaded = null; // the Trace the sources belong to, for find
 let findGen = 0;
-
-const fileSource = (file) => ({
-  name: file.name,
-  size: file.size,
-  async slice(a, b) { return new Uint8Array(await file.slice(a, b).arrayBuffer()); },
-});
 
 self.onmessage = async (e) => {
   const m = e.data || {};
@@ -66,7 +61,7 @@ self.onmessage = async (e) => {
       const entries = (m.files || []).map((f) => {
         const file = f instanceof Blob ? f : f.file;
         const path = (f instanceof Blob ? file.webkitRelativePath || file.name : f.path || file.webkitRelativePath || file.name).replace(/^\/+/, "");
-        return { path, source: fileSource(file) };
+        return { path, source: fileSource(file, f.handle, f.frozen) };
       });
       let last = 0;
       const { trace, sources: s } = await loadTrace(entries, {

@@ -3,6 +3,7 @@
 import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
+import { capturePickedFiles } from "./file-source.js";
 import { parsePaste } from "./paste.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
 import { createPalette } from "./palette.js";
@@ -197,6 +198,7 @@ function sendIndex() {
   return indexSent;
 }
 async function parseInWorker(files, root) {
+  files = await capturePickedFiles(files, root);
   await sendIndex();
   return new Promise((resolve, reject) => {
     pendingLoad = { resolve, reject };
@@ -350,18 +352,18 @@ async function openPasted(info, btn, hint, fresh = false) {
   const mem = !fresh && pickedRoots.get(info.product);
   if (mem) return holdsPaste(mem, info.id) ? loadFiles(narrowPicked(mem, info), info.id) : missingPaste(mem);
   if (typeof window.showDirectoryPicker === "function") {
-    let handle = fresh ? null : await storedHandle(info.product);
+    const previous = await storedHandle(info.product);
+    let handle = fresh ? null : previous;
     if (handle && !(await readPermission(handle))) handle = null;
     if (!handle) {
       copyRoot(info.product);
       copiedHint(hint, info.product);
       try {
-        handle = await window.showDirectoryPicker({ id: `trace-${info.product}`, mode: "read" });
+        handle = await window.showDirectoryPicker({ id: `trace-${info.product}`, mode: "read", ...(previous ? { startIn: previous } : {}) });
       } catch (e) {
         if (e && e.name === "AbortError") return;
         return showError(`The folder picker failed: ${e?.message || e}`);
       }
-      saveHandle(info.product, handle);
     }
     btn.disabled = true;
     setProgress(0, "Finding the session's files…");
@@ -371,6 +373,7 @@ async function openPasted(info, btn, hint, fresh = false) {
         btn.disabled = false;
         return missingPaste(files);
       }
+      await saveHandle(info.product, handle);
       return loadFiles(files, info.id);
     } catch (e) {
       btn.disabled = false;
@@ -409,7 +412,7 @@ async function filesFromHandle(root, info) {
   const child = async (dir, name, kind) => { try { return kind === "dir" ? await dir.getDirectoryHandle(name) : await dir.getFileHandle(name); } catch { return null; } };
   const walk = async (dir, prefix) => {
     for await (const [name, h] of dir.entries()) {
-      if (h.kind === "file") out.push({ path: `${prefix}${name}`, file: await h.getFile() });
+      if (h.kind === "file") out.push({ path: `${prefix}${name}`, file: await h.getFile(), handle: h });
       else await walk(h, `${prefix}${name}/`);
     }
   };
@@ -421,7 +424,7 @@ async function filesFromHandle(root, info) {
     const tryDir = async (dir, prefix) => {
       const f = await child(dir, `${info.id}.jsonl`, "file");
       if (!f) return false;
-      out.push({ path: `${prefix}${info.id}.jsonl`, file: await f.getFile() });
+      out.push({ path: `${prefix}${info.id}.jsonl`, file: await f.getFile(), handle: f });
       const folder = await child(dir, info.id, "dir");
       if (folder) await walk(folder, `${prefix}${info.id}/`);
       return true;
@@ -437,14 +440,14 @@ async function filesFromHandle(root, info) {
   const d = new Date(info.ms), day = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
   const num = s => (/^\d+$/.test(s) ? Number(s) : null);
   for await (const [y, yh] of base.entries()) {
-    if (yh.kind === "file" && /^rollout-.*\.jsonl$/.test(y)) { out.push({ path: y, file: await yh.getFile() }); continue; }
+    if (yh.kind === "file" && /^rollout-.*\.jsonl$/.test(y)) { out.push({ path: y, file: await yh.getFile(), handle: yh }); continue; }
     if (yh.kind !== "directory" || num(y) == null || num(y) < d.getFullYear()) continue;
     for await (const [m, mh] of yh.entries()) {
       if (mh.kind !== "directory" || num(m) == null || num(y) * 100 + num(m) < Math.floor(day / 100)) continue;
       for await (const [dd, dh] of mh.entries()) {
         if (dh.kind !== "directory" || num(dd) == null || num(y) * 10000 + num(m) * 100 + num(dd) < day) continue;
         for await (const [name, fh] of dh.entries()) {
-          if (fh.kind === "file" && /\.jsonl$/.test(name)) out.push({ path: `${y}/${m}/${dd}/${name}`, file: await fh.getFile() });
+          if (fh.kind === "file" && /\.jsonl$/.test(name)) out.push({ path: `${y}/${m}/${dd}/${name}`, file: await fh.getFile(), handle: fh });
         }
       }
     }

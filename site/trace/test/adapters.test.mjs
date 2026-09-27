@@ -531,3 +531,22 @@ test("worker API: load streams progress then a trace; text returns a block's lit
   assert.deepEqual([txt.id, txt.text], [7, CC_ASK]);
   delete globalThis.self;
 });
+
+test('codex: legacy token_count requests render once, and modern usage records stay authoritative', async () => {
+  const {parseCodexThread, buildCodexTrace}=await import('../adapters/codex.js');
+  const memorySource=text=>{const bytes=new TextEncoder().encode(text);return {name:'test.jsonl',size:bytes.length,async slice(a,b){return bytes.slice(a,b);}};}
+  for(const modern of [false,true]){
+    const list=[{type:'session_meta',payload:{id:CODEX.root,source:'cli'}},msg('user',['hello'],[])];
+    for(let i=1;i<=3;i++){
+      list.push(msg('assistant',['answer '+i],[]));
+      if(modern)list.push(usage('r'+i,1000*i,100));
+      const count={type:'event_msg',payload:{type:'token_count',info:{last_token_usage:usage('x',1000*i,100).payload.usage,total_token_usage:{total_tokens:i*10000},model_context_window:100000}}};
+      list.push(count,count,{type:'event_msg',payload:{type:'token_count',info:null}});
+    }
+    const th=await parseCodexThread(memorySource(rows(list,CODEX_T0)),0);
+    assert.equal(th.agent.requests.length,3);
+    assert.deepEqual(th.agent.requests.map(r=>r.tokens.context),[1000,2000,3000]);
+    assert.deepEqual(th.agent.requests.map(r=>r.responseId),modern?['r1','r2','r3']:[null,null,null]);
+    assertStrata(buildCodexTrace([th],[]));
+  }
+});

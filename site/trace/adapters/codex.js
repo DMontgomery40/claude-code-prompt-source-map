@@ -8,6 +8,13 @@ import {
 const ts = (s) => Date.parse(s);
 const COLLAB = new Set(["spawn_agent", "send_message", "followup_task", "wait_agent", "list_agents", "interrupt_agent", "close_agent"]);
 
+// Normalize the two shipped rollout metadata formats before joining the family.
+export function codexMeta(meta) {
+  const spawn = meta.source?.subagent?.thread_spawn;
+  return { ...meta, id: meta.id || meta.session_id,
+    parent_thread_id: meta.parent_thread_id || spawn?.parent_thread_id || null };
+}
+
 export function isCodexFirstLine(row) {
   return !!(row && row.type === "session_meta" && row.payload && row.payload.id);
 }
@@ -66,6 +73,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
   };
   let windowStart = 0;
   let requestsInWindow = 0;
+  let explicitUsage = false, legacyTotal = null;
   let outStart = null;
   let pendingCalls = [];
   const calls = new Map(); // callId -> call record
@@ -221,7 +229,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
 
     if (r.type === "session_meta") {
       if (!th.meta) {
-        th.meta = p;
+        th.meta = codexMeta(p);
         th.guardian = p.thread_source === "guardian_review" || !!(p.source && p.source.subagent && p.source.subagent.other === "guardian");
         if (p.forked_from_id && Number.isFinite(p.subagent_history_start_ordinal)) inheritedUntil = p.subagent_history_start_ordinal;
         const bi = p.base_instructions;
@@ -258,8 +266,17 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       agent.compactions.push({ t, pre, post: null, block: summary ? summary.i : windowStart, window: p.window_number ?? null });
       continue;
     }
-    if (r.type === "token_usage_record") {
-      const u = p.usage || {};
+    // Older CLI/desktop logs only recorded token_count. Repeated rate-limit
+    // updates carry the same cumulative usage and must not create new requests.
+    const count = r.type === "event_msg" && p.type === "token_count" ? p.info : null;
+    if (count?.model_context_window) th.contextWindow = count.model_context_window;
+    const total = count?.total_token_usage;
+    const totalKey = total ? [total.input_tokens, total.output_tokens, total.total_tokens].join(":") : null;
+    const legacy = !explicitUsage && count?.last_token_usage && totalKey != null && totalKey !== legacyTotal;
+    if (totalKey != null) legacyTotal = totalKey;
+    if (r.type === "token_usage_record" || legacy) {
+      if (r.type === "token_usage_record") explicitUsage = true;
+      const u = legacy ? count.last_token_usage : p.usage || {};
       if (!u.input_tokens) continue;
       const end = (outStart == null ? agent.blocks.length : outStart) - 1;
       const req = { i: agent.requests.length, t, model, tokens: tokensCodex(u), window: [windowStart, end], strata: null, action: null, reasoning: null, responseId: p.response_id || null };
