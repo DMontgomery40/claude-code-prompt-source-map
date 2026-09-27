@@ -14,6 +14,7 @@ import { createGeometry, topsOf } from "./landscape-geometry.js";
 import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
 import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
 import { KERNEL, bandsForRequest } from "./grain-rules.js";
+import { createBlockText } from "./block-text.js";
 
 const H = BASE_H;         // world height of the tallest context
 const STAGE_Z0 = 15;
@@ -359,7 +360,7 @@ void main() {
 
 const ease = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export function createScene(host, { trace, layout: L, reducedMotion, onHover, onPick, onMapFocus = () => {}, onViewChange = () => {} }) {
+export function createScene(host, { trace, layout: L, reducedMotion, onHover, onPick, onMapFocus = () => {}, onViewChange = () => {}, getText = null }) {
   // An open agent's cores stand in front of the whole subagent field, so the faded ridges of the
   // other agents never stand between the camera and the stage.
   const STAGE_Z = L.lanes ? Math.max(STAGE_Z0, laneZ(L.lanes - 1) + 10) : STAGE_Z0;
@@ -1095,6 +1096,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   let overviewDistance = 1, detail = mapDetail(1), mapZoom = 1;
   const labelGroups = { l0: new THREE.Group(), l1: new THREE.Group(), l2: new THREE.Group(), map: new THREE.Group(), sweep: new THREE.Group() };
   Object.values(labelGroups).forEach(g => scene.add(g));
+  // Words at max zoom: panes with the text of the leading grain column's blocks (block-text.js).
+  const wordsGroup = new THREE.Group();
+  scene.add(wordsGroup);
+  const blockText = getText ? createBlockText({ getText, group: wordsGroup, onChange: () => { dirty = Math.max(dirty, 2); } }) : null;
+  let wordBands = [], wordKey = "", wordTables = null, wordsOn = false;
+  const clearWords = () => { if (wordsOn) { blockText.clear(); wordsOn = false; } };
   const PRIO = { sweep: 7, focus: 10, request: 6, agent: 5, cluster: 4, corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
   function label(text, cls, pos, center = [0.5, 0.5], group = labelGroups.l0, onClick) {
     const div = document.createElement(onClick ? "button" : "div");
@@ -1134,7 +1141,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // In a tall, narrow viewport the landscape keeps only its cliff and row labels.
     const sparse = level === 0 && w < h && detail.level === 0;
     const box = { x0: 2, x1: w - insets.right + 4, y0: insets.top - 8, y1: h - insets.bottom + 8 };
-    const placed = [];
+    const placed = wordsOn ? blockText.rects(camera, w, h) : []; // the word panes keep their room
     let moved = false;
     for (const it of items) {
       // its own anchor first; a landmark label mirrors its anchor before it gives up its place
@@ -1665,6 +1672,24 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     return 2 ** binExp;
   }
   let shownRequests = new Set(), shownAgents = new Set(), heldFocus = "";
+  // At the Layers zoom the blocks of the focused agent's leading grain column (request floor(agentP))
+  // carry their words; anywhere else the panes are cleared (once: hidden panes cost nothing). Runs in
+  // the 90 ms-throttled part of updateMapDetail, on the previous frame's grain columns.
+  function updateWords() {
+    if (!blockText) return;
+    const agent = grains.agent, tables = grains.tables, i = Math.floor(grainUP);
+    if (level !== 0 || detail.level < 3 || !(grainK > 0) || !agent || agent !== grainAgent || !tables || i < 0) { clearWords(); return; }
+    if (tables !== wordTables || wordKey !== `${agent.id}:${i}`) { wordTables = tables; wordKey = `${agent.id}:${i}`; wordBands = bandsForRequest(tables, i); }
+    const [t0, t1] = geom.tread(agent, i), x = (t0 + t1) / 2, z = zOf(agent, i), y = crest(agent, i) / 2;
+    _pa.set(x, y - 0.5, z).project(camera); _pb.set(x, y + 0.5, z).project(camera);
+    const pxPerUnit = Math.hypot((_pb.x - _pa.x) * host.clientWidth, (_pb.y - _pa.y) * host.clientHeight) / 2;
+    // the zoom control and the transport float inside the insets: no pane runs under them
+    const hr = host.getBoundingClientRect();
+    const avoid = ["#map-zoom", "#playback"].map(sel => document.querySelector(sel)).filter(e => e && !e.hidden)
+      .map(e => e.getBoundingClientRect()).filter(r => r.width && r.height).map(r => ({ x: r.left - hr.left, y: r.top - hr.top, w: r.width, h: r.height }));
+    blockText.update({ camera, agent, bands: wordBands, geom, i, pxPerUnit, viewport: { width: host.clientWidth, height: host.clientHeight, insets, avoid } });
+    wordsOn = true;
+  }
   function updateMapDetail(now) {
     camera.updateMatrixWorld();
     mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
@@ -1674,7 +1699,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (status) status.textContent = level === 0 ? `${mapZoom.toFixed(1)}× · ${detail.name}` : level === 1 ? 'Agent requests' : 'Request layers';
     if (flags.visible) flags.userData.update();
     if (stage.flags?.visible) stage.flags.userData.update();
-    if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; return; }
+    if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; clearWords(); return; }
     xray.visible = detail.level < 2;
     const linkFade = lens === "agents" ? 1 : Math.min(1, 1 / (mapZoom * mapZoom));
     spawnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.85 : 0.1) * linkFade;
@@ -1772,6 +1797,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         o.element.style.setProperty('--c', s.color); o.userData.flip = true;
       });
     }
+    updateWords();
     const state = detail.level && focus ? { detail: detail.level, agentId: focus.agent.id, reqIdx: focus.i, stratum } : null;
     const key = state ? `${state.detail}:${state.agentId}:${state.detail > 1 ? state.reqIdx : ''}:${state.stratum || ''}` : 'overview';
     if (key !== lastFocusKey) { lastFocusKey = key; focusSince = now; }
@@ -2040,7 +2066,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         }, ms);
       });
     },
-    dispose() { cancelAnimationFrame(raf); ro.disconnect(); navigator.dispose(); miniMat.dispose(); miniTex.dispose(); grains.dispose(); renderer.dispose(); host.replaceChildren(); }
+    dispose() { cancelAnimationFrame(raf); ro.disconnect(); navigator.dispose(); miniMat.dispose(); miniTex.dispose(); grains.dispose(); blockText?.dispose(); renderer.dispose(); host.replaceChildren(); }
   };
 }
 

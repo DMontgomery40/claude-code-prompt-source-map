@@ -549,7 +549,8 @@ async function start(trace) {
   mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
-  transport ||= createTransport($("#playback"), { onPlayhead: p => scene?.setPlayhead(p) });
+  // the speed rides along so the scene can skip sweep labels at 16 requests a second and faster
+  transport ||= createTransport($("#playback"), { onPlayhead: p => scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }) });
   transport.load(playbackFor(S.layout));
   palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
     playback: {
@@ -611,7 +612,8 @@ async function setMode(mode) {
       $("#flat").hidden = true;
       $("#stage").hidden = false;
       if (!scene) {
-        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon });
+        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon,
+          getText: (agentId, ref) => A.getText(agentId, ref).then(r => r?.text ?? "") });
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
         if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false, sweep: null });
