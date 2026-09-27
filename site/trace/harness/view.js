@@ -428,6 +428,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 300);
   let model = null, trace = null, L = null, board = null, racks = [], hero = null, words = null;
   let preset = "session", sel = null, focusAgent = null, picked = null, rackKey = null, shown = false, pending = false, tween = null, disposed = false;
+  let deferred = null, frames = 0;   // deferred: Trace's latest selection while hidden, applied on show()
   let renderer = null, controls = null, composer = null, bokeh = null, ro = null, root = null, canvas = null, overlay = null, svg = null, caption = null, nav = null, card = null, legend = null;
   let labs = [], clampTags = [], fanTags = [], plateEls = [], callouts = [];
   const getRackFor = async () => rackFor || (rackFor = (await import("./pieces.js")).rackFor);
@@ -489,6 +490,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   function requestRender() { if (!renderer || !shown || pending || disposed) return; pending = true; requestAnimationFrame(frame); }
   function frame() {
     pending = false; if (!shown || disposed) return;
+    frames++;
     if (tween) {
       const k = Math.min(1, (performance.now() - tween.t0) / tween.dur), e = ease(k);
       camera.position.lerpVectors(tween.from.p, tween.to.p, e); controls.target.lerpVectors(tween.from.t, tween.to.t, e);
@@ -670,7 +672,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     });
     if (marks.instanceColor) marks.instanceColor.needsUpdate = true; marks.instanceMatrix.needsUpdate = true;
     for (const l of labs) { l.el.classList.toggle("sel", sel === l.p); l.el.classList.toggle("dim", !!sel && sel !== l.p); l.el.dataset.cls = l.p.cls; }
-    showCard(sel);
+    showCard(preset === "hero" ? null : sel);   // the hero's callouts already say where, what, who and when
     requestRender();
   }
   // Which copy to open: the one in the rack clicked, else the one the selected agent got, else the first.
@@ -722,7 +724,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (preset === "hero" && hero) sel = hero;
     if (preset === "hero" && hero && overlay) {
       const p = hero;
-      callout(`${esc(p.name.length > 44 ? p.name.slice(0, 42) + "…" : p.name)}<span class="m">${esc(p.where ? `${p.where.shelf} · ${p.where.label ?? ""}` : words[p.rung])}</span>`, p.curve.getPointAt(0.13).clone().add(new THREE.Vector3(0, 0.25, 0)));
+      callout(`${esc(p.name.length > 44 ? p.name.slice(0, 42) + "…" : p.name)}<span class="m">${esc(p.where ? `${p.where.shelf} · ${p.where.label ?? ""}` : words[p.rung])}</span>`, p.curve.getPointAt(p.kind === "loose" ? 0.32 : 0.13).clone().add(new THREE.Vector3(0, 0.25, 0)));   // unmatched ends sit by the bottom-left chrome
       const via = (p.via || []).find(([k]) => k !== "own block");
       callout(`${esc(trigWord(p.trigger))}<span class="m">${via ? `rides inside a ${esc(via[0])}` : "observed trigger"}</span>`, p.trig.anchor.clone().add(new THREE.Vector3(0, 0.25, 0)));
       const zs = [...p.rec].map(L.pinZ), zm = zs.reduce((a, b) => a + b, 0) / zs.length;
@@ -750,12 +752,16 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     silkscreen(); buildLabels();
     return setPreset(hero ? "hero" : "session", { instant: true });
   }
-  function show() { if (disposed) return; shown = true; if (root) root.hidden = false; resize(); requestRender(); }
+  function show() {
+    if (disposed) return; shown = true; if (root) root.hidden = false; resize(); requestRender();
+    if (deferred) { const d = deferred; deferred = null; return sync(d); }
+  }
   function hide() { shown = false; if (root) root.hidden = true; }
   // Trace's selection: a request (level 2+) shows its rack; the session or an agent shows the board; the open
   // block's piece is lit. The echo of our own pick keeps the current view.
   async function sync({ level = 0, agentId = null, reqIdx = 0, block = null } = {}) {
     if (!model) return;
+    if (!shown) { deferred = { level, agentId, reqIdx, block }; return; }   // no work while hidden
     const ai = agentId == null ? -1 : model.agents.findIndex(a => a.id === agentId);
     focusAgent = ai >= 0 ? ai : null;
     if (picked && picked[0] === ai && picked[1] === block) { picked = null; return; }
@@ -777,6 +783,6 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   function pickPiece(id, at) { const p = L?.byId.get(id); if (p) pick(p, at); }
   return { setModel, show, hide, sync, playhead, dispose, setPreset, pickPiece,
     // read-only state for the tests and the app's own checks
-    get state() { return { preset, selected: sel?.id ?? null, rack: rackKey, hero: hero?.id ?? null, focusAgent, shown }; },
+    get state() { return { preset, selected: sel?.id ?? null, rack: rackKey, hero: hero?.id ?? null, focusAgent, shown, frames }; },
     scene, camera };
 }

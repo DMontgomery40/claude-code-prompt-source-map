@@ -123,7 +123,10 @@ test("presets: each has its own camera; racks frame what was built", async () =>
 test("sync: a request shows its rack, the session shows the board, an open block lights its piece", async () => {
   const { model, trace } = fixture(), { v, calls } = view();
   await v.setModel(model, trace);
+  const before = calls.length;
   await v.sync({ level: 2, agentId: "sub-a", reqIdx: 1, block: null });
+  assert.equal(calls.length, before, "hidden: the selection waits, no rack is built");
+  await v.show();
   assert.equal(v.state.preset, "rack");
   assert.deepEqual(v.state.rack, [1, 1]);
   assert.deepEqual(calls.at(-1), [1, 1]);
@@ -138,6 +141,7 @@ test("sync: a request shows its rack, the session shows the board, an open block
 test("pick: hands Trace the selected agent's copy, else the first; its echo keeps the view", async () => {
   const { model, trace } = fixture(), { v, picks } = view();
   await v.setModel(model, trace);
+  v.show();
   await v.setPreset("session", { instant: true });
   v.pickPiece("notice");
   assert.deepEqual(picks.at(-1), ["root-1", 1], "no agent selected: the first delivery");
