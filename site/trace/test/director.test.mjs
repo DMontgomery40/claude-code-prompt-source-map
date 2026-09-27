@@ -198,6 +198,17 @@ test("rule 8: at 16x and faster only follow and compaction", () => {
   assert.deepEqual([...new Set(kinds(r))], ["follow", "compaction"]);
 });
 
+test("every shot carries the zoom the director engaged at; a new engage carries the new one", () => {
+  const ev = sorted([spawn(20, "a"), comp(40, 40)]);
+  const r = play(ev, 19, 6000, { zoom: 5.8 }); // follow, spawns, follow, compaction
+  assert.ok(new Set(kinds(r)).size >= 3);
+  assert.deepEqual([...new Set(r.shots.map(o => o.shot.followZoom))], [5.8]);
+  const f = nextShot(state(ev, 21, { zoom: 3.7 }), null, 0);
+  assert.deepEqual([f.kind, f.followZoom], ["follow", 3.7], "re-engaged after the user zoomed: the new zoom");
+  // The follow box is the bare column top (not padded); the anchor places `target`.
+  assert.deepEqual([f.box.x0, f.box.x1, f.box.yTop, f.target], [21, 21, 20, [21, 20, 0]]);
+});
+
 test("rule 9: the same inputs give the same shots", () => {
   const ev = sorted([spawn(20, "a", 0), spawn(20.5, "b", 1), ret(31, "a"), wait(38, 44, [["b", 38.5]]), comp(47, 47), spawn(53, "c", 2)]);
   const a = play(ev, 18, 9000), b = play(ev, 18, 9000);

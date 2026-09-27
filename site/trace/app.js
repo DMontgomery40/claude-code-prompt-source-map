@@ -793,7 +793,7 @@ function direct(p) {
   const pb = transport.playback;
   if (!dir) {
     const geom = createGeometry({ trace: S.trace, layout: S.layout });
-    dir = { geom, events: scene.getEvents?.() || buildEvents(S.layout, geom), prev: null, prevCutX: null, level: 0, span: 0,
+    dir = { geom, events: scene.getEvents?.() || buildEvents(S.layout, geom), prev: null, prevCutX: null, level: 0, span: 0, zoom: 1,
       lead: { agentId: null, P: 0, x: 0, z: 0, yTop: 0 }, state: {} };
   }
   const d = dir, g = d.geom, s = d.state, root = S.layout.root, cutX = g.W * pb.xAt(p.P);
@@ -801,6 +801,7 @@ function direct(p) {
     const v = scene.getView();
     const dist = Math.hypot(v.position[0] - v.target[0], v.position[1] - v.target[1], v.position[2] - v.target[2]);
     const zoom = v.zoom * v.overviewDistance / Math.max(1e-6, dist);
+    d.zoom = zoom;
     d.level = mapDetail(zoom).level;
     d.span = g.W / Math.max(1e-6, zoom);
   }
@@ -812,7 +813,7 @@ function direct(p) {
   const landscape = isLandscape(S);
   s.P = p.P; s.playing = true; s.speed = pb.speed; s.n = pb.n; s.W = g.W; s.cutX = cutX; s.prevCutX = d.prevCutX ?? cutX;
   s.level = landscape ? d.level : 0; s.override = transport.follow === "manual"; s.forced = landscape && transport.forced;
-  s.lead = lead; s.events = d.events; s.span = d.span; s.leadFx = scene.leadScreenX?.();
+  s.lead = lead; s.events = d.events; s.span = d.span; s.zoom = d.zoom; s.leadFx = scene.leadScreenX?.();
   d.prevCutX = cutX;
   const shot = nextShot(s, d.prev, performance.now());
   if (shot) { d.prev = shot; scene.setDirectorShot?.(shot); }

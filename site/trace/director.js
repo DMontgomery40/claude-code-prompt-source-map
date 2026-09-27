@@ -3,9 +3,11 @@
 // its camera (scene.setDirectorShot). It never touches the app's view state or history.
 //
 // A shot: { kind: 'follow'|'spawns'|'wait'|'return'|'compaction'|'manual'|'none', id,
-//   box: { x0, x1, z0, z1, yTop } in world units (the ground is y 0), padded; null for manual and none,
-//   anchor: [fx, fy] for follow (where the leading column's top sits in the free area), else null,
-//   zoom: 'follow' (the zoom the director engaged at) or 'fit' (fit the box),
+//   box: { x0, x1, z0, z1, yTop } in world units (the ground is y 0), padded 12%; for follow the bare
+//   leading column's top point, unpadded; null for manual and none,
+//   anchor: [fx, fy] for follow: where `target` [x, yTop, z] (the leading column's top) sits in the free area,
+//   zoom: 'follow' (keep followZoom, the map zoom the director engaged at) or 'fit' (fit the box),
+//   followZoom: that map zoom (camera.zoom * overviewDistance / orbit distance), on every shot,
 //   hold, ease (ms), at (ms it started) } plus the director's bookkeeping (through, members, x1, releaseAt).
 // nextShot returns a new shot (move the camera), the current shot with the same id and new fields (the
 // box grew or the hold changed: retarget without restarting the ease), or null (leave the camera).
@@ -160,7 +162,7 @@ function box(points) {
   return { x0: cx - hx, x1: cx + hx, z0: cz - hz, z1: cz + hz, yTop: yTop * (1 + D.pad) };
 }
 const leadPoint = s => ({ x: s.lead.x, z: s.lead.z, yTop: s.lead.yTop });
-const make = (kind, id, s, now, prev, extra) => ({ kind, id, box: null, anchor: null, zoom: "fit", hold: 0, ease: DIRECTOR.cutEase, at: now,
+const make = (kind, id, s, now, prev, extra) => ({ kind, id, box: null, anchor: null, zoom: "fit", followZoom: s.zoom ?? null, hold: 0, ease: DIRECTOR.cutEase, at: now,
   through: Math.max(prev?.through ?? -Infinity, s.cutX), ...extra });
 
 // World x the cut covers in `sec` seconds of playback at this speed (speed = requests per second over
@@ -184,6 +186,11 @@ function spawnsFrom(group, s, now, prev, base) {
     waitX1: w ? w.x1 : null, through: Math.max(prev?.through ?? -Infinity, s.cutX, ...group.map(e => e.x)) });
 }
 
+// A wait shot's framing: the lead column and the children at work at the cut.
+function atWork(w, s, active) {
+  const kids = w.children.filter(k => k.x0 <= s.cutX);
+  return { box: box([leadPoint(s), ...kids]), members: kids.slice(0, DIRECTOR.cap).map(k => k.id), band: kids.length > DIRECTOR.cap, active };
+}
 // The wait holding x: waits are distinct gaps of the main thread, so it is the last one starting at or before x.
 function waitAt(waits, x) {
   const w = waits[after(waits, x) - 1];
@@ -215,6 +222,7 @@ function follow(s, prev, now) {
 
 // state: { P, playing, speed, n, W, cutX, prevCutX, level (mapDetail 0..3 the director engaged at),
 //   override (the user moved the camera since Follow was last enabled), forced (the user enabled Follow),
+//   zoom (the map zoom the director engaged at: every shot carries it as followZoom),
 //   lead: { agentId, P (its own request space), x, z, yTop }, leadFx (optional: the column's screen
 //   fraction across the free area now), span (optional: world width seen across the free area at the
 //   column), events (buildEvents or the scene's list) }. Rules 1-9 of the brief, in priority order.
@@ -226,7 +234,8 @@ export function nextShot(s, prev, now) {
   if (!s.forced && !(s.level >= 1)) return prev?.kind === "none" ? null : make("none", "none", s, now, prev, { ease: 0 });
   const ix = indexOf(s.events), lead = s.lead;
   // 6. a compaction ahead of the leading column: pull back over the column and its puck
-  for (const c of ix.compaction) {
+  for (let k = 0; k < ix.compaction.length; k++) {
+    const c = ix.compaction[k];
     if (c.agentId !== lead.agentId || !(lead.P >= c.req - 1 && lead.P < c.req)) continue;
     const id = `compaction:${c.agentId}:${c.req}`;
     if (prev?.id === id) return null;
@@ -241,11 +250,11 @@ export function nextShot(s, prev, now) {
   const fast = s.speed >= D.fast;
   if (!fast) {
     const held = holding(prev, s, now);
-    // 3. spawns the cut crossed this tick
-    const found = [];
+    // 3. spawns the cut crossed this tick (the list is only made when there is one)
+    let found = null;
     const lo = Math.max(s.prevCutX ?? s.cutX, prev?.through ?? -Infinity);
-    for (let k = after(ix.spawn, lo); k < ix.spawn.length && ix.spawn[k].x <= s.cutX; k++) found.push(ix.spawn[k]);
-    if (found.length) {
+    for (let k = after(ix.spawn, lo); k < ix.spawn.length && ix.spawn[k].x <= s.cutX; k++) (found ||= []).push(ix.spawn[k]);
+    if (found) {
       if (held && prev.kind === "spawns") return spawnsFrom([...prev.group, ...found.filter(e => !prev.group.includes(e))], s, now, prev, prev);
       // a spawns group takes over from framing a wait's children (rule 5)
       if (!held || prev.kind === "wait") return spawnsShot(found, s, now, prev);
@@ -253,16 +262,14 @@ export function nextShot(s, prev, now) {
     // 5. the main thread is waiting on children already at work: frame its column and them. A wait that
     // begins while the last one's shot holds continues that shot (same id), following the work.
     const w = waitAt(ix.wait, s.cutX);
-    const kids = w ? w.children.filter(k => k.x0 <= s.cutX) : null;
+    let active = 0; // children at work at the cut, counted without building a list
+    if (w) for (let k = 0; k < w.children.length; k++) if (w.children[k].x0 <= s.cutX) active++;
     if (held) {
-      if (prev.kind === "wait" && kids?.length && (w.x1 > prev.x1 || kids.length > prev.active)) {
-        return { ...prev, x1: Math.max(prev.x1, w.x1), box: box([leadPoint(s), ...kids]), members: kids.slice(0, D.cap).map(k => k.id), band: kids.length > D.cap, active: kids.length };
-      }
+      if (prev.kind === "wait" && active && (w.x1 > prev.x1 || active > prev.active)) return { ...prev, x1: Math.max(prev.x1, w.x1), ...atWork(w, s, active) };
       return null;
     }
-    if (kids?.length && w.x1 - s.cutX >= cutSpan(s, D.window)) {
-      return make("wait", `wait:${w.rootReq}`, s, now, prev, { box: box([leadPoint(s), ...kids]), x1: w.x1, hold: D.spawnHold,
-        members: kids.slice(0, D.cap).map(k => k.id), band: kids.length > D.cap, active: kids.length });
+    if (active && w.x1 - s.cutX >= cutSpan(s, D.window)) {
+      return make("wait", `wait:${w.rootReq}`, s, now, prev, { x1: w.x1, hold: D.spawnHold, ...atWork(w, s, active) });
     }
     // 4. a report returning to its parent
     let ret = null;
