@@ -1,0 +1,39 @@
+/* Words at max zoom (block-text.js): the text of the blocks in the playhead's leading column, on an
+   opaque panel beside the ridge face. Legibility floor: 14 px body, 11.5 px caption, both at least 7:1
+   over the panel. Heights are whole even pixels (26 + 2 + 20 per line) so a pane centred on its band
+   lands on whole pixels; block-text.js mirrors these sizes. Colours stay literal: the test reads them. */
+.word-pane {
+  --word-bg: #0d1720;
+  --word-ink: #edf4f9;
+  --word-muted: #c4d2de;
+  box-sizing: border-box;
+  max-width: 46ch;
+  padding: 5px 10px 5px 8px;
+  border-left: 2px solid var(--c, #8b97a8);
+  border-radius: 0 6px 6px 0;
+  background: #0d1720f0;
+  box-shadow: 0 2px 10px #00000059;
+  color: var(--word-ink);
+  font: 14px/20px var(--sans, system-ui, sans-serif);
+  text-align: left;
+  pointer-events: none;
+}
+.word-cap {
+  display: flex; align-items: center; gap: 6px;
+  font: 600 11.5px/16px var(--sans, system-ui, sans-serif);
+  color: var(--word-muted);
+  white-space: nowrap;
+}
+.word-swatch { flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--c, #8b97a8); }
+.word-label { overflow: hidden; text-overflow: ellipsis; }
+.word-body {
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines, 5);
+  line-clamp: var(--lines, 5);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.word-body:empty { display: none; }
+.word-body.note { color: var(--word-muted); font-style: italic; }

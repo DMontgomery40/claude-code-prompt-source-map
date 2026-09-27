@@ -1,0 +1,1623 @@
+{
+ "taxonomy_version": "02977bfe7901",
+ "threshold": 0.7,
+ "tags": [
+  {
+   "id": "auth-providers",
+   "label": "Auth, providers and network",
+   "kind": "topic",
+   "definition": "Settings and environment variables for signing in and reaching model backends: login method and credential storage, API keys and access tokens, model provider definitions and base URLs, cloud-provider credentials (such as AWS/Bedrock), HTTP proxies, CA certificates and request headers. It applies in any group, including requirements: variants. It does not cover the sandbox's network allowlist for commands the agent runs, or MCP-server-specific auth.",
+   "count": 50
+  },
+  {
+   "id": "sandbox-approvals",
+   "label": "Sandbox and approvals",
+   "kind": "topic",
+   "definition": "Settings that limit or approve what the agent may execute or touch: sandbox mode and permission profiles, filesystem and network access for commands, approval policy and approvals reviewer (including guardian auto-review), exec-policy / prefix rules, shell environment policy, and variables Codex sets to mark or escalate sandboxed processes. It applies in any group, including features.* flags and requirements: variants. It does not cover keybindings in approval dialogs or generic terminal-detection variables.",
+   "count": 15
+  },
+  {
+   "id": "built-in-tools",
+   "label": "Built-in tools",
+   "kind": "topic",
+   "definition": "Settings for tools that ship with Codex and that the model calls directly: shell / unified exec and background terminals, apply_patch, plan updates, web search, browser use, computer use, image generation and viewing, JS REPL and code mode, clock/sleep and async user-message tools, and tool discovery or suggestion. It applies in any group, including features.* flags and requirements: variants. It does not cover external MCP servers or approval policy in general.",
+   "count": 4
+  },
+  {
+   "id": "mcp-plugins",
+   "label": "MCP, plugins and skills",
+   "kind": "topic",
+   "definition": "Settings for extending Codex with external or packaged capabilities: MCP server definitions (command, URL, auth, timeouts, per-tool limits), plugins and marketplaces, skills, and connected apps. It applies in any group, including features.* flags and requirements: variants. It does not cover tools built into Codex such as web search or shell, or sub-agent coordination.",
+   "count": 8
+  },
+  {
+   "id": "telemetry-storage",
+   "label": "Telemetry, logs and storage",
+   "kind": "topic",
+   "definition": "Settings and environment variables for observability and local state: OpenTelemetry exporters and trace context, analytics and feedback, log levels and formats, transcript/history persistence, rollout and session files, and Codex home or database paths. It applies in any group, including features.* flags and requirements: variants. It does not cover the model's memory of past sessions or lifecycle hooks.",
+   "count": 28
+  },
+  {
+   "id": "ui",
+   "label": "Terminal and desktop UI",
+   "kind": "topic",
+   "definition": "Settings and environment variables that change how the terminal UI or desktop app looks and behaves for the user: TUI options, keymaps and vim mode, themes and rendering, notices and prompts, desktop-app window or runtime behavior, and terminal detection. It applies in any group. It does not cover what the model can do, or third-party library variables that only happen to be read by the desktop bundle.",
+   "count": 24
+  },
+  {
+   "id": "documented",
+   "label": "Documented",
+   "kind": "status",
+   "count": 25
+  },
+  {
+   "id": "undocumented",
+   "label": "Undocumented",
+   "kind": "status",
+   "count": 312
+  },
+  {
+   "id": "desktop-app",
+   "label": "Read by the desktop app",
+   "kind": "status",
+   "count": 166
+  },
+  {
+   "id": "cli",
+   "label": "Read by the CLI",
+   "kind": "status",
+   "count": 144
+  },
+  {
+   "id": "child-env",
+   "label": "Set for child processes",
+   "kind": "status",
+   "count": 32
+  },
+  {
+   "id": "not-in-build",
+   "label": "Not in this build",
+   "kind": "status",
+   "count": 55
+  }
+ ],
+ "items": {
+  "env:AWS_ACCESS_KEY_ID": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:AWS_BEARER_TOKEN_BEDROCK": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:AWS_DEFAULT_REGION": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:AWS_REGION": [
+   "documented",
+   "desktop-app",
+   "cli",
+   "auth-providers"
+  ],
+  "env:AWS_SECRET_ACCESS_KEY": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_ACCESS_TOKEN": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_API_KEY": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_APP_SERVER_CHATGPT_BASE_URL": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_APP_SERVER_LOGIN_CLIENT_ID": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_APP_SERVER_LOGIN_ISSUER": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_AUTHAPI_BASE_URL": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_CA_CERTIFICATE": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_CLOUD_TASKS_BASE_URL": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_CONNECTORS_TOKEN": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_EXEC_SERVER_NOISE_AUTH_TOKEN": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_EXEC_SERVER_URL": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_INTERNAL_ORIGINATOR_OVERRIDE": [
+   "undocumented",
+   "desktop-app",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_NETWORK_PROXY_CREDENTIAL_BROKER_ACTIVE": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_NETWORK_PROXY_SNAPSHOT_BROKERED_VALUE_": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_OSS_BASE_URL": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_REFRESH_TOKEN_URL_OVERRIDE": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_REVOKE_TOKEN_URL_OVERRIDE": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:GH_HOST": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:HTTPS_PROXY": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:HTTP_PROXY": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:NO_PROXY": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:OPENAI_API_KEY": [
+   "documented",
+   "desktop-app",
+   "cli",
+   "auth-providers"
+  ],
+  "env:OPENAI_BASE_URL": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:OPENAI_FEDERATION_RULE_ID": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:OPENAI_IDENTITY_TOKEN_FILE": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:OPENAI_WORKLOAD_IDENTITY_CONTEXT": [
+   "documented",
+   "cli"
+  ],
+  "env:SSL_CERT_DIR": [
+   "undocumented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:SSL_CERT_FILE": [
+   "documented",
+   "cli",
+   "auth-providers"
+  ],
+  "env:CODEX_ESCALATE_SOCKET": [
+   "undocumented",
+   "cli",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_EXEC_SERVER_EXIT_ON_STDIN_CLOSE": [
+   "undocumented",
+   "cli",
+   "sandbox-approvals",
+   "built-in-tools"
+  ],
+  "env:CODEX_NETWORK_ALLOW_LOCAL_BINDING": [
+   "undocumented",
+   "cli",
+   "sandbox-approvals",
+   "built-in-tools"
+  ],
+  "env:CODEX_SANDBOX": [
+   "undocumented",
+   "cli",
+   "sandbox-approvals",
+   "built-in-tools"
+  ],
+  "env:EXEC_WRAPPER": [
+   "undocumented",
+   "cli",
+   "sandbox-approvals",
+   "built-in-tools"
+  ],
+  "env:TERM": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:TERMINFO": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:TERMINFO_DIRS": [
+   "undocumented",
+   "cli"
+  ],
+  "env:TERM_PROGRAM": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:TERM_PROGRAM_VERSION": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:WEZTERM_EXECUTABLE": [
+   "undocumented",
+   "cli"
+  ],
+  "env:WEZTERM_VERSION": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_MCP_PROTOCOL_VERSION": [
+   "undocumented",
+   "cli",
+   "mcp-plugins"
+  ],
+  "env:CARGO_MANIFEST_DIR": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_HOME": [
+   "documented",
+   "desktop-app",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:CODEX_MANAGED_PACKAGE_ROOT": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:CODEX_ROLLOUT_TRACE_ROOT": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:CODEX_SQLITE_HOME": [
+   "documented",
+   "desktop-app",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:CODEX_TUI_SESSION_LOG_PATH": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:HOME": [
+   "documented",
+   "desktop-app",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:OUT_DIR": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_DAEMON_TELEMETRY_HANDOFF": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:LOG_FORMAT": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:RUST_LOG": [
+   "documented",
+   "desktop-app",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:TRACEPARENT": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:TRACESTATE": [
+   "undocumented",
+   "cli",
+   "telemetry-storage"
+  ],
+  "env:APPDATA": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:CODEX_APPLY_GIT_CFG": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_CLOUD_TASKS_FORCE_INTERNAL": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_MANAGED_BY_BUN": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_MANAGED_BY_NPM": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_MANAGED_BY_PNPM": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_MANAGED_BY_VITE_PLUS": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_OSS_PORT": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_STARTING_DIFF": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_TUI_DISABLE_KEYBOARD_ENHANCEMENT": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:CODEX_TUI_RECORD_SESSION": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:CODEX_TUI_ROUNDED": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:COLUMNS": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:DISPLAY": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:EDITOR": [
+   "documented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:FORCE_COLOR": [
+   "undocumented",
+   "desktop-app",
+   "cli",
+   "ui"
+  ],
+  "env:GIT_SSH_COMMAND": [
+   "undocumented",
+   "cli"
+  ],
+  "env:KITTY_WINDOW_ID": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:KONSOLE_VERSION": [
+   "undocumented",
+   "cli"
+  ],
+  "env:LINES": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:LOCALAPPDATA": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:NO_COLOR": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:PATH": [
+   "documented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:PUBLIC": [
+   "undocumented",
+   "cli"
+  ],
+  "env:SSH_CONNECTION": [
+   "undocumented",
+   "cli"
+  ],
+  "env:SSH_TTY": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:STY": [
+   "undocumented",
+   "cli"
+  ],
+  "env:SystemRoot": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:TARGET": [
+   "undocumented",
+   "cli"
+  ],
+  "env:TMPDIR": [
+   "documented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:TMUX": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:TMUX_PANE": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:USER": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:USERPROFILE": [
+   "documented",
+   "cli"
+  ],
+  "env:VISUAL": [
+   "documented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:VTE_VERSION": [
+   "undocumented",
+   "cli"
+  ],
+  "env:WAYLAND_DISPLAY": [
+   "undocumented",
+   "cli",
+   "ui"
+  ],
+  "env:WSL_DISTRO_NAME": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:WSL_INTEROP": [
+   "undocumented",
+   "cli"
+  ],
+  "env:WT_SESSION": [
+   "undocumented",
+   "cli"
+  ],
+  "env:ZELLIJ": [
+   "undocumented",
+   "cli"
+  ],
+  "env:ZELLIJ_SESSION_NAME": [
+   "undocumented",
+   "cli"
+  ],
+  "env:ZELLIJ_VERSION": [
+   "undocumented",
+   "cli"
+  ],
+  "env:http_proxy": [
+   "undocumented",
+   "desktop-app",
+   "cli",
+   "auth-providers"
+  ],
+  "env:https_proxy": [
+   "undocumented",
+   "desktop-app",
+   "cli",
+   "auth-providers"
+  ],
+  "env:BUILD_FLAVOR": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_API_BASE_URL": [
+   "undocumented",
+   "desktop-app",
+   "auth-providers"
+  ],
+  "env:CODEX_API_ENDPOINT": [
+   "undocumented",
+   "desktop-app",
+   "auth-providers"
+  ],
+  "env:CODEX_APP_SERVER_FORCE_CLI": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_APP_SERVER_USE_LOCAL_DAEMON": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_APP_SERVER_WS_URL": [
+   "undocumented",
+   "desktop-app",
+   "auth-providers"
+  ],
+  "env:CODEX_APP_TOOLS_PIPE_PATH": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_APP_VERSION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_BUILD_NUMBER": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_CLI_PATH": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:CODEX_DESKTOP_NETWORK_POLICY": [
+   "undocumented",
+   "desktop-app",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_DESKTOP_RELAUNCH_OPEN_EVENTS": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_ELECTRON_AGENT_RUN_ID": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_ELECTRON_ARTIFACT_SESSION_RUNTIME_ROOT": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage",
+   "ui"
+  ],
+  "env:CODEX_ELECTRON_DEV_DOCK_ICONS_PATH": [
+   "undocumented",
+   "desktop-app",
+   "ui"
+  ],
+  "env:CODEX_ELECTRON_DISABLE_QUIT_CONFIRMATION": [
+   "undocumented",
+   "desktop-app",
+   "ui"
+  ],
+  "env:CODEX_ELECTRON_PRIMARY_RUNTIME_UPDATE_MODE": [
+   "undocumented",
+   "desktop-app",
+   "ui"
+  ],
+  "env:CODEX_ELECTRON_START_IN_BACKGROUND": [
+   "undocumented",
+   "desktop-app",
+   "ui"
+  ],
+  "env:CODEX_ELECTRON_USER_DATA_PATH": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:CODEX_MAX_LOG_LEVEL": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:CODEX_MCP_APP_SANDBOX_URL": [
+   "undocumented",
+   "desktop-app",
+   "sandbox-approvals",
+   "mcp-plugins"
+  ],
+  "env:CODEX_OTEL_TRACES_ENDPOINT": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:CODEX_PREFERRED_GIT_EXECUTABLE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEX_TECTONIC_PATH": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:CODEX_TRACE_SHORTCUT": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:ELECTRON_RENDERER_URL": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:NODE_REPL_ENABLE_AUDIO": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:NODE_REPL_HOST_SERVICES_PIPE_PATH": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SKY_ENABLE_AUDIO": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SPARKLE_UPDATE_INTERVAL_MINUTES": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VITE_CODEX_DESKTOP_AUTH_ORIGIN": [
+   "undocumented",
+   "desktop-app",
+   "auth-providers"
+  ],
+  "env:CODEX_CI": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_INSTALL_DAEMON_ONLY": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_INSTALL_DEFER_SELECTION": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_INSTALL_IF_CURRENT": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_INSTALL_IF_LATEST": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_NETWORK_PROXY_ACTIVE": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "auth-providers",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_NETWORK_PROXY_ATTRIBUTION": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "auth-providers",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_NETWORK_PROXY_SNAPSHOT_BROKERED_UNSET_": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "auth-providers"
+  ],
+  "env:CODEX_NETWORK_PROXY_SNAPSHOT_ORIGINAL_BASH_ENV": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_NETWORK_PROXY_SNAPSHOT_ORIGINAL_POSIX_ENV": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_NETWORK_PROXY_SNAPSHOT_ORIGINAL_ZDOTDIR": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_NON_INTERACTIVE": [
+   "documented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_PERMISSION_PROFILE": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_PLUGIN_METRICS_OUTPUT": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_RELEASE": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_SANDBOX_NETWORK_DISABLED": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_SESSION_ID": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_THREAD_ID": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_UPDATE_FROM_RELEASE": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:CODEX_VERSION": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:DEVELOPER_DIR": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:ELECTRON_GET_USE_PROXY": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "auth-providers"
+  ],
+  "env:GH_PROMPT_DISABLED": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_CONFIG_COUNT": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_DIR": [
+   "undocumented",
+   "desktop-app",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_EXEC_PATH": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_LFS_SKIP_SMUDGE": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_OPTIONAL_LOCKS": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_TEMPLATE_DIR": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:GIT_TERMINAL_PROMPT": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "ui"
+  ],
+  "env:NODE_USE_ENV_PROXY": [
+   "undocumented",
+   "cli",
+   "child-env",
+   "auth-providers"
+  ],
+  "env:NoDefaultCurrentDirectoryInExePath": [
+   "undocumented",
+   "cli",
+   "child-env"
+  ],
+  "env:BAZEL_PACKAGE": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_BUILD_COMMIT": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:CODEX_BUILD_TARGET": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_BWRAP_SHA256": [
+   "undocumented",
+   "cli"
+  ],
+  "env:CODEX_REPO_ROOT_MARKER": [
+   "undocumented",
+   "cli"
+  ],
+  "env:GIT_COMMIT": [
+   "undocumented",
+   "desktop-app",
+   "cli"
+  ],
+  "env:STABLE_GIT_COMMIT": [
+   "undocumented",
+   "cli"
+  ],
+  "env:ALIYUN_REGION_ID": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:APPVEYOR_PULL_REQUEST_HEAD_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:APPVEYOR_REPO_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:ARM_VERSION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:AWS_COMMIT_ID": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:AWS_EXECUTION_ENV": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:BITBUCKET_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:BUDDY_EXECUTION_REVISION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:BUILDKITE_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:BUILD_SOURCEVERSION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:BUILD_VCS_NUMBER": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CF_PAGES_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CF_REVISION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CHROME_CONFIG_HOME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CIRCLE_SHA1": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CIRRUS_CHANGE_IN_REPO": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CI_BUILD_REF": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CI_COMMIT_ID": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CI_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CI_MERGE_REQUEST_SOURCE_BRANCH_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CMDER_ROOT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CM_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:CODEBUILD_RESOLVED_SOURCE_VERSION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:COMMIT_REF": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:DEBUG": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:DRONE_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:DYNO": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:ELECTRON_RUN_AS_NODE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:EVENTARC_CLOUD_EVENT_SOURCE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:FC_GIT_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:FLY_REGION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:FUNCTION_TARGET": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:GCLOUD_PROJECT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:GCP_PROJECT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:GITHUB_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:GIT_CLONE_COMMIT_HASH": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:GIT_CONFIG_GLOBAL": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:GIT_WORK_TREE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:HEROKU_SLUG_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:HEROKU_TEST_RUN_COMMIT_VERSION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:IBM_CLOUD_REGION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:K_SERVICE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:LIBC": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:NETLIFY": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:NODE_ENV": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:NODE_OPTIONS": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:OSTYPE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:OTEL_FASTIFY_IGNORE_PATHS": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:OTEL_SEMCONV_STABILITY_OPT_IN": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:OTEL_SERVICE_NAME": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:PREBUILDS_ONLY": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:PRISMA_SHOW_ALL_TRACES": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:Path": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:ProgramData": [
+   "documented",
+   "desktop-app"
+  ],
+  "env:ProgramFiles": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:RAILWAY_GIT_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:REGION_NAME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:RENDER_GIT_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SEMAPHORE_GIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SENTRY_BAGGAGE": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:SENTRY_DEBUG": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SENTRY_DSN": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:SENTRY_ENVIRONMENT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SENTRY_NAME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SENTRY_RELEASE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SENTRY_SPOTLIGHT": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:SENTRY_TRACE": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:SENTRY_TRACES_SAMPLE_RATE": [
+   "undocumented",
+   "desktop-app",
+   "telemetry-storage"
+  ],
+  "env:SENTRY_USE_ENVIRONMENT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SHELL": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SOURCE_COMMIT": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:SOURCE_VERSION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:TENCENTCLOUD_APPID": [
+   "undocumented",
+   "desktop-app",
+   "auth-providers"
+  ],
+  "env:TENCENTCLOUD_REGION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:TENCENTCLOUD_ZONE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:TESTING_TAR_FAKE_PLATFORM": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:TRAVIS_PULL_REQUEST_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VERCEL": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VERCEL_BITBUCKET_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VERCEL_GITHUB_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VERCEL_GITLAB_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VERCEL_GIT_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VERCEL_REGION": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:VITEST": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:WEBSITE_SITE_NAME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:WSLENV": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:WS_NO_BUFFER_UTIL": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:WS_NO_UTF_8_VALIDATE": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:XDG_CONFIG_HOME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:XDG_CURRENT_DESKTOP": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:XDG_DATA_DIRS": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:XDG_DATA_HOME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:XDG_ICON_THEME": [
+   "undocumented",
+   "desktop-app",
+   "ui"
+  ],
+  "env:XDG_RUNTIME_DIR": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:XDG_STATE_HOME": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:ZEIT_BITBUCKET_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:ZEIT_GITHUB_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:ZEIT_GITLAB_COMMIT_SHA": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:_ISEXE_TEST_PLATFORM_": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:__FAKE_FS_O_FILENAME__": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:__FAKE_PLATFORM__": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:__MINIMATCH_TESTING_PLATFORM__": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:comspec": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:npm_config_arch": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:npm_config_platform": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:windir": [
+   "undocumented",
+   "desktop-app"
+  ],
+  "env:BIND_ADDR": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CARGO_BIN_EXE_bwrap": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CARGO_CFG_TARGET_ABI": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CARGO_CFG_TARGET_ENV": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CARGO_CFG_TARGET_OS": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_APP_SERVER_DEV_OPEN_APP_URL": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_APP_SERVER_DISABLE_MANAGED_CONFIG": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_APP_SERVER_MANAGED_CONFIG_PATH": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_APP_SERVER_TEST_USER_CONFIG_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_BWRAP_SOURCE_DIR": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_CLOUD_TASKS_MODE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_CUSTOM_CA_PROBE_PROXY": [
+   "undocumented",
+   "not-in-build",
+   "auth-providers"
+  ],
+  "env:CODEX_CUSTOM_CA_PROBE_TLS13": [
+   "undocumented",
+   "not-in-build",
+   "auth-providers"
+  ],
+  "env:CODEX_CUSTOM_CA_PROBE_URL": [
+   "undocumented",
+   "not-in-build",
+   "auth-providers"
+  ],
+  "env:CODEX_DAEMON_SHUTDOWN_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_DAEMON_SHUTDOWN_SOCKET": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_MXC_LAUNCH_": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_MXC_LAUNCH_BYTES": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_MXC_LAUNCH_COUNT": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_SKIP_BWRAP_BUILD": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:CODEX_TEST_LINUX_SANDBOX_EXE": [
+   "undocumented",
+   "not-in-build",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_WINDOWS_REGISTERED_CORE": [
+   "undocumented",
+   "desktop-app",
+   "not-in-build"
+  ],
+  "env:CODEX_WINDOWS_SANDBOX_PACKAGE_FAMILY": [
+   "undocumented",
+   "desktop-app",
+   "not-in-build",
+   "sandbox-approvals"
+  ],
+  "env:CODEX_WINDOWS_SANDBOX_PROXY_PORTS": [
+   "undocumented",
+   "not-in-build",
+   "sandbox-approvals"
+  ],
+  "env:COMSPEC": [
+   "undocumented",
+   "desktop-app",
+   "not-in-build"
+  ],
+  "env:ComSpec": [
+   "undocumented",
+   "desktop-app",
+   "not-in-build"
+  ],
+  "env:MCP_EXPECT_BEARER": [
+   "undocumented",
+   "not-in-build",
+   "auth-providers",
+   "mcp-plugins"
+  ],
+  "env:MCP_EXPECT_GATEWAY_BEARER": [
+   "undocumented",
+   "not-in-build",
+   "auth-providers",
+   "mcp-plugins"
+  ],
+  "env:MCP_STREAMABLE_HTTP_BIND_ADDR": [
+   "undocumented",
+   "not-in-build",
+   "mcp-plugins"
+  ],
+  "env:MCP_STREAMABLE_HTTP_BOUND_ADDR_FILE": [
+   "undocumented",
+   "not-in-build",
+   "mcp-plugins"
+  ],
+  "env:MCP_TEST_AMBIENT_SECRET": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_APP_ONLY_CWD_MARKER_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_BREAKAWAY_DENIED_FILE": [
+   "undocumented",
+   "not-in-build",
+   "sandbox-approvals"
+  ],
+  "env:MCP_TEST_CONSOLE_STATE_FILE": [
+   "undocumented",
+   "not-in-build",
+   "telemetry-storage"
+  ],
+  "env:MCP_TEST_DAYBREAK_READ_ONLY": [
+   "undocumented",
+   "not-in-build",
+   "mcp-plugins"
+  ],
+  "env:MCP_TEST_DESCENDANT_PID_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_DESCENDANT_ROLE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_DYNAMIC_SERVER_METADATA": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_ENABLE_NODE_REPL_JS": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_EXIT_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_IMAGE_DATA_URL": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_INITIALIZE_BARRIER_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_OVERSIZED_INVALID_IMAGE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_OVERSIZED_TOOL_DESCRIPTION": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_PID_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:MCP_TEST_SERVER_INSTRUCTIONS": [
+   "undocumented",
+   "not-in-build",
+   "mcp-plugins"
+  ],
+  "env:MCP_TEST_TOOL_PAGINATION": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:PATHEXT": [
+   "undocumented",
+   "desktop-app",
+   "not-in-build"
+  ],
+  "env:RUNFILES_DIR": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:RUNFILES_MANIFEST_FILE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:RUNFILES_MANIFEST_ONLY": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:SBX_DEBUG": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:TEST_SRCDIR": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:TEST_WORKSPACE": [
+   "undocumented",
+   "not-in-build"
+  ],
+  "env:USERNAME": [
+   "undocumented",
+   "desktop-app",
+   "not-in-build"
+  ]
+ }
+}

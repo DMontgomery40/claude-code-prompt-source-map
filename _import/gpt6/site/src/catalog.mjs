@@ -1,0 +1,430 @@
+export const categories = [
+  {
+    label: "Findings",
+    files: [
+      {
+        path: "outputs/security-review-map-2026-09-24.md",
+        anchor: "security-review-map-2026-09-24-md",
+        slug: "key-findings",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Key findings",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/chatgpt-work-source-check-2026-09-24.md",
+        anchor: "chatgpt-work-source-check-2026-09-24-md",
+        slug: "chatgpt-work",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "ChatGPT Work",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/chatgpt-work-gpt6-client-trace-2026-09-24.json",
+        anchor: "chatgpt-work-gpt6-client-trace-2026-09-24-json",
+        slug: "sanitized-gpt-6-work-client-trace",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Sanitized GPT-6 Work client trace",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/voice-tool-surface-2026-09-24.md",
+        anchor: "voice-tool-surface-2026-09-24-md",
+        slug: "voice-tools",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Voice tools",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/model-comparison.json",
+        anchor: "codex-gpt6-model-prompt-comparison-2026-09-24-json",
+        slug: "three-model-prompt-comparison",
+        format: "source",
+        title: "Three-model prompt comparison",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-luna-surface-check-2026-09-24.json",
+        anchor: "codex-luna-surface-check-2026-09-24-json",
+        slug: "astra-luna-source-check",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Astra/Luna source check",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Codex/ChatGPT GPT-6 instructions",
+    files: [
+      {
+        path: "outputs/persistent-instructions.md",
+        anchor: "aeon-persistent-instructions-2026-09-24-md",
+        slug: "persistent-mode-instructions",
+        format: "markdown",
+        title: "Persistent mode instructions",
+        instructionProfile: "persistent",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/gpt-6-astra-base-instructions.md",
+        anchor: "gpt-6-astra-base-instructions-2026-09-24-md",
+        slug: "astra-base-instructions",
+        format: "markdown",
+        title: "Astra base instructions",
+        instructionProfile: "base",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/gpt-6-sol-base-instructions.md",
+        anchor: "gpt-6-sol-base-instructions-2026-09-24-md",
+        slug: "sol-base-instructions",
+        format: "markdown",
+        title: "Sol base instructions",
+        instructionProfile: "base",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-luna-base-instructions.md",
+        anchor: "gpt-6-luna-base-instructions-2026-09-24-md",
+        slug: "luna-base-instructions",
+        format: "markdown",
+        title: "Luna base instructions",
+        instructionProfile: "base",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/other-catalog-models.md",
+        anchor: "other-catalog-models-md",
+        slug: "other-catalog-models",
+        format: "markdown",
+        title: "Other models in the catalog",
+        promptText: true,
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-instruction-modules.md",
+        anchor: "gpt-6-astra-instruction-modules-2026-09-24-md",
+        slug: "conditional-instruction-modules",
+        format: "markdown",
+        title: "Conditional instruction modules",
+        instructionProfile: "modules",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/gpt-6-astra-model-record.json",
+        anchor: "gpt-6-astra-model-messages-2026-09-24-json",
+        slug: "raw-captured-astra-record",
+        format: "source",
+        title: "Raw captured Astra record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-sol-model-record.json",
+        anchor: "gpt-6-sol-model-messages-2026-09-24-json",
+        slug: "raw-captured-sol-record",
+        format: "source",
+        title: "Raw captured Sol record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-luna-model-record.json",
+        anchor: "gpt-6-luna-model-messages-2026-09-24-json",
+        slug: "raw-captured-luna-record",
+        format: "source",
+        title: "Raw captured Luna record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/capture-metadata.json",
+        anchor: "gpt-6-astra-instruction-stack-2026-09-24-metadata-json",
+        slug: "capture-and-verification-metadata",
+        format: "source",
+        title: "Capture and verification metadata",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "ChatGPT prompts",
+    files: [
+      {
+        path: "outputs/chatgpt-conversation-prompts.md",
+        anchor: "chatgpt-conversation-prompts-md",
+        slug: "chatgpt-conversation-prompts",
+        format: "markdown",
+        title: "Conversation prompts",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/chatgpt-gpt-builder-prompts.md",
+        anchor: "chatgpt-gpt-builder-prompts-md",
+        slug: "chatgpt-gpt-builder-prompts",
+        format: "markdown",
+        title: "GPT builder prompts",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/chatgpt-work-prompts.md",
+        anchor: "chatgpt-work-prompts-md",
+        slug: "chatgpt-work-prompts",
+        format: "markdown",
+        title: "Work prompts",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/chatgpt-finance-health-prompts.md",
+        anchor: "chatgpt-finance-health-prompts-md",
+        slug: "chatgpt-finance-health-prompts",
+        format: "markdown",
+        title: "Finance and health prompts",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/chatgpt-sites-artifacts-prompts.md",
+        anchor: "chatgpt-sites-artifacts-prompts-md",
+        slug: "chatgpt-sites-artifacts-prompts",
+        format: "markdown",
+        title: "Sites and artifacts prompts",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Codex/ChatGPT configuration",
+    files: [
+      {
+        path: "outputs/codex-config.md",
+        anchor: "codex-config-md",
+        slug: "codex-config",
+        format: "markdown",
+        title: "config.toml reference",
+        filters: { records: "outputs/codex-config.json", tags: "outputs/codex-config-tags.json" },
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-env-vars.md",
+        anchor: "codex-env-vars-md",
+        slug: "codex-env-vars",
+        format: "markdown",
+        title: "Environment variables",
+        filters: { records: "outputs/codex-env-vars.json", tags: "outputs/codex-env-vars-tags.json" },
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "GPT-Live API",
+    files: [
+      {
+        path: "outputs/gpt-live-telephony.md",
+        anchor: "gpt-live-telephony-md",
+        slug: "gpt-live-telephony",
+        format: "markdown",
+        title: "GPT-Live telephony and SIP",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Codex/ChatGPT voice prompts",
+    files: [
+      {
+        path: "outputs/voice-prompts.md",
+        anchor: "codex-voice-prompts-2026-09-24-md",
+        slug: "bundled-codex-voice-prompts",
+        format: "markdown",
+        title: "Bundled Codex/ChatGPT voice prompts",
+        instructionProfile: "voice",
+        defaultOpen: true
+      }
+    ]
+  },
+  {
+    label: "ChatGPT plugins and Computer Use",
+    files: [
+      {
+        path: "outputs/chatgpt-bundled-plugins.md",
+        anchor: "chatgpt-bundled-plugins-md",
+        slug: "chatgpt-bundled-plugins",
+        format: "markdown",
+        title: "Bundled plugins and skills",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/computer-use-prompts.md",
+        anchor: "computer-use-prompts-md",
+        slug: "computer-use-prompts",
+        format: "markdown",
+        title: "Computer Use prompts and tool descriptions",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Other desktop prompts",
+    files: [
+      {
+        path: "outputs/desktop-helper-prompts.md",
+        anchor: "codex-desktop-helper-prompts-2026-09-24-md",
+        slug: "codex-helper-prompt-inventory",
+        format: "markdown",
+        title: "Codex/ChatGPT helper prompt inventory",
+        promptText: true,
+        defaultOpen: false
+      },
+      {
+        path: "outputs/desktop-model-facing-text.md",
+        anchor: "desktop-model-facing-text-md",
+        slug: "desktop-model-facing-text",
+        format: "markdown",
+        title: "Other model-facing text",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/prompt-provenance-inventory.json",
+        anchor: "codex-prompt-provenance-inventory-2026-09-24-json",
+        slug: "prompt-provenance-inventory",
+        format: "source",
+        title: "Prompt provenance inventory",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Codex CLI prompts",
+    files: [
+      {
+        path: "outputs/codex-cli-prompts.md",
+        anchor: "codex-cli-prompts-md",
+        slug: "codex-cli-prompts",
+        format: "markdown",
+        title: "CLI prompt templates",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-cli-bundled-skills.md",
+        anchor: "codex-cli-bundled-skills-md",
+        slug: "codex-cli-bundled-skills",
+        format: "markdown",
+        title: "CLI bundled skills",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-cli-prompts.json",
+        anchor: "codex-cli-prompts-json",
+        slug: "codex-cli-prompt-provenance",
+        format: "source",
+        title: "CLI prompt provenance",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Observed runtime and tools",
+    files: [
+      {
+        path: "outputs/desktop-tool-manifest.md",
+        anchor: "desktop-tool-manifest-md",
+        slug: "tool-manifest",
+        format: "markdown",
+        title: "Tool manifest (live)",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/aeon-current-responses-2026-09-24.json",
+        anchor: "aeon-current-responses-2026-09-24-json",
+        slug: "current-response-samples",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Current response samples",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/aeon-native-tools-2026-09-24.md",
+        anchor: "aeon-native-tools-2026-09-24-md",
+        slug: "persistent-tool-signals",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Persistent tool signals",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/aeon-tools-and-tool-calls.md",
+        anchor: "aeon-tools-and-tool-calls-md",
+        slug: "tool-and-call-inventory-notes",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Tool and call inventory notes",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/current-host-tool-manifest-2026-09-24.json",
+        anchor: "current-host-tool-manifest-2026-09-24-json",
+        slug: "complete-host-tool-manifest",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Complete host tool manifest",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Extraction evidence",
+    files: [
+      {
+        path: "outputs/binwalk-aeon-daybreak-report.md",
+        anchor: "binwalk-aeon-daybreak-report-md",
+        slug: "binwalk-report",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Binwalk report",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/binwalk-method-diff.json",
+        anchor: "binwalk-method-diff-json",
+        slug: "protocol-method-diff",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Protocol method diff",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/binwalk-codename-byte-scan.json",
+        anchor: "binwalk-codename-byte-scan-json",
+        slug: "model-alias-byte-scan",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Model alias byte scan",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
+    label: "Historical archive",
+    files: [
+      {
+        path: "outputs/aeon-core-instructions.md",
+        anchor: "aeon-core-instructions-md",
+        slug: "earlier-aeon-core-prompt",
+        format: "markdown",
+        title: "Earlier Aeon core prompt",
+        instructionProfile: "historical-core",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/aeon-assembled-instructions.md",
+        anchor: "aeon-assembled-instructions-md",
+        slug: "earlier-assembled-prompt",
+        format: "markdown",
+        title: "Earlier assembled prompt",
+        instructionProfile: "historical-assembled",
+        defaultOpen: false
+      }
+    ]
+  }
+];

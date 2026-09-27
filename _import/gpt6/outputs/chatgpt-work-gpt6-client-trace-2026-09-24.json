@@ -1,0 +1,55 @@
+{
+  "captured_at": "2026-09-24",
+  "surface": "ChatGPT Work",
+  "source_type": "authenticated live browser observation",
+  "privacy": "Sanitized: request IDs, conversation IDs, account data, timestamps, and unrelated browser state omitted.",
+  "model_catalog": {
+    "endpoint": "/backend-api/tpp/models/?iim=false&include_icons=false",
+    "work_model_count": 7,
+    "gpt6_models": [
+      { "title": "GPT-6 Astra", "slug": "gpt-6-astra-wm", "is_work_mode_model": true },
+      { "title": "GPT-6 Sol", "slug": "gpt-6-sol-wm", "is_work_mode_model": true },
+      { "title": "GPT-6 Luna", "slug": "gpt-6-luna-wm", "is_work_mode_model": true }
+    ],
+    "prompt_or_instruction_fields_present": false
+  },
+  "observed_turns": [
+    {
+      "model": "gpt-6-luna-wm",
+      "message_roles_sent_by_client": ["user"],
+      "user_message_count": 1,
+      "system_or_developer_message_sent_by_client": false,
+      "prompt_or_instruction_field_present": false,
+      "visible_exact_response_verified": true,
+      "activation_status": "active for the observed test turn"
+    },
+    {
+      "model": "gpt-6-astra-wm",
+      "message_roles_sent_by_client": ["user"],
+      "user_message_count": 1,
+      "system_or_developer_message_sent_by_client": false,
+      "prompt_or_instruction_field_present": false,
+      "visible_exact_response_verified": true,
+      "activation_status": "active for the observed test turn"
+    },
+    {
+      "model": "gpt-6-sol-wm",
+      "message_roles_sent_by_client": ["user"],
+      "user_message_count": 1,
+      "system_or_developer_message_sent_by_client": false,
+      "prompt_or_instruction_field_present": false,
+      "visible_exact_response_verified": true,
+      "activation_status": "active for the observed test turn"
+    }
+  ],
+  "voice_prefetch": {
+    "endpoint": "/realtime/wm",
+    "chat_mode": "work",
+    "backend_model": "gpt-6-luna-wm",
+    "voice_mode": "wingman",
+    "client_tools": [],
+    "prompt_or_instruction_field_present": false,
+    "activation_status": "automatic prefetch only; no microphone call was completed"
+  },
+  "boundary": "The client trace cannot reveal instructions assembled or injected by the Work service after request submission."
+}

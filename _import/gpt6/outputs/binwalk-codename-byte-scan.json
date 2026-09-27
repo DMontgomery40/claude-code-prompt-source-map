@@ -1,0 +1,279 @@
+{
+  "roots": [
+    "/Applications/ChatGPT.app/Contents",
+    "~/Documents/Codex/2026-09-24/do-x20/work/binwalk/extract-codex-full"
+  ],
+  "scanned_files": 4197,
+  "scanned_bytes": 1450421595,
+  "matches": [
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/app.asar",
+      "size": 370175042,
+      "hits": {
+        "persian:ascii": [
+          33250441,
+          89814868,
+          114124171,
+          114124199,
+          114124225,
+          114173685,
+          186716473,
+          186718045,
+          186760257,
+          235506956,
+          235509593,
+          235512631,
+          235513195,
+          235530715,
+          235533946,
+          235544139,
+          235546124,
+          235550208,
+          235550619,
+          235553239,
+          235560681
+        ],
+        "gpt-6-astra:ascii": [
+          29222742,
+          29222761,
+          37749926,
+          37749951,
+          38194938
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/codex",
+      "size": 235581792,
+      "hits": {
+        "persian:ascii": [
+          184303722,
+          185157985,
+          185772306,
+          185860494,
+          186612900,
+          186613409
+        ],
+        "gpt-6-astra:ascii": [
+          180464555,
+          180464573,
+          180508815,
+          181440114,
+          181451773,
+          181452045,
+          181452176,
+          181459009,
+          181459157,
+          181459229,
+          181465885,
+          181476464,
+          181476513,
+          181476875,
+          181477110,
+          181477610,
+          181477769,
+          181482775,
+          181489116,
+          181489859,
+          181493444,
+          181495564,
+          181495753
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/rg",
+      "size": 4032480,
+      "hits": {
+        "persian:ascii": [
+          3300979,
+          3484379
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/codex-code-mode-host",
+      "size": 62803600,
+      "hits": {
+        "persian:ascii": [
+          36517310,
+          36518168,
+          43711364,
+          44042363,
+          44693583,
+          45442880,
+          47897210
+        ],
+        "persian:utf-16le": [
+          43956400,
+          43956692,
+          43957970,
+          44701974,
+          45251962,
+          45252050,
+          45252246,
+          45252346,
+          45252482,
+          45252598,
+          45519388
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/plugins/openai-bundled/plugins/latex/bin/tectonic",
+      "size": 54016384,
+      "hits": {
+        "persian:ascii": [
+          12743804,
+          29609295,
+          31600635,
+          33387231,
+          35992524
+        ],
+        "persian:utf-16le": [
+          30581216,
+          30897246,
+          30898254,
+          30898748,
+          30901636,
+          31807174,
+          31808228,
+          31809474,
+          31884744,
+          31887596,
+          32039568,
+          32039788,
+          32410696,
+          32413266,
+          33400696,
+          35728530,
+          35728618,
+          35728814,
+          35728914,
+          35729050,
+          35729166,
+          35799078,
+          36098986
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl",
+      "size": 17684320,
+      "hits": {
+        "persian:ascii": [
+          9964706
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node",
+      "size": 122127712,
+      "hits": {
+        "persian:ascii": [
+          62939612,
+          65243959,
+          67181311,
+          70021708,
+          90621004,
+          90621022,
+          112646490
+        ],
+        "persian:utf-16le": [
+          64093770,
+          64391084,
+          64433070,
+          64434048,
+          64434574,
+          64437502,
+          65468340,
+          65469740,
+          65471218,
+          65550990,
+          65553884,
+          65752292,
+          65752682,
+          66158512,
+          66158708,
+          67195712,
+          69708034,
+          69708122,
+          69708318,
+          69708418,
+          69708554,
+          69708670,
+          69774316,
+          70129724
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules/playwright-core/lib/vite/traceViewer/assets/codeMirrorModule-Bucv2d7q.js",
+      "size": 298247,
+      "hits": {
+        "persian:ascii": [
+          197675
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules/playwright-core/lib/vite/recorder/assets/codeMirrorModule-BoWUGj0J.js",
+      "size": 298233,
+      "hits": {
+        "persian:ascii": [
+          197661
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules/@img/sharp-libvips-darwin-arm64/lib/libvips-cpp.8.18.6.dylib",
+      "size": 18182288,
+      "hits": {
+        "persian:ascii": [
+          13141735,
+          13721139,
+          15286241
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/153.0.8010.53/Codex Framework",
+      "size": 270654464,
+      "hits": {
+        "persian:ascii": [
+          225687896,
+          232458799,
+          232628479,
+          247494713,
+          247500166,
+          249436291
+        ]
+      }
+    },
+    {
+      "path": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/153.0.8010.53/Resources/icudtl.dat",
+      "size": 10823536,
+      "hits": {
+        "persian:ascii": [
+          7039548,
+          7398370,
+          8000756,
+          8757224
+        ],
+        "persian:utf-16le": [
+          7297074,
+          7297366,
+          7298644,
+          8009254,
+          8563358,
+          8563446,
+          8563642,
+          8563742,
+          8563878,
+          8563994,
+          8833804
+        ]
+      }
+    }
+  ]
+}

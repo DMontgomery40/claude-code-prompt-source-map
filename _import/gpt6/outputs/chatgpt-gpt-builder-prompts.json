@@ -1,0 +1,51 @@
+{
+ "page": "outputs/chatgpt-gpt-builder-prompts.md",
+ "app_version": "26.924.22138",
+ "app_build": "11645",
+ "source": {
+  "asar_sha256": "d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80"
+ },
+ "items": [
+  {
+   "id": "gpt-fields-no-picture",
+   "title": "Current fields: no profile picture",
+   "label": "assembled",
+   "message_id": null,
+   "source_file": "webview/assets/page-d3b69e0b642f.js",
+   "byte_offset": 3097,
+   "sha256": "50c9d93a3cdd14049e52e97bb0ccbd5b297352a37d64cebde5e62509e520d561",
+   "text": "This is the GPT's current set of fields:\n\n{\n  \"name\": \"<NAME>\",\n  \"description\": \"<DESCRIPTION>\",\n  \"context\": \"<INSTRUCTIONS>\",\n  \"prompt_starters\": [\n    \"<PROMPT_STARTER>\"\n  ],\n  \"abilities\": [\n    \"<ABILITY>\"\n  ],\n  \"file_ids\": [\n    \"<FILE_ID>\"\n  ]\n}\n\nThis GPT does not have a profile picture. You must generate a profile picture when you next update your behavior."
+  },
+  {
+   "id": "gpt-fields-with-picture",
+   "title": "Current fields: with profile picture",
+   "label": "assembled",
+   "message_id": null,
+   "source_file": "webview/assets/page-d3b69e0b642f.js",
+   "byte_offset": 3097,
+   "sha256": "fa04926be840d1670593e01cd2f11d495bf42905ba4b5cba3d1310a0db190043",
+   "text": "This is the GPT's current set of fields:\n\n{\n  \"name\": \"<NAME>\",\n  \"description\": \"<DESCRIPTION>\",\n  \"context\": \"<INSTRUCTIONS>\",\n  \"prompt_starters\": [\n    \"<PROMPT_STARTER>\"\n  ],\n  \"abilities\": [\n    \"<ABILITY>\"\n  ],\n  \"file_ids\": [\n    \"<FILE_ID>\"\n  ]\n}\n\nThe GPT has a profile picture."
+  },
+  {
+   "id": "gpt-settings-changed",
+   "title": "Settings changed directly",
+   "label": "assembled",
+   "message_id": null,
+   "source_file": "webview/assets/page-d3b69e0b642f.js",
+   "byte_offset": 3764,
+   "sha256": "ea7dce415e54fedafd65dae250ebf5f69c582f95090f34695d878ffe2fd0573c",
+   "text": "<…>\n\nThe user changed these settings directly. Treat these fields, abilities, and files as the current GPT configuration. Do not call update_behavior yet; incorporate these changes in your next update_behavior call. Files absent from file_ids are no longer available to the GPT."
+  },
+  {
+   "id": "gpt-files-uploaded",
+   "title": "Files uploaded to the GPT",
+   "label": "assembled",
+   "message_id": null,
+   "source_file": "webview/assets/page-d3b69e0b642f.js",
+   "byte_offset": 25130,
+   "sha256": "a6a36541e762f65f11901f66a3f39b1475aa412558f9b950ecc2cfa72fe71335",
+   "text": "The user uploaded these files to the GPT: <…>. Incorporate them in your next update_behavior call."
+  }
+ ],
+ "not_found": []
+}

@@ -1,0 +1,137 @@
+{
+  "title": "Aeon current response samples",
+  "date_local": "2026-09-24",
+  "timezone": "America/Denver",
+  "recorded_at": "2026-09-24T20:12:11-06:00",
+  "source": {
+    "desktop_version": "26.917.71314",
+    "desktop_build": "10954",
+    "codex_cli": "codex-cli 0.155.0-alpha.16.4",
+    "model": "gpt-6-astra",
+    "persistent_instructions_sha256": "30747e79e50efb64f91cfff3d5ef1882e347081e81448918d5f7d5358e98c523"
+  },
+  "operating_model": "Aeon is the persistent control layer over the host's normal Codex, ChatGPT, and Work tool inventory. It stores the next action, starts or resumes worker turns, steers active work, waits for conditions, and returns results without ending the root task.",
+  "responses": {
+    "persistent_instructions": {
+      "request": {
+        "command": "codex debug models",
+        "model": "gpt-6-astra",
+        "field": "model_messages.persistent_instructions"
+      },
+      "response": {
+        "authenticated_model_count": 10,
+        "bundled_model_count": 11,
+        "bundled_matches_authenticated": true,
+        "characters": 5737,
+        "lines": 33,
+        "sha256": "30747e79e50efb64f91cfff3d5ef1882e347081e81448918d5f7d5358e98c523"
+      }
+    },
+    "standard_thread_entrypoint": {
+      "request": {
+        "method": "thread/start",
+        "model": "gpt-6-astra",
+        "ephemeral": false,
+        "approvalPolicy": "never",
+        "dynamicTools": [
+          "probe_checkpoint"
+        ]
+      },
+      "response": {
+        "threadId": "01a0d654-3caa-7630-9120-8646fa24c274",
+        "model": "gpt-6-astra"
+      }
+    },
+    "aeon_named_entrypoint": {
+      "request": {
+        "method": "thread/startAeon"
+      },
+      "response": {
+        "accepted": false,
+        "error": {
+          "code": -32600,
+          "message": "Invalid request: unknown variant thread/startAeon"
+        }
+      },
+      "meaning": "Persistent Astra work uses the standard thread/start path; persistent behavior is supplied by model instructions and task state rather than a separate local startAeon RPC."
+    },
+    "live_turn_steering": {
+      "request": {
+        "method": "turn/steer",
+        "threadId": "01a0d654-3caa-7630-9120-8646fa24c274",
+        "expectedTurnId": "01a0d654-3d5b-77f1-ad68-1f071b47ca87"
+      },
+      "response": {
+        "turnId": "01a0d654-3d5b-77f1-ad68-1f071b47ca87"
+      },
+      "completed_output": "STEERED ORBIT-73"
+    },
+    "restart_resume": {
+      "request": {
+        "method": "thread/resume",
+        "threadId": "01a0d654-3caa-7630-9120-8646fa24c274",
+        "excludeTurns": true
+      },
+      "response": {
+        "sameThreadId": true,
+        "model": "gpt-6-astra",
+        "restoredGoalStatus": "paused",
+        "restoredDynamicTool": "probe_checkpoint",
+        "dynamicToolDefinitionResent": false
+      },
+      "completed_output": "RESTORED ORBIT-73"
+    },
+    "automatic_continuation": {
+      "trigger": {
+        "method": "thread/goal/set",
+        "status": "active"
+      },
+      "response": {
+        "priorTurnId": "01a0d654-699e-7dd2-a4a9-9bead4a1b3f9",
+        "automaticTurnId": "01a0d654-7a87-7a50-a47c-9ec952a1f286",
+        "clientSentAnotherTurnStart": false,
+        "tool": "probe_checkpoint",
+        "completed_output": "AUTOMATIC ORBIT-73",
+        "finalGoalStatus": "complete"
+      }
+    },
+    "concurrent_workers": {
+      "response": {
+        "simultaneouslyActive": 2,
+        "workerA": {
+          "threadId": "01a0d654-9eaf-7910-84b4-1e4ddc9b6bc3",
+          "turnId": "01a0d654-9ecc-7bd2-8c3b-1f8be971e64d",
+          "output": "STEERED WORKER-A-19"
+        },
+        "workerB": {
+          "threadId": "01a0d654-9e9e-7da3-9ebd-3d86e658b7c2",
+          "turnId": "01a0d654-9eac-73e0-9bab-d7d185b072b2",
+          "output": "DONE WORKER-B-28"
+        },
+        "workerBCompletedWhileWorkerAWasHeld": true,
+        "crossWorkerTurnIdRejected": true,
+        "bothWorkersResumedAfterServerRestart": true
+      }
+    },
+    "automation_management": {
+      "create": {
+        "automationId": "aeon-current-response-probe-2026-09-24",
+        "mode": "create",
+        "status": "PAUSED"
+      },
+      "view": {
+        "message": "Rendered automation card in the app."
+      },
+      "delete": {
+        "automationId": "aeon-current-response-probe-2026-09-24",
+        "mode": "delete",
+        "deleteStatus": "deleted",
+        "snapshot": {
+          "kind": "heartbeat",
+          "name": "Aeon current response probe 2026-09-24",
+          "rrule": "FREQ=HOURLY;INTERVAL=1"
+        }
+      }
+    }
+  }
+}

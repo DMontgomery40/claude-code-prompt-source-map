@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-09-25T04:40:22.008452+00:00",
+  "source": {
+    "surface": "Codex CLI authenticated model catalog",
+    "command": "/Applications/ChatGPT.app/Contents/Resources/codex debug models",
+    "binary_sha256": "93169e745735930598e867ad837abf3fdc50774a3ad7e7aa89c0d0c51b0189a5",
+    "authenticated_model_count": 10
+  },
+  "records": {
+    "gpt-6-astra": {
+      "display_name": "GPT-6-Astra",
+      "base_first_sentence": "You are Codex, an agent based on GPT-6.",
+      "base_sha256": "35bd51b5f577cb7b24cd5f4629e49e37cb724ab57754ce6f8f202001635bab8a",
+      "base_characters": 21420,
+      "base_equals_instructions_template": true,
+      "persistent_sha256": "30747e79e50efb64f91cfff3d5ef1882e347081e81448918d5f7d5358e98c523",
+      "persistent_characters": 5737
+    },
+    "gpt-6-luna": {
+      "display_name": "GPT-6-Luna",
+      "base_first_sentence": "You are Codex, an agent based on GPT-6.",
+      "base_sha256": "b707476816bfe5e571a1bd2179f130fff2b132da5ab8e61063acdb7fd24daf12",
+      "base_characters": 18037,
+      "base_equals_instructions_template": true,
+      "persistent_sha256": "30747e79e50efb64f91cfff3d5ef1882e347081e81448918d5f7d5358e98c523",
+      "persistent_characters": 5737
+    }
+  },
+  "comparison": {
+    "persistent_instructions_equal": true,
+    "base_instructions_equal": false,
+    "different_model_messages_top_level_fields": [
+      "instructions_template"
+    ]
+  }
+}

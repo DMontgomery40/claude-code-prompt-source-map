@@ -1,0 +1,200 @@
+{
+ "tags": [
+  {
+   "id": "persistent-mode",
+   "label": "Persistent mode",
+   "definition": "Settings that turn on Codex persistent mode, gate the tools it relies on, or tune its long-running follow-up behavior. Counts: the main thread's reasoning-effort key and its managed new-thread default (the value `persistent` enables the mode); model catalogs that supply persistent-mode instructions or tools; async user-message tools (send_user_message_async, send_message_to_user_async); clock, clock.sleep and current-time reminder settings; automatic idle continuation and goals; automations; keeping the machine awake during a running turn. Applies in any group, including features.* flags and requirements: variants. Does NOT include reasoning effort for guardian or reviewer sessions, sub-agents or plan mode; other model, verbosity, provider or service-tier settings; settings that merely say persistent or persistence (saved approvals, transcript history); async hooks; or keybindings.",
+   "true_examples": [
+    "config:model_reasoning_effort",
+    "config:features.sleep_tool",
+    "config:features.current_time_reminder.sleep_tool",
+    "config:features.send_message_to_user_async"
+   ],
+   "false_examples": [
+    "config:history.persistence",
+    "config:requirements:computer_use.allow_persistent_approval",
+    "config:hooks.<Event>[].hooks[].async"
+   ]
+  },
+  {
+   "id": "prompt-instructions",
+   "label": "Prompt and instructions",
+   "definition": "Settings that supply, replace or toggle text injected into the model's context: base or developer instructions, instruction files, AGENTS.md / project-doc discovery and size limits, compaction or startup prompts, and switches that include or omit context blocks (environment, permissions, apps, collaboration-mode instructions). It applies in any group, including features.* flags and requirements: variants. It does not cover settings that only change model behavior without adding text, or that store transcripts.",
+   "true_examples": [
+    "config:developer_instructions",
+    "config:model_instructions_file",
+    "config:project_doc_max_bytes",
+    "config:include_environment_context"
+   ],
+   "false_examples": [
+    "config:model_verbosity",
+    "config:history.persistence"
+   ]
+  },
+  {
+   "id": "model-reasoning",
+   "label": "Model and reasoning",
+   "definition": "Settings that choose which model runs or how it thinks and answers: model slug, reasoning effort and summaries, verbosity, context window and auto-compaction limit, service tier, model catalogs, and per-role or managed defaults for these. It applies in any group, including features.* flags and requirements: variants. It does not cover provider endpoints, credentials or keybindings that change effort.",
+   "true_examples": [
+    "config:model",
+    "config:model_reasoning_summary",
+    "config:service_tier",
+    "config:requirements:models.new_thread.model_reasoning_effort"
+   ],
+   "false_examples": [
+    "config:model_providers.<id>.base_url",
+    "config:tui.keymap.chat.increase_reasoning_effort"
+   ]
+  },
+  {
+   "id": "auth-providers",
+   "label": "Auth, providers and network",
+   "definition": "Settings and environment variables for signing in and reaching model backends: login method and credential storage, API keys and access tokens, model provider definitions and base URLs, cloud-provider credentials (such as AWS/Bedrock), HTTP proxies, CA certificates and request headers. It applies in any group, including requirements: variants. It does not cover the sandbox's network allowlist for commands the agent runs, or MCP-server-specific auth.",
+   "true_examples": [
+    "config:forced_login_method",
+    "config:model_providers.<id>.env_key",
+    "env:OPENAI_BASE_URL",
+    "env:AWS_ACCESS_KEY_ID"
+   ],
+   "false_examples": [
+    "config:permissions.<name>.network.domains",
+    "config:model"
+   ]
+  },
+  {
+   "id": "sandbox-approvals",
+   "label": "Sandbox and approvals",
+   "definition": "Settings that limit or approve what the agent may execute or touch: sandbox mode and permission profiles, filesystem and network access for commands, approval policy and approvals reviewer (including guardian auto-review), exec-policy / prefix rules, shell environment policy, and variables Codex sets to mark or escalate sandboxed processes. It applies in any group, including features.* flags and requirements: variants. It does not cover keybindings in approval dialogs or generic terminal-detection variables.",
+   "true_examples": [
+    "config:approval_policy",
+    "config:sandbox_mode",
+    "config:requirements:rules.prefix_rules[].decision",
+    "env:CODEX_SANDBOX"
+   ],
+   "false_examples": [
+    "config:tui.keymap.approval.approve_for_prefix",
+    "env:TERM"
+   ]
+  },
+  {
+   "id": "built-in-tools",
+   "label": "Built-in tools",
+   "definition": "Settings for tools that ship with Codex and that the model calls directly: shell / unified exec and background terminals, apply_patch, plan updates, web search, browser use, computer use, image generation and viewing, JS REPL and code mode, clock/sleep and async user-message tools, and tool discovery or suggestion. It applies in any group, including features.* flags and requirements: variants. It does not cover external MCP servers or approval policy in general.",
+   "true_examples": [
+    "config:tools.web_search",
+    "config:browser_use.origins.<pattern>.downloads",
+    "config:features.unified_exec_tty",
+    "config:computer_use.macos.bundle_ids.<bundle-id>"
+   ],
+   "false_examples": [
+    "config:mcp_servers.<id>.command",
+    "config:approval_policy"
+   ]
+  },
+  {
+   "id": "mcp-plugins",
+   "label": "MCP, plugins and skills",
+   "definition": "Settings for extending Codex with external or packaged capabilities: MCP server definitions (command, URL, auth, timeouts, per-tool limits), plugins and marketplaces, skills, and connected apps. It applies in any group, including features.* flags and requirements: variants. It does not cover tools built into Codex such as web search or shell, or sub-agent coordination.",
+   "true_examples": [
+    "config:mcp_servers.<id>.command",
+    "config:mcp_servers.<id>.startup_timeout_sec",
+    "config:skills.bundled",
+    "config:requirements:mcp_servers.<id>.identity.command"
+   ],
+   "false_examples": [
+    "config:tools.web_search",
+    "config:agents.max_threads"
+   ]
+  },
+  {
+   "id": "multi-agent",
+   "label": "Multi-agent",
+   "definition": "Settings for spawning and coordinating sub-agents: multi-agent features, agent roles and nicknames, thread and depth limits, default sub-agent model or effort, and orchestrator behavior. It applies in any group, including features.* flags and requirements: variants. It does not cover skills or plugins by themselves, or IDs Codex exports to child processes.",
+   "true_examples": [
+    "config:agents.max_threads",
+    "config:agents.<role>.nickname_candidates",
+    "config:features.multi_agent_v2",
+    "config:agents.default_subagent_reasoning_effort"
+   ],
+   "false_examples": [
+    "config:skills.bundled",
+    "env:CODEX_THREAD_ID"
+   ]
+  },
+  {
+   "id": "memory-context",
+   "label": "Memory, context and compaction",
+   "definition": "Settings that decide what the model remembers across turns and sessions: generated memories, context-window budgets and reminders, automatic compaction and context rollover, and history/notes carried across windows. It applies in any group, including features.* flags and requirements: variants. It does not cover saving transcripts to disk for the user, telemetry, or clock and current-time reminder settings.",
+   "true_examples": [
+    "config:memories.generate_memories",
+    "config:features.token_budget",
+    "config:model_auto_compact_token_limit",
+    "config:memories.min_rollout_idle_hours"
+   ],
+   "false_examples": [
+    "config:history.persistence",
+    "config:features.guardianv2.persist_scores"
+   ]
+  },
+  {
+   "id": "hooks-notifications",
+   "label": "Hooks and notifications",
+   "definition": "Settings for lifecycle hooks (commands or prompts that run on events, their matchers, trust state and timeouts) and for notifying the user (notify commands, desktop or terminal notifications and when they fire). It applies in any group, including requirements: variants. It does not cover telemetry exporters, UI features that only display status, or current-time reminders injected into the model's context.",
+   "true_examples": [
+    "config:hooks.<Event>[].hooks[].command",
+    "config:hooks.<Event>[].matcher",
+    "config:notify",
+    "config:tui.notifications"
+   ],
+   "false_examples": [
+    "config:otel.exporter.otlp-http.headers",
+    "config:tui.auto_recap"
+   ]
+  },
+  {
+   "id": "realtime-voice",
+   "label": "Realtime voice",
+   "definition": "Settings for realtime speech sessions and audio devices: realtime transport, model, voice, startup instructions or context, and microphone or speaker selection. It applies in any group, including features.* flags. It does not cover ordinary streaming timeouts or terminal sounds.",
+   "true_examples": [
+    "config:realtime.voice",
+    "config:audio.microphone",
+    "config:experimental_realtime_ws_model",
+    "config:realtime.transport"
+   ],
+   "false_examples": [
+    "config:model_providers.<id>.stream_idle_timeout_ms",
+    "config:features.unified_exec_tty"
+   ]
+  },
+  {
+   "id": "telemetry-storage",
+   "label": "Telemetry, logs and storage",
+   "definition": "Settings and environment variables for observability and local state: OpenTelemetry exporters and trace context, analytics and feedback, log levels and formats, transcript/history persistence, rollout and session files, and Codex home or database paths. It applies in any group, including features.* flags and requirements: variants. It does not cover the model's memory of past sessions or lifecycle hooks.",
+   "true_examples": [
+    "config:otel.trace_exporter.otlp-http.endpoint",
+    "config:history.persistence",
+    "env:RUST_LOG",
+    "env:CODEX_SQLITE_HOME"
+   ],
+   "false_examples": [
+    "config:memories.generate_memories",
+    "config:hooks.state"
+   ]
+  },
+  {
+   "id": "ui",
+   "label": "Terminal and desktop UI",
+   "definition": "Settings and environment variables that change how the terminal UI or desktop app looks and behaves for the user: TUI options, keymaps and vim mode, themes and rendering, notices and prompts, desktop-app window or runtime behavior, and terminal detection. It applies in any group. It does not cover what the model can do, or third-party library variables that only happen to be read by the desktop bundle.",
+   "true_examples": [
+    "config:tui.keymap.editor.move_up",
+    "config:tui.vim_mode_default",
+    "config:notice.hide_world_writable_warning",
+    "env:TERM_PROGRAM"
+   ],
+   "false_examples": [
+    "config:realtime.voice",
+    "config:approval_policy"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,10 @@
+// Static hosting on Cloudflare Workers assets. `npm run build`, then `npx wrangler deploy`.
+{
+  "name": "gpt6-prompt-source-map",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [{ "pattern": "gpt6aeon.dtmont.com", "custom_domain": true }]
+}

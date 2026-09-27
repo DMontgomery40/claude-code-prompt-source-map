@@ -1,0 +1,156 @@
+[
+ {
+  "id": "config:model_reasoning_effort",
+  "file": "codex-config",
+  "relation": "enables",
+  "reason": "Value `persistent` is ReasoningEffort::Persistent; the session seeds its effort from this key unclamped, and persistent-mode instructions are injected exactly when effort == Persistent.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/context/world_state/persistent_mode.rs:56"
+ },
+ {
+  "id": "config:requirements:models.new_thread.model_reasoning_effort",
+  "file": "codex-config",
+  "relation": "enables",
+  "reason": "Managed new-thread default effort (typed ReasoningEffort, so `persistent` parses); the TUI copies it into config.model_reasoning_effort when no explicit model setting is given.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/tui/src/managed_new_thread_defaults.rs:35"
+ },
+ {
+  "id": "config:model_catalog_json",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "A custom catalog supplies model_messages.persistent_instructions (null = built-in, empty = disabled), experimental_supported_tools (send_user_message_async, clock) and default_reasoning_level.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/protocol/src/openai_models.rs:541"
+ },
+ {
+  "id": "config:requirements:model_catalog_json",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "Managed-policy catalog; same persistent_instructions / experimental_supported_tools / default_reasoning_level fields decide the instructions and the async-message and clock tools.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/tools/spec_plan.rs:1130"
+ },
+ {
+  "id": "config:features.sleep_tool",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "Registers the clock.sleep tool that persistent mode uses to wait between follow-up checks.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/tools/spec_plan.rs:1182"
+ },
+ {
+  "id": "config:features.sleep_tool.enabled",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "Table form of the sleep_tool feature gate for clock.sleep.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/tools/spec_plan.rs:1182"
+ },
+ {
+  "id": "config:features.sleep_tool.mode",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "model_driven registers clock.sleep only when the catalog lists `clock` or current_time_reminder.sleep_tool is set; always_on registers it regardless.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/feature_configs.rs:421"
+ },
+ {
+  "id": "config:features.current_time_reminder",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "Persistent mode auto-enables this feature with sleep_tool=true for the turn; any explicit current_time_reminder config suppresses those defaults.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/session/time_reminder.rs:17"
+ },
+ {
+  "id": "config:features.current_time_reminder.enabled",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "Turns the clock/current-time tool on; forwarded by the desktop app to durable (Aeon) hosts alongside codex_internal_persistent_mode.",
+  "evidence": "app.asar:.vite/build/main-C-Mhak1n.js:495 (anchor: var PSe=new Set)"
+ },
+ {
+  "id": "config:features.current_time_reminder.sleep_tool",
+  "file": "codex-config",
+  "relation": "gates-dependency",
+  "reason": "Exposes clock.sleep in model_driven mode when the reminder is on; persistent defaults set it to true.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/tools/spec_plan.rs:1186"
+ },
+ {
+  "id": "config:features.current_time_reminder.clock_source",
+  "file": "codex-config",
+  "relation": "tunes",
+  "reason": "system vs external clock; external makes the app-server client supply time and sleep deadlines for clock tools.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/feature_configs.rs:379"
+ },
+ {
+  "id": "config:features.current_time_reminder.delivery_mode",
+  "file": "codex-config",
+  "relation": "tunes",
+  "reason": "Which inference boundaries receive current-time reminders during long-running persistent turns.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/feature_configs.rs:388"
+ },
+ {
+  "id": "config:features.current_time_reminder.reminder_interval_seconds",
+  "file": "codex-config",
+  "relation": "tunes",
+  "reason": "Interval between current-time reminders injected into long-running turns.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/feature_configs.rs:402"
+ },
+ {
+  "id": "config:features.nonfatal_clock_read_errors",
+  "file": "codex-config",
+  "relation": "tunes",
+  "reason": "Reports failed clock reads to the model instead of failing the turn (clock tools that persistent mode depends on).",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/lib.rs:1675"
+ },
+ {
+  "id": "config:features.reasoning_effort_override",
+  "file": "codex-config",
+  "relation": "tunes",
+  "reason": "Appends trusted response-config items when effort changes; tested for high <-> persistent transitions (wire value `disabled`).",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/tests/suite/reasoning_effort_override.rs:165"
+ },
+ {
+  "id": "config:features.send_message_to_user_async",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Registers the sibling send_message_to_user_async tool for root agents without catalog support; forwarded by the desktop to durable (Aeon) hosts.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/tools/spec_plan.rs:1153"
+ },
+ {
+  "id": "config:features.send_async_message",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Removed predecessor flag for model-enabled async user messaging (accepted, no effect).",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/lib.rs:1579"
+ },
+ {
+  "id": "config:features.goals",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Goals extension continues an active goal when the thread goes idle (the 'automatic continuations' the persistent template refers to).",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/ext/goal/src/extension.rs:180"
+ },
+ {
+  "id": "config:goals",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Settings table for goal continuation (automatic idle continuation of long-running work).",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/ext/goal/src/extension.rs:180"
+ },
+ {
+  "id": "config:goals.max_goal_token_budget",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Caps the token budget of goal continuation, bounding automatic long-running follow-up work.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/core/src/config/mod.rs:911"
+ },
+ {
+  "id": "config:features.in_app_local_automation",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Desktop maps its local-automations capability to this flag; those automations (heartbeat runs that start scheduled turns in an existing thread) are the recurring-work alternative the persistent prompt names.",
+  "evidence": "app.asar:webview/assets/app-initial-51da50e6c6e3.js:4877 (anchor: \"automations.local\":{accessPolicy:`local-automations`,configFeatures:[{key:`in_app_local_automation`)"
+ },
+ {
+  "id": "config:features.prevent_idle_sleep",
+  "file": "codex-config",
+  "relation": "related",
+  "reason": "Keeps the machine awake while a turn is running; persistent turns stay in progress across clock.sleep waits.",
+  "evidence": "codex-rs@rust-v0.155.0-alpha.16.4:codex-rs/features/src/lib.rs:1753"
+ }
+]

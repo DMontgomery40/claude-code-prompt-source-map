@@ -1,0 +1,107 @@
+{
+  "app": {
+    "bundle_id": "com.openai.codex",
+    "version": "26.924.22138",
+    "build": "11645",
+    "asar_sha256": "d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80"
+  },
+  "cli": {
+    "version": "codex-cli 0.158.0-alpha.2.1",
+    "binary_sha256": "3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a"
+  },
+  "catalog": {
+    "fetched_at": "2026-09-26T19:17:00.672469Z",
+    "client_version": "0.158.0",
+    "models": [
+      "gpt-6-astra",
+      "gpt-6-sol",
+      "gpt-6-luna",
+      "gpt-reserve",
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
+      "gpt-daybreak-blue-latest",
+      "gpt-5.5",
+      "codex-auto-review"
+    ],
+    "bundled_models": [
+      "gpt-6-astra",
+      "gpt-6-sol",
+      "gpt-6-luna",
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
+      "gpt-daybreak-blue-latest",
+      "gpt-daybreak-red-latest",
+      "gpt-5.5",
+      "gpt-5.4",
+      "codex-auto-review"
+    ]
+  },
+  "asar_prompt_files": {
+    ".vite/build/main-C5425b_s.js": "91a68c5f690e60033152a34cf0bf5c4234caeb9ddb47586fd3ef5b017bb29d64",
+    ".vite/build/src-BSSLXJxP.js": "50c7cf9c144594cfa6f33298e977f0b144976cc70c579f59fdc7242615c4af98",
+    "webview/assets/app-initial-d817715f10a0.js": "0c24aeb875e80ae2d41532534b227dd976c9a8f5644a4e10a3d2cb4ffa4047ff",
+    "webview/assets/app-shared-36eae88777f2.js": "bc90bb198f29b62bd745aa99dbfae6a81719d9739c22811a12a810f9813d6c43",
+    "webview/assets/local-conversation-side-chat-93f45d4f7312.js": "f55c451c373cd9d69ab28e2e416dc6fe550ee20ac47ca13590dc97647e1e37ab",
+    "webview/assets/review-slash-command-submenu-registration-e98b2fd516c9.js": "12502cc76c6bc904c8f017f8e7ff9975b6a9a991d6dda1d81e0048a1a7d31aa8"
+  },
+  "documents": {
+    "persistent-instructions.md": {
+      "sha256": "30747e79e50efb64f91cfff3d5ef1882e347081e81448918d5f7d5358e98c523",
+      "bytes": 5741
+    },
+    "gpt-6-astra-base-instructions.md": {
+      "sha256": "35bd51b5f577cb7b24cd5f4629e49e37cb724ab57754ce6f8f202001635bab8a",
+      "bytes": 21428
+    },
+    "gpt-6-sol-base-instructions.md": {
+      "sha256": "b1dd8718c037906c53a305c5cbccb4a4be35ccbb7837461ec349bfc495412f0d",
+      "bytes": 18998
+    },
+    "gpt-6-luna-base-instructions.md": {
+      "sha256": "b707476816bfe5e571a1bd2179f130fff2b132da5ab8e61063acdb7fd24daf12",
+      "bytes": 18043
+    },
+    "gpt-6-instruction-modules.md": {
+      "sha256": "5761752d9b038f36ab662e44d3caf3ef1daf31c3540c36a2bf827a67c78e8661",
+      "bytes": 33961
+    },
+    "gpt-6-astra-model-record.json": {
+      "sha256": "7a6f5bc690ca61fe9b025f5da3f548e3ed40d62d726eedfb0ca1c0cd08caaadb",
+      "bytes": 84283
+    },
+    "gpt-6-sol-model-record.json": {
+      "sha256": "de3866149652f1fbfe8217d39d1a59dc8c2e56c112a357b97c612e7c95a580fa",
+      "bytes": 79381
+    },
+    "gpt-6-luna-model-record.json": {
+      "sha256": "5517bc140116a08a0afb0bcb8e73c44ceac3bdf23d3424d4ab712e84a0c56c0d",
+      "bytes": 77466
+    },
+    "model-comparison.json": {
+      "sha256": "4f3e930c5d8c35245a36d4aa8a2712e21d13fb0cb5e7ec1263added82f9e5351",
+      "bytes": 5658
+    },
+    "capture-metadata.json": {
+      "sha256": "d057b93136575060bc974cfda7761df798fe58bf0a230fc7b7fbe78820d4a78e",
+      "bytes": 1813
+    },
+    "desktop-helper-prompts.md": {
+      "sha256": "3380011f7aac72d1d0a4b4c1905df0d1ef3010b1f4c7d2ed8666e90559e43a06",
+      "bytes": 59948
+    },
+    "voice-prompts.md": {
+      "sha256": "c9d693542838b23ae8acc67b03d303afd8e1999f28e0ce633a6aad34eadf5ea2",
+      "bytes": 13848
+    },
+    "prompt-provenance-inventory.json": {
+      "sha256": "8089ea0d78c16457b69fc6349bdc366660bd2f0cf65bd6de08156151ecdbf6b7",
+      "bytes": 38285
+    },
+    "other-catalog-models.md": {
+      "sha256": "adf13df172becaafb62afdd190b31a25f087e57116069e4f47f4738a632dfe1e",
+      "bytes": 73311
+    }
+  }
+}
