@@ -487,7 +487,14 @@ export function heroFacts(model, p) {
     case "found-nowhere": library = libDark("not in the library"); code = codeDark(hasLiterals(model) ? "not found in the shipped code either" : "not checked (no literal index)"); break;
     case "in-library-unlinked": library = { state: "amber", title: `LIBRARY · ${lib}`, text: title ? `in the library: ${title}` : "in the library", sub: "Trace's own link misses it" }; code = p.where ? codeLit : codeDark("no offset on the record"); break;
     case "linked-type-text-differs": library = { state: "typed", title: `LIBRARY · ${lib}`, text: title ? `linked by type: ${title}` : "linked by type", sub: "the text differs from the record" }; code = p.where ? codeLit : codeDark("no offset on the record"); break;
-    case "composite": library = { state: title ? "lit" : "dark", title: `LIBRARY · ${lib}`, text: title ? `the wrapper: ${title}` : "not in the library", sub: "a harness wrapper around other text" }; code = p.where ? codeLit : codeDark("no single offset (composite)"); break;
+    case "composite": {
+      // Its lines match several records, none holding most of it: the library has it in parts.
+      const parts = (p.composite?.parts || []).filter(x => x && x.title).sort((x, y) => (y.n || 0) - (x.n || 0));
+      library = title ? { state: "lit", title: `LIBRARY · ${lib}`, text: `the wrapper: ${title}`, sub: "a harness wrapper around other text" }
+        : parts.length ? { state: "lit", title: `LIBRARY · ${lib}`, text: `in the library in ${parts.length} parts: ${parts[0].title}${parts.length > 1 ? ", …" : ""}`, sub: "no single record holds it" }
+        : { state: "dark", title: `LIBRARY · ${lib}`, text: "not in the library", sub: "a harness wrapper around other text" };
+      code = p.where ? codeLit : codeDark(parts.length ? `no single offset (${parts.length} parts)` : "no single offset (composite)"); break;
+    }
     case "outside": library = libDark("not harness text"); code = { state: "paper", title: "OUTSIDE ANY BINARY", text: `from ${originWord(p.origin)}` }; break;
     default: library = { state: "lit", title: `LIBRARY · ${lib}`, text: title ? `linked: ${title}` : "linked" }; code = p.where ? codeLit : codeDark("no offset on the record");
   }

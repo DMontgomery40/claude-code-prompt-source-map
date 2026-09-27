@@ -227,6 +227,11 @@ test("hero facts: the sockets tell the rung truthfully, and the readout says who
   assert.equal(f.library.state, "amber"); assert.equal(f.library.text, "in the library: Example record"); assert.equal(f.code.state, "dark");
   f = heroFacts(model, one({ rung: "linked", record: { page: "p", title: "Rec" }, where: { shelf: "example binary", key: "chunk-a.js", pos: 5 } }));
   assert.deepEqual([f.library.state, f.code.state, f.code.text], ["lit", "lit", "chunk-a.js @ 5"]);
+  // A composite's lines match several records: the library has it in parts, never "not in the library".
+  f = heroFacts(model, one({ rung: "composite", record: null, where: null, composite: { parts: [{ page: "p", title: "Minor", n: 2 }, { page: "p", title: "Git attribution reminder", n: 9 }, { page: "q", title: "Third", n: 1 }], matched: 12, lines: 20 } }));
+  assert.deepEqual([f.library.state, f.library.text, f.code.text], ["lit", "in the library in 3 parts: Git attribution reminder, …", "no single offset (3 parts)"]);
+  f = heroFacts(model, one({ rung: "composite", record: null, where: null, composite: null }));
+  assert.equal(f.library.text, "not in the library");
   f = heroFacts(model, one({ rung: "outside", origin: "file", where: null }));
   assert.deepEqual([f.library.text, f.code.state, f.code.text], ["not harness text", "paper", "from your files"]);
   f = heroFacts(model, model.pieces[0]);   // two of three agents
