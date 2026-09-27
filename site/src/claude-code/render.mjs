@@ -7,6 +7,7 @@ import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } fro
 
 export { escapeHtml } from "../shared/html.mjs";
 import { escapeHtml } from "../shared/html.mjs";
+import { ICON_LINKS } from "../shared/site.mjs";
 
 export function fileAnchor(filePath) {
   return filePath
@@ -173,10 +174,6 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   const pageUrl = `${site.origin}/${current ? `${routes.slug(current.anchor)}/` : ""}`;
   const cardUrl = `${site.origin}/${site.socialCard.file}`;
   const description = escapeHtml(site.description);
-  const icon = encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#f2f2ed"/><path d="M8 23 15.4 7h1.3L24 23h-3.4l-1.5-3.7h-6.4L11.2 23H8Zm5.8-6.5H18l-2.1-5.3-2.1 5.3Z" fill="#111210"/></svg>'
-  );
-
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -203,7 +200,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${cardUrl}">
   <meta name="twitter:image:alt" content="${escapeHtml(site.socialCard.alt)}">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${icon}">
+  ${ICON_LINKS}
   <noscript><style>.intro{display:none}${tocNoscriptStyles}</style></noscript>
   <script>document.documentElement.classList.add("js")</script>
   <style>

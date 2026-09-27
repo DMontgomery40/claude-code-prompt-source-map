@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- The site's social card (1200×630). Rendered to social-card.png by tools/render-brand-assets.py. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: #0c121b; }
+  body { position: relative; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif; color: #eef4e6; }
+  /* The Trace landscape, cropped to the terrain, bleeding off the right edge. */
+  .shot {
+    position: absolute; top: 0; right: 0; width: 820px; height: 630px;
+    background: url("trace-landscape-2000.webp") no-repeat;
+    background-size: 1900px auto; background-position: -170px -205px;
+  }
+  .fade {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, #0c121b 0%, #0c121b 36%, rgba(12,18,27,.86) 46%, rgba(12,18,27,0) 64%),
+      linear-gradient(0deg, rgba(12,18,27,.9) 0%, rgba(12,18,27,0) 22%);
+  }
+  .copy { position: absolute; left: 64px; top: 58px; width: 560px; }
+  .eyebrow { font: 700 19px/1 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: .16em; color: #c8f784; }
+  h1 { margin-top: 26px; font-size: 62px; line-height: 1.02; letter-spacing: -.025em; font-weight: 800; }
+  .sub { margin-top: 24px; font-size: 25px; line-height: 1.35; color: #b9c4d3; max-width: 500px; }
+  .sub b { color: #eef4e6; font-weight: 600; }
+  .foot { position: absolute; left: 64px; bottom: 50px; display: flex; align-items: center; gap: 14px; font: 700 22px/1 ui-monospace, "SF Mono", Menlo, monospace; color: #c8f784; letter-spacing: .02em; }
+  .foot img { width: 38px; height: 38px; }
+</style>
+</head>
+<body>
+  <div class="shot"></div>
+  <div class="fade"></div>
+  <div class="copy">
+    <div class="eyebrow">HARNESS SOURCE MAP</div>
+    <h1>What the agent harness puts in front of the model.</h1>
+    <p class="sub"><b>Claude Code</b> and <b>Codex/ChatGPT</b>: every prompt and reminder, read from the shipped binaries. Trace your own session.</p>
+  </div>
+  <div class="foot"><img src="favicon.svg" alt="">harness.dtmont.com</div>
+</body>
+</html>

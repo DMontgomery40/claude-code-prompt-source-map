@@ -43,3 +43,5 @@ await writeFile(path.join(dist, "trace", "reference-index.json"), JSON.stringify
 
 await writeFile(path.join(dist, "index.html"), renderLanding({ cardFile: "social-card.png" }));
 await copyFile(path.join(siteRoot, "assets", "shared", "social-card.png"), path.join(dist, "social-card.png"));
+// The landing page's Trace screenshot (sRGB WebP, metadata stripped) at two widths, and the site's icon.
+for (const file of ["trace-landscape-1000.webp", "trace-landscape-2000.webp", "favicon.svg", "favicon.ico", "apple-touch-icon.png"]) await copyFile(path.join(siteRoot, "assets", "shared", file), path.join(dist, file));

@@ -11,5 +11,11 @@ export const SITE = {
   }
 };
 
+// The site's icon, in every page's head (the files sit at the site root; tools/render-brand-assets.py
+// renders the .ico and the touch icon from favicon.svg).
+export const ICON_LINKS = `<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">`;
+
 export const siteOrigin = () => `https://${SITE.domain}`;
 export const productOrigin = id => `${siteOrigin()}/${SITE.products[id].path}`;

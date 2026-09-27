@@ -2,7 +2,7 @@ import { Marked } from "marked";
 import { guideStyles, renderGuide } from "./guide.mjs";
 import { filterBar, filterScript, filterStyles, wrapFilterable } from "../shared/filters.mjs";
 import { createRoutes } from "./routes.mjs";
-import { SITE, productOrigin } from "../shared/site.mjs";
+import { SITE, productOrigin, ICON_LINKS } from "../shared/site.mjs";
 
 const ORIGIN = productOrigin("codex");
 import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } from "./toc.mjs";
@@ -279,10 +279,6 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   const pageTitle = current ? `${current.title} · ${siteTitle}` : `${siteTitle} · Work, Codex/ChatGPT, Voice`;
   const shareTitle = current ? `${current.title} · ${siteTitle}` : `${siteTitle}: Work, Codex/ChatGPT, Voice 😎`;
   const pageUrl = `${ORIGIN}/${current ? `${routes.slug(current.anchor)}/` : ""}`;
-  const icon = encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#f2f2ed"/><path d="M8 23 15.4 7h1.3L24 23h-3.4l-1.5-3.7h-6.4L11.2 23H8Zm5.8-6.5H18l-2.1-5.3-2.1 5.3Z" fill="#111210"/></svg>'
-  );
-
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -309,7 +305,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   <meta name="twitter:description" content="ChatGPT Work evidence, Codex/ChatGPT GPT-6 instruction texts, desktop helper prompts, and voice tool evidence.">
   <meta name="twitter:image" content="${ORIGIN}/prompt-map-social-card.png">
   <meta name="twitter:image:alt" content="Dark GPT-6 prompt source map card with a lime green winking face and Good takes detected stamp.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,${icon}">
+  ${ICON_LINKS}
   <noscript><style>.intro{display:none}${tocNoscriptStyles}</style></noscript>
   <style>
     :root{color-scheme:dark;--bg:#111210;--panel:#171816;--panel-2:#1c1d1b;--text:#f2f2ed;--muted:#8d918b;--subtle:#6f736d;--line:#2a2c29;--link:#b8c7d9;--focus:#d9e6f4;--entry-accent:#ffd479}

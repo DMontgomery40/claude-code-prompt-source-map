@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- A rising ridge of context layers, as Trace draws a session: harness, injected, outside, model. -->
+  <rect width="32" height="32" rx="7" fill="#0b100e"/>
+  <polygon points="5,26 27,26 27,23 5,24.6" fill="#8b97a8"/>
+  <polygon points="5,24.6 27,23 27,19 5,22.8" fill="#ff5ccd"/>
+  <polygon points="5,22.8 27,19 27,14 5,20.6" fill="#ff9f5a"/>
+  <polygon points="5,20.6 27,14 27,6 5,17" fill="#b9a0ff"/>
+</svg>

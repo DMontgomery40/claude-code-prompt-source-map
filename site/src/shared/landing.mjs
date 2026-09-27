@@ -1,6 +1,6 @@
 // The site's front door: pick a harness (Claude Code or Codex/ChatGPT), or open Trace, which reads
 // sessions from both. Everything product-specific lives under /claude-code/ and /codex/.
-import { SITE, siteOrigin } from "./site.mjs";
+import { SITE, siteOrigin, ICON_LINKS } from "./site.mjs";
 
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -38,6 +38,7 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
   <link rel="canonical" href="${origin}/">
+  ${ICON_LINKS}
   <meta name="theme-color" content="#0b100e">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${origin}/">
@@ -62,13 +63,17 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
     .choice-title{font-size:clamp(26px,3.6vw,34px);font-weight:700;letter-spacing:-.01em}
     .choice-line{color:var(--ink-2)}
     .go{margin-top:auto;padding-top:6px;color:var(--accent);font-weight:600}
-    .trace{display:grid;grid-template-columns:1fr auto;gap:14px 24px;align-items:center;margin-top:16px;padding:20px 24px;border:1px dashed var(--line);border-radius:14px}
-    .trace b{font-size:18px}
-    .trace p{margin:4px 0 0;color:var(--ink-2)}
-    .trace a{justify-self:end;padding:10px 16px;border-radius:999px;background:var(--accent);color:#0b100e;font-weight:700;text-decoration:none;white-space:nowrap}
+    .trace{display:grid;grid-template-columns:1fr auto;gap:18px 24px;align-items:center;margin-top:20px;padding:22px 22px 22px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+    .trace-title{font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-.01em;margin:0;color:var(--ink)}
+    .trace p{margin:6px 0 0;color:var(--ink-2);max-width:640px}
+    .trace-go{justify-self:end;padding:11px 18px;border-radius:999px;background:var(--accent);color:#0b100e;font-weight:700;text-decoration:none;white-space:nowrap}
+    .trace-shot{grid-column:1/-1;display:block;border-radius:12px;overflow:hidden;border:1px solid #1e2833;background:#0f131a;box-shadow:0 30px 70px -30px rgba(0,0,0,.8)}
+    .trace-shot img{display:block;width:100%;height:auto;transition:transform .5s ease}
+    .trace-shot:hover img,.trace-shot:focus-visible img{transform:scale(1.012)}
+    .trace-shot:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
     footer{display:flex;flex-wrap:wrap;gap:18px;margin-top:40px;color:var(--ink-2);font-size:14px}
     footer a{color:var(--ink-2)}
-    @media (max-width:560px){.trace{grid-template-columns:1fr}.trace a{justify-self:start}}
+    @media (max-width:560px){.trace{grid-template-columns:1fr;padding:18px 14px}.trace-go{justify-self:start}}
   </style>
 </head>
 <body>
@@ -79,9 +84,10 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
     <h2 id="pick">Which harness?</h2>
     <nav class="choices" aria-labelledby="pick">${cards}
     </nav>
-    <section class="trace" aria-label="Trace a session">
-      <div><b>Trace a session</b><p>Open your own Claude Code or Codex/ChatGPT session log and see what reached the model, where it came from, and who got it. Runs in your browser; nothing is uploaded.</p></div>
-      <a href="trace/">Open Trace</a>
+    <section class="trace" aria-labelledby="trace-title">
+      <div><h2 id="trace-title" class="trace-title">Trace a session</h2><p>Open your own Claude Code or Codex/ChatGPT session log and see what reached the model, where it came from, and who got it. Runs in your browser; nothing is uploaded.</p></div>
+      <a class="trace-go" href="trace/">Open Trace</a>
+      <a class="trace-shot" href="trace/" tabindex="-1"><img src="trace-landscape-2000.webp" srcset="trace-landscape-1000.webp 1000w, trace-landscape-2000.webp 2000w" sizes="(max-width: 1072px) calc(100vw - 32px), 1040px" width="2000" height="1162" loading="lazy" decoding="async" alt="Trace showing a Claude Code session as a 3D landscape: a ridge for each agent, its context stacked in layers by source, and a sidebar breaking down what filled the context."></a>
     </section>
     <footer>
       <a href="${esc(SITE.follow.url)}">Follow @${esc(SITE.follow.handle)} on X</a>
