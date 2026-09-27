@@ -1,0 +1,20 @@
+{
+  "name": "explainer-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:wide": "remotion render src/index.ts Wide out/trace-demo-16x9.mp4 --codec h264 --crf 14",
+    "render:tall": "remotion render src/index.ts Tall out/trace-demo-4x5.mp4 --codec h264 --crf 14"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.529",
+    "@remotion/google-fonts": "^4.0.529",
+    "@remotion/media": "^4.0.529",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.529",
+    "typescript": "^7.0.2"
+  }
+}

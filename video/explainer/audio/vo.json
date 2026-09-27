@@ -1,0 +1,169 @@
+{
+ "voice": "cjVigY5qzO86Huf0OWal",
+ "voice_name": "Eric - Smooth, Trustworthy",
+ "model": "eleven_multilingual_v2",
+ "settings": {
+  "stability": 0.55,
+  "similarity_boost": 0.75,
+  "style": 0.15,
+  "use_speaker_boost": true,
+  "speed": 1.0
+ },
+ "beats": [
+  {
+   "id": "open",
+   "phrases": [
+    [
+     "This is one Claude Code session:"
+    ],
+    [
+     "over sixteen hundred requests, and ninety subagents.",
+     "over 1,600 requests and 90 subagents."
+    ],
+    [
+     "Trace shows you what filled the context,"
+    ],
+    [
+     "what got sent twice,"
+    ],
+    [
+     "and what your agent did for you."
+    ]
+   ]
+  },
+  {
+   "id": "axes",
+   "phrases": [
+    [
+     "Time runs left to right."
+    ],
+    [
+     "Height is context."
+    ],
+    [
+     "Each color is a source:"
+    ],
+    [
+     "you, files and commands, subagents, the model,"
+    ],
+    [
+     "and text injected between turns."
+    ]
+   ]
+  },
+  {
+   "id": "play1",
+   "phrases": [
+    [
+     "Press play, and it fills, grain by grain."
+    ],
+    [
+     "On every request, the model re-reads the whole pile."
+    ]
+   ]
+  },
+  {
+   "id": "play2",
+   "phrases": [
+    [
+     "At the ceiling, compaction crushes"
+    ],
+    [
+     "nine hundred sixty-nine thousand tokens down to eighty-nine thousand.",
+     "969k tokens down to 89k."
+    ]
+   ]
+  },
+  {
+   "id": "search",
+   "phrases": [
+    [
+     "Press slash to search the whole session.",
+     "Press / to search the whole session."
+    ],
+    [
+     "Your Claude dot M D went to all ninety-one agents.",
+     "Your CLAUDE.md went to all 91 agents."
+    ],
+    [
+     "Press the N key to follow it, copy by copy.",
+     "Press n to follow it, copy by copy."
+    ]
+   ]
+  },
+  {
+   "id": "dupe",
+   "phrases": [
+    [
+     "Widen the panel,"
+    ],
+    [
+     "and read exactly what the model read."
+    ],
+    [
+     "Twice on the main thread,"
+    ],
+    [
+     "it was sent again"
+    ],
+    [
+     "while an identical copy was still in context."
+    ]
+   ]
+  },
+  {
+   "id": "egress",
+   "phrases": [
+    [
+     "Press two for everything that left your machine,",
+     "Press 2 for everything that left your machine,"
+    ],
+    [
+     "and who allowed it."
+    ]
+   ]
+  },
+  {
+   "id": "agents",
+   "phrases": [
+    [
+     "Press four to see what each subagent cost.",
+     "Press 4 to see what each subagent cost."
+    ],
+    [
+     "One advisor alone used seven point three million fresh tokens.",
+     "One advisor alone used 7.3M fresh tokens."
+    ]
+   ]
+  },
+  {
+   "id": "keys",
+   "phrases": [
+    [
+     "Every view is one key away."
+    ],
+    [
+     "Question mark lists them all.",
+     "? lists them all."
+    ]
+   ]
+  },
+  {
+   "id": "close",
+   "phrases": [
+    [
+     "It all runs in your browser."
+    ],
+    [
+     "Nothing leaves your machine."
+    ],
+    [
+     "Open a session,"
+    ],
+    [
+     "and see what your agent actually saw."
+    ]
+   ]
+  }
+ ]
+}

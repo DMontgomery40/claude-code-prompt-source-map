@@ -7,3 +7,10 @@ site/.wrangler/
 .DS_Store
 .worktrees/
 .superpowers/
+
+# Local only: frozen sessions, video media, research. Never published (tools/leak-check.mjs).
+private/
+# Video pipelines: installed deps and render output
+video/*/edit/node_modules/
+video/*/edit/out/
+video/*/edit/public/

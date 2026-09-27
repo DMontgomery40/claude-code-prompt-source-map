@@ -1,0 +1,322 @@
+{
+ "L0": {
+  "stat_wall": [
+   32,
+   98,
+   118.21875,
+   84.59375
+  ],
+  "stat_requests": [
+   202.21875,
+   98,
+   260.5625,
+   84.59375
+  ],
+  "stat_subagents": [
+   514.78125,
+   98,
+   324.8125,
+   84.59375
+  ],
+  "stat_cache": [
+   1333.9375,
+   98,
+   327.03125,
+   84.59375
+  ],
+  "stats": [
+   32,
+   98,
+   2109.0625,
+   84.59375
+  ],
+  "panel": [
+   3024,
+   403,
+   784,
+   1725
+  ],
+  "strata_injected": [
+   3062,
+   986.5,
+   708,
+   103.5
+  ],
+  "setup_head": [
+   3062,
+   1346,
+   708,
+   40.5
+  ],
+  "_texts": [
+   "1 d 4 h | wall clock",
+   "1,656 | main-thread requests",
+   "90 | subagents, 3,994 requests",
+   "9M vs 20M | fresh tokens, main vs subagents",
+   "98% | of context read from cache",
+   "7.3M | fresh tokens, side calls and reviews"
+  ]
+ },
+ "setup_claudemd": {
+  "claudemd": [
+   3062,
+   1311.5,
+   708,
+   178.5
+  ],
+  "agentchecks": [
+   3062,
+   549.5,
+   708,
+   178.5
+  ],
+  "memory": [
+   3062,
+   147.5,
+   708,
+   183
+  ],
+  "_text": "instructions file \u00b7 ~/.claude/CLAUDE.md\n\u2248 449 yours + \u2248 40 product wording (Harness) \u00b7 sent 6\u00d7 \u00b7 sent again 2\u00d7, identical while a copy was still in context (as nested memory)",
+  "sentagain": [
+   3644.8125,
+   247.5,
+   89.25,
+   30
+  ]
+ },
+ "setup_skills": {
+  "skills": [
+   3062,
+   1213.5,
+   708,
+   103.5
+  ],
+  "invoked": [
+   3062,
+   872.5,
+   708,
+   229.5
+  ]
+ },
+ "egress_L0": {
+  "left_head": [
+   3062,
+   704.5,
+   708,
+   40.5
+  ],
+  "left_sub": [
+   3062,
+   761,
+   708,
+   37.5
+  ],
+  "first_item": [
+   3062,
+   810.5,
+   708,
+   445
+  ],
+  "panel": [
+   3024,
+   403,
+   784,
+   1725
+  ],
+  "_text": "What left the machine\n\nEvery tool call, ranked by consequence: what left the machine (deploys, pushes, messages, data sent, then network), attempts the sandbox blocked, local writes, then reads. Open one for its custody ladder.\n\nLeft the machine (96)\n\n3 deploy \u00b7 1 send \u00b7 92 network\n\ndeploy\nBash\ncd ~/Documents/Codex/2026-09-03/token-gremlin-https-x-com-tokengremlin/site && cat > wrangler.jsonc <<'E"
+ },
+ "egress_L2": {
+  "action": [
+   3062,
+   1736,
+   708,
+   40.5
+  ],
+  "custody": [
+   3062,
+   2375.625,
+   708,
+   40.5
+  ],
+  "panel": [
+   3024,
+   403,
+   784,
+   1725
+  ],
+  "_text": "Main thread \u00b7 request 83 of 1656\n\n295k tokens in context\n\nSep 25, 12:08 am \u00b7 claude-opus-5-5\n\nWhere the context came from (\u2248, split estimated; total exact)\nHarness\n\u2248 45k\n15%\nYou\n\u2248 8.3k\n3%\nfrom your setup \u2248 7.5k\nInjected\n\u2248 28k\n9%\nfrom your setup \u2248 13k\nOutside\n\u2248 91k\n31%\nAgents\n\u2248 3k\n1%\nModel\n\u2248 119k\n41%\nTokens (exact, from the log)\nContext\n294,593input + cache read + cache write\nCache read\n293,707\nCache write\n884\nUncached input\n2\nOutput\n1,339\nReasoning output\n624\nFresh\n2,225uncached + cache write + output\nAction\nBash\nleft the machine\ncd ~/Documents/Codex/2026-09-03/token-gremlin-https-x-com-tokengremlin/site && cat > wrangler.jsonc <<'EOF' // Static hosting on Cloudflare Workers assets. `npm run build`, then `npx wrangler deploy`. { \"name\": \"gpt6-prompt-source-map\", \"compatibility_date\": \"2026-09-01\", \"assets\": { \"directory\": \"./dist\", \"html_handling\": \"auto-trailing-slash\" }, \"routes\": [{ \"pattern\": \"gpt6aeo\u2026\nShow the call\nShow the result\nCustody ladder\nAsked by\n\nSep 25, 12:06 am\n\n<system-reminder> The user sent a new message while you were working: you have cloudflare cli logged in locally This is how Claude Code surfaces messages the user sends mid-turn \u2014 within the running turn, often alongside the next tool result, rather than as a separate conversation turn. Address the message above as yo\u2026\nPermitted by\npermission mode: bypassPermissions\nmode: normal\nGuided by\n\nTool: Bash. Bash\n\nIn view\n\n96 outside and agent blocks, \u2248 94k tokens; 6 flagged instruction-like (heuristic).\n\nIns"
+ },
+ "custody": {
+  "custody": [
+   3062,
+   405.625,
+   708,
+   40.5
+  ],
+  "panel": [
+   3024,
+   403,
+   784,
+   1725
+  ],
+  "_text": "Custody ladder\nAsked by\n\nSep 25, 12:06 am\n\n<system-reminder> The user sent a new message while you were working: you have cloudflare cli logged in locally This is how Claude Code surfaces messages the user sends mid-turn \u2014 within the running turn, often alongside the next tool result, rather than as a separate conversation turn. Address the message above as yo\u2026\nPermitted by\npermission mode: bypassPermissions\nmode: normal\nGuided by\n\nTool: Bash. Bash\n\nIn view\n\n96 outside and agent blocks, \u2248 94k tokens; 6 flagged instruction-like (heuristic).\n\nInstruction-like (heuristic): Bash result\nInstruction-like (heuristic): Bash result\nInstruction-like (heuristic): Bash result\nInstruction-like (heuristic): Bash result\nInstruction-like (heuristic): Bash result\nDid\n\nBash cd ~/Documents/Codex/2026-09-03/t",
+  "asked": [
+   3090,
+   466.125,
+   122.1875,
+   32
+  ],
+  "permitted": [
+   3090,
+   938.125,
+   172.34375,
+   32
+  ],
+  "bypass": [
+   3106,
+   988.625,
+   484.625,
+   34
+  ],
+  "inview": [
+   3090,
+   1267.625,
+   583.96875,
+   76
+  ],
+  "did": [
+   3090,
+   1701.625,
+   44.875,
+   32
+  ]
+ },
+ "agents": {
+  "advisor": [
+   3062,
+   709,
+   708,
+   120
+  ],
+  "table": [
+   3062,
+   654.5,
+   708,
+   12781.5
+  ],
+  "_text": "Subagents, spend and return\n\nFresh tokens each agent spent (uncached input + cache write + output), its requests, and the size of the report that came back. Open one to focus its ridge.\n\nAgent\tFresh\tReq.\tReport\nadvisor (claude-opus-5-5)\nside\n\t7.3M\t17\t\u2013\naprompts-standalone-5f8de4bd7943c860\nopus\n\t1.9M\t102\t\u2013\natrace-viewer-0f4e6303deb994b2\nopus\n\t1.1M\t172\t\u2013\natrace-adapters-661a1d3a715ec35b\nopus\n\t807k\t94\t\u2013\naenv-vars-998a8894edfdd42c\nopus\n\t756k\t93\t\u2013\nasystem-prompt-3089315fd77ab95e\nopus\n\t701k\t143\t\u2013\natools-ref-858a33c842bb3e49\nopus\n\t404k\t107\t\u2013\naimpl-t10-14a38460b0b93e36\nsonnet\n\t388k\t119\t\u2013\natrace-permis"
+ },
+ "L1": {
+  "ask_ugh": [
+   3062,
+   1042.5,
+   708,
+   151.5
+  ],
+  "asks_head": [
+   3062,
+   986,
+   708,
+   40.5
+  ],
+  "cursor": [
+   1428,
+   520,
+   302.375,
+   48.5
+  ]
+ },
+ "L2": {
+  "lab_injected": null,
+  "lab_model": null,
+  "lab_harness": null,
+  "head": [
+   3062,
+   478.5,
+   708,
+   47.5
+  ],
+  "bar": [
+   3062,
+   976,
+   708,
+   103.5
+  ]
+ },
+ "L3": {
+  "head": [
+   3062,
+   478.5,
+   708,
+   47.5
+  ],
+  "setup": [
+   3062,
+   658,
+   708,
+   40.5
+  ],
+  "product": [
+   3062,
+   2040.5,
+   708,
+   40.5
+  ],
+  "_text": "Main thread \u00b7 request 939\n\n Injected: \u2248 97k\n\nText inserted between turns: the product's reminders, and your skills, hooks and MCP servers\n\nFrom your setup: \u2248 34k in 8 blocks\n1 \u00d7\nskill \u00b7 superpowers:subagent-driven-development\n\u2248 12k\nSep 25, 4:41 am\n1 \u00d7\nskill \u00b7 superpowers:brainstorming\n\u2248 5.6k\nSep 25,"
+ },
+ "codex": {
+  "stats": [
+   32,
+   98,
+   2181.28125,
+   84.59375
+  ],
+  "skills": [
+   3062,
+   1465,
+   708,
+   178.5
+  ],
+  "_texts": [
+   "20 h 38 min | wall clock",
+   "1,475 | main-thread requests",
+   "6 | subagents, 262 requests",
+   "9.3M vs 1.3M | fresh tokens, main vs subagents",
+   "96% | of context read from cache",
+   "2.6M | fresh tokens, side calls and reviews"
+  ],
+  "_skills": "skills list (131)\n\u2248 5.1k yours + \u2248 455 product wording (Harness) \u00b7 sent 25\u00d7, carried 22\u00d7 \u00b7 sent again 24\u00d7, changed while a copy was still in context"
+ },
+ "reader": {
+  "title": [
+   3084,
+   444,
+   543.96875,
+   34
+  ],
+  "sentagain": [
+   3084,
+   708.5,
+   625.9375,
+   30
+  ],
+  "body": [
+   3104,
+   1020,
+   303.4375,
+   32
+  ],
+  "green": [
+   3084,
+   621.5,
+   646.625,
+   30
+  ],
+  "panel": [
+   3024,
+   403,
+   784,
+   1725
+  ]
+ }
+}
