@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data: blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://127.0.0.1:8766; img-src 'self' data: blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'">
 <title>Trace: see an agent session as a landscape</title>
 <meta name="description" content="Load a Codex or Claude Code session log and explore what filled the model's context, what it did, and every prompt the harness injected between turns. Runs entirely in your browser.">
 <meta name="color-scheme" content="dark">
@@ -48,8 +48,8 @@
       <p id="load-error" class="error" role="alert" hidden></p>
 
       <div class="private">
-        <strong>Nothing leaves this browser.</strong>
-        <span>Session files stay on your device.</span>
+        <strong>Session files stay on your device.</strong>
+        <span>No session uploads.</span>
       </div>
 
       <div id="dev" class="dev" hidden>
