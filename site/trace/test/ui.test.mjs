@@ -547,6 +547,23 @@ test("playing to the end stops the loop and resets the button; play again starts
   assert.equal(frames.size, 1);
 });
 
+// Play from an inspection pushes one history entry as the run starts (app.js playFromMap, the onStart hook). At
+// the end (focusing the root's last request lands there) the clock starts over from request 1, but the entry
+// being left must keep the playhead it had, or Back shows that inspection fully ghosted.
+test("a run's onStart sees the playhead before the clock moves, even when a play at the end starts over", () => {
+  const { pb, tr, starts, frames } = transportFixture();
+  tr.seek(pb.n - 1);
+  tr.play();
+  assert.deepEqual(starts, [pb.n - 1], "the view being left still has the end");
+  assert.equal(pb.P, 0, "then the run starts from request 1");
+  assert.equal(frames.size, 1);
+  tr.pause(); tr.seek(40.65); tr.play();
+  assert.deepEqual(starts, [pb.n - 1, 40.65]);
+  const one = createPlayback({ times: [0], X: () => 1 });
+  tr.load(one); tr.play();
+  assert.deepEqual([starts.length, one.playing], [2, false], "a clock of one request never plays, so no run starts");
+});
+
 test("the speed button cycles 4× → 8× → 16× → 1×; the keys' faster and slower stop at the ends", () => {
   const { pb, tr, speed } = transportFixture();
   const seen = [speed.textContent];

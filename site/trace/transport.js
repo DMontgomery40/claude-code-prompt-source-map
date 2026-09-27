@@ -41,7 +41,7 @@ export function nextSpeed(pb) {
 
 // host: the #playback element. onPlayhead({ P, playing, sweep }) runs on every change of the playhead
 // or its playing state; sweep is the progress through the current request while playing, else null.
-// onStart() runs as playback starts, before the first push. onFollow('auto'|'manual') runs when the
+// onStart() runs as playback starts, before the clock moves and the first push. onFollow('auto'|'manual') runs when the
 // Follow chip's state changes.
 export function createTransport(host, { onPlayhead = () => {}, onStart = () => {}, onFollow = () => {}, raf = f => requestAnimationFrame(f), caf = id => cancelAnimationFrame(id), now = () => performance.now(), maxDt = 100 } = {}) {
   let pb = null, frame = 0, last = 0, label = "";
@@ -115,12 +115,14 @@ export function createTransport(host, { onPlayhead = () => {}, onStart = () => {
     get playback() { return pb; },
     get playing() { return !!pb?.playing; },
     toggle() { if (pb?.playing) api.pause(); else api.play(); },
-    // Starting a run follows again, unless the user turned Follow off.
+    // Starting a run follows again, unless the user turned Follow off. onStart runs before the clock moves,
+    // so a history entry it pushes keeps the playhead of the view being left, even when a play at the end
+    // starts over from request 1 (a clock of one request never plays).
     play() {
       if (!pb) return;
       const was = pb.playing;
+      if (!was && pb.n >= 2) { held = false; onStart(); }
       pb.play();
-      if (pb.playing && !was) { held = false; onStart(); }
       if (pb.playing) run();
       push(); sync();
     },
