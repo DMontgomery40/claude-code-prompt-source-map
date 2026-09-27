@@ -482,7 +482,7 @@ test("the transport renders play, scrub, readout and speed; the readout names th
   assert.equal(readout.textContent, `req 1,234 · ${day} · ${fmtClock(t)}`);
   assert.match(readout.textContent, /^req 1,234 · Sep 2[56] · \d{1,2}:\d\d [ap]m$/);
   assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
-  assert.deepEqual(pushed.at(-1), { P: 1233.5, playing: false, sweep: null });
+  assert.deepEqual(pushed.at(-1), { P: 1233.5, playing: false });
   // Halfway through the 40-minute wait the clock reads 20 minutes on, not the request's own time.
   tr.seek(1300.5);
   const mid = pb.timeAt(1300) + 20 * 60e3;
@@ -495,24 +495,24 @@ test("the transport renders play, scrub, readout and speed; the readout names th
     scrub.value = String(pb.xAt(P));
     scrub.dispatch("input");
     assert.ok(Math.abs(pb.P - P) < 1e-9, `scrubbing to x(${P}) lands on ${pb.P}`);
-    assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
+    assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false });
   }
 });
 
-test("play runs one frame loop that pushes P and the sweep; pause, step and scrubbing stop it", () => {
+test("play runs one frame loop that pushes P; pause, step and scrubbing stop it", () => {
   const { pb, tr, host, frames, frame, pushed, play, scrub } = transportFixture();
   tr.seek(100.2);
   assert.equal(frames.size, 0, "paused: no frame is scheduled");
   play.dispatch("click");
   assert.deepEqual([host.getAttribute("data-playing"), play.getAttribute("aria-pressed"), play.getAttribute("aria-label")], ["true", "true", "Pause"]);
   assert.equal(frames.size, 1);
-  assert.deepEqual(pushed.at(-1), { P: 100.2, playing: true, sweep: 100.2 - 100 });
+  assert.deepEqual(pushed.at(-1), { P: 100.2, playing: true });
   for (const t of [16, 33, 50]) {
     const before = pb.P;
     frame(t);
     const p = pushed.at(-1);
     assert.ok(p.playing && p.P > before, `frame ${t} moves the playhead`);
-    assert.equal(p.sweep, p.P - Math.floor(p.P));
+    assert.deepEqual(Object.keys(p), ["P", "playing"]);
     assert.equal(Number(scrub.value), pb.xAt(p.P));
     assert.equal(frames.size, 1, "one frame queued at a time");
   }
@@ -521,7 +521,7 @@ test("play runs one frame loop that pushes P and the sweep; pause, step and scru
   assert.ok(Math.abs(pb.xAt(pb.P) - x0 - 4 / (pb.n - 1) * 0.1) < 1e-9, "a 5 s gap between frames (a hidden tab) advances only 100 ms");
   play.dispatch("click");
   assert.deepEqual([host.getAttribute("data-playing"), play.getAttribute("aria-label"), frames.size], ["false", "Play", 0]);
-  assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
+  assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false });
   tr.play();
   assert.equal(frames.size, 1);
   const from = pb.P;
@@ -543,7 +543,7 @@ test("playing to the end stops the loop and resets the button; play again starts
   assert.equal(frames.size, 0, "the frame that reaches the end schedules no other");
   assert.equal(pb.end, pb.n - 1 + FOCUS, "the end is the last request complete");
   assert.deepEqual([pb.P, pb.playing, host.getAttribute("data-playing"), play.getAttribute("aria-label")], [pb.end, false, "false", "Play"]);
-  assert.deepEqual(pushed.at(-1), { P: pb.end, playing: false, sweep: null });
+  assert.deepEqual(pushed.at(-1), { P: pb.end, playing: false });
   assert.match(host.children[2].textContent, /^req 1,701 · /, "the readout names the last request");
   play.dispatch("click");
   assert.equal(pb.P, 0, "play at the end starts from the first request");
@@ -582,7 +582,9 @@ test("the speed button cycles 4× → 8× → 16× → 1×; the keys' faster and
 
 test("focusing request i puts the playhead at i + 0.65: request i complete, on the root or in a subagent's own requests", () => {
   const { L, pb, tr, readout, scrub } = transportFixture();
-  assert.equal(FOCUS, 0.65, "past the pour (i + 0.6), before a collapse starts (i + 0.7)");
+  assert.equal(FOCUS, 0.65, "past request i's tread (the midpoint to i + 1), short of i + 1");
+  // the playhead stays inside request i for every i (the float value of i + 0.65 - i varies with i)
+  for (let i = 0; i < pb.n; i++) assert.equal(Math.floor(playheadForRequest(pb, L, "root", i)), i, `request ${i}`);
   assert.equal(playheadForRequest(pb, L, "root", 1234), 1234.65);
   assert.equal(playheadForRequest(pb, L, "root", 0), 0.65);
   assert.equal(playheadForRequest(pb, L, "root", pb.n - 1), pb.n - 1 + FOCUS, "the last request complete: the end");
@@ -641,7 +643,7 @@ test(", and . move the readout's request number by exactly one, to that request 
   assert.deepEqual(seen, [[900.65, "req 901"], [901.65, "req 902"], [900.65, "req 901"], [899.65, "req 900"], [898.65, "req 899"]]);
   tr.seek(0.65);
   tr.step(-1);
-  assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [0.65, "req 1"], ", from 0.65 stays at 0.65: request 0 is never un-poured");
+  assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [0.65, "req 1"], ", from 0.65 stays at 0.65: request 0 stays complete");
 });
 
 test("the Follow chip: auto by default; moving the camera during a run makes it manual; the chip or f asks for it again", () => {

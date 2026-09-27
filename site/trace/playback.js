@@ -6,9 +6,9 @@
 // they are still crossed one by one, in request order. No DOM, no events: tick() reports what happened.
 
 const SNAP = 1e-12; // x distance treated as landing exactly on a request
-// Request i is complete at P = i + COMPLETE: its blocks have poured in and settled (grain-rules KERNEL:
-// by i + pourWindow + fallDur = i + 0.6) and no column has started to collapse (from i + 1 - collapseDur =
-// i + 0.7). Focusing a request puts the playhead there, and the session's end is its last request complete.
+// Request i is complete at P = i + COMPLETE: the cut stands past the midpoint to request i + 1, so the
+// whole of request i's tread is solid, and short of request i + 1, which is still to come. Focusing a
+// request puts the playhead there, and the session's end is its last request complete.
 export const COMPLETE = 0.65;
 
 export function createPlayback({ times, X, speeds = [1, 2, 4, 8, 16], speed = 4, direction = 1 }) {

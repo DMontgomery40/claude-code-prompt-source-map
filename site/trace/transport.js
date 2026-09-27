@@ -12,9 +12,8 @@ export function playheadLabel(pb, P = pb.P) {
   return `req ${fmtInt(Math.floor(P) + 1)} · ${day} · ${fmtClock(t)}`;
 }
 
-// Where a focused request puts the playhead within it: request i has poured in by i + 0.6 and a
-// column before a compaction starts to collapse at i + 0.7, so i + FOCUS shows request i complete
-// (playback.js COMPLETE, which is also where the session ends).
+// Where a focused request puts the playhead within it: i + FOCUS shows request i complete (playback.js
+// COMPLETE, which is also where the session ends).
 export const FOCUS = COMPLETE;
 
 // Where focusing request i puts the playhead: i + FOCUS on the root. For any other agent, the root-space
@@ -30,7 +29,7 @@ export function playheadForRequest(pb, layout, agentId, i) {
 }
 
 // `,` and `.`: the previous or next request, complete (floor(P) -/+ 1, plus FOCUS), so the readout's
-// request number moves by exactly one. Never below FOCUS (request 0 stays poured), never past the end
+// request number moves by exactly one. Never below FOCUS (request 0 stays complete), never past the end
 // (the last request complete).
 export function focusStep(P, d, n) {
   return Math.min(n - 1 + FOCUS, Math.max(FOCUS, Math.floor(P) + (d < 0 ? -1 : 1) + FOCUS));
@@ -42,8 +41,8 @@ export function nextSpeed(pb) {
   return list.find(s => s > pb.speed) ?? list[0];
 }
 
-// host: the #playback element. onPlayhead({ P, playing, sweep }) runs on every change of the playhead
-// or its playing state; sweep is the progress through the current request while playing, else null.
+// host: the #playback element. onPlayhead({ P, playing }) runs on every change of the playhead or its
+// playing state.
 // onStart() runs as playback starts, before the clock moves and the first push. onFollow('auto'|'manual') runs when the
 // Follow chip's state changes.
 export function createTransport(host, { onPlayhead = () => {}, onStart = () => {}, onFollow = () => {}, raf = f => requestAnimationFrame(f), caf = id => cancelAnimationFrame(id), now = () => performance.now(), maxDt = 100 } = {}) {
@@ -68,7 +67,7 @@ export function createTransport(host, { onPlayhead = () => {}, onStart = () => {
   follow.addEventListener("click", () => api.toggleFollow());
 
   function push() {
-    if (pb) onPlayhead({ P: pb.P, playing: pb.playing, sweep: pb.playing ? pb.P - Math.floor(pb.P) : null });
+    if (pb) onPlayhead({ P: pb.P, playing: pb.playing });
   }
   function stop() { if (frame) caf(frame); frame = 0; }
   function loop(t) {

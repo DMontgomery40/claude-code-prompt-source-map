@@ -60,9 +60,9 @@ export function createFollowZoom(readZoom) {
 }
 
 // ---------- events (once per trace) ----------
-// Epoch starts, as the grain kernel reads them: a request whose context window starts after the
-// previous windowed request's (a compaction, logged or not).
-function epochStarts(agent) {
+// Compactions, logged or not: a request whose context window starts after the previous windowed
+// request's.
+function compactionStarts(agent) {
   const out = [];
   let prev = null;
   agent.requests.forEach((r, j) => {
@@ -114,7 +114,7 @@ export function buildEvents(L, geom) {
   }
   const ridges = [root, ...[...(L.info?.values() || [])].map(i => i.agent).filter(a => a.kind === "subagent")];
   for (const a of ridges) {
-    for (const k of epochStarts(a)) {
+    for (const k of compactionStarts(a)) {
       const pre = at(a, k - 1);
       out.push({ kind: "compaction", agentId: a.id, req: k, x: geom.x(a, k), prevX: pre.x, t: a.requests[k].t, z: pre.z,
         y: a.requests[k - 1].tokens.context || 0, yTop: pre.yTop, rootReq: a === root ? k : null });
@@ -287,7 +287,7 @@ export function nextShot(s, prev, now) {
   if (s.override) return prev?.kind === "manual" ? null : make("manual", "manual", s, now, prev, { ease: 0 });
   if (!s.forced && !(s.level >= 1)) return prev?.kind === "none" ? null : make("none", "none", s, now, prev, { ease: 0 });
   const ix = indexOf(s.events), lead = s.lead;
-  // 6. a compaction ahead of the leading column: pull back over the column and its puck
+  // 6. a compaction ahead of the leading column: pull back over the column and the drop after it
   for (let k = 0; k < ix.compaction.length; k++) {
     const c = ix.compaction[k];
     if (c.agentId !== lead.agentId || !(lead.P >= c.req - 1 && lead.P < c.req)) continue;
@@ -297,7 +297,7 @@ export function nextShot(s, prev, now) {
     return make("compaction", id, s, now, prev, { box: box(pts), until: c.req, releaseAt: null });
   }
   if (prev?.kind === "compaction") {
-    if (prev.releaseAt == null) return { ...prev, releaseAt: now + D.release }; // the collapse is done
+    if (prev.releaseAt == null) return { ...prev, releaseAt: now + D.release }; // the compaction is crossed
     if (now < prev.releaseAt) return null;
   }
   // 8. at 16x and faster only follow and compactions

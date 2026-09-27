@@ -569,9 +569,8 @@ async function start(trace) {
   mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
-  // the speed rides along so the scene can skip sweep labels at 16 requests a second and faster
   transport ||= createTransport($("#playback"), {
-    onPlayhead: p => { scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }); direct(p); playCardTick(p); },
+    onPlayhead: p => { scene?.setPlayhead(p); direct(p); playCardTick(p); },
     onStart: playFromMap,
     onFollow: () => { if (dir) { dir.prev = null; dir.prevCutX = null; } }
   });
@@ -653,11 +652,10 @@ async function setMode(mode) {
       $("#flat").hidden = true;
       $("#stage").hidden = false;
       if (!scene) {
-        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon,
-          getText: (agentId, ref) => A.getText(agentId, ref).then(r => r?.text ?? "") });
+        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon });
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
-        if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false, sweep: null });
+        if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false });
         scene.onUserCamera?.(() => userCamera("hands"));
       }
     } catch (e) {
@@ -831,7 +829,7 @@ function direct(p) {
     d.level = latch.level;
     d.span = g.W / Math.max(1e-6, latch.zoom);
   }
-  // The leading column: the focused subagent's ridge when one is focused (as the scene's grains are), else the main thread's.
+  // The leading column: the focused subagent's ridge when one is focused (as the scene's lead agent is), else the main thread's.
   const agent = S.agent?.kind === "subagent" && g.rowZ.has(S.agent.id) ? S.agent : root;
   const aP = agent === root ? p.P : agentPAt(g, agent, cutX), i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(aP)));
   const lead = d.lead;

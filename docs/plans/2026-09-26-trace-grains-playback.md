@@ -1,5 +1,12 @@
 # Trace Grains + Playback Implementation Plan
 
+> **Superseded (2026-09-27).** Grains are removed from Trace: the pour, the re-read sweep and sweep labels,
+> grain density and its frame-time governor, words at max zoom, and the compaction puck and collapse
+> (`grains.js`, `grain-rules.js`, `block-text.js` are gone). They do not fit Trace's harness-layer
+> framing. Playback stays: the transport, step, speed, scrub, the cut plane, playhead-driven landmarks and
+> the follow director, including its compaction shot (`playback.js`, `transport.js`, `director.js`). Kept
+> for history; do not build on it.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn Trace's static landscape into a living material: grains near the playhead, a session scrub with pour, compaction collapse and subagent growth, a per-request re-read sweep, and readable block text at max zoom, all at 60 fps on a dpr 1 1920x1200 screen with zero GPU uploads after load.
