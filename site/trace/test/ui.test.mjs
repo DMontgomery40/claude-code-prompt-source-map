@@ -131,6 +131,53 @@ test("2D overview renders the whole session and picks a request from a click on 
   }
 });
 
+// A browser logs "A negative value is not valid" for every <rect> with a negative width or height. The full
+// overview's lane pitch bottoms out at 2.5 px while its bar leaves a 3 px gap, and the columns' margins take
+// 44 px of the height.
+test("2D charts never emit negative geometry: dense lanes keep a visible bar, margins taller than the chart clamp", async () => {
+  // 60 subagents at work at once: 60 lanes, so the full view's pitch is H * 0.3 / 60, inside 2.5 to 3 px for H of 500 to 600
+  const t0 = Date.UTC(2026, 8, 25, 7, 0), req = t => ({ t, tokens: { context: 1000 } });
+  const agent = (id, kind, extra = {}) => ({ id, kind, name: id, requests: [], blocks: [], asks: [], compactions: [], ...extra });
+  const root = agent("root", "root");
+  for (let i = 0; i < 40; i++) root.requests.push(req(t0 + i * 20e3));
+  const subs = Array.from({ length: 60 }, (_, k) => {
+    const a = agent(`s${k}`, "subagent", { parentId: "root" });
+    for (let j = 0; j < 5; j++) a.requests.push(req(t0 + 100e3 + k * 1e3 + j * 60e3));
+    return a;
+  });
+  const dense = { agents: [root, ...subs], started: t0, ended: t0 + 800e3 };
+  const sessions = [["dense", dense], ["long", longSession()], ...await fixtureTraces()];
+  const bad = [], at = (what, n) => `${what} ${n.getAttribute("class") || ""} ${n.getAttribute("width")}x${n.getAttribute("height")}`;
+  const check = (what, svg) => {
+    for (const n of svg.all(n => n.tagName === "RECT")) {
+      for (const k of ["width", "height"]) {
+        const v = Number(n.getAttribute(k));
+        if (!Number.isFinite(v) || v < 0) bad.push(at(what, n));
+      }
+    }
+  };
+  const heights = [10, 20, 30, 43.9, 50, 132, 140, 300, 500, 540, 598.4, 599.9, 640];
+  let dense3 = 0;
+  for (const [name, trace] of sessions) {
+    const L = buildLayout(trace), subagents = trace.agents.filter(a => a.kind === "subagent" && a.requests.length).length;
+    for (const H of heights) {
+      for (const full of [true, false]) {
+        const svg = renderOverview(new Element("div"), trace, L, { width: 1000, height: H, full, lens: "context", focus: { agentId: subs[0].id, reqIdx: 0 } });
+        check(`${name} overview H ${H} ${full ? "full" : "compact"}`, svg);
+        const lanes = svg.all(n => n.getAttribute("class") === "lane");
+        assert.ok(lanes.length >= subagents, `${name} H ${H}: every subagent has a lane bar`);
+        for (const r of lanes) assert.ok(Number(r.getAttribute("height")) >= 1, `${name} H ${H}: a lane bar is at least 1 px (${r.getAttribute("height")})`);
+        if (name === "dense" && full && (H * 0.3) / L.lanes < 3 && (H * 0.3) / L.lanes >= 2.5) dense3++;
+      }
+    }
+    for (const a of trace.agents.filter(a => a.requests.length)) {
+      for (const H of heights) check(`${name} ${a.id} columns H ${H}`, renderAgentColumns(new Element("div"), a, { width: 600, height: H, reqIdx: 0 }));
+    }
+  }
+  assert.ok(dense3 >= 3, `the sweep reaches the 2.5 to 3 px lane pitch (${dense3} renders)`);
+  assert.deepEqual(bad, []);
+});
+
 // ---------- the reader's highlighting ----------
 test("ownLines: exact user spans split lines into the user's runs and the product's wording", () => {
   const text = "Intro from the product\n- mine: my skill\n\nmy notes\nmore notes\nOutro";
