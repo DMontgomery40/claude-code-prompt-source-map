@@ -203,3 +203,20 @@ test("plain keys dispatch, modified keys don't; ⌘K and Ctrl+K open search", ()
   assert.ok(!isSearchChord(ev("k")));
   assert.ok(!isSearchChord(ev("k", { metaKey: true, shiftKey: true })));
 });
+
+test("playback keys: six rows of their own, each a palette command; Space, , . < > f dispatch", () => {
+  const want = { "Play or pause": " ", "Previous request": ",", "Next request": ".", Slower: "<", Faster: ">", "Camera follows the playhead, or stops following": "f" };
+  const rows = KEYS.filter(k => k.group === "Playback");
+  assert.deepEqual(rows.map(r => r.label), Object.keys(want));
+  assert.equal(new Set(rows.map(r => r.id)).size, rows.length, "each row has its own action, so its palette command needs no argument");
+  for (const r of rows) {
+    assert.deepEqual(Object.keys(r.bind), [want[r.label]], r.label);
+    assert.ok(r.command, `${r.label} is a palette command`);
+    assert.equal(r.keys.length, 1);
+  }
+  const ev = (key, mods = {}) => ({ key, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, ...mods });
+  assert.deepEqual([" ", ",", ".", "f"].map(k => keyFor(ev(k)).row.id), ["play", "stepBack", "stepOn", "follow"]);
+  assert.deepEqual(["<", ">"].map(k => keyFor(ev(k, { shiftKey: true })).row.id), ["slower", "faster"]);
+  assert.equal(keyFor(ev(" ", { metaKey: true })), null);
+  // Where Space plays, and that the page keeps it when playback declines: ui.test.mjs, on the fake DOM.
+});

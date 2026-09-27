@@ -1,4 +1,6 @@
 // Pure rules behind the landscape (no three.js), shared by scene.js and its tests.
+import { collapseStart } from "./grain-rules.js";
+import { COMPLETE } from "./playback.js";
 
 export const BASE_W = 220;   // world width of a session with a subagent field
 export const BASE_H = 32;    // world height of the tallest context
@@ -89,4 +91,155 @@ export function cappedMarkerHeight(worldHeight, projectedPixels, maxPixels = 48)
 export function terrainPlacement() {
   const subDepth = 3.4, sideZ = 5.5, spacing = 5.2;
   return { subDepth, sideZ, laneZ: lane => 17 + lane * spacing };
+}
+
+// Grain columns near the playhead: how many request columns of the focused agent are drawn as grains.
+// None while a request's tread is under 2 px on screen (at overview a request is about one pixel wide,
+// so grains would be pixel noise), then 4, 8 and 16 at the Agents, Requests and Layers levels. Grains
+// fill their tread edge to edge, so a 2 px tread holds a solid strip of 2 px grains. pxPerColumn is the
+// on-screen width of the agent's mean request pitch. `previous` (the last result) gives both gates
+// hysteresis, so a column that hovers near a threshold does not flicker.
+export const GRAIN_COLUMN_MIN_PX = 2;
+const GRAIN_K = [0, 4, 8, 16];
+export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
+  const on = Number.isFinite(pxPerColumn) && pxPerColumn >= GRAIN_COLUMN_MIN_PX * (previous > 0 ? 0.9 : 1);
+  if (!on) return 0;
+  const prevLevel = Math.max(0, GRAIN_K.indexOf(previous));
+  return GRAIN_K[mapDetail(mapZoom, prevLevel).level];
+}
+
+// Whether the grain trench widens for the puck of a compaction at request iLead + 1: exactly while the
+// leading column collapses (the kernel's kC > 0, from lastReq + 0.7), never at iLead + FOCUS (0.65, where
+// focusing a request puts the playhead: request iLead complete, nothing collapsing).
+export function collapseWidens(uP, iLead) { return uP > collapseStart(iLead); }
+
+// The grain columns the re-read sweep crosses: the K columns up to the leading request i, but never back
+// past the start of i's ridge segment (segStart), so the sweep does not bridge an idle gap to the trail
+// columns of the segment before. iFirst is the first request swept, col0 its column (0 = the oldest).
+export function sweepColumns(i, K, segStart = 0) {
+  const iFirst = Math.max(0, i - K + 1, Math.min(i, segStart));
+  return { iFirst, col0: iFirst - (i - K + 1) };
+}
+
+// Frame-time governor for grain density. Only intervals between two consecutively rendered frames are
+// frame cost: the scene renders on demand while the user explores, and the pause before a render that
+// follows an idle stretch is not slowness, so such a push (contiguous false) neither slows nor calms.
+// Every `window` samples, a p90 above the slow threshold multiplies density by `down` (never below
+// `floor`); `calm` samples in a row under the calm threshold multiply it by `up` (never above 1). The
+// thresholds are `high` / `low` ms, raised to 1.5x / 1.2x the display's frame interval: rAF intervals on
+// a 60 Hz display jitter up to ~18.7 ms with no load (p90 18.0-18.4 ms measured), so a flat 18 ms reads
+// vsync jitter as slowness, while a dropped frame is ~33 ms. The display interval is the lowest p25 of
+// the last `cadenceWindows` windows, capped at 1000/60 (a scene slow from its first frame still counts
+// as slow; moving to a slower display recovers within a few windows). Intervals over `gap` ms are idle.
+export function createDensityGovernor({ window = 30, high = 18, low = 12, calm = 30, down = 0.75, up = 1.1, floor = 0.05, gap = 250, cadenceWindows = 8 } = {}) {
+  let density = 1, sinceEval = 0, calmRun = 0;
+  const samples = [], p25s = [];
+  const pick = (sorted, q) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))];
+  const cadence = () => Math.min(1000 / 60, ...p25s);
+  return {
+    get density() { return density; },
+    get cadence() { return cadence(); },
+    push(dt, contiguous = true) {
+      if (!contiguous || !(dt > 0) || dt > gap) return density;
+      samples.push(dt);
+      if (samples.length > window) samples.shift();
+      calmRun = dt < Math.max(low, 1.2 * cadence()) ? calmRun + 1 : 0;
+      if (++sinceEval >= window && samples.length >= window) {
+        sinceEval = 0;
+        const sorted = [...samples].sort((a, b) => a - b);
+        p25s.push(pick(sorted, 0.25));
+        if (p25s.length > cadenceWindows) p25s.shift();
+        if (pick(sorted, 0.9) > Math.max(high, 1.5 * cadence())) { density = Math.max(floor, density * down); calmRun = 0; }
+      }
+      if (calmRun >= calm) { density = Math.min(1, density * up); calmRun = 0; }
+      return density;
+    },
+    reset() { density = 1; sinceEval = 0; calmRun = 0; samples.length = 0; p25s.length = 0; }
+  };
+}
+
+// Sweep labels (scene.js updateSweepLabels): of the bands in a request's leading column, the injected
+// (flag 1) or re-sent (flag 2) blocks of at least `min` tokens, largest first, at most `limit`. A band is
+// labelled once the sweep (0..1 up the column) reaches its bottom, y0 / context.
+export function sweepLabelBands(bands, { min = 900, limit = 6 } = {}) {
+  return bands
+    .filter(b => (b.flags & 3) && b.blockIndex >= 0 && b.y1 - b.y0 >= min)
+    .sort((a, b) => (b.y1 - b.y0) - (a.y1 - a.y0) || a.y0 - b.y0)
+    .slice(0, limit);
+}
+// A sweep label's opacity `age` seconds after the sweep passed it: full for the first third, then a
+// smooth fade to nothing at 1 s (null: remove it).
+export function sweepLabelOpacity(age) {
+  if (!(age >= 0) || age >= 1) return null;
+  const t = Math.min(1, Math.max(0, (age - 0.35) / 0.65));
+  return 1 - t * t * (3 - 2 * t);
+}
+
+// Map detail refresh (scene.js updateMapDetail): the beacons, cluster badges, map labels and word panes are
+// rebuilt only when the view changed, the leading column did or the words did, never merely because a frame
+// was drawn. `prev` is the last refresh ({ t, anchors, zoom, key, lead }, or null before the first); `next` is
+// this frame ({ t, anchors, zoom, key, lead, playing, force }). anchors are the screen px [x0, y0, x1, y1, ...]
+// of fixed world points (the orbit target and four points at its depth near the viewport corners, captured at
+// the last refresh), so an orbit about the target moves the corners even though the target stays put. `lead`
+// is the leading grain column the stratum labels describe at Layers ("" or absent when they follow none). The
+// result: `refresh` now; `moved`: the view or the lead changed (or the refresh is forced), so everything is
+// rebuilt; otherwise only the key (the words' request and text) changed and only the words follow it;
+// `pending`: something changed but the refresh waits for the interval, so the caller keeps drawing frames
+// until it is due (a view that stops moving inside the interval still gets its refresh).
+export const DETAIL_MOVE_PX = 0.5;   // an anchor moved more than this on screen since the last refresh
+export const DETAIL_ZOOM = 0.01;     // or the map zoom changed by more than 1%
+export const DETAIL_MIN_MS = 90;     // refreshes at least this far apart while the view moves
+export const DETAIL_PLAY_MS = 100;   // and at most 10 Hz while playing
+export function shouldRefreshDetail(prev, next) {
+  if (!prev || next.force) return { refresh: true, moved: true, pending: false };
+  let moved = (next.lead || "") !== (prev.lead || "") || !(Math.abs(next.zoom / prev.zoom - 1) <= DETAIL_ZOOM) || next.anchors.length !== prev.anchors.length;
+  for (let k = 0; !moved && k < next.anchors.length; k += 2) {
+    moved = !(Math.hypot(next.anchors[k] - prev.anchors[k], next.anchors[k + 1] - prev.anchors[k + 1]) <= DETAIL_MOVE_PX);
+  }
+  if (!moved && next.key === prev.key) return { refresh: false, moved: false, pending: false };
+  const due = next.t - prev.t >= (next.playing ? DETAIL_PLAY_MS : DETAIL_MIN_MS);
+  return { refresh: due, moved, pending: !due };
+}
+
+// The navigator (map-overview.js) redraws its terrain only when what it draws changed (`key`: the lens, the
+// playhead's cut, the haze distance), and at most 10 Hz while playing; its viewport outline is SVG and follows
+// the camera on its own. prev: the last redraw ({ t, key }) or null; next: { t, key, playing }.
+export function shouldRedrawNavigator(prev, next) {
+  if (prev && next.key === prev.key) return { redraw: false, pending: false };
+  const due = !prev || !next.playing || next.t - prev.t >= DETAIL_PLAY_MS;
+  return { redraw: due, pending: !due };
+}
+
+// ---------- the playhead on the landscape ----------
+// The root's playhead runs from 0 to its end, the last request complete (playback.js COMPLETE).
+export function playheadEnd(n) { return n ? n - 1 + COMPLETE : 0; }
+// The cut's world x at root playhead P: the root's request x (xAt(i)) interpolated to the next request;
+// noCut from the last request on, where the whole landscape stands.
+export function cutXAt(P, n, xAt, noCut) {
+  if (!(n > 1) || P >= n - 1 - 1e-9) return noCut;
+  const i = Math.floor(P), f = P - i;
+  return xAt(i) + (xAt(i + 1) - xAt(i)) * f;
+}
+// The focused agent's own request-space playhead: the root's P, or for a subagent the request its ridge has
+// reached at the cut's x (xAt(i) its request i), -1 before its first request, and its end (its last request
+// complete) once the cut has reached its last request or there is no cut. A cut within float error of a
+// request's x has reached it: focusing a subagent's last request puts the cut on that x by way of root space.
+export function agentPlayhead(P, cutX, { isRoot, n, xAt }, noCut) {
+  if (isRoot) return P;
+  if (!n) return -1;
+  const end = playheadEnd(n);
+  if (cutX >= noCut) return end;
+  const reached = m => xAt(m) <= cutX + 1e-9 * Math.max(1, Math.abs(cutX));
+  if (!reached(0)) return -1;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (reached(m)) lo = m; else hi = m - 1; }
+  if (lo >= n - 1) return end;
+  const x0 = xAt(lo), x1 = xAt(lo + 1);
+  return lo + (x1 > x0 ? Math.min(1, Math.max(0, (cutX - x0) / (x1 - x0))) : 0);
+}
+// The re-read sweep through a focused subagent's current request (0..1) while the root plays: the fraction of
+// its own playhead uP, or null once its run is over (at its end the root plays on, and a band would stand
+// still at 65% of its last column).
+export function subagentSweep(uP, n) {
+  return uP >= playheadEnd(n) ? null : uP - Math.floor(uP);
 }

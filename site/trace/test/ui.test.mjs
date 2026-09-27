@@ -35,13 +35,53 @@ class Element extends Node {
   addEventListener(t, fn) { (this.listeners[t] ||= []).push(fn); }
   dispatch(t, ev) { for (const fn of this.listeners[t] || []) fn(ev); }
   all(pred, out = []) { for (const c of this.children) { if (pred(c)) out.push(c); c.all(pred, out); } return out; }
+  get hidden() { return this.attributes.has("hidden"); }
+  set hidden(v) { if (v) this.attributes.set("hidden", ""); else this.attributes.delete("hidden"); }
+  matches(sel) { return splitSelectors(sel).some(s => matchesCompound(this, s)); }
+  closest(sel) { for (let n = this; n instanceof Element; n = n.parentNode) if (n.matches(sel)) return n; return null; }
+}
+// Selectors for matches() and closest(): comma lists of compound selectors built from tag, #id, .class,
+// [attr], [attr=value] and :not(<compound>), the forms keys.js hands to closest().
+function splitSelectors(s) {
+  const out = [];
+  let depth = 0, cur = "";
+  for (const ch of s) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    if (ch === "," && !depth) { out.push(cur); cur = ""; } else cur += ch;
+  }
+  return [...out, cur].map(x => x.trim()).filter(Boolean);
+}
+function matchesCompound(n, sel) {
+  let rest = sel;
+  const tag = rest.match(/^[a-z][a-z0-9-]*/i);
+  if (tag) { if (n.tagName !== tag[0].toUpperCase()) return false; rest = rest.slice(tag[0].length); }
+  while (rest) {
+    let m;
+    if ((m = rest.match(/^#([\w-]+)/))) { if (n.getAttribute("id") !== m[1]) return false; }
+    else if ((m = rest.match(/^\.([\w-]+)/))) { if (!n.className.split(/\s+/).includes(m[1])) return false; }
+    else if ((m = rest.match(/^\[([\w-]+)(?:=(?:"([^"]*)"|([^\]]*)))?\]/))) {
+      const want = m[2] ?? m[3];
+      if (!n.attributes.has(m[1]) || (want !== undefined && n.getAttribute(m[1]) !== want)) return false;
+    }
+    else if ((m = rest.match(/^:not\(([^()]*)\)/))) { if (matchesCompound(n, m[1].trim())) return false; }
+    else throw new Error(`the fake DOM cannot read the selector "${sel}"`);
+    rest = rest.slice(m[0].length);
+  }
+  return true;
 }
 globalThis.Node = Node;
 globalThis.document = {
   createElement: tag => new Element(tag),
   createElementNS: (_ns, tag) => new Element(tag),
-  createTextNode: v => new Text(v)
+  createTextNode: v => new Text(v),
+  body: new Element("body"),
+  querySelector: () => null,
+  // Listeners the page puts on the document (the palette's pointer press); spacePage's click runs them.
+  listeners: {},
+  addEventListener(t, fn) { (this.listeners[t] ||= []).push(fn); }
 };
+globalThis.addEventListener ??= () => {};
 
 const { renderAgentColumns, renderOverview, buildLayout } = await import("../minimap.js");
 const { ownLines, askWhere, largestLayer, modelsUsed, breakable, sessionStats, STRATA } = await import("../panels.js");
@@ -92,6 +132,53 @@ test("2D overview renders the whole session and picks a request from a click on 
     assert.ok(Number.isInteger(picked.reqIdx), `${name}: at a request`);
     for (const lens of ["egress", "inflow", "agents"]) renderOverview(new Element("div"), trace, L, { width: 320, height: 132, full: false, lens });
   }
+});
+
+// A browser logs "A negative value is not valid" for every <rect> with a negative width or height. The full
+// overview's lane pitch bottoms out at 2.5 px while its bar leaves a 3 px gap, and the columns' margins take
+// 44 px of the height.
+test("2D charts never emit negative geometry: dense lanes keep a visible bar, margins taller than the chart clamp", async () => {
+  // 60 subagents at work at once: 60 lanes, so the full view's pitch is H * 0.3 / 60, inside 2.5 to 3 px for H of 500 to 600
+  const t0 = Date.UTC(2026, 8, 25, 7, 0), req = t => ({ t, tokens: { context: 1000 } });
+  const agent = (id, kind, extra = {}) => ({ id, kind, name: id, requests: [], blocks: [], asks: [], compactions: [], ...extra });
+  const root = agent("root", "root");
+  for (let i = 0; i < 40; i++) root.requests.push(req(t0 + i * 20e3));
+  const subs = Array.from({ length: 60 }, (_, k) => {
+    const a = agent(`s${k}`, "subagent", { parentId: "root" });
+    for (let j = 0; j < 5; j++) a.requests.push(req(t0 + 100e3 + k * 1e3 + j * 60e3));
+    return a;
+  });
+  const dense = { agents: [root, ...subs], started: t0, ended: t0 + 800e3 };
+  const sessions = [["dense", dense], ["long", longSession()], ...await fixtureTraces()];
+  const bad = [], at = (what, n) => `${what} ${n.getAttribute("class") || ""} ${n.getAttribute("width")}x${n.getAttribute("height")}`;
+  const check = (what, svg) => {
+    for (const n of svg.all(n => n.tagName === "RECT")) {
+      for (const k of ["width", "height"]) {
+        const v = Number(n.getAttribute(k));
+        if (!Number.isFinite(v) || v < 0) bad.push(at(what, n));
+      }
+    }
+  };
+  const heights = [10, 20, 30, 43.9, 50, 132, 140, 300, 500, 540, 598.4, 599.9, 640];
+  let dense3 = 0;
+  for (const [name, trace] of sessions) {
+    const L = buildLayout(trace), subagents = trace.agents.filter(a => a.kind === "subagent" && a.requests.length).length;
+    for (const H of heights) {
+      for (const full of [true, false]) {
+        const svg = renderOverview(new Element("div"), trace, L, { width: 1000, height: H, full, lens: "context", focus: { agentId: subs[0].id, reqIdx: 0 } });
+        check(`${name} overview H ${H} ${full ? "full" : "compact"}`, svg);
+        const lanes = svg.all(n => n.getAttribute("class") === "lane");
+        assert.ok(lanes.length >= subagents, `${name} H ${H}: every subagent has a lane bar`);
+        for (const r of lanes) assert.ok(Number(r.getAttribute("height")) >= 1, `${name} H ${H}: a lane bar is at least 1 px (${r.getAttribute("height")})`);
+        if (name === "dense" && full && (H * 0.3) / L.lanes < 3 && (H * 0.3) / L.lanes >= 2.5) dense3++;
+      }
+    }
+    for (const a of trace.agents.filter(a => a.requests.length)) {
+      for (const H of heights) check(`${name} ${a.id} columns H ${H}`, renderAgentColumns(new Element("div"), a, { width: 600, height: H, reqIdx: 0 }));
+    }
+  }
+  assert.ok(dense3 >= 3, `the sweep reaches the 2.5 to 3 px lane pitch (${dense3} renders)`);
+  assert.deepEqual(bad, []);
 });
 
 // ---------- the reader's highlighting ----------
@@ -271,6 +358,19 @@ test('a request offers its tool call once, whether or not the map card is showin
   }
 });
 
+test("the map card names where it is: the playhead while playing, the centre of the map, or the selection", () => {
+  const req = { i: 4, t: 1000, tokens: { context: 900 } };
+  const agent = { id: "root", kind: "root", requests: [{}, {}, {}, {}, req], blocks: [], asks: [], compactions: [] };
+  const kicker = extra => {
+    const host = new Element("aside");
+    renderPanel(host, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 4, ...extra }, { focusAction() {}, focusRequest() {}, focusStratum() {} });
+    return host.all(n => n.getAttribute("class") === "kicker")[0]?.textContent;
+  };
+  assert.equal(kicker({ followingMap: true, atPlayhead: true }), "AT THE PLAYHEAD");
+  assert.equal(kicker({ followingMap: true }), "AT THE CENTER OF YOUR MAP");
+  assert.equal(kicker({ mapPinned: true, level: 3 }), "SELECTED REQUEST");
+});
+
 test('tool inspector opens the actual selected call immediately, including every call in multi-call responses', async () => {
   for (const tool of ['Bash', 'Read', 'mcp__web__search']) {
     const ref = { file: 0, offset: 50, length: 20 }, result = { file: 0, offset: 80, length: 20 };
@@ -322,4 +422,442 @@ test('tool inspector handles missing text, reader errors and competing async rea
   renderPanel(host, state, { focusRequest() {}, getText: async () => { throw new Error('source missing'); } });
   await new Promise(resolve => setImmediate(resolve));
   assert.ok(host.all(n => n.tagName === 'PRE')[0].textContent.includes('source missing'));
+});
+
+// ---------- the playback transport ----------
+const { createPlayback } = await import("../playback.js");
+const { createTransport, playheadLabel, playheadForRequest, nextSpeed, focusStep, FOCUS } = await import("../transport.js");
+const { cutXAt, agentPlayhead } = await import("../scene-rules.js");
+const { fmtClock } = await import("../panels.js");
+
+// A long main thread: 1,701 requests 20 s apart, with 3-hour idle stretches before requests 501, 1,001
+// and 1,501 (the layout squeezes them) and a 40-minute wait before request 1,302 that one subagent's
+// whole run fills. A second subagent's single request sits inside an idle stretch, splitting it.
+function longSession() {
+  const t0 = Date.UTC(2026, 8, 25, 7, 0), req = t => ({ t, tokens: { context: 1000 } });
+  const agent = (id, kind, extra = {}) => ({ id, kind, name: id, requests: [], blocks: [], asks: [], compactions: [], ...extra });
+  const root = agent("root", "root");
+  let t = t0;
+  for (let i = 0; i < 1701; i++) {
+    if (i) t += i % 500 === 0 ? 3 * 3600e3 : i === 1301 ? 40 * 60e3 : 20e3;
+    root.requests.push(req(t));
+  }
+  const worker = agent("worker", "subagent", { parentId: "root" });
+  for (let k = 0; k < 50; k++) worker.requests.push(req(root.requests[1300].t + 30e3 + k * 48e3));
+  const late = agent("late", "subagent", { parentId: "root" });
+  late.requests.push(req(root.requests[999].t + 2 * 3600e3));
+  return { agents: [root, worker, late], started: t0, ended: t };
+}
+function transportFixture() {
+  const L = buildLayout(longSession());
+  const pb = createPlayback({ times: L.root.requests.map(r => r.t), X: L.X });
+  pb.setP(pb.end); // parked where app.js parks it: the end, the last request complete
+  const frames = new Map(), pushed = [];
+  let id = 0;
+  const host = new Element("div");
+  const starts = [], follows = [];
+  const tr = createTransport(host, { onPlayhead: p => pushed.push(p), onStart: () => starts.push(pb.P), onFollow: f => follows.push(f),
+    raf: f => { frames.set(++id, f); return id; }, caf: i => frames.delete(i), now: () => 0 });
+  tr.load(pb);
+  // Runs the queued animation frame at time t.
+  const frame = t => { const [[k, f]] = frames; frames.delete(k); f(t); };
+  const [play, scrub, readout, speed] = host.children;
+  return { L, pb, tr, host, frames, frame, pushed, starts, follows, play, scrub, readout, speed, follow: tr.controls.follow };
+}
+
+test("the transport renders play, scrub, readout and speed; the readout names the request and its time", () => {
+  const { pb, tr, host, pushed, play, scrub, readout, speed } = transportFixture();
+  assert.deepEqual(host.children.map(c => `${c.tagName}.${c.className}`), ["BUTTON.play", "INPUT.scrub", "OUTPUT.readout", "BUTTON.speed", "BUTTON.follow"]);
+  assert.deepEqual(["type", "min", "max", "step", "aria-label"].map(k => scrub.getAttribute(k)), ["range", "0", "1", "0.0005", "Session time"]);
+  assert.equal(readout.getAttribute("aria-live"), "off", "the readout is not announced every frame");
+  assert.deepEqual([play.getAttribute("aria-label"), play.getAttribute("aria-pressed"), host.getAttribute("data-playing")], ["Play", "false", "false"]);
+  assert.equal(speed.textContent, "4×");
+  assert.equal(pushed.length, 0, "loading a session pushes nothing: the scene starts at the same end");
+  const tEnd = pb.timeAt(pb.n - 1);
+  assert.equal(readout.textContent, `req 1,701 · ${new Date(tEnd).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${fmtClock(tEnd)}`);
+  tr.seek(1233.5);
+  const t = pb.timeAt(1233.5);
+  assert.ok(t > pb.timeAt(1233) && t < pb.timeAt(1234), "the time the playhead has reached, between the two requests");
+  const day = new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  assert.equal(readout.textContent, `req 1,234 · ${day} · ${fmtClock(t)}`);
+  assert.match(readout.textContent, /^req 1,234 · Sep 2[56] · \d{1,2}:\d\d [ap]m$/);
+  assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
+  assert.deepEqual(pushed.at(-1), { P: 1233.5, playing: false, sweep: null });
+  // Halfway through the 40-minute wait the clock reads 20 minutes on, not the request's own time.
+  tr.seek(1300.5);
+  const mid = pb.timeAt(1300) + 20 * 60e3;
+  assert.equal(pb.timeAt(1300.5), mid);
+  assert.equal(readout.textContent, `req 1,301 · ${new Date(mid).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${fmtClock(mid)}`);
+  assert.notEqual(fmtClock(mid), fmtClock(pb.timeAt(1300)));
+  // The scrub is the playhead's compressed-time x, and dragging it moves the playhead to that x.
+  for (const P of [0, 1, 499.5, 500, 1000.25, 1301, pb.n - 1]) { tr.seek(P); assert.equal(Number(scrub.value), pb.xAt(P), `scrub at P ${P}`); }
+  for (const P of [12.75, 700.25, 1300.5]) {
+    scrub.value = String(pb.xAt(P));
+    scrub.dispatch("input");
+    assert.ok(Math.abs(pb.P - P) < 1e-9, `scrubbing to x(${P}) lands on ${pb.P}`);
+    assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
+  }
+});
+
+test("play runs one frame loop that pushes P and the sweep; pause, step and scrubbing stop it", () => {
+  const { pb, tr, host, frames, frame, pushed, play, scrub } = transportFixture();
+  tr.seek(100.2);
+  assert.equal(frames.size, 0, "paused: no frame is scheduled");
+  play.dispatch("click");
+  assert.deepEqual([host.getAttribute("data-playing"), play.getAttribute("aria-pressed"), play.getAttribute("aria-label")], ["true", "true", "Pause"]);
+  assert.equal(frames.size, 1);
+  assert.deepEqual(pushed.at(-1), { P: 100.2, playing: true, sweep: 100.2 - 100 });
+  for (const t of [16, 33, 50]) {
+    const before = pb.P;
+    frame(t);
+    const p = pushed.at(-1);
+    assert.ok(p.playing && p.P > before, `frame ${t} moves the playhead`);
+    assert.equal(p.sweep, p.P - Math.floor(p.P));
+    assert.equal(Number(scrub.value), pb.xAt(p.P));
+    assert.equal(frames.size, 1, "one frame queued at a time");
+  }
+  const x0 = pb.xAt(pb.P);
+  frame(5050);
+  assert.ok(Math.abs(pb.xAt(pb.P) - x0 - 4 / (pb.n - 1) * 0.1) < 1e-9, "a 5 s gap between frames (a hidden tab) advances only 100 ms");
+  play.dispatch("click");
+  assert.deepEqual([host.getAttribute("data-playing"), play.getAttribute("aria-label"), frames.size], ["false", "Play", 0]);
+  assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
+  tr.play();
+  assert.equal(frames.size, 1);
+  const from = pb.P;
+  tr.step(1);
+  assert.deepEqual([frames.size, pb.playing, pb.P], [0, false, Math.floor(from) + 1 + FOCUS], "stepping pauses on the next request, complete");
+  tr.play();
+  scrub.dispatch("pointerdown");
+  assert.deepEqual([frames.size, pb.playing], [0, false], "grabbing the scrub pauses");
+});
+
+test("playing to the end stops the loop and resets the button; play again starts over", () => {
+  const { pb, tr, host, frames, frame, pushed, play } = transportFixture();
+  tr.seek(pb.n - 3.5);
+  tr.setSpeed(16);
+  play.dispatch("click");
+  let t = 0, guard = 0;
+  while (pb.playing && guard++ < 10000) frame(t += 100);
+  assert.ok(guard < 10000);
+  assert.equal(frames.size, 0, "the frame that reaches the end schedules no other");
+  assert.equal(pb.end, pb.n - 1 + FOCUS, "the end is the last request complete");
+  assert.deepEqual([pb.P, pb.playing, host.getAttribute("data-playing"), play.getAttribute("aria-label")], [pb.end, false, "false", "Play"]);
+  assert.deepEqual(pushed.at(-1), { P: pb.end, playing: false, sweep: null });
+  assert.match(host.children[2].textContent, /^req 1,701 · /, "the readout names the last request");
+  play.dispatch("click");
+  assert.equal(pb.P, 0, "play at the end starts from the first request");
+  assert.equal(frames.size, 1);
+});
+
+// Play from an inspection pushes one history entry as the run starts (app.js playFromMap, the onStart hook). At
+// the end (focusing the root's last request lands there) the clock starts over from request 1, but the entry
+// being left must keep the playhead it had, or Back shows that inspection fully ghosted.
+test("a run's onStart sees the playhead before the clock moves, even when a play at the end starts over", () => {
+  const { pb, tr, starts, frames } = transportFixture();
+  tr.seek(pb.end);
+  tr.play();
+  assert.deepEqual(starts, [pb.end], "the view being left still has the end");
+  assert.equal(pb.P, 0, "then the run starts from request 1");
+  assert.equal(frames.size, 1);
+  tr.pause(); tr.seek(40.65); tr.play();
+  assert.deepEqual(starts, [pb.end, 40.65]);
+  const one = createPlayback({ times: [0], X: () => 1 });
+  tr.load(one); tr.play();
+  assert.deepEqual([starts.length, one.playing], [2, false], "a clock of one request never plays, so no run starts");
+});
+
+test("the speed button cycles 4× → 8× → 16× → 1×; the keys' faster and slower stop at the ends", () => {
+  const { pb, tr, speed } = transportFixture();
+  const seen = [speed.textContent];
+  for (let i = 0; i < 5; i++) { speed.dispatch("click"); seen.push(speed.textContent); }
+  assert.deepEqual(seen, ["4×", "8×", "16×", "1×", "2×", "4×"]);
+  assert.equal(pb.speed, 4);
+  assert.equal(nextSpeed({ speeds: [1, 2, 4, 8, 16], speed: 3 }), 4, "an off-list speed goes to the next listed one");
+  for (let i = 0; i < 4; i++) tr.faster();
+  assert.equal(speed.textContent, "16×");
+  for (let i = 0; i < 6; i++) tr.slower();
+  assert.equal(speed.textContent, "1×");
+});
+
+test("focusing request i puts the playhead at i + 0.65: request i complete, on the root or in a subagent's own requests", () => {
+  const { L, pb, tr, readout, scrub } = transportFixture();
+  assert.equal(FOCUS, 0.65, "past the pour (i + 0.6), before a collapse starts (i + 0.7)");
+  assert.equal(playheadForRequest(pb, L, "root", 1234), 1234.65);
+  assert.equal(playheadForRequest(pb, L, "root", 0), 0.65);
+  assert.equal(playheadForRequest(pb, L, "root", pb.n - 1), pb.n - 1 + FOCUS, "the last request complete: the end");
+  assert.equal(playheadForRequest(pb, L, "root", 99999), null);
+  assert.equal(playheadForRequest(pb, L, "nobody", 0), null);
+  assert.equal(playheadForRequest(null, L, "root", 3), null);
+  // What app.js's set() does with the option: seek, paused. The readout and scrub name the focused request.
+  tr.play();
+  tr.seek(playheadForRequest(pb, L, "root", 899));
+  assert.deepEqual([pb.P, pb.playing], [899.65, false]);
+  assert.match(readout.textContent, /^req 900 · /, "request index 899 is the 900th, as the request slider shows it");
+  assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
+  tr.seek(playheadForRequest(pb, L, "root", pb.n - 1));
+  assert.deepEqual([pb.P, pb.atEnd], [pb.n - 1 + FOCUS, true], "the last request complete is the end: the whole landscape");
+  assert.match(readout.textContent, /^req 1,701 · /);
+  // A map pin (the Selected card) on root request 849, then on a subagent's request, while playing.
+  tr.seek(100.2); tr.play();
+  tr.seek(playheadForRequest(pb, L, "root", 849));
+  assert.deepEqual([pb.P, pb.playing, readout.textContent.split(" · ")[0]], [849.65, false, "req 850"]);
+  tr.step(-1);
+  assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [848.65, "req 849"], ", from 849.65 gives 848.65");
+  tr.seek(playheadForRequest(pb, L, "worker", 10));
+  assert.ok(pb.P > 1300 && pb.P < 1301 && !pb.playing, "a pin on a subagent's request moves the playhead into its run");
+  // A subagent's request: the cut lands where that agent's own playhead reads i + 0.65, its last request
+  // included (there the cut sits on its own x, by way of root space). The scene's side is scene-rules: the
+  // cut in world x (the layout's x times the world width, as landscape-geometry places requests) and the
+  // agent's playhead at that cut.
+  const worker = L.byId.get("worker"), W = 220, rootXs = L.info.get("root").xs, workerXs = L.info.get("worker").xs;
+  const own = P => agentPlayhead(P, cutXAt(P, pb.n, i => rootXs[i] * W, Infinity), { isRoot: false, n: workerXs.length, xAt: i => workerXs[i] * W }, Infinity);
+  let prev = -1;
+  worker.requests.forEach((r, i) => {
+    const P = playheadForRequest(pb, L, "worker", i);
+    assert.ok(P > 1300 && P < 1301 && P > prev, `worker request ${i}: P ${P} is fractional, inside the wait, in order`);
+    assert.ok(Math.abs(own(P) - (i + FOCUS)) < 1e-6, `worker request ${i}: its own playhead reads ${own(P)}`);
+    prev = P;
+  });
+  assert.equal(own(pb.end), worker.requests.length - 1 + FOCUS, "at the session end the finished worker stands at its end");
+  // Inside a squeezed idle stretch, time and compressed x disagree: the playhead follows x.
+  const t = L.byId.get("late").requests[0].t, P = playheadForRequest(pb, L, "late", 0);
+  assert.ok(P > 999 && P < 1000);
+  assert.ok(Math.abs(pb.xAt(P) - L.X(t)) < 1e-12);
+  assert.ok(Math.abs(pb.xAt(pb.PAtTime(t)) - L.X(t)) > 1e-3, "PAtTime alone would put the cut off the request here");
+});
+
+test(", and . move the readout's request number by exactly one, to that request complete", () => {
+  const n = 1701;
+  for (const [P, back, on] of [[849.65, 848.65, 850.65], [899.65, 898.65, 900.65], [900, 899.65, 901.65], [900.4, 899.65, 901.65], [900.95, 899.65, 901.65],
+    [0, FOCUS, 1.65], [0.65, FOCUS, 1.65], [0.3, FOCUS, 1.65], [n - 1, n - 2 + FOCUS, n - 1 + FOCUS], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1 + FOCUS],
+    [n - 1 + FOCUS, n - 2 + FOCUS, n - 1 + FOCUS]]) {
+    assert.deepEqual([focusStep(P, -1, n), focusStep(P, 1, n)], [back, on], `from ${P}`);
+  }
+  const { pb, tr, readout } = transportFixture();
+  tr.seek(899.65);
+  const seen = [];
+  for (const d of [1, 1, -1, -1, -1]) { tr.step(d); seen.push([pb.P, readout.textContent.split(" · ")[0]]); }
+  assert.deepEqual(seen, [[900.65, "req 901"], [901.65, "req 902"], [900.65, "req 901"], [899.65, "req 900"], [898.65, "req 899"]]);
+  tr.seek(0.65);
+  tr.step(-1);
+  assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [0.65, "req 1"], ", from 0.65 stays at 0.65: request 0 is never un-poured");
+});
+
+test("the Follow chip: auto by default; moving the camera during a run makes it manual; the chip or f asks for it again", () => {
+  const { pb, tr, follow, follows, starts, frame, frames } = transportFixture();
+  const chip = () => [follow.getAttribute("aria-pressed"), follow.textContent, tr.follow, tr.forced];
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false]);
+  assert.equal(follow.getAttribute("title"), "The camera follows the playhead · f");
+  tr.userCamera();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "panning while paused leaves Follow alone");
+  tr.seek(100.65);
+  tr.play();
+  assert.deepEqual(starts, [100.65], "a run starts once");
+  frame(16);
+  tr.play();
+  assert.deepEqual(starts, [100.65], "play while playing is not a new run");
+  tr.userCamera();
+  assert.deepEqual(chip(), ["false", "Follow manual", "manual", false]);
+  assert.deepEqual(follows, ["manual"]);
+  tr.pause(); tr.play();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "a new run follows again");
+  tr.userCamera();
+  follow.dispatch("click");
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", true], "asked for: it follows at the overview too");
+  follow.dispatch("click");
+  assert.deepEqual(chip(), ["false", "Follow manual", "manual", false], "turned off");
+  tr.pause(); tr.play();
+  assert.equal(tr.follow, "manual", "off stays off across runs");
+  tr.toggleFollow();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", true]);
+  tr.pause();
+  tr.userCamera();
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "the user took the camera: no longer asked to follow at the overview");
+  tr.toggleFollow(); tr.toggleFollow();
+  assert.equal(tr.forced, true);
+  assert.deepEqual(follows, ["manual", "manual", "auto", "manual", "auto", "manual", "auto"]);
+  assert.ok(frames.size <= 1);
+});
+
+test("a new session's clock starts with Follow auto: off, a held run and 'asked for' do not carry over", () => {
+  const { tr, pb, follow } = transportFixture();
+  const next = () => { const p = createPlayback({ times: [0, 1000, 2000], X: t => t / 2000 }); p.setP(2); return p; };
+  const chip = () => [follow.getAttribute("aria-pressed"), follow.textContent, tr.follow, tr.forced];
+  tr.toggleFollow(); // off
+  tr.load(next());
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "turned off in the last session");
+  tr.toggleFollow(); tr.toggleFollow(); // off, then asked for: follows at the overview too
+  assert.equal(tr.forced, true);
+  tr.load(next());
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "asked for in the last session");
+  tr.load(pb); tr.play(); tr.userCamera(); // held: the user moved the camera during a run
+  assert.equal(tr.follow, "manual");
+  tr.load(next());
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "held in the last session");
+});
+
+// Every transport control's text at rest, on hover, pressed and playing: at least 7:1 on its own opaque
+// background (the rules as trace.css writes them; hover loses to the pressed and playing rules, which are
+// more specific).
+test("the transport's controls keep 7:1 text contrast at rest, on hover, pressed and playing", async () => {
+  const { readFileSync } = await import("node:fs");
+  const css = readFileSync(new URL("../trace.css", import.meta.url), "utf8");
+  const decl = (sel, prop) => {
+    const m = new RegExp(`(^|\\n)${sel.replace(/[.[\]=]/g, c => `\\${c}`)}\\s*\\{([^}]*)\\}`).exec(css);
+    assert.ok(m, `${sel} is in trace.css`);
+    const v = new RegExp(`(^|[;\\s])${prop}:\\s*(#[0-9a-fA-F]{6})\\b`).exec(m[2]);
+    assert.ok(v, `${sel} sets ${prop}`);
+    return v[2];
+  };
+  const hex = h => [1, 3, 5].map(k => parseInt(h.slice(k, k + 2), 16));
+  const lum = h => { const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; const [r, g, b] = hex(h); return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+  const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  const ink = decl(".playback button", "color"), hover = decl(".playback button:hover", "background");
+  const pairs = [
+    ["rest", ink, decl(".playback button", "background")],
+    ["hover (play, speed, Follow off)", ink, hover],
+    ["Follow off", ink, decl(".playback .follow", "background")],
+    ["Follow pressed", decl(".playback .follow[aria-pressed=true]", "color"), decl(".playback .follow[aria-pressed=true]", "background")],
+    ["playing", decl(".playback[data-playing=true] .play", "color"), decl(".playback[data-playing=true] .play", "background")]
+  ];
+  for (const [what, fg, bg] of pairs) assert.ok(contrast(fg, bg) >= 7, `${what}: ${fg} on ${bg} is ${contrast(fg, bg).toFixed(2)}:1`);
+});
+
+// ---------- where Space plays ----------
+const { createPalette } = await import("../palette.js");
+
+// A fake page: the landscape, the transport, the panel with the call reader panels.js renders, the 2D
+// view and a few fields and controls, under one body. The palette's key handler runs over it with a
+// playback that declines (returns false) while the transport is hidden, as app.js's does.
+function spacePage() {
+  const body = document.body;
+  body.replaceChildren();
+  const E = (tag, attrs = {}, ...kids) => { const n = new Element(tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); n.append(...kids); return n; };
+  const canvas = E("canvas", { class: "gl" }), label = E("button", { class: "lbl event" });
+  const stage = E("div", { id: "stage", class: "stage" }, canvas, E("div", { class: "labels" }, label));
+  const transportHost = E("div", { id: "playback", class: "playback", role: "group" });
+  const L = buildLayout(longSession());
+  const pb = createPlayback({ times: L.root.requests.map(r => r.t), X: L.X });
+  const tr = createTransport(transportHost, { raf: () => 1, caf: () => {}, now: () => 0 });
+  tr.load(pb);
+  const req = { i: 0, t: 1000, tokens: { context: 900 }, action: { kind: "tool", tool: "Bash", target: "echo hi", args: null, result: null } };
+  const agent = { id: "root", kind: "root", requests: [req], blocks: [], asks: [], compactions: [] };
+  const panel = E("aside", { id: "panel", class: "panel" });
+  renderPanel(panel, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, inspector: "action" }, { focusRequest() {} });
+  const reader = panel.all(n => n.tagName === "PRE")[0];
+  // The level 3 block reader panels.js renders, in the same panel: a block's text is a plain pre.
+  const block = { i: 0, t: 900, kind: "outside", label: "README.md", chars: 4000, est: 1000, ref: { file: "a.jsonl", offset: 1 }, site: null };
+  const deep = { ...agent, blocks: [block], requests: [{ ...req, window: [0, 0], strata: { outside: 1000 } }] };
+  const levelThree = E("div");
+  renderPanel(levelThree, { trace: { agents: [deep] }, level: 3, agent: deep, reqIdx: 0, stratum: "outside", block: 0 },
+    { focusRequest() {}, openBlock() {}, openBlockAt() {}, getText: () => new Promise(() => {}) });
+  panel.append(levelThree);
+  const blockText = levelThree.all(n => n.tagName === "PRE" && n.className === "text")[0];
+  const panelText = panel.all(n => n.tagName === "P" && n.className === "lede")[0];
+  const flat = E("div", { id: "flat", class: "flat" });
+  const minimap = E("div", { id: "minimap", class: "minimap" }, E("canvas", { class: "map-terrain" }));
+  const hud = E("header", { class: "hud" }, E("h1", { id: "title" }, "a session"));
+  const fields = [E("input", { id: "paste", type: "text" }), E("input", { id: "request-range", type: "range" }), E("input", { id: "request-number", type: "number" }),
+    E("textarea"), E("select"), E("div", { contenteditable: "true" })];
+  const controls = [E("button", { id: "zoom-in" }), E("summary"), E("a", { href: "#x" }), E("div", { role: "button", tabindex: "0" })];
+  body.append(E("div", { id: "app", class: "app" }, hud, stage, E("div", { class: "side" }, panel), minimap, flat, transportHost, ...fields, ...controls));
+  document.listeners = {};
+  let shown = true;
+  const calls = [];
+  const act = name => (...a) => shown && void calls.push([name, ...a].join(" "));
+  const palette = createPalette({ state: () => ({}), A: {}, overview() {}, selectLens() {}, moveRequest() {}, getText: async () => ({ text: "" }), finder: () => null,
+    playback: { toggle: act("toggle"), step: act("step"), slower: act("slower"), faster: act("faster"), follow: act("follow") } });
+  palette.setTrace({ agents: [agent] });
+  // One keydown through the palette's handler: [handled, prevented, what playback did].
+  const press = (target, key = " ", mods = {}) => {
+    const e = { key, target, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, ...mods, prevented: false, preventDefault() { this.prevented = true; } };
+    calls.length = 0;
+    const handled = palette.handleKey(e);
+    return [handled, e.prevented, calls.join(", ")];
+  };
+  // A click as a browser runs it: the document's capture listeners see the pointer press, then focus moves to
+  // the nearest focusable ancestor of what was clicked, or stays on the body. key() presses at the focus.
+  const FOCUSABLE = "button, input, select, textarea, summary, a[href], [tabindex], [contenteditable=true]";
+  let focused = body;
+  const click = target => {
+    for (const fn of document.listeners.pointerdown || []) fn({ type: "pointerdown", target });
+    focused = target.closest(FOCUSABLE) || body;
+    return focused;
+  };
+  const key = (k = " ", mods) => press(focused, k, mods);
+  return { body, canvas, label, stage, tr, reader, panel, blockText, panelText, minimap, hud, flat, fields, controls, palette, agent, press, click, key,
+    hide: v => { shown = !v; } };
+}
+
+test("Space plays from the page, the landscape and the scrub; a reader, the panel, a field or a control keeps it", () => {
+  const p = spacePage();
+  const { play, scrub, speed } = p.tr.controls;
+  assert.ok(p.reader.className.includes("call-text") && p.reader.getAttribute("tabindex") === "0", "the call reader is the focusable pre panels.js renders");
+  for (const [where, target] of [["the page", p.body], ["the landscape", p.canvas], ["the transport's scrub", scrub]]) {
+    assert.deepEqual(p.press(target), [true, true, "toggle"], `Space on ${where} plays`);
+  }
+  const keeps = [["the call reader", p.reader], ["the panel", p.panel], ["the 2D view", p.flat], ["the play button (it presses itself)", play], ["the speed button", speed],
+    ["the Follow chip", p.tr.controls.follow], ["a landscape label button", p.label], ...p.fields.map(f => [`${f.tagName} ${f.getAttribute("type") || f.getAttribute("contenteditable") || ""}`, f]),
+    ...p.controls.map(c => [`${c.tagName} ${c.getAttribute("role") || ""}`, c])];
+  for (const [where, target] of keeps) assert.deepEqual(p.press(target), [false, false, ""], `Space on ${where} is left to it, not prevented`);
+  // The scrub still answers the other playback keys; other fields and range inputs do not.
+  assert.deepEqual(p.press(scrub, ","), [true, true, "step -1"]);
+  assert.deepEqual(p.press(scrub, ">", { shiftKey: true }), [true, true, "faster"]);
+  assert.deepEqual(p.press(scrub, "f"), [true, true, "follow"]);
+  assert.deepEqual(p.press(p.body, "f"), [true, true, "follow"]);
+  assert.deepEqual(p.press(p.fields[0], "f"), [false, false, ""], "typing an f is typing");
+  assert.deepEqual(p.press(scrub, "Home"), [false, false, ""], "Home stays with the range");
+  assert.deepEqual(p.press(p.fields[0], ","), [false, false, ""], "typing a comma is typing");
+  assert.deepEqual(p.press(p.fields[1], "."), [false, false, ""], "the request slider keeps its keys");
+  // A focused button still gets the step keys (they are not its own).
+  assert.deepEqual(p.press(play, "."), [true, true, "step 1"]);
+});
+
+// The panel and a block's text take no focus: after a click into them the key comes from the body. Space must
+// page what was clicked (at level 3 playing would also close the reader and go back to the map).
+test("after a click into a block's text or the panel Space pages them; a click on the map or the transport gives it back", () => {
+  const p = spacePage();
+  const { play, readout } = p.tr.controls;
+  assert.equal(p.blockText.getAttribute("tabindex"), null, "a block's text is a plain pre");
+  assert.deepEqual(p.key(), [true, true, "toggle"], "keyboard only: Space from the page plays");
+  assert.equal(p.click(p.blockText), p.body, "the click leaves focus on the body");
+  assert.deepEqual(p.key(), [false, false, ""], "Space after a click into the block reader pages it, unprevented");
+  assert.deepEqual(p.key("f"), [true, true, "follow"], "the other playback keys still work from there");
+  assert.deepEqual(p.key(","), [true, true, "step -1"]);
+  for (const [where, target] of [["the landscape", p.canvas], ["the transport's readout", readout], ["the minimap", p.minimap.children[0]], ["the bare page", p.body], ["the header", p.hud.children[0]]]) {
+    p.click(p.panelText);
+    assert.deepEqual(p.key(), [false, false, ""], "Space after a click into the panel's text is the panel's");
+    assert.equal(p.click(target), p.body);
+    assert.deepEqual(p.key(), [true, true, "toggle"], `a click on ${where} gives Space back to playback`);
+  }
+  for (const [where, target] of [["the 2D view", p.flat], ["the panel's text", p.panelText]]) {
+    p.click(p.canvas); p.click(target);
+    assert.deepEqual(p.key(), [false, false, ""], `Space after a click on ${where} is left to the page`);
+  }
+  // The palette's layers: a press there (the search scrim, a result) leaves the last word to the page.
+  const scrim = p.body.all(n => n.className === "pal-scrim")[0];
+  p.click(p.panelText); p.click(scrim);
+  assert.deepEqual(p.key(), [false, false, ""]);
+  p.click(p.canvas); p.click(scrim);
+  assert.deepEqual(p.key(), [true, true, "toggle"]);
+  // A new session starts afresh: the press that loaded it (on the loader) does not carry over.
+  p.click(p.panelText);
+  p.palette.setTrace({ agents: [p.agent] });
+  assert.deepEqual(p.key(), [true, true, "toggle"]);
+  // What takes focus is judged by itself, as before: the call reader keeps Space, the play button presses itself.
+  assert.equal(p.click(p.reader), p.reader);
+  assert.deepEqual(p.key(), [false, false, ""]);
+  assert.equal(p.click(play), play);
+  assert.deepEqual(p.key(), [false, false, ""]);
+});
+
+test("while the transport is hidden, playback keys decline and the page keeps them unprevented", () => {
+  const p = spacePage();
+  p.hide(true);
+  for (const [key, mods] of [[" ", {}], [",", {}], [".", {}], ["<", { shiftKey: true }], [">", { shiftKey: true }], ["f", {}]]) {
+    for (const target of [p.body, p.canvas]) assert.deepEqual(p.press(target, key, mods), [false, false, ""], `"${key}" with the transport hidden`);
+  }
+  p.hide(false);
+  assert.deepEqual(p.press(p.body), [true, true, "toggle"], "shown again, Space plays");
 });

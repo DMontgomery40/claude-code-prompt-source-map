@@ -150,6 +150,9 @@ export function renderOverview(host, trace, L, opts) {
   const top = full ? 36 : 14;
   const laneH = full ? Math.max(2.5, Math.min(11, (H * 0.3) / Math.max(1, L.lanes))) : Math.max(2, Math.min(5, (H * 0.3) / Math.max(1, L.lanes)));
   const lanesH = L.lanes * laneH;
+  // A lane's bar leaves a gap below it, but never less than 1 px of bar: at the densest pitch (2.5 px in
+  // the full view) the 3 px gap would otherwise give a negative height and drop the subagent from the chart.
+  const laneBar = Math.max(1, laneH - (full ? 3 : 1));
   const railH = full ? 22 : 10;
   const axisH = full ? 24 : 0;
   const areaH = Math.max(40, H - top - railH - lanesH - axisH - (full ? 26 : 6));
@@ -188,7 +191,7 @@ export function renderOverview(host, trace, L, opts) {
   // idle gaps
   for (const gap of L.gaps) {
     const x0 = px(gap.x0), x1 = px(gap.x1);
-    g.append(S("rect", { x: x0, y: top - (full ? 16 : 6), width: Math.max(2, x1 - x0), height: H - top, fill: "#0b0e13" }));
+    g.append(S("rect", { x: x0, y: top - (full ? 16 : 6), width: Math.max(2, x1 - x0), height: Math.max(0, H - top), fill: "#0b0e13" }));
     const tip = `≈ ${fmtDur(gap.b - gap.a)} idle, compressed`;
     g.lastChild.append(S("title", {}, tip));
     if (full) {
@@ -239,7 +242,7 @@ export function renderOverview(host, trace, L, opts) {
       let fresh = 0;
       for (let i = s.i0; i <= s.i1; i++) fresh += freshTokens(a.requests[i]);
       const x0 = px(s.x0), x1 = Math.max(px(s.x1), x0 + 3);
-      const r = S("rect", { x: x0, y: lane0 + s.lane * laneH, width: x1 - x0, height: laneH - (full ? 3 : 1), rx: full ? 2 : 1, fill: col,
+      const r = S("rect", { x: x0, y: lane0 + s.lane * laneH, width: x1 - x0, height: laneBar, rx: full ? 2 : 1, fill: col,
         "fill-opacity": (0.5 + 0.5 * Math.min(1, Math.log10(Math.max(fresh, 1)) / 7)).toFixed(2), "data-agent": id, class: "lane" });
       r.append(S("title", {}, `${a.name}: ${fmtTok(fresh)} fresh tokens`));
       g.append(r);
@@ -315,13 +318,14 @@ export function renderAgentColumns(host, agent, opts) {
   const { width: W, height: H, reqIdx, onPick } = opts;
   const n = agent.requests.length;
   const left = 56, right = 12, top = 16, bottom = 28;
+  const plotH = Math.max(0, H - top - bottom); // no negative geometry when the margins exceed the height
   const colW = Math.max(3, Math.min(14, (W - left - right) / Math.max(1, n)));
   const visible = Math.floor((W - left - right) / colW);
   const start = Math.max(0, Math.min(n - visible, (reqIdx ?? 0) - Math.floor(visible / 2)));
   let yMax = 1;
   for (const r of agent.requests) yMax = Math.max(yMax, r.tokens.context);
   yMax *= 1.05;
-  const py = v => top + (H - top - bottom) * (1 - v / yMax);
+  const py = v => top + plotH * (1 - v / yMax);
   const svg = S("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, class: "ov cols", role: "img", "aria-label": `Requests of ${agent.name}: stacked context per request` });
   for (const v of niceTicks(yMax)) {
     svg.append(S("line", { x1: left, x2: W - right, y1: py(v), y2: py(v), stroke: "#2b313b" }));
@@ -341,10 +345,10 @@ export function renderAgentColumns(host, agent, opts) {
       svg.append(S("rect", { x, y: py(base + v), width: Math.max(1, xw - gap), height: Math.max(0.5, py(base) - py(base + v)), fill: s.color, "shape-rendering": "crispEdges" }));
       base += v;
     }
-    const hit = S("rect", { x, y: top, width: colW, height: H - top - bottom, fill: "transparent", "data-i": i, class: "hit" });
+    const hit = S("rect", { x, y: top, width: colW, height: plotH, fill: "transparent", "data-i": i, class: "hit" });
     hit.append(S("title", {}, `request ${i + 1}: ${fmtTok(r.tokens.context)} · ${fmtClock(r.t)}`));
     svg.append(hit);
-    if (i === reqIdx) svg.append(S("rect", { x: x - 1, y: top - 4, width: colW + 1, height: H - top - bottom + 6, fill: "none", stroke: "#fff", "stroke-width": 1.5 }));
+    if (i === reqIdx) svg.append(S("rect", { x: x - 1, y: top - 4, width: colW + 1, height: plotH + 6, fill: "none", stroke: "#fff", "stroke-width": 1.5 }));
   }
   svg.append(S("text", { x: left, y: H - 8, class: "ax" }, `requests ${start + 1}–${Math.min(n, start + visible)} of ${n}`));
   if (onPick) svg.addEventListener("click", ev => { const i = ev.target.getAttribute?.("data-i"); if (i != null) onPick(Number(i)); });

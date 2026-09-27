@@ -19,16 +19,49 @@ export const KEYS = [
   { id: "reset", group: "View", keys: ["r"], label: "Reset the camera", command: "Reset the camera", bind: { r: 0 } },
   { id: "mode", group: "View", keys: ["v"], label: "Switch between the 3D and 2D view", command: "Switch 3D / 2D view", bind: { v: 0 } },
   { id: "landmarks", group: "View", keys: ["l"], label: "Show or hide landmark labels", command: "Show / hide landmarks", bind: { l: 0 } },
-  { id: "widen", group: "View", keys: ["w"], label: "Expand or compact the reader", command: "Expand / compact the reader", bind: { w: 0 } }
+  { id: "widen", group: "View", keys: ["w"], label: "Expand or compact the reader", command: "Expand / compact the reader", bind: { w: 0 } },
+  { id: "play", group: "Playback", keys: ["Space"], label: "Play or pause", command: "Play or pause", detail: "Playback", bind: { " ": 0 } },
+  { id: "stepBack", group: "Playback", keys: [","], label: "Previous request", command: "Previous request", detail: "Playback", bind: { ",": -1 } },
+  { id: "stepOn", group: "Playback", keys: ["."], label: "Next request", command: "Next request", detail: "Playback", bind: { ".": 1 } },
+  { id: "slower", group: "Playback", keys: ["<"], label: "Slower", command: "Slower", detail: "Playback", bind: { "<": -1 } },
+  { id: "faster", group: "Playback", keys: [">"], label: "Faster", command: "Faster", detail: "Playback", bind: { ">": 1 } },
+  { id: "follow", group: "Playback", keys: ["f"], label: "Camera follows the playhead, or stops following", command: "Follow the playhead", detail: "Playback", bind: { f: 0 } }
 ];
 
 const BY_KEY = new Map();
 for (const row of KEYS) for (const [key, arg] of Object.entries(row.bind || {})) BY_KEY.set(key, { row, arg });
 
-// The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null.
-export function keyFor(e) {
+// The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null. Space is the playback
+// key only where spacePlays says so; anywhere else it belongs to the focused element. pressedMap: what
+// pressLeavesSpace said of the last pointer press (true before any).
+export function keyFor(e, pressedMap = true) {
   if (e.metaKey || e.ctrlKey || e.altKey) return null;
+  if (e.key === " " && !spacePlays(e.target, pressedMap)) return null;
   return BY_KEY.get(e.key) || null;
+}
+
+// Space plays from the landscape, the minimap and the transport's scrub. A control there still presses
+// natively, and everywhere else (a reader, the panel, a field) Space pages or types as usual. From the
+// page itself (focus on the body) it plays only when the last pointer press left it to playback.
+const PRESSES = "button, summary, a[href], select, textarea, input:not([type=range]), [contenteditable]:not([contenteditable=false]), [role=button], [role=checkbox], [role=switch], [role=tab], [role=option], [role=menuitem]";
+const MAP = "#stage, #playback, #minimap";
+const isPage = t => t.tagName === "BODY" || t.tagName === "HTML";
+export function spacePlays(target, pressedMap = true) {
+  if (!target || !target.closest || isPage(target)) return pressedMap;
+  return !target.closest(PRESSES) && !!target.closest(MAP);
+}
+// Whether a pointer press on `target` leaves the page's Space to playback. Only a press into a scrolling
+// text region takes it away: the side column (the panel, its block readers, the request nav) and the 2D
+// view, which take no focus, so after a click there focus stays on the body and Space pages what was
+// clicked, as the browser does. A press anywhere else (the landscape, the minimap, the transport, the
+// header, the zoom and view toolbars, the bare page) leaves Space to playback.
+const READERS = ".side, #flat";
+export function pressLeavesSpace(target) {
+  return !target || !target.closest || !target.closest(READERS);
+}
+// The transport's own controls: its scrub is a field, but it still answers the playback keys.
+export function inTransport(target) {
+  return !!(target && target.closest && target.closest("#playback"));
 }
 
 // ⌘K on a Mac, Ctrl+K elsewhere (either works everywhere).

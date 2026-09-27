@@ -7,6 +7,9 @@ import { capturePickedFiles } from "./file-source.js";
 import { parsePaste } from "./paste.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
 import { createPalette } from "./palette.js";
+import { createPlayback } from "./playback.js";
+import { createTransport, playheadForRequest } from "./transport.js";
+import { nextShot, agentPAt, createFollowZoom } from "./director.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -24,6 +27,14 @@ let text = null;     // (agentId, ref) => Promise<{text, mode}>
 let worker = null;
 let lastFiles = null; // the dropped files, kept so another session among them can be opened
 let pasteRoot = null; // the thread or session id from the paste box, sent as the worker's `root`
+// The playback transport (transport.js). Its clock lives outside S: playing never calls set(), and
+// each history entry carries the playhead's P beside the view.
+let transport = null;
+let dir = null;       // the playback director's per-session state (direct() below)
+let playCard = null, playCardAt = 0; // the map card at the playhead while playing (playCardTick below)
+// The zoom runs follow at (director.js createFollowZoom): told of every camera move that chooses a zoom,
+// read as a run starts. Kept across pauses, seeks and runs; each session starts its own.
+let followZoom = null;
 
 // ---------- loader ----------
 setupLoader();
@@ -77,6 +88,9 @@ function setupLoader() {
 function backToLoader() {
   palette?.setTrace(null);
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
+  transport?.load(null);
+  $("#playback").hidden = true;
+  dir = null; playCard = null; followZoom = null;
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -255,6 +269,9 @@ async function switchSession(root) {
   pick.disabled = true;
   try {
     const trace = await parseInWorker(lastFiles, root);
+    transport?.load(null);
+    $("#playback").hidden = true;
+    dir = null; playCard = null; followZoom = null;
     scene?.dispose();
     scene = null;
     Object.assign(S, { level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -540,9 +557,24 @@ async function start(trace) {
   mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
-  palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null) });
+  // the speed rides along so the scene can skip sweep labels at 16 requests a second and faster
+  transport ||= createTransport($("#playback"), {
+    onPlayhead: p => { scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }); direct(p); playCardTick(p); },
+    onStart: playFromMap,
+    onFollow: () => { if (dir) { dir.prev = null; dir.prevCutX = null; } }
+  });
+  transport.load(playbackFor(S.layout));
+  dir = null; playCard = null; followZoom = null;
+  palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
+    playback: {
+      toggle: () => playbackShown() && transport.toggle(),
+      step: d => playbackShown() && transport.step(d),
+      slower: () => playbackShown() && transport.slower(),
+      faster: () => playbackShown() && transport.faster(),
+      follow: () => playbackShown() && transport.toggleFollow()
+    } });
   palette.setTrace(S.trace);
-  window.__trace = { S, set };
+  window.__trace = { S, set, transport };
   $("#loader").hidden = true;
   $("#app").hidden = false;
   buildHud();
@@ -555,9 +587,24 @@ async function start(trace) {
     started = true;
     setupResizer();
     $("#overview").addEventListener("click", overview);
-    $("#reset-view").addEventListener("click", () => viewHistory.navigate(() => { followMap(null); scene?.refit(); }));
-    $("#zoom-in").addEventListener("click", () => scene?.zoom(1.55));
-    $("#zoom-out").addEventListener("click", () => scene?.zoom(1 / 1.55));
+    $("#reset-view").addEventListener("click", () => { userCamera("refit"); viewHistory.navigate(() => { followMap(null); scene?.refit(); }); });
+    $("#zoom-in").addEventListener("click", () => { userCamera("zoom"); scene?.zoom(1.55); });
+    $("#zoom-out").addEventListener("click", () => { userCamera("zoom"); scene?.zoom(1 / 1.55); });
+    // The user's hands on the landscape camera: a wheel or a pinch (a zoom), or a drag of more than 5 px
+    // (a pan or orbit, which keeps the zoom).
+    const stage = $("#stage"), pointers = new Set();
+    stage.addEventListener("wheel", () => userCamera("zoom"), { passive: true, capture: true });
+    for (const t of ["pointerup", "pointercancel"]) stage.addEventListener(t, e => pointers.delete(e.pointerId), true);
+    stage.addEventListener("pointerdown", e => {
+      pointers.add(e.pointerId);
+      if (pointers.size > 1) { userCamera("zoom"); return; } // a second finger: a pinch
+      const x0 = e.clientX, y0 = e.clientY;
+      const move = ev => { if (pointers.size === 1 && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 5) { userCamera("drag"); done(); } };
+      const done = () => { stage.removeEventListener("pointermove", move, true); stage.removeEventListener("pointerup", done, true); stage.removeEventListener("pointercancel", done, true); };
+      stage.addEventListener("pointermove", move, true);
+      stage.addEventListener("pointerup", done, true);
+      stage.addEventListener("pointercancel", done, true);
+    }, true);
     $("#label-detail").addEventListener("click", () => {
       S.detailedLabels = !S.detailedLabels;
       $("#label-detail").setAttribute("aria-pressed", String(S.detailedLabels));
@@ -594,9 +641,12 @@ async function setMode(mode) {
       $("#flat").hidden = true;
       $("#stage").hidden = false;
       if (!scene) {
-        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon });
+        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon,
+          getText: (agentId, ref) => A.getText(agentId, ref).then(r => r?.text ?? "") });
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
+        if (transport.playback) scene.setPlayhead({ P: transport.playback.P, playing: false, sweep: null });
+        scene.onUserCamera?.(() => userCamera("hands"));
       }
     } catch (e) {
       console.warn("3D view unavailable, using the 2D view", e);
@@ -607,6 +657,7 @@ async function setMode(mode) {
     $("#stage").hidden = true;
     $("#flat").hidden = false;
   }
+  showPlayback();
   symbolLegend();
   layoutInsets();
   render(true);
@@ -724,8 +775,104 @@ function symbolLegend() {
 
 function clipName(s) { s = String(s); return s.length > 48 ? `${s.slice(0, 47)}…` : s; }
 
+// ---------- playback ----------
+// The session's clock over the main thread's requests, parked at the end, the last request complete
+// (the whole landscape, where the scene starts). Null when there is nothing to play through.
+function playbackFor(L) {
+  const reqs = L.root?.requests || [];
+  if (reqs.length < 2) return null;
+  const pb = createPlayback({ times: reqs.map(r => r.t), X: L.X });
+  pb.setP(pb.end);
+  return pb;
+}
+// The transport shows in the 3D view only; hiding it stops playback.
+function showPlayback() {
+  const on = S.mode === "3d" && !!scene && !!transport?.playback;
+  if (!on) transport?.pause();
+  $("#playback").hidden = !on;
+}
+function playbackShown() { return !$("#playback").hidden; }
+// Playing from an inspection (a request's core, an agent's requests) goes back to the map at that request,
+// where the landscape plays. On the map the camera stays where the user put it.
+function playFromMap() {
+  if (S.mode !== "3d" || !scene || isLandscape(S) || !S.agent?.requests[S.reqIdx]) return;
+  set({ mapPinned: true, level: 2, agentId: S.agentId, reqIdx: S.reqIdx, stratum: null, block: null, inspector: null, callIndex: null }, { locate: true, reveal: true });
+}
+
+// ---------- the director (director.js) ----------
+// Built on a session's first run: the scene's own placement and events, so the director aims where the
+// scene draws. prev is the last shot; level and span are the map zoom the run started at, so the
+// director's own framing never changes the level it works at. Nothing here allocates per tick but the
+// shots the director returns.
+function direct(p) {
+  if (!scene || S.mode !== "3d") return;
+  if (!p.playing) { if (dir) { dir.prev = null; dir.prevCutX = null; } return; }
+  const pb = transport.playback;
+  if (!dir) {
+    dir = { geom: scene.getGeometry(), events: scene.getEvents(), prev: null, prevCutX: null, level: 0, span: 0, zoom: 1,
+      lead: { agentId: null, P: 0, x: 0, z: 0, yTop: 0 }, state: {} };
+  }
+  const d = dir, g = d.geom, s = d.state, root = S.layout.root, cutX = g.W * pb.xAt(p.P);
+  if (d.prevCutX == null) { // a run starts, or Follow was asked for again: the user's zoom to follow at
+    const latch = (followZoom ||= createFollowZoom(mapZoomNow)).engage();
+    d.zoom = latch.zoom;
+    d.level = latch.level;
+    d.span = g.W / Math.max(1e-6, latch.zoom);
+  }
+  // The leading column: the focused subagent's ridge when one is focused (as the scene's grains are), else the main thread's.
+  const agent = S.agent?.kind === "subagent" && g.rowZ.has(S.agent.id) ? S.agent : root;
+  const aP = agent === root ? p.P : agentPAt(g, agent, cutX), i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(aP)));
+  const lead = d.lead;
+  lead.agentId = agent.id; lead.P = aP; lead.x = cutX; lead.z = g.z(agent, i); lead.yTop = g.crest(agent, i);
+  const landscape = isLandscape(S);
+  s.P = p.P; s.playing = true; s.speed = pb.speed; s.n = pb.n; s.W = g.W; s.cutX = cutX; s.prevCutX = d.prevCutX ?? cutX;
+  s.level = landscape ? d.level : 0; s.override = transport.follow === "manual"; s.forced = landscape && transport.forced;
+  s.lead = lead; s.events = d.events; s.span = d.span; s.zoom = d.zoom; s.leadFx = scene.leadScreenX?.();
+  d.prevCutX = cutX;
+  const shot = nextShot(s, d.prev, performance.now());
+  if (shot) { d.prev = shot; scene.setDirectorShot?.(shot); }
+}
+function mapZoomNow() {
+  const v = scene.getView();
+  const dist = Math.hypot(v.position[0] - v.target[0], v.position[1] - v.target[1], v.position[2] - v.target[2]);
+  return v.zoom * v.overviewDistance / Math.max(1e-6, dist);
+}
+// Camera moves the app makes or hears of, by source (director.js choosesZoom decides which choose the
+// follow zoom). The scene's onViewChange is not one of them: it fires for the director's framing too.
+function cameraMove(source) { (followZoom ||= scene && createFollowZoom(mapZoomNow))?.camera(source); }
+// The user's hands on the camera, by source: "zoom" (the wheel, a pinch, the zoom buttons and keys), "refit"
+// (Reset view, the overview, a lens), "drag" (a pan or orbit), "hands" (the scene's onUserCamera, which does not say which).
+// While playing the director lets go (Follow manual); only a zoom or a refit chooses the follow zoom.
+function userCamera(source) { cameraMove(source); transport?.userCamera(); }
+// The transport sits on the bottom row, centred between the minimap and the view controls; where that
+// row is too narrow it sits above the minimap. Phones: full width, above the stacked bottom controls.
+function placePlayback() {
+  const host = $("#playback");
+  if (host.hidden) return;
+  const box = s => { const e = $(s); return e && !e.hidden ? e.getBoundingClientRect() : null; };
+  if (innerWidth <= 980) {
+    const tops = ["#map-zoom", ".viewtools", "#request-nav", "#panel"].map(box).filter(r => r?.height).map(r => r.top);
+    Object.assign(host.style, { left: "", width: "", bottom: `${Math.round(innerHeight - Math.min(...tops) + 8)}px` });
+    host.classList.add("compact");
+    return;
+  }
+  const H = 72, GAP = 14; // room for the two-row layout, so the choice does not flip with it
+  const mm = box("#minimap"), side = $(".side").getBoundingClientRect();
+  const others = ["#map-zoom", ".viewtools"].map(box).filter(r => r?.height);
+  const rightEdge = (top, left) => Math.min(side.left, ...others.filter(r => r.top < top + H && r.bottom > top && r.right > left).map(r => r.left)) - GAP;
+  let bottom = 22, left = (mm?.width ? mm.right : 14) + GAP, right = rightEdge(innerHeight - bottom - H, left), centred = true;
+  if (right - left < 440 && mm?.width) {
+    bottom = innerHeight - mm.top + 10; left = mm.left; centred = false;
+    right = rightEdge(mm.top - 10 - H, left);
+  }
+  const width = Math.max(0, Math.min(640, right - left));
+  Object.assign(host.style, { bottom: `${Math.round(bottom)}px`, left: `${Math.round(centred ? left + (right - left - width) / 2 : left)}px`, width: `${Math.round(width)}px` });
+  host.classList.toggle("compact", width < 520);
+}
+
 function layoutInsets(preserveView = false) {
   if (!scene) { const h = $(".hud").getBoundingClientRect(); if (innerWidth > 980) $("#crumbs").style.top = `${Math.round(h.bottom + 8)}px`; return; }
+  placePlayback();
   const vw = innerWidth, vh = innerHeight;
   const mobile = vw <= 980;
   const hud = $(".hud").getBoundingClientRect();
@@ -738,7 +885,7 @@ function layoutInsets(preserveView = false) {
   place.style.top = `${Math.round(crumbs.bottom + 8)}px`;
   const placeBottom = place.hidden ? 0 : place.getBoundingClientRect().bottom;
   const top = Math.max(hud.bottom, crumbs.bottom, placeBottom, mobile ? $("#lenses").getBoundingClientRect().bottom : 0) + 12;
-  const controlsTop = Math.min(...["#map-zoom", ".viewtools", "#request-nav"].map(s => $(s)).filter(e => e && !e.hidden).map(e => e.getBoundingClientRect().top), panel.top);
+  const controlsTop = Math.min(...["#map-zoom", ".viewtools", "#request-nav", "#playback"].map(s => $(s)).filter(e => e && !e.hidden).map(e => e.getBoundingClientRect().top), panel.top);
   scene.setInsets(mobile
     ? { top, right: 8, left: 8, bottom: vh - Math.min(panel.top, controlsTop) + 12 }
     : { top, right: vw - panel.left + 12, left: 16, bottom: (mm.height ? mm.height + 24 : 16) }, preserveView);
@@ -748,7 +895,8 @@ const VIEW_KEYS = ['level', 'agentId', 'reqIdx', 'stratum', 'block', 'lens', 'mo
 function captureSceneView() {
   return { state: Object.fromEntries(VIEW_KEYS.map(k => [k, S[k]])), camera: scene?.getView(), scroll: $('#panel').scrollTop };
 }
-function captureView() { return { ...captureSceneView(), mapReturn }; }
+// The playhead rides on history entries but not on mapReturn: "Back to map" keeps where focusing put it.
+function captureView() { return { ...captureSceneView(), mapReturn, P: transport?.playback?.P ?? null }; }
 function saveViewSoon() {
   clearTimeout(viewTimer);
   viewTimer = setTimeout(() => viewHistory?.checkpoint(), 160);
@@ -756,6 +904,8 @@ function saveViewSoon() {
 function restoreView(view) {
   clearTimeout(viewTimer);
   mapReturn = view.mapReturn || null;
+  const pb = transport?.playback;
+  if (pb && Number.isFinite(view.P) && view.P !== pb.P) transport.seek(view.P);
   const modeChanged = S.mode !== view.state.mode;
   Object.assign(S, view.state);
   S.agent = S.agentId ? agentById(S.agentId) : null;
@@ -774,8 +924,10 @@ function agentById(id) { return S.trace.agents.find(a => a.id === id); }
 function set(patch, options) {
   const change = () => {
     if (isLandscape(S) && patch.mapPinned === false && patch.level > 0) mapReturn = captureSceneView();
+    // Inside the change, so the entry being left keeps its own playhead.
+    if (options?.playhead != null) transport?.seek(options.playhead);
     applySet(patch);
-    if (options?.locate && S.mapPinned) scene?.panToRequest(S.agentId, S.reqIdx, options.reveal);
+    if (options?.locate && S.mapPinned) { scene?.panToRequest(S.agentId, S.reqIdx, options.reveal); cameraMove(options.reveal ? "reveal" : "pan"); }
   };
   if (viewHistory) viewHistory.navigate(change, options);
   else change();
@@ -795,30 +947,36 @@ function applySet(patch) {
   if (S.level < 3 || S.block == null) S.reading = false;
   render(prev.level !== S.level || prev.agentId !== S.agentId, patch.block != null);
 }
+// Focusing request i of an agent moves the playhead there, paused: the option set() seeks with, so the
+// history entry being left keeps its own playhead. Every request focus below passes it.
+function focusAt(agentId, i, options) {
+  return { ...options, playhead: playheadForRequest(transport?.playback, S.layout, agentId, i) };
+}
 function pick(p) {
   const mapPinned = S.mode === '3d' && (S.level === 0 || S.mapPinned);
-  if (p.intent === 'locate') return set({mapPinned:true, level:2, agentId:p.agentId, reqIdx:p.reqIdx, stratum:null, block:null}, {locate:true, reveal:true});
+  if (p.intent === 'locate') return set({mapPinned:true, level:2, agentId:p.agentId, reqIdx:p.reqIdx, stratum:null, block:null}, focusAt(p.agentId, p.reqIdx, {locate:true, reveal:true}));
   if (p.intent === 'action') return A.focusAction(p.agentId, p.reqIdx);
-  if (p.level === 3) return set({ ...requestInspection(p.agentId, p.reqIdx, p.stratum), block: p.block ?? null });
+  if (p.level === 3) return set({ ...requestInspection(p.agentId, p.reqIdx, p.stratum), block: p.block ?? null }, focusAt(p.agentId, p.reqIdx));
   if (p.level === 2) return A.focusRequest(p.agentId, p.reqIdx);
-  set({ mapPinned, level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null });
+  // A click on the map's terrain pins that request (the Selected card): a request focus. At L1 it is an agent's.
+  set({ mapPinned, level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null }, mapPinned ? focusAt(p.agentId, p.reqIdx ?? 0) : undefined);
 }
 const A = {
   focusAction: (id, i) => set({ level: 2, agentId: id, reqIdx: i, stratum: null, block: null,
-    inspector: 'action', callIndex: null, mapPinned: S.mode === '3d' && (S.level === 0 || S.mapPinned) }),
+    inspector: 'action', callIndex: null, mapPinned: S.mode === '3d' && (S.level === 0 || S.mapPinned) }, focusAt(id, i)),
   showCallPart: part => { S.callPart = part; saveViewSoon(); },
   focusCall: i => set({ inspector: 'action', callIndex: i }),
   focusAgent: (id, i) => set({ mapPinned: false, level: 1, agentId: id, reqIdx: i ?? 0, stratum: null, block: null }),
-  focusRequest: (id, i) => set(requestInspection(id, i)),
-  focusStratum: (id, i, key) => set(requestInspection(id, i, key)),
-  openBlock: i => { const view = sidebarState(); set({ ...requestInspection(view.agentId, view.reqIdx, view.stratum), block: i }); },
+  focusRequest: (id, i) => set(requestInspection(id, i), focusAt(id, i)),
+  focusStratum: (id, i, key) => set(requestInspection(id, i, key), focusAt(id, i)),
+  openBlock: i => { const view = sidebarState(); set({ ...requestInspection(view.agentId, view.reqIdx, view.stratum), block: i }, focusAt(view.agentId, view.reqIdx)); },
   openBlockAt(agentId, bi) {
     const a = agentById(agentId);
     const b = a?.blocks[bi];
     if (!b) return;
     let r = a.requests.findIndex(q => q.window && q.window[0] <= bi && q.window[1] >= bi);
     if (r < 0) r = Math.max(0, a.requests.findIndex(q => q.t >= b.t));
-    set({ ...requestInspection(agentId, r, b.kind), block: bi });
+    set({ ...requestInspection(agentId, r, b.kind), block: bi }, focusAt(agentId, r));
   },
   openRef(agentId, ref) {
     const a = agentById(agentId);
@@ -852,20 +1010,25 @@ function backToMap() {
   const destination = { ...structuredClone(mapReturn), mapReturn: null };
   viewHistory.navigate(() => restoreView(destination));
 }
+// The overview (the button, `o`, the Session crumb, Escape from a map focus) and the lenses (tabs, 1 to 4,
+// the palette) refit the map: the user's hands on the camera, like Reset view, so a run's director lets go.
 function overview() {
   set({ level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
+  userCamera("refit");
 }
 function selectLens(key) {
   // Each tab opens its session-wide exploration. Retaining a deep layer would
   // otherwise change the scene but leave an unrelated source reader on screen.
   set({ lens: key, level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
+  userCamera("refit");
 }
 function moveRequest(delta, inspect = true) {
   const view = sidebarState();
   if (!view.agent?.requests.length) return;
-  set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: inspect ? Math.max(2, view.level) : view.level, agentId: view.agentId, stratum: view.stratum, reqIdx: stepRequest(view.agent.requests.length, view.reqIdx, delta), block: null }, { locate: true });
+  const reqIdx = stepRequest(view.agent.requests.length, view.reqIdx, delta);
+  set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: inspect ? Math.max(2, view.level) : view.level, agentId: view.agentId, stratum: view.stratum, reqIdx, block: null }, focusAt(view.agentId, reqIdx, { locate: true }));
 }
 function onKey(e) {
   if ($("#app").hidden || !S.trace) return;
@@ -941,15 +1104,40 @@ function renderMinimap() {
   host.hidden = false;
   const w = Math.min(350, Math.max(220, innerWidth - sideW - 350));
   scene?.mountMinimap(host, w, 128, {agentId:S.agentId, reqIdx:S.level>=1?S.reqIdx:null});
+  placePlayback();
 }
 
-function sidebarState() { return mapPanelState(S, S.mapFocus); }
+// While playing on the map, the "At the centre of your map" card describes the leading column (the
+// request the playhead is in) instead; paused, the centre again. playCard: { agentId, reqIdx } or null.
+function sidebarState() {
+  if (!playCard || !S.mapFocus) return mapPanelState(S, S.mapFocus);
+  const view = mapPanelState(S, { ...S.mapFocus, ...playCard, stratum: null });
+  return view === S ? view : { ...view, atPlayhead: true };
+}
+// Redrawn when the playhead enters another request, at most every 250 ms; never a history entry. The panel
+// keeps its scroll while the card stays on one agent, so the user can read on during playback.
+function playCardTick(p) {
+  const lead = p.playing && dir && S.mode === "3d" && S.level === 0 && S.mapFocus ? dir.lead : null;
+  const next = lead ? { agentId: lead.agentId, reqIdx: Math.max(0, Math.floor(lead.P)) } : null;
+  if (next ? playCard && next.agentId === playCard.agentId && next.reqIdx === playCard.reqIdx : !playCard) return;
+  const now = performance.now();
+  if (next && playCard && now - playCardAt < 250) return; // a later tick catches up
+  const cardAgent = c => c?.agentId ?? S.mapFocus?.agentId ?? null; // the playhead's card, else the centre's
+  const otherAgent = cardAgent(next) !== cardAgent(playCard);
+  playCard = next; playCardAt = now;
+  renderRequestNav();
+  renderPanel($("#panel"), sidebarState(), A);
+  if (otherAgent) $("#panel").scrollTop = 0;
+  renderMapLocation();
+}
 function followMap(focus) {
   if (S.level !== 0 || S.mode !== "3d") return;
   S.mapFocus = focus;
   renderRequestNav();
   renderPanel($("#panel"), sidebarState(), A);
-  $("#panel").scrollTop = 0;
+  // While playing the card is the playhead's (playCardTick): the centre moving under the director changes
+  // nothing the user is reading, so the panel keeps its scroll. Paused, the new centre's card shows on top.
+  if (!playCard) $("#panel").scrollTop = 0;
   $("#app").classList.toggle("map-following", !!focus);
   renderMapLocation();
   layoutInsets(true);
@@ -964,7 +1152,7 @@ function renderMapLocation() {
   const onMap = isLandscape(S);
   location.replaceChildren(
     el('div', {class:'location-copy'},
-      el('b', { text: `${onMap ? (S.mapPinned ? 'Selected' : 'In view') : 'Inspecting'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
+      el('b', { text: `${onMap ? (S.mapPinned ? 'Selected' : view.atPlayhead ? 'At the playhead' : 'In view') : 'Inspecting'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
       el('span', { text: `${fmtWhen(r.t)} · ${onMap ? 'Height = context tokens · Colors = sources' : 'Sources within this request'}` })),
     el('button', {type:'button',class:'btn inspect-layers',text:onMap?'Inspect layers':'Back to map',
       onclick:()=>onMap ? A.focusRequest(view.agentId,view.reqIdx) : backToMap()}));
@@ -985,7 +1173,8 @@ function renderRequestNav() {
     let scrubbing = false;
     const go = (value, replace = false) => {
       const current = sidebarState();
-      set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: Math.max(2, current.level), agentId: current.agentId, stratum: current.stratum, reqIdx: requestPosition(current.agent.requests.length, Number(value) - 1).index, block: null }, { replace, locate: true });
+      const reqIdx = requestPosition(current.agent.requests.length, Number(value) - 1).index;
+      set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: Math.max(2, current.level), agentId: current.agentId, stratum: current.stratum, reqIdx, block: null }, focusAt(current.agentId, reqIdx, { replace, locate: true }));
     };
     range.addEventListener("input", () => { go(range.value, scrubbing); scrubbing = true; });
     range.addEventListener("change", () => { scrubbing = false; });

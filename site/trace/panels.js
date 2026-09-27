@@ -256,7 +256,7 @@ export function renderPanel(root, S, A) {
   const req = agent && S.reqIdx != null ? agent.requests[S.reqIdx] : null;
   const located = (S.followingMap || (S.mapPinned && S.level === 3)) && req;
   if (located) root.append(el("div", { class: "map-location" },
-    el("p", { class: "kicker", text: S.followingMap ? "AT THE CENTER OF YOUR MAP" : "SELECTED REQUEST" }),
+    el("p", { class: "kicker", text: S.atPlayhead ? "AT THE PLAYHEAD" : S.followingMap ? "AT THE CENTER OF YOUR MAP" : "SELECTED REQUEST" }),
     el("b", { text: `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${req.i + 1}` }),
     el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${fmtTok(req.tokens.context)} context tokens` }),
     req.action?.kind === 'tool' ? btn(`Open ${req.action.tool} call ↗`, () => A.focusAction(agent.id, req.i), 'btn small') : null));

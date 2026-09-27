@@ -3,6 +3,8 @@
 // the worker can acquire fresh File objects and freeze the chosen family.
 const message = name => `${name || 'The session file'} could not be read. It changed or is unavailable; select it again.`;
 
+// A direct pick that cannot be read is left as it is unless the hint names it: the loader then skips it
+// with a note, or reports it when it was the only candidate. The hinted file itself must read.
 export async function capturePickedFiles(files, root) {
   return Promise.all(files.map(async entry => {
     if (entry.handle || entry.frozen || !entry.file) return entry;
@@ -12,7 +14,10 @@ export async function capturePickedFiles(files, root) {
     try {
       const file = new Blob([await entry.file.arrayBuffer()]);
       return {...entry, file, frozen: true};
-    } catch (cause) { throw new Error(message(entry.path), {cause}); }
+    } catch (cause) {
+      if (!primary) return entry;
+      throw new Error(message(entry.path), {cause});
+    }
   }));
 }
 

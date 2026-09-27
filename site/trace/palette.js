@@ -6,7 +6,7 @@
 import { el, fmtTok, fmtInt, STRATA, STRATUM_INDEX, STATUS, LENSES } from "./panels.js";
 import { buildSearchIndex, setAskText, search, parseQuery, matchRanges, SCOPES, agentName } from "./search.js";
 import { peakRequestIndex, requestCalls } from "./navigation.js";
-import { KEYS, keyFor, isSearchChord, typingInto } from "./keys.js";
+import { KEYS, keyFor, isSearchChord, typingInto, inTransport, pressLeavesSpace } from "./keys.js";
 
 const $ = s => document.querySelector(s);
 const SECTION = { command: "Commands", agent: "Agents", ask: "Asks & tasks", call: "Tool calls", block: "Injected & setup", text: "In the text", mine: "Your asks", largest: "Largest blocks in context" };
@@ -15,13 +15,19 @@ const MIN_TEXT = 3;
 const HIGHLIGHT = "trace-find";
 
 // ctx: { state() -> the app's S, A (the app's actions), overview(), selectLens(key),
-//        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref) }
+//        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref),
+//        playback: { toggle(), step(d), slower(), faster(), follow() } for the transport's keys, each
+//        returning false when the transport is hidden }
 export function createPalette(ctx) {
   let trace = null, index = null, commands = [], largest = [];
   let q = "", scope = "all", active = 0, shown = [], sections = new Map();
   let find = blankFind(), findTimer = null, findSeq = 0, listening = null;
   let trail = null; // { label, items, i, terms }: what n / ⇧N step through
   let asksLoaded = false, asksVersion = 0, renderTimer = null;
+  // Where the last pointer press landed decides Space from the page (keys.js pressLeavesSpace). Presses in the
+  // palette's own layers leave it as it was (they are gone once closed), and a new session starts afresh.
+  let pressedMap = true;
+  document.addEventListener("pointerdown", e => { if (!e.target?.closest?.(".pal-layer")) pressedMap = pressLeavesSpace(e.target); }, true);
 
   // ---------- DOM ----------
   const input = el("input", {
@@ -64,7 +70,7 @@ export function createPalette(ctx) {
 
   // ---------- session ----------
   function setTrace(t) {
-    trace = t; index = null; commands = []; largest = []; asksLoaded = false;
+    trace = t; index = null; commands = []; largest = []; asksLoaded = false; pressedMap = true;
     trail = null; clearHighlight(); cancelFind(); q = ""; scope = "all";
     close(false);
     renderBar();
@@ -104,7 +110,7 @@ export function createPalette(ctx) {
       ...LENSES.map((l, i) => cmd(l.q, () => ctx.selectLens(l.key), String(i + 1), "Question")),
       root?.requests.length ? cmd("Open the main thread", () => ctx.A.focusAgent(root.id, 0), null, `${fmtInt(root.requests.length)} requests`) : null,
       peak >= 0 ? cmd("Jump to peak context", () => ctx.A.focusRequest(root.id, peak), null, `Request ${peak + 1} · ${fmtTok(root.requests[peak].tokens.context)} in context`) : null,
-      ...KEYS.filter(k => k.command).map(k => cmd(k.command, () => ACTIONS[k.id](0), k.keys[0])),
+      ...KEYS.filter(k => k.command).map(k => cmd(k.command, () => ACTIONS[k.id](0), k.keys[0], k.detail)),
       cmd("Load another session", () => $("#back-to-load")?.click(), null, "Back to the loader")
     ];
     return out.filter(Boolean);
@@ -464,7 +470,13 @@ export function createPalette(ctx) {
     reset: () => click("#reset-view"),
     mode: () => click("#mode"),
     landmarks: () => click("#label-detail"),
-    widen: () => click("#widen")
+    widen: () => click("#widen"),
+    play: () => ctx.playback?.toggle(),
+    stepBack: () => ctx.playback?.step(-1),
+    stepOn: () => ctx.playback?.step(1),
+    slower: () => ctx.playback?.slower(),
+    faster: () => ctx.playback?.faster(),
+    follow: () => ctx.playback?.follow()
   };
   function agentsInOrder() { return trace.agents.filter(a => a.requests.length); }
   function stepAgent(d) {
@@ -504,11 +516,12 @@ export function createPalette(ctx) {
     if (!trace || !layer.hidden) return false;
     if (isSearchChord(e)) { e.preventDefault(); open(); return true; }
     if (!help.hidden) return false;
-    if (typingInto(e.target)) return false;
-    const hit = keyFor(e);
+    const hit = keyFor(e, pressedMap);
     if (!hit) return false;
+    if (typingInto(e.target) && !(hit.row.group === "Playback" && inTransport(e.target))) return false;
+    // An action that declines (playback while the transport is hidden) leaves the key to the page.
+    if (ACTIONS[hit.row.id](hit.arg) === false) return false;
     e.preventDefault();
-    ACTIONS[hit.row.id](hit.arg);
     return true;
   }
 

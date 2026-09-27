@@ -75,8 +75,10 @@ test("claude-code: a batched teammate message is one agents block per sender, ea
   const a = trace.agents.find((x) => x.name === "alpha");
   const b = trace.agents.find((x) => x.name === "beta");
   const via = (ag) => ag.returns.map((r) => [r.via, root.blocks[r.block].chars]);
-  assert.deepEqual(via(a), [["tool_result", "Spawned alpha".length], ["teammate-message", texts[0].length], ["teammate-message", alpha2.length]]);
-  assert.deepEqual(via(b), [["tool_result", "Spawned beta".length], ["teammate-message", beta.length]]);
+  // One return per burst: the sender's first message after it (not the launch acknowledgement, which
+  // came before the teammate's first request, nor alpha's idle notice after its report).
+  assert.deepEqual(via(a), [["teammate-message", texts[0].length]]);
+  assert.deepEqual(via(b), [["teammate-message", beta.length]]);
   // In a subagent, a teammate message is an ask credited to its sender.
   assert.deepEqual(a.asks.map((x) => [x.from, x.by]), [["agent", "team-lead"]]);
 });

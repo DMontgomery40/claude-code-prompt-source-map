@@ -9,6 +9,7 @@
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="trace.css">
+<link rel="stylesheet" href="block-text.css">
 <link rel="stylesheet" href="search.css">
 <script type="module" src="app.js"></script>
 </head>
@@ -89,6 +90,7 @@
     <output id="zoom-status" aria-label="Map detail">1.0× · Overview</output>
     <button id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button>
   </div>
+  <div id="playback" class="playback" role="group" aria-label="Playback" hidden></div>
   <div class="viewtools" aria-label="View controls">
     <button id="reset-view" class="btn small" type="button" title="Reset camera to the current selection">↺ <span>Reset view</span></button>
     <button id="label-detail" class="btn small" type="button" aria-pressed="false" title="Show injection labels on the landscape">Landmarks</button>
