@@ -215,7 +215,7 @@ export function foldPlates(plates) {
 // ---------- camera presets ----------
 export const PRESETS = {
   session: { p: [-1.75, 25.9, 19.9], t: [-1.75, 0, -0.75], fov: 30 },
-  hero: { p: [-5.2, 9.6, 17.8], t: [-0.6, 0.1, 0.4], fov: 33, dof: 0.0012 },
+  hero: { p: [-2.6, 6.6, 17.5], t: [0, 3.9, -1.4], fov: 30 },   // framed to the instrument (fitPanel); no depth of field: its text must be sharp
   close: { p: [-5.2, 2.5, 3.9], t: [-8.5, 0.3, 0.1], fov: 34, dof: 0.003 },
   rack: { p: [-3.6, 7.6, 9.6], t: [-3.0, 5.25, -7.4], fov: 32 },
   later: { p: [-3.6, 7.6, 9.6], t: [-3.0, 5.25, -7.4], fov: 32 },
@@ -463,6 +463,90 @@ function buildRoom() {
   return g;
 }
 
+
+// ---------- the hero: one instrument that carries the claim ----------
+// Three parts on one panel, joined by one lit cable: two provenance sockets (the library, the shipped code), the
+// piece's own words, and recipients x time (one row per agent in birth order, a dim lifetime bar, a lit tick per
+// delivery). Every mark is a fact from the model; the silkscreen names what each part is.
+const dur = m => m < 1 ? "under a minute" : m < 90 ? `${Math.round(m)} min` : `${(m / 60).toFixed(1)} h`;
+const PLACE_CAPS = { binary: "IN THE BINARY", bundle: "IN THE APP BUNDLE", source: "IN THE SOURCE" };
+export function heroFacts(model, p) {
+  const lib = model.libName || "the library", NA = model.agents.length, rec = new Set(p.ev.map(e => e[0]));
+  const kind = p.where ? whereKind(p.where) : null;
+  const at = p.where ? (kind === "source" ? `${p.where.key}${Number.isFinite(p.where.pos) ? `:${p.where.pos}` : ""}` : `${p.where.key ?? p.where.shelf}${Number.isFinite(p.where.pos) ? ` @ ${num(p.where.pos)}` : ""}`) : "";
+  const title = p.record?.title || p.record?.page || "";
+  const codeLit = { state: "lit", title: `SHIPPED CODE · ${PLACE_CAPS[kind] || PLACE_CAPS.binary}`, text: at };
+  const codeDark = text => ({ state: "dark", title: "SHIPPED CODE", text });
+  const libDark = text => ({ state: "dark", title: `LIBRARY · ${lib}`, text });
+  let library, code;
+  switch (p.rung) {
+    case "binary-only": library = libDark("not in the library"); code = p.where ? codeLit : { ...codeLit, text: "in the shipped code (no offset recorded)" }; break;
+    case "found-nowhere": library = libDark("not in the library"); code = codeDark(hasLiterals(model) ? "not found in the shipped code either" : "not checked (no literal index)"); break;
+    case "in-library-unlinked": library = { state: "amber", title: `LIBRARY · ${lib}`, text: title ? `in the library: ${title}` : "in the library", sub: "Trace's own link misses it" }; code = p.where ? codeLit : codeDark("no offset on the record"); break;
+    case "linked-type-text-differs": library = { state: "typed", title: `LIBRARY · ${lib}`, text: title ? `linked by type: ${title}` : "linked by type", sub: "the text differs from the record" }; code = p.where ? codeLit : codeDark("no offset on the record"); break;
+    case "composite": library = { state: title ? "lit" : "dark", title: `LIBRARY · ${lib}`, text: title ? `the wrapper: ${title}` : "not in the library", sub: "a harness wrapper around other text" }; code = p.where ? codeLit : codeDark("no single offset (composite)"); break;
+    case "outside": library = libDark("not harness text"); code = { state: "paper", title: "OUTSIDE ANY BINARY", text: `from ${originWord(p.origin)}` }; break;
+    default: library = { state: "lit", title: `LIBRARY · ${lib}`, text: title ? `linked: ${title}` : "linked" }; code = p.where ? codeLit : codeDark("no offset on the record");
+  }
+  const ts = p.ev.map(e => e[1]), first = Math.min(...ts), last = Math.max(...ts);
+  const readout = NA > 1
+    ? { big: `${p.reach} OF ${NA} AGENTS GOT IT`, small: `${num(p.n)} deliver${p.n === 1 ? "y" : "ies"} · first ${fmtMin(first)} · last ${fmtMin(last)}` }
+    : { big: p.n === 1 ? `ONCE, AT ${fmtMin(first).slice(1).toUpperCase()}` : `${num(p.n)} TIMES OVER ${dur(last - first).toUpperCase()}`, small: `to the one thread · first ${fmtMin(first)} · last ${fmtMin(last)}` };
+  const missing = model.agents.map((a, i) => ({ a, i })).filter(({ i }) => !rec.has(i)).sort((x, y) => x.a.born - y.a.born);
+  const didNot = missing.length ? `did not get it: ${missing.slice(0, 3).map(({ a }) => `${a.name} (${a.kind}, born ${fmtMin(a.born)})`).join(" · ")}${missing.length > 3 ? ` · and ${missing.length - 3} more` : ""}` : "";
+  const words = plateWords(p.sample), sameName = words.toLowerCase().startsWith(String(p.name).replace(/^[“"]|[”"…]+$/g, "").slice(0, 24).toLowerCase());
+  return { library, code, readout, didNot, words, label: `${sameName ? "" : `${p.name} · `}${trigWord(p.trigger)} (observed)`, cls: RUNG_CLASS[p.rung] || "linked" };
+}
+export const HERO_PANEL = { w: 16, h: 6.8, y: 3.9, z: -1.4, tilt: -0.1 };
+const HP = HERO_PANEL, SOCK = { x: -6.75, lib: 0.25, code: -1.75 }, GRID = { x0: -0.55, x1: 7.4, y0: -2.75, y1: 0.05 }, SPEC = { x0: -7.5, x1: 7.5, y0: 1.3, y1: 3.05 };
+const LIT = { lit: 0xdfe8f2, amber: 0xf2a93a, typed: 0xd8bc82, paper: 0xe6ebf1 };
+export function buildHero(L, p, facts, SEL) {
+  const g = new THREE.Group(); g.name = "hv:hero";
+  g.position.set(0, HP.y, HP.z); g.rotation.x = HP.tilt;
+  const body = new THREE.Mesh(new RoundedBoxGeometry(HP.w + 0.5, HP.h + 0.5, 0.3, 4, 0.12), phys({ color: 0x10141a, roughness: 0.45, metalness: 0.4, clearcoat: 0.6, clearcoatRoughness: 0.25 }));
+  body.castShadow = body.receiveShadow = true; g.add(body);
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(HP.w, HP.h), new THREE.MeshStandardMaterial({ color: 0x12171e, roughness: 0.8 }));
+  face.position.z = 0.152; face.name = "hv:hero-face"; g.add(face);
+  const col = new THREE.Color(CSS_COL[facts.cls]);
+  // the specimen's bezel, lit in the piece's rung colour
+  const bez = new THREE.MeshStandardMaterial({ color: 0x0b0e12, emissive: col, emissiveIntensity: 0.9 });
+  for (const [x, y, w, h] of [[0, SPEC.y1, SPEC.x1 - SPEC.x0, 0.03], [0, SPEC.y0, SPEC.x1 - SPEC.x0, 0.03], [SPEC.x0, (SPEC.y0 + SPEC.y1) / 2, 0.03, SPEC.y1 - SPEC.y0], [SPEC.x1, (SPEC.y0 + SPEC.y1) / 2, 0.03, SPEC.y1 - SPEC.y0]]) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.05), bez); m.position.set(x, y, 0.17); g.add(m);
+  }
+  // sockets: lit and plugged, or dark and empty
+  const plugs = [];
+  for (const [key, y] of [["library", SOCK.lib], ["code", SOCK.code]]) {
+    const st = facts[key].state, lit = st !== "dark";
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.07, 16, 48), lit ? new THREE.MeshStandardMaterial({ color: 0x1a1f26, emissive: LIT[st], emissiveIntensity: 1.6, roughness: 0.4 }) : phys({ color: 0x2a3038, metalness: 0.9, roughness: 0.5 }));
+    ring.position.set(SOCK.x, y, 0.2); ring.name = `hv:socket-${key}`; ring.userData.lit = lit; ring.userData.state = st; g.add(ring);
+    const hole = new THREE.Mesh(new THREE.CircleGeometry(0.36, 40), new THREE.MeshBasicMaterial({ color: 0x030405 })); hole.position.set(SOCK.x, y, 0.16); g.add(hole);
+    if (lit) { const plug = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.34, 24), phys({ color: 0xc09a5b, metalness: 1, roughness: 0.3 })); plug.rotation.x = Math.PI / 2; plug.position.set(SOCK.x, y, 0.33); g.add(plug); plugs.push(y); }
+  }
+  // one cable: from the plugged socket (or a loose end, when nothing holds the text) to the words, then to who got it
+  // Routed around the text: from the plug out to the left margin, down, along the bottom, up the gutter between the
+  // sockets and the rows, into the words. With nothing to plug into, the cable starts as a loose end.
+  const py = plugs.length ? plugs[plugs.length - 1] : null, gut = GRID.x0 - 0.42, low = GRID.y0 - 0.02;
+  const pts = py != null
+    ? [new THREE.Vector3(SOCK.x, py, 0.5), new THREE.Vector3(SOCK.x - 0.55, py - 0.1, 0.42), new THREE.Vector3(-7.65, py - 0.6, 0.36), new THREE.Vector3(-7.6, low + 0.25, 0.34), new THREE.Vector3(-7.2, low, 0.34)]
+    : [new THREE.Vector3(-5.2, low - 0.1, 0.4), new THREE.Vector3(-4.6, low, 0.34)];
+  pts.push(new THREE.Vector3(gut - 0.5, low, 0.34), new THREE.Vector3(gut, low + 0.35, 0.34), new THREE.Vector3(gut, SPEC.y0 - 0.45, 0.34), new THREE.Vector3(gut + 0.05, SPEC.y0 - 0.02, 0.3));
+  const curve = new THREE.CatmullRomCurve3(pts, false, "centripetal");
+  const cable = new THREE.Mesh(merge([new THREE.TubeGeometry(curve, 160, 0.06, 12, false)], { aId: { size: 1, values: [p.i] }, aCol: { size: 3, values: [[col.r, col.g, col.b]] }, aStripe: { size: 2, values: [[0, 0]] } }),
+    selectable(phys({ color: 0xffffff, roughness: 0.4, clearcoat: 1, emissive: 0x000000 }), SEL));
+  cable.name = "hv:hero-cable"; cable.castShadow = true; g.add(cable);
+  // recipients x time: one row per agent in birth order; a dim lifetime bar; a lit tick per delivery
+  const NA = L.NA, rowH = Math.min(0.5, (GRID.y1 - GRID.y0) / NA), rowY = r => GRID.y1 - (r + 0.5) * rowH;
+  const tx = m => GRID.x0 + (Math.max(0, Math.min(L.minutes, m)) / L.minutes) * (GRID.x1 - GRID.x0);
+  const lives = L.agents.map((a, ai) => { const x0 = tx(a.born), x1 = Math.max(x0 + 0.02, tx(a.end)); const gg = new THREE.BoxGeometry(x1 - x0, Math.max(0.006, rowH * 0.28), 0.01); gg.translate((x0 + x1) / 2, rowY(L.rank.get(ai)), 0.165); return gg; });
+  const life = new THREE.Mesh(merge(lives), new THREE.MeshStandardMaterial({ color: 0x3b4552, roughness: 0.8 })); life.name = "hv:hero-lives"; g.add(life);
+  const ticks = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x0b0e12, emissive: col, emissiveIntensity: 1.5 }), Math.max(1, p.ev.length));
+  const tw = Math.max(0.035, Math.min(0.09, (GRID.x1 - GRID.x0) / 400)), th = Math.max(0.018, rowH * 0.8);
+  p.ev.forEach(([ai, t], k) => { _m.compose(new THREE.Vector3(tx(t), rowY(L.rank.get(ai)), 0.19), _q, new THREE.Vector3(tw, th, 0.04)); ticks.setMatrixAt(k, _m); });
+  ticks.count = p.ev.length; ticks.name = "hv:hero-ticks"; g.add(ticks);
+  g.userData = { facts, rowH, rows: NA, face };
+  return g;
+}
+
 // ---------- the view ----------
 // Options beyond the interface: `rackFor` (defaults to pieces.js), `headless` (no DOM or WebGL; the tests).
 export function createHarnessView({ container, onPick = () => {}, rackFor = null, headless = false } = {}) {
@@ -474,6 +558,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 300);
   let model = null, trace = null, L = null, board = null, racks = [], hero = null, words = null;
   let preset = "session", sel = null, focusAgent = null, picked = null, rackKey = null, shown = false, pending = false, tween = null, disposed = false;
+  let heroG = null;
   let deferred = null, frames = 0, flowUntil = 0, hoverAt = null, hoverQueued = false, rackScroll = 0;
   // A pick sends light down its wire and out to the agents that got it, for a few seconds, then the layer is still again.
   const startFlow = () => { flowUntil = performance.now() + 6500; requestRender(); };   // deferred: Trace's latest selection while hidden, applied on show()
@@ -557,7 +642,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const [, fh] = size(), ins = insets(), capBottom = caption ? caption.offsetTop + caption.offsetHeight : ins.top;
     const [fw] = size();
     const free = { v: fh > 0 ? (fh - capBottom - camBottom(ins)) / fh : 1, h: fw > 0 ? (fw - ins.right - 60) / fw : 1, aspect: fw > 0 && fh > 0 ? fw / fh : 16 / 9 };
-    const c = RACKED.has(name) ? fitRacks(name, racks, free, rackScroll, visibleRows()) : PRESETS[name] || PRESETS.session;
+    const c = RACKED.has(name) ? fitRacks(name, racks, free, rackScroll, visibleRows()) : name === "hero" && heroG ? fitPanel(free) : PRESETS[name] || PRESETS.session;
     const to = { p: new THREE.Vector3(...c.p), t: new THREE.Vector3(...c.t), fov: c.fov };
     if (instant || !controls) { camera.position.copy(to.p); (controls?.target || new THREE.Vector3()).copy(to.t); camera.lookAt(to.t); camera.fov = to.fov; applyCamera(c); controls?.update(); return; }
     tween = { from: { p: camera.position.clone(), t: controls.target.clone(), fov: camera.fov }, to, t0: performance.now(), dur: 1200 };
@@ -634,6 +719,63 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     g.fillStyle = ink(0.42); g.fillText("ONE PIN PER AGENT · BIRTH ORDER ↑", px(X.pins - 2.4), pz(-5.95));
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16;
     const top = board.getObjectByName("hv:silkscreen"); top.material.map?.dispose(); top.material.map = t; top.material.color.set(0xffffff); top.material.needsUpdate = true;
+  }
+
+  // ----- the hero's face: the silkscreen and the words, drawn at 256 px per unit so text stays crisp -----
+  function heroFace(facts, p) {
+    const S = 256, W = HP.w * S, H = Math.round(HP.h * S), c = document.createElement("canvas"); c.width = W; c.height = H;
+    const g = c.getContext("2d"), cs = getComputedStyle(root), mono = cs.getPropertyValue("--mono").trim() || "ui-monospace, Menlo, monospace", sans = cs.getPropertyValue("--sans").trim() || "system-ui, sans-serif";
+    const X = x => (x + HP.w / 2) * S, Y = y => (HP.h / 2 - y) * S, ink = a => `rgba(226,233,242,${a})`;
+    g.fillStyle = "#12171e"; g.fillRect(0, 0, W, H); g.textBaseline = "middle";
+    const fit = (text, font, size, min, maxW) => { let sz = size; do { g.font = `${font.replace("SZ", sz * S)}`; if (g.measureText(text).width <= maxW * S) return sz; sz -= 0.01; } while (sz > min); return sz; };
+    const clip = (text, maxW) => { if (g.measureText(text).width <= maxW * S) return text; let t = text; while (t.length > 4 && g.measureText(t + "…").width > maxW * S) t = t.slice(0, -1); return t + "…"; };
+    // Wrap on spaces, and inside a long path after each "/", so a location never runs into the cable.
+    const wrap = (text, maxW, lines) => {
+      const parts = text.split(/(?<=\/)|(?= )/), out = []; let cur = "", used = 0;
+      for (const w of parts) {
+        const t = cur + w;
+        if (g.measureText(t.trim()).width > maxW * S && cur.trim()) { out.push(cur.trim()); used += cur.length; cur = w.trimStart(); if (out.length === lines) break; } else cur = t;
+      }
+      if (out.length < lines && cur.trim()) { out.push(cur.trim()); used += cur.length; }
+      if (used < text.length - 1) out[out.length - 1] = clip(out[out.length - 1] + " …", maxW);
+      return out;
+    };
+    const col = CSS_COL[facts.cls];
+    // the words
+    g.font = `500 ${0.2 * S}px ${mono}`; g.fillStyle = col; g.fillText("●", X(SPEC.x0 + 0.3), Y(SPEC.y1 - 0.3));
+    g.fillStyle = ink(0.62); g.fillText(clip(`THE TEXT THE MODEL WAS GIVEN · ${facts.label}`, SPEC.x1 - SPEC.x0 - 1), X(SPEC.x0 + 0.6), Y(SPEC.y1 - 0.3));
+    g.font = `500 ${0.44 * S}px ${sans}`; g.fillStyle = "#eef1f5";
+    wrap(`“${facts.words}”`, SPEC.x1 - SPEC.x0 - 0.7, 2).forEach((line, k) => g.fillText(line, X(SPEC.x0 + 0.3), Y(SPEC.y1 - 0.85 - k * 0.56)));
+    // where it comes from
+    g.font = `500 ${0.17 * S}px ${mono}`; g.fillStyle = ink(0.42); g.fillText("WHERE THIS TEXT LIVES", X(SOCK.x - 0.45), Y(SOCK.lib + 0.8));
+    for (const [key, y] of [["library", SOCK.lib], ["code", SOCK.code]]) {
+      const f = facts[key], lit = f.state !== "dark", tx0 = SOCK.x + 0.68, maxW = GRID.x0 - 0.5 - tx0;
+      g.font = `500 ${0.2 * S}px ${mono}`; g.fillStyle = ink(0.6); g.fillText(clip(f.title.toUpperCase(), maxW), X(tx0), Y(y + 0.3));
+      const hot = lit ? "#eef1f5" : key === "library" || f.text.startsWith("not found") ? "#ff6a4d" : ink(0.5);
+      const sz = fit(f.text, `600 SZpx ${mono}`, 0.36, 0.22, maxW); g.font = `600 ${sz * S}px ${mono}`; g.fillStyle = hot;
+      const lines = g.measureText(f.text).width > maxW * S ? wrap(f.text, maxW, 2) : [f.text];
+      lines.forEach((line, k) => g.fillText(line, X(tx0), Y(y - 0.08 - k * (sz + 0.06))));
+      if (f.sub) { g.font = `400 ${0.17 * S}px ${sans}`; g.fillStyle = ink(0.55); g.fillText(clip(f.sub, maxW), X(tx0), Y(y - 0.08 - lines.length * (sz + 0.06) - 0.06)); }
+    }
+    // who got it, and when
+    g.font = `650 ${0.52 * S}px ${sans}`; g.fillStyle = "#eef1f5"; g.fillText(clip(facts.readout.big, GRID.x1 - GRID.x0), X(GRID.x0), Y(GRID.y1 + 0.76));
+    g.font = `500 ${0.19 * S}px ${mono}`; g.fillStyle = ink(0.6); g.fillText(clip(facts.readout.small, GRID.x1 - GRID.x0), X(GRID.x0), Y(GRID.y1 + 0.32));
+    g.strokeStyle = ink(0.14); g.lineWidth = 3; g.strokeRect(X(GRID.x0) - 6, Y(GRID.y1) - 6, (GRID.x1 - GRID.x0) * S + 12, (GRID.y1 - GRID.y0) * S + 12);
+    g.save(); g.translate(X(GRID.x0 - 0.14), Y((GRID.y0 + GRID.y1) / 2)); g.rotate(-Math.PI / 2); g.textAlign = "center";
+    g.font = `500 ${0.15 * S}px ${mono}`; g.fillStyle = ink(0.5); g.fillText(L.NA > 1 ? `ONE ROW PER AGENT · MAIN THREAD FIRST` : "THE ONE THREAD", 0, 0); g.restore();
+    g.textAlign = "left"; g.font = `500 ${0.16 * S}px ${mono}`; g.fillStyle = ink(0.45);
+    const steps = [0, 0.25, 0.5, 0.75, 1];
+    for (const f of steps) { const m = L.minutes * f, x = GRID.x0 + f * (GRID.x1 - GRID.x0); g.textAlign = f === 0 ? "left" : f === 1 ? "right" : "center"; g.fillText(f === 0 ? "SESSION START" : fmtMin(m), X(x), Y(GRID.y0 - 0.2)); }
+    g.textAlign = "left";
+    if (facts.didNot) { g.font = `500 ${0.16 * S}px ${mono}`; g.fillStyle = ink(0.58); g.fillText(clip(facts.didNot, GRID.x1 - GRID.x0), X(GRID.x0), Y(GRID.y0 - 0.5)); }
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16;
+    return t;
+  }
+  function fitPanel(free) {
+    const c = PRESETS.hero, center = new THREE.Vector3(0, HP.y, HP.z), dir = new THREE.Vector3(-0.14, 0.2, 1).normalize();
+    const tan = Math.tan(THREE.MathUtils.degToRad(c.fov / 2));
+    const d = Math.max((HP.h / 2 + 0.45) / (tan * Math.max(0.2, free.v)), (HP.w / 2 + 0.45) / (tan * free.aspect * Math.max(0.3, free.h))) * 1.02;
+    return { ...c, t: center.toArray(), p: center.clone().addScaledVector(dir, d).toArray() };
   }
 
   // ----- DOM labels (live only) -----
@@ -729,14 +871,14 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       + st(CSS_COL.unlinked, counts("unlinked") + counts("typed"), "library has it, link off") + st(CSS_COL.linked, counts("linked") + counts("composite"), "linked") + st(CSS_COL.outside, counts("outside"), "outside any binary");
     const r = racks[0]?.userData.rack, an = ai => esc(model.agents[ai]?.kind === "root" ? "main thread" : model.agents[ai]?.name ?? "");
     const text = {
-      hero: heroCaption(),
+      hero: hero ? `<p class="hv-kicker">The least-explained harness text in this session · click the panel to read it in full</p>` : "",
       session: `<h3>What the harness put in front of the model</h3><p>${esc(model.product)} ${esc(model.session.version ?? "")} · ${L.NA} agent${L.NA > 1 ? "s" : ""}. Each wire runs from where its text is anchored, through what put it there, to the agents that got it and when.</p>`,
       rack: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, assembled</h3><p>The harness pieces in this request, in the order they first arrived; repeats fold into one plate (×n).${walkHint()}</p>` : "",
       later: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, later in the session</h3><p>Pieces that events added since the first request carry a NEW tag.${walkHint()}</p>` : "",
       compare: racks.length === 2 ? `<h3>${an(racks[0].userData.rack.agent)} vs ${an(racks[1].userData.rack.agent)}: births compared</h3><p>First two requests of each. Shared pieces recede to graphite; what differs stands forward.</p>` : "",
       close: `<h3>Where it came from</h3><p>Terminals where each text is anchored. Amber wires hover over records Trace's own link misses.</p>`,
     }[preset] || "";
-    caption.innerHTML = text + `<div class="hv-stats">${stats}</div>`;
+    caption.innerHTML = preset === "hero" ? text : text + `<div class="hv-stats">${stats}</div>`;
     for (const b of nav.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.preset === preset));
   }
   function walkHint() {
@@ -792,7 +934,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   }
   // Hover: the details the board leaves off (trigger, who, when) for the wire under the pointer, one raycast per frame.
   function wireAt(e) {
-    if (!["session", "hero", "close"].includes(preset) || !board) return null;
+    if (!["session", "close"].includes(preset) || !board) return null;
     const r = canvas.getBoundingClientRect(), ndc = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     const ray = new THREE.Raycaster(); ray.setFromCamera(ndc, camera);
     const wires = board.getObjectByName("hv:wires"), hit = ray.intersectObject(wires)[0];
@@ -810,6 +952,12 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     tip.style.left = `${Math.min(e.clientX - rr.left + 14, rr.width - insets().right - 340)}px`; tip.style.top = `${e.clientY - rr.top + 14}px`; tip.hidden = false;
   }
   function onCanvasClick(e) {
+    if (preset === "hero" && heroG && hero) {   // a click on the instrument opens the hero's text in the reader
+      const r = canvas.getBoundingClientRect(), ray = new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+      if (ray.intersectObject(heroG, true)[0]) pick(hero);
+      return;
+    }
     const r = canvas.getBoundingClientRect(), ndc = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     const ray = new THREE.Raycaster(); ray.setFromCamera(ndc, camera);
     const wires = board.getObjectByName("hv:wires"), hit = ray.intersectObject(wires)[0];
@@ -844,11 +992,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       if (sub != null) { await showRack(rootAi, 0, { x0: -3.35, columns: 1, other: birthSet(model, trace, sub) }); await showRack(sub, 0, { x0: 3.35, columns: 1, other: birthSet(model, trace, rootAi) }); }
     }
     if (preset === "hero" && hero) { sel = hero; startFlow(); }
-    if (preset === "hero" && hero && overlay) {
-      const p = hero;
-      const zs = [...p.rec].map(L.pinZ), zm = zs.reduce((a, b) => a + b, 0) / zs.length;
-      callout(`${p.reach} of ${L.NA} agent${L.NA > 1 ? "s" : ""}<span class="m">${L.NA - p.reach} did not</span>`, new THREE.Vector3(X.pins - 0.1, 0.6, zm));
-    }
+    board.visible = preset !== "hero"; if (heroG) heroG.visible = preset === "hero";
     if (preset === "close" && overlay) {
       const eye = new THREE.Vector3(...PRESETS.close.p);
       for (const p of L.P.filter(p => p.kind === "rail" && ["unnamed", "unlinked", "typed"].includes(p.cls)).sort((a, b) => a.end.distanceTo(eye) - b.end.distanceTo(eye)).slice(0, 5))
@@ -866,6 +1010,11 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (board) { board.removeFromParent(); board.traverse(o => { o.geometry?.dispose(); }); }
     L = layoutBoard(m); board = buildBoard(L, SEL); scene.add(board);
     const h = pickHero(m); hero = h ? L.byId.get(h.id) : null;
+    if (heroG) { heroG.removeFromParent(); heroG.traverse(o => { o.geometry?.dispose(); }); heroG = null; }
+    if (hero) {
+      const facts = heroFacts(m, hero); heroG = buildHero(L, hero, facts, SEL); heroG.visible = false; scene.add(heroG);
+      if (root) { const t = heroFace(facts, hero), mat = heroG.userData.face.material; mat.map = t; mat.emissiveMap = t; mat.emissive = new THREE.Color(0xffffff); mat.emissiveIntensity = 0.6; mat.color.set(0xffffff); mat.needsUpdate = true; }
+    }
     silkscreen(); buildLabels();
     return setPreset(hero ? "hero" : "session", { instant: true });
   }
