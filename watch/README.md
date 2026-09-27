@@ -1,5 +1,13 @@
 # prompt-watch
 
+> **Moved into harness-source-map (2026-09-27).** The watcher now lives in `watch/` of the one repo, and its
+> targets point at `claude-code/` and `codex/`. It is still **disabled**. Its publish stage (tests, build, leak check,
+> deploy, push) predates the one-site layout: it still expects a `site/` inside each product folder and one
+> deploy per product. Rework it for the single site (`npm run check`, one `wrangler deploy` from `site/`) before
+> re-enabling. The launchd plist is now a template (`com.dtmont.prompt-watch.plist.template`, fill in NODE,
+> REPO and HOME).
+
+
 **Disabled 2026-09-26 16:11 MDT at David's request: he updates the sites manually now.**
 The LaunchAgent is booted out and disabled; the plist is kept. Do not re-enable it without
 his say-so. To re-enable: `launchctl enable gui/$(id -u)/com.dtmont.prompt-watch && launchctl

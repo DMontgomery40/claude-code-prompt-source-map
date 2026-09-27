@@ -5,7 +5,7 @@ import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
 import { log, notify, run } from "../lib/run.mjs";
 
-const repo = `${process.env.HOME}/gpt6-prompt-source-map`;
+const repo = path.resolve(import.meta.dirname, "../../codex");
 const GENERATED = [
   { script: "extract/codex/chatgpt-prompts.mjs", diff: "work/chatgpt-prompts-diff.md",
     outputs: ["conversation", "gpt-builder", "work", "finance-health", "sites-artifacts"].flatMap(p => [`outputs/chatgpt-${p}-prompts.md`, `outputs/chatgpt-${p}-prompts.json`]) },

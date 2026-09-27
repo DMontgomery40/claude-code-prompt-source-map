@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.dtmont.prompt-watch</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>{{NODE}}</string>
+    <string>{{REPO}}/watch/watch.mjs</string>
+  </array>
+  <key>WorkingDirectory</key><string>{{REPO}}/watch</string>
+  <key>StartCalendarInterval</key><dict><key>Minute</key><integer>7</integer></dict>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key><string>{{HOME}}/.nvm/versions/node/v22.22.0/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>HOME</key><string>{{HOME}}</string>
+  </dict>
+  <key>StandardOutPath</key><string>{{REPO}}/watch/logs/launchd.out.log</string>
+  <key>StandardErrorPath</key><string>{{REPO}}/watch/logs/launchd.err.log</string>
+  <key>ProcessType</key><string>Standard</string>
+</dict>
+</plist>

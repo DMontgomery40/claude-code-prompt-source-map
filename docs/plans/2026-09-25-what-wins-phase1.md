@@ -1478,12 +1478,12 @@ Remove the existing single `run(node, ["extract/tags.mjs"])` line.
 - [ ] **Step 3: Dry run.** Run `node ~/prompt-watch/watch.mjs --dry-run --force cc`. Expected: the refresh completes, the gate passes (tests including coverage, build, leak check, narrative lint), and "would publish" is reported.
 
 - [ ] **Step 4: Publish through the watcher's publish path** (it deploys, verifies the live hash, commits, and pushes within the budget).
-  - Run `node -e 'import("/Users/davidmontgomery/prompt-watch/lib/publish.mjs").then(async m=>{const r="/Users/davidmontgomery/claude-code-prompt-source-map";await m.gate(r);await m.publish(r,{origin:"https://ccprompts.dtmont.com",message:"Add What wins: decision ladders for every knob\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"})})'`.
+  - Run `node -e 'import("~/prompt-watch/lib/publish.mjs").then(async m=>{const r="~/claude-code-prompt-source-map";await m.gate(r);await m.publish(r,{origin:"https://ccprompts.dtmont.com",message:"Add What wins: decision ladders for every knob\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"})})'`.
   - Then check `curl -s https://ccprompts.dtmont.com/what-wins/ | grep -c 'class="ladder"'`. Expected: equal to the number of decisions.
 
 - [ ] **Step 5: Commit the watcher change and record memory.**
   - `cd ~/prompt-watch && git commit -am "Review agents handle decision ladders"`.
-  - Append the phase-1 outcome to `~/.claude/projects/-Users-davidmontgomery/memory/prompt_sites_autoupdate_09_25.md`: decisions count, tested rung count, pending count, and file locations.
+  - Append the phase-1 outcome to `the project memory note (prompt sites auto-update)`: decisions count, tested rung count, pending count, and file locations.
 
 ---
 
