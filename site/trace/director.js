@@ -8,7 +8,8 @@
 //   anchor: [fx, fy] for follow: where `target` [x, yTop, z] (the leading column's top) sits in the free area,
 //   zoom: 'follow' (keep followZoom, the map zoom the director engaged at) or 'fit' (fit the box),
 //   followZoom: that map zoom (camera.zoom * overviewDistance / orbit distance), on every shot,
-//   hold, ease (ms), at (ms it started) } plus the director's bookkeeping (through, members, x1, releaseAt).
+//   hold, ease (ms), at (ms it started) } plus the director's bookkeeping (through, members, group, band,
+//   bounded, carryX, x1, releaseAt).
 // nextShot returns a new shot (move the camera), the current shot with the same id and new fields (the
 // box grew or the hold changed: retarget without restarting the ease), or null (leave the camera).
 
@@ -23,6 +24,10 @@ export const DIRECTOR = {
   cutGap: 4000,         // after the camera returns to follow, no other cut for this long (compactions excepted)
   pad: 0.12, minHalf: 1.5, cap: 12, fast: 16, waitFactor: 3
 };
+// A spawns group takes in the spawns the cut crosses while its shot holds, each holding it spawnHold more, for
+// at most this long after the shot began (ms of playback wall time) and up to DIRECTOR.cap children. Then it
+// takes in no more and its hold runs out (a wait of the main thread still holds it to the wait's end).
+export const SPAWNS_HOLD_MAX_MS = 8000;
 
 // ---------- the zoom a run follows at ----------
 // The camera's map zoom (camera.zoom · overviewDistance / orbit distance), read as a run starts or Follow
@@ -212,13 +217,24 @@ function spawnsShot(found, s, now, prev, D = DIRECTOR) {
   for (const e of found) if (!group.includes(e)) group.push(e);
   return spawnsFrom(group, s, now, prev, { kind: "spawns", id: `spawns:${first.childId}:${first.x}`, at: now });
 }
-// Up to 12 children are framed one by one; a bigger group frames the whole band of lanes it spans.
+// Children are framed one by one until the group reaches 12; from the 12th it frames the whole band of lanes it
+// spans and takes in no more. `bounded`: a bound (the cap, or SPAWNS_HOLD_MAX_MS) ends this hold, not a pause
+// in the spawns; the spawns the cut crosses once it ends form the next group (see carryFrom).
 function spawnsFrom(group, s, now, prev, base) {
   const D = DIRECTOR, waits = indexOf(s.events).wait;
-  const w = waitAt(waits, s.cutX) || waitAt(waits, group[0].x);
+  const w = waitAt(waits, s.cutX) || waitAt(waits, group[0].x), full = group.length >= D.cap;
   return make("spawns", base.id, s, base.at, prev, { box: box([leadPoint(s), ...group]), hold: D.spawnHold,
-    members: group.slice(0, D.cap).map(e => e.childId), band: group.length > D.cap, group,
+    members: group.slice(0, D.cap).map(e => e.childId), band: full, bounded: full || !!base.bounded, group,
     waitX1: w ? w.x1 : null, through: Math.max(prev?.through ?? -Infinity, s.cutX, ...group.map(e => e.x)) });
+}
+// Does a spawns shot's group still take in the spawns the cut crosses? Under the cap, within SPAWNS_HOLD_MAX_MS.
+const growing = (shot, now) => shot.group.length < DIRECTOR.cap && now - shot.at < SPAWNS_HOLD_MAX_MS;
+// The follow shot's carry mark: after a spawns hold a bound ended, the spawns the cut crosses from that tick
+// on are kept for the next group (they are not dropped by the 4 s gap, they wait it out); follow re-aims keep
+// the mark, any other shot drops it.
+function carryFrom(prev, s) {
+  if (prev?.kind === "spawns") return prev.bounded ? Math.max(prev.through, s.prevCutX ?? s.cutX) : null;
+  return prev?.kind === "follow" ? prev.carryX ?? null : null;
 }
 
 // A wait shot's framing: the lead column and the children at work at the cut.
@@ -254,7 +270,8 @@ function follow(s, prev, now) {
   }
   const p = leadPoint(s);
   return make("follow", `follow:${p.x}`, s, now, prev, { box: { x0: p.x, x1: p.x, z0: p.z, z1: p.z, yTop: p.yTop }, anchor: D.anchor,
-    zoom: "follow", ease: D.followEase, target: [p.x, p.yTop, p.z], followSince: BOX.has(prev?.kind) ? now : prev?.followSince ?? -Infinity });
+    zoom: "follow", ease: D.followEase, target: [p.x, p.yTop, p.z], followSince: BOX.has(prev?.kind) ? now : prev?.followSince ?? -Infinity,
+    carryX: carryFrom(prev, s) });
 }
 
 // state: { P, playing, speed, n, W, cutX, prevCutX, level (mapDetail 0..3 the director engaged at),
@@ -287,17 +304,22 @@ export function nextShot(s, prev, now) {
   const fast = s.speed >= D.fast;
   if (!fast) {
     const held = holding(prev, s, now);
-    // 3. spawns the cut crossed this tick (the list is only made when there is one)
-    let found = null;
-    const lo = Math.max(s.prevCutX ?? s.cutX, prev?.through ?? -Infinity);
-    for (let k = after(ix.spawn, lo); k < ix.spawn.length && ix.spawn[k].x <= s.cutX; k++) (found ||= []).push(ix.spawn[k]);
     // No cut to a box sooner than 4 s after the camera came back to follow, and none straight from one box to
     // another: a box whose hold ends goes back to follow first, in one move.
     const cutOK = !held && !BOX.has(prev?.kind) && now - (prev?.followSince ?? -Infinity) >= D.cutGap;
+    // 3. spawns the cut crossed this tick (the list is only made when there is one); once the gap after a bounded
+    // spawns hold is over, every spawn crossed since that hold ended, back no further than the gap and one
+    // grouping window at this speed (so a stretch at 16x never piles into one group)
+    let found = null;
+    const lo = cutOK && prev?.carryX != null ? Math.max(prev.carryX, s.cutX - cutSpan(s, D.cutGap / 1000 + D.window))
+      : Math.max(s.prevCutX ?? s.cutX, prev?.through ?? -Infinity);
+    for (let k = after(ix.spawn, lo); k < ix.spawn.length && ix.spawn[k].x <= s.cutX; k++) (found ||= []).push(ix.spawn[k]);
     if (found) {
-      // more spawns while a spawns shot holds: the same shot takes them in and holds 2.5 s from now
-      if (held && prev.kind === "spawns") {
-        return { ...spawnsFrom([...prev.group, ...found.filter(e => !prev.group.includes(e))], s, now, prev, prev), hold: now - prev.at + D.spawnHold };
+      // more spawns while a spawns shot holds: a group still growing takes them in and holds 2.5 s from now, but
+      // never past SPAWNS_HOLD_MAX_MS from its start; a full or timed-out group lets them go
+      if (held && prev.kind === "spawns" && growing(prev, now)) {
+        const hold = now - prev.at + D.spawnHold, next = spawnsFrom([...prev.group, ...found.filter(e => !prev.group.includes(e))], s, now, prev, prev);
+        return { ...next, hold: Math.min(hold, SPAWNS_HOLD_MAX_MS), bounded: next.bounded || hold > SPAWNS_HOLD_MAX_MS };
       }
       if (cutOK) return spawnsShot(found, s, now, prev);
     }

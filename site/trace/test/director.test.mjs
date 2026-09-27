@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-const { DIRECTOR, buildEvents, nextShot, agentPAt, followLatch, choosesZoom, createFollowZoom } = await import("../director.js");
+const { DIRECTOR, SPAWNS_HOLD_MAX_MS, buildEvents, nextShot, agentPAt, followLatch, choosesZoom, createFollowZoom } = await import("../director.js");
 const { buildLayout } = await import("../minimap.js");
 const { createGeometry } = await import("../landscape-geometry.js");
 
@@ -101,6 +101,88 @@ test("rule 3: a group caps at 12 children and then frames the band of lanes it s
   assert.equal(shot.members.length, 12);
   assert.equal(shot.band, true);
   assert.ok(shot.box.z1 >= 17 + 5.2 * 14, "the box reaches the 15th child's lane");
+});
+
+// A world of 201 requests, 200 units wide: still one request per unit (4 units a second at 4x), room for 30 s.
+const WIDE = { W: 200, n: 201 };
+const TICK = 1000 / 60;
+
+test("rule 3: a spawns hold ends within 8 s however the spawns keep coming; follow resumes, and the spawns of the next 4 s are the next group", () => {
+  assert.equal(SPAWNS_HOLD_MAX_MS, 8000);
+  const perSec = unitsPerSec(4);
+  for (const sec of [1.25, 2]) { // a spawn every 1.25 s, then every 2 s, of playback for 30 s
+    const ev = sorted(Array.from({ length: Math.floor(30 / sec) }, (_, k) => spawn(20 + k * sec * perSec, `k${k}`, k % 6)));
+    const r = play(ev, 19.9, 32000, WIDE);
+    const cuts = r.shots.filter((o, k) => !k || o.shot.id !== r.shots[k - 1].shot.id);
+    const groups = cuts.filter(o => o.shot.kind === "spawns");
+    assert.ok(groups.length >= 3, `${sec} s: ${groups.length} groups`);
+    for (const g of groups) {
+      // each hold runs 2.5 s from the latest spawn taken in, never past 8 s from the shot's start
+      const updates = r.shots.filter(o => o.shot.id === g.shot.id), hold = updates.at(-1).shot.hold;
+      for (const u of updates) assert.equal(u.shot.hold, Math.min(u.now - g.now + 2500, SPAWNS_HOLD_MAX_MS));
+      const end = cuts.find(o => o.now > g.now);
+      if (!end) continue; // the run ends inside this hold
+      assert.equal(end.shot.kind, "follow", `${sec} s: follow resumes`);
+      assert.ok(end.now - g.now >= hold && end.now - g.now < hold + TICK + 1, `${sec} s: held ${end.now - g.now} ms, hold ${hold}`);
+      // while the spawns keep coming the bound ends it at 8 s; the last group ends 2.5 s after the last spawn
+      const streaming = ev.some(e => e.x > end.x);
+      assert.equal(hold === SPAWNS_HOLD_MAX_MS, streaming, `${sec} s: hold ${hold} ms`);
+      const next = groups.find(o => o.now > g.now);
+      if (!next) continue;
+      assert.ok(next.now - end.now >= 4000 && next.now - end.now < 4000 + TICK + 1, `${sec} s: the next group cuts as the 4 s gap ends (${next.now - end.now} ms)`);
+      // and it is the spawns the cut crossed from the tick the hold ended to the cut, none dropped by the gap
+      const from = end.x - perSec * TICK / 1000;
+      assert.deepEqual(next.shot.group.map(e => e.childId), ev.filter(e => e.x > from && e.x <= next.x).map(e => e.childId), `${sec} s: the group after ${end.now} ms`);
+    }
+    // every spawn is framed, in exactly one group (the run ends past the last one's hold)
+    const framed = groups.flatMap(g => r.shots.filter(o => o.shot.id === g.shot.id).at(-1).shot.group).sort((a, b) => a.x - b.x);
+    assert.deepEqual(framed.map(e => e.childId), ev.map(e => e.childId), `${sec} s`);
+  }
+});
+
+test("rule 3: a group closes at 12 children: the box becomes the lane band at the 12th, holds 2.5 s from it and ends", () => {
+  // 13 spawns in 5 s of playback at 4x (5/3 requests apart), each on its own lane
+  const ev = sorted(Array.from({ length: 13 }, (_, k) => spawn(20 + k * 5 / 3, `k${k}`, k)));
+  const r = play(ev, 19.9, 12000);
+  const spawns = r.shots.filter(o => o.shot.kind === "spawns");
+  assert.equal(new Set(spawns.map(o => o.shot.id)).size, 1, "one group");
+  const at12 = spawns.find(o => o.shot.group.length >= 12);
+  assert.ok(spawns.filter(o => o.now < at12.now).every(o => !o.shot.band && o.shot.group.length < 12), "children one by one before the 12th");
+  assert.deepEqual([at12.shot.group.length, at12.shot.members.length, at12.shot.band, at12.shot.bounded], [12, 12, true, true]);
+  assert.ok(at12.shot.box.z1 >= 17 + 5.2 * 11, "the band reaches the 12th child's lane");
+  assert.equal(at12.shot.hold, at12.now - at12.shot.at + 2500);
+  assert.equal(spawns.at(-1), at12, "the 13th is not taken in: the hold is not extended, the box not widened");
+  const next = r.shots.find(o => o.now > at12.now);
+  assert.ok(next.shot.kind === "follow" && next.now - at12.now >= 2500 && next.now - at12.now < 2500 + TICK + 1, `follow ${next.now - at12.now} ms after the 12th`);
+  assert.ok(r.shots.filter(o => o.now > next.now).every(o => o.shot.kind === "follow"), "the 13th, spawned during the hold, makes no cut of its own");
+});
+
+test("rule 3 with rule 5: a wait still holds the spawns shot to the wait's end, but the group takes in no spawns after 8 s", () => {
+  // the main thread waits from 20 to 70 (12.5 s at 4x) while a child is spawned every 1.25 s
+  const kids = Array.from({ length: 10 }, (_, k) => [`k${k}`, 20.5 + 5 * k]);
+  const ev = sorted([...kids.map(([id, x], k) => spawn(x, id, k % 6)), wait(20, 70, kids)]);
+  const r = play(ev, 20.4, 14000);
+  const first = r.shots.find(o => o.shot.kind === "spawns"), mine = r.shots.filter(o => o.shot.id === first.shot.id);
+  assert.equal(new Set(r.shots.filter(o => o.shot.kind === "spawns").map(o => o.shot.id)).size, 1);
+  const next = r.shots.find(o => o.now > first.now && o.shot.id !== first.shot.id);
+  assert.ok(next.shot.kind === "follow" && next.x >= 70 && next.now - first.now > SPAWNS_HOLD_MAX_MS, `held to the wait's end (x ${next.x.toFixed(2)}, ${next.now - first.now} ms)`);
+  assert.ok(mine.at(-1).now - first.now < SPAWNS_HOLD_MAX_MS, "no update after 8 s");
+  assert.deepEqual(mine.at(-1).shot.group.map(e => e.childId), kids.filter(([, x]) => x < first.x + unitsPerSec(4) * 8).map(([id]) => id));
+});
+
+test("rule 3: the spawns kept after a bounded hold reach back no further than the 4 s gap and one grouping window", () => {
+  const ev = sorted(Array.from({ length: 36 }, (_, k) => spawn(20 + 5 * k, `k${k}`, k % 6)));
+  const r = play(ev, 19.9, 9000, WIDE);
+  const f = r.shots.find(o => o.shot.kind === "follow" && o.now > 1000);
+  assert.ok(f.shot.carryX != null, "the follow after a bounded hold carries the mark");
+  // the user speeds to 16x for a while (only follow there), then back to 4x: the cut is now 100 units on
+  const x = f.x + 100, back = unitsPerSec(4) * (DIRECTOR.cutGap / 1000 + DIRECTOR.window);
+  const shot = nextShot(state(ev, x, { ...WIDE, prevCutX: x - 0.1 }), f.shot, f.now + 5000);
+  assert.equal(shot.kind, "spawns");
+  assert.deepEqual(shot.group.map(e => e.childId), ev.filter(e => e.x > x - back && e.x <= x).map(e => e.childId), "only the last 4.6 s of spawns, not the 100 units since");
+  // after a hold that ended on its own (2.5 s after its last spawn) spawns inside the gap are still dropped
+  const lone = play(sorted([spawn(20, "a"), spawn(33, "b"), spawn(50, "c")]), 19.9, 9000);
+  assert.deepEqual(lone.shots.filter(o => o.shot.kind === "spawns").map(o => o.shot.group.map(e => e.childId)), [["a"], ["c"]]);
 });
 
 test("rule 4: a report returning frames the child's end and the parent for 1.5 s, unless a spawns shot holds", () => {
