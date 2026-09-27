@@ -191,15 +191,16 @@ export async function buildTrace({ siteRoot, sourceRoot, categories, siteId, ori
   }
   const stats = { pages: pages.length, lines: Object.keys(lines).length, records: index.records.length, reminders: Object.keys(index.reminders).length, templates: Object.keys(index.templates).length, tools: Object.keys(index.tools).length };
   // The literal index: where unpublished text sits in what ships (hashes, file names and offsets; no text).
-  // Merged into dist/trace/literal-index.json by product; HARNESS_LITERALS=0 leaves it out.
+  // One file per product (dist/trace/literal-index.<product>.json): the page fetches only the loaded
+  // session's product, and only when the harness layer first opens. HARNESS_LITERALS=0 leaves it out.
   if (process.env.HARNESS_LITERALS !== "0") {
-    const lit = await buildLiteralIndex({ productId: path.basename(sourceRoot), sourceRoot, version });
+    const product = path.basename(sourceRoot);
+    const lit = await buildLiteralIndex({ productId: product, sourceRoot, version });
     if (lit) {
-      const file = path.join(out, "literal-index.json");
-      const all = copy || !existsSync(file) ? { byProduct: {} } : JSON.parse(await readFile(file, "utf8"));
-      all.byProduct[path.basename(sourceRoot)] = lit;
-      await writeFile(file, JSON.stringify(all));
+      const file = path.join(out, `literal-index.${product}.json`);
+      await writeFile(file, JSON.stringify(lit));
       stats.literals = Object.keys(lit.keys).length;
+      stats.literalBytes = (await stat(file)).size;
     }
   }
   if (write) {

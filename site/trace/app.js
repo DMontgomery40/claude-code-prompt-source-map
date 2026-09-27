@@ -179,10 +179,11 @@ function getWorker() {
       const p = pendingText.get(data.id);
       if (p) { pendingText.delete(data.id); p.resolve({ text: data.text, mode: data.mode }); }
     } else if (data.type === "harness-progress") {
-      pendingHarness.get(data.id)?.onProgress(data);
+      pendingHarness?.onProgress(data);
     } else if (data.type === "harness") {
-      const p = pendingHarness.get(data.id);
-      if (p) { pendingHarness.delete(data.id); data.error ? p.reject(new Error(data.error)) : p.resolve(data.model); }
+      pendingHarness?.resolve(data.model); pendingHarness = null;
+    } else if (data.type === "harness-error") {
+      pendingHarness?.reject(new Error(data.message)); pendingHarness = null;
     }
   });
   worker.addEventListener("error", e => {
@@ -191,15 +192,14 @@ function getWorker() {
   });
   return worker;
 }
-// The harness model is built in the worker (harness/pieces.js), lazily, the first time the mode opens.
-const pendingHarness = new Map();
-let harnessSeq = 0;
+// The harness model is built in the worker (harness/pieces.js), lazily, the first time the mode opens,
+// and cached there per loaded session. One request at a time (harness/mode.js keeps the promise).
+let pendingHarness = null;
 function requestHarness(onProgress = () => {}) {
-  const id = ++harnessSeq;
-  return new Promise((resolve, reject) => {
-    pendingHarness.set(id, { resolve, reject, onProgress });
-    getWorker().postMessage({ type: "harness", id });
-  });
+  return loadLiterals(S.trace?.product).then(literals => new Promise((resolve, reject) => {
+    pendingHarness = { resolve, reject, onProgress };
+    getWorker().postMessage({ type: "harness", literals });
+  }));
 }
 let textSeq = 0;
 function workerText(agentId, ref) {
@@ -218,20 +218,20 @@ function loadIndex() {
     .catch(() => null);
   return indexLoad;
 }
-// The literal index (hashes of the binaries' literal text with chunk and offset, no text) lets the harness
-// layer say where an unnamed piece sits in the shipped binary. Optional, like the reference index.
-let literalsLoad = null;
-function loadLiterals() {
-  literalsLoad ||= fetch(new URL("./literal-index.json", import.meta.url))
+// The literal index (hashes of the shipped binaries' literal text with chunk or file and offset; no text)
+// lets the harness layer say where an unnamed piece sits in what ships. One file per product, fetched only
+// when the harness layer first opens for a session of that product. Optional: without it such pieces read
+// "not in the library".
+const literalsLoad = {};
+function loadLiterals(product) {
+  if (!product) return Promise.resolve(null);
+  literalsLoad[product] ||= fetch(new URL(`./literal-index.${product}.json`, import.meta.url))
     .then(r => (r.ok ? r.json() : null))
     .catch(() => null);
-  return literalsLoad;
+  return literalsLoad[product];
 }
 function sendIndex() {
-  indexSent ||= Promise.all([loadIndex(), loadLiterals()]).then(([index, literals]) => {
-    if (index) getWorker().postMessage({ type: "index", index });
-    if (literals) getWorker().postMessage({ type: "literals", literals });
-  });
+  indexSent ||= loadIndex().then(index => { if (index) getWorker().postMessage({ type: "index", index }); });
   return indexSent;
 }
 async function parseInWorker(files, root) {
