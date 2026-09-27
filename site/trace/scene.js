@@ -1890,6 +1890,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   // The request whose blocks carry words (updateWords) and the version of their text, or "" while there are none.
   const wordsKey = () => blockText && level === 0 && detail.level >= 3 && grainK > 0 && grains.agent === grainAgent && grains.tables && grainUP >= 0 ? `${grainAgent.id}:${Math.floor(grainUP)}:${wordsVersion}` : "";
+  // The leading grain column the stratum labels describe at Layers (the refresh's `lead`), or "" while they
+  // follow none: a new one rebuilds the map labels, as a move does.
+  const leadKey = () => {
+    const i = Math.floor(grainUP);
+    return level === 0 && detail.level >= 3 && grainK > 0 && grains.agent === grainAgent && i >= 0 && i < grainAgent.requests.length ? `${grainAgent.id}:${i}` : "";
+  };
   function updateMapDetail(now) {
     camera.updateMatrixWorld();
     mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
@@ -1905,10 +1911,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const linkFade = lens === "agents" ? 1 : Math.min(1, 1 / (mapZoom * mapZoom));
     spawnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.85 : 0.1) * linkFade;
     returnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.95 : 0.14) * linkFade;
-    const next = { t: now, anchors: lastRefresh ? anchorsPx() : [], zoom: mapZoom, key: wordsKey(), playing: play.playing, force: detailAt === -Infinity };
+    const next = { t: now, anchors: lastRefresh ? anchorsPx() : [], zoom: mapZoom, key: wordsKey(), lead: leadKey(), playing: play.playing, force: detailAt === -Infinity };
     const due = shouldRefreshDetail(lastRefresh, next);
     if (due.refresh && due.moved) refreshMapDetail(now, next);
-    else if (due.refresh) { Object.assign(lastRefresh, { t: now, key: next.key }); wordRefreshes++; labelsStale = true; updateWords(); } // only the words' request moved
+    else if (due.refresh) { Object.assign(lastRefresh, { t: now, key: next.key }); wordRefreshes++; labelsStale = true; updateWords(); } // only the words changed
     else if (due.pending) dirty = Math.max(dirty, 2);
     // the map's focus goes to the app once it has held for 180 ms
     if (lastFocusKey !== sentFocusKey) {
@@ -1959,7 +1965,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   function refreshMapDetail(now, next) {
     detailAt = now; mapRefreshes++; labelsStale = true;
     captureAnchors();
-    lastRefresh = { t: now, anchors: anchorsPx(), zoom: next.zoom, key: next.key };
+    lastRefresh = { t: now, anchors: anchorsPx(), zoom: next.zoom, key: next.key, lead: next.lead };
     // Grouped in world bins set by zoom alone: panning moves beacons, it never regroups them (so the groups
     // are kept until the bin or the lens changes).
     const bin = mapBin();
@@ -2232,8 +2238,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       fitDepth(); // uses last frame's grain columns: their box sits inside the terrain pad anyway
       updateMapDetail(now);
       updatePlayhead();
-      // the playhead just moved the words' leading request: one more frame, so the map refresh follows it
-      if (lastRefresh && level === 0 && wordsKey() !== lastRefresh.key) dirty = Math.max(dirty, 2);
+      // the playhead just moved the leading column or the words' request: one more frame, so the map refresh follows it
+      if (lastRefresh && level === 0 && (wordsKey() !== lastRefresh.key || leadKey() !== lastRefresh.lead)) dirty = Math.max(dirty, 2);
       updateGrains(now);
       updateSweepSolids();
       updateSweepLabels(now);

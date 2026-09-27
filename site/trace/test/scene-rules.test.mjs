@@ -355,6 +355,17 @@ test("map detail refresh: only when an anchor moved over 0.5 px, the zoom 1%, or
   assert.deepEqual(shouldRefreshDetail(last, now({ anchors: at.map((v, k) => (k === 3 ? NaN : v)) })), go);
   assert.deepEqual(shouldRefreshDetail(last, now({ anchors: at.slice(0, 4) })), go);
   assert.deepEqual(shouldRefreshDetail(last, now({ zoom: NaN })), go);
+  // the leading grain column the stratum labels describe at Layers (lead): its change rebuilds everything,
+  // like a move, on the same throttle; no lead on either side is no change
+  const led = { ...last, lead: "root:900" };
+  assert.deepEqual(shouldRefreshDetail(led, now({ lead: "root:900", t: 1e9, playing: true })), none, "the same lead is no change");
+  assert.deepEqual(shouldRefreshDetail(led, now({ lead: "root:901", t: 1099, playing: true })), wait, "a new lead while playing waits for 100 ms");
+  assert.deepEqual(shouldRefreshDetail(led, now({ lead: "root:901", t: 1100, playing: true })), go, "then everything follows it");
+  assert.deepEqual(shouldRefreshDetail(led, now({ lead: "root:901", t: 1089 })), wait, "a step while paused: 90 ms");
+  assert.deepEqual(shouldRefreshDetail(led, now({ lead: "root:901", t: 1090 })), go);
+  assert.deepEqual(shouldRefreshDetail(led, now({ lead: "", t: 1090 })), go, "the lead leaving (zoomed out of Layers) rebuilds too");
+  assert.deepEqual(shouldRefreshDetail({ ...led, key: "root:900:0" }, now({ lead: "root:901", key: "root:901:0", t: 1100, playing: true })), go, "a crossing with words: everything, not only the words");
+  assert.deepEqual(shouldRefreshDetail({ ...led, key: "root:900:0" }, now({ lead: "root:900", key: "root:900:1", t: 1100, playing: true })), words, "arriving word text alone: only the words");
 });
 
 test("navigator: redraws when its content changed, at most 10 Hz while playing", async () => {

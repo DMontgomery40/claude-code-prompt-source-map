@@ -175,22 +175,23 @@ export function sweepLabelOpacity(age) {
 }
 
 // Map detail refresh (scene.js updateMapDetail): the beacons, cluster badges, map labels and word panes are
-// rebuilt only when the view changed or the leading request of the words did, never merely because a frame
-// was drawn. `prev` is the last refresh ({ t, anchors, zoom, key }, or null before the first); `next` is this
-// frame ({ t, anchors, zoom, key, playing, force }). anchors are the screen px [x0, y0, x1, y1, ...] of fixed
-// world points (the orbit target and four points at its depth near the viewport corners, captured at the last
-// refresh), so an orbit about the target moves the corners even though the target stays put. The result:
-// `refresh` now; `moved`: the view changed (or the refresh is forced), so everything is rebuilt; otherwise only
-// the key (the words' request) changed and only the words follow it; `pending`: something changed but the
-// refresh waits for the interval, so the caller keeps drawing frames until it is due (a view that stops
-// moving inside the interval still gets its refresh).
+// rebuilt only when the view changed, the leading column did or the words did, never merely because a frame
+// was drawn. `prev` is the last refresh ({ t, anchors, zoom, key, lead }, or null before the first); `next` is
+// this frame ({ t, anchors, zoom, key, lead, playing, force }). anchors are the screen px [x0, y0, x1, y1, ...]
+// of fixed world points (the orbit target and four points at its depth near the viewport corners, captured at
+// the last refresh), so an orbit about the target moves the corners even though the target stays put. `lead`
+// is the leading grain column the stratum labels describe at Layers ("" or absent when they follow none). The
+// result: `refresh` now; `moved`: the view or the lead changed (or the refresh is forced), so everything is
+// rebuilt; otherwise only the key (the words' request and text) changed and only the words follow it;
+// `pending`: something changed but the refresh waits for the interval, so the caller keeps drawing frames
+// until it is due (a view that stops moving inside the interval still gets its refresh).
 export const DETAIL_MOVE_PX = 0.5;   // an anchor moved more than this on screen since the last refresh
 export const DETAIL_ZOOM = 0.01;     // or the map zoom changed by more than 1%
 export const DETAIL_MIN_MS = 90;     // refreshes at least this far apart while the view moves
 export const DETAIL_PLAY_MS = 100;   // and at most 10 Hz while playing
 export function shouldRefreshDetail(prev, next) {
   if (!prev || next.force) return { refresh: true, moved: true, pending: false };
-  let moved = !(Math.abs(next.zoom / prev.zoom - 1) <= DETAIL_ZOOM) || next.anchors.length !== prev.anchors.length;
+  let moved = (next.lead || "") !== (prev.lead || "") || !(Math.abs(next.zoom / prev.zoom - 1) <= DETAIL_ZOOM) || next.anchors.length !== prev.anchors.length;
   for (let k = 0; !moved && k < next.anchors.length; k += 2) {
     moved = !(Math.hypot(next.anchors[k] - prev.anchors[k], next.anchors[k + 1] - prev.anchors[k + 1]) <= DETAIL_MOVE_PX);
   }
