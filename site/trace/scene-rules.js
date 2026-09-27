@@ -106,6 +106,14 @@ export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
   return GRAIN_K[mapDetail(mapZoom, prevLevel).level];
 }
 
+// The grain columns the re-read sweep crosses: the K columns up to the leading request i, but never back
+// past the start of i's ridge segment (segStart), so the sweep does not bridge an idle gap to the trail
+// columns of the segment before. iFirst is the first request swept, col0 its column (0 = the oldest).
+export function sweepColumns(i, K, segStart = 0) {
+  const iFirst = Math.max(0, i - K + 1, Math.min(i, segStart));
+  return { iFirst, col0: iFirst - (i - K + 1) };
+}
+
 // Frame-time governor for grain density. Only intervals between two consecutively rendered frames are
 // frame cost: the scene renders on demand while the user explores, and the pause before a render that
 // follows an idle stretch is not slowness, so such a push (contiguous false) neither slows nor calms.

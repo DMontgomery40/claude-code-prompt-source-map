@@ -264,8 +264,8 @@ test("the re-read sweep: band, afterglow on injected and re-sent grains, luminan
   assert.ok(sweepGain({ ...base, y: 15, flags: 1 }) < 1e-6, "no afterglow above the sweep");
   for (let y = 0; y < 20; y += 0.05) for (const flags of [0, 1, 2, 3]) assert.ok(lum(accent, sweepGain({ ...base, y, flags })) <= 0.35 + 1e-12);
   assert.equal(sweepGain({ ...base, y: 10, emissive: 0 }), 0);
-  // the shader has the same expressions, on every grain column
-  assert.match(GRAIN_VERT, /if \(uSweepOn > 0\.5\) \{/, "every grain column takes the band, not only the leading one");
+  // the shader has the same expressions, on every grain column from uSweepCol0 (sweepColumns)
+  assert.match(GRAIN_VERT, /if \(uSweepOn > 0\.5 && float\(col\) >= uSweepCol0\) \{/, "every grain column of the leading segment takes the band, not only the leading one");
   assert.match(GRAIN_VERT, /float band = exp\(-abs\(w\.y - uSweepY\) \* pxPerWorld \/ \(2\.5 \* uDpr\)\);/);
   assert.match(GRAIN_VERT, /float glow = \(fl & 3\) != 0 && w\.y < uSweepY \? 0\.6 \* exp\(-\(uSweepY - w\.y\) \/ max\(0\.25 \* ctx \* uYScale, 1e-4\)\) : 0\.0;/);
   assert.match(GRAIN_VERT, /colr \+= uAccent \* min\(\(band \+ glow\) \* uEmissive, uAccentMax\);/);
@@ -286,8 +286,8 @@ test("the re-read sweep: band, afterglow on injected and re-sent grains, luminan
   const n = agent.requests.length, cam = new THREE.PerspectiveCamera(34, 1.6, 0.1, 4000);
   cam.position.set((n - 1) * 0.13, 1, 30); cam.lookAt((n - 1) * 0.13, 1, 0); cam.updateMatrixWorld();
   const frame = (o) => ({ camera: cam, uP: n - 1, columns: 4, density: 1, res: new THREE.Vector2(1920, 1200), dpr: 1, ...o });
-  g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02 } }));
-  assert.equal(g.uniforms.uSweepOn.value, 1); assert.equal(g.uniforms.uSweepY.value, 1.5);
+  g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02, col0: 2 } }));
+  assert.equal(g.uniforms.uSweepOn.value, 1); assert.equal(g.uniforms.uSweepY.value, 1.5); assert.equal(g.uniforms.uSweepCol0.value, 2);
   assert.equal(g.sweepPlane.visible, true);
   const pu = g.sweepPlane.material.uniforms;
   assert.deepEqual([pu.uX0.value, pu.uX1.value, pu.uY.value, pu.uZ.value], [1, 1.13, 1.5, 0.02]);

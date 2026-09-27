@@ -11,7 +11,7 @@ import { zoomCamera, panCameraTo } from "./map-camera.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
-import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
+import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, sweepColumns, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
 import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
 import { KERNEL, bandsForRequest } from "./grain-rules.js";
 import { createBlockText } from "./block-text.js";
@@ -766,9 +766,11 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     let sweep = null;
     const frac = sweepFraction();
     if (frac != null && K > 0) {
-      // the plane spans the whole slab, from the first grain column's tread to the leading one's
-      const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP))), iFirst = Math.max(0, i - K + 1);
-      sweep = { y: crest(agent, i) * frac, x0: geom.tread(agent, iFirst)[0], x1: geom.tread(agent, i)[1], z: zOf(agent, i) + 0.02 };
+      // the sweep spans the slab, from the first grain column's tread to the leading one's, within the
+      // leading request's ridge segment
+      const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
+      const { iFirst, col0 } = sweepColumns(i, K, geom.segOf(agent, i)?.seg.i0 ?? 0);
+      sweep = { y: crest(agent, i) * frac, x0: geom.tread(agent, iFirst)[0], x1: geom.tread(agent, i)[1], z: zOf(agent, i) + 0.02, col0 };
     }
     grains.update({
       camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),

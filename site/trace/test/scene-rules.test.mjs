@@ -257,6 +257,21 @@ test("density governor: on-demand rendering while exploring is not slowness, and
   assert.ok(Math.abs(r.cadence - 1000 / 60) < 1e-9, "reset forgets the display interval");
 });
 
+test("sweep columns: the K grain columns up to the leading request, never back across its ridge segment's start", async () => {
+  const { sweepColumns } = await import("../scene-rules.js");
+  assert.deepEqual(sweepColumns(900, 16, 850), { iFirst: 885, col0: 0 }, "inside one segment: every column");
+  assert.deepEqual(sweepColumns(1279, 16, 1279), { iFirst: 1279, col0: 15 }, "first request of a segment: the leading column alone");
+  assert.deepEqual(sweepColumns(1283, 16, 1279), { iFirst: 1279, col0: 11 }, "the trail columns before the gap stay dark");
+  assert.deepEqual(sweepColumns(5, 16, 0), { iFirst: 0, col0: 10 }, "the session's start: no request before 0");
+  assert.deepEqual(sweepColumns(40, 4), { iFirst: 37, col0: 0 }, "no segment given: all K columns");
+  for (let i = 0; i < 60; i++) for (const K of [1, 4, 16, 32]) for (const s of [0, 10, 30, 59]) {
+    if (s > i) continue;
+    const { iFirst, col0 } = sweepColumns(i, K, s);
+    assert.ok(iFirst >= s && iFirst >= i - K + 1 && iFirst <= i, `${i} ${K} ${s}`);
+    assert.equal(iFirst, i - (K - 1 - col0), "col0 is iFirst's column");
+  }
+});
+
 test("sweep labels: the six largest injected or re-sent blocks of 900 tokens or more, shown a second", async () => {
   const { sweepLabelBands, sweepLabelOpacity } = await import("../scene-rules.js");
   const band = (b, flags, y0, size, blockIndex = b) => ({ b, blockIndex, stratum: 3, flags, y0, y1: y0 + size });

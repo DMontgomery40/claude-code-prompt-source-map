@@ -92,6 +92,7 @@ uniform vec3 uFog;
 uniform vec3 uLight;
 uniform float uSweepOn;
 uniform float uSweepY;
+uniform float uSweepCol0;
 uniform float uEmissive;
 uniform vec3 uAccent;
 uniform float uAccentMax;
@@ -172,11 +173,12 @@ void main() {
   vec4 mv = viewMatrix * wp;
   vec4 clip = projectionMatrix * mv;
   float pxPerWorld = projectionMatrix[1][1] * 0.5 * uRes.y / clip.w; // device px per world unit here
-  // The re-read sweep, across every grain column (a 1-4 px leading tread alone would hide it): a band of
-  // the accent around uSweepY (world y, climbing the leading request's context), 2.5 px deep, and below
-  // the band an afterglow on injected and re-sent grains that fades over a quarter of the column. The
-  // light added never exceeds 0.35 in luminance (uAccentMax), so nothing washes out.
-  if (uSweepOn > 0.5) {
+  // The re-read sweep, across the grain columns of the leading request's ridge segment (from column
+  // uSweepCol0; a 1-4 px leading tread alone would hide it): a band of the accent around uSweepY (world y,
+  // climbing the leading request's context), 2.5 px deep, and below the band an afterglow on injected and
+  // re-sent grains that fades over a quarter of the column. The light added never exceeds 0.35 in
+  // luminance (uAccentMax), so nothing washes out.
+  if (uSweepOn > 0.5 && float(col) >= uSweepCol0) {
     float band = exp(-abs(w.y - uSweepY) * pxPerWorld / (2.5 * uDpr));
     int fl = int(B1.y + 0.5);
     float glow = (fl & 3) != 0 && w.y < uSweepY ? 0.6 * exp(-(uSweepY - w.y) / max(0.25 * ctx * uYScale, 1e-4)) : 0.0;
@@ -216,7 +218,7 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-// The sweep plane: one additive quad across the grain slab at the sweep's height, 3 px tall with an
+// The sweep plane: one additive quad across the swept grain columns at the sweep's height, 3 px tall with an
 // analytic soft edge, in front of the face. The quad's ends come from uniforms, so moving it uploads
 // nothing; position.x picks the end (-1, 1), position.y the side of the line (-1, 1).
 export const SWEEP_VERT = /* glsl */`
@@ -288,7 +290,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uK1: { value: new THREE.Vector4(KERNEL.jitterX, KERNEL.jitterZ, KERNEL.puckRadius, KERNEL.spiralTurns) },
     uCol: shared.uCol, uEm: shared.uEm, uFog: shared.uFog, uLight: shared.uLight, uFocusDist: shared.uFocusDist,
     uAgentEm: { value: 1 },
-    uSweepOn: { value: 0 }, uSweepY: { value: 0 }, uEmissive: { value: 1 },
+    uSweepOn: { value: 0 }, uSweepY: { value: 0 }, uSweepCol0: { value: 0 }, uEmissive: { value: 1 },
     uAccent: { value: new THREE.Color(accent) }, uAccentMax: { value: 0 }
   };
   uniforms.uAccentMax.value = accentGain(uniforms.uAccent.value);
@@ -472,13 +474,15 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uniforms.uRes.value.copy(f.res);
     uniforms.uSquare.value = f.square ? 1 : 0;
     uniforms.uAgentEm.value = f.agentEm ?? 1;
-    // the sweep: sw = { y (world), x0, x1 (the grain slab), z (the leading face) } while playing, else null
+    // the sweep: sw = { y (world), x0, x1 (the grain slab), z (the leading face), col0 (its first column) }
+    // while playing, else null
     const sw = f.sweep;
     uniforms.uSweepOn.value = sw ? 1 : 0;
     uniforms.uEmissive.value = f.emissive ?? 1;
     sweepPlane.visible = !!sw && uniforms.uEmissive.value > 0;
     if (sw) {
       uniforms.uSweepY.value = sw.y;
+      uniforms.uSweepCol0.value = sw.col0 ?? 0;
       planeU.uX0.value = sw.x0; planeU.uX1.value = sw.x1; planeU.uY.value = sw.y; planeU.uZ.value = sw.z;
       planeU.uStrength.value = 0.75 * Math.min(1, uniforms.uEmissive.value);
     }
