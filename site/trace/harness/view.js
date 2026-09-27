@@ -185,6 +185,12 @@ export function compareAgent(model, trace, focusAgent) {
   return i >= 0 ? i : null;
 }
 // A plate as the view reads it, whatever the builder called the fields.
+// A plate's words: its text without the wrapper tags or heading marks it opens with, so the payload shows first.
+export function plateWords(text) {
+  const t = String(text || "").replace(/\s+/g, " ").trim();
+  const words = t.replace(/^(?:\s*<[A-Za-z][^<>]{0,200}>)+/, "").replace(/<\/?[A-Za-z][\w:-]*(?:\s[^<>]{0,120})?>/g, " ").replace(/^[#\s]+/, "").replace(/\s+/g, " ").trim();
+  return (words || t).slice(0, 140);
+}
 export function normPlate(pl) {
   const piece = pl.piece ?? pl.pieceId ?? pl.shape ?? null;
   const core = !!(pl.core || pl.kind === "conversation" || piece == null);
@@ -690,7 +696,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       const { pl, piece } = it, el = document.createElement("div");
       el.className = `hv-plate r-${it.cls}${it.shared ? " shared" : ""}${["unnamed", "unlinked", "loose", "core"].includes(it.cls) || it.shared ? " light" : ""}`;
       if (pl.core) el.innerHTML = pl.more ? `<span class="dim">… and ${pl.n} more harness pieces in this request</span>` : `<span class="dim">+ the conversation: ${pl.n} block${pl.n > 1 ? "s" : ""} between these pieces</span>`;
-      else el.innerHTML = `${it.fresh ? `<span class="new">NEW · ${esc(trigWord(piece?.trigger))}</span>` : ""}<span class="k">${esc(piece ? piece.name : pl.label)}${pl.n > 1 ? ` ×${pl.n}` : ""}</span>${esc(String(pl.excerpt || piece?.sample || "").slice(0, 110))}`;
+      else el.innerHTML = `${it.fresh ? `<span class="new">NEW · ${esc(trigWord(piece?.trigger))}</span>` : ""}<span class="k">${esc(piece ? piece.name : pl.label)}${pl.n > 1 ? ` ×${pl.n}` : ""}</span>${esc(plateWords(pl.excerpt || piece?.sample))}`;
       if (piece) el.onclick = () => pick(piece, { agent: rg.userData.rack.agent, block: pl.block });
       overlay.append(el); plateEls.push({ el, h: it.h, a: new THREE.Vector3(it.x0 - 2.85, it.y, it.z + 0.06), b: new THREE.Vector3(it.x0 + 2.85, it.y, it.z + 0.06) });
     }
@@ -840,7 +846,6 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (preset === "hero" && hero) { sel = hero; startFlow(); }
     if (preset === "hero" && hero && overlay) {
       const p = hero;
-      callout(`${esc(p.name.length > 44 ? p.name.slice(0, 42) + "…" : p.name)}<span class="m">${esc(p.rung === "binary-only" && p.where ? `${whereText(p)} · not in ${model.libName}` : p.where ? `${p.where.shelf} · ${whereText(p)}` : words[p.rung])}</span>`, p.curve.getPointAt(p.kind === "loose" ? 0.32 : 0.13).clone().add(new THREE.Vector3(0, 0.25, 0)));   // unmatched ends sit by the bottom-left chrome
       const zs = [...p.rec].map(L.pinZ), zm = zs.reduce((a, b) => a + b, 0) / zs.length;
       callout(`${p.reach} of ${L.NA} agent${L.NA > 1 ? "s" : ""}<span class="m">${L.NA - p.reach} did not</span>`, new THREE.Vector3(X.pins - 0.1, 0.6, zm));
     }

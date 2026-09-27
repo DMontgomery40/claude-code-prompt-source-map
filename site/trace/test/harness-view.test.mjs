@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   createHarnessView, layoutBoard, rungWords, whereText, instructionScore, pickHero, birthSet, laterRequest, compareAgent,
-  normPlate, foldPlates, buildRack, PRESETS, PRESET_NAMES, RUNG_CLASS,
+  normPlate, plateWords, foldPlates, buildRack, PRESETS, PRESET_NAMES, RUNG_CLASS,
 } from "../harness/view.js";
 
 // Three agents: the main thread (4 requests, compacted once) and two subagents (2 requests each).
@@ -199,4 +199,10 @@ test("racks: every copy of a piece folds into one plate (×n), conversation fold
   assert.equal(buildRack(L, { agent: 0, req: 0, plates: many }, -3, SEL, { columns: 1 }).userData.cols, 1, "compare keeps one column");
   const short = buildRack(L, { agent: 0, req: 0, plates: plates }, -3, SEL);
   assert.equal(short.userData.plates, 2); assert.equal(short.userData.conv, 3); assert.equal(short.userData.cols, 1);
+});
+
+test("plate words: the payload first, without the wrapper tags", () => {
+  assert.equal(plateWords("<heartbeat> <automation_id>sync-1</automation_id> Continue the task."), "sync-1 Continue the task.");
+  assert.equal(plateWords("## My request:"), "My request:");
+  assert.equal(plateWords("<only-tag>"), "<only-tag>", "a bare tag stays as it is");
 });
