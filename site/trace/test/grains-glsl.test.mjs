@@ -134,11 +134,20 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
   const shared = { uCol: { value: [] }, uEm: { value: [] }, uFog: { value: new THREE.Color() }, uLight: { value: new THREE.Vector3() }, uFocusDist: { value: 100 } };
   const make = (yScale) => {
     const g = createGrains({ THREE, renderer, shared, geom, yScale });
-    g.setAgent(agent, buildTables(agent, geom));
+    g.setAgent(agent, buildTables(agent, geom, { chunkSize: 64 })); // several chunks, so chunk offsets matter
     return g;
   };
   const g = make(1e-4);
   assert.equal(inits, 4, "request, block, epoch and id textures");
+  // refocusing an agent reuses its built tables (no rebuild); textures upload again
+  const again = createGrains({ THREE, renderer, shared, geom, yScale: 1e-4 });
+  again.setAgent(agent);
+  const firstTables = again.tables;
+  again.setAgent(null); again.setAgent(agent);
+  assert.equal(again.tables, firstTables, "the tables are cached");
+  assert.equal(again.stats().grainBuildMs, 0);
+  again.dispose();
+  inits = 4;
   assert.equal(g.stats().grainUploads, 4);
   // the uploaded request table: texel 0 .x is the tread centre, .z the grain depth, the rest as built
   const up = g.uniforms.uReq.value.image.data, built = g.tables.requests.data;
@@ -167,6 +176,28 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
   const full = g.stats();
   assert.ok(full.grainChunks > 0 && full.grains > 0);
   assert.equal(full.grains, drawn());
+  // Each chunk's draw starts at 6 * K * chunk.start (gl_VertexID counts from drawArrays' first, which
+  // carries the chunk offset) and draws ceil(count * density) grains of every column. Emulating the
+  // shader's vid -> (corner, col, g) mapping over every drawn vertex lands g inside the chunk.
+  const chunks = g.tables.grains.chunks, meshes = g.group.children.filter((m) => m.material === g.material);
+  assert.equal(meshes.length, chunks.length);
+  let drawnChunks = 0;
+  meshes.forEach((m, c) => {
+    if (!m.visible) return;
+    drawnChunks++;
+    const { start, count } = m.geometry.drawRange, ch = chunks[c], n = Math.ceil(ch.count * 1);
+    assert.equal(start, 6 * K * ch.start, `chunk ${c} starts at 6·K·start`);
+    assert.equal(count, 6 * K * n);
+    const seenCols = new Set();
+    for (const vid of [start, start + 5, start + 6, start + 6 * K - 1, start + count - 1]) {
+      const inst = Math.floor(vid / 6), col = inst % K, gi = Math.floor(inst / K);
+      assert.ok(gi >= ch.start && gi < ch.start + n, `vid ${vid} -> grain ${gi} in chunk ${c}`);
+      seenCols.add(col);
+    }
+    assert.ok(seenCols.has(0) && seenCols.has(K - 1), "every column is drawn");
+  });
+  assert.equal(drawnChunks, full.grainChunks);
+  assert.ok(chunks.length > 2 && meshes.some((m, c) => m.visible && chunks[c].start > 0), "the fixture spans several chunks");
   assert.equal(full.minGrainPx, 2, "grains far under their floor at this distance");
   g.update(frame({ minPx: 3 }));
   assert.equal(g.stats().minGrainPx, 3, "the Layers floor");
@@ -202,7 +233,8 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
     let far = 0;
     for (let k = 0; k < 8; k++) far = Math.max(far, -new THREE.Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(inv).z);
     const t = tableMin(big.tables);
-    const vx = Math.abs(cam.position.clone().sub(box.getCenter(new THREE.Vector3())).normalize().x);
+    let vx = Infinity;
+    for (let k = 0; k < 8; k++) vx = Math.min(vx, Math.abs(cam.position.clone().sub(new THREE.Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z)).normalize().x));
     const want = grainSizePx({ halfW: t.halfW, stepWorld: t.step * t.scale * yScale, pxPerWorld: cam.projectionMatrix.elements[5] * 0.5 * 1200 / far, minPx: 2, maxPx: GRAIN_MAX_PX, depthSpread: GRAIN_DEPTH * vx });
     assert.ok(Math.abs(big.stats().minGrainPx - want) < 1e-9);
     if (expectCap) assert.equal(big.stats().minGrainPx, GRAIN_MAX_PX);

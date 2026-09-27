@@ -130,6 +130,8 @@ uniform float uCutX;
 uniform float uGrainOn;
 uniform float uGrainAgent;
 uniform float uGhostX0;
+uniform float uGrainX0;
+uniform float uGrainX1;
 #endif
 #ifdef SWEEP
 // The re-read sweep's band where it crosses solid ground: the cap (the wall where the focused ridge
@@ -156,6 +158,10 @@ void main() {
   // Second pass for subagent ridges, drawn only where something nearer hides them (depthFunc
   // GreaterDepth): a translucent silhouette through the main ridge, so every agent stays visible.
   if (vAg.z > 0.5) discard;
+#ifdef CUT
+  // the focused agent's face steps back behind its grain columns there: its x-ray would fog them
+  if (uGrainOn > 0.5 && abs(vAgentId - uGrainAgent) < 0.5 && vW.x >= uGrainX0 && vW.x <= uGrainX1) discard;
+#endif
 #endif
   float tops[7];
   tops[0] = vB0.x; tops[1] = vB0.y; tops[2] = vB0.z; tops[3] = vB0.w;
@@ -600,7 +606,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const grains = createGrains({ THREE, renderer, shared, geom, yScale, reducedMotion, accent: STRATA[STRATUM_INDEX.you].color });
   grains.group.renderOrder = 1;
   world.add(grains.group);
-  let grainAgent = L.root, grainK = 0, grainUP = play.P, lastRenderAt = 0;
+  // renderedLastFrame: the previous animation frame rendered too, so now - lastRenderAt is one frame's cost
+  let grainAgent = L.root, grainK = 0, grainUP = play.P, lastRenderAt = 0, renderedLastFrame = false;
   const grainState = { K: 0, uP: play.P, cutX: NO_CUT, grainX0: NO_CUT, grainX1: -NO_CUT, ghostX0: NO_CUT, pxPerColumn: 0 };
   // the root's tables are built at load, so the first zoom-in does not stall; a subagent's on focus
   if (grainOpts.enabled && rowZ.has(L.root.id)) { grains.setAgent(L.root); grains.warmUp(camera); }
@@ -659,7 +666,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       let x0 = wallX(iFirst), x1 = geom.tread(agent, iNext)[1] + (stepped ? 0 : 1e-3);
       const ghostX0 = stepped ? x0 + 1e-4 : xOf(agent, iFirst);
       // a collapse into the puck at the next request: the trench makes room for the whole spiral
-      const e = grains.tables.requests.epochs.find(q => q.start === iLead + 1);
+      const e = grains.epochStartingAt(iLead + 1);
       let jWall = iFirst;
       if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) {
         const r = KERNEL.puckRadius + 0.1;
@@ -750,7 +757,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   function updateGrains(now) {
     const K = grainK;
-    if (K > 0 && grains.group.visible && lastRenderAt) governor.push(now - lastRenderAt);
+    // only consecutive rendered frames are frame cost: the pause before a render after idle is not
+    if (K > 0 && grains.group.visible && lastRenderAt) governor.push(now - lastRenderAt, renderedLastFrame);
     const density = grainOpts.density != null ? Math.min(1, Math.max(0.01, grainOpts.density)) : governor.density;
     const agent = grainAgent, ai = agentIndex.get(agent.id);
     // The re-read sweep climbs the leading column once per request while playing: at sweep (0..1 through
@@ -769,6 +777,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     });
   }
 
+  const treadCentre = (agent, i) => { const [t0, t1] = geom.tread(agent, i); return (t0 + t1) / 2; };
   const heightAt = geom.heightAtSeg; // (agent, inf, seg, x, taper): face height on one segment, -1 off it
   const nearestReq = (inf, seg, x) => {
     let best = seg.i0, bd = Infinity;
@@ -1782,18 +1791,23 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     mapLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
     mapLines.geometry.computeBoundingSphere();
     let stratum = null;
-    if (detail.level >= 3 && focus) {
-      const r = focus.agent.requests[focus.i], tops = geom.tops(focus.agent, focus.i);
+    // At Layers with grain columns standing, the stratum labels describe the leading column (the
+    // playhead's request, which the word panes read), not the column nearest the centre.
+    const iLead = Math.floor(grainUP);
+    const strataOf = grainK > 0 && grains.agent === grainAgent && iLead >= 0 && iLead < grainAgent.requests.length
+      ? { agent: grainAgent, i: iLead, pos: new THREE.Vector3(treadCentre(grainAgent, iLead), 0, zOf(grainAgent, iLead)) } : focus;
+    if (detail.level >= 3 && strataOf) {
+      const r = strataOf.agent.requests[strataOf.i], tops = geom.tops(strataOf.agent, strataOf.i);
       let bottom = 0, best = Infinity;
       STRATA.forEach((s, j) => {
-        const top = tops[j], pos = new THREE.Vector3(focus.pos.x, (bottom + top) / 2, focus.pos.z + 0.05);
+        const top = tops[j], pos = new THREE.Vector3(strataOf.pos.x, (bottom + top) / 2, strataOf.pos.z + 0.05);
         bottom = top;
         if (!(r.strata?.[s.key] > 0)) return;
         const p = projectMapPoint(pos);
         if (!inMap(p)) return;
         const score = Math.hypot(p.px - center.x, p.py - center.y);
         if (score < best) { best = score; stratum = s.key; }
-        const o = label(`${s.name} · ≈ ${fmtTok(r.strata[s.key])}`, `stratum s-${s.key}`, pos, [0, 0.5], g, () => onPick({ level: 3, agentId: focus.agent.id, reqIdx: focus.i, stratum: s.key }));
+        const o = label(`${s.name} · ≈ ${fmtTok(r.strata[s.key])}`, `stratum s-${s.key}`, pos, [0, 0.5], g, () => onPick({ level: 3, agentId: strataOf.agent.id, reqIdx: strataOf.i, stratum: s.key }));
         o.element.style.setProperty('--c', s.color); o.userData.flip = true;
       });
     }
@@ -1952,7 +1966,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       measure();
       declutter();
       dirty--;
-    }
+      renderedLastFrame = true;
+    } else renderedLastFrame = false;
   }
   function resize() {
     const w = host.clientWidth, h = host.clientHeight;
@@ -2038,6 +2053,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     setGrainOptions(o = {}) {
       for (const k of ["enabled", "square"]) if (o[k] !== undefined) grainOpts[k] = !!o[k];
       for (const k of ["density", "columns", "emissive"]) if (o[k] !== undefined) grainOpts[k] = o[k] == null ? (k === "emissive" ? 1 : null) : +o[k];
+      // at most 32 columns: 6 * K * chunk.start must stay a valid drawArrays first
+      if (grainOpts.columns != null) grainOpts.columns = Math.max(0, Math.min(32, Math.floor(grainOpts.columns) || 0));
       if (grainOpts.enabled && !grains.tables && rowZ.has(grainAgent.id)) grains.setAgent(grainAgent);
       dirty = Math.max(dirty, 2);
       return { ...grainOpts };

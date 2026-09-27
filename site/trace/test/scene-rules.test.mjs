@@ -191,10 +191,10 @@ test("density governor: dropped frames lower density in steps, calm frames resto
   assert.equal(g.density, 0.75 * 0.75, "one step per window, not per frame");
   for (let i = 0; i < 3000; i++) g.push(40);
   assert.equal(g.density, 0.05, "floor");
-  for (let i = 0; i < 119; i++) g.push(16.7);
+  for (let i = 0; i < 29; i++) g.push(16.7);
   assert.equal(g.density, 0.05);
   g.push(16.7);
-  assert.ok(Math.abs(g.density - 0.055) < 1e-12, "120 calm frames at 60 Hz raise it by 10%");
+  assert.ok(Math.abs(g.density - 0.055) < 1e-12, "30 calm frames at 60 Hz raise it by 10%");
   // 60 Hz with the jitter measured on the M4 (p05 14.7 .. max 18.7 ms): never a verdict of slow
   const jitter = createDensityGovernor();
   const q = [14.7, 15.8, 16.2, 16.7, 16.7, 17.3, 17.4, 18.0, 18.4, 18.7];
@@ -219,6 +219,42 @@ test("density governor: dropped frames lower density in steps, calm frames resto
   h.push(NaN); h.push(-3);
   h.reset();
   assert.equal(h.density, 1);
+});
+
+test("density governor: on-demand rendering while exploring is not slowness, and the display interval follows the display", async () => {
+  const { createDensityGovernor } = await import("../scene-rules.js");
+  // Exploring without playing: bursts of 3 to 8 rendered 60 Hz frames, each after an idle pause of 34 to
+  // 240 ms (hover, a wheel tick, a label reflow). The pause before a burst is not a contiguous frame.
+  const bursts = (g, contiguousGaps) => {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let b = 0; b < 600; b++) {
+      g.push(34 + rnd() * 206, contiguousGaps);
+      for (let f = 0, n = 3 + Math.floor(rnd() * 6); f < n; f++) g.push(16.7);
+    }
+    return g.density;
+  };
+  assert.equal(bursts(createDensityGovernor(), false), 1, "idle gaps skipped: density stays 1");
+  assert.ok(bursts(createDensityGovernor(), true) < 0.1, "the same gaps read as frames would sink it (the bug)");
+  // recovery needs only 30 fast contiguous frames, which bursts of 3-8 reach across idle gaps
+  const g = createDensityGovernor();
+  for (let i = 0; i < 60; i++) g.push(40);
+  assert.equal(g.density, 0.75 * 0.75);
+  for (let b = 0; b < 10; b++) { g.push(200, false); for (let f = 0; f < 3; f++) g.push(16.7); }
+  assert.ok(Math.abs(g.density - 0.75 * 0.75 * 1.1) < 1e-12, "30 calm frames spread over bursts count");
+  // the display interval is a rolling minimum: after a 120 Hz stretch, 60 Hz frames are calm again
+  // within a few windows, and reset() forgets it
+  const d = createDensityGovernor();
+  for (let i = 0; i < 300; i++) d.push(8.3);
+  assert.ok(Math.abs(d.cadence - 8.3) < 1e-9);
+  for (let i = 0; i < 30 * 8; i++) d.push(16.7);
+  assert.ok(Math.abs(d.cadence - 1000 / 60) < 1e-9, "eight 60 Hz windows later the display interval is 60 Hz again");
+  for (let i = 0; i < 3000; i++) d.push(i % 10 === 0 ? 18.4 : 16.7);
+  assert.equal(d.density, 1, "60 Hz jitter on the slower display is not slow");
+  const r = createDensityGovernor();
+  for (let i = 0; i < 300; i++) r.push(8.3);
+  r.reset();
+  assert.ok(Math.abs(r.cadence - 1000 / 60) < 1e-9, "reset forgets the display interval");
 });
 
 test("sweep labels: the six largest injected or re-sent blocks of 900 tokens or more, shown a second", async () => {

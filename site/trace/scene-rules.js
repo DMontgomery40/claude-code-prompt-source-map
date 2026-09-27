@@ -106,36 +106,40 @@ export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
   return GRAIN_K[mapDetail(mapZoom, prevLevel).level];
 }
 
-// Frame-time governor for grain density: keeps the last `window` frame intervals; every `window`
-// samples, a p90 above the slow threshold multiplies density by `down` (never below `floor`); `calm`
-// frames in a row under the calm threshold multiply it by `up` (never above 1). The thresholds are
-// `high` / `low` ms, raised to 1.5x / 1.2x the display's frame interval: rAF intervals on a 60 Hz
-// display jitter up to ~18.7 ms with no load at all (p90 18.0-18.4 ms measured, headless and headed),
-// so a flat 18 ms reads vsync jitter as slowness, while a dropped frame is ~33 ms. The display interval
-// is the lowest window p25 seen, capped at 1000/60 (so a scene slow from its first frame still counts
-// as slow). Intervals over `gap` ms are idle time between renders, not frame cost, and are ignored.
-export function createDensityGovernor({ window = 30, high = 18, low = 12, calm = 120, down = 0.75, up = 1.1, floor = 0.05, gap = 250 } = {}) {
-  let density = 1, sinceEval = 0, calmRun = 0, cadence = 1000 / 60;
-  const samples = [];
+// Frame-time governor for grain density. Only intervals between two consecutively rendered frames are
+// frame cost: the scene renders on demand while the user explores, and the pause before a render that
+// follows an idle stretch is not slowness, so such a push (contiguous false) neither slows nor calms.
+// Every `window` samples, a p90 above the slow threshold multiplies density by `down` (never below
+// `floor`); `calm` samples in a row under the calm threshold multiply it by `up` (never above 1). The
+// thresholds are `high` / `low` ms, raised to 1.5x / 1.2x the display's frame interval: rAF intervals on
+// a 60 Hz display jitter up to ~18.7 ms with no load (p90 18.0-18.4 ms measured), so a flat 18 ms reads
+// vsync jitter as slowness, while a dropped frame is ~33 ms. The display interval is the lowest p25 of
+// the last `cadenceWindows` windows, capped at 1000/60 (a scene slow from its first frame still counts
+// as slow; moving to a slower display recovers within a few windows). Intervals over `gap` ms are idle.
+export function createDensityGovernor({ window = 30, high = 18, low = 12, calm = 30, down = 0.75, up = 1.1, floor = 0.05, gap = 250, cadenceWindows = 8 } = {}) {
+  let density = 1, sinceEval = 0, calmRun = 0;
+  const samples = [], p25s = [];
   const pick = (sorted, q) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))];
+  const cadence = () => Math.min(1000 / 60, ...p25s);
   return {
     get density() { return density; },
-    get cadence() { return cadence; },
-    push(dt) {
-      if (!(dt > 0) || dt > gap) return density;
+    get cadence() { return cadence(); },
+    push(dt, contiguous = true) {
+      if (!contiguous || !(dt > 0) || dt > gap) return density;
       samples.push(dt);
       if (samples.length > window) samples.shift();
-      calmRun = dt < Math.max(low, 1.2 * cadence) ? calmRun + 1 : 0;
+      calmRun = dt < Math.max(low, 1.2 * cadence()) ? calmRun + 1 : 0;
       if (++sinceEval >= window && samples.length >= window) {
         sinceEval = 0;
         const sorted = [...samples].sort((a, b) => a - b);
-        cadence = Math.min(cadence, pick(sorted, 0.25));
-        if (pick(sorted, 0.9) > Math.max(high, 1.5 * cadence)) { density = Math.max(floor, density * down); calmRun = 0; }
+        p25s.push(pick(sorted, 0.25));
+        if (p25s.length > cadenceWindows) p25s.shift();
+        if (pick(sorted, 0.9) > Math.max(high, 1.5 * cadence())) { density = Math.max(floor, density * down); calmRun = 0; }
       }
       if (calmRun >= calm) { density = Math.min(1, density * up); calmRun = 0; }
       return density;
     },
-    reset() { density = 1; sinceEval = 0; calmRun = 0; samples.length = 0; }
+    reset() { density = 1; sinceEval = 0; calmRun = 0; samples.length = 0; p25s.length = 0; }
   };
 }
 

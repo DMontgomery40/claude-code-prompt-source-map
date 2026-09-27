@@ -318,6 +318,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
   group.add(sweepPlane);
 
   let cur = null; // { agent, tables, textures, chunks, meta, ... }
+  const TABLE_CACHE = 4, tableCache = new Map(); // agent -> built tables, most recent last
   let uploads = 0, builds = 0, lastBuildMs = 0;
   const last = { grains: 0, chunks: 0, instances: 0, columns: 0, density: 1, minPx: null };
 
@@ -347,8 +348,12 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     clear();
     if (!agent) return null;
     const t0 = performance.now();
-    const tables = built || buildTables(agent, geom);
-    lastBuildMs = built ? 0 : performance.now() - t0;
+    // tables are kept for the last few agents, so refocusing (root -> subagent -> root) does not rebuild
+    const cached = built || tableCache.get(agent);
+    const tables = cached || buildTables(agent, geom);
+    lastBuildMs = cached ? 0 : performance.now() - t0;
+    tableCache.delete(agent); tableCache.set(agent, tables);
+    if (tableCache.size > TABLE_CACHE) tableCache.delete(tableCache.keys().next().value);
     builds++;
     const { requests: R, blocks: B, grains: G } = tables;
     if (!G.count || !R.count) { cur = { agent, tables, textures: {}, chunks: [], empty: true }; return cur; }
@@ -418,7 +423,8 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       group.add(mesh);
       return { start: c.start, count: c.count, minSeen, maxLast, mesh };
     });
-    cur = { agent, tables, textures, chunks, reqX, reqCtx, reqHalf, reqZ, reqDepth, reqScaleMin, stepMin: Number.isFinite(stepMin) ? stepMin : 0, maxCtx, n: R.count, N0: tables.N0, total: G.count };
+    const epochAt = new Map(R.epochs.map((e) => [e.start, e])); // epoch by its first request
+    cur = { agent, tables, textures, chunks, reqX, reqCtx, reqHalf, reqZ, reqDepth, reqScaleMin, epochAt, stepMin: Number.isFinite(stepMin) ? stepMin : 0, maxCtx, n: R.count, N0: tables.N0, total: G.count };
     return cur;
   }
 
@@ -434,7 +440,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     for (let i = iLo; i <= iHi; i++) { top = Math.max(top, cur.reqCtx[i]); z0 = Math.min(z0, cur.reqZ[i]); z1 = Math.max(z1, cur.reqZ[i]); }
     frameBox.min.set(cur.reqX[iLo] - cur.reqHalf[iLo], 0, z0 - Math.max(GRAIN_DEPTH, KERNEL.puckRadius));
     frameBox.max.set(cur.reqX[iHi] + cur.reqHalf[iHi], top * (1 + KERNEL.dropHeightTokens) * yScale, z1 + KERNEL.puckRadius);
-    const e = cur.tables.requests.epochs.find((q) => q.start === iLead + 1);
+    const e = cur.epochAt.get(iLead + 1);
     if (e) {
       const p = e.puck;
       frameBox.expandByPoint(_v.set(p[0] - KERNEL.puckRadius, 0, p[2] - KERNEL.puckRadius));
@@ -488,19 +494,20 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       // The smallest grain drawn, in CSS px: grainSizePx (the vertex shader's rule) for the narrowest
       // drawn tread, the thinnest grain step and the smallest stratum scale, at the farthest corner of
       // the drawn columns. A lower bound, no readback; the floor makes it at least 2 (3 at Layers).
-      let far = 0, halfW = Infinity, scale = Infinity, depth = Infinity;
+      let far = 0, halfW = Infinity, scale = Infinity, depth = Infinity, vx = Infinity;
       for (let k = 0; k < 8; k++) {
-        _v.set(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(f.camera.matrixWorldInverse);
+        _v.set(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z);
+        _c.subVectors(f.camera.position, _v).normalize();
+        vx = Math.min(vx, Math.abs(_c.x)); // the smallest |view direction .x| any drawn grain can have
+        _v.applyMatrix4(f.camera.matrixWorldInverse);
         far = Math.max(far, -_v.z);
       }
       for (let i = Math.max(0, iLo); i <= Math.min(cur.n - 1, iLead); i++) { halfW = Math.min(halfW, cur.reqHalf[i]); scale = Math.min(scale, cur.reqScaleMin[i]); depth = Math.min(depth, cur.reqDepth[i]); }
-      // the view direction's x at the drawn columns' centre (the shader takes it per grain)
-      box.getCenter(_c); _c.subVectors(f.camera.position, _c).normalize();
       const px = grainSizePx({
         halfW: Number.isFinite(halfW) ? halfW : 0, stepWorld: cur.stepMin * (Number.isFinite(scale) ? scale : 1) * yScale,
         pxPerWorld: f.camera.projectionMatrix.elements[5] * 0.5 * f.res.y / Math.max(1e-6, far),
         minPx: uniforms.uMinPx.value, maxPx: uniforms.uMaxPx.value, density: f.density,
-        depthSpread: (Number.isFinite(depth) ? depth : 0) * Math.abs(_c.x)
+        depthSpread: (Number.isFinite(depth) ? depth : 0) * (Number.isFinite(vx) ? vx : 0)
       });
       last.minPx = px / dpr;
     }
@@ -547,6 +554,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     columnsBox,
     get agent() { return cur ? cur.agent : null; },
     get tables() { return cur ? cur.tables : null; },
+    epochStartingAt: (i) => (cur && !cur.empty ? cur.epochAt.get(i) : undefined),
     stats() {
       return {
         grains: last.grains, grainChunks: last.chunks, grainColumns: last.columns, grainDensity: last.density, minGrainPx: last.minPx,
