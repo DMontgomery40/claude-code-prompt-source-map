@@ -45,14 +45,24 @@ on 2026-09-27.
   with no text. The page fetches it only when the layer opens.
 - **Verified** in the built site on one Claude Code session and three Codex/ChatGPT sessions. The model
   builds in 0.5–3.6 s in the browser, and there are no console errors.
+- **Placing short wrappers (dfe10dd).** The literal index also keeps short markers: a wrapper's head
+  line or an opening tag, matched only when a piece's whole first line matches. Rust sources are read as
+  Rust strings. On the three private Codex/ChatGPT sessions, the pieces that read "not in the library"
+  went from 10, 7 and 5 to 1, 1 and 0.
+- **Craft pass (122c9dd).**
+  - A cool, neutral stage.
+  - The legend sits in the caption, and the layer keeps clear of Trace's playback bar and Session map.
+  - One hero callout; hover shows a tip, and a pick sends a pulse along the wire.
+  - Racks fold repeats into one "×n" plate and frame only as many rows as stay readable; the wheel walks
+    the rest.
 - **Open.**
-  - **Codex/ChatGPT coverage.** Index the published `data/*.json` records too. Today, pieces the library
-    only documents in JSON read "not in the library".
-  - **Short tool-output wrappers** ("Wall time:", "Script completed") need short-literal matching.
-  - **Size.** Trim the literal index (1.6 MB and 2.6 MB gzipped).
-  - **Tall racks** have small text at first framing.
-  - **The rung legend** crowds the session map at the bottom left.
-  - **The craft pass**, measured against Ryan Sael's frames and the stop-scroll cold read.
+  - **The hero graphic doesn't carry the claim.** The caption does. A cold read called the wires mostly
+    decoration, and next to Ryan Sael's frames at the same scale it is still behind on materials and on
+    having one designed object. This is a concept question, not a craft one.
+  - **At 1280×800,** Trace's own chrome leaves the layer about 240 px of height.
+  - **Text on linked plates** is lower contrast than on the red and amber ones.
+  - **Size.** The literal index is 1.7 MB (Claude Code) and 1.2 MB (Codex/ChatGPT) gzipped, and loads
+    only when the layer opens.
 
 ## Where the work in progress lives
 Locally, in the gitignored `private/research/restart/`. That covers the brief, discovery scans, the four
