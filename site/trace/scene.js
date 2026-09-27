@@ -2275,11 +2275,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   return {
     show,
     getView() { return { position: camera.position.toArray(), target: controls.target.toArray(), zoom: camera.zoom, overviewDistance }; },
-    // The playback director (Task 10): see applyShot. getEvents is director.js's buildEvents on this
-    // scene's own placement, built once.
+    // The playback director (Task 10): see applyShot. getGeometry is this scene's own placement (with
+    // ?massif=); getEvents is director.js's buildEvents on it, built once.
     setDirectorShot: applyShot,
     onUserCamera(cb) { onUserCam = typeof cb === "function" ? cb : null; },
     leadScreenX,
+    getGeometry() { return geom; },
     getEvents() { return directorEvents ??= buildEvents(L, geom); },
     restoreView(view) {
       fly.on = false;

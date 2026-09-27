@@ -9,8 +9,7 @@ import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLands
 import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
 import { createTransport, playheadForRequest } from "./transport.js";
-import { buildEvents, nextShot, agentPAt, createFollowZoom } from "./director.js";
-import { createGeometry } from "./landscape-geometry.js";
+import { nextShot, agentPAt, createFollowZoom } from "./director.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -801,8 +800,8 @@ function playFromMap() {
 }
 
 // ---------- the director (director.js) ----------
-// Built on a session's first run: the landscape's placement and its events (the scene's own list when it
-// offers one). prev is the last shot; level and span are the map zoom the run started at, so the
+// Built on a session's first run: the scene's own placement and events, so the director aims where the
+// scene draws. prev is the last shot; level and span are the map zoom the run started at, so the
 // director's own framing never changes the level it works at. Nothing here allocates per tick but the
 // shots the director returns.
 function direct(p) {
@@ -810,8 +809,7 @@ function direct(p) {
   if (!p.playing) { if (dir) { dir.prev = null; dir.prevCutX = null; } return; }
   const pb = transport.playback;
   if (!dir) {
-    const geom = createGeometry({ trace: S.trace, layout: S.layout });
-    dir = { geom, events: scene.getEvents?.() || buildEvents(S.layout, geom), prev: null, prevCutX: null, level: 0, span: 0, zoom: 1,
+    dir = { geom: scene.getGeometry(), events: scene.getEvents(), prev: null, prevCutX: null, level: 0, span: 0, zoom: 1,
       lead: { agentId: null, P: 0, x: 0, z: 0, yTop: 0 }, state: {} };
   }
   const d = dir, g = d.geom, s = d.state, root = S.layout.root, cutX = g.W * pb.xAt(p.P);
