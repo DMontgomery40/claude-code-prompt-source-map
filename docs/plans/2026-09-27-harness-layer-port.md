@@ -82,12 +82,12 @@ export function createHarnessView({ container, onPick /* (agentId, blockIndex) *
 - It renders on demand and does no work while hidden.
 - Everything product-specific comes from the model.
 
-### 3. The literal index (build time; **not shipped until David decides**)
+### 3. The literal index (build time; **ships**: David approved it 2026-09-27)
 Built by `site/src/shared/trace-build.mjs` from `claude-code/work` (the extracted chunks) and `codex/work`
 (the CLI source, the binary, and app.asar):
 - **Contents:** hashes of normalized literal lines and prefixes, plus chunk or file and offset. No text.
-- **Output:** `dist/trace/literal-index.json` only when `HARNESS_LITERALS=1`.
-- **Default:** off. The view says "not in the library" instead of "in the binary at …".
+- **Output:** `dist/trace/literal-index.json` in the `byProduct` shape, built by default. A test asserts it holds no readable text.
+- The view says "in the binary: <chunk> @ <offset>" for binary-only pieces, and "not in the library" when there is no literal match.
 
 ### 4. The app wiring (owned by the lead)
 The same edits as the integration mock:
