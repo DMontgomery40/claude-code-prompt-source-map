@@ -22,8 +22,11 @@ export const GRAIN_SIZES = [10, 20, 50, 100, 200, 500, 1000];
 export const GRAIN_CAP = 400_000;
 
 // dropHeightTokens is a fraction of the column's context (tokens), so every column drops the same
-// share of its height. puckRadius (world units) and spiralTurns shape the compaction puck.
-export const KERNEL = { pourWindow: 0.6, fallDur: 0.5, dropHeightTokens: 0.12, collapseDur: 0.8, jitterX: 0.35, jitterZ: 0.6, puckRadius: 0.8, spiralTurns: 5 };
+// share of its height. puckRadius (world units) and spiralTurns shape the compaction puck. Timing, in
+// requests: a request's blocks start falling within pourWindow and fall for fallDur, so all are
+// settled by i + 0.6; a collapse runs over the last collapseDur, [lastReq + 0.7, lastReq + 1]. P = i +
+// 0.65 (where focusing request i puts the playhead) is request i complete, nothing collapsing.
+export const KERNEL = { pourWindow: 0.35, fallDur: 0.25, dropHeightTokens: 0.12, collapseDur: 0.3, jitterX: 0.35, jitterZ: 0.6, puckRadius: 0.8, spiralTurns: 5 };
 // A grain rests anywhere across its request's tread (the table's `centre` +- half width) and up to
 // GRAIN_DEPTH world units behind the face (or the ridge's own depth, if less: the table's `depth`), so
 // neighbouring columns meet as one slab. jitterX and jitterZ above are no longer read.
@@ -370,13 +373,15 @@ export function grainPosition(tables, b, s, uT, params = KERNEL) {
   const o = b * BLOCK_TEXELS * 4;
   const k = bt[o], prefix = bt[o + 1], step = bt[o + 2], seenBy = bt[o + 3];
   const lastReq = bt[o + 4], flags = bt[o + 5], epoch = bt[o + 6], slotBase = bt[o + 7];
-  const i = Math.floor(uT), f = uT - i;
-  const i0 = Math.min(Math.max(i, 0), n - 1), i1 = Math.min(i0 + 1, n - 1);
-  const A0 = reqTexel(req, i0, 0), A1 = reqTexel(req, i1, 0);
-  const lerp = (t, c) => mix(reqTexel(req, i0, t)[c], reqTexel(req, i1, t)[c], f);
-  const baseK = k < 4 ? lerp(1, k) : lerp(2, k - 4);
-  const scaleK = k < 4 ? lerp(3, k) : lerp(4, k - 4);
-  const ctx = mix(A0[1], A1[1], f), halfW = A0[3]; // x and depth: request i0's own tread, not interpolated
+  const i = Math.floor(uT);
+  const i0 = Math.min(Math.max(i, 0), n - 1);
+  // Request i0 as it was: its tread, depth, bases and scales (no easing toward i0 + 1), so a column
+  // reads the same as the leading column during its request and as a settled trail column after it.
+  const A0 = reqTexel(req, i0, 0);
+  const at = (t, c) => reqTexel(req, i0, t)[c];
+  const baseK = k < 4 ? at(1, k) : at(2, k - 4);
+  const scaleK = k < 4 ? at(3, k) : at(4, k - 4);
+  const ctx = A0[1], halfW = A0[3];
   const zF = reqTexel(req, i0, 4)[3];
   const sum = reqTexel(req, i0, 2)[3];
 

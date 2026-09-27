@@ -121,15 +121,15 @@ void main() {
   float fi = floor(uT);
   if (fi < 0.0 || fi < B0.w || fi > B1.x) return;
   int i0 = clamp(int(fi), 0, uReqCount - 1);
-  int i1 = min(i0 + 1, uReqCount - 1);
-  float f = lead ? uT - fi : 0.0;
   if (!(reqTexel(i0, 2).w > 0.0)) return; // split unknown: the ridge is grey, no grains
-  vec4 A0 = reqTexel(i0, 0), A1 = reqTexel(i1, 0); // grains.js's copy: x tread centre, y context, z grain depth, w tread half width
+  // request i0 as it was (no easing toward i0 + 1): the leading column matches the trail column it
+  // becomes, and a focused request (P = i + 0.65) shows exactly request i
+  vec4 A0 = reqTexel(i0, 0); // grains.js's copy: x tread centre, y context, z grain depth, w tread half width
   int k = int(B0.x + 0.5);
   int bt = k < 4 ? 1 : 2, st = k < 4 ? 3 : 4, c = k < 4 ? k : k - 4;
-  float baseK = mix(reqTexel(i0, bt)[c], reqTexel(i1, bt)[c], f);
-  float scaleK = mix(reqTexel(i0, st)[c], reqTexel(i1, st)[c], f);
-  float ctx = mix(A0.y, A1.y, f), halfW = A0.w;
+  float baseK = reqTexel(i0, bt)[c];
+  float scaleK = reqTexel(i0, st)[c];
+  float ctx = A0.y, halfW = A0.w;
   float zF = reqTexel(i0, 4).w;
   uint u = grainHash(uint(b), uint(s));
   float h = u2f(u), hx = u2f(${HASH_NAME}(u ^ SALT_X)), hz = u2f(${HASH_NAME}(u ^ SALT_Z));

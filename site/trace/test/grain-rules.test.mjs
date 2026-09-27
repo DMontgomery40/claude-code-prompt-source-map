@@ -166,7 +166,9 @@ test("grain rules: constants and grain size", () => {
   assert.equal(BLOCK_TEXELS, 2);
   assert.equal(TABLE_WIDTH, 2048);
   assert.equal(MAX_SLOTS, 4096);
-  for (const [k, v] of Object.entries({ pourWindow: 0.6, fallDur: 0.5, dropHeightTokens: 0.12, collapseDur: 0.8, jitterX: 0.35, jitterZ: 0.6 })) assert.equal(KERNEL[k], v, k);
+  for (const [k, v] of Object.entries({ pourWindow: 0.35, fallDur: 0.25, dropHeightTokens: 0.12, collapseDur: 0.3, jitterX: 0.35, jitterZ: 0.6 })) assert.equal(KERNEL[k], v, k);
+  assert.ok(Math.abs(KERNEL.pourWindow + KERNEL.fallDur - 0.6) < 1e-12, "a request's blocks are all settled by i + 0.6");
+  assert.ok(1 - KERNEL.collapseDur > 0.65, "i + 0.65 (a focused request) is before any collapse starts");
   assert.equal(chooseGrainSize(1_000_000, 400_000), 10);
   assert.equal(chooseGrainSize(50_000_000, 400_000), 200);
   assert.equal(chooseGrainSize(0), 10);
@@ -409,8 +411,20 @@ test("grain rules: kernel pour, purity and collapse", () => {
   const near = (u, v) => Math.abs(u - v) <= 1e-6 * Math.max(1, Math.abs(v));
   assert.ok(near(c.x, puck[0] + off[0]) && near(c.y, puck[1] + off[1]) && near(c.z, puck[2] + off[2]), JSON.stringify([c, puck, off]));
   assert.equal(grainPosition(T, row, s, 20.1, P).kC, 0);
-  const mid = grainPosition(T, row, s, 20.6, P);
+  assert.equal(grainPosition(T, row, s, 20.65, P).kC, 0, "nothing collapses at lastReq + 0.65");
+  assert.equal(grainPosition(T, row, s, 20.7, P).kC, 0, "the collapse starts at lastReq + 0.7");
+  const mid = grainPosition(T, row, s, 20.85, P);
   assert.ok(mid.kC > 0 && mid.kC < 1 && !mid.hidden);
+  // every grain of the request pours in within [i, i + 0.6]: at seenBy + 0.6 + epsilon all have landed
+  for (let q = 0; q < Math.min(m.nSlots[row], 60); q++) {
+    const g = grainPosition(T, row, q, 10.6 + 1e-9, P);
+    assert.equal(g.kIn, 1, `slot ${q} settled by i + 0.6`);
+    assert.equal(g.y, g.rest[1]);
+    assert.equal(grainPosition(T, row, q, 10.65, P).kC, 0);
+    // heights are request 10's through the request (no easing toward 11): the column that becomes the
+    // settled trail column at P = 11 is the same one
+    assert.equal(grainPosition(T, row, q, 10.95, P).rest[1], grainPosition(T, row, q, 10.61, P).rest[1]);
+  }
   // A block still in context at the end never collapses.
   const endRow = [...Array(T.blocks.count).keys()].find((r) => m.blockIndex[r] === 26);
   assert.equal(m.epoch[endRow], -1);
@@ -464,7 +478,8 @@ test("grain rules: the JS kernel places grains across the tread and depth, as th
   // the shader's expressions, which the JS below mirrors
   assert.match(GRAIN_VERT, /vec3 rest = vec3\(A0\.x \+ \(2\.0 \* hx - 1\.0\) \* halfW,/);
   assert.match(GRAIN_VERT, /zF - hz \* A0\.z\);/);
-  assert.match(GRAIN_VERT, /float ctx = mix\(A0\.y, A1\.y, f\), halfW = A0\.w;/);
+  assert.match(GRAIN_VERT, /float ctx = A0\.y, halfW = A0\.w;/);
+  assert.match(GRAIN_VERT, /float baseK = reqTexel\(i0, bt\)\[c\];/);
   const [[, trace]] = await fixtureTraces();
   const agent = trace.agents.find((a) => a.kind === "root");
   // off-centre treads (the request's x is not the tread's middle) and a ridge shallower than the grain depth

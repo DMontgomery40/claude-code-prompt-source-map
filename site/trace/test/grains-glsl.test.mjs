@@ -112,7 +112,8 @@ test("grain size: the face area a grain stands for, floored, capped, grown by sq
 test("the grain shader fills the tread and GRAIN_DEPTH, and sizes grains by grainSizePx", async () => {
   assert.match(GRAIN_VERT, /vec3 rest = vec3\(A0\.x \+ \(2\.0 \* hx - 1\.0\) \* halfW,/);
   assert.match(GRAIN_VERT, /zF - hz \* A0\.z\);/);
-  assert.match(GRAIN_VERT, /float ctx = mix\(A0\.y, A1\.y, f\), halfW = A0\.w;/);
+  assert.match(GRAIN_VERT, /float ctx = A0\.y, halfW = A0\.w;/);
+  assert.match(GRAIN_VERT, /float baseK = reqTexel\(i0, bt\)\[c\];/);
   assert.match(GRAIN_VERT, /float pxPerWorld = projectionMatrix\[1\]\[1\] \* 0\.5 \* uRes\.y \/ clip\.w;/);
   assert.match(GRAIN_VERT, /float tilePx = uTile \* sqrt\(max\(\(2\.0 \* halfW \+ A0\.z \* abs\(V\.x\)\) \* B0\.z \* scaleK \* uYScale, 0\.0\)\) \* pxPerWorld;/);
   assert.match(GRAIN_VERT, /float rad = 0\.5 \* clamp\(tilePx, uMinPx, uMaxPx\) \* uSizeScale;/);
