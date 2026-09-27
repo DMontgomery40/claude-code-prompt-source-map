@@ -1368,7 +1368,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // A single massif is seen nearly side-on, so its stepped profile reads the way the 2D chart does.
     const [az, el] = rule.compact ? (portrait ? [VIEW.cpaz, VIEW.cpel] : [VIEW.caz, VIEW.cel]) : (portrait ? [VIEW.paz, VIEW.pel] : [VIEW.az, VIEW.el]);
     const f = fit(null, dirFrom(az, el), box.getCenter(new THREE.Vector3()), pts, pad);
-    overviewDistance = f.pos.distanceTo(f.tgt);
+    // OrbitControls clamps the camera to maxDistance, so the overview distance the map zoom is measured
+    // against must not exceed it (a phone's fit can ask for more, which read as 2.5x Agents at load)
+    overviewDistance = Math.min(controls.maxDistance, f.pos.distanceTo(f.tgt));
     flyTo(f.pos, f.tgt, dur);
   }
   function frameL1(i, dur) {
