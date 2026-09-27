@@ -28,28 +28,31 @@ on 2026-09-27.
 - **Hand-offs.** A click in the layer opens Trace's own reader at that block. A selection in Trace's
   sidebar drives the layer.
 
-## Status
-- **Prototyped and integrated as a real mode in built copies of Trace, for both products.**
-  - A Harness button sits next to 2D/3D, and the `h` key toggles it. Both appear in the "?" sheet and the command palette.
-  - `?view=harness` opens straight into it.
-  - `S.mode = "harness"` is a real mode, so back and forward work through view history.
-  - Trace's selection and playhead drive the layer.
-  - A click in the layer calls `A.openBlockAt`, so the reader, crumbs and playhead follow.
-  - Grains are gone from Trace (removed 2026-09-27, `port/grains-out`).
-  - The patch against the built Trace is small: app.js +21 lines, index.html +3, keys.js +1, palette.js +1, plus a `harness/` folder.
-- **Tested** on one Claude Code session and three Codex/ChatGPT sessions.
-- **Not yet ported into `site/trace`.** The port needs to:
-  - apply those edits to the source;
-  - mount the layer as a module in the stage container (no iframe, no second WebGL context);
-  - compute pieces in `worker.js` instead of precomputed per-session data;
-  - ship a literal index next to `reference-index.json`;
-  - add an n/N "next copy of this piece" key.
-- **Known rough edges:**
-  - Esc/back can leave the mode.
-  - A 2D-only session has no playback or minimap in the layer.
-  - The panel note says "ridge" in Harness mode.
-  - The bottom-left is tight under 980 px.
-- **Open decision:** whether an index derived from the binary may ship publicly.
+## Status (2026-09-27): ported into `site/trace`
+- **The mode.** The Harness button sits beside 3D/2D, and the `h` key toggles it. Both appear in the "?"
+  sheet and the command palette. `?view=harness` opens straight into it, and back and forward work.
+- **Where it lives.**
+  - `harness/pieces.js` builds the model in the worker, lazily, the first time the mode opens. It works on
+    any session and links pieces by text.
+  - `harness/view.js` draws the board, live racks, compare, later and six presets. It uses its own canvas,
+    renders on demand, and does nothing while hidden.
+  - `harness/mode.js` is the glue.
+- **What keeps working.** The 3D scene runs hidden under the layer, so playback and the session map still
+  work.
+- **Hand-offs.** A pick opens the existing reader through `A.openBlockAt`, and Trace's selection drives
+  the layer.
+- **Literal index.** Each product ships `literal-index.<product>.json`: hashes, file names and offsets,
+  with no text. The page fetches it only when the layer opens.
+- **Verified** in the built site on one Claude Code session and three Codex/ChatGPT sessions. The model
+  builds in 0.5–3.6 s in the browser, and there are no console errors.
+- **Open.**
+  - **Codex/ChatGPT coverage.** Index the published `data/*.json` records too. Today, pieces the library
+    only documents in JSON read "not in the library".
+  - **Short tool-output wrappers** ("Wall time:", "Script completed") need short-literal matching.
+  - **Size.** Trim the literal index (1.6 MB and 2.6 MB gzipped).
+  - **Tall racks** have small text at first framing.
+  - **The rung legend** crowds the session map at the bottom left.
+  - **The craft pass**, measured against Ryan Sael's frames and the stop-scroll cold read.
 
 ## Where the work in progress lives
 Locally, in the gitignored `private/research/restart/`. That covers the brief, discovery scans, the four
