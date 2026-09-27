@@ -220,3 +220,26 @@ test("density governor: dropped frames lower density in steps, calm frames resto
   h.reset();
   assert.equal(h.density, 1);
 });
+
+test("sweep labels: the six largest injected or re-sent blocks of 900 tokens or more, shown a second", async () => {
+  const { sweepLabelBands, sweepLabelOpacity } = await import("../scene-rules.js");
+  const band = (b, flags, y0, size, blockIndex = b) => ({ b, blockIndex, stratum: 3, flags, y0, y1: y0 + size });
+  const bands = [
+    band(0, 1, 0, 5000), band(1, 2, 5000, 900), band(2, 1, 6000, 899), band(3, 0, 7000, 50000), band(4, 4, 0, 9000),
+    band(5, 3, 60000, 1200), band(6, 1, 61200, 2000), band(7, 1, 63200, 3000), band(8, 1, 66200, 4000), band(9, 1, 70200, 6000),
+    band(10, 64, 0, 16000, -1), band(11, 65, 0, 16000, -1)
+  ];
+  const got = sweepLabelBands(bands);
+  assert.deepEqual(got.map(b => b.b), [9, 0, 8, 7, 6, 5], "largest first, six at most");
+  assert.ok(!got.some(b => b.b === 1 || b.b === 2), "900 tokens make the cut only when the six are not full");
+  assert.deepEqual(sweepLabelBands(bands, { limit: 20 }).map(b => b.b), [9, 0, 8, 7, 6, 5, 1], "exactly 900 counts; 899 does not");
+  assert.ok(!sweepLabelBands(bands, { limit: 20 }).some(b => [3, 4, 10, 11].includes(b.b)), "plain, own-only and unlogged rows never");
+  assert.deepEqual(sweepLabelBands([]), []);
+  assert.equal(sweepLabelOpacity(0), 1);
+  assert.equal(sweepLabelOpacity(0.35), 1);
+  assert.ok(sweepLabelOpacity(0.6) > 0 && sweepLabelOpacity(0.6) < 1);
+  assert.ok(sweepLabelOpacity(0.99) < 0.01);
+  assert.equal(sweepLabelOpacity(1), null);
+  assert.equal(sweepLabelOpacity(NaN), null);
+  for (let a = 0; a < 1; a += 0.01) assert.ok(sweepLabelOpacity(a + 0.01) <= sweepLabelOpacity(a) || sweepLabelOpacity(a + 0.01) == null);
+});

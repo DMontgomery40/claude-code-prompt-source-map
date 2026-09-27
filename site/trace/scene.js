@@ -11,9 +11,9 @@ import { zoomCamera, panCameraTo } from "./map-camera.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
-import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor } from "./scene-rules.js";
+import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
 import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
-import { KERNEL } from "./grain-rules.js";
+import { KERNEL, bandsForRequest } from "./grain-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
 const STAGE_Z0 = 15;
@@ -593,7 +593,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const gpuName = glInfo ? String(renderer.getContext().getParameter(glInfo.UNMASKED_RENDERER_WEBGL)) : "unknown";
   const softwareGpu = /SwiftShader|llvmpipe|Basic Render|softpipe/i.test(gpuName);
   const rootN = L.root.requests.length;
-  const play = { P: Math.max(0, rootN - 1), playing: false, sweep: null };
+  const play = { P: Math.max(0, rootN - 1), playing: false, sweep: null, speed: null };
   const grainOpts = { enabled: !softwareGpu, density: null, square: false, columns: null, emissive: 1 };
   const governor = createDensityGovernor();
   const grains = createGrains({ THREE, renderer, shared, geom, yScale, reducedMotion, accent: STRATA[STRATUM_INDEX.you].color });
@@ -711,6 +711,41 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       }
     }
     liftSweep.uSweepOn.value = liftOn ? 1 : 0;
+  }
+  // Sweep labels: in each request the playhead reaches while playing, the six largest injected or re-sent
+  // blocks (900 tokens or more) of the leading column get a label as the sweep passes them, fading over a
+  // second; a block labelled again while its label still shows only renews it. None at 16 requests a
+  // second or faster (setPlayhead's speed), where they would only flicker.
+  const SWEEP_LABELS = 6, SWEEP_MIN = 900, SWEEP_FADE = 1000;
+  const sweepLabels = { key: "", pending: [], shown: new Map() };
+  function updateSweepLabels(now) {
+    const frac = sweepFraction(), agent = grainAgent, tables = grains.tables;
+    const on = frac != null && grainK > 0 && level === 0 && !(play.speed >= 16) && tables && grains.agent === agent;
+    if (on) {
+      const i = Math.floor(grainUP), key = `${agent.id}:${i}`, ctx = agent.requests[i]?.tokens.context || 0;
+      if (key !== sweepLabels.key) {
+        sweepLabels.key = key;
+        sweepLabels.pending = ctx > 0 ? sweepLabelBands(bandsForRequest(tables, i), { min: SWEEP_MIN, limit: SWEEP_LABELS }) : [];
+      }
+      for (let k = sweepLabels.pending.length - 1; k >= 0; k--) {
+        const b = sweepLabels.pending[k];
+        if (frac < b.y0 / ctx) continue;
+        sweepLabels.pending.splice(k, 1);
+        const [, t1] = geom.tread(agent, i), pos = new THREE.Vector3(t1 + 0.05, (b.y0 + b.y1) / 2 * yScale, zOf(agent, i));
+        const had = sweepLabels.shown.get(b.b);
+        if (had) { had.t = now; had.o.position.copy(pos); continue; }
+        const o = label(`${clip(agent.blocks[b.blockIndex]?.label || STRATA[b.stratum].name, 34)} · ≈ ${fmtTok(b.y1 - b.y0)}`, "sweep event", pos, [0, 0.5], labelGroups.sweep);
+        o.element.style.borderLeftColor = STRATA[b.stratum].color;
+        sweepLabels.shown.set(b.b, { o, t: now });
+      }
+    } else { sweepLabels.key = ""; sweepLabels.pending = []; }
+    labelGroups.sweep.visible = level === 0;
+    // full for the first third of the second, then fading; all gone as soon as the sweep stops
+    for (const [k, s] of sweepLabels.shown) {
+      const op = on ? sweepLabelOpacity((now - s.t) / SWEEP_FADE) : null;
+      if (op == null) { labelGroups.sweep.remove(s.o); s.o.element.remove(); sweepLabels.shown.delete(k); continue; }
+      s.o.element.style.opacity = String(op);
+    }
   }
   function updateGrains(now) {
     const K = grainK;
@@ -1058,9 +1093,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // ---- labels (pooled per level; only what is in focus) ----
   let detailedLabels = false;
   let overviewDistance = 1, detail = mapDetail(1), mapZoom = 1;
-  const labelGroups = { l0: new THREE.Group(), l1: new THREE.Group(), l2: new THREE.Group(), map: new THREE.Group() };
+  const labelGroups = { l0: new THREE.Group(), l1: new THREE.Group(), l2: new THREE.Group(), map: new THREE.Group(), sweep: new THREE.Group() };
   Object.values(labelGroups).forEach(g => scene.add(g));
-  const PRIO = { focus: 10, request: 6, agent: 5, cluster: 4, corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
+  const PRIO = { sweep: 7, focus: 10, request: 6, agent: 5, cluster: 4, corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
   function label(text, cls, pos, center = [0.5, 0.5], group = labelGroups.l0, onClick) {
     const div = document.createElement(onClick ? "button" : "div");
     div.className = `lbl ${cls || ""}`;
@@ -1883,6 +1918,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       updatePlayhead();
       updateGrains(now);
       updateSweepSolids();
+      updateSweepLabels(now);
       renderer.render(scene, camera);
       lastRenderAt = now;
       labels.render(scene, camera);
@@ -1960,8 +1996,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // The playhead. P: root request space, clamped to [0, n - 1] (n - 1 = the end: nothing cut). playing:
     // keep rendering every frame. sweep: 0..1 through the current request, or null. Cheap and idempotent:
     // it stores state and asks for a frame; the cut, trench and grain columns follow in frame().
-    setPlayhead({ P, playing, sweep } = {}) {
+    setPlayhead({ P, playing, sweep, speed } = {}) {
       if (P != null && Number.isFinite(+P)) play.P = clampP(+P);
+      if (speed !== undefined) play.speed = Number.isFinite(+speed) ? +speed : null;
       if (playing !== undefined) play.playing = !!playing;
       if (sweep !== undefined) play.sweep = sweep == null || !Number.isFinite(+sweep) ? null : Math.min(1, Math.max(0, +sweep));
       dirty = Math.max(dirty, 1);

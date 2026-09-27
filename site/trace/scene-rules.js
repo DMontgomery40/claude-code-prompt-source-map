@@ -138,3 +138,20 @@ export function createDensityGovernor({ window = 30, high = 18, low = 12, calm =
     reset() { density = 1; sinceEval = 0; calmRun = 0; samples.length = 0; }
   };
 }
+
+// Sweep labels (scene.js updateSweepLabels): of the bands in a request's leading column, the injected
+// (flag 1) or re-sent (flag 2) blocks of at least `min` tokens, largest first, at most `limit`. A band is
+// labelled once the sweep (0..1 up the column) reaches its bottom, y0 / context.
+export function sweepLabelBands(bands, { min = 900, limit = 6 } = {}) {
+  return bands
+    .filter(b => (b.flags & 3) && b.blockIndex >= 0 && b.y1 - b.y0 >= min)
+    .sort((a, b) => (b.y1 - b.y0) - (a.y1 - a.y0) || a.y0 - b.y0)
+    .slice(0, limit);
+}
+// A sweep label's opacity `age` seconds after the sweep passed it: full for the first third, then a
+// smooth fade to nothing at 1 s (null: remove it).
+export function sweepLabelOpacity(age) {
+  if (!(age >= 0) || age >= 1) return null;
+  const t = Math.min(1, Math.max(0, (age - 0.35) / 0.65));
+  return 1 - t * t * (3 - 2 * t);
+}
