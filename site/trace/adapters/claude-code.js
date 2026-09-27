@@ -135,7 +135,7 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
   const isSub = !!meta || !!agentId;
   const agent = newAgent({ file: fileIndex, kind: isSub ? "subagent" : "root" }, index);
   const st = {
-    agent, meta, agentId, sessionId: null, version: null, title: null, spawnCalls: [], agentBlocks: [],
+    agent, meta, agentId, sessionId: null, version: null, title: null, spawnCalls: [], workflowCalls: [], agentBlocks: [],
     side: [], badLines: 0, firstT: null, lastT: null, attachmentTypes: {}, bytesRead: 0,
   };
   let windowStart = 0;
@@ -379,6 +379,10 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
               tu.action.result = first.ref;
               if (x.is_error) tu.action.error = true;
             }
+            if (tu && tu.workflow) {
+              tu.workflow.result = partText(x.content);
+              tu.workflow.runId = (r.toolUseResult && r.toolUseResult.runId) || null;
+            }
             if (kind === "agents" && first) st.agentBlocks.push({ t, block: first.i, callId: x.tool_use_id, teammate: null, ids: [] });
           } else if (x.type === "text") textBlocks(x.text || "", path.concat(["text"]), t, r.uuid, r);
           else if (x.type === "image") track(r.uuid, addBlock(agent, { t, kind: isSub ? "agents" : "you", label: "image", ref: { ...lineRef, path: path.concat(["source"]) }, image: imageDims(x.source && x.source.data) || {} }));
@@ -405,11 +409,15 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
             if (main && !main.action) main.action = { kind: "text", tool: null, target: null, class: "internal", args: b.ref, result: null };
           } else if (x.type === "tool_use") {
             const input = x.input || {};
-            const b = addBlock(agent, { t, kind: "model", label: `${x.name} call`, ref: { ...lineRef, path: path.concat(["input"]) }, text: JSON.stringify(input) });
+            const args = JSON.stringify(input);
+            const b = addBlock(agent, { t, kind: "model", label: `${x.name} call`, ref: { ...lineRef, path: path.concat(["input"]) }, text: args });
             track(r.uuid, b);
             const c = classifyClaudeTool(x.name, input);
             const action = { kind: "tool", tool: x.name, target: c.target, class: c.class, args: b.ref, result: null, callId: x.id };
-            toolUses.set(x.id, { name: x.name, action, skill: x.name === "Skill" ? input.skill || input.name || null : null });
+            // A Workflow call's input and result text, to find the run it launched (buildClaudeTrace).
+            const workflow = x.name === "Workflow" ? { t, callId: x.id, request: main ? main.i : null, input: args, result: "", runId: null } : null;
+            if (workflow) st.workflowCalls.push(workflow);
+            toolUses.set(x.id, { name: x.name, action, skill: x.name === "Skill" ? input.skill || input.name || null : null, workflow });
             if (x.name === "Agent" || x.name === "Task") st.spawnCalls.push({ t, callId: x.id, name: input.name || null, description: input.description || null, subagentType: input.subagent_type || null, request: main ? main.i : null, block: b.i });
             if (main) {
               if (!main.action || main.action.kind === "text") main.action = action;
@@ -470,29 +478,67 @@ export function buildClaudeTrace(parsed, files) {
     a.model = (a.requests.find((r) => r.model && r.model !== "<synthetic>") || {}).model || (p.meta && p.meta.model) || null;
     finalizeAgent(a, permissionAt);
   }
-  // Parent links: the Agent tool_use whose input name (else description) matches
-  // the subagent's meta, closest before the subagent's first row.
+  // Parent links. A fork's transcript replays its parent's rows up to its own spawn call (the meta's
+  // toolUseId); those copies spawned nothing, so only calls after it count.
   const spawnIndex = [];
-  for (const p of parsed) for (const s of p.spawnCalls) spawnIndex.push({ p, s });
+  for (const p of parsed) {
+    const own = p.meta && p.meta.toolUseId ? p.spawnCalls.find((s) => s.callId === p.meta.toolUseId) : null;
+    for (const s of p.spawnCalls) if (!own || s.t > own.t) spawnIndex.push({ p, s });
+  }
+  const claimed = new Set();
+  const link = (p, parent, s, linkedBy) => {
+    p.parent = parent;
+    p.agent.parentId = parent.agent.id;
+    if (s) { p.agent.spawn = { t: s.t, parentRequest: s.request, callId: s.callId, linkedBy }; claimed.add(s.callId); }
+  };
+  // A Workflow run's agents sit in <session>/subagents/workflows/<run id>/ ("" when picked loose).
+  const runOf = (p) => {
+    const m = /\/subagents\/workflows\/([^/]+)\/[^/]+$/.exec(files[p.agent.file].name);
+    return m ? m[1] : p.meta && p.meta.agentType === "workflow-subagent" ? "" : null;
+  };
+  const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const names = (text, id) => !!(id && text) && new RegExp(`(?:^|\\W)${esc(id)}(?![\\w-])`).test(text);
+  // The root's Workflow call that launched the run: its runId, else the earliest whose result (then
+  // input) names the run, else the closest before the agent's first row.
+  const launch = (run, first) => {
+    const before = root.workflowCalls.filter((w) => w.t <= first + 5000);
+    return (run && (root.workflowCalls.find((w) => w.runId === run) || before.find((w) => names(w.result, run)) || before.find((w) => names(w.input, run)))) || before.at(-1) || null;
+  };
+  // Exact links first: a Workflow run's launch; the Agent/Task call the meta's toolUseId names; else
+  // the call whose input name (else description) matches the meta, closest before the first row.
+  const unlinked = [];
   for (const p of parsed) {
     if (p === root) continue;
     const m = p.meta || {};
     const first = p.firstT ?? Infinity;
+    const w = runOf(p) != null ? launch(runOf(p), first) : null;
+    if (w) { link(p, root, w, "workflow"); continue; }
     const match = (f) => spawnIndex.filter(({ p: q, s }) => q !== p && f(s) && s.t <= first + 5000).sort((x, y) => y.s.t - x.s.t)[0];
-    const hit = (m.name && match((s) => s.name === m.name)) || (m.description && match((s) => s.description === m.description)) || null;
-    const parent = hit ? hit.p : root;
-    p.agent.parentId = parent.agent.id;
-    if (hit) {
-      p.agent.spawn = { t: hit.s.t, parentRequest: hit.s.request, callId: hit.s.callId, linkedBy: m.name && hit.s.name === m.name ? "name" : "description" };
-      hit.s.agentId = p.agent.id;
-    } else notes.push(`subagent ${p.agent.id} (${p.agent.name}): no matching Agent tool_use; attached to root`);
-    p.parent = parent;
+    const byId = m.toolUseId ? spawnIndex.find(({ p: q, s }) => q !== p && s.callId === m.toolUseId) : null;
+    const hit = byId || (m.name && match((s) => s.name === m.name)) || (m.description && match((s) => s.description === m.description)) || null;
+    if (hit) link(p, hit.p, hit.s, byId ? "toolUseId" : m.name && hit.s.name === m.name ? "name" : "description");
+    else unlinked.push(p);
+  }
+  // The rest: the meta's spawnDepth says how deep it sits (teammates count from 0 at the root, other
+  // subagents from 1). A nested one takes a subagent's unclaimed Agent/Task call in the 5 s before its
+  // first row, closest first; else it hangs from the root at that depth.
+  for (const p of unlinked.sort((x, y) => (x.firstT ?? Infinity) - (y.firstT ?? Infinity))) {
+    const m = p.meta || {};
+    const first = p.firstT ?? Infinity;
+    const want = !Number.isInteger(m.spawnDepth) ? 1 : m.taskKind === "in_process_teammate" ? m.spawnDepth + 1 : Math.max(1, m.spawnDepth);
+    const near = want > 1 && spawnIndex.filter(({ p: q, s }) => q !== p && q !== root && !claimed.has(s.callId) && (q.firstT ?? Infinity) < first && s.t >= first - 5000 && s.t <= first).sort((x, y) => y.s.t - x.s.t)[0];
+    if (near) { link(p, near.p, near.s, "time"); continue; }
+    link(p, root, null);
+    if (want > 1) {
+      p.fixedDepth = want;
+      notes.push(`subagent ${p.agent.id} (${p.agent.name}): meta spawnDepth ${m.spawnDepth} puts it at depth ${want}, but no Agent tool_use near its start spawned it; attached to root`);
+    } else notes.push(`subagent ${p.agent.id} (${p.agent.name}): no matching ${runOf(p) != null ? "Workflow" : "Agent"} tool_use; attached to root`);
   }
   for (const p of parsed) {
     if (p === root) continue;
-    let d = 0;
-    for (let q = p; q && q !== root && d < 20; q = q.parent) d++;
-    p.agent.depth = d;
+    let d = 0, q = p;
+    for (; q && q !== root && q.fixedDepth == null && d < 20; q = q.parent) d++;
+    p.agent.depth = d + (q && q.fixedDepth != null ? q.fixedDepth : 0);
     const parent = p.parent;
     const name = p.meta && p.meta.name;
     for (const ab of parent.agentBlocks) {

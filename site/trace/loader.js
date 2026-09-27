@@ -9,8 +9,9 @@ import { isCodexFirstLine, parseCodexThread, buildCodexTrace } from "./adapters/
 import { isClaudeRow, parseClaudeFile, buildClaudeTrace } from "./adapters/claude-code.js";
 
 const stem = (p) => p.split("/").pop().replace(/\.jsonl$/, "");
-// A Claude Code subagent file, recognised by its folder or, for loose files, by its first row.
-const SUB_PATH = /\/subagents\/agent-([^/]+)\.jsonl$/;
+// A Claude Code subagent file, recognised by its folder (a Workflow run's agents sit in
+// subagents/workflows/<run id>/) or, for loose files, by its first row.
+const SUB_PATH = /\/subagents\/(?:workflows\/[^/]+\/)?agent-([^/]+)\.jsonl$/;
 const isSub = (s) => SUB_PATH.test(s.path) || (s.row?.isSidechain === true && !!s.row?.agentId);
 const agentIdOf = (s) => SUB_PATH.exec(s.path)?.[1] ?? s.row?.agentId ?? /agent-([^/]+)\.jsonl$/.exec(s.path)?.[1] ?? null;
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
@@ -19,7 +20,7 @@ async function sniff(entry) {
   try {
     const first = JSON.parse(await readFirstLine(entry.source));
     if (isCodexFirstLine(first)) return { product: "codex", meta: first.payload };
-    if (isClaudeRow(first) || /\/subagents\/agent-[^/]+\.jsonl$/.test(entry.path)) return { product: "claude-code", row: first };
+    if (isClaudeRow(first) || SUB_PATH.test(entry.path)) return { product: "claude-code", row: first };
   } catch { /* not a log we know */ }
   return null;
 }
@@ -132,7 +133,8 @@ export async function narrowByHint(entries, hint, onProgress = () => {}) {
 
   // Claude Code: by path, plus loose subagent files grouped by their sessionId.
   const ccRoot = jsonl.find((e) => baseName(e.path).toLowerCase() === `${id}.jsonl`);
-  const ccSubs = jsonl.filter((e) => inFolder(e, "subagents"));
+  // agent-*.jsonl only: a Workflow run folder also holds its journal.jsonl, which is no transcript.
+  const ccSubs = jsonl.filter((e) => inFolder(e, "subagents") && /^agent-[^/]+\.jsonl$/.test(baseName(e.path)));
   if (ccRoot || ccSubs.length) {
     const loose = jsonl.filter((e) => /^agent-[^/]+\.jsonl$/.test(baseName(e.path)) && !/\/subagents\//.test(e.path) && !e.path.startsWith("subagents/"));
     report(0, loose.length + (ccRoot ? 1 : 0));

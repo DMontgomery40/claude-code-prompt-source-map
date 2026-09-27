@@ -5,10 +5,10 @@ import { fileURLToPath } from "node:url";
 import { loadTrace, findSessions } from "../loader.js";
 import { entriesFor } from "../dump.mjs";
 import { readRef, readRefLine, KINDS } from "../model.js";
-import { ASK, CC_ASK, CODEX, CC, CODEX_T0, uuid7, rows, msg, usage, pngBase64 } from "./fixtures/make.mjs";
+import { ASK, CC_ASK, CODEX, CC, CCN, CODEX_T0, uuid7, rows, msg, usage, pngBase64, claudeNestedFiles } from "./fixtures/make.mjs";
 import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const FIX = fileURLToPath(new URL("./fixtures/", import.meta.url));
 const load = async (sub, opts) => loadTrace(await entriesFor([FIX + sub]), opts);
@@ -409,6 +409,72 @@ test("claude-code: subagent linked by name and time, bursts, returns", async () 
   assert.deepEqual(sub.returns.map((x) => x.via), ["tool_result", "teammate-message"]);
   assert.deepEqual(sub.asks.map((a) => a.from), ["agent"]);
   assert.equal(sub.blocks[sub.asks[0].block].kind, "agents");
+});
+
+// The nested Claude Code session (make.mjs claudeNestedFiles), written once to a temp dir.
+let nestedDir = null;
+async function loadNested(opts) {
+  if (!nestedDir) {
+    nestedDir = mkdtempSync(join(tmpdir(), "trace-cc-nested-"));
+    for (const [rel, body] of Object.entries(claudeNestedFiles())) {
+      mkdirSync(dirname(join(nestedDir, rel)), { recursive: true });
+      writeFileSync(join(nestedDir, rel), body);
+    }
+  }
+  const { trace } = await loadTrace(await entriesFor([nestedDir]), opts);
+  return { trace, by: Object.fromEntries(trace.agents.map((a) => [a.id, a])) };
+}
+const subNotes = (trace, id) => trace.notes.filter((n) => n.startsWith(`subagent ${id} `));
+
+test("claude-code: a subagent's own subagents sit under it at their true depth", async () => {
+  const { by } = await loadNested();
+  // matched by name inside the parent's transcript, at the parent's request that made the call
+  assert.deepEqual([by.c1.parentId, by.c1.depth, by.c1.spawn.callId, by.c1.spawn.linkedBy, by.c1.spawn.parentRequest], ["b1", 2, "tuLeaf", "name", 0]);
+  assert.equal(by.b1.requests[by.c1.spawn.parentRequest].action.callId, "tuLeaf");
+  // a fork replays b1's calls ("leaf" included) before its own spawn: those copies spawned nothing.
+  // The fork hangs under b1 at depth 2 though its spawnDepth, counted from b1 (a teammate), is 1.
+  assert.deepEqual([by.a0fk.parentId, by.a0fk.depth, by.a0fk.spawn.callId, by.a0fk.spawn.linkedBy], ["b1", 2, "tuForkB", "toolUseId"]);
+  // regular subagents: the meta's toolUseId names the call (not the later call with the same
+  // description), and their spawnDepth 1 is the root's own child
+  assert.deepEqual([by.rv1.parentId, by.rv1.depth, by.rv1.spawn.callId, by.rv1.spawn.linkedBy], [CCN.session, 1, "tuRev", "toolUseId"]);
+  assert.deepEqual([by.g1.parentId, by.g1.depth, by.g1.spawn.callId, by.g1.spawn.linkedBy], ["rv1", 2, "tuG", "toolUseId"]);
+  assert.equal(by.rv1.requests[by.g1.spawn.parentRequest].action.callId, "tuG");
+});
+
+test("claude-code: spawnDepth places a nested subagent nothing names; an unclaimed call just before it links it", async () => {
+  const { trace, by } = await loadNested();
+  // a teammate whose meta says spawnDepth 1 is at depth 2; the only call near its start is c1's: root, and a note
+  assert.deepEqual([by.d1.parentId, by.d1.depth, by.d1.spawn], [CCN.session, 2, null]);
+  const lost = subNotes(trace, "d1");
+  assert.equal(lost.length, 1);
+  assert.match(lost[0], /spawnDepth 1/);
+  assert.match(lost[0], /depth 2/);
+  // no name or description match: b1's unnamed call 2 s before e1's first row, which no other agent claimed
+  assert.deepEqual([by.e1.parentId, by.e1.depth, by.e1.spawn.callId, by.e1.spawn.linkedBy], ["b1", 2, "tuAnon", "time"]);
+  // a regular subagent's spawnDepth 1 is the root's own child: unlinked, it stays at depth 1
+  assert.deepEqual([by.x1.parentId, by.x1.depth, by.x1.spawn], [CCN.session, 1, null]);
+  assert.deepEqual(subNotes(trace, "x1"), ["subagent x1 (general-purpose): no matching Agent tool_use; attached to root"]);
+  assert.deepEqual(trace.notes.filter((n) => n.startsWith("subagent ")).sort(), [...lost, ...subNotes(trace, "x1")].sort());
+});
+
+test("claude-code: Workflow-spawned agents link to the Workflow call that launched their run", async () => {
+  const { trace, by } = await loadNested();
+  const at = (s) => CCN.t0 + s * 1000;
+  // wf_12's call has the runId; wf_1's result only names its folder, and the earlier wf_12 text must not claim it
+  assert.deepEqual([by.w1.parentId, by.w1.depth, by.w1.spawn.t, by.w1.spawn.callId, by.w1.spawn.linkedBy], [CCN.session, 1, at(22), "wfA", "workflow"]);
+  assert.deepEqual([by.w2.parentId, by.w2.depth, by.w2.spawn.t, by.w2.spawn.callId, by.w2.spawn.linkedBy], [CCN.session, 1, at(20), "wfB", "workflow"]);
+  assert.equal(trace.agents[0].requests[by.w1.spawn.parentRequest].action.callId, "wfA");
+  assert.deepEqual([...subNotes(trace, "w1"), ...subNotes(trace, "w2")], []);
+});
+
+test("loader: a session hint loads workflow run folders the same (their metas read, the journal not an agent)", async () => {
+  const shape = (t) => t.agents.map((a) => [a.id, a.kind, a.name, a.parentId, a.depth, a.spawn && a.spawn.callId, a.asks.map((x) => x.from).join()]);
+  const { trace: plain } = await loadNested();
+  const { trace: hinted, by } = await loadNested({ root: CCN.session });
+  assert.deepEqual(shape(hinted), shape(plain));
+  assert.equal(new Set(hinted.agents.map((a) => a.id)).size, hinted.agents.length);
+  assert.ok(!hinted.files.some((f) => f.name.endsWith("journal.jsonl")));
+  assert.deepEqual([by.w1.name, by.w1.asks.map((x) => x.from)], ["workflow-subagent", ["agent"]]);
 });
 
 test("loader: sessions found by first line; a hint picks one", async () => {
