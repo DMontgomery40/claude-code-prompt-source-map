@@ -47,14 +47,16 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
   const pool = [];           // { o, el, label, body, band, textKey, lines, margin, rect }
   let inFlight = 0, wanted = new Set(), disposed = false;
 
-  function settle(key, entry, value, keep) {
-    entry.done = true; entry.value = value;
-    if (!keep && cache.get(key) === entry) cache.delete(key); // a timeout may be retried later
-    entry.resolve(value);
+  function show(key, value) {
     if (disposed) return;
     let changed = false;
     for (const p of pool) if (p.textKey === key && p.o.visible) { setBody(p, value); changed = true; }
     if (changed) onChange();
+  }
+  function settle(key, entry, value) {
+    entry.done = true; entry.value = value;
+    entry.resolve(value);
+    show(key, value);
   }
   function pump() {
     while (!disposed && inFlight < PANE.fetches && queue.length) {
@@ -62,18 +64,17 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
       const at = Math.max(0, queue.findIndex(j => wanted.has(j.key)));
       const job = queue.splice(at, 1)[0];
       inFlight++;
-      let open = true, timer = 0;
-      const done = (value, keep) => {
-        if (!open) return;
-        open = false; clearTimeout(timer); timers.delete(timer); inFlight--;
-        settle(job.key, job.entry, value, keep);
+      // a read with no answer in 15 s shows as unavailable (its words replace that if they come), but it
+      // keeps its slot until it settles: never more than 4 at once
+      const timer = setTimeout(() => { timers.delete(timer); show(job.key, { text: NOTE.failed, note: true }); }, PANE.timeoutMs);
+      timers.add(timer);
+      const done = value => {
+        clearTimeout(timer); timers.delete(timer); inFlight--;
+        settle(job.key, job.entry, value);
         pump();
       };
-      // a read that never answers must not hold a slot
-      timer = setTimeout(() => done({ text: NOTE.failed, note: true }, false), PANE.timeoutMs);
-      timers.add(timer);
       new Promise(resolve => resolve(getText(job.agentId, job.ref)))
-        .then(r => done(paneText(r), true), () => done({ text: NOTE.failed, note: true }, true));
+        .then(r => done(paneText(r)), () => done({ text: NOTE.failed, note: true }));
     }
   }
   // The cached read of one block's text: the same promise for the same ref, resolving to { text, note }.

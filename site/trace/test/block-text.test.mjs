@@ -207,6 +207,32 @@ test("block text: the cache returns the same promise for the same ref, and at mo
   bt.dispose();
 });
 
+test("block text: a read with no answer in 15 s shows as unavailable but keeps its slot until it settles", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const calls = [];
+  const getText = (agentId, ref) => new Promise(resolve => calls.push({ ref, resolve }));
+  const { bt, group } = setup({ getText });
+  const { camera, viewport } = view(1000, 3000);
+  const { agent, bands } = scene(Array.from({ length: 6 }, (_, k) => [k * 300, k * 300 + 200]));
+  bt.update({ camera, agent, bands, geom, i: 0, viewport });
+  assert.equal(calls.length, 4);
+  t.mock.timers.tick(PANE.timeoutMs);
+  await flush();
+  const slow = shown(group).filter(o => body(o) === "text unavailable");
+  assert.equal(slow.length, 4, "the 4 panes waiting on a read say so");
+  assert.equal(bt.stats().inFlight, 4);
+  assert.equal(calls.length, 4, "no 5th read while 4 are still out");
+  calls[0].resolve("late words");
+  await flush();
+  assert.equal(calls.length, 5, "a settled read frees its slot");
+  assert.ok(shown(group).some(o => body(o) === "late words"), "and its words replace the note");
+  for (const c of calls) c.resolve("x");
+  await flush();
+  for (const c of calls) c.resolve("x");
+  await flush();
+  bt.dispose();
+});
+
 test("block text: panes fetch through the cache, show the caption alone while loading, then the words", async () => {
   let pending = [];
   const getText = (agentId, ref) => new Promise(resolve => pending.push({ ref, resolve }));
