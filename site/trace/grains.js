@@ -533,11 +533,14 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     group.visible = true; c.mesh.visible = true;
     c.mesh.geometry.setDrawRange(6 * c.start, 6);
     uniforms.uColumns.value = 1; uniforms.uP.value = -1;
+    // the sweep plane too (its program and its 6 vertices), as a zero-length line: no fragments
+    planeU.uX0.value = planeU.uX1.value = 0;
+    sweepPlane.visible = true;
     const autoClear = renderer.autoClear;
     renderer.autoClear = false;
     renderer.render(group, camera);
     renderer.autoClear = autoClear;
-    c.mesh.visible = false; group.visible = false;
+    c.mesh.visible = false; group.visible = false; sweepPlane.visible = false;
     c.mesh.geometry.setDrawRange(0, 0);
     return true;
   }

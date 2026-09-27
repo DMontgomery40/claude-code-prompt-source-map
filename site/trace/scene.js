@@ -137,7 +137,7 @@ uniform float uGrainX1;
 // The re-read sweep's band where it crosses solid ground: the cap (the wall where the focused ridge
 // steps back into its grain trench) and the lifted core. uSweepY and uSweepW are in the material's own
 // vY units (world y on the ridge, 0..1 up the lifted core); x outside [uSweepX0, uSweepX1] and other
-// agents than uSweepAgent (-1 = any) get nothing.
+// agents than uSweepAgent (-1 = any) get nothing. uSweepK is the sweep's strength (the emissive option).
 uniform float uSweepOn;
 uniform float uSweepY;
 uniform float uSweepW;
@@ -146,6 +146,7 @@ uniform float uSweepX1;
 uniform float uSweepAgent;
 uniform vec3 uAccent;
 uniform float uAccentMax;
+uniform float uSweepK;
 #endif
 uniform float uReflect;
 float layerEm(int j) {
@@ -256,7 +257,7 @@ void main() {
 #endif
 #ifdef SWEEP
   if (uSweepOn > 0.5 && vW.x >= uSweepX0 && vW.x <= uSweepX1 && (uSweepAgent < -0.5 || abs(vAgentId - uSweepAgent) < 0.5))
-    col += uAccent * min(exp(-abs(vY - uSweepY) / uSweepW), uAccentMax);
+    col += uAccent * min(exp(-abs(vY - uSweepY) / uSweepW) * uSweepK, uAccentMax);
 #endif
   col = mix(col, uFog, haze(vW, vDepth));
   // ridges other than the focused agent's recede almost to the ground while one agent is open
@@ -437,7 +438,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const ACCENT = new THREE.Color(STRATA[STRATUM_INDEX.you].color);
   const sweepUniforms = () => ({
     uSweepOn: { value: 0 }, uSweepY: { value: 0 }, uSweepW: { value: 1 }, uSweepX0: { value: 0 }, uSweepX1: { value: -1 }, uSweepAgent: { value: -1 },
-    uAccent: { value: ACCENT }, uAccentMax: { value: accentGain(ACCENT) }
+    uAccent: { value: ACCENT }, uAccentMax: { value: accentGain(ACCENT) }, uSweepK: { value: 1 }
   });
   const capSweep = sweepUniforms(), liftSweep = sweepUniforms();
   const strataMaterial = (defines = {}, own = {}) => new THREE.ShaderMaterial({
@@ -692,9 +693,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // The sweep's band on solid ground: the cap of the focused ridge's grain trench, and the lifted core
   // while it is the request the playhead is in. Band depth is 2.5 px in each material's own units.
   function updateSweepSolids() {
-    const frac = sweepFraction();
-    const capOn = frac != null && grainK > 0 && level === 0;
+    const frac = sweepFraction(), em = grainOpts.emissive ?? 1;
+    const capOn = frac != null && grainK > 0 && level === 0 && em > 0;
     capSweep.uSweepOn.value = capOn ? 1 : 0;
+    capSweep.uSweepK.value = liftSweep.uSweepK.value = Math.min(1, Math.max(0, em));
     if (capOn) {
       const agent = grainAgent, i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
       const y = crest(agent, i) * frac, x = (grainState.capX0 + grainState.capX1) / 2, z = zOf(agent, i);
@@ -706,7 +708,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       capSweep.uSweepAgent.value = agentIndex.get(agent.id);
     }
     let liftOn = false;
-    if (play.playing && play.sweep != null && !reducedMotion && lifted.visible && stage.agent && stage.lifted >= 0) {
+    if (play.playing && play.sweep != null && !reducedMotion && em > 0 && lifted.visible && stage.agent && stage.lifted >= 0) {
       const a = stage.agent, ap = agentP(a, play.P, cutXOf(play.P));
       if (Math.floor(ap) === stage.lifted) {
         liftOn = true;
@@ -725,15 +727,19 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // second; a block labelled again while its label still shows only renews it. None at 16 requests a
   // second or faster (setPlayhead's speed), where they would only flicker.
   const SWEEP_LABELS = 6, SWEEP_MIN = 900, SWEEP_FADE = 1000;
-  const sweepLabels = { key: "", pending: [], shown: new Map() };
+  // Playing on from the previous request, every band is labelled as the sweep reaches it. Anything else
+  // (a seek, a scrub, a resume) starts mid-request: only the bands the sweep has not yet passed wait for
+  // it, so the ones below do not all pop at once.
+  const sweepLabels = { agent: null, i: -1, pending: [], shown: new Map() };
   function updateSweepLabels(now) {
     const frac = sweepFraction(), agent = grainAgent, tables = grains.tables;
     const on = frac != null && grainK > 0 && level === 0 && !(play.speed >= 16) && tables && grains.agent === agent;
     if (on) {
-      const i = Math.floor(grainUP), key = `${agent.id}:${i}`, ctx = agent.requests[i]?.tokens.context || 0;
-      if (key !== sweepLabels.key) {
-        sweepLabels.key = key;
-        sweepLabels.pending = ctx > 0 ? sweepLabelBands(bandsForRequest(tables, i), { min: SWEEP_MIN, limit: SWEEP_LABELS }) : [];
+      const i = Math.floor(grainUP), ctx = agent.requests[i]?.tokens.context || 0;
+      if (agent !== sweepLabels.agent || i !== sweepLabels.i) {
+        const from = agent === sweepLabels.agent && i === sweepLabels.i + 1 ? 0 : frac;
+        sweepLabels.agent = agent; sweepLabels.i = i;
+        sweepLabels.pending = ctx > 0 ? sweepLabelBands(bandsForRequest(tables, i), { min: SWEEP_MIN, limit: SWEEP_LABELS }).filter(b => b.y0 / ctx >= from) : [];
       }
       for (let k = sweepLabels.pending.length - 1; k >= 0; k--) {
         const b = sweepLabels.pending[k];
@@ -746,7 +752,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         o.element.style.borderLeftColor = STRATA[b.stratum].color;
         sweepLabels.shown.set(b.b, { o, t: now });
       }
-    } else { sweepLabels.key = ""; sweepLabels.pending = []; }
+    } else { sweepLabels.agent = null; sweepLabels.i = -1; sweepLabels.pending = []; }
     labelGroups.sweep.visible = level === 0;
     // full for the first third of the second, then fading; all gone as soon as the sweep stops
     for (const [k, s] of sweepLabels.shown) {
@@ -763,21 +769,25 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const agent = grainAgent, ai = agentIndex.get(agent.id);
     // The re-read sweep climbs the leading column once per request while playing: at sweep (0..1 through
     // the request; for a subagent, through its own request) of that request's context.
-    let sweep = null;
+    const f = grainFrame, sw = sweepFrame;
+    f.sweep = null;
     const frac = sweepFraction();
     if (frac != null && K > 0) {
       // the sweep spans the slab, from the first grain column's tread to the leading one's, within the
       // leading request's ridge segment
       const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
       const { iFirst, col0 } = sweepColumns(i, K, geom.segOf(agent, i)?.seg.i0 ?? 0);
-      sweep = { y: crest(agent, i) * frac, x0: geom.tread(agent, iFirst)[0], x1: geom.tread(agent, i)[1], z: zOf(agent, i) + 0.02, col0 };
+      sw.y = crest(agent, i) * frac; sw.x0 = geom.tread(agent, iFirst)[0]; sw.x1 = geom.tread(agent, i)[1]; sw.z = zOf(agent, i) + 0.02; sw.col0 = col0;
+      f.sweep = sw;
     }
-    grains.update({
-      camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),
-      minPx: detail.level >= 3 ? 3 : 2, // grains at least 2 px, 3 at Layers and closer
-      agentEm: agentData[(AW + ai) * 4], sweep, emissive: grainOpts.emissive
-    });
+    f.uP = grainUP; f.columns = K; f.density = density; f.square = grainOpts.square; f.res = pinUniforms.uRes.value; f.dpr = renderer.getPixelRatio();
+    f.minPx = detail.level >= 3 ? 3 : 2; // grains at least 2 px, 3 at Layers and closer
+    f.agentEm = agentData[(AW + ai) * 4]; f.emissive = grainOpts.emissive;
+    grains.update(f);
   }
+  // one frame object and one sweep object, reused every frame
+  const grainFrame = { camera, uP: 0, columns: 0, density: 1, square: false, res: null, dpr: 1, minPx: 2, agentEm: 1, sweep: null, emissive: 1 };
+  const sweepFrame = { y: 0, x0: 0, x1: 0, z: 0, col0: 0 };
 
   const treadCentre = (agent, i) => { const [t0, t1] = geom.tread(agent, i); return (t0 + t1) / 2; };
   const heightAt = geom.heightAtSeg; // (agent, inf, seg, x, taper): face height on one segment, -1 off it
@@ -1794,10 +1804,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     mapLines.geometry.computeBoundingSphere();
     let stratum = null;
     // At Layers with grain columns standing, the stratum labels describe the leading column (the
-    // playhead's request, which the word panes read), not the column nearest the centre.
+    // playhead's request, which the word panes read), not the column nearest the centre; while that
+    // column is off the map (the user looks elsewhere), the column nearest the centre as before.
     const iLead = Math.floor(grainUP);
-    const strataOf = grainK > 0 && grains.agent === grainAgent && iLead >= 0 && iLead < grainAgent.requests.length
-      ? { agent: grainAgent, i: iLead, pos: new THREE.Vector3(treadCentre(grainAgent, iLead), 0, zOf(grainAgent, iLead)) } : focus;
+    let strataOf = focus;
+    if (grainK > 0 && grains.agent === grainAgent && iLead >= 0 && iLead < grainAgent.requests.length) {
+      const x = treadCentre(grainAgent, iLead), z = zOf(grainAgent, iLead);
+      if (inMap(projectMapPoint(_pa.set(x, crest(grainAgent, iLead) / 2, z)))) strataOf = { agent: grainAgent, i: iLead, pos: new THREE.Vector3(x, 0, z) };
+    }
     if (detail.level >= 3 && strataOf) {
       const r = strataOf.agent.requests[strataOf.i], tops = geom.tops(strataOf.agent, strataOf.i);
       let bottom = 0, best = Infinity;

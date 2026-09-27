@@ -158,10 +158,12 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
     assert.equal(up[o + 1], built[o + 1]); assert.equal(up[o + 3], built[o + 3]);
     for (let k = 4; k < REQ_TEXELS * 4; k++) assert.equal(up[o + k], built[o + k]);
   }
-  // warm-up: one draw of the group with every grain hidden (uP = -1), then everything off again
+  // warm-up: one draw of the group with every grain hidden (uP = -1) and the sweep plane as a zero-length
+  // line (its program and buffer too, not on the first play), then everything off again
   assert.equal(g.warmUp(new THREE.PerspectiveCamera()), true);
   assert.equal(renders.length, 1);
-  assert.equal(renders[0][0], g.group); assert.equal(renders[0][1], false, "no clear"); assert.equal(renders[0][2], 1);
+  assert.equal(renders[0][0], g.group); assert.equal(renders[0][1], false, "no clear"); assert.equal(renders[0][2], 2, "one chunk and the sweep plane");
+  assert.equal(g.sweepPlane.material.uniforms.uX0.value, g.sweepPlane.material.uniforms.uX1.value);
   assert.equal(renderer.autoClear, true); assert.equal(g.group.visible, false);
   assert.ok(g.group.children.every((m) => !m.visible && (m.material !== g.material || m.geometry.drawRange.count === 0)));
   assert.equal(inits, 4, "the warm-up uploads nothing");
