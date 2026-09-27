@@ -50,12 +50,14 @@ export function spacePlays(target, pressedMap = true) {
   if (!target || !target.closest || isPage(target)) return pressedMap;
   return !target.closest(PRESSES) && !!target.closest(MAP);
 }
-// Whether a pointer press on `target` leaves the page's Space to playback: on the map, the transport or the
-// bare page it does. Anywhere else (the panel and its readers, the 2D view, a toolbar) it does not: the
-// panel and a block's text take no focus, so after a click there focus stays on the body, and Space pages
-// what was clicked, as the browser does.
+// Whether a pointer press on `target` leaves the page's Space to playback. Only a press into a scrolling
+// text region takes it away: the side column (the panel, its block readers, the request nav) and the 2D
+// view, which take no focus, so after a click there focus stays on the body and Space pages what was
+// clicked, as the browser does. A press anywhere else (the landscape, the minimap, the transport, the
+// header, the zoom and view toolbars, the bare page) leaves Space to playback.
+const READERS = ".side, #flat";
 export function pressLeavesSpace(target) {
-  return !target || !target.closest || isPage(target) || !!target.closest(MAP);
+  return !target || !target.closest || !target.closest(READERS);
 }
 // The transport's own controls: its scrub is a field, but it still answers the playback keys.
 export function inTransport(target) {

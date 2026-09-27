@@ -825,14 +825,14 @@ test("after a click into a block's text or the panel Space pages them; a click o
   assert.deepEqual(p.key(), [false, false, ""], "Space after a click into the block reader pages it, unprevented");
   assert.deepEqual(p.key("f"), [true, true, "follow"], "the other playback keys still work from there");
   assert.deepEqual(p.key(","), [true, true, "step -1"]);
-  for (const [where, target] of [["the landscape", p.canvas], ["the transport's readout", readout], ["the minimap", p.minimap.children[0]], ["the bare page", p.body]]) {
+  for (const [where, target] of [["the landscape", p.canvas], ["the transport's readout", readout], ["the minimap", p.minimap.children[0]], ["the bare page", p.body], ["the header", p.hud.children[0]]]) {
     p.click(p.panelText);
     assert.deepEqual(p.key(), [false, false, ""], "Space after a click into the panel's text is the panel's");
     assert.equal(p.click(target), p.body);
     assert.deepEqual(p.key(), [true, true, "toggle"], `a click on ${where} gives Space back to playback`);
   }
-  for (const [where, target] of [["the 2D view", p.flat], ["the header", p.hud.children[0]]]) {
-    p.click(target);
+  for (const [where, target] of [["the 2D view", p.flat], ["the panel's text", p.panelText]]) {
+    p.click(p.canvas); p.click(target);
     assert.deepEqual(p.key(), [false, false, ""], `Space after a click on ${where} is left to the page`);
   }
   // The palette's layers: a press there (the search scrim, a result) leaves the last word to the page.
