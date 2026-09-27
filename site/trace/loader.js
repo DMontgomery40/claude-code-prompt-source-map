@@ -16,22 +16,30 @@ const isSub = (s) => SUB_PATH.test(s.path) || (s.row?.isSidechain === true && !!
 const agentIdOf = (s) => SUB_PATH.exec(s.path)?.[1] ?? s.row?.agentId ?? /agent-([^/]+)\.jsonl$/.exec(s.path)?.[1] ?? null;
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 
+// The product of a .jsonl from its first line: null for JSON that is no transcript, undefined when the
+// first line is not JSON. A read error is thrown.
 async function sniff(entry) {
   try {
     const first = JSON.parse(await readFirstLine(entry.source));
     if (isCodexFirstLine(first)) return { product: "codex", meta: codexMeta(first.payload) };
     if (isClaudeRow(first) || SUB_PATH.test(entry.path)) return { product: "claude-code", row: first };
-  } catch (error) { if (!(error instanceof SyntaxError)) throw error; /* not JSON */ }
+  } catch (error) { if (!(error instanceof SyntaxError)) throw error; return undefined; }
   return null;
 }
 
-// Finds candidate sessions among the entries without parsing whole files.
-export async function findSessions(entries) {
+// Finds candidate sessions among the entries without parsing whole files. A file that cannot be read (a
+// transcript still being written, a file that went away) is skipped and listed in `skipped` as
+// { path, error }, so one busy session does not stop the rest from loading; with no session found at all
+// the first such error is thrown, as it is the real reason. Files whose first line is not JSON are skipped
+// and listed as { path, error: null }.
+export async function findSessions(entries, skipped = []) {
   const jsonl = entries.filter((e) => /\.jsonl$/.test(e.path));
   const sniffed = [];
   for (const e of jsonl) {
-    const s = await sniff(e);
+    let s;
+    try { s = await sniff(e); } catch (error) { skipped.push({ path: e.path, error }); continue; }
     if (s) sniffed.push({ ...e, ...s });
+    else if (s === undefined) skipped.push({ path: e.path, error: null });
   }
   const sessions = [];
   // Codex: families by parent_thread_id.
@@ -68,6 +76,8 @@ export async function findSessions(entries) {
     const id = (orphans[0].path.match(UUID) || ["subagents"])[0];
     sessions.push({ product: "claude-code", id, name: id, entries: orphans, metas: entries.filter((e) => /\.meta\.json$/.test(e.path)), toolResults: [], bytes: orphans.reduce((n, f) => n + f.source.size, 0), orphan: true });
   }
+  const unread = skipped.find((x) => x.error);
+  if (!sessions.length && unread) throw unread.error;
   return sessions;
 }
 
@@ -226,6 +236,7 @@ async function readJson(source) {
 export async function loadTrace(entries, { root = null, onProgress = () => {}, index = null } = {}) {
   const ix = prepareIndex(index);
   let sessions, pick;
+  const skipped = []; // unhinted loads: files findSessions could not read or recognise
   if (root && UUID.test(String(root))) {
     // A hinted id: take its files by path, never sniffing unrelated sessions.
     const hit = await narrowByHint(entries, root, onProgress);
@@ -234,7 +245,7 @@ export async function loadTrace(entries, { root = null, onProgress = () => {}, i
     sessions = [pick];
   } else {
     onProgress({ phase: "scan", done: 0, total: entries.length });
-    sessions = await findSessions(entries);
+    sessions = await findSessions(entries, skipped);
     if (!sessions.length) throw new Error("No Codex rollout or Claude Code transcript found in the dropped files.");
     pick = (root && sessions.find((s) => s.id === root || s.name.includes(root) || s.entries.some((e) => e.path.includes(root)))) || sessions.slice().sort((a, b) => b.bytes - a.bytes)[0];
   }
@@ -276,6 +287,9 @@ export async function loadTrace(entries, { root = null, onProgress = () => {}, i
   if (persisted.size) for (const a of trace.agents) for (const b of a.blocks) if (b.persisted && persisted.has(b.persisted)) {
     const i = persisted.get(b.persisted);
     b.full = { file: i, offset: 0, length: files[i].size };
+  }
+  for (const x of skipped) {
+    trace.notes.push(x.error ? `${x.path}: could not be read (${x.error.cause?.name || x.error.name || "error"}), skipped` : `${x.path}: its first line is not JSON, skipped`);
   }
   trace.reference = ix ? { site: ix.site, origin: ix.origin, pages: ix.pages.length } : null;
   trace.candidates = sessions.map((s) => ({ product: s.product, id: s.id, name: s.name, files: s.entries.length, bytes: s.bytes }));
