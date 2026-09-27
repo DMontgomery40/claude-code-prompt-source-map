@@ -36,7 +36,7 @@ export function createGeometry({ trace, layout, W, yScale, rule, massif }) // la
 
 // grain-rules.js (Task 2)
 export const STRATA_KEYS;                       // panels.js STRATA order
-export const KERNEL = { pourWindow: 0.6, fallDur: 0.5, dropHeightTokens: 0.12, collapseDur: 0.8, jitterX: 0.35, jitterZ: 0.6 };
+export const KERNEL = { pourWindow: 0.35, fallDur: 0.25, dropHeightTokens: 0.12, collapseDur: 0.3, puckRadius: 0.8, spiralTurns: 5 }; // retimed 2026-09-27 so a request completes by i + 0.6 and collapses in [i + 0.7, i + 1]; focus lands at i + 0.65
 export function chooseGrainSize(totalEst, cap = 400_000) // -> N0 from [10, 20, 50, 100, 200, 500, 1000]
 export function buildRequestTable(agent, geom)   // -> { data: Float32Array, texels: 4, width: 2048, height, count, epochs: [{ start, end, puck: [x, y, z] }] }
 //   texel 0: [x, contextTokens, epochId, xTreadHalfWidth]
