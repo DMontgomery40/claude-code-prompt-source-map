@@ -204,25 +204,7 @@ test("plain keys dispatch, modified keys don't; ⌘K and Ctrl+K open search", ()
   assert.ok(!isSearchChord(ev("k", { metaKey: true, shiftKey: true })));
 });
 
-// A stand-in element whose closest() evaluates the selector forms keys.js uses: tag, [attr],
-// [attr=value], tag[attr] and :not([attr=value]), over the element and its ancestors.
-function fakeEl(tag, attrs = {}, parent = null) {
-  const node = { tagName: tag.toUpperCase(), attrs, parent };
-  const matches = (n, sel) => {
-    const m = sel.match(/^([a-z]*)((?:\[[^\]]+\]|:not\(\[[^\]]+\]\))*)$/);
-    if (!m) throw new Error(`the stand-in cannot read "${sel}"`);
-    if (m[1] && m[1].toUpperCase() !== n.tagName) return false;
-    for (const [, not, name, value] of m[2].matchAll(/(:not\()?\[([\w-]+)(?:=([^\]]*))?\]\)?/g)) {
-      const has = name in n.attrs && (value == null || n.attrs[name] === value);
-      if (not ? has : !has) return false;
-    }
-    return !!(m[1] || m[2]);
-  };
-  node.closest = sel => { for (let n = node; n; n = n.parent) if (sel.split(",").some(s => matches(n, s.trim()))) return n; return null; };
-  return node;
-}
-
-test("playback keys: Space plays unless a field or control has focus; , . step, < > change speed", () => {
+test("playback keys: five rows of their own, each a palette command; Space, , . < > dispatch", () => {
   const want = { "Play or pause": " ", "Previous request": ",", "Next request": ".", Slower: "<", Faster: ">" };
   const rows = KEYS.filter(k => k.group === "Playback");
   assert.deepEqual(rows.map(r => r.label), Object.keys(want));
@@ -232,19 +214,9 @@ test("playback keys: Space plays unless a field or control has focus; , . step, 
     assert.equal(r.command, r.label, `${r.label} is a palette command`);
     assert.equal(r.keys.length, 1);
   }
-  const ev = (key, target, mods = {}) => ({ key, target, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, ...mods });
-  const body = fakeEl("body");
-  assert.equal(keyFor(ev(" ", body)).row.id, "play");
-  assert.equal(keyFor(ev(" ", fakeEl("canvas", {}, body))).row.id, "play");
-  assert.equal(keyFor(ev(" ", undefined)).row.id, "play");
-  const takers = [fakeEl("input", { type: "range" }), fakeEl("input", { type: "text" }), fakeEl("textarea"), fakeEl("select"), fakeEl("button"),
-    fakeEl("summary"), fakeEl("a", { href: "#x" }), fakeEl("div", { contenteditable: "true" }), fakeEl("div", { contenteditable: "" }),
-    fakeEl("div", { role: "button", tabindex: "0" }), fakeEl("div", { role: "separator" }), fakeEl("span", {}, fakeEl("button", {}, body))];
-  for (const target of takers) assert.equal(keyFor(ev(" ", target)), null, `Space stays with a focused ${target.tagName} ${JSON.stringify(target.attrs)}`);
-  for (const target of [fakeEl("div", { contenteditable: "false" }), fakeEl("a"), fakeEl("div", { role: "dialog", tabindex: "-1" })]) {
-    assert.equal(keyFor(ev(" ", target)).row.id, "play", `Space plays from ${target.tagName} ${JSON.stringify(target.attrs)}`);
-  }
-  // Only Space defers to a focused button: the other playback keys still work there.
-  assert.deepEqual([",", ".", "<", ">"].map(k => keyFor(ev(k, fakeEl("button"), { shiftKey: k === "<" || k === ">" })).row.id), ["stepBack", "stepOn", "slower", "faster"]);
-  assert.equal(keyFor(ev(" ", body, { metaKey: true })), null);
+  const ev = (key, mods = {}) => ({ key, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, ...mods });
+  assert.deepEqual([" ", ",", "."].map(k => keyFor(ev(k)).row.id), ["play", "stepBack", "stepOn"]);
+  assert.deepEqual(["<", ">"].map(k => keyFor(ev(k, { shiftKey: true })).row.id), ["slower", "faster"]);
+  assert.equal(keyFor(ev(" ", { metaKey: true })), null);
+  // Where Space plays, and that the page keeps it when playback declines: ui.test.mjs, on the fake DOM.
 });

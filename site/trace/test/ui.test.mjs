@@ -35,13 +35,50 @@ class Element extends Node {
   addEventListener(t, fn) { (this.listeners[t] ||= []).push(fn); }
   dispatch(t, ev) { for (const fn of this.listeners[t] || []) fn(ev); }
   all(pred, out = []) { for (const c of this.children) { if (pred(c)) out.push(c); c.all(pred, out); } return out; }
+  get hidden() { return this.attributes.has("hidden"); }
+  set hidden(v) { if (v) this.attributes.set("hidden", ""); else this.attributes.delete("hidden"); }
+  matches(sel) { return splitSelectors(sel).some(s => matchesCompound(this, s)); }
+  closest(sel) { for (let n = this; n instanceof Element; n = n.parentNode) if (n.matches(sel)) return n; return null; }
+}
+// Selectors for matches() and closest(): comma lists of compound selectors built from tag, #id, .class,
+// [attr], [attr=value] and :not(<compound>), the forms keys.js hands to closest().
+function splitSelectors(s) {
+  const out = [];
+  let depth = 0, cur = "";
+  for (const ch of s) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    if (ch === "," && !depth) { out.push(cur); cur = ""; } else cur += ch;
+  }
+  return [...out, cur].map(x => x.trim()).filter(Boolean);
+}
+function matchesCompound(n, sel) {
+  let rest = sel;
+  const tag = rest.match(/^[a-z][a-z0-9-]*/i);
+  if (tag) { if (n.tagName !== tag[0].toUpperCase()) return false; rest = rest.slice(tag[0].length); }
+  while (rest) {
+    let m;
+    if ((m = rest.match(/^#([\w-]+)/))) { if (n.getAttribute("id") !== m[1]) return false; }
+    else if ((m = rest.match(/^\.([\w-]+)/))) { if (!n.className.split(/\s+/).includes(m[1])) return false; }
+    else if ((m = rest.match(/^\[([\w-]+)(?:=(?:"([^"]*)"|([^\]]*)))?\]/))) {
+      const want = m[2] ?? m[3];
+      if (!n.attributes.has(m[1]) || (want !== undefined && n.getAttribute(m[1]) !== want)) return false;
+    }
+    else if ((m = rest.match(/^:not\(([^()]*)\)/))) { if (matchesCompound(n, m[1].trim())) return false; }
+    else throw new Error(`the fake DOM cannot read the selector "${sel}"`);
+    rest = rest.slice(m[0].length);
+  }
+  return true;
 }
 globalThis.Node = Node;
 globalThis.document = {
   createElement: tag => new Element(tag),
   createElementNS: (_ns, tag) => new Element(tag),
-  createTextNode: v => new Text(v)
+  createTextNode: v => new Text(v),
+  body: new Element("body"),
+  querySelector: () => null
 };
+globalThis.addEventListener ??= () => {};
 
 const { renderAgentColumns, renderOverview, buildLayout } = await import("../minimap.js");
 const { ownLines, askWhere, largestLayer, modelsUsed, breakable, sessionStats, STRATA } = await import("../panels.js");
@@ -370,7 +407,8 @@ test("the transport renders play, scrub, readout and speed; the readout names th
   assert.deepEqual([play.getAttribute("aria-label"), play.getAttribute("aria-pressed"), host.getAttribute("data-playing")], ["Play", "false", "false"]);
   assert.equal(speed.textContent, "4×");
   assert.equal(pushed.length, 0, "loading a session pushes nothing: the scene starts at the same end");
-  assert.equal(readout.textContent, `req 1,701 · ${playheadLabel(pb).split(" · ").slice(1).join(" · ")}`);
+  const tEnd = pb.timeAt(pb.n - 1);
+  assert.equal(readout.textContent, `req 1,701 · ${new Date(tEnd).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · ${fmtClock(tEnd)}`);
   tr.seek(1233.5);
   const t = pb.timeAt(1233.5);
   assert.ok(t > pb.timeAt(1233) && t < pb.timeAt(1234), "the time the playhead has reached, between the two requests");
@@ -475,4 +513,78 @@ test("focusing a request puts the playhead on it: the root's own index, a subage
   assert.ok(P > 999 && P < 1000);
   assert.ok(Math.abs(pb.xAt(P) - L.X(t)) < 1e-12);
   assert.ok(Math.abs(pb.xAt(pb.PAtTime(t)) - L.X(t)) > 1e-3, "PAtTime alone would put the cut off the request here");
+});
+
+// ---------- where Space plays ----------
+const { createPalette } = await import("../palette.js");
+
+// A fake page: the landscape, the transport, the panel with the call reader panels.js renders, the 2D
+// view and a few fields and controls, under one body. The palette's key handler runs over it with a
+// playback that declines (returns false) while the transport is hidden, as app.js's does.
+function spacePage() {
+  const body = document.body;
+  body.replaceChildren();
+  const E = (tag, attrs = {}, ...kids) => { const n = new Element(tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); n.append(...kids); return n; };
+  const canvas = E("canvas", { class: "gl" }), label = E("button", { class: "lbl event" });
+  const stage = E("div", { id: "stage", class: "stage" }, canvas, E("div", { class: "labels" }, label));
+  const transportHost = E("div", { id: "playback", class: "playback", role: "group" });
+  const L = buildLayout(longSession());
+  const pb = createPlayback({ times: L.root.requests.map(r => r.t), X: L.X });
+  const tr = createTransport(transportHost, { raf: () => 1, caf: () => {}, now: () => 0 });
+  tr.load(pb);
+  const req = { i: 0, t: 1000, tokens: { context: 900 }, action: { kind: "tool", tool: "Bash", target: "echo hi", args: null, result: null } };
+  const agent = { id: "root", kind: "root", requests: [req], blocks: [], asks: [], compactions: [] };
+  const panel = E("aside", { id: "panel", class: "panel" });
+  renderPanel(panel, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, inspector: "action" }, { focusRequest() {} });
+  const reader = panel.all(n => n.tagName === "PRE")[0];
+  const flat = E("div", { id: "flat", class: "flat" });
+  const fields = [E("input", { id: "paste", type: "text" }), E("input", { id: "request-range", type: "range" }), E("input", { id: "request-number", type: "number" }),
+    E("textarea"), E("select"), E("div", { contenteditable: "true" })];
+  const controls = [E("button", { id: "zoom-in" }), E("summary"), E("a", { href: "#x" }), E("div", { role: "button", tabindex: "0" })];
+  body.append(E("div", { id: "app", class: "app" }, stage, E("div", { class: "side" }, panel), flat, transportHost, ...fields, ...controls));
+  let shown = true;
+  const calls = [];
+  const act = name => (...a) => shown && void calls.push([name, ...a].join(" "));
+  const palette = createPalette({ state: () => ({}), A: {}, overview() {}, selectLens() {}, moveRequest() {}, getText: async () => ({ text: "" }), finder: () => null,
+    playback: { toggle: act("toggle"), step: act("step"), slower: act("slower"), faster: act("faster") } });
+  palette.setTrace({ agents: [agent] });
+  // One keydown through the palette's handler: [handled, prevented, what playback did].
+  const press = (target, key = " ", mods = {}) => {
+    const e = { key, target, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, ...mods, prevented: false, preventDefault() { this.prevented = true; } };
+    calls.length = 0;
+    const handled = palette.handleKey(e);
+    return [handled, e.prevented, calls.join(", ")];
+  };
+  return { body, canvas, label, stage, tr, reader, panel, flat, fields, controls, press, hide: v => { shown = !v; } };
+}
+
+test("Space plays from the page, the landscape and the scrub; a reader, the panel, a field or a control keeps it", () => {
+  const p = spacePage();
+  const { play, scrub, speed } = p.tr.controls;
+  assert.ok(p.reader.className.includes("call-text") && p.reader.getAttribute("tabindex") === "0", "the call reader is the focusable pre panels.js renders");
+  for (const [where, target] of [["the page", p.body], ["the landscape", p.canvas], ["the transport's scrub", scrub]]) {
+    assert.deepEqual(p.press(target), [true, true, "toggle"], `Space on ${where} plays`);
+  }
+  const keeps = [["the call reader", p.reader], ["the panel", p.panel], ["the 2D view", p.flat], ["the play button (it presses itself)", play], ["the speed button", speed],
+    ["a landscape label button", p.label], ...p.fields.map(f => [`${f.tagName} ${f.getAttribute("type") || f.getAttribute("contenteditable") || ""}`, f]),
+    ...p.controls.map(c => [`${c.tagName} ${c.getAttribute("role") || ""}`, c])];
+  for (const [where, target] of keeps) assert.deepEqual(p.press(target), [false, false, ""], `Space on ${where} is left to it, not prevented`);
+  // The scrub still answers the other playback keys; other fields and range inputs do not.
+  assert.deepEqual(p.press(scrub, ","), [true, true, "step -1"]);
+  assert.deepEqual(p.press(scrub, ">", { shiftKey: true }), [true, true, "faster"]);
+  assert.deepEqual(p.press(scrub, "Home"), [false, false, ""], "Home stays with the range");
+  assert.deepEqual(p.press(p.fields[0], ","), [false, false, ""], "typing a comma is typing");
+  assert.deepEqual(p.press(p.fields[1], "."), [false, false, ""], "the request slider keeps its keys");
+  // A focused button still gets the step keys (they are not its own).
+  assert.deepEqual(p.press(play, "."), [true, true, "step 1"]);
+});
+
+test("while the transport is hidden, playback keys decline and the page keeps them unprevented", () => {
+  const p = spacePage();
+  p.hide(true);
+  for (const [key, mods] of [[" ", {}], [",", {}], [".", {}], ["<", { shiftKey: true }], [">", { shiftKey: true }]]) {
+    for (const target of [p.body, p.canvas]) assert.deepEqual(p.press(target, key, mods), [false, false, ""], `"${key}" with the transport hidden`);
+  }
+  p.hide(false);
+  assert.deepEqual(p.press(p.body), [true, true, "toggle"], "shown again, Space plays");
 });

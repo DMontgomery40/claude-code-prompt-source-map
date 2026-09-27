@@ -262,6 +262,8 @@ async function switchSession(root) {
   pick.disabled = true;
   try {
     const trace = await parseInWorker(lastFiles, root);
+    transport?.load(null);
+    $("#playback").hidden = true;
     scene?.dispose();
     scene = null;
     Object.assign(S, { level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });

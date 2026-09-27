@@ -30,17 +30,24 @@ export const KEYS = [
 const BY_KEY = new Map();
 for (const row of KEYS) for (const [key, arg] of Object.entries(row.bind || {})) BY_KEY.set(key, { row, arg });
 
-// The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null. Space belongs to the
-// focused control or field when there is one (a button presses, a disclosure opens).
+// The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null. Space is the playback
+// key only where spacePlays says so; anywhere else it belongs to the focused element.
 export function keyFor(e) {
   if (e.metaKey || e.ctrlKey || e.altKey) return null;
-  if (e.key === " " && takesSpace(e.target)) return null;
+  if (e.key === " " && !spacePlays(e.target)) return null;
   return BY_KEY.get(e.key) || null;
 }
 
-const SPACE_TAKERS = "input, textarea, select, button, summary, a[href], [contenteditable]:not([contenteditable=false]), [role=button], [role=checkbox], [role=switch], [role=tab], [role=option], [role=menuitem], [role=slider], [role=separator]";
-export function takesSpace(target) {
-  return !!(target && target.closest && target.closest(SPACE_TAKERS));
+// Space plays from the page itself, the landscape and the transport's scrub. A control there still
+// presses natively, and everywhere else (a reader, the panel, a field) Space pages or types as usual.
+const PRESSES = "button, summary, a[href], select, textarea, input:not([type=range]), [contenteditable]:not([contenteditable=false]), [role=button], [role=checkbox], [role=switch], [role=tab], [role=option], [role=menuitem]";
+export function spacePlays(target) {
+  if (!target || !target.closest || target.tagName === "BODY" || target.tagName === "HTML") return true;
+  return !target.closest(PRESSES) && !!target.closest("#stage, #playback");
+}
+// The transport's own controls: its scrub is a field, but it still answers the playback keys.
+export function inTransport(target) {
+  return !!(target && target.closest && target.closest("#playback"));
 }
 
 // ⌘K on a Mac, Ctrl+K elsewhere (either works everywhere).

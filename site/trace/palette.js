@@ -6,7 +6,7 @@
 import { el, fmtTok, fmtInt, STRATA, STRATUM_INDEX, STATUS, LENSES } from "./panels.js";
 import { buildSearchIndex, setAskText, search, parseQuery, matchRanges, SCOPES, agentName } from "./search.js";
 import { peakRequestIndex, requestCalls } from "./navigation.js";
-import { KEYS, keyFor, isSearchChord, typingInto } from "./keys.js";
+import { KEYS, keyFor, isSearchChord, typingInto, inTransport } from "./keys.js";
 
 const $ = s => document.querySelector(s);
 const SECTION = { command: "Commands", agent: "Agents", ask: "Asks & tasks", call: "Tool calls", block: "Injected & setup", text: "In the text", mine: "Your asks", largest: "Largest blocks in context" };
@@ -16,7 +16,8 @@ const HIGHLIGHT = "trace-find";
 
 // ctx: { state() -> the app's S, A (the app's actions), overview(), selectLens(key),
 //        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref),
-//        playback: { toggle(), step(d), slower(), faster() } for the transport's keys }
+//        playback: { toggle(), step(d), slower(), faster() } for the transport's keys, each
+//        returning false when the transport is hidden }
 export function createPalette(ctx) {
   let trace = null, index = null, commands = [], largest = [];
   let q = "", scope = "all", active = 0, shown = [], sections = new Map();
@@ -510,11 +511,12 @@ export function createPalette(ctx) {
     if (!trace || !layer.hidden) return false;
     if (isSearchChord(e)) { e.preventDefault(); open(); return true; }
     if (!help.hidden) return false;
-    if (typingInto(e.target)) return false;
     const hit = keyFor(e);
     if (!hit) return false;
+    if (typingInto(e.target) && !(hit.row.group === "Playback" && inTransport(e.target))) return false;
+    // An action that declines (playback while the transport is hidden) leaves the key to the page.
+    if (ACTIONS[hit.row.id](hit.arg) === false) return false;
     e.preventDefault();
-    ACTIONS[hit.row.id](hit.arg);
     return true;
   }
 
