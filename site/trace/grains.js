@@ -172,10 +172,11 @@ void main() {
   vec4 mv = viewMatrix * wp;
   vec4 clip = projectionMatrix * mv;
   float pxPerWorld = projectionMatrix[1][1] * 0.5 * uRes.y / clip.w; // device px per world unit here
-  // The re-read sweep, on the leading column only: a band of the accent around uSweepY (world y), 2.5 px
-  // deep, and below the band an afterglow on injected and re-sent grains that fades over a quarter of
-  // the column. The light added never exceeds 0.35 in luminance (uAccentMax), so nothing washes out.
-  if (lead && uSweepOn > 0.5) {
+  // The re-read sweep, across every grain column (a 1-4 px leading tread alone would hide it): a band of
+  // the accent around uSweepY (world y, climbing the leading request's context), 2.5 px deep, and below
+  // the band an afterglow on injected and re-sent grains that fades over a quarter of the column. The
+  // light added never exceeds 0.35 in luminance (uAccentMax), so nothing washes out.
+  if (uSweepOn > 0.5) {
     float band = exp(-abs(w.y - uSweepY) * pxPerWorld / (2.5 * uDpr));
     int fl = int(B1.y + 0.5);
     float glow = (fl & 3) != 0 && w.y < uSweepY ? 0.6 * exp(-(uSweepY - w.y) / max(0.25 * ctx * uYScale, 1e-4)) : 0.0;
@@ -215,7 +216,7 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-// The sweep plane: one additive quad across the leading tread at the sweep's height, 3 px tall with an
+// The sweep plane: one additive quad across the grain slab at the sweep's height, 3 px tall with an
 // analytic soft edge, in front of the face. The quad's ends come from uniforms, so moving it uploads
 // nothing; position.x picks the end (-1, 1), position.y the side of the line (-1, 1).
 export const SWEEP_VERT = /* glsl */`
@@ -253,7 +254,7 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-// The sweep's light on one grain of the leading column, as a multiple of the accent colour (the vertex
+// The sweep's light on one grain of the slab, as a multiple of the accent colour (the vertex
 // shader's rule): a 2.5 px band around the sweep plus, for injected (1) and re-sent (2) grains below it,
 // an afterglow over a quarter of the column; capped so the added luminance stays within 0.35.
 export function sweepGain({ y, sweepY, pxPerWorld, dpr = 1, flags = 0, contextWorld, emissive = 1, max }) {
@@ -471,7 +472,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uniforms.uRes.value.copy(f.res);
     uniforms.uSquare.value = f.square ? 1 : 0;
     uniforms.uAgentEm.value = f.agentEm ?? 1;
-    // the sweep: sw = { y (world), x0, x1 (the leading tread), z (its face) } while playing, else null
+    // the sweep: sw = { y (world), x0, x1 (the grain slab), z (the leading face) } while playing, else null
     const sw = f.sweep;
     uniforms.uSweepOn.value = sw ? 1 : 0;
     uniforms.uEmissive.value = f.emissive ?? 1;

@@ -264,8 +264,8 @@ test("the re-read sweep: band, afterglow on injected and re-sent grains, luminan
   assert.ok(sweepGain({ ...base, y: 15, flags: 1 }) < 1e-6, "no afterglow above the sweep");
   for (let y = 0; y < 20; y += 0.05) for (const flags of [0, 1, 2, 3]) assert.ok(lum(accent, sweepGain({ ...base, y, flags })) <= 0.35 + 1e-12);
   assert.equal(sweepGain({ ...base, y: 10, emissive: 0 }), 0);
-  // the shader has the same expressions, on the leading column only
-  assert.match(GRAIN_VERT, /if \(lead && uSweepOn > 0\.5\) \{/);
+  // the shader has the same expressions, on every grain column
+  assert.match(GRAIN_VERT, /if \(uSweepOn > 0\.5\) \{/, "every grain column takes the band, not only the leading one");
   assert.match(GRAIN_VERT, /float band = exp\(-abs\(w\.y - uSweepY\) \* pxPerWorld \/ \(2\.5 \* uDpr\)\);/);
   assert.match(GRAIN_VERT, /float glow = \(fl & 3\) != 0 && w\.y < uSweepY \? 0\.6 \* exp\(-\(uSweepY - w\.y\) \/ max\(0\.25 \* ctx \* uYScale, 1e-4\)\) : 0\.0;/);
   assert.match(GRAIN_VERT, /colr \+= uAccent \* min\(\(band \+ glow\) \* uEmissive, uAccentMax\);/);

@@ -766,9 +766,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     let sweep = null;
     const frac = sweepFraction();
     if (frac != null && K > 0) {
-      const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
-      const [t0, t1] = geom.tread(agent, i);
-      sweep = { y: crest(agent, i) * frac, x0: t0, x1: t1, z: zOf(agent, i) + 0.02 };
+      // the plane spans the whole slab, from the first grain column's tread to the leading one's
+      const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP))), iFirst = Math.max(0, i - K + 1);
+      sweep = { y: crest(agent, i) * frac, x0: geom.tread(agent, iFirst)[0], x1: geom.tread(agent, i)[1], z: zOf(agent, i) + 0.02 };
     }
     grains.update({
       camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),
