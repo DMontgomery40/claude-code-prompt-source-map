@@ -22,9 +22,6 @@ const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); 
 const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -25), el: Number(q.get("el") ?? 40), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -32), pel: Number(q.get("pel") ?? 42), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
 const SP = 0.62, CORE_R = 0.24, H1 = 12, LIFT_R = 1.25, LIFT_H = 13;
 const RINGS = 9;
-// A stepped massif's tread starts this far (world units) after the previous one ends, so the riser
-// between them has its own vertices and the grain trench can step back on it (see updatePlayhead).
-const RISER = 1e-4;
 const FOG = new THREE.Color("#0a141e");
 const LIGHT = new THREE.Vector3(-0.38, 0.62, 0.69).normalize();
 
@@ -48,7 +45,10 @@ varying float vAgentId;
 #ifdef CUT
 // Grain columns stand in a trench: the focused agent's face (and the slope's lip) between uGrainX0 and
 // uGrainX1 steps back by uRecess, deeper than any grain or puck sits behind the face. The mesh stays
-// closed and opaque; the steps between moved and unmoved columns are its side walls.
+// closed and opaque; the steps between moved and unmoved columns are its side walls. On a stepped
+// massif a tread's start shares x with the previous tread's end: aSide (1 start, 0 end, 0.5 elsewhere)
+// says which side of the riser a vertex is on, so the riser itself becomes the wall.
+attribute float aSide;
 uniform float uGrainOn;
 uniform float uGrainAgent;
 uniform float uGrainX0;
@@ -63,7 +63,8 @@ void main() {
 #ifdef AGENTS
   vAgentId = aAgent;
 #if defined(CUT)
-  if (uGrainOn > 0.5 && abs(aAgent - uGrainAgent) < 0.5 && p.x >= uGrainX0 && p.x <= uGrainX1) p.z = min(p.z, uGrainZ - uRecess);
+  bool inTrench = (p.x > uGrainX0 || (p.x == uGrainX0 && aSide > 0.25)) && (p.x < uGrainX1 || (p.x == uGrainX1 && aSide < 0.75));
+  if (uGrainOn > 0.5 && abs(aAgent - uGrainAgent) < 0.5 && inTrench) p.z = min(p.z, uGrainZ - uRecess);
 #endif
 #endif
   vec3 n = normal;
@@ -413,8 +414,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const { rootDepth, subDepth, rootBack, profile } = geom;
 
   function buildRidges() {
-    const front = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [] };
-    const slope = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [] };
+    const front = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [], side: [] };
+    const slope = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [], side: [] };
     const addSeg = (agent, inf, seg, zF, depthOf, taper) => {
       const ai = agentIndex.get(agent.id);
       const cols = [];
@@ -423,7 +424,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         // one flat tread per request, a riser between: the crest reads request by request
         for (let i = seg.i0; i <= seg.i1; i++) {
           const t = geom.tops(agent, i), [a, b] = geom.tread(agent, i);
-          cols.push({ x: Math.min(a + RISER, b), t }, { x: b, t });
+          cols.push({ x: a, t, side: 1 }, { x: b, t, side: 0 });
         }
       } else {
         for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: geom.x(agent, i), t: geom.tops(agent, i) });
@@ -436,7 +437,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       for (const c of cols) {
         for (const y of [0, c.t[6]]) {
           front.pos.push(c.x, y, zF); front.nor.push(0, 0, 1);
-          front.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); front.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); front.ag.push(ai); front.u.push(0);
+          front.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); front.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); front.ag.push(ai); front.u.push(0); front.side.push(c.side ?? 0.5);
         }
       }
       for (let c = 0; c < cols.length - 1; c++) {
@@ -449,7 +450,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         for (let r = 0; r <= RINGS; r++) {
           const u = r / RINGS;
           slope.pos.push(c.x, c.t[6] * profile(u), zF - u * depth); slope.nor.push(0, 1, 0);
-          slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai); slope.u.push(Math.max(1e-3, u));
+          slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai); slope.u.push(Math.max(1e-3, u)); slope.side.push(c.side ?? 0.5);
         }
       };
       const R = RINGS + 1;
@@ -478,7 +479,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
           const u = r / RINGS;
           for (const y of [0, c.t[6] * profile(u)]) {
             slope.pos.push(c.x, y, zF - u * depth); slope.nor.push(sx, 0, 0);
-            slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai); slope.u.push(0);
+            slope.b0.push(c.t[0], c.t[1], c.t[2], c.t[3]); slope.b1.push(c.t[4], c.t[5], c.t[6], c.t[7] || 0); slope.ag.push(ai); slope.u.push(0); slope.side.push(c.side ?? 0.5);
           }
         }
         for (let r = 0; r < RINGS; r++) {
@@ -509,6 +510,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       g.setAttribute("aB1", new THREE.Float32BufferAttribute(d.b1, 4));
       g.setAttribute("aAgent", new THREE.Float32BufferAttribute(d.ag, 1));
       g.setAttribute("aU", new THREE.Float32BufferAttribute(d.u, 1));
+      g.setAttribute("aSide", new THREE.Float32BufferAttribute(d.side, 1));
       g.setIndex(d.pos.length / 3 > 65535 ? new THREE.Uint32BufferAttribute(d.idx, 1) : new THREE.Uint16BufferAttribute(d.idx, 1));
       if (computeNormals) g.computeVertexNormals();
       return g;
@@ -615,12 +617,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (K > 0) {
       const iLead = Math.min(n - 1, Math.floor(uP)), iFirst = Math.max(0, iLead - K + 1), iNext = Math.min(n - 1, iLead + 1);
       // The trench's walls stand where the face has vertices: on a sloped ridge the stretch of face from
-      // request j - 1 to j is the wall (the solid part's cap), on a stepped massif the riser before tread j.
-      // The focused ridge is a ghost from the far side of the left wall.
+      // request j - 1 to j is the wall (the solid part's cap), on a stepped massif the riser before tread j
+      // (VERT's aSide). The focused ridge is a ghost from the far side of the left wall.
       const stepped = geom.stepped(agent);
-      const wallX = j => geom.tread(agent, j)[0] + (stepped ? RISER / 2 : 0);
-      let x0 = wallX(iFirst), x1 = geom.tread(agent, iNext)[1] + (stepped ? RISER / 2 : 1e-3);
-      const ghostX0 = stepped ? x0 + RISER / 2 : xOf(agent, iFirst);
+      const wallX = j => geom.tread(agent, j)[0];
+      let x0 = wallX(iFirst), x1 = geom.tread(agent, iNext)[1] + (stepped ? 0 : 1e-3);
+      const ghostX0 = stepped ? x0 + 1e-4 : xOf(agent, iFirst);
       // a collapse into the puck at the next request: the trench makes room for the whole spiral
       const e = grains.tables.requests.epochs.find(q => q.start === iLead + 1);
       if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) {
