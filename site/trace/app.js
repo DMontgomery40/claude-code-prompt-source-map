@@ -1,10 +1,11 @@
 // Trace viewer: loading, state, levels, keyboard, and wiring between the scene, minimap and panels.
-// Everything runs locally. The only network requests are this page's own static files.
+// Parsing stays in the browser; sources are picked files or the optional loopback resolver.
 import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 import { capturePickedFiles } from "./file-source.js";
 import { parsePaste } from "./paste.js";
+import { openLocalSession } from "./local-session.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
 import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
@@ -359,6 +360,17 @@ function copyRoot(product) {
 
 async function openPasted(info, btn, hint, fresh = false) {
   pasteRoot = info.id;
+  if (!fresh) {
+    btn.disabled = true;
+    setProgress(0, "Opening the session…");
+    try {
+      const files = await openLocalSession(info.id);
+      if (files) return await loadFiles(files, info.id);
+    } catch (error) {
+      return showError(error.message);
+    } finally { btn.disabled = false; }
+    $("#progress").hidden = true;
+  }
   const mem = !fresh && pickedRoots.get(info.product);
   if (mem) return holdsPaste(mem, info.id) ? loadFiles(narrowPicked(mem, info), info.id) : missingPaste(mem);
   if (typeof window.showDirectoryPicker === "function") {

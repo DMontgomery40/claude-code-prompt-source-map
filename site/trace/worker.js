@@ -1,9 +1,10 @@
+import { localFileSource } from "./local-session.js";
 // Trace Web Worker: parses dropped session logs off the main thread and serves
 // block text on demand. Load with: new Worker("worker.js", { type: "module" }).
 //
 // API
 //   postMessage({ type: "index", index })   optional, before load: the site's parsed
-//     /trace/reference-index.json (the page fetches it; the worker never fetches).
+//     /trace/reference-index.json (the page fetches it).
 //     -> { type: "index", ok, pages }
 //     With an index, harness/injected blocks get block.site = { slug, title, matched, lines }
 //     (the page holding most of the block's indexed lines; >= 2 lines, or all if fewer),
@@ -61,7 +62,7 @@ self.onmessage = async (e) => {
       const entries = (m.files || []).map((f) => {
         const file = f instanceof Blob ? f : f.file;
         const path = (f instanceof Blob ? file.webkitRelativePath || file.name : f.path || file.webkitRelativePath || file.name).replace(/^\/+/, "");
-        return { path, source: fileSource(file, f.handle, f.frozen) };
+        return { path, source: f.local ? localFileSource(f.local) : fileSource(file, f.handle, f.frozen) };
       });
       let last = 0;
       const { trace, sources: s } = await loadTrace(entries, {
