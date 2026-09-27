@@ -18,14 +18,22 @@ import { RoundedBoxGeometry } from "../vendor/RoundedBoxGeometry.js";
 export const RUNG_CLASS = { linked: "linked", "linked-type-text-differs": "typed", "in-library-unlinked": "unlinked",
   "binary-only": "unnamed", composite: "composite", outside: "outside", "found-nowhere": "loose" };
 export const RUNG_ORDER = { "found-nowhere": 0, "binary-only": 1, "in-library-unlinked": 2, "linked-type-text-differs": 3, composite: 4, outside: 5, linked: 6 };
-// Binary-only needs the literal index; without it nothing was checked against the binary, so an unmatched
-// piece is only "not in the library", never "found nowhere".
+// Binary-only comes from the shipped literal index (hashes plus chunk or file and offset): the piece's text is in
+// the binary at that place and in no library record. Anything without a literal match reads "not in the library";
+// the view never claims a piece is found nowhere.
 export const hasLiterals = model => model.literals === true || model.pieces.some(p => p.rung === "binary-only");
+const num = n => Number(n).toLocaleString("en-US");
+// Where a piece's text is anchored, in words: "in the binary: chunk-x.js @ 190,114,848" for binary-only.
+export function whereText(p) {
+  const w = p.where; if (!w) return null;
+  if (p.rung === "binary-only") return `in the binary: ${w.key ?? w.shelf}${Number.isFinite(w.pos) ? ` @ ${num(w.pos)}` : ""}`;
+  return w.label ?? `${w.key ?? ""}${Number.isFinite(w.pos) ? ` @ ${num(w.pos)}` : ""}`;
+}
 export function rungWords(model) {
   const lib = model.libName || "library";
   return {
-    "found-nowhere": hasLiterals(model) ? "found nowhere" : `not in the ${lib} library`,
-    "binary-only": `in the binary or app bundle, not in the ${lib} library`,
+    "found-nowhere": `not in the ${lib} library`,
+    "binary-only": "in the binary",
     "in-library-unlinked": `in the ${lib} library; Trace's own link misses it`,
     "linked-type-text-differs": "linked by type; the text differs",
     composite: "composite: a harness wrapper around other text",
@@ -549,7 +557,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   }
 
   // ----- DOM labels (live only) -----
-  const offTxt = p => `${p.kind === "outside" ? originWord(p.origin) : { linked: "library", typed: "library≠", unlinked: "lib, unlinked", unnamed: "unnamed", composite: "composite", loose: hasLiterals(model) ? "nowhere" : "no record" }[p.cls] || ""} · ${p.reach}/${L.NA}`;
+  const offTxt = p => `${p.kind === "outside" ? originWord(p.origin) : { linked: "library", typed: "library≠", unlinked: "lib, unlinked", unnamed: "in the binary", composite: "composite", loose: "no record" }[p.cls] || ""} · ${p.reach}/${L.NA}`;
   function buildLabels() {
     if (!overlay) return;
     for (const el of overlay.querySelectorAll(".hv-lab, .hv-tag")) el.remove();
@@ -558,7 +566,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     fanTags = L.G.filter(gr => gr.cls === "unnamed" || gr.cls === "loose" || gr.cls === "unlinked").map(gr => {
       const el = document.createElement("div"); el.className = "hv-tag hv-who"; el.textContent = gr.rec.size === 1 && gr.rec.has(Math.max(0, L.agents.findIndex(a => a.kind === "root"))) ? "main thread" : `${gr.rec.size} agent${gr.rec.size > 1 ? "s" : ""}`; overlay.append(el); return { gr, el };
     });
-    legend.innerHTML = [["linked", "linked record"], ["typed", "linked by type, text differs"], ["unlinked", "in library, not linked"], ["loose", hasLiterals(model) ? "unnamed: binary only or found nowhere" : words["found-nowhere"]], ["outside", "outside any binary"]]
+    legend.innerHTML = [["linked", "linked record"], ["typed", "linked by type, text differs"], ["unlinked", "in library, not linked"], ["loose", `not in the ${model.libName} library (a red collar: found in the binary)`], ["outside", "outside any binary"]]
       .map(([c, t]) => `<span><i style="background:${CSS_COL[c]}"></i>${esc(t)}</span>`).join("");
     nav.innerHTML = "";
     for (const name of PRESET_NAMES) {
@@ -621,7 +629,9 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   function showCard(p) {
     if (!card) return;
     if (!p) { card.hidden = true; return; }
-    const ts = p.ev.map(e => e[1]), origin = p.where ? `${esc(p.where.shelf)}<div class="m">${esc(p.where.label ?? "")}</div>` : esc(p.kind === "outside" ? originWord(p.origin) : words[p.rung]);
+    const ts = p.ev.map(e => e[1]);
+    const origin = p.rung === "binary-only" && p.where ? `${esc(whereText(p))}<div class="m">not in the ${esc(model.libName)} library</div>`
+      : p.where ? `${esc(p.where.shelf)}<div class="m">${esc(whereText(p))}</div>` : esc(p.kind === "outside" ? originWord(p.origin) : words[p.rung]);
     card.innerHTML = `<div class="k">Harness piece · ${p.order + 1} of ${L.P.length}, least explained first</div><h4>${esc(p.name)}</h4>
       <span class="badge b-${p.cls}">${esc(words[p.rung]).toUpperCase()}</span>
       <dl><dt>Origin</dt><dd>${origin}</dd><dt>Put there</dt><dd>${esc(trigWord(p.trigger))} <span class="m">(observed)</span></dd>
@@ -651,7 +661,8 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const head = (String(p.sample).replace(/^[<#\s]+/, "").split(/(?<=[.:!?])\s/)[0] || p.name).slice(0, 70).trim();
     const root = Math.max(0, L.agents.findIndex(a => a.kind === "root"));
     const who = p.reach === 1 ? `${p.rec.has(root) ? "the main thread" : "one agent"} ${p.n.toLocaleString()} time${p.n > 1 ? "s" : ""}` : `${p.reach} of ${L.NA} agents`;
-    return `<h3>${esc(model.product)} put <em>“${esc(head)}${head.length >= 70 ? "…" : ""}”</em> in front of ${who}. It is ${esc(words[p.rung])}.</h3>`;
+    const tail = p.rung === "binary-only" && p.where ? `It is ${esc(whereText(p))}, and in no ${esc(model.libName)} record.` : `It is ${esc(words[p.rung])}.`;
+    return `<h3>${esc(model.product)} put <em>“${esc(head)}${head.length >= 70 ? "…" : ""}”</em> in front of ${who}. ${tail}</h3>`;
   }
 
   // ----- selection and hand-off -----
@@ -724,7 +735,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (preset === "hero" && hero) sel = hero;
     if (preset === "hero" && hero && overlay) {
       const p = hero;
-      callout(`${esc(p.name.length > 44 ? p.name.slice(0, 42) + "…" : p.name)}<span class="m">${esc(p.where ? `${p.where.shelf} · ${p.where.label ?? ""}` : words[p.rung])}</span>`, p.curve.getPointAt(p.kind === "loose" ? 0.32 : 0.13).clone().add(new THREE.Vector3(0, 0.25, 0)));   // unmatched ends sit by the bottom-left chrome
+      callout(`${esc(p.name.length > 44 ? p.name.slice(0, 42) + "…" : p.name)}<span class="m">${esc(p.rung === "binary-only" && p.where ? `${whereText(p)} · not in ${model.libName}` : p.where ? `${p.where.shelf} · ${whereText(p)}` : words[p.rung])}</span>`, p.curve.getPointAt(p.kind === "loose" ? 0.32 : 0.13).clone().add(new THREE.Vector3(0, 0.25, 0)));   // unmatched ends sit by the bottom-left chrome
       const via = (p.via || []).find(([k]) => k !== "own block");
       callout(`${esc(trigWord(p.trigger))}<span class="m">${via ? `rides inside a ${esc(via[0])}` : "observed trigger"}</span>`, p.trig.anchor.clone().add(new THREE.Vector3(0, 0.25, 0)));
       const zs = [...p.rec].map(L.pinZ), zm = zs.reduce((a, b) => a + b, 0) / zs.length;
@@ -735,7 +746,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (preset === "close" && overlay) {
       const eye = new THREE.Vector3(...PRESETS.close.p);
       for (const p of L.P.filter(p => p.kind === "rail" && ["unnamed", "unlinked", "typed"].includes(p.cls)).sort((a, b) => a.end.distanceTo(eye) - b.end.distanceTo(eye)).slice(0, 5))
-        callout(`${esc(p.name.length > 34 ? p.name.slice(0, 32) + "…" : p.name)}<span class="m">${esc(words[p.rung])} · ${esc(p.where.label ?? "")}</span>`, p.end.clone().add(new THREE.Vector3(0, 0.3, 0)), CSS_COL[p.cls]);
+        callout(`${esc(p.name.length > 34 ? p.name.slice(0, 32) + "…" : p.name)}<span class="m">${esc(p.rung === "binary-only" ? whereText(p) : `${words[p.rung]} · ${whereText(p)}`)}</span>`, p.end.clone().add(new THREE.Vector3(0, 0.3, 0)), CSS_COL[p.cls]);
     }
     if (PRESETS[preset].dof && renderer) { await ensurePost(); const c = PRESETS[preset]; bokeh.uniforms.focus.value = new THREE.Vector3(...c.p).distanceTo(new THREE.Vector3(...c.t)) * (preset === "hero" ? 0.95 : 1); bokeh.uniforms.aperture.value = c.dof; }
     setCaption();

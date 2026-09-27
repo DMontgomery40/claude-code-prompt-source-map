@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  createHarnessView, layoutBoard, rungWords, instructionScore, pickHero, birthSet, laterRequest, compareAgent,
+  createHarnessView, layoutBoard, rungWords, whereText, instructionScore, pickHero, birthSet, laterRequest, compareAgent,
   normPlate, PRESETS, PRESET_NAMES, RUNG_CLASS,
 } from "../harness/view.js";
 
@@ -75,9 +75,12 @@ test("layout: every piece gets an origin, a lane, a clamp and a fan; zones run b
   assert.equal(RUNG_CLASS["found-nowhere"], "loose");
 });
 
-test("rung words: without the literal index an unmatched piece is only 'not in the library'", () => {
+test("rung words: binary-only says where in the binary; anything unmatched is only 'not in the library'", () => {
   assert.equal(rungWords(fixture().model)["found-nowhere"], "not in the examplelib library");
-  assert.equal(rungWords(fixture({ literals: true }).model)["found-nowhere"], "found nowhere");
+  assert.equal(rungWords(fixture({ literals: true }).model)["found-nowhere"], "not in the examplelib library", "never 'found nowhere'");
+  assert.equal(whereText({ rung: "binary-only", where: { shelf: "example binary 1.1", key: "chunk-abc.js", pos: 190114848 } }), "in the binary: chunk-abc.js @ 190,114,848");
+  assert.equal(whereText({ rung: "linked", where: { shelf: "lib shelf", key: "a.js", pos: 5, label: "a.js @5" } }), "a.js @5");
+  assert.equal(whereText({ rung: "found-nowhere", where: null }), null);
 });
 
 test("hero: instruction-like text beats a formatting header, even one delivered more often", () => {
