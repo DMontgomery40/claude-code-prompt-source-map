@@ -404,11 +404,11 @@ export function agentTable(trace, agents, S, A) {
 
 function harnessNote(trace, agent) {
   const src = agent?.harnessSource;
-  if (src === "inferred") return "Claude Code's system prompt and tools, sized from the ccprompts data for this version.";
+  if (src === "inferred") return "Claude Code's system prompt and tools, sized from the Harness Source Map data for this version.";
   if (src === "residual") return "The system prompt and tools, sized at the first request: its exact context minus everything the log shows.";
   if (src === "partial") return "The tool definitions, which the log doesn't carry, sized at the first request: its exact context minus everything the log shows.";
   if (src) return null;
-  return trace.product === "claude-code" ? "Inferred: Claude Code does not log its system prompt; the size comes from the ccprompts data for this version." : null;
+  return trace.product === "claude-code" ? "Inferred: Claude Code does not log its system prompt; the size comes from the Harness Source Map data for this version." : null;
 }
 
 export function nearestRequest(agent, t) {
@@ -900,7 +900,7 @@ function blockReader(agent, b, A) {
     b.full ? refToggle(agent, b.full, "the full file", A) : null);
   A.getText(agent.id, b.ref).then(r => {
     const text = r?.text ?? "";
-    mode.textContent = b.template ? "rebuilt from the ccprompts template" : r?.mode || b.render || "";
+    mode.textContent = b.template ? "rebuilt from the Harness Source Map template" : r?.mode || b.render || "";
     if (/^data:image\/(png|jpe?g|gif|webp);base64,/.test(text)) {
       pre.replaceWith(el("img", { class: "shot", src: text, alt: b.label || "image" }));
     } else {

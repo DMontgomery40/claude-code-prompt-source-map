@@ -676,6 +676,7 @@ const webglFor3d = () => S.webgl !== false;
 async function setMode(mode) {
   if (mode !== "harness") S.lastMode = mode;
   S.mode = mode;
+  setSessionKind();
   $("#mode").textContent = mode === "3d" ? "2D view" : "3D view";
   $("#harness-mode").setAttribute("aria-pressed", String(mode === "harness"));
   $("#legend").hidden = mode === "harness";   // the landscape's source colours; the layer draws its own legend
@@ -777,11 +778,17 @@ function setupResizer() {
   });
 }
 
+// The header's eyebrow names the product and the view: the landscape, or the harness layer over it.
+function setSessionKind() {
+  if (!S.trace) return;
+  $("#session-kind").textContent = `${S.trace.product === "codex" ? "Codex/ChatGPT" : "Claude Code"} / ${S.mode === "harness" ? "Harness layer" : "Session landscape"}`;
+}
+
 function buildHud() {
   const t = S.trace;
   const st = sessionStats(t);
-  $("#session-kind").textContent = `${t.product === "codex" ? "Codex" : "Claude Code"} / Session landscape`;
-  $("#title").textContent = t.title || (t.product === "codex" ? "Codex session" : "Claude Code session");
+  setSessionKind();
+  $("#title").textContent = t.title || (t.product === "codex" ? "Codex/ChatGPT session" : "Claude Code session");
   // More than one session among the dropped files: offer the others.
   const cands = (t.candidates || []).filter(c => c && c.id);
   const old = $("#session-pick");
@@ -789,7 +796,7 @@ function buildHud() {
   if (cands.length > 1 && lastFiles) {
     const cur = cands.find(c => (t.agents[0]?.id || "") === c.id || (t.agents[0]?.id || "").includes(c.id) || c.id.includes(t.agents[0]?.id || "@")) || null;
     const sel = el("select", { id: "session-pick", class: "session-pick", "aria-label": `${cands.length} sessions in what you dropped` },
-      cands.map(c => el("option", { value: c.id, selected: cur === c ? true : null, text: `${c.product === "codex" ? "Codex" : "Claude Code"} · ${clipName(c.name || c.id)} · ${fmtInt(c.files)} files, ${(c.bytes / 1048576).toFixed(1)} MB` })));
+      cands.map(c => el("option", { value: c.id, selected: cur === c ? true : null, text: `${c.product === "codex" ? "Codex/ChatGPT" : "Claude Code"} · ${clipName(c.name || c.id)} · ${fmtInt(c.files)} files, ${(c.bytes / 1048576).toFixed(1)} MB` })));
     sel.addEventListener("change", () => switchSession(sel.value));
     $(".hud-title").append(sel);
   }

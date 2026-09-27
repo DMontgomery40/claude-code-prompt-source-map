@@ -36,7 +36,8 @@ const byProduct = {};
 for (const [i, product] of PRODUCTS.entries()) {
   const section = SITE.products[product.id].path;
   const built = await buildTrace({ siteRoot, sourceRoot: path.join(repoRoot, product.id), categories: product.categories, siteId: product.siteId, origin: productOrigin(product.id), section, copy: i === 0, write: false });
-  byProduct[product.id] = built.index;
+  // The names a reader sees: the site's (not the section's historical siteId) and the product's.
+  byProduct[product.id] = { ...built.index, libName: SITE.name, label: SITE.products[product.id].label };
 }
 await writeFile(path.join(dist, "trace", "reference-index.json"), JSON.stringify({ byProduct }));
 

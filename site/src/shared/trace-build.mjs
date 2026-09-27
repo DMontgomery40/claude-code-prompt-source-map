@@ -28,12 +28,12 @@ async function headingIds(siteRoot, slug, section) {
 // needs no parser: a quote inside a regex or comment only shifts which side of a boundary a fragment lands on.
 // Yields [text, byteOffset, templateEnd]. `src` is latin1, so string positions are byte offsets.
 const codePoint = (n, e) => (n >= 0 && n <= 0x10ffff ? String.fromCodePoint(n) : e);
-export function* codeLiterals(src) {
+export function* codeLiterals(src, min = 24) {
   const re = /["'`]|\$\{|\}/g;
   let at = 0, m;
   const piece = (a, b, end) => {
     const raw = src.slice(a, b);
-    if (raw.length < 24) return null;
+    if (raw.length < min) return null;
     const text = Buffer.from(raw, "latin1").toString("utf8").replace(/\\(u\{[0-9a-fA-F]+\}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{2}|.)/g, (_, e) =>
       e.length > 1 && e[0] === "u" ? codePoint(parseInt(e[1] === "{" ? e.slice(2, -1) : e.slice(1), 16), e) : e.length > 1 && e[0] === "x" ? String.fromCharCode(parseInt(e.slice(1), 16)) : e === "n" ? "\n" : e === "t" ? " " : e);
     return [text, a, end];
@@ -48,18 +48,50 @@ export function* codeLiterals(src) {
   if (p) yield p;
 }
 
+// Rust string literals ("…", r"…", r#"…"#), unescaped. Yields [text, charOffset]; `src` is latin1.
+const RUST_HOLE = /\{[^{}\n]{0,48}\}/g;
+export function* rustLiterals(src) {
+  const re = /(?<![\w'])b?(?:r(#*)"([\s\S]*?)"\1|"((?:[^"\\]|\\[\s\S])*)")/g;
+  let m;
+  while ((m = re.exec(src))) {
+    const raw = m[2] ?? m[3];
+    if (raw.length < 8) continue;
+    const text = m[2] != null ? raw : raw.replace(/\\(\n\s*|u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|.)/g, (_, e) =>
+      e[0] === "\n" ? "" : e.length > 1 && e[0] === "u" ? codePoint(parseInt(e.slice(2, -1), 16), e) : e.length > 1 && e[0] === "x" ? String.fromCharCode(parseInt(e.slice(1), 16)) : e === "n" ? "\n" : e === "t" ? " " : e);
+    yield [Buffer.from(text, "latin1").toString("utf8"), m.index];
+  }
+}
+
 // { shelves, files, keys: { hash: [shelf, file, offset or line] }, lineShelves } for one product, from its
 // gitignored work folder; null when the folder is not there (a clean checkout builds without it).
 export async function buildLiteralIndex({ productId, sourceRoot, version }) {
-  const { literalEntryKeys } = await import(pathToFileURL(path.join(path.dirname(new URL(import.meta.url).pathname), "..", "..", "trace", "harness", "pieces.js")).href);
+  const { literalEntryKeys, markEntryKeys } = await import(pathToFileURL(path.join(path.dirname(new URL(import.meta.url).pathname), "..", "..", "trace", "harness", "pieces.js")).href);
   const shelves = [], files = [], keys = {}, lineShelves = [];
   const fileIdx = new Map();
-  const add = (shelf, file, pos, literal, end) => {
-    for (const k of literalEntryKeys(literal, end)) {
-      if (k in keys) continue;
+  const put = (shelf, file, pos, list, define = false) => {
+    for (const k of list) {
+      if (k in keys && !define) continue;
       if (!fileIdx.has(file)) { fileIdx.set(file, files.length); files.push(file); }
       keys[k] = [shelf, fileIdx.get(file), pos];
     }
+  };
+  // A literal gives fragment keys when it is long enough, and its first line gives a short marker (a
+  // wrapper's head, an opening tag). A minified JS bundle's short spans are mostly UI strings and code, so
+  // there only a tag or the head line of a multi-line string is a marker.
+  const add = (shelf, file, pos, literal, end, bundle = false) => {
+    if (literal.length >= 24) put(shelf, file, pos, literalEntryKeys(literal, end));
+    const multi = literal.includes("\n");
+    if (!bundle || multi || literal.startsWith("<")) put(shelf, file, pos, markEntryKeys(literal.split("\n")[0], end && !multi));
+  };
+  // A Rust string: its format holes ({}, {name:.4}) split it as template holes do, and read as values in
+  // its marker; {{ and }} are literal braces.
+  // define: the string is a named constant (const X: &str = "…"), the definition every other copy uses.
+  const addRust = (shelf, file, line, literal, define = false) => {
+    const t = literal.replace(/\{\{/g, "\u0002").replace(/\}\}/g, "\u0003"), back = (x) => x.replace(/\u0002/g, "{").replace(/\u0003/g, "}");
+    // A string left open ("… precedent. " then the next string of a concat!) has more text after it, as a hole does.
+    const parts = t.split(RUST_HOLE), open = /[\s:(=]$/.test(literal);
+    parts.forEach((x, i) => { x = back(x); if (x.length >= 24) put(shelf, file, line, literalEntryKeys(x, i < parts.length - 1 || open)); });
+    put(shelf, file, line, markEntryKeys(back(t.replace(RUST_HOLE, "\u0001")).split("\n")[0]), define);
   };
   const work = path.join(sourceRoot, "work");
   if (productId === "claude-code") {
@@ -69,7 +101,7 @@ export async function buildLiteralIndex({ productId, sourceRoot, version }) {
     for (const f of JSON.parse(readFileSync(manifest, "utf8")).files) {
       const name = path.basename(f.name), full = path.join(work, "extracted", name);
       if (!name.endsWith(".js") || !existsSync(full)) continue;
-      for (const [text, pos, end] of codeLiterals(readFileSync(full, "latin1"))) add(shelf, name, f.file_offset + pos, text, end);
+      for (const [text, pos, end] of codeLiterals(readFileSync(full, "latin1"), 8)) add(shelf, name, f.file_offset + pos, text, end, true);
     }
   } else if (productId === "codex") {
     let tag = null;
@@ -84,9 +116,12 @@ export async function buildLiteralIndex({ productId, sourceRoot, version }) {
           const full = path.join(dir, e.name);
           if (e.isDirectory()) { if (!/^(\.git|target|node_modules|tests?|fixtures|snapshots)$/.test(e.name)) walk(full); continue; }
           if (!/\.(rs|md|txt|jinja|j2)$/.test(e.name) || /_tests?\.rs$|tests\.rs$/.test(e.name) || statSync(full).size > 2e6) continue;
-          const rel = path.relative(srcDir, full), text = readFileSync(full, "latin1");
+          // A Rust file's own test module (#[cfg(test)] mod tests { … }, by convention last) is not shipped code.
+          const rel = path.relative(srcDir, full), all = readFileSync(full, "latin1"), cut = /\.rs$/.test(e.name) ? all.search(/\n#\[cfg\(test\)\]\s*\n\s*(?:pub(?:\([^)]*\))?\s+)?mod \w+\s*\{/) : -1;
+          const text = cut >= 0 ? all.slice(0, cut) : all;
           const lineAt = (i) => { let n = 1; for (let j = text.indexOf("\n"); j >= 0 && j < i; j = text.indexOf("\n", j + 1)) n++; return n; };
-          if (/\.rs$/.test(e.name)) { for (const [lit, pos, end] of codeLiterals(text)) add(shelf, rel, lineAt(pos), lit, end); }
+          const named = (pos) => /\b(?:const|static)\s+\w+\s*:\s*&(?:'static\s+)?str\s*=\s*$/.test(text.slice(Math.max(0, pos - 120), pos));
+          if (/\.rs$/.test(e.name)) { for (const [lit, pos] of rustLiterals(text)) addRust(shelf, rel, lineAt(pos), lit, named(pos)); }
           else Buffer.from(text, "latin1").toString("utf8").split("\n").forEach((l, i) => add(shelf, rel, i + 1, l, false));
         }
       };
@@ -96,7 +131,7 @@ export async function buildLiteralIndex({ productId, sourceRoot, version }) {
     if (existsSync(asar)) {
       const shelf = shelves.push("ChatGPT desktop app.asar") - 1;
       for (const name of readdirSync(asar).filter((n) => n.endsWith(".js")).sort()) {
-        for (const [text, pos, end] of codeLiterals(readFileSync(path.join(asar, name), "latin1"))) add(shelf, name, pos, text, end);
+        for (const [text, pos, end] of codeLiterals(readFileSync(path.join(asar, name), "latin1"), 8)) add(shelf, name, pos, text, end, true);
       }
     }
     if (!shelves.length) return null;
@@ -167,7 +202,7 @@ export async function buildTrace({ siteRoot, sourceRoot, categories, siteId, ori
       systemChars: (summary.cli?.main_prompt_chars ?? 0) + (summary.cli?.identity?.length ?? 0),
       toolsChars,
       tools: captured.size,
-      source: `ccprompts capture of Claude Code ${summary.version}`
+      source: `Harness Source Map capture of Claude Code ${summary.version}`
     };
   }
   if (existsSync(reminders)) {

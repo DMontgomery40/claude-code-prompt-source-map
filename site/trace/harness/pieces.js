@@ -31,10 +31,55 @@ function fragments(line) {
   return parts.map((f, i) => ({ f: f.replace(/^[^\p{L}\p{N}<\[]+/u, "").trim(), valueAfter: i < parts.length - 1 })).filter((x) => x.f.length >= PREFIX);
 }
 const preKey = (f) => h64("^" + f.slice(0, PREFIX));
+// Opening tags a harness wraps text in on the same line ("<multi_agent_mode>Proactive …"); the library and
+// the code often hold the words without them.
+const LEAD_TAGS = /^(?:\s*<[A-Za-z][^<>]{0,63}>)+\s*/;
 // Keys to look up for one line of a session's text.
 export function lookupKeys(line) {
   const out = [];
-  for (const { f } of fragments(line)) { if (f.length >= MIN_LINE) out.push(h64(f)); out.push(preKey(f)); }
+  const bare = String(line).replace(LEAD_TAGS, "");
+  for (const l of bare !== line && bare.trim() ? [line, bare] : [line]) {
+    for (const { f } of fragments(l)) { if (f.length >= MIN_LINE) out.push(h64(f)); out.push(preKey(f)); }
+  }
+  return out;
+}
+
+// Short markers: a wrapper's head line is often too short for the keys above ("Script completed",
+// "Wall time: 0.93 seconds", "<heartbeat>", ">>> TRANSCRIPT START"). A literal's first line is kept as a
+// marker, and a piece's own first line matches one only whole: the same words with values blanked
+// ("m:"), the same opening tag ("t:"), or a template's words followed by exactly one value ("v:",
+// "Message Type: MESSAGE" against "Message Type: {}"). Never a substring or a prefix of other words.
+const HTML = new Set("a abbr b body br button code div em form head hr html img input label li link meta ol option path pre script select span strong style svg table tbody td th thead tr ul".split(" "));
+// A line's shape: values (and template holes the build marks with U+0001) as "#".
+export function markShape(line) {
+  return normalizeLine(String(line).replace(DYN, "\u0001")).replace(/\u0001+/g, "#");
+}
+function tagOf(shape) {
+  const m = shape.match(/^<([A-Za-z][\w-]{2,})(>|\s+([A-Za-z_][\w-]*)=|$)/);
+  if (!m || HTML.has(m[1].toLowerCase())) return null;
+  return { full: m[3] ? `<${m[1]} ${m[3]}=` : m[2] === ">" ? `<${m[1]}>` : `<${m[1]}`, open: m[2] === "" };
+}
+const plain = (s) => s.length >= 8 && s.length <= 64 && !s.startsWith("<") && (s.match(/\p{L}{2,}/gu) || []).length >= 2 && (s.match(/[\p{L} ]/gu) || []).length >= 0.6 * s.length;
+// Keys a literal index stores for a literal's first line. valueAfter: a template value follows the line.
+export function markEntryKeys(line, valueAfter = false) {
+  let s = markShape(line);
+  if (valueAfter && !s.endsWith("#")) s += " #";
+  const out = [], tag = tagOf(s);
+  if (tag) { out.push(h64("t:" + tag.full)); return out; }
+  if (plain(s)) out.push(h64("m:" + s));
+  const words = s.replace(/\s*#$/, "");
+  if (words !== s && words.length >= 12 && plain(words)) out.push(h64("v:" + words));
+  return out;
+}
+// Keys to look up for a piece's first line.
+export function markLookupKeys(line) {
+  const s = markShape(line), out = [], tag = tagOf(s);
+  if (tag) { out.push(h64("t:" + tag.full)); if (!tag.open) out.push(h64("t:" + tag.full.replace(/[\s>].*$/, ""))); return out; }
+  // A template's words plus one value first: that literal is the producer ("Message Type: {}"), where an
+  // exact copy of the whole line is more often code that checks for it.
+  const words = s.replace(/\s+\S+$/, "");
+  if (words !== s) out.push(h64("v:" + words));
+  out.push(h64("m:" + s));
   return out;
 }
 // Keys a literal index stores for one literal of the shipped code (text between quotes or template holes).
@@ -60,7 +105,7 @@ export function literalEntryKeys(literal, templateEnd = false) {
 // gives the byte offset the page publishes. Returns { records, recordLines, recordPrefixes } where
 // records[i] = { slug, anchor, title, file, offset, gates, n (hashable lines), s (hashes that start its text) }.
 export function recordsFromMarkdown(pages) {
-  const records = [], recordLines = {}, recordPrefixes = {};
+  const records = [], recordLines = {}, recordPrefixes = {}, recordMarks = {};
   const headings = new Set();
   for (const p of pages) for (const m of p.text.matchAll(/^#{2,6} (.+)$/gm)) headings.add(m[1].trim());
   for (const p of pages) {
@@ -91,6 +136,13 @@ export function recordsFromMarkdown(pages) {
       }
       if (!rec) continue;
       const idx = records.length - 1;
+      // The text's opening line (its first fence's, not a later example block's) as a short marker, with
+      // {{placeholders}} read as values: a record whose words are all short or templated
+      // ("<teammate-message teammate_id="{{…}}">") still matches by its opening.
+      if (first && !rec.opened && normalizeLine(raw)) {
+        rec.opened = true;
+        for (const k of markEntryKeys(raw.replace(/\{\{[^}]*\}\}/g, "\u0001"))) if (!(k in recordMarks)) recordMarks[k] = idx;
+      }
       // The literal part of a template line: up to its first {{placeholder}}.
       const literal = raw.split("{{")[0];
       const whole = !raw.includes("{{");
@@ -113,7 +165,7 @@ export function recordsFromMarkdown(pages) {
   // Only records that carry model-facing (fenced) text are kept, hashable or not; indices are remapped.
   const keep = new Map();
   const out = [];
-  records.forEach((r, i) => { if (r.text) { keep.set(i, out.length); delete r.text; out.push(r); } });
+  records.forEach((r, i) => { if (r.text) { keep.set(i, out.length); delete r.text; delete r.opened; out.push(r); } });
   const remap = (o) => {
     const x = {};
     for (const [h, v] of Object.entries(o)) {
@@ -122,7 +174,7 @@ export function recordsFromMarkdown(pages) {
     }
     return x;
   };
-  return { records: out, recordLines: remap(recordLines), recordPrefixes: remap(recordPrefixes) };
+  return { records: out, recordLines: remap(recordLines), recordPrefixes: remap(recordPrefixes), recordMarks: remap(recordMarks) };
 }
 
 // ------------------------------------------------------------------ text: shape, look-alikes, linking
@@ -149,7 +201,7 @@ export function isLookAlike(text) {
 // Match a text against the record index, line by line. Returns the best record, per-record votes, the
 // matched share of hashable lines, and the page the plain line index points at.
 export function textLink(ix, text, prefer = null) {
-  const out = { rec: null, votes: new Map(), matched: 0, considered: 0, first: null, page: null };
+  const out = { rec: null, votes: new Map(), matched: 0, considered: 0, first: null, page: null, mark: false };
   const recs = (ix && ix.records) || [];
   const pick = (v) => {
     if (!Array.isArray(v)) return v;
@@ -165,11 +217,26 @@ export function textLink(ix, text, prefer = null) {
     out.considered++;
     let r = k.full != null ? pick(rl[k.full]) : undefined;
     if (r === undefined) r = pick(rp[k.prefix]);
+    if (r === undefined) {
+      const bare = lineKeys(raw.replace(LEAD_TAGS, ""));
+      if (bare.n !== k.n && bare.prefix) r = (bare.full != null ? pick(rl[bare.full]) : undefined) ?? pick(rp[bare.prefix]);
+    }
     if (k.full != null && pl[k.full] !== undefined) pages.set(pl[k.full], (pages.get(pl[k.full]) || 0) + 1);
     if (out.first === null) out.first = r === undefined ? -1 : r;
     if (r === undefined) continue;
     out.matched++;
     out.votes.set(r, (out.votes.get(r) || 0) + 1);
+  }
+  // Nothing matched line by line: the text's opening line against records' opening markers.
+  if (!out.matched && ix.recordMarks) {
+    const first = String(text).split("\n").find((l) => l.trim());
+    for (const h of first ? markLookupKeys(first) : []) {
+      const v = ix.recordMarks[h];
+      if (v === undefined) continue;
+      const r = pick(v);
+      out.votes.set(r, 1); out.matched = 1; out.considered = Math.max(1, out.considered); out.first = r; out.mark = true;
+      break;
+    }
   }
   let best = -1;
   for (const [r, v] of out.votes) if (best < 0 || v > out.votes.get(best) || (v === out.votes.get(best) && prefer && r === prefer.rec)) best = r;
@@ -185,15 +252,20 @@ function recordsOfLine(ix, line) {
   return v === undefined || v === false || v === null ? [] : Array.isArray(v) ? v : [v];
 }
 
-// Where a literal index places a text: the first line whose whole or prefix hash it holds.
+// Where a literal index places a text: the first line whose whole or prefix hash it holds, else the text's
+// own first line as a whole short marker.
 export function literalHit(literals, text) {
   if (!literals || !literals.keys) return null;
-  for (const raw of String(text).split("\n")) {
+  const place = (hit) => ({ shelf: literals.shelves[hit[0]], key: literals.files[hit[1]], pos: hit[2], line: !!(literals.lineShelves && literals.lineShelves.includes(hit[0])) });
+  const lines = String(text).split("\n");
+  for (const raw of lines) {
     for (const h of lookupKeys(raw)) {
       const hit = literals.keys[h];
-      if (hit) return { shelf: literals.shelves[hit[0]], key: literals.files[hit[1]], pos: hit[2], line: !!(literals.lineShelves && literals.lineShelves.includes(hit[0])) };
+      if (hit) return place(hit);
     }
   }
+  const first = lines.find((l) => l.trim());
+  if (first) for (const h of markLookupKeys(first)) { const hit = literals.keys[h]; if (hit) return place(hit); }
   return null;
 }
 
@@ -405,7 +477,7 @@ export async function buildHarnessModel({ trace, readText, index, literals = nul
       rung = agrees ? "linked" : "in-library-unlinked";
       if (agrees && site.anchor && typeRec === undefined) note = `Trace links the row type to "${site.title}"; the text is published under "${recs[link.rec].title}"`;
       else if (!agrees && site && site.anchor) note = `Trace's row-type link files this under "${site.title}"; its text is "${recs[link.rec].title}"`;
-      else if (!agrees) note = "Trace's linker does not link this; its text matches the record";
+      else if (!agrees) note = `Trace's linker does not link this; its ${link.mark ? "opening line" : "text"} matches the record`;
     } else if (site && site.anchor && typeRec === undefined) {
       rung = "linked"; record = { page: site.slug, anchor: site.anchor, title: site.title };
       note = "linked by row type; that record publishes no text to check against";
@@ -499,7 +571,7 @@ export async function buildHarnessModel({ trace, readText, index, literals = nul
 
   return {
     product: product === "codex" ? "Codex/ChatGPT" : product === "claude-code" ? "Claude Code" : product,
-    libName: (ix && ix.site) || null,
+    libName: (ix && (ix.libName || ix.site)) || null,
     shelves,
     session: {
       version: trace.version || null, title: trace.title || null, started: t0, ended: trace.ended,
@@ -547,7 +619,7 @@ function count(list) { const m = new Map(); for (const x of list) m.set(x, (m.ge
 function fileName(trace, i) { const n = (trace.files && trace.files[i] && trace.files[i].name) || ""; return n.split(/[\\/]/).pop(); }
 function shelfName(ix, product) {
   const v = ix && (ix.libVersion || Object.keys(ix.harness || {})[0]);
-  return product === "claude-code" ? `claude.exe${v ? " " + v : ""}` : `${(ix && ix.site) || "library"} sources${v ? " " + v : ""}`;
+  return product === "claude-code" ? `claude.exe${v ? " " + v : ""}` : `${(ix && (ix.label || ix.site)) || "library"} sources${v ? " " + v : ""}`;
 }
 function nameOf(g, record, composite) {
   const b = g.b;

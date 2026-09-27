@@ -4,11 +4,11 @@ import { fileURLToPath } from "node:url";
 import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { buildLiteralIndex, codeLiterals } from "../../src/shared/trace-build.mjs";
+import { buildLiteralIndex, codeLiterals, rustLiterals } from "../../src/shared/trace-build.mjs";
 import { textLineHashes, readRef } from "../model.js";
 import { loadTrace } from "../loader.js";
 import { entriesFor } from "../dump.mjs";
-import { buildHarnessModel, rackFor, recordsFromMarkdown, literalEntryKeys, lookupKeys, shapeOf, isLookAlike, RUNGS } from "../harness/pieces.js";
+import { buildHarnessModel, rackFor, recordsFromMarkdown, literalEntryKeys, lookupKeys, shapeOf, isLookAlike, RUNGS, literalHit, markEntryKeys, textLink } from "../harness/pieces.js";
 
 const FIX = fileURLToPath(new URL("./fixtures/", import.meta.url));
 
@@ -317,4 +317,65 @@ test("literal index: code literals key by fragment and template prefix, and hold
   for (const v of Object.values(lit.keys)) assert.ok(v.length === 3 && v.every(Number.isInteger));
   assert.ok(!/Other agents|teammates|model reads/.test(json), "no literal text is stored");
   assert.equal(await buildLiteralIndex({ productId: "claude-code", sourceRoot: join(root, "missing") }), null);
+});
+
+// A literal index built from files written under a temporary product root.
+async function literalsFrom(productId, files) {
+  const root = mkdtempSync(join(tmpdir(), "marks-"));
+  for (const [rel, text] of Object.entries(files)) { mkdirSync(join(root, rel, ".."), { recursive: true }); writeFileSync(join(root, rel), text); }
+  return buildLiteralIndex({ productId, sourceRoot: root, version: "9.9.9" });
+}
+
+test("short markers: a wrapper's head line meets a literal only whole (bug repro and near misses)", async () => {
+  const lit = await literalsFrom("codex", {
+    "outputs/codex-cli-prompts.json": JSON.stringify({ source: { tag: "rust-v9" } }),
+    "work/codex-src-rust-v9/codex-rs/core/src/wrap.rs": [
+      'fn a() -> String { if ok { "Script completed".to_string() } else { "Script failed to finish".to_string() } }',
+      'fn b(s: f64) -> String { format!("Wall time: {s:.4} seconds\\nOutput:") }',
+      'fn c(k: &str) -> String { format!("Message Type: {}\\nTask name: {}\\nPayload:\\n{}", k, t, p) }',
+      'fn d(text: &str) -> bool { text.starts_with("<environment_context>") }',
+      'pub const ENVIRONMENT_CONTEXT_OPEN_TAG: &str = "<environment_context>";',
+      'const IMG: &str = r#"<image name="#;',
+      'const WS: &str = "Use prior reviews as context, not binding precedent. ";',
+      "#[cfg(test)]", "mod tests {", '    const X: &str = "<only_in_tests>";', "}",
+    ].join("\n"),
+  });
+  const at = (t) => { const h = literalHit(lit, t); return h && `${h.key}:${h.pos}`; };
+  const f = "codex-rs/core/src/wrap.rs";
+  assert.equal(at("Script completed\nWall time 0.1 seconds\nOutput:\nok"), `${f}:1`);
+  assert.equal(at("Wall time: 0.9315 seconds\nOutput:\nok"), `${f}:2`, "a format hole reads as a value");
+  assert.equal(at("Message Type: MESSAGE\nTask name: /root\nSender: /root/a\nPayload:"), `${f}:3`, "a template's words plus exactly one value");
+  assert.equal(at("<environment_context>\n<cwd>/x</cwd>\n</environment_context>"), `${f}:5`, "a named constant is the definition, ahead of code that checks for the text");
+  assert.equal(at('<image name=[Image #1] path="/tmp/a.png">'), `${f}:6`, "an opening tag with its first attribute");
+  assert.equal(at("Use prior reviews as context, not binding precedent. Follow the policy."), `${f}:7`, "a string left open for concat! matches by prefix");
+  // Near misses: the same words inside longer text, more words after the head, the head not first, a test module.
+  for (const t of ["Script completed successfully", "Wall time: 3 seconds left in the quiz", "Message Type: MESSAGE from the user today", "The run said: Script completed", "Notes\nScript completed", "Script", "<only_in_tests>", "<environment_contexts>"]) assert.equal(literalHit(lit, t), null, t);
+  assert.deepEqual(markEntryKeys('<div class="x">'), [], "plain HTML tags are not markers");
+  assert.ok(!/Script|Wall time|Message Type|environment_context/.test(JSON.stringify(lit)), "markers are hashes too");
+});
+
+test("rust strings: raw strings, escapes and line continuations; a char quote opens nothing", () => {
+  const src = `let q = '"'; let r = r#"<tagged "quoted">"#; let s = "x \\\n    continued here"; let t = "tab\\there";`;
+  assert.deepEqual([...rustLiterals(src)].map(([t]) => t), ['<tagged "quoted">', "x continued here", "tab here"]);
+});
+
+test("in a JS bundle only tags and multi-line heads are markers (its short strings are UI and code)", async () => {
+  const js = 'var a="Copy link to clipboard";var b="## Your request:\\n"+x;var c=`<peer-note from="${id}">`;var d="<div>";';
+  const lit = await literalsFrom("claude-code", { "work/extracted/chunk-m.js": js, "work/embedded-manifest.json": JSON.stringify({ files: [{ name: "/$bunfs/root/chunk-m.js", file_offset: 0 }] }) });
+  assert.ok(literalHit(lit, "## Your request:\nabc"));
+  assert.ok(literalHit(lit, '<peer-note from="agent-7">'));
+  assert.equal(literalHit(lit, "Copy link to clipboard"), null);
+  assert.equal(literalHit(lit, "<div>\nhello"), null);
+});
+
+test("records match by their opening line when all their lines are short or templated, never by a later example", () => {
+  const text = "## Envelope\n\n~~~text\n<peer-note from=\"{{id}}\">\n{{body}}\n~~~\n\n## Pulse format\n\n~~~text\nRespond in this format.\n~~~\n\n```xml\n<pulse>\n<decision>NOTIFY</decision>\n</pulse>\n```\n\n## Proactive mode\n\n~~~text\nProactive multi-agent delegation is active for this whole session now.\n~~~\n";
+  const recs = recordsFromMarkdown([{ slug: "p", text, ids: new Map() }]);
+  const ix = { ...recs, lines: {}, pages: [] };
+  const title = (t) => { const l = textLink(ix, t); return l.rec == null ? null : recs.records[l.rec].title; };
+  assert.equal(title('<peer-note from="agent-7">'), "Envelope");
+  assert.equal(title("<pulse>\n<automation_id>x</automation_id>"), null, "an example block later in a record is not its opening");
+  assert.equal(title("<peer-notes>"), null, "another tag");
+  assert.equal(title("<multi_mode>Proactive multi-agent delegation is active for this whole session now.\n</multi_mode>"), "Proactive mode", "a tag wrapped round the words on the same line");
+  assert.ok(lookupKeys("<multi_mode>Proactive multi-agent delegation is active for this whole session now.").some((k) => literalEntryKeys("Proactive multi-agent delegation is active for this whole session now.").includes(k)));
 });

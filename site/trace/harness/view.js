@@ -666,7 +666,8 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   }
   function heroCaption() {
     const p = hero; if (!p) return "";
-    const head = (String(p.sample).replace(/^[<#\s]+/, "").split(/(?<=[.:!?])\s/)[0] || p.name).slice(0, 70).trim();
+    // The words, without the tags they're wrapped in (the piece's name already says which) or heading marks.
+    const head = (String(p.sample).replace(/^(?:\s*<[A-Za-z][^<>]{0,160}>)+/, "").replace(/^[#\s]+/, "").split(/(?<=[.:!?])\s/)[0] || p.name).slice(0, 70).trim();
     const root = Math.max(0, L.agents.findIndex(a => a.kind === "root"));
     const who = p.reach === 1 ? `${p.rec.has(root) ? "the main thread" : "one agent"} ${p.n.toLocaleString()} time${p.n > 1 ? "s" : ""}` : `${p.reach} of ${L.NA} agents`;
     const tail = p.rung === "binary-only" && p.where ? `It is ${esc(whereText(p))}, and in no ${esc(model.libName)} record.` : `It is ${esc(words[p.rung])}.`;
