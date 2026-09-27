@@ -218,9 +218,14 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-// The sweep plane: one additive quad across the swept grain columns at the sweep's height, 3 px tall with an
+// The sweep plane: one quad across the swept grain columns at the sweep's height, 3 px tall with an
 // analytic soft edge, in front of the face. The quad's ends come from uniforms, so moving it uploads
 // nothing; position.x picks the end (-1, 1), position.y the side of the line (-1, 1).
+// It blends by MAX, not by adding: blending runs on sRGB-encoded values, where adding the accent to a lit
+// pixel adds far more than its linear luminance, but the encoding is monotone per channel, so a max there
+// is the max in linear light. Its light (the accent times accentGain, times the edge cover) is then at
+// most 0.35 in luminance over whatever is below, and over a grain that already carries the band the two
+// together still add at most 0.35: max(base + band, plane) - base <= max(band, plane) per channel.
 export const SWEEP_VERT = /* glsl */`
 uniform float uX0;
 uniform float uX1;
@@ -252,7 +257,7 @@ layout(location = 0) out highp vec4 sweepOut;
 #define gl_FragColor sweepOut
 void main() {
   float cover = clamp(vHalf + 0.5 - abs(vD), 0.0, 1.0);
-  gl_FragColor = vec4(uAccent * uStrength, cover);
+  gl_FragColor = vec4(uAccent * (uStrength * cover), cover); // MAX ignores alpha: the edge is in the colour
   #include <colorspace_fragment>
 }`;
 
@@ -305,13 +310,14 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
   const maskOff = () => gl.colorMask(true, true, true, true);
   const planeU = {
     uX0: { value: 0 }, uX1: { value: 0 }, uY: { value: 0 }, uZ: { value: 0 }, uRes: uniforms.uRes, uDpr: uniforms.uDpr,
-    uAccent: uniforms.uAccent, uStrength: { value: 0.75 }
+    uAccent: uniforms.uAccent, uStrength: { value: uniforms.uAccentMax.value }
   };
   const planeGeo = new THREE.BufferGeometry();
   planeGeo.setAttribute("position", new THREE.Float32BufferAttribute([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, -1, 1, 0], 3));
   const sweepPlane = new THREE.Mesh(planeGeo, new THREE.ShaderMaterial({
     glslVersion: THREE.GLSL3, vertexShader: SWEEP_VERT, fragmentShader: SWEEP_FRAG, uniforms: planeU,
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    blending: THREE.CustomBlending, blendEquation: THREE.MaxEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor
   }));
   sweepPlane.frustumCulled = false;
   sweepPlane.visible = false;
@@ -484,7 +490,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       uniforms.uSweepY.value = sw.y;
       uniforms.uSweepCol0.value = sw.col0 ?? 0;
       planeU.uX0.value = sw.x0; planeU.uX1.value = sw.x1; planeU.uY.value = sw.y; planeU.uZ.value = sw.z;
-      planeU.uStrength.value = 0.75 * Math.min(1, uniforms.uEmissive.value);
+      planeU.uStrength.value = uniforms.uAccentMax.value * Math.min(1, uniforms.uEmissive.value);
     }
     for (const c of cur.chunks) {
       const on = c.minSeen <= iLead && c.maxLast >= iLo && frustum.intersectsSphere(sph.copy(c.mesh.geometry.boundingSphere));

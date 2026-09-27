@@ -247,8 +247,8 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
 });
 
 // The re-read sweep: the shader's band and afterglow are sweepGain, the added light stays within 0.35
-// luminance, only the leading column takes it, and the sweep plane follows the update's sweep with no
-// upload.
+// luminance (the band, the plane and both together), the swept columns take it, and the sweep plane
+// follows the update's sweep with no upload.
 test("the re-read sweep: band, afterglow on injected and re-sent grains, luminance cap, plane", async () => {
   const THREE = await import("../vendor/three.module.min.js");
   const { createGrains, sweepGain, accentGain, SWEEP_VERT, SWEEP_FRAG } = await import("../grains.js");
@@ -272,6 +272,7 @@ test("the re-read sweep: band, afterglow on injected and re-sent grains, luminan
   assert.match(SWEEP_VERT, /float ext = vHalf \+ uDpr;/);
   assert.match(SWEEP_VERT, /vHalf = 1\.5 \* uDpr;/, "3 px tall");
   assert.ok(!/\bdiscard\b/.test(SWEEP_FRAG));
+  assert.match(SWEEP_FRAG, /gl_FragColor = vec4\(uAccent \* \(uStrength \* cover\), cover\);/, "the soft edge is in the colour (MAX ignores alpha)");
   // the plane follows the sweep; the grain uniforms carry it; nothing uploads
   const { loadTrace } = await import("../loader.js");
   const { entriesFor } = await import("../dump.mjs");
@@ -292,10 +293,47 @@ test("the re-read sweep: band, afterglow on injected and re-sent grains, luminan
   const pu = g.sweepPlane.material.uniforms;
   assert.deepEqual([pu.uX0.value, pu.uX1.value, pu.uY.value, pu.uZ.value], [1, 1.13, 1.5, 0.02]);
   assert.ok(Math.abs(g.uniforms.uAccentMax.value - max) < 1e-12);
+  const pm = g.sweepPlane.material;
+  assert.equal(pm.blending, THREE.CustomBlending); assert.equal(pm.blendEquation, THREE.MaxEquation, "the plane blends by MAX");
+  assert.ok(Math.abs(pu.uStrength.value - max) < 1e-12, "the plane's light is the accent at 0.35 luminance");
+  g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02 }, emissive: 0.5 }));
+  assert.ok(Math.abs(pu.uStrength.value - 0.5 * max) < 1e-12, "emissive scales it down, never up");
+  g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02 }, emissive: 3 }));
+  assert.ok(Math.abs(pu.uStrength.value - max) < 1e-12);
   g.update(frame({ sweep: { y: 1.5, x0: 1, x1: 1.13, z: 0.02 }, emissive: 0 }));
   assert.equal(g.sweepPlane.visible, false, "emissive 0 turns the sweep off");
   g.update(frame({ sweep: null }));
   assert.equal(g.uniforms.uSweepOn.value, 0); assert.equal(g.sweepPlane.visible, false, "paused: no plane");
   assert.equal(inits, 4, "the sweep uploads nothing");
   g.dispose();
+});
+
+// The 0.35 clamp holds on the framebuffer, where blending happens on sRGB-encoded values: a grain that
+// carries the band (added in linear light in its shader, then encoded) with the sweep plane blended over
+// it by MAX adds at most 0.35 luminance to the pixel without the sweep, for any base colour, band gain up
+// to the cap and edge cover. The previous additive plane (the accent at 0.75, added to the encoded pixel)
+// breaks it: the model must tell the two apart.
+test("the sweep plane over the band stays within 0.35 luminance on the sRGB framebuffer; additive does not", async () => {
+  const THREE = await import("../vendor/three.module.min.js");
+  const { accentGain } = await import("../grains.js");
+  const a = new THREE.Color("#c8f784"), A = [a.r, a.g, a.b], cap = accentGain(a);
+  const enc = v => v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+  const dec = v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  const lum = c => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  const clamp1 = v => Math.min(1, Math.max(0, v));
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  let worstMax = 0, worstAdd = 0;
+  for (let n = 0; n < 20000; n++) {
+    const base = [rnd(), rnd(), rnd()].map(v => v * v), k = cap * rnd(), cover = rnd();
+    // the grain pixel: base plus the band in linear light, then encoded (colorspace_fragment)
+    const grain = base.map((v, c) => enc(clamp1(v + k * A[c])));
+    const plane = A.map(v => enc(clamp1(v * cap * cover)));
+    const maxOut = grain.map((v, c) => dec(Math.max(v, plane[c])));
+    const addOut = grain.map((v, c) => dec(clamp1(v + enc(clamp1(A[c] * 0.75)) * cover)));
+    worstMax = Math.max(worstMax, lum(maxOut) - lum(base));
+    worstAdd = Math.max(worstAdd, lum(addOut) - lum(base));
+  }
+  assert.ok(worstMax <= 0.35 + 1e-9, `MAX: ${worstMax}`);
+  assert.ok(worstAdd > 0.6, `the additive plane overshoots (${worstAdd}), so the model discriminates`);
 });
