@@ -72,10 +72,11 @@ test("rule 2: no new follow aim while the last follow move is easing, however fa
   assert.equal(nextShot(state([], 10.6, { leadFx: 0.45 }), f, f.ease), null, "arrived and inside the band: nothing");
 });
 
-test("rule 3: spawns crossed within 0.6 s of playback are one group, framed with the parent's column and held 2.5 s", () => {
+test("rule 3: spawns crossed within 0.6 s of playback are one group, framed with the parent's column and held 2.5 s from the last", () => {
   const ahead = unitsPerSec(4) * 0.6; // 2.4 units
-  const ev = sorted([spawn(20, "a", 0), spawn(20 + ahead - 0.1, "b", 3), spawn(20 + ahead + 0.5, "c", 1), spawn(40, "d", 2)]);
-  const r = play(ev, 19, 7000);
+  // d comes 4.5 s of playback after the hold ends (at 4 units a second), past the 4 s cut gap
+  const ev = sorted([spawn(20, "a", 0), spawn(20 + ahead - 0.1, "b", 3), spawn(20 + ahead + 0.5, "c", 1), spawn(52, "d", 2)]);
+  const r = play(ev, 19, 9500);
   const first = r.shots.find(o => o.shot.kind === "spawns");
   assert.ok(first && first.x >= 20 && first.x - 20 < 0.1, "cut to the group as the cut crosses the first spawn");
   assert.deepEqual(first.shot.members, ["a", "b"], "b is within 0.6 s of a; c is not");
@@ -83,13 +84,14 @@ test("rule 3: spawns crossed within 0.6 s of playback are one group, framed with
   assert.ok(b.x0 < 19.5 && b.x1 > 20 + ahead - 0.1, "the box spans the parent's column and both children");
   assert.ok(b.z0 < 0 && b.z1 > 17 + 5.2 * 3, "from the main ridge's face to the farthest child's lane, padded");
   assert.ok(b.yTop >= 20 * 1.12 - 1e-9, "the parent's column top with 12% headroom");
-  // c arrives during the hold: the same shot grows to take it in.
+  // c arrives during the hold: the same shot grows to take it in and holds 2.5 s from c.
   const grown = r.shots.find(o => o.shot.id === first.shot.id && o.shot.members.includes("c"));
   assert.ok(grown && grown.shot.at === first.shot.at && grown.shot.box.x1 > b.x1, "extended, same id, same start");
-  // Nothing else moves the camera during the hold; follow resumes after 2.5 s; d gets its own group.
+  assert.equal(grown.shot.hold, grown.now - first.now + 2500);
+  // Nothing else moves the camera during the hold; one follow move 2.5 s after c; d gets its own group.
   const afterFirst = r.shots.filter(o => o.now > first.now && o.shot.id !== first.shot.id);
   assert.equal(afterFirst[0].shot.kind, "follow");
-  assert.ok(afterFirst[0].now - first.now >= 2500 && afterFirst[0].now - first.now < 2500 + 20, `follow resumed at ${afterFirst[0].now - first.now} ms`);
+  assert.ok(afterFirst[0].now - grown.now >= 2500 && afterFirst[0].now - grown.now < 2500 + 20, `follow resumed ${afterFirst[0].now - grown.now} ms after c`);
   assert.deepEqual(r.shots.filter(o => o.shot.kind === "spawns" && o.shot.id !== first.shot.id).map(o => o.shot.members), [["d"]]);
 });
 
@@ -127,9 +129,11 @@ test("rule 5: while the main thread waits on its children the spawns shot holds;
   assert.equal(w.kind, "wait");
   assert.ok(w.box.x0 <= 20.5 && w.box.x1 >= 40 && w.box.z1 >= 17 + 5.2, "both children's stretches and lanes");
   assert.deepEqual(w.members, ["a", "b"]);
-  // A spawn during that wait takes over, and holds to the wait's end.
-  const t = play(sorted([...ev, spawn(26, "c", 2)]), 25, 2000);
-  assert.deepEqual(kinds(t), ["wait", "spawns"]);
+  // A child spawned during that wait joins the wait's shot: the same shot, no new cut.
+  const ev2 = sorted([spawn(20.5, "a"), spawn(26, "c", 2), wait(20, 40, [["a", 20.5], ["b", 22], ["c", 26]])]);
+  const t = play(ev2, 25, 2000);
+  assert.deepEqual(kinds(t), ["wait"]);
+  assert.ok(t.shots.at(-1).shot.members.includes("c"));
 });
 
 test("rule 5: a wait shot holds 2.5 s and to the wait's end, carries on into a wait that follows closely, and skips a wait about to end", () => {
@@ -287,9 +291,33 @@ test("a tick with no finite cut moves nothing and leaves the next ticks sound", 
   assert.equal(nextShot(state(ev, 20.05, { prevCutX: 19.9 }), f, 32).kind, "spawns", "the spawn after it is still found");
 });
 
+test("cut cadence: after a box the camera follows for at least 4 s before another cut; compactions are exempt", () => {
+  // a's hold ends at 30 (x = 20 + 2.5 s at 4 units a second); the camera is back to follow there
+  const ev = sorted([spawn(20, "a"), spawn(40, "b", 1), ret(44, "b"), wait(38, 45, [["b", 40]]), spawn(47, "c", 2), comp(60, 60)]);
+  const r = play(ev, 19.9, 12000);
+  const cuts = r.shots.filter((o, k) => !k || o.shot.id !== r.shots[k - 1].shot.id);
+  const boxes = cuts.filter(o => o.shot.kind !== "follow");
+  assert.deepEqual(boxes.map(o => o.shot.kind), ["spawns", "spawns", "compaction"]);
+  // the follow move that ended each box (a follow re-aim within the dead band rules may come later)
+  const backAfter = box => cuts.find(o => o.now > box.now && o.shot.kind === "follow");
+  const back = backAfter(boxes[0]), next = boxes[1];
+  assert.ok(next.now - back.now >= 4000, `the next cut came ${next.now - back.now} ms after follow resumed`);
+  assert.deepEqual(next.shot.members, ["c"], "b's spawn, its wait and its return came inside the 4 s and made no cut");
+  // the compaction cuts in soon after follow resumed from c's hold, gap or not
+  assert.ok(boxes[2].now - backAfter(boxes[1]).now < 4000);
+  // a box whose hold ends goes back to follow even when another event is due on that tick: no box-to-box cut
+  const held = nextShot(state([spawn(20, "a")], 20, { prevCutX: 19.9 }), null, 0);
+  assert.equal(held.kind, "spawns");
+  const end = nextShot(state([spawn(20, "a"), ret(30.05, "b")], 30.1, { prevCutX: 30 }), held, 2600);
+  assert.equal(end.kind, "follow");
+  // one move back to follow after each hold: no follow re-aims while it eases
+  assert.ok(r.shots.every((o, k) => k === 0 || o.shot.kind !== "follow" || r.shots[k - 1].shot.kind !== "follow" || o.now - r.shots[k - 1].now >= 600));
+});
+
 test("rule 9: the same inputs give the same shots", () => {
-  const ev = sorted([spawn(20, "a", 0), spawn(20.5, "b", 1), ret(31, "a"), wait(38, 44, [["b", 38.5]]), comp(47, 47), spawn(53, "c", 2)]);
-  const a = play(ev, 18, 9000), b = play(ev, 18, 9000);
+  // spaced for the 4 s cut gap at 4 units a second (16 units of follow after each box)
+  const ev = sorted([spawn(20, "a", 0), spawn(20.5, "b", 1), ret(47, "a"), wait(70, 76, [["b", 70.5]]), comp(90, 90), spawn(110, "c", 2)]);
+  const a = play(ev, 18, 24000), b = play(ev, 18, 24000);
   assert.deepEqual(a.shots, b.shots);
   assert.ok(new Set(kinds(a)).size >= 5, `a varied run: ${[...new Set(kinds(a))]}`);
   assert.deepEqual(DIRECTOR.anchor, [0.42, 0.35]);

@@ -20,6 +20,7 @@ export const DIRECTOR = {
   followEase: 600, cutEase: 900,
   window: 0.6,          // spawns crossed within this much playback time form one group (s)
   spawnHold: 2500, returnHold: 1500, release: 500,
+  cutGap: 4000,         // after the camera returns to follow, no other cut for this long (compactions excepted)
   pad: 0.12, minHalf: 1.5, cap: 12, fast: 16, waitFactor: 3
 };
 
@@ -195,7 +196,9 @@ function box(points) {
 }
 const leadPoint = s => ({ x: s.lead.x, z: s.lead.z, yTop: s.lead.yTop });
 const make = (kind, id, s, now, prev, extra) => ({ kind, id, box: null, anchor: null, zoom: "fit", followZoom: s.zoom ?? null, hold: 0, ease: DIRECTOR.cutEase, at: now,
-  through: Math.max(prev?.through ?? -Infinity, s.cutX), ...extra });
+  through: Math.max(prev?.through ?? -Infinity, s.cutX), followSince: prev?.followSince ?? -Infinity, ...extra });
+// The shots that frame a box; after one the camera returns to follow before any other cut.
+const BOX = new Set(["spawns", "wait", "return", "compaction"]);
 
 // World x the cut covers in `sec` seconds of playback at this speed (speed = requests per second over
 // the whole axis, the transport's clock).
@@ -251,7 +254,7 @@ function follow(s, prev, now) {
   }
   const p = leadPoint(s);
   return make("follow", `follow:${p.x}`, s, now, prev, { box: { x0: p.x, x1: p.x, z0: p.z, z1: p.z, yTop: p.yTop }, anchor: D.anchor,
-    zoom: "follow", ease: D.followEase, target: [p.x, p.yTop, p.z] });
+    zoom: "follow", ease: D.followEase, target: [p.x, p.yTop, p.z], followSince: BOX.has(prev?.kind) ? now : prev?.followSince ?? -Infinity });
 }
 
 // state: { P, playing, speed, n, W, cutX, prevCutX, level (mapDetail 0..3 the director engaged at),
@@ -288,10 +291,15 @@ export function nextShot(s, prev, now) {
     let found = null;
     const lo = Math.max(s.prevCutX ?? s.cutX, prev?.through ?? -Infinity);
     for (let k = after(ix.spawn, lo); k < ix.spawn.length && ix.spawn[k].x <= s.cutX; k++) (found ||= []).push(ix.spawn[k]);
+    // No cut to a box sooner than 4 s after the camera came back to follow, and none straight from one box to
+    // another: a box whose hold ends goes back to follow first, in one move.
+    const cutOK = !held && !BOX.has(prev?.kind) && now - (prev?.followSince ?? -Infinity) >= D.cutGap;
     if (found) {
-      if (held && prev.kind === "spawns") return spawnsFrom([...prev.group, ...found.filter(e => !prev.group.includes(e))], s, now, prev, prev);
-      // a spawns group takes over from framing a wait's children (rule 5)
-      if (!held || prev.kind === "wait") return spawnsShot(found, s, now, prev);
+      // more spawns while a spawns shot holds: the same shot takes them in and holds 2.5 s from now
+      if (held && prev.kind === "spawns") {
+        return { ...spawnsFrom([...prev.group, ...found.filter(e => !prev.group.includes(e))], s, now, prev, prev), hold: now - prev.at + D.spawnHold };
+      }
+      if (cutOK) return spawnsShot(found, s, now, prev);
     }
     // 5. the main thread is waiting on children already at work: frame its column and them. A wait that
     // begins while the last one's shot holds continues that shot (same id), following the work.
@@ -302,13 +310,13 @@ export function nextShot(s, prev, now) {
       if (prev.kind === "wait" && active && (w.x1 > prev.x1 || active > prev.active)) return { ...prev, x1: Math.max(prev.x1, w.x1), ...atWork(w, s, active) };
       return null;
     }
-    if (active && w.x1 - s.cutX >= cutSpan(s, D.window)) {
+    if (cutOK && active && w.x1 - s.cutX >= cutSpan(s, D.window)) {
       return make("wait", `wait:${w.rootReq}`, s, now, prev, { x1: w.x1, hold: D.spawnHold, ...atWork(w, s, active) });
     }
     // 4. a report returning to its parent
     let ret = null;
     for (let k = after(ix.return, s.prevCutX ?? s.cutX); k < ix.return.length && ix.return[k].x <= s.cutX; k++) ret = ix.return[k];
-    if (ret) {
+    if (ret && cutOK) {
       return make("return", `return:${ret.childId}:${ret.x}`, s, now, prev, { hold: D.returnHold,
         box: box([leadPoint(s), { x: ret.childX, z: ret.z, yTop: ret.yTop }, { x: ret.parentX, z: ret.parentZ, yTop: ret.parentTop }]) });
     }
