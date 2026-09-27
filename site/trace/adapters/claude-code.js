@@ -216,7 +216,8 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
         : row.origin && row.origin.kind === "task-notification" ? { kind: "agents", label: "task-notification" } : textKind(text, isSub);
       const b = addBlock(agent, { t, kind: k.kind, label: k.label, ref, text });
       track(uuid, b);
-      if (k.kind === "agents") st.agentBlocks.push({ t, block: b.i, teammate: k.teammate || null, notification: k.label === "task-notification", ids: noteIds(text) });
+      if (k.kind === "agents") st.agentBlocks.push({ t, block: b.i, teammate: k.teammate || null, notification: k.label === "task-notification", ids: noteIds(text),
+        idle: !!k.teammate && /<teammate-message[^>]*>\s*\{\s*"type"\s*:\s*"idle_notification"/.test(text) });
       if (k.ask) {
         agent.asks.push({ t, request: null, block: b.i, from: k.human ? "human" : "agent", ...(k.teammate ? { by: k.teammate } : {}) });
         if (!st.title && k.human) st.title = text.trim().slice(0, 120);
@@ -557,7 +558,9 @@ export function buildClaudeTrace(parsed, files) {
   // spawn (a fork's earlier requests are its parent's, replayed). Signals: the spawn call's own result
   // when the call waited for the agent (not a launch acknowledgement); a task-notification naming the
   // agent or its spawn call (background agents, and a Workflow run's agents when the run reports), or
-  // the agent's hand-back message; a teammate's message.
+  // the agent's hand-back message; a teammate's message. A teammate's return is its report, the burst's
+  // last message with content (it often lands just before the burst's last request, the idle notice
+  // after it); the first idle notice after that request only when the burst sent no report.
   const LAUNCHED = new Set(["teammate_spawned", "async_launched"]);
   for (const p of parsed) {
     if (p === root) continue;
@@ -579,7 +582,9 @@ export function buildClaudeTrace(parsed, files) {
     a.bursts.forEach((b, k) => {
       const next = a.bursts[k + 1];
       const inBurst = signals.filter(([ab]) => ab.t >= b.a && (!next || ab.t < next.a));
-      const hit = inBurst.find(([ab]) => ab.t >= b.b - 1000) || inBurst.at(-1);
+      const talk = inBurst.filter(([, v]) => v === "teammate-message");
+      const report = talk.filter(([ab]) => !ab.idle).at(-1);
+      const hit = report || inBurst.find(([ab]) => ab.t >= b.b - 1000) || inBurst.at(-1);
       if (hit) ret(...hit);
     });
   }

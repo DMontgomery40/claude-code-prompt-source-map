@@ -176,10 +176,13 @@ export function claudeFiles() {
 // (teammate_spawned, async_launched) except g1's, which rv1 waited for (completed); rv1 (background)
 // and the wf_1 run come back in task-notifications on the root (a user row; a queued_command attachment
 // with rendered text), x1 in a queued one without it (no block) while it is still working; rv1 also hands
-// back early, inside its burst, before its notification; c1 reports to b1 in a teammate-message
-// batch (its report, then an idle notification), its first request logged with its acknowledgement;
-// a0fk hands back to b1 in an <agent-message>; e1 works in two bursts 11 minutes apart and reports only
-// after the second; the wf_12 run was stopped and never reports.
+// back early, inside its burst, before its notification; c1 sends b1 a progress note, then its report 2 s
+// before its last request
+// and sends its idle notice 17 s after it (separate rows), then works a second burst that ends in an
+// idle notice only; c1's first request is logged with its acknowledgement;
+// rv1's notification is also queued again 2 s later; a0fk hands back to b1 in an <agent-message>; e1's
+// launch acknowledgement is logged with its first request, and e1 works in two bursts 11 minutes apart
+// and reports only after the second; the wf_12 run was stopped and never reports.
 export const CCN = { session: "33333333-3333-4333-8333-333333333333", t0: Date.parse("2026-01-04T00:00:00Z") };
 export function claudeNestedFiles() {
   const sid = CCN.session;
@@ -211,6 +214,7 @@ export function claudeNestedFiles() {
     result(23, "wfA", `Workflow launched in background.\nTranscript dir: ${dir}/subagents/workflows/wf_1\n`),
     { ...base(25), type: "user", isMeta: true, origin: { kind: "peer" }, message: { role: "user", content: 'Another Claude session sent a message:\n<agent-message from="rv1">[Subagent hand-back] early word</agent-message>' } },
     note(31, "rv1", "tuRev"),
+    queued(33, "rv1", "tuRev", false),
     queued(40, "tsk1", "wfA", true),
     queued(85, "x1", "tuGone", false),
     asst(90, "r4", [{ type: "text", text: "done" }]),
@@ -226,12 +230,15 @@ export function claudeNestedFiles() {
   const b1 = [
     ...b1Rows("b1"),
     result(9, "tuForkB", "Spawned forkb", sb("b1")),
-    ask(12, '<teammate-message teammate_id="leaf" color="blue">leaf: all done</teammate-message>\n<teammate-message teammate_id="leaf" color="blue">{"type":"idle_notification","from":"leaf"}</teammate-message>', sb("b1")),
+    ask(9.5, '<teammate-message teammate_id="leaf" color="blue">leaf: halfway</teammate-message>', sb("b1")),
+    ask(10, '<teammate-message teammate_id="leaf" color="blue">leaf: all done</teammate-message>', sb("b1")),
     { ...ask(13, 'Another Claude session sent a message:\n<agent-message from="a0fk">[Subagent hand-back] forked work done</agent-message>', sb("b1")), isMeta: true, origin: { kind: "peer" } },
+    ask(29, '<teammate-message teammate_id="leaf" color="blue">{"type":"idle_notification","from":"leaf"}</teammate-message>', sb("b1")),
     call(50, "q3", "tuAnon", "Agent", { description: "unlabelled", prompt: "do anon" }, sb("b1")),
-    result(51, "tuAnon", "Spawned", sb("b1")),
+    result(53, "tuAnon", "Spawned successfully.", sb("b1"), { toolUseResult: { status: "teammate_spawned" } }),
     call(60, "q4", "tuZed", "Agent", { name: "zed", description: "zed", prompt: "do zed" }, sb("b1")),
     result(61, "tuZed", "Spawned zed", sb("b1")),
+    ask(720, '<teammate-message teammate_id="leaf" color="blue">{"type":"idle_notification","from":"leaf"}</teammate-message>', sb("b1")),
     ask(760, '<teammate-message teammate_id="anon" color="green">anon: second pass done</teammate-message>', sb("b1")),
     asst(770, "q5", [{ type: "text", text: "thanks" }], sb("b1")),
   ];
@@ -253,7 +260,7 @@ export function claudeNestedFiles() {
     [`${S}/subagents/agent-a0fk.meta.json`]: meta({ agentType: "fork", isFork: true, name: "forkb", description: "fork of mid", toolUseId: "tuForkB", spawnDepth: 1 }),
     [`${S}/subagents/agent-b1.jsonl`]: J(b1),
     [`${S}/subagents/agent-b1.meta.json`]: mate({ agentType: "mid", name: "mid", description: "middle", spawnDepth: 0 }),
-    [`${S}/subagents/agent-c1.jsonl`]: J(leafRows("c1", 5)),
+    [`${S}/subagents/agent-c1.jsonl`]: J([...leafRows("c1", 5), asst(12, "c1q2", [{ type: "text", text: "sent" }], sb("c1")), ask(711, "more", sb("c1")), asst(712, "c1q3", [{ type: "text", text: "ok" }], sb("c1"))]),
     [`${S}/subagents/agent-c1.meta.json`]: mate({ agentType: "leaf", name: "leaf", description: "leafy", spawnDepth: 1 }),
     [`${S}/subagents/agent-e1.jsonl`]: J([...leafRows("e1", 52), ask(752, "again", sb("e1")), asst(753, "e1q2", [{ type: "text", text: "ok" }], sb("e1"))]),
     [`${S}/subagents/agent-e1.meta.json`]: mate({ agentType: "anon", name: "anon", description: "no such call", spawnDepth: 1 }),
