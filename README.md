@@ -1,5 +1,10 @@
 # Harness Source Map
 
+**Live site: [harness.dtmont.com](https://harness.dtmont.com)** · [Claude Code](https://harness.dtmont.com/claude-code/) ·
+[Codex/ChatGPT](https://harness.dtmont.com/codex/) · [Trace](https://harness.dtmont.com/trace/)
+
+[![Harness Source Map: what the agent harness puts in front of the model](site/assets/shared/social-card.png)](https://harness.dtmont.com)
+
 What Claude Code and Codex/ChatGPT put in front of the model: every prompt, reminder, tool description,
 setting, flag and environment variable, read from the shipped binaries and apps, each record with its
 provenance. Plus **Trace**, which opens your own session log in the browser and shows how those pieces
