@@ -190,10 +190,20 @@ export function normPlate(pl) {
   const core = !!(pl.core || pl.kind === "conversation" || piece == null);
   return { piece: core ? null : piece, core, n: pl.n ?? pl.count ?? 1, excerpt: pl.excerpt ?? pl.text ?? "", block: pl.block ?? (pl.blocks ? pl.blocks[0] : null), label: pl.label, more: !!pl.more };
 }
-const CAP = 44;
-function capPlates(plates) {
-  if (plates.length <= CAP) return plates;
-  return [...plates.slice(0, CAP - 1), { core: true, more: true, n: plates.slice(CAP - 1).filter(q => !q.core).length }];
+const CAP = 45;
+// One plate per piece, in order of first appearance: every copy of a piece in the request folds into it (×n, the
+// first copy's block kept for the hand-off), and the conversation between pieces folds into one count.
+export function foldPlates(plates) {
+  const out = [], at = new Map(); let conv = 0;
+  for (const raw of plates) {
+    const pl = normPlate(raw);
+    if (pl.core) { conv += pl.n; continue; }
+    const q = at.get(pl.piece);
+    if (q) { q.n += pl.n; continue; }
+    const f = { ...pl }; at.set(pl.piece, f); out.push(f);
+  }
+  const more = out.length > CAP ? out.length - (CAP - 1) : 0;
+  return { plates: more ? out.slice(0, CAP - 1) : out, conv, more };
 }
 
 // ---------- camera presets ----------
@@ -207,25 +217,32 @@ export const PRESETS = {
 };
 export const PRESET_NAMES = ["hero", "session", "rack", "later", "compare", "close"];
 // Rack views frame what was built: the preset gives the direction, the racks' height and width the distance.
-export function fitRacks(name, racks, fraction = 1) {
+// `free` is the share of the screen the layer may use: { v: height fraction, h: width fraction, aspect }.
+// A rack taller than VISIBLE_ROWS is framed at its top: the first rows stay readable, the wheel walks the rest.
+export const VISIBLE_ROWS = 20;
+export function fitRacks(name, racks, free = { v: 1, h: 1, aspect: 16 / 9 }, scroll = 0, visible = VISIBLE_ROWS) {
   const c = PRESETS[name]; if (!racks.length) return c;
-  const H = Math.max(...racks.map(r => r.userData.H)), xs = racks.map(r => r.userData.x0);
-  const t = [(Math.min(...xs) + Math.max(...xs)) / 2, 0.9 + H / 2, -7.6];
+  const full = Math.max(...racks.map(r => r.userData.H)), u = racks[0].userData;
+  const rows = Math.max(...racks.map(r => r.userData.per ?? 0)), win = rows > visible ? visible * (u.pitch ?? 0.34) + 0.4 : full;
+  const H = win, topY = 0.9 + full, cy = Math.min(topY - win / 2, Math.max(0.9 + win / 2, topY - win / 2 - scroll));
+  const left = Math.min(...racks.map(r => r.userData.x0 - (r.userData.W ?? 6.2) / 2)), right = Math.max(...racks.map(r => r.userData.x0 + (r.userData.W ?? 6.2) / 2));
+  const t = [(left + right) / 2, cy, -7.6];
   const dir = new THREE.Vector3(...c.p).sub(new THREE.Vector3(...c.t)).normalize();
-  const half = Math.max(H / 2 + 0.7, (Math.max(...xs) - Math.min(...xs) + 6.8) / 2 / 1.6);
-  const d = half / Math.tan(THREE.MathUtils.degToRad(c.fov / 2)) / Math.max(0.3, fraction) * 1.05;
+  const tan = Math.tan(THREE.MathUtils.degToRad(c.fov / 2));
+  const dv = (H / 2 + 0.55) / (tan * Math.max(0.3, free.v)), dh = ((right - left) / 2 + 0.6) / (tan * free.aspect * Math.max(0.3, free.h));
+  const d = Math.max(dv, dh) * 1.02;
   return { ...c, t, p: [t[0] + dir.x * d, t[1] + dir.y * d, t[2] + dir.z * d] };
 }
 const PRESET_LABEL = { hero: "Hero", session: "Session", rack: "One request", later: "Later", compare: "Compare", close: "Close-up" };
 
 // ---------- colours and materials ----------
-const NEUTRALS = [0x8e8a82, 0x74828f, 0x9a948a, 0x7c8a7c, 0x8a8078, 0x6f7f92, 0xa3a09a];
+const NEUTRALS = [0x8d949d, 0x6f7c8b, 0x9aa1a9, 0x7b8794, 0x858c96, 0x6b798b, 0xa6adb5];
 const HUE = { unnamed: 0xd92c16, loose: 0xd92c16, unlinked: 0xf09c16, typed: 0xcdb074, composite: 0xb4b8bd };
-const OUTHUE = { file: 0xe4d9c0, mcp: 0x2ea394, hook: 0xc4773f, agent: 0x8fa7c9, service: 0x9aa0b8, partial: 0xb4b8bd };
-const FANCOL = { linked: 0x6e6b66, typed: 0x8a7d60, composite: 0x6e6b66, outside: 0x6f6a5f, unlinked: 0xf09c16, unnamed: 0xd92c16, loose: 0xd92c16 };
-const PLATE = { linked: [0x9c8a66, 1, 0.42], typed: [0x9c7a4c, 1, 0.55], unlinked: [0x5d4a2c, 1, 0.45], unnamed: [0x2c3b52, 1, 0.3], loose: [0x2a1512, 0.2, 0.3], outside: [0xe2d8c2, 0, 0.85], composite: [0xa9adb2, 1, 0.3], core: [0x3a3632, 0.2, 0.7], shared: [0x3c3934, 0.4, 0.6] };
-const TAB = { unnamed: 0xff3a1c, loose: 0xff3a1c, unlinked: 0xffa21a, typed: 0xd8bc82, outside: 0xf1e8d4, linked: 0x7d7a74, composite: 0x7d7a74 };
-const CSS_COL = { unnamed: "#ff5236", loose: "#ff5236", unlinked: "#f2a93a", typed: "#d8bc82", outside: "#e6dcc6", linked: "#cfc9bc", composite: "#cfc9bc" };
+const OUTHUE = { file: 0xdadfe6, mcp: 0x2ea394, hook: 0xc4773f, agent: 0x8fa7c9, service: 0x9aa0b8, partial: 0xb4b8bd };
+const FANCOL = { linked: 0x5d6570, typed: 0x8a7d60, composite: 0x5d6570, outside: 0x6a717b, unlinked: 0xf09c16, unnamed: 0xd92c16, loose: 0xd92c16 };
+const PLATE = { linked: [0x7d8793, 1, 0.38], typed: [0x9c7a4c, 1, 0.55], unlinked: [0x5d4a2c, 1, 0.45], unnamed: [0x2c3b52, 1, 0.3], loose: [0x2a1512, 0.2, 0.3], outside: [0xdfe3e8, 0, 0.85], composite: [0xa9adb2, 1, 0.3], core: [0x2b313a, 0.2, 0.7], shared: [0x30353d, 0.4, 0.6] };
+const TAB = { unnamed: 0xff3a1c, loose: 0xff3a1c, unlinked: 0xffa21a, typed: 0xd8bc82, outside: 0xeef1f5, linked: 0x7b8490, composite: 0x7b8490 };
+const CSS_COL = { unnamed: "#ff5236", loose: "#ff5236", unlinked: "#f2a93a", typed: "#d8bc82", outside: "#dfe4ea", linked: "#c3cad3", composite: "#cfc9bc" };
 const phys = o => new THREE.MeshPhysicalMaterial(o);
 const UP = new THREE.Vector3(0, 1, 0);
 const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(1, 1, 1);
@@ -249,19 +266,20 @@ function merge(geos, extra) {
   return out;
 }
 // Wires carry their piece index (aId), colour (aCol) and vehicle stripes (aStripe); selection dims the rest in the shader.
+const FLOW = { uTime: { value: 0 }, uFlow: { value: 0 } };
 function selectable(m, SEL) {
   m.onBeforeCompile = sh => {
-    sh.uniforms.uSel = SEL; sh.uniforms.uDim = { value: new THREE.Color(0x30353b) };
+    sh.uniforms.uSel = SEL; sh.uniforms.uTime = FLOW.uTime; sh.uniforms.uFlow = FLOW.uFlow; sh.uniforms.uDim = { value: new THREE.Color(0x30353b) };
     sh.vertexShader = "attribute float aId; attribute vec3 aCol; attribute vec2 aStripe; varying float vId; varying vec3 vCol; varying vec2 vUv2; varying vec2 vStripe;\n" +
       sh.vertexShader.replace("#include <uv_vertex>", "#include <uv_vertex>\n vId = aId; vCol = aCol; vUv2 = uv; vStripe = aStripe;");
-    sh.fragmentShader = "uniform float uSel; uniform vec3 uDim; varying float vId; varying vec3 vCol; varying vec2 vUv2; varying vec2 vStripe;\n" +
+    sh.fragmentShader = "uniform float uSel; uniform float uTime; uniform float uFlow; uniform vec3 uDim; varying float vId; varying vec3 vCol; varying vec2 vUv2; varying vec2 vStripe;\n" +
       sh.fragmentShader.replace("#include <color_fragment>", `#include <color_fragment>
         diffuseColor.rgb = vCol;
         if (vStripe.x > 0.5) { float s = fract(vUv2.x * vStripe.y + vUv2.y); float band = smoothstep(0.0, 0.02, s) * (1.0 - smoothstep(0.1, 0.12, s));
           if (vStripe.x > 1.5) { float s2 = fract(s + 0.5); band = max(band, smoothstep(0.0, 0.02, s2) * (1.0 - smoothstep(0.1, 0.12, s2))); }
           diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.05), band); }
         if (uSel > -0.5 && abs(vId - uSel) > 0.5) diffuseColor.rgb = mix(diffuseColor.rgb, uDim, 0.9);`)
-        .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\n if (uSel > -0.5 && abs(vId - uSel) < 0.5) totalEmissiveRadiance += vCol * 0.22;");
+        .replace("#include <emissivemap_fragment>", "#include <emissivemap_fragment>\n if (uSel > -0.5 && abs(vId - uSel) < 0.5) { float pulse = uFlow * smoothstep(0.9, 1.0, fract(vUv2.x * 4.0 - uTime * 0.45)); totalEmissiveRadiance += vCol * (0.22 + 1.8 * pulse); }");
   };
   return m;
 }
@@ -306,9 +324,9 @@ export function buildBoard(L, SEL) {
   const paper = phys({ color: 0xd9ceb4, roughness: 0.85, sheen: 0.4 });
   const black = phys({ color: 0x121110, metalness: 0.3, roughness: 0.5, clearcoat: 0.6, clearcoatRoughness: 0.3 });
   const { zones } = L;
-  const slab = new THREE.Mesh(new RoundedBoxGeometry(BOARD.x1 - BOARD.x0, 0.5, BOARD.z1 - BOARD.z0, 4, 0.12), phys({ color: 0x1f1c19, roughness: 0.65, metalness: 0.15 }));
+  const slab = new THREE.Mesh(new RoundedBoxGeometry(BOARD.x1 - BOARD.x0, 0.5, BOARD.z1 - BOARD.z0, 4, 0.12), phys({ color: 0x14181e, roughness: 0.6, metalness: 0.2 }));
   slab.position.set((BOARD.x0 + BOARD.x1) / 2, -0.252, (BOARD.z0 + BOARD.z1) / 2); slab.receiveShadow = slab.castShadow = true; slab.name = "hv:slab"; g.add(slab);
-  const top = new THREE.Mesh(new THREE.PlaneGeometry(BOARD.x1 - BOARD.x0 - 0.1, BOARD.z1 - BOARD.z0 - 0.1), phys({ color: 0x2a2724, roughness: 0.74, clearcoat: 0.25, clearcoatRoughness: 0.55 }));
+  const top = new THREE.Mesh(new THREE.PlaneGeometry(BOARD.x1 - BOARD.x0 - 0.1, BOARD.z1 - BOARD.z0 - 0.1), phys({ color: 0x1a1f27, roughness: 0.74, clearcoat: 0.25, clearcoatRoughness: 0.55 }));
   top.rotation.x = -Math.PI / 2; top.position.set((BOARD.x0 + BOARD.x1) / 2, 0.001, (BOARD.z0 + BOARD.z1) / 2); top.receiveShadow = true; top.name = "hv:silkscreen"; g.add(top);
   if (zones.rail) bar(g, X.rail, zones.rail[0] - 0.2, zones.rail[1] + 0.15, brass);
   if (zones.page) bar(g, X.rail, zones.page[0] - 0.15, zones.page[1] + 0.15, brass);
@@ -365,51 +383,57 @@ export function buildBoard(L, SEL) {
   const marks = new THREE.InstancedMesh(new THREE.BoxGeometry(0.022, 0.02, 0.075), new THREE.MeshStandardMaterial({ roughness: 0.6 }), Math.max(1, EV.length));
   marks.count = EV.length; marks.name = "hv:marks"; marks.userData.EV = EV; g.add(marks);
   const life = L.agents.map((a, ai) => { const gg = new THREE.BoxGeometry(Math.max(0.01, L.tX(a.end) - L.tX(a.born)), 0.004, 0.012); gg.translate((L.tX(a.born) + L.tX(a.end)) / 2, 0.003, L.pinZ(ai)); return gg; });
-  const lifeMesh = new THREE.Mesh(merge(life), new THREE.MeshStandardMaterial({ color: 0x5f5a52, roughness: 0.8 })); lifeMesh.name = "hv:lifetimes"; g.add(lifeMesh);
-  const now = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 11.4), new THREE.MeshStandardMaterial({ color: 0x3a3226, emissive: 0xf3e6c8, emissiveIntensity: 0.9 }));
+  const lifeMesh = new THREE.Mesh(merge(life), new THREE.MeshStandardMaterial({ color: 0x4d5663, roughness: 0.8 })); lifeMesh.name = "hv:lifetimes"; g.add(lifeMesh);
+  const now = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 11.4), new THREE.MeshStandardMaterial({ color: 0x26303c, emissive: 0xe9f1fb, emissiveIntensity: 0.9 }));
   now.position.set(X.t0, 0.03, 0); now.visible = false; now.name = "hv:now"; g.add(now);
   return g;
 }
 
 // One request's rack: plates in log order, material by rung, each wired back to its piece's terminal.
 // `other` (a Set of piece ids) turns it into half of a compare: shared plates recede to graphite.
-export function buildRack(L, rack, x0, SEL, { other = null, newSince = null } = {}) {
+export function buildRack(L, rack, x0, SEL, { other = null, newSince = null, columns = null } = {}) {
   const g = new THREE.Group(); g.name = "hv:rack";
-  const plates = capPlates(rack.plates.map(normPlate));
-  const RZ = -7.6, pitch = Math.min(0.245, 7.0 / Math.max(1, plates.length)), PH = pitch * 0.82, PG = pitch * 0.18;
-  const H = plates.length * (PH + PG) + 0.4, top = 0.9 + H;
-  const back = new THREE.Mesh(new RoundedBoxGeometry(6.2, H + 0.3, 0.14, 3, 0.05), phys({ color: 0x1d1b18, roughness: 0.55, metalness: 0.3, clearcoat: 0.4 }));
+  const { plates, conv, more } = foldPlates(rack.plates);
+  const n = plates.length + (more ? 1 : 0), cols = columns ?? (n <= 14 ? 1 : 2), per = Math.max(1, Math.ceil(n / cols));
+  const RZ = -7.6, pitch = 0.34, PH = 0.27, COLW = 6.7;
+  const H = per * pitch + (conv ? 0.34 : 0) + 0.45, top = 0.9 + H, W = cols * COLW - 0.5;
+  const colX = c => x0 + (c - (cols - 1) / 2) * COLW;
+  const back = new THREE.Mesh(new RoundedBoxGeometry(W + 0.2, H + 0.3, 0.14, 3, 0.05), phys({ color: 0x141820, roughness: 0.5, metalness: 0.35, clearcoat: 0.4 }));
   back.position.set(x0, 0.9 + H / 2, RZ - 0.12); back.receiveShadow = true; g.add(back);
   const steel = phys({ color: 0x9aa0a6, metalness: 1, roughness: 0.34 });
-  for (const dx of [-3.0, 3.0]) { const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, H + 0.6, 16), steel); sp.position.set(x0 + dx, 0.9 + H / 2, RZ + 0.02); g.add(sp); }
+  for (const dx of [-W / 2 - 0.05, W / 2 + 0.05]) { const sp = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, H + 0.6, 16), steel); sp.position.set(x0 + dx, 0.9 + H / 2, RZ + 0.02); g.add(sp); }
   const items = [], byMat = {};
-  plates.forEach((pl, k) => {
-    const y = top - 0.3 - k * (PH + PG), piece = pl.piece != null ? (L.byId.get(pl.piece) ?? null) : null;
+  const rows = more ? [...plates, { core: true, more: true, n: more }] : plates;
+  rows.forEach((pl, k) => {
+    const c = Math.floor(k / per), x = colX(c), y = top - 0.3 - (k % per) * pitch;
+    const piece = pl.piece != null ? (L.byId.get(pl.piece) ?? null) : null;
     const cls = pl.core ? "core" : piece ? piece.cls : "composite";
     const shared = !!(other && piece && other.has(piece.id));
     const fresh = !!(newSince && piece && !newSince.has(piece.id));
-    const z = RZ + (shared ? 0 : other ? 0.16 : 0.06), w = pl.core ? 5.4 : 5.6, h = pl.core ? 0.03 : PH;
-    (byMat[shared ? "shared" : cls] ||= []).push({ p: new THREE.Vector3(x0, y, z), s: new THREE.Vector3(w, h, 1) });
-    items.push({ pl, piece, y, z, cls, shared, fresh, x0, h: PH });
+    const z = RZ + (shared ? 0 : other ? 0.16 : 0.06), w = pl.core ? 5.4 : 5.9, h = pl.core ? 0.03 : PH;
+    (byMat[shared ? "shared" : cls] ||= []).push({ p: new THREE.Vector3(x, y, z), s: new THREE.Vector3(w, h, 1) });
+    items.push({ pl, piece, y, z, cls, shared, fresh, x0: x, h: PH });
   });
+  if (conv) items.push({ pl: { core: true, conv: true, n: conv }, piece: null, y: top - 0.3 - per * pitch - 0.02, z: RZ + 0.06, cls: "core", shared: false, fresh: false, x0: colX(0), h: PH });
   const tabs = items.filter(it => !it.pl.core);
-  inst(g, "hv:tabs", new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: 0.5 }), tabs.map(it => ({ p: new THREE.Vector3(it.x0 - 2.93, it.y, it.z + 0.02), s: new THREE.Vector3(0.16, PH * 0.9, 0.13), c: it.shared ? 0x3c3934 : TAB[it.cls] ?? 0x7d7a74 })));
+  inst(g, "hv:tabs", new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: 0.5 }), tabs.map(it => ({ p: new THREE.Vector3(it.x0 - 3.08, it.y, it.z + 0.02), s: new THREE.Vector3(0.16, PH * 0.9, 0.13), c: it.shared ? 0x30353d : TAB[it.cls] ?? 0x7b8490 })));
   for (const k in byMat) {
     const [c, metal, rough] = PLATE[k];
     inst(g, `hv:plates-${k}`, new RoundedBoxGeometry(1, 1, 0.1, 2, 0.02), phys({ color: c, metalness: metal, roughness: rough, clearcoat: k === "outside" ? 0 : 0.7, clearcoatRoughness: 0.25, sheen: k === "outside" ? 0.5 : 0, iridescence: k === "unnamed" ? 0.6 : 0 }), byMat[k]);
   }
-  const geos = [], ids = [], cols = [];
+  // Each plate's wire leaves from behind the rack and runs down to its piece's terminal on the board.
+  const geos = [], ids = [], cols3 = [];
   for (const it of items) {
     const p = it.piece; if (!p || it.shared || !p.end) continue;
-    const a = new THREE.Vector3(it.x0 - 2.85, it.y, it.z + 0.05), end = p.end.clone();
-    const c = new THREE.CatmullRomCurve3([a, new THREE.Vector3(a.x - 0.8, a.y, a.z + 0.4), new THREE.Vector3((a.x + end.x) / 2 - 1, Math.max(0.9, a.y * 0.45), (a.z + end.z) / 2), new THREE.Vector3(end.x + 0.3, 0.9, end.z), end], false, "centripetal");
-    geos.push(new THREE.TubeGeometry(c, 90, 0.018, 6, false)); ids.push(p.i); cols.push([p.color.r, p.color.g, p.color.b]);
+    const a = new THREE.Vector3(it.x0 - 2.95, it.y, RZ - 0.26), end = p.end.clone(), low = 0.55;
+    const c = new THREE.CatmullRomCurve3([a, new THREE.Vector3(a.x - 0.05, (a.y + low) / 2, RZ - 0.3), new THREE.Vector3(a.x - 0.2, low, RZ - 0.3), new THREE.Vector3((a.x + end.x) / 2, low, (RZ + end.z) / 2), new THREE.Vector3(end.x + 0.3, 0.8, end.z), end], false, "centripetal");
+    geos.push(new THREE.TubeGeometry(c, 90, 0.018, 6, false)); ids.push(p.i); cols3.push([p.color.r, p.color.g, p.color.b]);
   }
   if (geos.length) {
-    const m = new THREE.Mesh(merge(geos, { aId: { size: 1, values: ids }, aCol: { size: 3, values: cols }, aStripe: { size: 2, values: ids.map(() => [0, 0]) } }), selectable(phys({ color: 0xffffff, roughness: 0.4, clearcoat: 1, emissive: 0 }), SEL));
+    const m = new THREE.Mesh(merge(geos, { aId: { size: 1, values: ids }, aCol: { size: 3, values: cols3 }, aStripe: { size: 2, values: ids.map(() => [0, 0]) } }), selectable(phys({ color: 0xffffff, roughness: 0.4, clearcoat: 1, emissive: 0 }), SEL));
     m.castShadow = true; m.name = "hv:rack-wires"; g.add(m);
   }
-  g.userData = { items, rack, x0, H };
+  g.userData = { items, rack, x0, H, W, cols, per, pitch, top, plates: plates.length, conv, more };
   return g;
 }
 
@@ -421,15 +445,15 @@ function buildRoom() {
   const geo = new THREE.BufferGeometry(), W = 90, pos = [], idx = [];
   prof.forEach((v, k) => { pos.push(-W / 2, v.y, v.x, W / 2, v.y, v.x); if (k) idx.push(2 * k - 2, 2 * k - 1, 2 * k, 2 * k - 1, 2 * k + 1, 2 * k); });
   geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx); geo.computeVertexNormals();
-  const room = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x57524b, roughness: 0.92, side: THREE.DoubleSide })); room.receiveShadow = true; g.add(room);
-  const plinth = new THREE.Mesh(new RoundedBoxGeometry(22.5, 0.9, 15.2, 4, 0.2), phys({ color: 0x24211d, roughness: 0.6, metalness: 0.2, clearcoat: 0.3 }));
+  const room = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x3a4250, roughness: 0.95, side: THREE.DoubleSide })); room.receiveShadow = true; g.add(room);
+  const plinth = new THREE.Mesh(new RoundedBoxGeometry(22.5, 0.9, 15.2, 4, 0.2), phys({ color: 0x151920, roughness: 0.55, metalness: 0.25, clearcoat: 0.3 }));
   plinth.position.set(-0.6, -0.96, 0.4); plinth.receiveShadow = plinth.castShadow = true; g.add(plinth);
-  const key = new THREE.SpotLight(0xffe2bd, 900, 80, 0.52, 0.75, 1.6);
+  const key = new THREE.SpotLight(0xfff6ee, 900, 80, 0.52, 0.75, 1.6);
   key.position.set(-9, 26, 14); key.target.position.set(-1, 0, -0.5); g.add(key, key.target);
   key.castShadow = true; key.shadow.mapSize.set(4096, 4096); key.shadow.radius = 6; key.shadow.blurSamples = 16; key.shadow.bias = -0.0004; key.shadow.normalBias = 0.03; key.shadow.camera.near = 8; key.shadow.camera.far = 60;
   const rim = new THREE.DirectionalLight(0x9fbcff, 0.9); rim.position.set(12, 9, -16); g.add(rim);
-  const wall = new THREE.SpotLight(0xffc98f, 420, 70, 0.7, 1, 1.4); wall.position.set(4, 10, 6); wall.target.position.set(2, 6, -22); g.add(wall, wall.target);
-  g.add(new THREE.HemisphereLight(0xe8e0d4, 0x1a1510, 0.28));
+  const wall = new THREE.SpotLight(0xc9d8ee, 360, 70, 0.7, 1, 1.4); wall.position.set(4, 10, 6); wall.target.position.set(2, 6, -22); g.add(wall, wall.target);
+  g.add(new THREE.HemisphereLight(0xdfe6ef, 0x0c1016, 0.3));
   return g;
 }
 
@@ -438,14 +462,16 @@ function buildRoom() {
 export function createHarnessView({ container, onPick = () => {}, rackFor = null, headless = false } = {}) {
   const SEL = { value: -1 };
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0f0d0b);
-  scene.fog = new THREE.FogExp2(0x15120f, 0.012);
+  scene.background = new THREE.Color(0x0a0d12);
+  scene.fog = new THREE.FogExp2(0x0b0f15, 0.012);
   scene.add(buildRoom());
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.1, 300);
   let model = null, trace = null, L = null, board = null, racks = [], hero = null, words = null;
   let preset = "session", sel = null, focusAgent = null, picked = null, rackKey = null, shown = false, pending = false, tween = null, disposed = false;
-  let deferred = null, frames = 0;   // deferred: Trace's latest selection while hidden, applied on show()
-  let renderer = null, controls = null, composer = null, bokeh = null, ro = null, root = null, canvas = null, overlay = null, svg = null, caption = null, nav = null, card = null, legend = null;
+  let deferred = null, frames = 0, flowUntil = 0, hoverAt = null, hoverQueued = false, rackScroll = 0;
+  // A pick sends light down its wire and out to the agents that got it, for a few seconds, then the layer is still again.
+  const startFlow = () => { flowUntil = performance.now() + 6500; requestRender(); };   // deferred: Trace's latest selection while hidden, applied on show()
+  let renderer = null, controls = null, composer = null, bokeh = null, ro = null, root = null, canvas = null, overlay = null, svg = null, caption = null, nav = null, card = null, tip = null;
   let labs = [], clampTags = [], fanTags = [], plateEls = [], callouts = [];
   const getRackFor = async () => rackFor || (rackFor = (await import("./pieces.js")).rackFor);
 
@@ -457,8 +483,8 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     caption = document.createElement("div"); caption.className = "hv-caption";
     nav = document.createElement("nav"); nav.className = "hv-nav"; nav.setAttribute("aria-label", "Harness layer views");
     card = document.createElement("div"); card.className = "hv-card"; card.hidden = true;
-    legend = document.createElement("div"); legend.className = "hv-legend";
-    root.append(canvas, overlay, caption, nav, legend, card);
+    tip = document.createElement("div"); tip.className = "hv-tip"; tip.hidden = true;
+    root.append(canvas, overlay, caption, nav, card, tip);
     container.append(root);
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
@@ -469,6 +495,16 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     ro = new ResizeObserver(() => { if (shown) resize(); });
     ro.observe(root);
     canvas.addEventListener("click", onCanvasClick);
+    // In a rack the wheel walks the plates top to bottom (orbit zoom stays for the board views).
+    canvas.addEventListener("wheel", e => {
+      if (!RACKED.has(preset) || !racks.length) return;
+      const u = racks[0].userData, vis = visibleRows(); if ((u.per ?? 0) <= vis) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      const max = Math.max(0, (u.per - vis) * u.pitch);
+      rackScroll = Math.max(0, Math.min(max, rackScroll + Math.sign(e.deltaY) * u.pitch * 3)); goCam(preset, true); requestRender();
+    }, { capture: true, passive: false });
+    canvas.addEventListener("pointermove", e => { hoverAt = e; if (!hoverQueued) { hoverQueued = true; requestAnimationFrame(onHover); } });
+    canvas.addEventListener("pointerleave", () => { hoverAt = null; tip.hidden = true; });
     import("../vendor/RoomEnvironment.js").then(({ RoomEnvironment }) => {
       if (disposed) return;
       const pmrem = new THREE.PMREMGenerator(renderer);
@@ -479,7 +515,27 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   // ----- geometry of the screen the layer shares with Trace's chrome -----
   const cssNum = (name, dflt) => { if (!root) return dflt; const v = parseFloat(getComputedStyle(root).getPropertyValue(name)); return Number.isFinite(v) ? v : dflt; };
   const size = () => root ? [root.clientWidth, root.clientHeight] : [1600, 900];
-  const insets = () => ({ right: cssNum("--side-w", 392) + 32, top: cssNum("--hv-top", 176), bottom: cssNum("--hv-bottom", 200) });
+  // Trace's own chrome floats over the stage (header, sidebar, session map, playback, view buttons). The layer keeps
+  // its text and framing clear of it by measuring the host's other children: panels in the lower part of the screen
+  // are bottom obstacles. `bottom` clears everything (the playback bar), `bottomLeft` the left column (session map).
+  let chrome = null;
+  function measureChrome() {
+    const [W, H] = size(), host = root?.parentElement?.parentElement, out = { bottom: 96, bottomLeft: cssNum("--hv-bottom", 200), leftW: 420 };
+    if (!host || !(W > 0 && H > 0)) return (chrome = out);
+    const r0 = root.getBoundingClientRect(), side = cssNum("--side-w", 392) + 32;
+    let bottom = 16, bottomLeft = 16, leftW = 0;
+    for (const el of host.children) {
+      if (el === root.parentElement || el.hidden) continue;
+      const r = el.getBoundingClientRect(); if (!(r.width > 0 && r.height > 0) || r.width * r.height > W * H * 0.4) continue;
+      const top = r.top - r0.top, left = r.left - r0.left;
+      if (top < H * 0.5 || left > W - side) continue;               // header and sidebar are handled by --hv-top and --side-w
+      const need = H - top + 12;
+      if (left < W * 0.28 && r.right - r0.left < W * 0.4) { bottomLeft = Math.max(bottomLeft, need); leftW = Math.max(leftW, r.right - r0.left); }
+      else bottom = Math.max(bottom, need);
+    }
+    return (chrome = { bottom, bottomLeft: Math.max(bottomLeft, bottom), leftW: leftW || 420 });
+  }
+  const insets = () => { const c = chrome || measureChrome(); return { right: cssNum("--side-w", 392) + 32, top: cssNum("--hv-top", 176), bottom: c.bottomLeft, bottomAll: c.bottom, leftW: c.leftW }; };
   function applyCamera(c) {
     const [w, h] = size(); if (!(w > 0 && h > 0)) return;
     camera.aspect = w / h; camera.fov = c.fov ?? camera.fov;
@@ -487,19 +543,26 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     camera.setViewOffset(w, h, ins.right * 0.5, -Math.max(0, (capBottom - camBottom(ins)) * 0.5), w, h); camera.updateProjectionMatrix();
   }
   function resize() {
-    const [w, h] = size(); if (!(w > 0 && h > 0) || !renderer) return;   // a hidden container reports 0x0: keep the last good size
+    const [w, h] = size(); if (!(w > 0 && h > 0) || !renderer) return;
+    measureChrome();   // a hidden container reports 0x0: keep the last good size
     renderer.setSize(w, h, false); composer?.setSize(w, h); applyCamera({}); requestRender();
   }
   function goCam(name, instant) {
     const [, fh] = size(), ins = insets(), capBottom = caption ? caption.offsetTop + caption.offsetHeight : ins.top;
-    const c = RACKED.has(name) ? fitRacks(name, racks, fh > 0 ? (fh - capBottom - camBottom(ins)) / fh : 1) : PRESETS[name] || PRESETS.session;
+    const [fw] = size();
+    const free = { v: fh > 0 ? (fh - capBottom - camBottom(ins)) / fh : 1, h: fw > 0 ? (fw - ins.right - 60) / fw : 1, aspect: fw > 0 && fh > 0 ? fw / fh : 16 / 9 };
+    const c = RACKED.has(name) ? fitRacks(name, racks, free, rackScroll, visibleRows()) : PRESETS[name] || PRESETS.session;
     const to = { p: new THREE.Vector3(...c.p), t: new THREE.Vector3(...c.t), fov: c.fov };
     if (instant || !controls) { camera.position.copy(to.p); (controls?.target || new THREE.Vector3()).copy(to.t); camera.lookAt(to.t); camera.fov = to.fov; applyCamera(c); controls?.update(); return; }
     tween = { from: { p: camera.position.clone(), t: controls.target.clone(), fov: camera.fov }, to, t0: performance.now(), dur: 1200 };
     requestRender();
   }
   // Racks stand centre-left, clear of the minimap's corner: they may use the height down to the playback bar.
-  const RACKED = new Set(["rack", "later", "compare"]), camBottom = ins => RACKED.has(preset) ? Math.min(ins.bottom, 96) : ins.bottom;
+  // How many plate rows stay readable (about 26 px a row) in the height the layer has; the wheel walks the rest.
+  const freeH = () => { const [, h] = size(), ins = insets(); return h - (caption ? caption.offsetTop + caption.offsetHeight : ins.top) - ins.bottomAll; };
+  const visibleRows = () => Math.max(6, Math.min(VISIBLE_ROWS, Math.floor(freeH() / 26)));
+  const narrow = () => { const [w] = size(); return w - insets().right - 60 < 1000; };
+  const RACKED = new Set(["rack", "later", "compare"]), camBottom = ins => RACKED.has(preset) ? ins.bottomAll : ins.bottom;
   const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
   // ----- rendering on demand -----
@@ -514,6 +577,9 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       if (k >= 1) tween = null; else requestRender();
     }
     if (controls.update()) requestRender();
+    const now = performance.now();
+    if (flowUntil > now && sel) { FLOW.uTime.value = now / 1000; FLOW.uFlow.value = Math.min(1, (flowUntil - now) / 900); requestRender(); }
+    else FLOW.uFlow.value = 0;
     if (composer && PRESETS[preset]?.dof) composer.render(); else renderer.render(scene, camera);
     placeLabels();
   }
@@ -535,8 +601,8 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
     const px = x => (x - BOARD.x0) / (BOARD.x1 - BOARD.x0) * W, pz = z => (z - BOARD.z0) / (BOARD.z1 - BOARD.z0) * H, s = W / (BOARD.x1 - BOARD.x0);
     const mono = getComputedStyle(root).getPropertyValue("--mono").trim() || "ui-monospace, Menlo, monospace";
-    const ink = a => `rgba(234,228,216,${a})`;
-    g.fillStyle = "#2a2724"; g.fillRect(0, 0, W, H); g.textBaseline = "middle";
+    const ink = a => `rgba(226,233,242,${a})`;
+    g.fillStyle = "#1a1f27"; g.fillRect(0, 0, W, H); g.textBaseline = "middle";
     g.font = `500 ${0.3 * s}px ${mono}`; g.fillStyle = ink(0.6);
     for (const [x, t] of [[X.rail - 0.9, "WHERE IT CAME FROM"], [X.clamp - 1.2, "WHAT PUT IT THERE"], [X.pins - 1.5, "WHO GOT IT"], [X.t0 + 0.2, "WHEN"]]) g.fillText(t, px(x), pz(6.68));
     for (const p of L.railed) { g.fillStyle = ink(0.45); g.fillRect(px(X.rail + 0.36), pz(p.zs) - 2, 0.16 * s, 4); }
@@ -574,8 +640,6 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     fanTags = L.G.filter(gr => gr.cls === "unnamed" || gr.cls === "loose" || gr.cls === "unlinked").map(gr => {
       const el = document.createElement("div"); el.className = "hv-tag hv-who"; el.textContent = gr.rec.size === 1 && gr.rec.has(Math.max(0, L.agents.findIndex(a => a.kind === "root"))) ? "main thread" : `${gr.rec.size} agent${gr.rec.size > 1 ? "s" : ""}`; overlay.append(el); return { gr, el };
     });
-    legend.innerHTML = [["linked", "linked record"], ["typed", "linked by type, text differs"], ["unlinked", "in library, not linked"], ["loose", `not in the ${model.libName} library (a red collar: found in the binary)`], ["outside", "outside any binary"]]
-      .map(([c, t]) => `<span><i style="background:${CSS_COL[c]}"></i>${esc(t)}</span>`).join("");
     nav.innerHTML = "";
     for (const name of PRESET_NAMES) {
       if (name === "compare" && compareAgent(model, trace, focusAgent) == null) continue;
@@ -611,11 +675,13 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       .filter(r => { const ok = r.z < 1 && r.x > -200 && r.x < W - ins.right + 100 && r.y < H - 40; r.c.el.hidden = !ok; return ok; }).sort((a, b) => a.ty - b.ty);
     for (let it = 0; it < 40; it++) for (let k = 1; k < cs.length; k++) { const a = cs[k - 1], b = cs[k]; const d = b.ty - a.ty, need = (a.c.el.offsetHeight + b.c.el.offsetHeight) / 2 + 6; if (d < need && Math.abs(a.x - b.x) < (a.c.el.offsetWidth + b.c.el.offsetWidth) / 2) { b.ty += (need - d) / 2; a.ty -= (need - d) / 2; } }
     let lead = "";
-    for (const r of cs) { const w = r.c.el.offsetWidth, x = Math.max(14 + w / 2, Math.min(W - ins.right - 14 - w / 2, r.x)); r.c.el.style.left = `${x}px`; r.c.el.style.top = `${r.ty}px`; if (preset === "close") lead += `<path d="M${x},${r.ty} L${r.x},${r.y - 4}" stroke="#e8e2d6" stroke-opacity=".7" fill="none"/>`; }
+    for (const r of cs) { const w = r.c.el.offsetWidth, x = Math.max(14 + w / 2, Math.min(W - ins.right - 14 - w / 2, r.x));
+      const capB = caption.offsetTop + caption.offsetHeight + 8, hgt = r.c.el.offsetHeight;
+      r.ty = Math.max(capB + hgt, Math.min(r.ty, x - w / 2 < ins.leftW + 20 ? H - ins.bottom - 8 : H - ins.bottomAll - 8)); r.c.el.style.left = `${x}px`; r.c.el.style.top = `${r.ty}px`; if (preset === "close") lead += `<path d="M${x},${r.ty} L${r.x},${r.y - 4}" stroke="#e8e2d6" stroke-opacity=".7" fill="none"/>`; }
     if (preset === "close") svg.innerHTML = lead;
     for (const pe of plateEls) {
-      const [x, y, z] = proj(pe.a), [x2] = proj(pe.b); pe.el.hidden = !onScreen(x, y, z); pe.el.style.left = `${x}px`; pe.el.style.top = `${y}px`; pe.el.style.maxWidth = `${Math.max(40, x2 - x)}px`;
-      const hpx = Math.abs(proj(pe.a.clone().add(new THREE.Vector3(0, pe.h, 0)))[1] - y); pe.el.style.fontSize = `${Math.max(7, Math.min(13, hpx * 0.62))}px`;
+      const [x, y, z] = proj(pe.a), [x2] = proj(pe.b); pe.el.hidden = !onScreen(x, y, z) || y > H - (x < ins.leftW + 20 ? ins.bottom : ins.bottomAll); pe.el.style.left = `${x}px`; pe.el.style.top = `${y}px`; pe.el.style.maxWidth = `${Math.max(40, x2 - x)}px`;
+      const hpx = Math.abs(proj(pe.a.clone().add(new THREE.Vector3(0, pe.h, 0)))[1] - y); pe.el.style.fontSize = `${Math.max(8, Math.min(14, hpx * 0.6))}px`;
     }
   }
   function plateLabels(rg) {
@@ -623,10 +689,10 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     for (const it of rg.userData.items) {
       const { pl, piece } = it, el = document.createElement("div");
       el.className = `hv-plate r-${it.cls}${it.shared ? " shared" : ""}${["unnamed", "unlinked", "loose", "core"].includes(it.cls) || it.shared ? " light" : ""}`;
-      if (pl.core) el.innerHTML = pl.more ? `<span class="dim">… and ${pl.n} more harness pieces later in this request</span>` : `<span class="dim">conversation · ${pl.n} block${pl.n > 1 ? "s" : ""}</span>`;
+      if (pl.core) el.innerHTML = pl.more ? `<span class="dim">… and ${pl.n} more harness pieces in this request</span>` : `<span class="dim">+ the conversation: ${pl.n} block${pl.n > 1 ? "s" : ""} between these pieces</span>`;
       else el.innerHTML = `${it.fresh ? `<span class="new">NEW · ${esc(trigWord(piece?.trigger))}</span>` : ""}<span class="k">${esc(piece ? piece.name : pl.label)}${pl.n > 1 ? ` ×${pl.n}` : ""}</span>${esc(String(pl.excerpt || piece?.sample || "").slice(0, 110))}`;
       if (piece) el.onclick = () => pick(piece, { agent: rg.userData.rack.agent, block: pl.block });
-      overlay.append(el); plateEls.push({ el, h: it.h, a: new THREE.Vector3(it.x0 - 2.7, it.y, it.z + 0.06), b: new THREE.Vector3(it.x0 + 2.75, it.y, it.z + 0.06) });
+      overlay.append(el); plateEls.push({ el, h: it.h, a: new THREE.Vector3(it.x0 - 2.85, it.y, it.z + 0.06), b: new THREE.Vector3(it.x0 + 2.85, it.y, it.z + 0.06) });
     }
   }
   function whoStrip(p, W, H) {
@@ -646,23 +712,30 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
       <dt>Who</dt><dd>${p.reach} of ${L.NA} agents<img class="who" alt="" src="${whoStrip(p, 170, 7)}"></dd>
       <dt>When</dt><dd>${fmtMin(Math.min(...ts))} → ${fmtMin(Math.max(...ts))} · ${p.n.toLocaleString()} deliveries</dd></dl>
       <div class="hand">Its text opens in Trace's reader, in the sidebar.</div>`;
-    card.hidden = false;
+    card.style.bottom = `${insets().bottom}px`; card.hidden = false;
   }
   function setCaption() {
     if (!caption) return;
     const counts = c => L.P.filter(p => p.cls === c).length;
-    const stats = `<span class="st"><b>${L.P.length}</b> kinds of harness text</span><span class="st"><b>${counts("linked")}</b> linked</span><span class="st amber"><b>${counts("unlinked") + counts("typed")}</b> library has it, link missing or off</span><span class="st red"><b>${counts("unnamed") + counts("loose")}</b> ${esc(words["found-nowhere"])}</span>`;
+    // The counts are the legend: each swatch is the colour of those wires and plates.
+    const st = (col, n, text) => `<span class="st"><i style="background:${col}"></i><b>${n}</b>${esc(text)}</span>`;
+    const stats = `<span class="st"><b>${L.P.length}</b>kinds of harness text</span>` + st(CSS_COL.unnamed, counts("unnamed") + counts("loose"), "not in the library")
+      + st(CSS_COL.unlinked, counts("unlinked") + counts("typed"), "library has it, link off") + st(CSS_COL.linked, counts("linked") + counts("composite"), "linked") + st(CSS_COL.outside, counts("outside"), "outside any binary");
     const r = racks[0]?.userData.rack, an = ai => esc(model.agents[ai]?.kind === "root" ? "main thread" : model.agents[ai]?.name ?? "");
     const text = {
       hero: heroCaption(),
       session: `<h3>What the harness put in front of the model</h3><p>${esc(model.product)} ${esc(model.session.version ?? "")} · ${L.NA} agent${L.NA > 1 ? "s" : ""}. Each wire runs from where its text is anchored, through what put it there, to the agents that got it and when.</p>`,
-      rack: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, assembled</h3><p>The harness pieces in this request, in log order, each wired back to where its text is anchored.</p>` : "",
-      later: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, later in the session</h3><p>Pieces that events added since the first request carry a NEW tag.</p>` : "",
+      rack: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, assembled</h3><p>The harness pieces in this request, in the order they first arrived; repeats fold into one plate (×n).${walkHint()}</p>` : "",
+      later: r ? `<h3>${an(r.agent)} · request ${r.req + 1}, later in the session</h3><p>Pieces that events added since the first request carry a NEW tag.${walkHint()}</p>` : "",
       compare: racks.length === 2 ? `<h3>${an(racks[0].userData.rack.agent)} vs ${an(racks[1].userData.rack.agent)}: births compared</h3><p>First two requests of each. Shared pieces recede to graphite; what differs stands forward.</p>` : "",
       close: `<h3>Where it came from</h3><p>Terminals where each text is anchored. Amber wires hover over records Trace's own link misses.</p>`,
     }[preset] || "";
-    caption.innerHTML = text + (preset === "hero" || preset === "session" ? `<div class="stats">${stats}</div>` : "");
+    caption.innerHTML = text + `<div class="hv-stats">${stats}</div>`;
     for (const b of nav.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.preset === preset));
+  }
+  function walkHint() {
+    const u = racks[0]?.userData, vis = visibleRows(); if (!u || (u.per ?? 0) <= vis) return "";
+    return ` Scroll to walk the rest: ${u.per - vis} more row${u.per - vis > 1 ? "s" : ""}${u.cols > 1 ? " per column" : ""}.`;
   }
   function heroCaption() {
     const p = hero; if (!p) return "";
@@ -680,14 +753,16 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     SEL.value = sel ? sel.i : -1;
     board.getObjectByName("hv:hifan")?.removeFromParent();
     if (sel) {
-      const c = sel.cls === "linked" ? new THREE.Color(0xf4ecd8) : sel.color;
-      const hi = new THREE.Mesh(merge(fanGeos(L, sel.g.z, sel.rec, 0.02, 0.36)), phys({ color: c, roughness: 0.35, clearcoat: 1, emissive: c.clone().multiplyScalar(0.25) }));
+      const c = sel.cls === "linked" ? new THREE.Color(0xeef3f9) : sel.color;
+      const geos = fanGeos(L, sel.g.z, sel.rec, 0.02, 0.36);
+      const hi = new THREE.Mesh(merge(geos, { aId: { size: 1, values: geos.map(() => sel.i) }, aCol: { size: 3, values: geos.map(() => [c.r, c.g, c.b]) }, aStripe: { size: 2, values: geos.map(() => [0, 0]) } }),
+        selectable(phys({ color: 0xffffff, roughness: 0.35, clearcoat: 1, emissive: 0x000000 }), SEL));
       hi.name = "hv:hifan"; hi.castShadow = true; board.add(hi);
     }
     const marks = board.getObjectByName("hv:marks"), EV = marks.userData.EV, hot = new THREE.Vector3(2.4, 2.6, 1.25), c = new THREE.Color(), v = new THREE.Vector3();
     EV.forEach(([pi, ai, t], k) => {
       const p = L.P[pi], on = sel && pi === sel.i;
-      if (sel) c.set(on ? (p.cls === "linked" ? 0xfff6e0 : p.color) : 0x3a3631); else c.set(p.cls === "linked" || p.cls === "composite" ? 0x9a958b : p.color);
+      if (sel) c.set(on ? (p.cls === "linked" ? 0xf4f8fc : p.color) : 0x2e343d); else c.set(p.cls === "linked" || p.cls === "composite" ? 0x8f97a1 : p.color);
       marks.setColorAt(k, c); _m.compose(v.set(L.tX(t), on ? 0.03 : 0.011, L.pinZ(ai)), _q, on ? hot : _s); marks.setMatrixAt(k, _m);
     });
     if (marks.instanceColor) marks.instanceColor.needsUpdate = true; marks.instanceMatrix.needsUpdate = true;
@@ -704,9 +779,29 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   function pick(p, at) {
     sel = p || null; paint();
     if (!p) return;
+    startFlow();
     const d = delivery(p, at); if (!d) return;
     picked = d;
     onPick(model.agents[d[0]].id, d[1]);
+  }
+  // Hover: the details the board leaves off (trigger, who, when) for the wire under the pointer, one raycast per frame.
+  function wireAt(e) {
+    if (!["session", "hero", "close"].includes(preset) || !board) return null;
+    const r = canvas.getBoundingClientRect(), ndc = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    const ray = new THREE.Raycaster(); ray.setFromCamera(ndc, camera);
+    const wires = board.getObjectByName("hv:wires"), hit = ray.intersectObject(wires)[0];
+    return hit ? L.P[wires.geometry.attributes.aId.getX(wires.geometry.index.getX(hit.faceIndex * 3))] : null;
+  }
+  function onHover() {
+    hoverQueued = false;
+    const e = hoverAt, p = e && shown ? wireAt(e) : null;
+    canvas.style.cursor = p ? "pointer" : "";
+    if (!p) { tip.hidden = true; return; }
+    const ts = p.ev.map(v => v[1]);
+    tip.innerHTML = `<b>${esc(p.name)}</b><span class="m">${esc(whereText(p) || (p.kind === "outside" ? originWord(p.origin) : words[p.rung]))}</span>`
+      + `<span class="m">${esc(trigWord(p.trigger))} (observed) · ${p.reach} of ${L.NA} agent${L.NA > 1 ? "s" : ""} · ${fmtMin(Math.min(...ts))} → ${fmtMin(Math.max(...ts))}</span>`;
+    const rr = root.getBoundingClientRect();
+    tip.style.left = `${Math.min(e.clientX - rr.left + 14, rr.width - insets().right - 340)}px`; tip.style.top = `${e.clientY - rr.top + 14}px`; tip.hidden = false;
   }
   function onCanvasClick(e) {
     const r = canvas.getBoundingClientRect(), ndc = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
@@ -724,12 +819,13 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   async function showRack(ai, ri, opts = {}) {
     const rf = await getRackFor(), rack = rf(model, trace, ai, ri);
     if (!rack) return null;
-    const rg = buildRack(L, rack, opts.x0 ?? -3.0, SEL, opts); scene.add(rg); racks.push(rg); plateLabels(rg); return rg;
+    const rg = buildRack(L, rack, opts.x0 ?? -3.0, SEL, { ...opts, columns: opts.columns ?? (root && narrow() ? 1 : null) }); scene.add(rg); racks.push(rg); plateLabels(rg); return rg;
   }
   async function setPreset(name, { agent = null, req = null, instant = false } = {}) {
     if (!model) return;
     preset = PRESET_NAMES.includes(name) ? name : "session";
-    clearRacks(); sel = null;
+    clearRacks(); sel = null; rackScroll = 0; if (root) measureChrome();
+    if (controls) controls.enableZoom = !RACKED.has(preset);
     const rootAi = Math.max(0, model.agents.findIndex(a => a.kind === "root"));
     if (preset === "rack") { rackKey = [agent ?? focusAgent ?? rootAi, req ?? 0]; await showRack(rackKey[0], rackKey[1]); }
     else rackKey = null;
@@ -739,18 +835,14 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     }
     if (preset === "compare") {
       const sub = compareAgent(model, trace, focusAgent);
-      if (sub != null) { await showRack(rootAi, 0, { x0: -3.3, other: birthSet(model, trace, sub) }); await showRack(sub, 0, { x0: 3.3, other: birthSet(model, trace, rootAi) }); }
+      if (sub != null) { await showRack(rootAi, 0, { x0: -3.35, columns: 1, other: birthSet(model, trace, sub) }); await showRack(sub, 0, { x0: 3.35, columns: 1, other: birthSet(model, trace, rootAi) }); }
     }
-    if (preset === "hero" && hero) sel = hero;
+    if (preset === "hero" && hero) { sel = hero; startFlow(); }
     if (preset === "hero" && hero && overlay) {
       const p = hero;
       callout(`${esc(p.name.length > 44 ? p.name.slice(0, 42) + "…" : p.name)}<span class="m">${esc(p.rung === "binary-only" && p.where ? `${whereText(p)} · not in ${model.libName}` : p.where ? `${p.where.shelf} · ${whereText(p)}` : words[p.rung])}</span>`, p.curve.getPointAt(p.kind === "loose" ? 0.32 : 0.13).clone().add(new THREE.Vector3(0, 0.25, 0)));   // unmatched ends sit by the bottom-left chrome
-      const via = (p.via || []).find(([k]) => k !== "own block");
-      callout(`${esc(trigWord(p.trigger))}<span class="m">${via ? `rides inside a ${esc(via[0])}` : "observed trigger"}</span>`, p.trig.anchor.clone().add(new THREE.Vector3(0, 0.25, 0)));
       const zs = [...p.rec].map(L.pinZ), zm = zs.reduce((a, b) => a + b, 0) / zs.length;
       callout(`${p.reach} of ${L.NA} agent${L.NA > 1 ? "s" : ""}<span class="m">${L.NA - p.reach} did not</span>`, new THREE.Vector3(X.pins - 0.1, 0.6, zm));
-      const ts = p.ev.map(e => e[1]).sort((a, b) => a - b), mid = p.ev[Math.floor(p.ev.length / 2)];
-      callout(`${fmtMin(ts[0])} → ${fmtMin(ts[ts.length - 1])}<span class="m">${p.n} deliver${p.n > 1 ? "ies" : "y"}</span>`, new THREE.Vector3(L.tX(mid[1]), 0.25, L.pinZ(mid[0])));
     }
     if (preset === "close" && overlay) {
       const eye = new THREE.Vector3(...PRESETS.close.p);
@@ -788,7 +880,8 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     if (level >= 2 && ai >= 0) { if (preset !== "rack" || !rackKey || rackKey[0] !== ai || rackKey[1] !== reqIdx) await setPreset("rack", { agent: ai, req: reqIdx }); }
     else if (preset === "rack" || preset === "later" || preset === "compare") await setPreset("session");
     const hit = block != null && ai >= 0 ? L.P.find(p => (p.blocks || []).some(b => b[0] === ai && b[1] === block)) : null;
-    if (hit || block == null) { sel = hit || null; paint(); }
+    if (hit) { sel = hit; paint(); }
+    else if (block == null) { sel = preset === "hero" ? hero : null; paint(); }   // the hero keeps its piece until Trace opens a block
   }
   function playhead(minutes) {
     if (!board) return;
