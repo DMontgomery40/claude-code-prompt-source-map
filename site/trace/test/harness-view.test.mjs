@@ -137,8 +137,12 @@ test("sync: a request shows its rack, the session shows the board, an open block
   assert.deepEqual(v.state.rack, [1, 1]);
   assert.deepEqual(calls.at(-1), [1, 1]);
   await v.sync({ level: 3, agentId: "root-1", reqIdx: 2, block: 22 });
-  assert.deepEqual(v.state.rack, [0, 2]);
+  assert.equal(v.state.preset, "piece", "an open block that carries a piece shows that piece's instrument");
   assert.equal(v.state.selected, "summary");
+  assert.equal(v.scene.getObjectByName("hv:hero").userData.piece.id, "summary");
+  assert.ok(v.scene.getObjectByName("hv:hero-copy"), "the open copy is marked on the rows");
+  await v.setPreset("rack", { instant: true });
+  assert.deepEqual(v.state.rack, [0, 2], "One request returns to the request that block belongs to");
   await v.sync({ level: 0, agentId: null, reqIdx: 0, block: null });
   assert.equal(v.state.preset, "session");
   assert.equal(v.state.selected, null);
@@ -155,7 +159,7 @@ test("pick: hands Trace the selected agent's copy, else the first; its echo keep
   v.pickPiece("notice");
   assert.deepEqual(picks.at(-1), ["sub-b", 2], "the selected agent's own copy");
   await v.sync({ level: 3, agentId: "sub-b", reqIdx: 0, block: 2 });   // Trace echoes the pick
-  assert.equal(v.state.preset, "session", "the echo of our own pick does not fly to a rack");
+  assert.equal(v.state.preset, "piece", "a pick shows the piece's instrument; the echo of our own pick does not fly to a rack");
   v.pickPiece("header", { agent: 0, block: 23 });
   assert.deepEqual(picks.at(-1), ["root-1", 23], "a plate hands off its own block");
 });
@@ -243,4 +247,23 @@ test("hero preset: the instrument replaces the board on screen; its sockets and 
   assert.equal(hero.getObjectByName("hv:hero-ticks").count, model.pieces[0].ev.length);
   await v.setPreset("session", { instant: true });
   assert.ok(!hero.visible); assert.ok(board.visible);
+});
+
+test("picks: any piece gets the instrument; Hero returns to the least-explained piece; nothing else is lost", async () => {
+  const { model, trace } = fixture({ literals: true }), { v, picks } = view();
+  await v.setModel(model, trace); v.show();
+  await v.setPreset("session", { instant: true });
+  v.pickPiece("memo");
+  await new Promise(r => setTimeout(r, 0));
+  assert.equal(v.state.preset, "piece");
+  const inst = () => v.scene.getObjectByName("hv:hero");
+  assert.equal(inst().userData.piece.id, "memo");
+  assert.equal(inst().userData.facts.code.state, "paper", "outside: the second socket names the outside source");
+  assert.deepEqual(picks.at(-1), ["root-1", 2], "the pick still opens the text in Trace's reader");
+  await v.setPreset("hero", { instant: true });
+  assert.equal(inst().userData.piece.id, "roster"); assert.equal(v.state.selected, "roster");
+  await v.setPreset("piece", { instant: true });
+  assert.equal(inst().userData.piece.id, "memo", "the picked piece stays one click away");
+  for (const name of ["session", "rack", "later", "compare", "close"]) { await v.setPreset(name, { instant: true }); assert.equal(v.state.preset, name); }
+  assert.ok(!inst().visible && v.scene.getObjectByName("hv:board").visible);
 });
