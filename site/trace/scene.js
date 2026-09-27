@@ -16,6 +16,7 @@ import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetai
 import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
 import { KERNEL, bandsForRequest } from "./grain-rules.js";
 import { createBlockText } from "./block-text.js";
+import { shouldRefreshDetail, shouldRedrawNavigator } from "./scene-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
 const STAGE_Z0 = 15;
@@ -858,12 +859,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const parts = withHeads ? [mk(false), mk(true)] : [mk(false)];
     group.add(...parts);
     const c = new THREE.Color();
+    // Only an attribute whose values changed is uploaded: the same beacons at the same zoom touch no GL buffer.
+    const stale = new Set();
+    const put = (a, i, v) => { const f = Math.fround(v); if (!Object.is(a.array[i], f)) { a.array[i] = f; stale.add(a); } };
     group.userData.set = list => {
       list.forEach((p, k) => {
-        attrs.iBase.setXYZ(k, p.x, p.y, p.z); attrs.iLen.setX(k, p.len);
-        c.set(p.color); attrs.iColor.setXYZ(k, c.r, c.g, c.b); attrs.iPx.setXY(k, p.w, p.r || 0);
+        put(attrs.iBase, k * 3, p.x); put(attrs.iBase, k * 3 + 1, p.y); put(attrs.iBase, k * 3 + 2, p.z); put(attrs.iLen, k, p.len);
+        c.set(p.color); put(attrs.iColor, k * 3, c.r); put(attrs.iColor, k * 3 + 1, c.g); put(attrs.iColor, k * 3 + 2, c.b);
+        put(attrs.iPx, k * 2, p.w); put(attrs.iPx, k * 2 + 1, p.r || 0);
       });
-      for (const a of Object.values(attrs)) a.needsUpdate = true;
+      for (const a of stale) a.needsUpdate = true;
+      stale.clear();
       for (const m of parts) m.geometry.instanceCount = list.length;
     };
     return group;
@@ -1121,7 +1127,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // Words at max zoom: panes with the text of the leading grain column's blocks (block-text.js).
   const wordsGroup = new THREE.Group();
   scene.add(wordsGroup);
-  const blockText = getText ? createBlockText({ getText, group: wordsGroup, onChange: () => { dirty = Math.max(dirty, 2); } }) : null;
+  // arriving words change a pane's size: a new words key (wordsVersion) has the next refresh re-measure it
+  let wordsVersion = 0;
+  const blockText = getText ? createBlockText({ getText, group: wordsGroup, onChange: () => { wordsVersion++; labelsStale = true; dirty = Math.max(dirty, 2); } }) : null;
   let wordBands = [], wordKey = "", wordTables = null, wordsOn = false;
   const clearWords = () => { if (wordsOn) { blockText.clear(); wordsOn = false; } };
   const PRIO = { sweep: 7, focus: 10, request: 6, agent: 5, cluster: 4, corehead: 9, stratum: 8, cursor: 8, cliff: 7, event: 6, row: 5, gap: 4, tick: 2 };
@@ -1144,7 +1152,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const _v = new THREE.Vector3();
   let lastPlaced = new Set();
   function declutter() {
-    const w = host.clientWidth, h = host.clientHeight;
+    const w = viewW, h = viewH; // as of the last resize: reading the host here, after the label writes, forced a layout every frame
     const items = [];
     for (const g of Object.values(labelGroups)) {
       if (!g.visible) continue;
@@ -1177,10 +1185,38 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     }
     if (moved) labels.render(scene, camera);
   }
+  // CSS2DRenderer.render re-places every label on each call; it runs only when something that places one changed:
+  // the camera, the viewport, a label's presence, visibility, anchor or centre, or a refresh (labelsStale). A
+  // label measured after its first placement keeps that placement until then, as the labels of the last map
+  // refresh always stood at rest before the refresh was change-driven.
+  let labelsStale = true, labelKeys = [], labelKeyCount = 0;
+  function labelsMoved() {
+    let k = 0, changed = labelsStale;
+    const put = v => { if (labelKeys[k] !== v) { labelKeys[k] = v; changed = true; } k++; };
+    for (const v of camera.matrixWorld.elements) put(v);
+    for (const v of camera.projectionMatrix.elements) put(v);
+    put(viewW); put(viewH);
+    const walk = (o, shown) => {
+      shown = shown && o.visible;
+      if (o.isCSS2DObject) { const m = o.matrixWorld.elements; put(o.id); put(shown); put(m[12]); put(m[13]); put(m[14]); put(o.center.x); put(o.center.y); }
+      for (const c of o.children) walk(c, shown);
+    };
+    walk(scene, true);
+    if (k !== labelKeyCount) { labelKeyCount = k; changed = true; }
+    labelsStale = false;
+    return changed;
+  }
+  // Sizes for whole-pixel placement. A label measured here outside the map (a sweep label, the stage's, a word
+  // pane) is re-placed on whole pixels next frame, as the next drawn frame always did; a map label keeps the
+  // placement its refresh gave it until something moves, and a reused one gets its size back.
   const measure = () => {
-    for (const g of Object.values(labelGroups)) g.traverse(o => {
-      if (o.isCSS2DObject && o.element._w === undefined && o.element.isConnected && o.element.offsetWidth) {
-        o.element._w = o.element.offsetWidth; o.element._h = o.element.offsetHeight;
+    for (const g of [...Object.values(labelGroups), wordsGroup]) g.traverse(o => {
+      const e = o.element;
+      if (!o.isCSS2DObject || e._w !== undefined || !e.isConnected) return;
+      if (o.userData.size) [e._w, e._h] = o.userData.size;
+      else if (e.offsetWidth) {
+        e._w = e.offsetWidth; e._h = e.offsetHeight;
+        if (g !== labelGroups.map) { labelsStale = true; dirty = Math.max(dirty, 2); }
       }
     });
   };
@@ -1410,6 +1446,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // Arcs stay faint until their agent is hovered, except in the subagents lens.
     spawnLinks.material.uniforms.uOpacity.value = next === "agents" ? 0.85 : 0.1;
     returnLinks.material.uniforms.uOpacity.value = next === "agents" ? 0.95 : 0.14;
+    navVersion++; detailAt = -Infinity; // the navigator's colours and the map's beacons follow the lens
     dirty = 3;
   }
   let focusAgentId = null;
@@ -1507,11 +1544,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     return _pa.z < -1 || _pa.z > 1 ? NaN : ((_pa.x + 1) / 2 * host.clientWidth - insets.left) / w;
   }
   // pad: extra px kept clear on each side, for HTML labels that hang off the fitted points
-  const safeNdc = (pad = {}) => {
-    const w = host.clientWidth || 1, h = host.clientHeight || 1;
+  const safeNdcAt = (width, height, pad = {}) => {
+    const w = width || 1, h = height || 1;
     const l = insets.left + (pad.l || 0), r = insets.right + (pad.r || 0), t = insets.top + (pad.t || 0), b = insets.bottom + (pad.b || 0);
     return { x0: -1 + 2 * l / w, x1: 1 - 2 * r / w, y0: -1 + 2 * b / h, y1: 1 - 2 * t / h };
   };
+  const safeNdc = (pad = {}) => safeNdcAt(host.clientWidth, host.clientHeight, pad);
   // Fit a box into the safe part of the viewport from a given view direction.
   function fit(box, dir, center, extra = [], pad) {
     camera.zoom = 1; camera.updateProjectionMatrix();
@@ -1632,6 +1670,17 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     bounds:terrainBounds, points:terrainPoints, direction:dirFrom(rule.compact?VIEW.caz:VIEW.az,rule.compact?VIEW.cel:VIEW.el),
     layout:L, agents, width:W, onPick:p=>onPick({...p,intent:'locate'})
   });
+  // What the navigator's terrain shows besides its fixed geometry: the lens (navVersion), the playhead's cut
+  // (its cairns share the cut material) and the haze distance (their haze reads uFocusDist, to 0.001). It
+  // redraws when that changes, at most 10 Hz while playing (shouldRedrawNavigator).
+  let navVersion = 0, navShown = null, navRedraws = 0;
+  function navigatorKey(now) {
+    const key = `${navVersion}|${cutU.uCutX.value}|${Math.round(shared.uFocusDist.value * 1000)}`;
+    const due = shouldRedrawNavigator(navShown, { t: now, key, playing: play.playing });
+    if (due.redraw) navShown = { t: now, key };
+    else if (due.pending) dirty = Math.max(dirty, 1);
+    return navShown.key;
+  }
 
   // ---- state ----
   let level = 0, cursor = -1, mapSelection = null;
@@ -1639,6 +1688,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     mapSelection = S.mapSelection || null;
     const agent = S.agentId ? agents[agentIndex.get(S.agentId)] : null;
     const prevLevel = level;
+    detailAt = -Infinity; // level, selection and focus feed the map refresh
     if (S.level === 0 || S.level !== level || S.lens !== lens) sentFocusKey = "";
     level = S.level;
     selStratum = S.level >= 3 ? S.stratum : null;
@@ -1706,12 +1756,21 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   scene.add(rulerL1);
 
   // ---- map zoom: screen density, progressive labels and a stable viewport focus ----
-  function projectMapPoint(v) {
-    const local = v.clone().applyMatrix4(camera.matrixWorldInverse), p = v.clone().project(camera);
-    return { px: (p.x + 1) * host.clientWidth / 2, py: (1 - p.y) * host.clientHeight / 2, depth: -local.z };
+  // The viewport size as of the last resize(): read on every frame and thousands of times per map refresh,
+  // where host.clientWidth would force a layout after each round of label writes.
+  let viewW = 1, viewH = 1;
+  const _ml = new THREE.Vector3(), _mp = new THREE.Vector3();
+  // A world point on screen (px from the canvas' top left) and its view depth, into `out`: the arithmetic of
+  // Vector3.project (view matrix, then projection), without allocating.
+  function projectInto(x, y, z, out) {
+    _ml.set(x, y, z).applyMatrix4(camera.matrixWorldInverse);
+    _mp.copy(_ml).applyMatrix4(camera.projectionMatrix);
+    out.px = (_mp.x + 1) * viewW / 2; out.py = (1 - _mp.y) * viewH / 2; out.depth = -_ml.z;
+    return out;
   }
+  function projectMapPoint(v) { return projectInto(v.x, v.y, v.z, {}); }
   function inMap(p) {
-    return p.depth > camera.near && p.px >= insets.left + 8 && p.px <= host.clientWidth - insets.right - 8 && p.py >= insets.top + 8 && p.py <= host.clientHeight - insets.bottom - 8;
+    return p.depth > camera.near && p.px >= insets.left + 8 && p.px <= viewW - insets.right - 8 && p.py >= insets.top + 8 && p.py <= viewH - insets.bottom - 8;
   }
   function zoomMap(factor, screen) {
     onViewChange();
@@ -1753,14 +1812,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   let binExp = NaN;
   const BEAM_RANK = { outward: 0, write: 1, read: 2 };
   function mapBin() {
-    const upp = unitsPerPixel(camera, camera.position.distanceTo(controls.target), host.clientHeight || 1);
+    const upp = unitsPerPixel(camera, camera.position.distanceTo(controls.target), viewH || 1);
     binExp = binExponent(detail.cell * upp, binExp);
     return 2 ** binExp;
   }
-  let shownRequests = new Set(), shownAgents = new Set(), heldFocus = "";
+  let shownRequests = new Set(), shownAgents = new Set(), heldFocus = null; // requests (the objects) and agent ids
   // At the Layers zoom the blocks of the focused agent's leading grain column (request floor(agentP))
   // carry their words; anywhere else the panes are cleared (once: hidden panes cost nothing). Runs in
-  // the 90 ms-throttled part of updateMapDetail, on the previous frame's grain columns.
+  // the map refresh (updateMapDetail), on the previous frame's grain columns.
   function updateWords() {
     if (!blockText) return;
     const agent = grains.agent, tables = grains.tables, i = Math.floor(grainUP);
@@ -1776,13 +1835,69 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     blockText.update({ camera, agent, bands: wordBands, geom, i, pxPerUnit, viewport: { width: host.clientWidth, height: host.clientHeight, insets, avoid } });
     wordsOn = true;
   }
+  // The map refresh (beacons, cluster badges, map labels, word panes) runs only when shouldRefreshDetail says
+  // the view or the words' leading request changed since the last one (detailAt = -Infinity forces it); the
+  // rest of updateMapDetail runs on every drawn frame and is cheap.
+  let lastRefresh = null, mapRefreshes = 0, wordRefreshes = 0, focusState = null, clusterCache = null, nearbyGeom = null, mapLinePoints = null;
+  const requestTitles = new WeakMap();
+  // Map labels are rebuilt by every refresh, but most stand again with the same text: those keep their element
+  // and object (no new DOM node, listener or CSS2DObject) and are otherwise reset to a new label's state: the
+  // new position and click, the centre they were made with, and no size, so they are placed and measured
+  // exactly as a new label would be. The rest are removed. The group's children end in the order this refresh
+  // made them (declutter breaks ties by that order).
+  let mapPool = null, mapOrder = null;
+  function poolMapLabels() {
+    mapPool = new Map(); mapOrder = [];
+    for (const o of labelGroups.map.children) {
+      const list = mapPool.get(o.userData.key);
+      if (list) list.push(o); else mapPool.set(o.userData.key, [o]);
+    }
+  }
+  function mapLabel(text, cls, pos, center, onClick) {
+    const key = `${cls}\u0001${text}\u0001${center}`;
+    let o = mapPool.get(key)?.pop();
+    if (o) {
+      // placed as new (the percentage path) this frame; measure() then gives back its size, which the same text
+      // and class keep, instead of reading it from the layout again
+      const e = o.element;
+      if (e._w !== undefined) { o.userData.size = [e._w, e._h]; e._w = e._h = undefined; }
+      o.position.copy(pos); o.center.set(center[0], center[1]); o.userData.click = onClick;
+    }
+    else {
+      o = label(text, cls, pos, center, labelGroups.map, () => o.userData.click());
+      Object.assign(o.userData, { key, click: onClick });
+    }
+    mapOrder.push(o);
+    return o;
+  }
+  function dropPooledLabels() {
+    for (const list of mapPool.values()) for (const o of list) labelGroups.map.remove(o); // its element leaves the DOM
+    labelGroups.map.children.splice(0, Infinity, ...mapOrder);
+    mapPool = mapOrder = null;
+  }
+  const anchorWorld = [0, 1, 2, 3, 4].map(() => new THREE.Vector3()), _ar = new THREE.Vector3(), _au = new THREE.Vector3(), _q = { px: 0, py: 0, depth: 0 };
+  // Fixed world points to watch the view by: the orbit target and four points at its depth near the corners.
+  function anchorsPx() {
+    const out = [];
+    for (const a of anchorWorld) { projectInto(a.x, a.y, a.z, _q); out.push(_q.px, _q.py); }
+    return out;
+  }
+  function captureAnchors() {
+    const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.distanceTo(controls.target) / camera.zoom, halfW = halfH * camera.aspect;
+    _ar.setFromMatrixColumn(camera.matrixWorld, 0); _au.setFromMatrixColumn(camera.matrixWorld, 1);
+    anchorWorld[0].copy(controls.target);
+    for (let k = 1; k < 5; k++) anchorWorld[k].copy(controls.target).addScaledVector(_ar, (k & 1 ? -0.9 : 0.9) * halfW).addScaledVector(_au, (k > 2 ? -0.9 : 0.9) * halfH);
+  }
+  // The request whose blocks carry words (updateWords) and the version of their text, or "" while there are none.
+  const wordsKey = () => blockText && level === 0 && detail.level >= 3 && grainK > 0 && grains.agent === grainAgent && grains.tables && grainUP >= 0 ? `${grainAgent.id}:${Math.floor(grainUP)}:${wordsVersion}` : "";
   function updateMapDetail(now) {
     camera.updateMatrixWorld();
     mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
     detail = mapDetail(mapZoom, detail.level);
-    host.dataset.mapDetail = detail.name;
+    if (host.dataset.mapDetail !== detail.name) host.dataset.mapDetail = detail.name;
     const status = document.querySelector('#zoom-status');
-    if (status) status.textContent = level === 0 ? `${mapZoom.toFixed(1)}× · ${detail.name}` : level === 1 ? 'Agent requests' : 'Request layers';
+    const statusText = level === 0 ? `${mapZoom.toFixed(1)}× · ${detail.name}` : level === 1 ? 'Agent requests' : 'Request layers';
+    if (status && status.textContent !== statusText) status.textContent = statusText;
     if (flags.visible) flags.userData.update();
     if (stage.flags?.visible) stage.flags.userData.update();
     if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; clearWords(); return; }
@@ -1790,83 +1905,159 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const linkFade = lens === "agents" ? 1 : Math.min(1, 1 / (mapZoom * mapZoom));
     spawnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.85 : 0.1) * linkFade;
     returnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.95 : 0.14) * linkFade;
-    if (now - detailAt < 90) { dirty = Math.max(dirty, 2); return; }
-    detailAt = now;
-    // Grouped in world bins set by zoom alone: panning moves beacons, it never regroups them.
-    const clusters = clusterStable(beamCandidates, mapBin(), { rank: b => BEAM_RANK[b.kind] ?? 3 })
-      .map(({ point, count }) => ({ count, point: { ...point, ...projectMapPoint(new THREE.Vector3(point.x, point.y0, point.z)) } }))
-      .filter(c => inMap(c.point));
+    const next = { t: now, anchors: lastRefresh ? anchorsPx() : [], zoom: mapZoom, key: wordsKey(), playing: play.playing, force: detailAt === -Infinity };
+    const due = shouldRefreshDetail(lastRefresh, next);
+    if (due.refresh && due.moved) refreshMapDetail(now, next);
+    else if (due.refresh) { Object.assign(lastRefresh, { t: now, key: next.key }); wordRefreshes++; labelsStale = true; updateWords(); } // only the words' request moved
+    else if (due.pending) dirty = Math.max(dirty, 2);
+    // the map's focus goes to the app once it has held for 180 ms
+    if (lastFocusKey !== sentFocusKey) {
+      if (now - focusSince >= 180) { sentFocusKey = lastFocusKey; onMapFocus(focusState); }
+      else dirty = Math.max(dirty, 2);
+    }
+  }
+  // Every ridge request's x, crest and face z (+0.1), built once (the geometry never changes), in runs of 64
+  // with their bounding box, so a run that cannot reach the map is passed over without projecting its requests.
+  function nearbyRuns() {
+    const runs = [];
+    for (const agent of agents) {
+      if (!rowZ.has(agent.id)) continue;
+      for (let i0 = 0; i0 < agent.requests.length; i0 += 64) {
+        const n = Math.min(64, agent.requests.length - i0), run = { agent, i0, x: new Float64Array(n), y: new Float64Array(n), z: new Float64Array(n) };
+        for (let k = 0; k < n; k++) { run.x[k] = xOf(agent, i0 + k); run.y[k] = crest(agent, i0 + k); run.z[k] = zOf(agent, i0 + k) + 0.1; }
+        const lo = v => v.reduce((m, q) => Math.min(m, q), Infinity), hi = v => v.reduce((m, q) => Math.max(m, q), -Infinity);
+        run.box = [lo(run.x), hi(run.x), 0, hi(run.y), lo(run.z), hi(run.z)];
+        runs.push(run);
+      }
+    }
+    return runs;
+  }
+  // Whether any point of a box [x0, x1, y0, y1, z0, z1] can land in the map: its projected corners' extent meets
+  // the map area (1 px slack), or a corner is not in front of the near plane (then it is always visited).
+  function runReachesMap([x0, x1, y0, y1, z0, z1]) {
+    let a = Infinity, b = -Infinity, c = Infinity, d = -Infinity;
+    for (let k = 0; k < 8; k++) {
+      projectInto(k & 1 ? x1 : x0, k & 2 ? y1 : y0, k & 4 ? z1 : z0, _q);
+      if (!(_q.depth > camera.near)) return true;
+      a = Math.min(a, _q.px); b = Math.max(b, _q.px); c = Math.min(c, _q.py); d = Math.max(d, _q.py);
+    }
+    return b >= insets.left + 7 && a <= viewW - insets.right - 7 && d >= insets.top + 7 && c <= viewH - insets.bottom - 7;
+  }
+  // The groups in runs of 64, in order, each with the box of its base points (where inMap looks).
+  function clusterRuns(list) {
+    const runs = [];
+    for (let k = 0; k < list.length; k += 64) {
+      const part = list.slice(k, k + 64), box = [Infinity, -Infinity, Infinity, -Infinity, Infinity, -Infinity];
+      for (const { point: p } of part) {
+        box[0] = Math.min(box[0], p.x); box[1] = Math.max(box[1], p.x); box[2] = Math.min(box[2], p.y0);
+        box[3] = Math.max(box[3], p.y0); box[4] = Math.min(box[4], p.z); box[5] = Math.max(box[5], p.z);
+      }
+      runs.push({ list: part, box });
+    }
+    return runs;
+  }
+  function refreshMapDetail(now, next) {
+    detailAt = now; mapRefreshes++; labelsStale = true;
+    captureAnchors();
+    lastRefresh = { t: now, anchors: anchorsPx(), zoom: next.zoom, key: next.key };
+    // Grouped in world bins set by zoom alone: panning moves beacons, it never regroups them (so the groups
+    // are kept until the bin or the lens changes).
+    const bin = mapBin();
+    if (clusterCache?.bin !== bin || clusterCache.of !== beamCandidates) clusterCache = { bin, of: beamCandidates, runs: clusterRuns(clusterStable(beamCandidates, bin, { rank: b => BEAM_RANK[b.kind] ?? 3 })) };
+    const clusters = [];
+    for (const run of clusterCache.runs) {
+      if (!runReachesMap(run.box)) continue;
+      for (const { point, count } of run.list) {
+        projectInto(point.x, point.y0, point.z, _q);
+        if (inMap(_q)) clusters.push({ count, point: { ...point, px: _q.px, py: _q.py, depth: _q.depth } });
+      }
+    }
     beamPick.length = 0;
     const draw = clusters.map(({ point: b, count }) => {
-      const top = projectMapPoint(new THREE.Vector3(b.x, b.y1, b.z));
+      const top = projectInto(b.x, b.y1, b.z, _q);
       const ratio = Math.min(1, PIN_CAP / Math.max(0.001, Math.hypot(top.px - b.px, top.py - b.py)));
       beamPick.push({ ...b, count, tipX: b.px + (top.px - b.px) * ratio, tipY: b.py + (top.py - b.py) * ratio });
       return b;
     });
     pins.userData.set(draw);
-    const g = labelGroups.map; clearGroup(g); g.visible = true;
+    const g = labelGroups.map; poolMapLabels(); g.visible = true;
     const grouped = beamPick.filter(b => b.count > 1).sort((a, b) => b.count - a.count).slice(0, detail.level ? 18 : 10);
     for (const b of grouped) {
       const top = projectMapPoint(new THREE.Vector3(b.x, b.y1, b.z));
       const height = cappedMarkerHeight(b.y1 - b.y0, Math.hypot(top.px - b.px, top.py - b.py), PIN_CAP);
-      const o = label(String(b.count), 'cluster', new THREE.Vector3(b.x, b.y0 + height, b.z), [0.5, 1.2], g,
+      const o = mapLabel(String(b.count), 'cluster', new THREE.Vector3(b.x, b.y0 + height, b.z), [0.5, 1.2],
         () => zoomMap(1.55, { x: b.px, y: b.py }));
-      o.element.title = `${b.count} ${b.kind === 'outward' ? 'external actions' : b.kind === 'write' ? 'file changes' : 'reads'} · zoom to separate`;
-      o.element.setAttribute('aria-label', o.element.title);
+      const title = `${b.count} ${b.kind === 'outward' ? 'external actions' : b.kind === 'write' ? 'file changes' : 'reads'} · zoom to separate`;
+      if (o.element.title !== title) { o.element.title = title; o.element.setAttribute('aria-label', title); }
     }
     mapLines.visible = detail.level >= 2;
-    const center = { x: (insets.left + host.clientWidth - insets.right) / 2, y: (insets.top + host.clientHeight - insets.bottom) / 2 };
+    const center = { x: (insets.left + viewW - insets.right) / 2, y: (insets.top + viewH - insets.bottom) / 2 };
     const nearby = [];
-    for (const agent of detail.level ? agents : []) {
-      if (!rowZ.has(agent.id)) continue;
-      for (let i = 0; i < agent.requests.length; i++) {
-        const top = new THREE.Vector3(xOf(agent, i), crest(agent, i), zOf(agent, i) + 0.1);
-        const base = top.clone().setY(0), a = projectMapPoint(base), b = projectMapPoint(top);
+    if (detail.level && !nearbyGeom) nearbyGeom = nearbyRuns();
+    const a = { px: 0, py: 0, depth: 0 }, b = { px: 0, py: 0, depth: 0 };
+    for (const run of detail.level ? nearbyGeom : []) {
+      if (!runReachesMap(run.box)) continue;
+      const { agent, i0, x, y, z } = run;
+      for (let k = 0; k < x.length; k++) {
+        // the point on the request's column (base to crest) nearest the viewport centre on screen
+        const i = i0 + k;
+        projectInto(x[k], 0, z[k], a); projectInto(x[k], y[k], z[k], b);
         if (a.depth <= camera.near || b.depth <= camera.near) continue;
         const dx = b.px - a.px, dy = b.py - a.py;
         const t = Math.max(0, Math.min(1, ((center.x - a.px) * dx + (center.y - a.py) * dy) / (dx * dx + dy * dy || 1)));
         const u = t * b.depth / ((1 - t) * a.depth + t * b.depth);
-        const pos = base.lerp(top, u), p = projectMapPoint(pos);
+        const p = projectInto(x[k], 0 + (y[k] - 0) * u, z[k], _q);
         if (!inMap(p)) continue;
-        nearby.push({ agent, i, pos, top, ...p, score: Math.hypot(p.px - center.x, p.py - center.y) + p.depth * 0.025 });
+        // pos (the point, as a Vector3) and top are made only for the few items that get a label
+        nearby.push({ agent, i, n: nearby.length, x: x[k], c: y[k], z: z[k], u, pos: null, top: null, px: p.px, py: p.py, depth: p.depth, score: Math.hypot(p.px - center.x, p.py - center.y) + p.depth * 0.025 });
       }
     }
-    nearby.sort((a, b) => a.score - b.score || a.depth - b.depth);
-    const rect = renderer.domElement.getBoundingClientRect();
-    const hit = detail.level ? pickAt(rect.left + center.x, rect.top + center.y) : null;
-    let focus = nearby.find(p => p.agent.id === mapSelection?.agentId && p.i === mapSelection?.reqIdx) || nearby.find(p => p.agent.id === hit?.agentId && p.i === hit?.reqIdx) || nearby[0];
-    const keyOf = item => `${item.agent.id}:${item.i}`;
+    const placeOf = item => { if (!item.pos) { item.top = new THREE.Vector3(item.x, item.c, item.z); item.pos = new THREE.Vector3(item.x, 0, item.z).lerp(item.top, item.u); } return item; };
+    // nearest first: score, then depth, then the order found (one pass here, one sort for the label order below)
+    const byScore = (a, b) => a.score - b.score || a.depth - b.depth || a.n - b.n;
+    const nearest = nearby.reduce((m, p) => (!m || byScore(p, m) < 0 ? p : m), null);
+    const hit = detail.level ? pickAt(center.x, center.y, { left: 0, top: 0, width: viewW, height: viewH }) : null;
+    let focus = nearby.find(p => p.agent.id === mapSelection?.agentId && p.i === mapSelection?.reqIdx) || nearby.find(p => p.agent.id === hit?.agentId && p.i === hit?.reqIdx) || nearest;
+    const reqOf = item => item.agent.requests[item.i];
     // The centre crossing between two neighbouring columns does not flip the focus back and forth.
-    const held = !mapSelection && focus && nearby.find(p => keyOf(p) === heldFocus);
+    const held = !mapSelection && focus && heldFocus && nearby.find(p => reqOf(p) === heldFocus);
     if (held && held !== focus && held.score <= focus.score + 14) focus = held;
-    heldFocus = focus ? keyOf(focus) : "";
-    if (focus) { nearby.splice(nearby.indexOf(focus), 1); nearby.unshift(focus); }
+    heldFocus = focus ? reqOf(focus) : null;
+    if (focus) placeOf(focus);
     // Labels already on screen keep their place unless another is clearly closer to the centre, and
     // they are spaced by distance rather than by a screen grid, so a small pan does not swap them.
-    const labelOrder = [focus, ...nearby.slice(1).map(item => ({ item, s: item.score - (shownRequests.has(keyOf(item)) ? 90 : 0) - (shownAgents.has(item.agent.id) ? 40 : 0) })).sort((a, b) => a.s - b.s).map(e => e.item)].filter(Boolean);
+    const labelOrder = [focus, ...nearby.filter(item => item !== focus).map(item => ({ item, s: item.score - (shownRequests.has(reqOf(item)) ? 90 : 0) - (shownAgents.has(item.agent.id) ? 40 : 0) })).sort((a, b) => a.s - b.s || byScore(a.item, b.item)).map(e => e.item)].filter(Boolean);
     const agentSeen = new Set(), placedRequests = [];
     const linePoints = [];
     shownRequests = new Set();
     for (const item of labelOrder) {
-      const { agent, i, pos } = item, r = agent.requests[i];
+      const { agent, i } = item, r = agent.requests[i];
       if (detail.level >= 1 && !agentSeen.has(agent.id) && agentSeen.size < 14) {
+        const { pos } = placeOf(item);
         agentSeen.add(agent.id);
-        const o = label(agent.kind === 'root' ? 'Main thread' : agent.name || agent.id, 'agent', pos.clone().add(new THREE.Vector3(0, 0.4, 0)), [0.5, 1.8], g, () => onPick({ level: 1, agentId: agent.id, reqIdx: i }));
+        const o = mapLabel(agent.kind === 'root' ? 'Main thread' : agent.name || agent.id, 'agent', pos.clone().add(new THREE.Vector3(0, 0.4, 0)), [0.5, 1.8], () => onPick({ level: 1, agentId: agent.id, reqIdx: i }));
         o.userData.flip = true;
       }
       if (detail.level < 2) continue;
       if (placedRequests.length >= detail.labelBudget || placedRequests.some(q => Math.abs(q.px - item.px) < 135 && Math.abs(q.py - item.py) < 48)) continue;
-      placedRequests.push(item); shownRequests.add(keyOf(item));
+      placedRequests.push(item); shownRequests.add(r);
+      const { pos } = placeOf(item);
       const action = r.action?.tool ? ` · ${r.action.tool.split('__').at(-1)}` : '';
       const text = detail.level >= 3 && action ? `${r.action.tool.split('__').at(-1)} ↗ · #${i + 1} · ${fmtTok(r.tokens.context)} context` : `#${i + 1} · ${fmtTok(r.tokens.context)} context`;
-      const o = label(text, (mapSelection ? mapSelection.agentId === agent.id && mapSelection.reqIdx === i : item === focus) ? 'focus' : 'request', pos, [0.5, 1], g, () => onPick({ level: 2, agentId: agent.id, reqIdx: i, intent: detail.level >= 3 && r.action?.kind === 'tool' ? 'action' : 'request' }));
+      const o = mapLabel(text, (mapSelection ? mapSelection.agentId === agent.id && mapSelection.reqIdx === i : item === focus) ? 'focus' : 'request', pos, [0.5, 1], () => onPick({ level: 2, agentId: agent.id, reqIdx: i, intent: detail.level >= 3 && r.action?.kind === 'tool' ? 'action' : 'request' }));
       o.userData.flip = true;
-      o.element.title = `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${i + 1} · ${fmtClock(r.t)} · ${fmtTok(r.tokens.context)} tokens in context${r.action?.tool ? ` · Open ${r.action.tool} call` : ''}`;
+      let title = requestTitles.get(r); // fixed per request, and fmtClock is slow enough to show in every refresh
+      if (title === undefined) requestTitles.set(r, title = `${agent.kind === 'root' ? 'Main thread' : agent.name} · request ${i + 1} · ${fmtClock(r.t)} · ${fmtTok(r.tokens.context)} tokens in context${r.action?.tool ? ` · Open ${r.action.tool} call` : ''}`);
+      if (o.element.title !== title) o.element.title = title;
       linePoints.push(pos.x, 0, pos.z, pos.x, item.top.y, pos.z);
     }
     shownAgents = agentSeen;
-    mapLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
-    mapLines.geometry.computeBoundingSphere();
+    // a new buffer only when the leader lines changed
+    if (!mapLinePoints || linePoints.length !== mapLinePoints.length || linePoints.some((v, k) => v !== mapLinePoints[k])) {
+      mapLinePoints = linePoints;
+      mapLines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
+      mapLines.geometry.computeBoundingSphere();
+    }
     let stratum = null;
     // At Layers with grain columns standing, the stratum labels describe the leading column (the
     // playhead's request, which the word panes read), not the column nearest the centre; only when none
@@ -1886,28 +2077,28 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         if (!inMap(p)) return;
         const score = Math.hypot(p.px - center.x, p.py - center.y);
         if (score < best) { best = score; stratum = s.key; }
-        const o = label(`${s.name} · ≈ ${fmtTok(r.strata[s.key])}`, `stratum s-${s.key}`, pos, [0, 0.5], g, () => onPick({ level: 3, agentId: strataOf.agent.id, reqIdx: strataOf.i, stratum: s.key }));
-        o.element.style.setProperty('--c', s.color); o.userData.flip = true;
+        const o = mapLabel(`${s.name} · ≈ ${fmtTok(r.strata[s.key])}`, `stratum s-${s.key}`, pos, [0, 0.5], () => onPick({ level: 3, agentId: strataOf.agent.id, reqIdx: strataOf.i, stratum: s.key }));
+        if (!o.element.style.getPropertyValue('--c')) o.element.style.setProperty('--c', s.color);
+        o.userData.flip = true;
         placed++;
       });
       return placed;
     };
     if (detail.level >= 3 && !(lead && strataLabels(lead)) && focus) strataLabels(focus);
+    dropPooledLabels();
     updateWords();
     const state = detail.level && focus ? { detail: detail.level, agentId: focus.agent.id, reqIdx: focus.i, stratum } : null;
     const key = state ? `${state.detail}:${state.agentId}:${state.detail > 1 ? state.reqIdx : ''}:${state.stratum || ''}` : 'overview';
     if (key !== lastFocusKey) { lastFocusKey = key; focusSince = now; }
-    if (key !== sentFocusKey) {
-      if (now - focusSince >= 180) { sentFocusKey = key; onMapFocus(state); }
-      else dirty = Math.max(dirty, 2);
-    }
+    focusState = state;
   }
 
   // ---- picking ----
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
-  function pickAt(clientX, clientY) {
-    const rect = renderer.domElement.getBoundingClientRect();
+  // rect: the canvas' client rect, measured here unless the caller has it (the map refresh passes the viewport
+  // size of the last resize, so it forces no layout)
+  function pickAt(clientX, clientY, rect = renderer.domElement.getBoundingClientRect()) {
     ndc.set((clientX - rect.left) / rect.width * 2 - 1, -(clientY - rect.top) / rect.height * 2 + 1);
     ray.setFromCamera(ndc, camera);
     const o = ray.ray.origin, d = ray.ray.direction;
@@ -2041,13 +2232,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       fitDepth(); // uses last frame's grain columns: their box sits inside the terrain pad anyway
       updateMapDetail(now);
       updatePlayhead();
+      // the playhead just moved the words' leading request: one more frame, so the map refresh follows it
+      if (lastRefresh && level === 0 && wordsKey() !== lastRefresh.key) dirty = Math.max(dirty, 2);
       updateGrains(now);
       updateSweepSolids();
       updateSweepLabels(now);
       renderer.render(scene, camera);
       lastRenderAt = now;
-      labels.render(scene, camera);
-      navigator.render(camera, safeNdc());
+      if (labelsMoved()) labels.render(scene, camera);
+      if (navigator.render(camera, safeNdcAt(viewW, viewH), navigatorKey(now))) navRedraws++;
       measure();
       declutter();
       dirty--;
@@ -2056,6 +2249,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   function resize() {
     const w = host.clientWidth, h = host.clientHeight;
+    viewW = w; viewH = h; detailAt = -Infinity;
     renderer.setSize(w, h, false);
     renderer.domElement.style.width = `${w}px`; renderer.domElement.style.height = `${h}px`;
     labels.setSize(w, h);
@@ -2116,6 +2310,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     setInsets(v, preserveView = false) {
       const changed = JSON.stringify(v) !== JSON.stringify(insets);
       insets = v;
+      if (changed) detailAt = -Infinity; // the map's free area moved
       if (changed && level === 0 && !fly.on && !preserveView) frameL0(0);
     },
     refit() {
@@ -2161,7 +2356,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         grainN0: g.grainN0, grainBuilds: g.grainBuilds, grainBuildMs: g.grainBuildMs, grainAgent: grainAgent.id, grainPxPerColumn: Math.round(grainState.pxPerColumn * 100) / 100,
         // grains in context at their columns (the rest of the submitted quads are degenerate); O(rows), on request
         ...(live ? { grainsLive: grainState.K > 0 ? grains.liveCount(grainState.uP, grainState.K, g.grainDensity) : 0 } : {}),
-        playhead: { P: play.P, playing: play.playing, cutX: grainState.cutX, grainX0: grainState.grainX0, grainX1: grainState.grainX1, ghostX0: grainState.ghostX0 }, mapZoom
+        playhead: { P: play.P, playing: play.playing, cutX: grainState.cutX, grainX0: grainState.grainX0, grainX1: grainState.grainX1, ghostX0: grainState.ghostX0 }, mapZoom,
+        mapRefreshes, wordRefreshes, navRedraws // map refreshes (full, and words only) and navigator terrain redraws since load
       };
     },
     bench(ms = 3000) {

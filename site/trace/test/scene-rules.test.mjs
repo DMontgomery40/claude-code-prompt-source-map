@@ -314,3 +314,55 @@ test("sweep labels: the six largest injected or re-sent blocks of 900 tokens or 
   assert.equal(sweepLabelOpacity(NaN), null);
   for (let a = 0; a < 1; a += 0.01) assert.ok(sweepLabelOpacity(a + 0.01) <= sweepLabelOpacity(a) || sweepLabelOpacity(a + 0.01) == null);
 });
+
+test("map detail refresh: only when an anchor moved over 0.5 px, the zoom 1%, or the leading request changed; throttled", async () => {
+  const { shouldRefreshDetail, DETAIL_MOVE_PX, DETAIL_ZOOM, DETAIL_MIN_MS, DETAIL_PLAY_MS } = await import("../scene-rules.js");
+  assert.deepEqual([DETAIL_MOVE_PX, DETAIL_ZOOM, DETAIL_MIN_MS, DETAIL_PLAY_MS], [0.5, 0.01, 90, 100]);
+  // anchors: the orbit target and four points at its depth near the viewport corners, in screen px
+  const at = [960, 600, 200, 100, 1720, 100, 200, 1100, 1720, 1100];
+  const last = { t: 1000, anchors: at, zoom: 2.4, key: "" };
+  const now = (patch = {}) => ({ t: 1200, anchors: at, zoom: 2.4, key: "", playing: false, force: false, ...patch });
+  const none = { refresh: false, moved: false, pending: false }, go = { refresh: true, moved: true, pending: false }, wait = { refresh: false, moved: true, pending: true };
+  const words = { refresh: true, moved: false, pending: false }, wordsWait = { refresh: false, moved: false, pending: true };
+  assert.deepEqual(shouldRefreshDetail(null, now()), go, "the first frame refreshes");
+  assert.deepEqual(shouldRefreshDetail(last, now({ force: true, t: 1001 })), go, "a forced refresh (lens, insets, selection) is never throttled");
+  assert.deepEqual(shouldRefreshDetail(last, now()), none, "nothing changed: no refresh however long it has been");
+  assert.deepEqual(shouldRefreshDetail(last, now({ t: 1e9, playing: true })), none, "playing alone changes nothing");
+  // an orbit about the target leaves the target in place and moves the corners
+  const orbit = at.map((v, k) => (k < 2 ? v : v + (k % 2 ? 0 : 3)));
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: orbit })), go, "orbit about the target");
+  // sub-threshold drift: 0.4 px since the last refresh does not count, 0.6 px (accumulated) does
+  const drift = d => at.map((v, k) => (k === 4 ? v + d : v));
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: drift(0.4) })), none);
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: drift(0.5) })), none, "exactly 0.5 px is not a move");
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: drift(0.6) })), go);
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: at.map((v, k) => (k === 7 ? v - 0.3 : k === 6 ? v + 0.45 : v)) })), go, "0.54 px diagonally");
+  // zoom: 1% or more
+  assert.deepEqual(shouldRefreshDetail(last, now({ zoom: 2.4 * 1.009 })), none);
+  assert.deepEqual(shouldRefreshDetail(last, now({ zoom: 2.4 * 1.011 })), go);
+  assert.deepEqual(shouldRefreshDetail(last, now({ zoom: 2.4 / 1.011 })), go, "zooming out too");
+  // the throttle: 90 ms between refreshes while the view moves, 100 ms (10 Hz) while playing; a change that
+  // lands inside the interval is pending, so the caller keeps rendering until it is due
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: orbit, t: 1089 })), wait);
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: orbit, t: 1090 })), go);
+  // the words' leading request changed and the view did not: only the words follow, at 10 Hz while playing
+  assert.deepEqual(shouldRefreshDetail(last, now({ key: "root:901", t: 1099, playing: true })), wordsWait, "a request crossing while playing waits for 100 ms");
+  assert.deepEqual(shouldRefreshDetail(last, now({ key: "root:901", t: 1100, playing: true })), words);
+  assert.deepEqual(shouldRefreshDetail(last, now({ key: "root:901", t: 1090 })), words, "a step while paused: 90 ms");
+  assert.deepEqual(shouldRefreshDetail(last, now({ key: "root:901", anchors: orbit, t: 1100, playing: true })), go, "both: everything");
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: orbit, t: 1095, playing: true })), wait, "moving while playing: 10 Hz too");
+  // a view that cannot be compared (an anchor behind the camera projects to NaN, or the anchor count changed) refreshes
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: at.map((v, k) => (k === 3 ? NaN : v)) })), go);
+  assert.deepEqual(shouldRefreshDetail(last, now({ anchors: at.slice(0, 4) })), go);
+  assert.deepEqual(shouldRefreshDetail(last, now({ zoom: NaN })), go);
+});
+
+test("navigator: redraws when its content changed, at most 10 Hz while playing", async () => {
+  const { shouldRedrawNavigator, DETAIL_PLAY_MS } = await import("../scene-rules.js");
+  const last = { t: 1000, key: "context|1e30" };
+  assert.deepEqual(shouldRedrawNavigator(null, { t: 0, key: "a", playing: false }), { redraw: true, pending: false });
+  assert.deepEqual(shouldRedrawNavigator(last, { t: 5000, key: "context|1e30", playing: true }), { redraw: false, pending: false });
+  assert.deepEqual(shouldRedrawNavigator(last, { t: 1001, key: "context|80.5", playing: false }), { redraw: true, pending: false }, "a manual scrub is not throttled");
+  assert.deepEqual(shouldRedrawNavigator(last, { t: 1000 + DETAIL_PLAY_MS - 1, key: "context|80.5", playing: true }), { redraw: false, pending: true });
+  assert.deepEqual(shouldRedrawNavigator(last, { t: 1000 + DETAIL_PLAY_MS, key: "context|80.5", playing: true }), { redraw: true, pending: false });
+});

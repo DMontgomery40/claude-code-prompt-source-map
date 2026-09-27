@@ -87,7 +87,7 @@ export function createMapOverview({meshes, bounds, points, direction, layout, ag
   const wrap = document.createElement('div'); wrap.className='map-terrain-wrap'; wrap.append(canvas,overlay);
   const caption = document.createElement('div'); caption.className='map-caption'; caption.textContent='Click terrain to go there';
   const ray = new THREE.Raycaster();
-  let camera, w=0, h=0, selected=null, container;
+  let camera, w=0, h=0, selected=null, container, stale=true, drawnContent, drawnWindow='';
   function hit(e) {
     if (!camera) return null;
     const r=canvas.getBoundingClientRect();
@@ -109,20 +109,29 @@ export function createMapOverview({meshes, bounds, points, direction, layout, ag
   return {
     mount(host, nextWidth, nextHeight, point) {
       if (wrap.parentNode!==host) host.replaceChildren(wrap,caption);
-      container=host; selected=point;
+      container=host; selected=point; stale=true;
       if (w!==nextWidth || h!==nextHeight) {
         w=nextWidth; h=nextHeight;
         renderer.setSize(w,h); overlay.setAttribute('viewBox',`0 0 ${w} ${h}`);
         camera=fitMapOverview(bounds,w/h,direction,points);
       }
     },
-    render(mainCamera, safe) {
-      if (!camera || !container || container.hidden || !container.clientWidth) return;
-      renderer.render(scene,camera);
+    // The terrain is redrawn only when `content` (what it shows besides its fixed geometry) differs from the
+    // last drawing, or after a mount; the viewport outline is SVG and changes only when its points do.
+    // Returns whether the terrain was drawn. This runs on every frame the camera moves, so it reads no layout
+    // (a clientWidth check here forced one per frame): the mounted size stands for the container's.
+    render(mainCamera, safe, content) {
+      if (!camera || !container || container.hidden || !(w>0 && h>0)) return false;
       const project=p=>{const q=p.clone().project(camera);return [(q.x+1)*w/2,(1-q.y)*h/2];};
-      windowShape.setAttribute('points',visibleMapGround(mainCamera,bounds,safe).map(p=>project(p).join(',')).join(' '));
+      const shape=visibleMapGround(mainCamera,bounds,safe).map(p=>project(p).join(',')).join(' ');
+      const redraw=stale || content!==drawnContent;
+      if (shape!==drawnWindow) { windowShape.setAttribute('points',shape); drawnWindow=shape; }
+      if (!redraw) return false;
+      renderer.render(scene,camera);
+      stale=false; drawnContent=content;
       marker.style.display=selected?'':'none';
       if (selected) {const [x,y]=project(selected);marker.setAttribute('cx',x);marker.setAttribute('cy',y);}
+      return true;
     },
     dispose() { renderer.dispose(); wrap.remove(); caption.remove(); }
   };
