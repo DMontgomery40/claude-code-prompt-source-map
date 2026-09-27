@@ -1116,17 +1116,20 @@ function sidebarState() {
   const view = mapPanelState(S, { ...S.mapFocus, ...playCard, stratum: null });
   return view === S ? view : { ...view, atPlayhead: true };
 }
-// Redrawn when the playhead enters another request, at most every 250 ms; never a history entry.
+// Redrawn when the playhead enters another request, at most every 250 ms; never a history entry. The panel
+// keeps its scroll while the card stays on one agent, so the user can read on during playback.
 function playCardTick(p) {
   const lead = p.playing && dir && S.mode === "3d" && S.level === 0 && S.mapFocus ? dir.lead : null;
   const next = lead ? { agentId: lead.agentId, reqIdx: Math.max(0, Math.floor(lead.P)) } : null;
   if (next ? playCard && next.agentId === playCard.agentId && next.reqIdx === playCard.reqIdx : !playCard) return;
   const now = performance.now();
   if (next && playCard && now - playCardAt < 250) return; // a later tick catches up
+  const cardAgent = c => c?.agentId ?? S.mapFocus?.agentId ?? null; // the playhead's card, else the centre's
+  const otherAgent = cardAgent(next) !== cardAgent(playCard);
   playCard = next; playCardAt = now;
   renderRequestNav();
   renderPanel($("#panel"), sidebarState(), A);
-  $("#panel").scrollTop = 0;
+  if (otherAgent) $("#panel").scrollTop = 0;
   renderMapLocation();
 }
 function followMap(focus) {
@@ -1134,7 +1137,9 @@ function followMap(focus) {
   S.mapFocus = focus;
   renderRequestNav();
   renderPanel($("#panel"), sidebarState(), A);
-  $("#panel").scrollTop = 0;
+  // While playing the card is the playhead's (playCardTick): the centre moving under the director changes
+  // nothing the user is reading, so the panel keeps its scroll. Paused, the new centre's card shows on top.
+  if (!playCard) $("#panel").scrollTop = 0;
   $("#app").classList.toggle("map-following", !!focus);
   renderMapLocation();
   layoutInsets(true);
