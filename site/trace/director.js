@@ -34,6 +34,25 @@ export function followLatch(latch, moved, readZoom) {
   return { zoom, level: mapDetail(zoom).level };
 }
 
+// Which camera moves choose that zoom. The user's hands (a wheel, pinch, drag, the zoom controls, reset,
+// the scene's onUserCamera), the overview or a lens refitting the map, and a request located with a reveal
+// zoom do. The director's framing does not, nor a plain pan to a request (it keeps whatever zoom it finds,
+// perhaps one the director left), a history restore (the saved view may be one the director framed), a
+// resize or any other change the scene reports.
+const CHOOSES_ZOOM = new Set(["hands", "refit", "reveal"]);
+export const choosesZoom = source => CHOOSES_ZOOM.has(source);
+
+// One session's follow zoom: camera(source) for every camera move the app makes or hears of, engage() as
+// a run starts or Follow is asked for again (it returns the latch).
+export function createFollowZoom(readZoom) {
+  let latch = null, moved = true;
+  return {
+    camera(source) { if (choosesZoom(source)) moved = true; },
+    engage() { latch = followLatch(latch, moved, readZoom); moved = false; return latch; },
+    get latch() { return latch; }
+  };
+}
+
 // ---------- events (once per trace) ----------
 // Epoch starts, as the grain kernel reads them: a request whose context window starts after the
 // previous windowed request's (a compaction, logged or not).

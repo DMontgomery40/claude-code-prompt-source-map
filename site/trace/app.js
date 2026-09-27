@@ -9,7 +9,7 @@ import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLands
 import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
 import { createTransport, playheadForRequest } from "./transport.js";
-import { buildEvents, nextShot, agentPAt, followLatch } from "./director.js";
+import { buildEvents, nextShot, agentPAt, createFollowZoom } from "./director.js";
 import { createGeometry } from "./landscape-geometry.js";
 
 const params = new URLSearchParams(location.search);
@@ -33,9 +33,9 @@ let pasteRoot = null; // the thread or session id from the paste box, sent as th
 let transport = null;
 let dir = null;       // the playback director's per-session state (direct() below)
 let playCard = null, playCardAt = 0; // the map card at the playhead while playing (playCardTick below)
-// The zoom runs follow at (director.js followLatch) and whether the camera moved by other hands than the
-// director's since it was read. Kept across pauses, seeks and runs; a new session starts unread.
-let camLatch = null, camMoved = true;
+// The zoom runs follow at (director.js createFollowZoom): told of every camera move that chooses a zoom,
+// read as a run starts. Kept across pauses, seeks and runs; each session starts its own.
+let followZoom = null;
 
 // ---------- loader ----------
 setupLoader();
@@ -91,7 +91,7 @@ function backToLoader() {
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
   transport?.load(null);
   $("#playback").hidden = true;
-  dir = null; playCard = null; camLatch = null; camMoved = true;
+  dir = null; playCard = null; followZoom = null;
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -272,7 +272,7 @@ async function switchSession(root) {
     const trace = await parseInWorker(lastFiles, root);
     transport?.load(null);
     $("#playback").hidden = true;
-    dir = null; playCard = null; camLatch = null; camMoved = true;
+    dir = null; playCard = null; followZoom = null;
     scene?.dispose();
     scene = null;
     Object.assign(S, { level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -565,7 +565,7 @@ async function start(trace) {
     onFollow: () => { if (dir) { dir.prev = null; dir.prevCutX = null; } }
   });
   transport.load(playbackFor(S.layout));
-  dir = null; playCard = null; camLatch = null; camMoved = true;
+  dir = null; playCard = null; followZoom = null;
   palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
     playback: {
       toggle: () => playbackShown() && transport.toggle(),
@@ -638,7 +638,7 @@ async function setMode(mode) {
       $("#flat").hidden = true;
       $("#stage").hidden = false;
       if (!scene) {
-        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: () => { cameraChanged(); saveViewSoon(); },
+        scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon,
           getText: (agentId, ref) => A.getText(agentId, ref).then(r => r?.text ?? "") });
         window.__trace.scene = scene;
         scene.setLabelDetail(S.detailedLabels);
@@ -812,11 +812,10 @@ function direct(p) {
   }
   const d = dir, g = d.geom, s = d.state, root = S.layout.root, cutX = g.W * pb.xAt(p.P);
   if (d.prevCutX == null) { // a run starts, or Follow was asked for again: the user's zoom to follow at
-    camLatch = followLatch(camLatch, camMoved, mapZoomNow);
-    camMoved = false;
-    d.zoom = camLatch.zoom;
-    d.level = camLatch.level;
-    d.span = g.W / Math.max(1e-6, camLatch.zoom);
+    const latch = (followZoom ||= createFollowZoom(mapZoomNow)).engage();
+    d.zoom = latch.zoom;
+    d.level = latch.level;
+    d.span = g.W / Math.max(1e-6, latch.zoom);
   }
   // The leading column: the focused subagent's ridge when one is focused (as the scene's grains are), else the main thread's.
   const agent = S.agent?.kind === "subagent" && g.rowZ.has(S.agent.id) ? S.agent : root;
@@ -829,25 +828,19 @@ function direct(p) {
   s.lead = lead; s.events = d.events; s.span = d.span; s.zoom = d.zoom; s.leadFx = scene.leadScreenX?.();
   d.prevCutX = cutX;
   const shot = nextShot(s, d.prev, performance.now());
-  if (shot) { d.prev = shot; d.shotAt = performance.now(); scene.setDirectorShot?.(shot); }
+  if (shot) { d.prev = shot; scene.setDirectorShot?.(shot); }
 }
 function mapZoomNow() {
   const v = scene.getView();
   const dist = Math.hypot(v.position[0] - v.target[0], v.position[1] - v.target[1], v.position[2] - v.target[2]);
   return v.zoom * v.overviewDistance / Math.max(1e-6, dist);
 }
-// Who moved the camera. The director is moving it while one of its box shots is up, or while a shot's
-// ease runs; any other change (the user, a request located on the map, a refit, history) is not the
-// director's, so the next run reads the zoom again. The scene reports the user's own input as well
-// (onUserCamera), and until it does, a wheel or a drag on the stage and the zoom controls count.
-const BOX_SHOTS = new Set(["spawns", "wait", "return", "compaction"]);
-function directorDriving() {
-  const shot = dir?.prev;
-  if (!shot || !transport?.playing || typeof scene?.setDirectorShot !== "function") return false;
-  return BOX_SHOTS.has(shot.kind) || performance.now() - dir.shotAt < (shot.ease || 0) + 150;
-}
-function cameraChanged() { if (!directorDriving()) camMoved = true; }
-function userCamera() { camMoved = true; transport?.userCamera(); }
+// Camera moves the app makes or hears of, by source (director.js choosesZoom decides which choose the
+// follow zoom). The scene's onViewChange is not one of them: it fires for the director's framing too.
+function cameraMove(source) { (followZoom ||= scene && createFollowZoom(mapZoomNow))?.camera(source); }
+// The user's hands on the camera: the scene's onUserCamera, and until it reports them a wheel or a drag on
+// the stage, the zoom controls and Reset view. While playing the director lets go (Follow manual).
+function userCamera() { cameraMove("hands"); transport?.userCamera(); }
 // The transport sits on the bottom row, centred between the minimap and the view controls; where that
 // row is too narrow it sits above the minimap. Phones: full width, above the stacked bottom controls.
 function placePlayback() {
@@ -931,7 +924,7 @@ function set(patch, options) {
     // Inside the change, so the entry being left keeps its own playhead.
     if (options?.playhead != null) transport?.seek(options.playhead);
     applySet(patch);
-    if (options?.locate && S.mapPinned) scene?.panToRequest(S.agentId, S.reqIdx, options.reveal);
+    if (options?.locate && S.mapPinned) { scene?.panToRequest(S.agentId, S.reqIdx, options.reveal); cameraMove(options.reveal ? "reveal" : "pan"); }
   };
   if (viewHistory) viewHistory.navigate(change, options);
   else change();
@@ -1017,12 +1010,14 @@ function backToMap() {
 function overview() {
   set({ level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
+  cameraMove("refit");
 }
 function selectLens(key) {
   // Each tab opens its session-wide exploration. Retaining a deep layer would
   // otherwise change the scene but leave an unrelated source reader on screen.
   set({ lens: key, level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
+  cameraMove("refit");
 }
 function moveRequest(delta, inspect = true) {
   const view = sidebarState();
