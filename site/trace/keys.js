@@ -32,19 +32,30 @@ const BY_KEY = new Map();
 for (const row of KEYS) for (const [key, arg] of Object.entries(row.bind || {})) BY_KEY.set(key, { row, arg });
 
 // The row and argument for a plain key press (no Ctrl, Alt or ⌘), or null. Space is the playback
-// key only where spacePlays says so; anywhere else it belongs to the focused element.
-export function keyFor(e) {
+// key only where spacePlays says so; anywhere else it belongs to the focused element. pressedMap: what
+// pressLeavesSpace said of the last pointer press (true before any).
+export function keyFor(e, pressedMap = true) {
   if (e.metaKey || e.ctrlKey || e.altKey) return null;
-  if (e.key === " " && !spacePlays(e.target)) return null;
+  if (e.key === " " && !spacePlays(e.target, pressedMap)) return null;
   return BY_KEY.get(e.key) || null;
 }
 
-// Space plays from the page itself, the landscape and the transport's scrub. A control there still
-// presses natively, and everywhere else (a reader, the panel, a field) Space pages or types as usual.
+// Space plays from the landscape, the minimap and the transport's scrub. A control there still presses
+// natively, and everywhere else (a reader, the panel, a field) Space pages or types as usual. From the
+// page itself (focus on the body) it plays only when the last pointer press left it to playback.
 const PRESSES = "button, summary, a[href], select, textarea, input:not([type=range]), [contenteditable]:not([contenteditable=false]), [role=button], [role=checkbox], [role=switch], [role=tab], [role=option], [role=menuitem]";
-export function spacePlays(target) {
-  if (!target || !target.closest || target.tagName === "BODY" || target.tagName === "HTML") return true;
-  return !target.closest(PRESSES) && !!target.closest("#stage, #playback");
+const MAP = "#stage, #playback, #minimap";
+const isPage = t => t.tagName === "BODY" || t.tagName === "HTML";
+export function spacePlays(target, pressedMap = true) {
+  if (!target || !target.closest || isPage(target)) return pressedMap;
+  return !target.closest(PRESSES) && !!target.closest(MAP);
+}
+// Whether a pointer press on `target` leaves the page's Space to playback: on the map, the transport or the
+// bare page it does. Anywhere else (the panel and its readers, the 2D view, a toolbar) it does not: the
+// panel and a block's text take no focus, so after a click there focus stays on the body, and Space pages
+// what was clicked, as the browser does.
+export function pressLeavesSpace(target) {
+  return !target || !target.closest || isPage(target) || !!target.closest(MAP);
 }
 // The transport's own controls: its scrub is a field, but it still answers the playback keys.
 export function inTransport(target) {

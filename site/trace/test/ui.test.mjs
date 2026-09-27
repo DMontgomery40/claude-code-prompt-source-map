@@ -76,7 +76,10 @@ globalThis.document = {
   createElementNS: (_ns, tag) => new Element(tag),
   createTextNode: v => new Text(v),
   body: new Element("body"),
-  querySelector: () => null
+  querySelector: () => null,
+  // Listeners the page puts on the document (the palette's pointer press); spacePage's click runs them.
+  listeners: {},
+  addEventListener(t, fn) { (this.listeners[t] ||= []).push(fn); }
 };
 globalThis.addEventListener ??= () => {};
 
@@ -673,11 +676,23 @@ function spacePage() {
   const panel = E("aside", { id: "panel", class: "panel" });
   renderPanel(panel, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, inspector: "action" }, { focusRequest() {} });
   const reader = panel.all(n => n.tagName === "PRE")[0];
+  // The level 3 block reader panels.js renders, in the same panel: a block's text is a plain pre.
+  const block = { i: 0, t: 900, kind: "outside", label: "README.md", chars: 4000, est: 1000, ref: { file: "a.jsonl", offset: 1 }, site: null };
+  const deep = { ...agent, blocks: [block], requests: [{ ...req, window: [0, 0], strata: { outside: 1000 } }] };
+  const levelThree = E("div");
+  renderPanel(levelThree, { trace: { agents: [deep] }, level: 3, agent: deep, reqIdx: 0, stratum: "outside", block: 0 },
+    { focusRequest() {}, openBlock() {}, openBlockAt() {}, getText: () => new Promise(() => {}) });
+  panel.append(levelThree);
+  const blockText = levelThree.all(n => n.tagName === "PRE" && n.className === "text")[0];
+  const panelText = panel.all(n => n.tagName === "P" && n.className === "lede")[0];
   const flat = E("div", { id: "flat", class: "flat" });
+  const minimap = E("div", { id: "minimap", class: "minimap" }, E("canvas", { class: "map-terrain" }));
+  const hud = E("header", { class: "hud" }, E("h1", { id: "title" }, "a session"));
   const fields = [E("input", { id: "paste", type: "text" }), E("input", { id: "request-range", type: "range" }), E("input", { id: "request-number", type: "number" }),
     E("textarea"), E("select"), E("div", { contenteditable: "true" })];
   const controls = [E("button", { id: "zoom-in" }), E("summary"), E("a", { href: "#x" }), E("div", { role: "button", tabindex: "0" })];
-  body.append(E("div", { id: "app", class: "app" }, stage, E("div", { class: "side" }, panel), flat, transportHost, ...fields, ...controls));
+  body.append(E("div", { id: "app", class: "app" }, hud, stage, E("div", { class: "side" }, panel), minimap, flat, transportHost, ...fields, ...controls));
+  document.listeners = {};
   let shown = true;
   const calls = [];
   const act = name => (...a) => shown && void calls.push([name, ...a].join(" "));
@@ -691,7 +706,18 @@ function spacePage() {
     const handled = palette.handleKey(e);
     return [handled, e.prevented, calls.join(", ")];
   };
-  return { body, canvas, label, stage, tr, reader, panel, flat, fields, controls, press, hide: v => { shown = !v; } };
+  // A click as a browser runs it: the document's capture listeners see the pointer press, then focus moves to
+  // the nearest focusable ancestor of what was clicked, or stays on the body. key() presses at the focus.
+  const FOCUSABLE = "button, input, select, textarea, summary, a[href], [tabindex], [contenteditable=true]";
+  let focused = body;
+  const click = target => {
+    for (const fn of document.listeners.pointerdown || []) fn({ type: "pointerdown", target });
+    focused = target.closest(FOCUSABLE) || body;
+    return focused;
+  };
+  const key = (k = " ", mods) => press(focused, k, mods);
+  return { body, canvas, label, stage, tr, reader, panel, blockText, panelText, minimap, hud, flat, fields, controls, palette, agent, press, click, key,
+    hide: v => { shown = !v; } };
 }
 
 test("Space plays from the page, the landscape and the scrub; a reader, the panel, a field or a control keeps it", () => {
@@ -716,6 +742,44 @@ test("Space plays from the page, the landscape and the scrub; a reader, the pane
   assert.deepEqual(p.press(p.fields[1], "."), [false, false, ""], "the request slider keeps its keys");
   // A focused button still gets the step keys (they are not its own).
   assert.deepEqual(p.press(play, "."), [true, true, "step 1"]);
+});
+
+// The panel and a block's text take no focus: after a click into them the key comes from the body. Space must
+// page what was clicked (at level 3 playing would also close the reader and go back to the map).
+test("after a click into a block's text or the panel Space pages them; a click on the map or the transport gives it back", () => {
+  const p = spacePage();
+  const { play, readout } = p.tr.controls;
+  assert.equal(p.blockText.getAttribute("tabindex"), null, "a block's text is a plain pre");
+  assert.deepEqual(p.key(), [true, true, "toggle"], "keyboard only: Space from the page plays");
+  assert.equal(p.click(p.blockText), p.body, "the click leaves focus on the body");
+  assert.deepEqual(p.key(), [false, false, ""], "Space after a click into the block reader pages it, unprevented");
+  assert.deepEqual(p.key("f"), [true, true, "follow"], "the other playback keys still work from there");
+  assert.deepEqual(p.key(","), [true, true, "step -1"]);
+  for (const [where, target] of [["the landscape", p.canvas], ["the transport's readout", readout], ["the minimap", p.minimap.children[0]], ["the bare page", p.body]]) {
+    p.click(p.panelText);
+    assert.deepEqual(p.key(), [false, false, ""], "Space after a click into the panel's text is the panel's");
+    assert.equal(p.click(target), p.body);
+    assert.deepEqual(p.key(), [true, true, "toggle"], `a click on ${where} gives Space back to playback`);
+  }
+  for (const [where, target] of [["the 2D view", p.flat], ["the header", p.hud.children[0]]]) {
+    p.click(target);
+    assert.deepEqual(p.key(), [false, false, ""], `Space after a click on ${where} is left to the page`);
+  }
+  // The palette's layers: a press there (the search scrim, a result) leaves the last word to the page.
+  const scrim = p.body.all(n => n.className === "pal-scrim")[0];
+  p.click(p.panelText); p.click(scrim);
+  assert.deepEqual(p.key(), [false, false, ""]);
+  p.click(p.canvas); p.click(scrim);
+  assert.deepEqual(p.key(), [true, true, "toggle"]);
+  // A new session starts afresh: the press that loaded it (on the loader) does not carry over.
+  p.click(p.panelText);
+  p.palette.setTrace({ agents: [p.agent] });
+  assert.deepEqual(p.key(), [true, true, "toggle"]);
+  // What takes focus is judged by itself, as before: the call reader keeps Space, the play button presses itself.
+  assert.equal(p.click(p.reader), p.reader);
+  assert.deepEqual(p.key(), [false, false, ""]);
+  assert.equal(p.click(play), play);
+  assert.deepEqual(p.key(), [false, false, ""]);
 });
 
 test("while the transport is hidden, playback keys decline and the page keeps them unprevented", () => {

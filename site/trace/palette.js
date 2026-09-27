@@ -6,7 +6,7 @@
 import { el, fmtTok, fmtInt, STRATA, STRATUM_INDEX, STATUS, LENSES } from "./panels.js";
 import { buildSearchIndex, setAskText, search, parseQuery, matchRanges, SCOPES, agentName } from "./search.js";
 import { peakRequestIndex, requestCalls } from "./navigation.js";
-import { KEYS, keyFor, isSearchChord, typingInto, inTransport } from "./keys.js";
+import { KEYS, keyFor, isSearchChord, typingInto, inTransport, pressLeavesSpace } from "./keys.js";
 
 const $ = s => document.querySelector(s);
 const SECTION = { command: "Commands", agent: "Agents", ask: "Asks & tasks", call: "Tool calls", block: "Injected & setup", text: "In the text", mine: "Your asks", largest: "Largest blocks in context" };
@@ -24,6 +24,10 @@ export function createPalette(ctx) {
   let find = blankFind(), findTimer = null, findSeq = 0, listening = null;
   let trail = null; // { label, items, i, terms }: what n / ⇧N step through
   let asksLoaded = false, asksVersion = 0, renderTimer = null;
+  // Where the last pointer press landed decides Space from the page (keys.js pressLeavesSpace). Presses in the
+  // palette's own layers leave it as it was (they are gone once closed), and a new session starts afresh.
+  let pressedMap = true;
+  document.addEventListener("pointerdown", e => { if (!e.target?.closest?.(".pal-layer")) pressedMap = pressLeavesSpace(e.target); }, true);
 
   // ---------- DOM ----------
   const input = el("input", {
@@ -66,7 +70,7 @@ export function createPalette(ctx) {
 
   // ---------- session ----------
   function setTrace(t) {
-    trace = t; index = null; commands = []; largest = []; asksLoaded = false;
+    trace = t; index = null; commands = []; largest = []; asksLoaded = false; pressedMap = true;
     trail = null; clearHighlight(); cancelFind(); q = ""; scope = "all";
     close(false);
     renderBar();
@@ -512,7 +516,7 @@ export function createPalette(ctx) {
     if (!trace || !layer.hidden) return false;
     if (isSearchChord(e)) { e.preventDefault(); open(); return true; }
     if (!help.hidden) return false;
-    const hit = keyFor(e);
+    const hit = keyFor(e, pressedMap);
     if (!hit) return false;
     if (typingInto(e.target) && !(hit.row.group === "Playback" && inTransport(e.target))) return false;
     // An action that declines (playback while the transport is hidden) leaves the key to the page.
