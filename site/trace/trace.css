@@ -644,7 +644,7 @@ button:disabled { opacity: .4; cursor: default; }
    centre on wide screens, above the minimap when that row is narrow, above the controls on phones. */
 .playback { position: absolute; bottom: 22px; display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border: 1px solid #3b5564; border-radius: 12px; background: #0b1925f5; box-shadow: 0 8px 25px #0004; }
 .playback button { flex: none; height: 32px; padding: 0; border: 0; border-radius: 7px; background: #1c3342; color: #c6f3e3; cursor: pointer; }
-.playback button:hover { background: #315445; }
+.playback button:hover { background: #2a4a3d; }
 .playback .play { width: 32px; display: grid; place-items: center; }
 .playback .play i { width: 11px; height: 13px; margin-left: 2px; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); }
 .playback[data-playing=true] .play { background: #2b5c4c; color: #e8fff6; }

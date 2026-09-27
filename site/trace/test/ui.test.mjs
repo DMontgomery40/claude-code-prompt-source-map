@@ -654,6 +654,33 @@ test("the Follow chip: auto by default; moving the camera during a run makes it 
   assert.ok(frames.size <= 1);
 });
 
+// Every transport control's text at rest, on hover, pressed and playing: at least 7:1 on its own opaque
+// background (the rules as trace.css writes them; hover loses to the pressed and playing rules, which are
+// more specific).
+test("the transport's controls keep 7:1 text contrast at rest, on hover, pressed and playing", async () => {
+  const { readFileSync } = await import("node:fs");
+  const css = readFileSync(new URL("../trace.css", import.meta.url), "utf8");
+  const decl = (sel, prop) => {
+    const m = new RegExp(`(^|\\n)${sel.replace(/[.[\]=]/g, c => `\\${c}`)}\\s*\\{([^}]*)\\}`).exec(css);
+    assert.ok(m, `${sel} is in trace.css`);
+    const v = new RegExp(`(^|[;\\s])${prop}:\\s*(#[0-9a-fA-F]{6})\\b`).exec(m[2]);
+    assert.ok(v, `${sel} sets ${prop}`);
+    return v[2];
+  };
+  const hex = h => [1, 3, 5].map(k => parseInt(h.slice(k, k + 2), 16));
+  const lum = h => { const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; const [r, g, b] = hex(h); return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+  const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+  const ink = decl(".playback button", "color"), hover = decl(".playback button:hover", "background");
+  const pairs = [
+    ["rest", ink, decl(".playback button", "background")],
+    ["hover (play, speed, Follow off)", ink, hover],
+    ["Follow off", ink, decl(".playback .follow", "background")],
+    ["Follow pressed", decl(".playback .follow[aria-pressed=true]", "color"), decl(".playback .follow[aria-pressed=true]", "background")],
+    ["playing", decl(".playback[data-playing=true] .play", "color"), decl(".playback[data-playing=true] .play", "background")]
+  ];
+  for (const [what, fg, bg] of pairs) assert.ok(contrast(fg, bg) >= 7, `${what}: ${fg} on ${bg} is ${contrast(fg, bg).toFixed(2)}:1`);
+});
+
 // ---------- where Space plays ----------
 const { createPalette } = await import("../palette.js");
 
