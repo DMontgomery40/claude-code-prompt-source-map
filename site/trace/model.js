@@ -197,6 +197,13 @@ export function textLineHashes(text) {
   return out;
 }
 
+// One site serves both products, so its reference-index.json may hold { byProduct: { "claude-code": …, codex: … } }.
+// A single-product index (older sites, dump.mjs --index) passes through unchanged.
+export function indexFor(index, product) {
+  if (!index || typeof index !== "object" || !index.byProduct) return index;
+  return index.byProduct[product] ?? null;
+}
+
 export function prepareIndex(index) {
   if (!index || typeof index !== "object") return null;
   return { site: index.site || null, origin: index.origin || null, pages: index.pages || [], lines: index.lines || {}, harness: index.harness || {}, reminders: index.reminders || {}, templates: index.templates || {} };

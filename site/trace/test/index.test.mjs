@@ -76,6 +76,26 @@ test("codex: harness and injected blocks link to the page holding their lines; c
   assert.ok(bare.agents[0].blocks.every((b) => b.site === null));
 });
 
+test("one site, both products: a byProduct index gives each session its own product's index, never the other's", async () => {
+  const codexIndex = makeIndex([{ slug: "base", title: "Base instructions", text: "You are a test agent. Ünïcödé ✓" }]);
+  const ccIndex = { ...makeIndex([], { reminders: { date: { slug: "reminders", anchor: "date", title: "Date" } } }), site: "cc-test", origin: "https://example.test/claude-code" };
+  const index = { byProduct: { codex: { ...codexIndex, site: "codex-test", origin: "https://example.test/codex" }, "claude-code": ccIndex } };
+
+  const { trace: cx } = await loadTrace(await entriesFor([FIX + "codex"]), { index });
+  assert.deepEqual(cx.reference, { site: "codex-test", origin: "https://example.test/codex", pages: 1 });
+  assert.ok(cx.agents[0].blocks.some((b) => b.site?.slug === "base"));
+
+  const { trace: cc } = await loadTrace(await entriesFor([FIX + "claude"]), { index });
+  assert.equal(cc.reference.site, "cc-test");
+  assert.equal(cc.reference.origin, "https://example.test/claude-code");
+  assert.ok(cc.agents.flatMap((a) => a.blocks).every((b) => b.site?.slug !== "base"), "a Claude Code session never links to a Codex page");
+
+  // A product the index doesn't carry gets no links rather than the other product's.
+  const { trace: onlyCc } = await loadTrace(await entriesFor([FIX + "codex"]), { index: { byProduct: { "claude-code": ccIndex } } });
+  assert.equal(onlyCc.reference, null);
+  assert.ok(onlyCc.agents[0].blocks.every((b) => b.site === null));
+});
+
 test("claude-code: reminder types map to their page; a structured row without a template stays structured", async () => {
   const index = makeIndex([], { reminders: { date: { slug: "reminders", anchor: "date", title: "Date" }, mystery_type: { slug: "reminders", anchor: "mystery", title: "Mystery" } } });
   const { trace } = await loadTrace(await entriesFor([FIX + "claude"]), { index });

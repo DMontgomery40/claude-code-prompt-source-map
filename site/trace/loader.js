@@ -4,7 +4,7 @@
 //
 // entries: [{ path, source }] where path is the dropped relative path (or an
 // absolute path in Node) and source is { name, size, slice(a, b) }.
-import { readFirstLine, prepareIndex } from "./model.js";
+import { readFirstLine, prepareIndex, indexFor } from "./model.js";
 import { isCodexFirstLine, parseCodexThread, buildCodexTrace, codexMeta } from "./adapters/codex.js";
 import { isClaudeRow, parseClaudeFile, buildClaudeTrace } from "./adapters/claude-code.js";
 
@@ -234,7 +234,6 @@ async function readJson(source) {
 // fails with a clear message when no file carries it.
 // Returns { trace, sources } where sources[i] backs trace.files[i] (for text reads).
 export async function loadTrace(entries, { root = null, onProgress = () => {}, index = null } = {}) {
-  const ix = prepareIndex(index);
   let sessions, pick;
   const skipped = []; // unhinted loads: files findSessions could not read or recognise
   if (root && UUID.test(String(root))) {
@@ -249,6 +248,8 @@ export async function loadTrace(entries, { root = null, onProgress = () => {}, i
     if (!sessions.length) throw new Error("No Codex rollout or Claude Code transcript found in the dropped files.");
     pick = (root && sessions.find((s) => s.id === root || s.name.includes(root) || s.entries.some((e) => e.path.includes(root)))) || sessions.slice().sort((a, b) => b.bytes - a.bytes)[0];
   }
+  // The picked session's product chooses its reference index (one site publishes both).
+  const ix = prepareIndex(indexFor(index, pick.product));
   // Keep byte references stable while the source session continues to grow.
   await Promise.all([...pick.entries, ...(pick.metas || []), ...(pick.toolResults || [])].map(e => e.source.snapshot?.()));
   const total = pick.entries.reduce((n, e) => n + e.source.size, 0);
