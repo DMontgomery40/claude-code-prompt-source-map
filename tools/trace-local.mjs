@@ -7,10 +7,12 @@ import {homedir} from 'node:os';
 import {randomBytes} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {narrowByHint} from '../site/trace/loader.js';
+import {SITE, siteOrigin} from '../site/src/shared/site.mjs';
 
 export const PORT = 8766;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const ORIGINS = new Set(['https://gpt6aeon.dtmont.com','https://ccprompts.dtmont.com']);
+// The one site, plus the retired hosts (they redirect to it, but a tab opened before the move may still call).
+const ORIGINS = new Set([siteOrigin(), ...Object.values(SITE.products).map(p => `https://${p.legacyHost}`)]);
 const within = (root, file) => {const rel=relative(root,file);return rel!== '..' && !rel.startsWith('../') && !rel.startsWith('/');};
 const defaultRoots = {codex:join(homedir(),'.codex','sessions'),'claude-code':join(homedir(),'.claude','projects')};
 

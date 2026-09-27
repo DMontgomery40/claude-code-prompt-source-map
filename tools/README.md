@@ -11,7 +11,7 @@ for every pasted ID. Parsing and rendering remain in the browser. Session data
 is not uploaded to the hosted site. Stop the process to disable local access.
 Nothing is installed at login by this command.
 
-Only the two exact hosted origins (`https://gpt6aeon.dtmont.com` and
+Only the one site's origin (`https://harness.dtmont.com`, from `site/src/shared/site.mjs`) and the two retired hosts (`https://gpt6aeon.dtmont.com` and
 `https://ccprompts.dtmont.com`) and the resolver's own origin can call the session
 API. Requests require a custom header, and file reads use expiring opaque tokens
 for the selected family. There is no arbitrary-path or directory-listing API.

@@ -29,6 +29,9 @@ test('local resolver opens only the requested family, refreshes new files, and r
   assert.equal((await call(file.url+'?start=0&end=16',null,'https://evil.example')).status,403);
  }
  assert.equal((await call('/v1/session',{id:CODEX.root},'https://gpt6aeon.dtmont.com.evil.example')).status,403);
+ // The one site's origin is trusted; a look-alike host is not.
+ assert.equal((await call('/v1/session',{id:CODEX.root},'https://harness.dtmont.com')).status,200);
+ assert.equal((await call('/v1/session',{id:CODEX.root},'https://harness.dtmont.com.evil.example')).status,403);
  assert.equal((await call('/v1/session',{id:'../../secret'})).status,400);
  assert.equal((await fetch(base+'/v1/session',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({id:CODEX.root})})).status,403);
  assert.equal((await call('/v1/file/not-a-token?start=0&end=2')).status,404);
