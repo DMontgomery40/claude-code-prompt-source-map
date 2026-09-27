@@ -11,13 +11,26 @@ export function playheadLabel(pb, P = pb.P) {
   return `req ${fmtInt(Math.floor(P) + 1)} · ${day} · ${fmtClock(t)}`;
 }
 
-// Where focusing a request puts the playhead: request i itself on the root; for any other agent the
-// root-space P whose cut lands exactly on that request's compressed-time x (a subagent's whole run
-// can sit between two root requests, so this is fractional, never rounded). Null when unknown.
+// Where a focused request puts the playhead within it: request i has poured in by i + 0.6 and a
+// column before a compaction starts to collapse at i + 0.7, so i + FOCUS shows request i complete.
+export const FOCUS = 0.65;
+
+// Where focusing request i puts the playhead: i + FOCUS on the root. For any other agent, the root-space
+// P whose cut lands at that agent's own i + FOCUS in compressed-time x (a subagent's whole run can sit
+// between two root requests, so this is fractional, never rounded; its last request is complete at its
+// own x). Past the root's last request the playback clamps to the end. Null when unknown.
 export function playheadForRequest(pb, layout, agentId, i) {
   const agent = layout.byId.get(agentId), r = agent?.requests[i];
   if (!pb || !r) return null;
-  return agent === layout.root ? i : pb.PAtX(layout.X(r.t));
+  if (agent === layout.root) return i + FOCUS;
+  const next = agent.requests[i + 1], x = layout.X(r.t);
+  return pb.PAtX(next ? x + (layout.X(next.t) - x) * FOCUS : x);
+}
+
+// `,` and `.`: the previous or next request, complete (floor(P) -/+ 1, plus FOCUS), so the readout's
+// request number moves by exactly one. Clamped to [0, n - 1].
+export function focusStep(P, d, n) {
+  return Math.max(0, Math.min(n - 1, Math.floor(P) + (d < 0 ? -1 : 1) + FOCUS));
 }
 
 // The next speed of the button's cycle (the keys' faster and slower stop at the ends instead).
@@ -92,7 +105,7 @@ export function createTransport(host, { onPlayhead = () => {}, raf = f => reques
     pause() { if (!pb) return; const was = pb.playing; pb.pause(); stop(); if (was) push(); sync(); },
     // Jump to P and stay paused (scrubbing, focusing a request, history).
     seek(P) { if (!pb) return; pb.pause(); stop(); pb.setP(P); push(); sync(); },
-    step(d) { if (!pb) return; pb.step(d); stop(); push(); sync(); },
+    step(d) { if (pb) api.seek(focusStep(pb.P, d, pb.n)); },
     setSpeed(v) { if (!pb) return; pb.setSpeed(v); sync(); },
     faster() { if (!pb) return; pb.faster(); sync(); },
     slower() { if (!pb) return; pb.slower(); sync(); },

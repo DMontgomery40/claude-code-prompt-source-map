@@ -363,7 +363,7 @@ test('tool inspector handles missing text, reader errors and competing async rea
 
 // ---------- the playback transport ----------
 const { createPlayback } = await import("../playback.js");
-const { createTransport, playheadLabel, playheadForRequest, nextSpeed } = await import("../transport.js");
+const { createTransport, playheadLabel, playheadForRequest, nextSpeed, focusStep, FOCUS } = await import("../transport.js");
 const { fmtClock } = await import("../panels.js");
 
 // A long main thread: 1,701 requests 20 s apart, with 3-hour idle stretches before requests 501, 1,001
@@ -458,8 +458,9 @@ test("play runs one frame loop that pushes P and the sweep; pause, step and scru
   assert.deepEqual(pushed.at(-1), { P: pb.P, playing: false, sweep: null });
   tr.play();
   assert.equal(frames.size, 1);
+  const from = pb.P;
   tr.step(1);
-  assert.deepEqual([frames.size, pb.playing, Number.isInteger(pb.P)], [0, false, true], "stepping pauses on a request");
+  assert.deepEqual([frames.size, pb.playing, pb.P], [0, false, Math.floor(from) + 1 + FOCUS], "stepping pauses on the next request, complete");
   tr.play();
   scrub.dispatch("pointerdown");
   assert.deepEqual([frames.size, pb.playing], [0, false], "grabbing the scrub pauses");
@@ -494,18 +495,31 @@ test("the speed button cycles 4× → 8× → 16× → 1×; the keys' faster and
   assert.equal(speed.textContent, "1×");
 });
 
-test("focusing a request puts the playhead on it: the root's own index, a subagent's exact x", () => {
-  const { L, pb } = transportFixture();
-  assert.equal(playheadForRequest(pb, L, "root", 1234), 1234);
+test("focusing request i puts the playhead at i + 0.65: request i complete, on the root or in a subagent's own requests", () => {
+  const { L, pb, tr, readout, scrub } = transportFixture();
+  assert.equal(FOCUS, 0.65, "past the pour (i + 0.6), before a collapse starts (i + 0.7)");
+  assert.equal(playheadForRequest(pb, L, "root", 1234), 1234.65);
+  assert.equal(playheadForRequest(pb, L, "root", 0), 0.65);
+  assert.equal(playheadForRequest(pb, L, "root", pb.n - 1), pb.n - 1 + FOCUS, "past the end: the playback clamps it");
   assert.equal(playheadForRequest(pb, L, "root", 99999), null);
   assert.equal(playheadForRequest(pb, L, "nobody", 0), null);
   assert.equal(playheadForRequest(null, L, "root", 3), null);
-  const worker = L.byId.get("worker");
+  // What app.js's set() does with the option: seek, paused. The readout and scrub name the focused request.
+  tr.play();
+  tr.seek(playheadForRequest(pb, L, "root", 899));
+  assert.deepEqual([pb.P, pb.playing], [899.65, false]);
+  assert.match(readout.textContent, /^req 900 · /, "request index 899 is the 900th, as the request slider shows it");
+  assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
+  tr.seek(playheadForRequest(pb, L, "root", pb.n - 1));
+  assert.equal(pb.P, pb.n - 1, "the last request complete is the end: the whole landscape");
+  // A subagent's request: the cut lands where that agent's own playhead reads i + 0.65 (its last at its own x).
+  const worker = L.byId.get("worker"), xs = worker.requests.map(r => L.X(r.t));
   let prev = -1;
   worker.requests.forEach((r, i) => {
-    const P = playheadForRequest(pb, L, "worker", i);
+    const P = playheadForRequest(pb, L, "worker", i), cut = pb.xAt(P);
     assert.ok(P > 1300 && P < 1301 && P > prev, `worker request ${i}: P ${P} is fractional, inside the wait, in order`);
-    assert.ok(Math.abs(pb.xAt(P) - L.X(r.t)) < 1e-12, `worker request ${i}: the cut lands on it`);
+    const own = i < xs.length - 1 ? i + (cut - xs[i]) / (xs[i + 1] - xs[i]) : (Math.abs(cut - xs[i]) < 1e-12 ? i : NaN);
+    assert.ok(Math.abs(own - (i < xs.length - 1 ? i + FOCUS : i)) < 1e-6, `worker request ${i}: its own playhead reads ${own}`);
     prev = P;
   });
   // Inside a squeezed idle stretch, time and compressed x disagree: the playhead follows x.
@@ -513,6 +527,19 @@ test("focusing a request puts the playhead on it: the root's own index, a subage
   assert.ok(P > 999 && P < 1000);
   assert.ok(Math.abs(pb.xAt(P) - L.X(t)) < 1e-12);
   assert.ok(Math.abs(pb.xAt(pb.PAtTime(t)) - L.X(t)) > 1e-3, "PAtTime alone would put the cut off the request here");
+});
+
+test(", and . move the readout's request number by exactly one, to that request complete", () => {
+  const n = 1701;
+  for (const [P, back, on] of [[899.65, 898.65, 900.65], [900, 899.65, 901.65], [900.4, 899.65, 901.65], [900.95, 899.65, 901.65],
+    [0, 0, 1.65], [0.65, 0, 1.65], [0.3, 0, 1.65], [n - 1, n - 2 + FOCUS, n - 1], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1]]) {
+    assert.deepEqual([focusStep(P, -1, n), focusStep(P, 1, n)], [back, on], `from ${P}`);
+  }
+  const { pb, tr, readout } = transportFixture();
+  tr.seek(899.65);
+  const seen = [];
+  for (const d of [1, 1, -1, -1, -1]) { tr.step(d); seen.push([pb.P, readout.textContent.split(" · ")[0]]); }
+  assert.deepEqual(seen, [[900.65, "req 901"], [901.65, "req 902"], [900.65, "req 901"], [899.65, "req 900"], [898.65, "req 899"]]);
 });
 
 // ---------- where Space plays ----------

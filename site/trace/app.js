@@ -863,31 +863,36 @@ function applySet(patch) {
   if (S.level < 3 || S.block == null) S.reading = false;
   render(prev.level !== S.level || prev.agentId !== S.agentId, patch.block != null);
 }
+// Focusing request i of an agent moves the playhead there, paused: the option set() seeks with, so the
+// history entry being left keeps its own playhead. Every request focus below passes it.
+function focusAt(agentId, i, options) {
+  return { ...options, playhead: playheadForRequest(transport?.playback, S.layout, agentId, i) };
+}
 function pick(p) {
   const mapPinned = S.mode === '3d' && (S.level === 0 || S.mapPinned);
-  if (p.intent === 'locate') return set({mapPinned:true, level:2, agentId:p.agentId, reqIdx:p.reqIdx, stratum:null, block:null}, {locate:true, reveal:true});
+  if (p.intent === 'locate') return set({mapPinned:true, level:2, agentId:p.agentId, reqIdx:p.reqIdx, stratum:null, block:null}, focusAt(p.agentId, p.reqIdx, {locate:true, reveal:true}));
   if (p.intent === 'action') return A.focusAction(p.agentId, p.reqIdx);
-  if (p.level === 3) return set({ ...requestInspection(p.agentId, p.reqIdx, p.stratum), block: p.block ?? null });
+  if (p.level === 3) return set({ ...requestInspection(p.agentId, p.reqIdx, p.stratum), block: p.block ?? null }, focusAt(p.agentId, p.reqIdx));
   if (p.level === 2) return A.focusRequest(p.agentId, p.reqIdx);
-  set({ mapPinned, level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null });
+  // A click on the map's terrain pins that request (the Selected card): a request focus. At L1 it is an agent's.
+  set({ mapPinned, level: 1, agentId: p.agentId, reqIdx: p.reqIdx ?? 0, stratum: null, block: null }, mapPinned ? focusAt(p.agentId, p.reqIdx ?? 0) : undefined);
 }
 const A = {
   focusAction: (id, i) => set({ level: 2, agentId: id, reqIdx: i, stratum: null, block: null,
-    inspector: 'action', callIndex: null, mapPinned: S.mode === '3d' && (S.level === 0 || S.mapPinned) }),
+    inspector: 'action', callIndex: null, mapPinned: S.mode === '3d' && (S.level === 0 || S.mapPinned) }, focusAt(id, i)),
   showCallPart: part => { S.callPart = part; saveViewSoon(); },
   focusCall: i => set({ inspector: 'action', callIndex: i }),
   focusAgent: (id, i) => set({ mapPinned: false, level: 1, agentId: id, reqIdx: i ?? 0, stratum: null, block: null }),
-  // Focusing a request moves the playhead there (paused).
-  focusRequest: (id, i) => set(requestInspection(id, i), { playhead: playheadForRequest(transport?.playback, S.layout, id, i) }),
-  focusStratum: (id, i, key) => set(requestInspection(id, i, key)),
-  openBlock: i => { const view = sidebarState(); set({ ...requestInspection(view.agentId, view.reqIdx, view.stratum), block: i }); },
+  focusRequest: (id, i) => set(requestInspection(id, i), focusAt(id, i)),
+  focusStratum: (id, i, key) => set(requestInspection(id, i, key), focusAt(id, i)),
+  openBlock: i => { const view = sidebarState(); set({ ...requestInspection(view.agentId, view.reqIdx, view.stratum), block: i }, focusAt(view.agentId, view.reqIdx)); },
   openBlockAt(agentId, bi) {
     const a = agentById(agentId);
     const b = a?.blocks[bi];
     if (!b) return;
     let r = a.requests.findIndex(q => q.window && q.window[0] <= bi && q.window[1] >= bi);
     if (r < 0) r = Math.max(0, a.requests.findIndex(q => q.t >= b.t));
-    set({ ...requestInspection(agentId, r, b.kind), block: bi });
+    set({ ...requestInspection(agentId, r, b.kind), block: bi }, focusAt(agentId, r));
   },
   openRef(agentId, ref) {
     const a = agentById(agentId);
@@ -934,7 +939,8 @@ function selectLens(key) {
 function moveRequest(delta, inspect = true) {
   const view = sidebarState();
   if (!view.agent?.requests.length) return;
-  set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: inspect ? Math.max(2, view.level) : view.level, agentId: view.agentId, stratum: view.stratum, reqIdx: stepRequest(view.agent.requests.length, view.reqIdx, delta), block: null }, { locate: true });
+  const reqIdx = stepRequest(view.agent.requests.length, view.reqIdx, delta);
+  set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: inspect ? Math.max(2, view.level) : view.level, agentId: view.agentId, stratum: view.stratum, reqIdx, block: null }, focusAt(view.agentId, reqIdx, { locate: true }));
 }
 function onKey(e) {
   if ($("#app").hidden || !S.trace) return;
@@ -1055,7 +1061,8 @@ function renderRequestNav() {
     let scrubbing = false;
     const go = (value, replace = false) => {
       const current = sidebarState();
-      set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: Math.max(2, current.level), agentId: current.agentId, stratum: current.stratum, reqIdx: requestPosition(current.agent.requests.length, Number(value) - 1).index, block: null }, { replace, locate: true });
+      const reqIdx = requestPosition(current.agent.requests.length, Number(value) - 1).index;
+      set({ mapPinned: S.mapPinned || !!S.mapFocus, inspector: S.inspector, level: Math.max(2, current.level), agentId: current.agentId, stratum: current.stratum, reqIdx, block: null }, focusAt(current.agentId, reqIdx, { replace, locate: true }));
     };
     range.addEventListener("input", () => { go(range.value, scrubbing); scrubbing = true; });
     range.addEventListener("change", () => { scrubbing = false; });
