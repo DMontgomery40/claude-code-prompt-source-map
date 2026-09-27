@@ -10,10 +10,11 @@ import { createMapOverview, overviewAgentData } from "./map-overview.js";
 import { zoomCamera, panCameraTo } from "./map-camera.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
-import { BASE_H, landscapeRule, tread, treadAt, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement } from "./scene-rules.js";
+import { createGeometry, topsOf } from "./landscape-geometry.js";
+import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement } from "./scene-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
-const ROOT_DEPTH = 7, STAGE_Z0 = 15;
+const STAGE_Z0 = 15;
 const { subDepth: SUB_DEPTH, sideZ: SIDE_Z, laneZ } = terrainPlacement();
 const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); // main ridge: slope depth per unit of height
 const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -25), el: Number(q.get("el") ?? 40), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -32), pel: Number(q.get("pel") ?? 42), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
@@ -318,8 +319,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // World width of the whole session: a single-agent session is a compact massif, at most 3:1.
   const rule = landscapeRule(L);
   const W = rule.width;
-  const massif = rule.compact ? Math.min(MASSIF, 1.4) : MASSIF;
   const yScale = H / (L.yMax * 1.02);
+  // Where every request sits on its ridge (landscape-geometry.js); the solid ridges are drawn from it.
+  const geom = createGeometry({ trace, layout: L, W, yScale, rule, massif: MASSIF });
   const agents = trace.agents;
   const agentIndex = new Map(agents.map((a, i) => [a.id, i]));
   const rootInfo = L.info.get(L.root.id);
@@ -355,27 +357,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // back slope and cut ends give it volume. The main ridge is a massif whose slope runs back in
   // proportion to its height; subagent ridges are shallow blocks in the field in front of it.
   const rows = []; // for picking: { z, depthOf(h), maxDepth, segs: [{ agent, inf, i0, i1, x0, x1, taper }] }
-  const rowZ = new Map(); // agent id -> [{ seg, zFront }]
-  const rootDepth = h => Math.max(ROOT_DEPTH, h * massif);
-  const subDepth = () => SUB_DEPTH;
-  const rootBack = rootDepth(Math.max(0, ...L.root.requests.map(r => (r.tokens.context || 0) * yScale)));
-  // a broad rounded shoulder behind the crest, falling away steeply at the back; a single massif keeps
-  // a flatter plateau, so its request-by-request terraces run back from the face where they can be seen
-  const shoulder = rule.compact ? 3.5 : 2.3;
-  const profile = u => 1 - Math.pow(Math.min(1, Math.max(0, u)), shoulder);
-
-  function topsOf(r, scale) {
-    const st = r.strata || {};
-    let sum = 0;
-    for (const s of STRATA) sum += st[s.key] || 0;
-    const total = (r.tokens.context || 0) * scale;
-    const out = new Float32Array(8);
-    if (!sum) { out.fill(total); out[7] = 1; return out; } // split unknown
-    let acc = 0;
-    STRATA.forEach((s, j) => { acc += (st[s.key] || 0) / sum * total; out[j] = acc; });
-    out[6] = total;
-    return out;
-  }
+  const rowZ = geom.rowZ; // agent id -> [{ seg, zFront }]; ridges only
+  const { rootDepth, subDepth, rootBack, profile } = geom;
 
   function buildRidges() {
     const front = { pos: [], nor: [], b0: [], b1: [], ag: [], idx: [], u: [] };
@@ -383,16 +366,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const addSeg = (agent, inf, seg, zF, depthOf, taper) => {
       const ai = agentIndex.get(agent.id);
       const cols = [];
-      const stepped = rule.stepped && agent === L.root;
+      const stepped = geom.stepped(agent);
       if (stepped) {
         // one flat tread per request, a riser between: the crest reads request by request
-        const xAt = i => inf.xs[i] * W;
         for (let i = seg.i0; i <= seg.i1; i++) {
-          const t = topsOf(agent.requests[i], yScale), [a, b] = tread(xAt, seg.i0, seg.i1, i, taper);
+          const t = geom.tops(agent, i), [a, b] = geom.tread(agent, i);
           cols.push({ x: a, t }, { x: b, t });
         }
       } else {
-        for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: inf.xs[i] * W, t: topsOf(agent.requests[i], yScale) });
+        for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: geom.x(agent, i), t: geom.tops(agent, i) });
         // flat ends a little past the first and last request, so a one-request segment still has width
         cols.unshift({ x: cols[0].x - taper, t: cols[0].t });
         cols.push({ x: cols.at(-1).x + taper, t: cols.at(-1).t });
@@ -454,21 +436,16 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       }
     };
     const rootSegs = [];
-    for (const seg of rootInfo.segments) { addSeg(L.root, rootInfo, seg, 0, rootDepth, 0.18); rootSegs.push({ ...seg, inf: rootInfo, taper: 0.18 }); }
+    for (const seg of rootInfo.segments) { addSeg(L.root, rootInfo, seg, 0, rootDepth, geom.rootTaper); rootSegs.push({ ...seg, inf: rootInfo, taper: geom.rootTaper }); }
     rows.push({ z: 0, depthOf: rootDepth, maxDepth: rootBack, segs: rootSegs });
-    rowZ.set(L.root.id, rootInfo.segments.map(s => ({ seg: s, zFront: 0 })));
     const laneRows = [];
     for (let k = 0; k < L.lanes; k++) laneRows.push({ z: laneZ(k), depthOf: subDepth, maxDepth: SUB_DEPTH, segs: [] });
-    for (const [id, inf] of L.info) {
+    for (const [, inf] of L.info) {
       if (inf.agent.kind !== "subagent") continue;
-      const list = [];
       for (const seg of inf.segments) {
-        const z = laneZ(seg.lane);
-        addSeg(inf.agent, inf, seg, z, subDepth, 0.3);
-        laneRows[seg.lane].segs.push({ ...seg, inf, taper: 0.3 });
-        list.push({ seg, zFront: z });
+        addSeg(inf.agent, inf, seg, laneZ(seg.lane), subDepth, geom.subTaper);
+        laneRows[seg.lane].segs.push({ ...seg, inf, taper: geom.subTaper });
       }
-      rowZ.set(id, list);
     }
     for (const r of laneRows) r.segs.sort((a, b) => a.x0 - b.x0);
     rows.push(...laneRows);
@@ -519,22 +496,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   world.add(mirror);
   scene.add(world);
 
-  const heightAt = (agent, inf, seg, x, taper) => {
-    const xs = inf.xs;
-    if (rule.stepped && agent === L.root) {
-      const i = treadAt(k => xs[k] * W, seg.i0, seg.i1, x, taper);
-      return i < 0 ? -1 : (agent.requests[i].tokens.context || 0) * yScale;
-    }
-    const x0 = xs[seg.i0] * W, x1 = xs[seg.i1] * W;
-    const ctx = i => (agent.requests[i].tokens.context || 0) * yScale;
-    if (x < x0) return x0 - x > taper ? -1 : ctx(seg.i0);
-    if (x > x1) return x - x1 > taper ? -1 : ctx(seg.i1);
-    let lo = seg.i0, hi = seg.i1;
-    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (xs[m] * W <= x) lo = m; else hi = m; }
-    const xa = xs[lo] * W, xb = xs[hi] * W;
-    const f = xb > xa ? (x - xa) / (xb - xa) : 0;
-    return ctx(lo) * (1 - f) + ctx(hi) * f;
-  };
+  const heightAt = geom.heightAtSeg; // (agent, inf, seg, x, taper): face height on one segment, -1 off it
   const nearestReq = (inf, seg, x) => {
     let best = seg.i0, bd = Infinity;
     let lo = seg.i0, hi = seg.i1;
@@ -542,17 +504,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     for (const i of [lo, hi]) { const d = Math.abs(inf.xs[i] * W - x); if (d < bd) { bd = d; best = i; } }
     return best;
   };
-  const crest = (agent, i) => {
-    const r = agent.requests[i];
-    return (r?.tokens.context || 0) * yScale;
-  };
-  const zOf = (agent, i) => {
-    const list = rowZ.get(agent.id);
-    if (!list) return SIDE_Z;
-    const hit = list.find(e => i >= e.seg.i0 && i <= e.seg.i1) || list[0];
-    return hit.zFront;
-  };
-  const xOf = (agent, i) => (L.info.get(agent.id)?.xs[i] ?? 0) * W;
+  const crest = geom.crest, zOf = geom.z, xOf = geom.x;
 
   // ---- ground, gaps, ticks, ruler ----
   const backZ = -rootBack - 8;
@@ -1509,7 +1461,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     mapLines.geometry.computeBoundingSphere();
     let stratum = null;
     if (detail.level >= 3 && focus) {
-      const r = focus.agent.requests[focus.i], tops = topsOf(r, yScale);
+      const r = focus.agent.requests[focus.i], tops = geom.tops(focus.agent, focus.i);
       let bottom = 0, best = Infinity;
       STRATA.forEach((s, j) => {
         const top = tops[j], pos = new THREE.Vector3(focus.pos.x, (bottom + top) / 2, focus.pos.z + 0.05);
