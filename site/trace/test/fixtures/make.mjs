@@ -156,6 +156,66 @@ export function claudeFiles() {
   };
 }
 
+// A Claude Code session with nesting and workflows, written to a temp dir by the tests (not by --write,
+// so the shared fixture folder keeps one Claude Code session).
+//   root: Agent "mid" (request 0); Workflow calls whose results name wf_1 (request 1) then wf_12 (request 2)
+//   b1 "mid" (spawnDepth 0, teammate-shaped): Agent "leaf" at request 0, an unnamed Agent call at request 2
+//   c1 "leaf" (spawnDepth 1): the grandchild, matched by name inside b1
+//   e1 "anon" (spawnDepth 1): no name match; b1's unclaimed call 2 s before its first row
+//   d1 "lost" (spawnDepth 1): no call anywhere near its start
+//   w1 under workflows/wf_1, w2 under workflows/wf_12; wf_1's call is the earlier one
+export const CCN = { session: "33333333-3333-4333-8333-333333333333", t0: Date.parse("2026-01-04T00:00:00Z") };
+export function claudeNestedFiles() {
+  const sid = CCN.session;
+  const T = (s) => new Date(CCN.t0 + s * 1000).toISOString();
+  let n = 0;
+  const base = (s, extra = {}) => ({ sessionId: sid, uuid: `n${++n}`, parentUuid: null, timestamp: T(s), version: "9.9.9", isSidechain: false, ...extra });
+  const usage = { input_tokens: 5, cache_read_input_tokens: 0, cache_creation_input_tokens: 1000, output_tokens: 10 };
+  const asst = (s, rid, content, extra) => ({ ...base(s, extra), type: "assistant", requestId: rid, message: { id: "m" + rid, model: "claude-test", role: "assistant", content, usage } });
+  const call = (s, rid, id, name, input, extra) => asst(s, rid, [{ type: "tool_use", id, name, input }], extra);
+  const result = (s, id, content, extra = {}, more = {}) => ({ ...base(s, extra), type: "user", message: { role: "user", content: [{ type: "tool_result", tool_use_id: id, content }] }, ...more });
+  const ask = (s, text, extra) => ({ ...base(s, extra), type: "user", message: { role: "user", content: text } });
+  const dir = `/tmp/proj/${sid}`;
+  const root = [
+    ask(1, "go"),
+    call(2, "r1", "tuMid", "Agent", { name: "mid", description: "middle", prompt: "do mid" }),
+    result(3, "tuMid", "Spawned mid"),
+    call(20, "r2", "wfA", "Workflow", { script: "export const meta = { name: 'one' }" }),
+    result(21, "wfA", `Workflow launched in background.\nTranscript dir: ${dir}/subagents/workflows/wf_1\n`, {}, { toolUseResult: { status: "async_launched", runId: "wf_1" } }),
+    call(22, "r3", "wfB", "Workflow", { script: "export const meta = { name: 'two' }" }),
+    result(23, "wfB", `Workflow launched in background.\nTranscript dir: ${dir}/subagents/workflows/wf_12\n`, {}, { toolUseResult: { status: "async_launched", runId: "wf_12" } }),
+    asst(90, "r4", [{ type: "text", text: "done" }]),
+  ];
+  const sb = (id) => ({ isSidechain: true, agentId: id });
+  const b1 = [
+    ask(4, "do mid", sb("b1")),
+    call(5, "q1", "tuLeaf", "Agent", { name: "leaf", description: "leafy", prompt: "do leaf" }, sb("b1")),
+    result(6, "tuLeaf", "Spawned leaf", sb("b1")),
+    asst(7, "q2", [{ type: "text", text: "waiting" }], sb("b1")),
+    call(50, "q3", "tuAnon", "Agent", { description: "unlabelled", prompt: "do anon" }, sb("b1")),
+    result(51, "tuAnon", "Spawned", sb("b1")),
+  ];
+  const leafRows = (id, s) => [ask(s, "task", sb(id)), asst(s + 1, `${id}q1`, [{ type: "text", text: "ok" }], sb(id))];
+  const J = (list) => list.map((r) => JSON.stringify(r)).join("\n") + "\n";
+  const S = `claude/-tmp-proj/${sid}`;
+  const meta = (m) => JSON.stringify({ model: "test", ...m });
+  return {
+    [`claude/-tmp-proj/${sid}.jsonl`]: J(root),
+    [`${S}/subagents/agent-b1.jsonl`]: J(b1),
+    [`${S}/subagents/agent-b1.meta.json`]: meta({ agentType: "mid", name: "mid", description: "middle", spawnDepth: 0 }),
+    [`${S}/subagents/agent-c1.jsonl`]: J(leafRows("c1", 6)),
+    [`${S}/subagents/agent-c1.meta.json`]: meta({ agentType: "leaf", name: "leaf", description: "leafy", spawnDepth: 1 }),
+    [`${S}/subagents/agent-e1.jsonl`]: J(leafRows("e1", 52)),
+    [`${S}/subagents/agent-e1.meta.json`]: meta({ agentType: "anon", name: "anon", description: "no such call", spawnDepth: 1 }),
+    [`${S}/subagents/agent-d1.jsonl`]: J(leafRows("d1", 70)),
+    [`${S}/subagents/agent-d1.meta.json`]: meta({ agentType: "lost", name: "lost", description: "no such call", spawnDepth: 1 }),
+    [`${S}/subagents/workflows/wf_1/agent-w1.jsonl`]: J(leafRows("w1", 35)),
+    [`${S}/subagents/workflows/wf_1/agent-w1.meta.json`]: meta({ agentType: "workflow-subagent", description: "r:one", workflowPhase: "Test", spawnDepth: 1 }),
+    [`${S}/subagents/workflows/wf_12/agent-w2.jsonl`]: J(leafRows("w2", 36)),
+    [`${S}/subagents/workflows/wf_12/agent-w2.meta.json`]: meta({ agentType: "workflow-subagent", description: "r:two", workflowPhase: "Test", spawnDepth: 1 }),
+  };
+}
+
 if (process.argv.includes("--write")) {
   for (const [rel, body] of Object.entries({ ...codexFiles(), ...claudeFiles() })) {
     const p = join(HERE, rel);
