@@ -157,21 +157,23 @@ test('subagent terrain sits in front of the main massif, with disjoint rows at e
   }
 });
 
-test("grain columns: none at overview or while a column is under 2.5 px, then 4 / 8 / 16 by zoom level", async () => {
+test("grain columns: none at overview or while a column is under 2 px, then 4 / 8 / 16 by zoom level", async () => {
   const { grainColumns, GRAIN_COLUMN_MIN_PX } = await import("../scene-rules.js");
   // measured on the real Claude Code session at each level's entry zoom: column px 0.78, 1.86, 2.89, 4.48
+  // (root); its largest subagent's column is 2.02 px at Requests and 3.12 px at Layers
   assert.equal(grainColumns(1, 0.78), 0, "overview");
   assert.equal(grainColumns(1, 40), 0, "overview stays solid even where columns are wide");
-  assert.equal(grainColumns(2.4, 1.86), 0, "agents entry: a request is still under 2.5 px");
+  assert.equal(grainColumns(2.4, 1.86), 0, "agents entry: a request is still under 2 px");
   assert.equal(grainColumns(2.4, 3), 4, "agents with room");
   assert.equal(grainColumns(3.72, 2.89), 8, "requests");
+  assert.equal(grainColumns(3.72, 2.02), 8, "requests on the largest subagent");
   assert.equal(grainColumns(5.77, 4.48), 16, "layers");
   assert.equal(grainColumns(200, 900), 16, "deep layers");
-  assert.equal(GRAIN_COLUMN_MIN_PX, 2.5);
+  assert.equal(GRAIN_COLUMN_MIN_PX, 2);
   // hysteresis: once on, a column may shrink 10% below the threshold before the grains go
-  assert.equal(grainColumns(3.72, 2.4, 8), 8);
-  assert.equal(grainColumns(3.72, 2.2, 8), 0);
-  assert.equal(grainColumns(3.72, 2.4, 0), 0);
+  assert.equal(grainColumns(3.72, 1.85, 8), 8);
+  assert.equal(grainColumns(3.72, 1.75, 8), 0);
+  assert.equal(grainColumns(3.72, 1.95, 0), 0);
   // the level gate uses mapDetail's hysteresis from the previous result's level
   assert.equal(grainColumns(4.8, 10, 16), 16, "just under the Layers threshold, still Layers");
   assert.equal(grainColumns(4.8, 10, 8), 8);

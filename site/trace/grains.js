@@ -41,9 +41,25 @@ float haze(vec3 w, float depth) {
   return clamp(max(a, b), 0.0, 0.8);
 }`;
 
+// Grains fill the tread of their request edge to edge and GRAIN_DEPTH world units back from the face, so
+// neighbouring columns meet as one granular slab. A grain is as wide as the face area it stands for
+// (tread width x its tokens' height) times GRAIN_TILE, never under the floor (2 px, 3 at Layers) nor over
+// the cap, so the slab stays covered from Requests to the deepest zoom.
+export const GRAIN_DEPTH = 1.5;
+export const GRAIN_TILE = 2;
+export const GRAIN_MAX_PX = 12;
+
+// The size rule in device px, shared by the vertex shader (below) and stats().minGrainPx:
+// clamp(GRAIN_TILE * sqrt(2 * halfW * stepWorld) * pxPerWorld, minPx, maxPx) * sqrt(1 / density).
+export function grainSizePx({ halfW, stepWorld, pxPerWorld, minPx, maxPx, density = 1 }) {
+  const tile = GRAIN_TILE * Math.sqrt(Math.max(2 * halfW * stepWorld, 0)) * pxPerWorld;
+  return Math.min(Math.max(tile, minPx), maxPx) * Math.sqrt(1 / Math.max(0.01, density));
+}
+
 // Spec 3.4. The leading column (the last) runs the full kernel at uT = uP: pour from above, collapse
-// into the epoch's puck. Trail columns show request j settled (kIn = 1, kC = 0): at an integer uT the
-// kernel would still hide that request's own arrivals, which pour in during the request.
+// into the epoch's puck. It stands on its own request's tread while its heights ease toward the next
+// request's. Trail columns show request j settled (kIn = 1, kC = 0): at an integer uT the kernel would
+// still hide that request's own arrivals, which pour in during the request.
 export const GRAIN_VERT = /* glsl */`
 precision highp float;
 precision highp int;
@@ -55,14 +71,16 @@ uniform int uReqCount;
 uniform int uColumns;
 uniform float uP;
 uniform float uYScale;
-uniform float uGrainWorld;
+uniform float uTile;
 uniform float uMinPx;
+uniform float uMaxPx;
+uniform float uDpr;
 uniform float uSizeScale;
 uniform vec2 uRes;
 uniform float uSnap;
 uniform float uSquare;
 uniform vec4 uK0; // pourWindow, fallDur, dropHeight (fraction of context), collapseDur
-uniform vec4 uK1; // jitterX, jitterZ, puckRadius, spiralTurns
+uniform vec4 uK1; // jitterX, jitterZ (both unused: grains fill the tread and GRAIN_DEPTH), puckRadius, spiralTurns
 uniform vec3 uCol[7];
 uniform float uEm[7];
 uniform float uAgentEm;
@@ -101,18 +119,18 @@ void main() {
   int i1 = min(i0 + 1, uReqCount - 1);
   float f = lead ? uT - fi : 0.0;
   if (!(reqTexel(i0, 2).w > 0.0)) return; // split unknown: the ridge is grey, no grains
-  vec4 A0 = reqTexel(i0, 0), A1 = reqTexel(i1, 0);
+  vec4 A0 = reqTexel(i0, 0), A1 = reqTexel(i1, 0); // grains.js's copy: x tread centre, y context, z grain depth, w tread half width
   int k = int(B0.x + 0.5);
   int bt = k < 4 ? 1 : 2, st = k < 4 ? 3 : 4, c = k < 4 ? k : k - 4;
   float baseK = mix(reqTexel(i0, bt)[c], reqTexel(i1, bt)[c], f);
   float scaleK = mix(reqTexel(i0, st)[c], reqTexel(i1, st)[c], f);
-  float x = mix(A0.x, A1.x, f), ctx = mix(A0.y, A1.y, f), halfW = mix(A0.w, A1.w, f);
+  float ctx = mix(A0.y, A1.y, f), halfW = A0.w;
   float zF = reqTexel(i0, 4).w;
   uint u = grainHash(uint(b), uint(s));
   float h = u2f(u), hx = u2f(${HASH_NAME}(u ^ SALT_X)), hz = u2f(${HASH_NAME}(u ^ SALT_Z));
-  vec3 rest = vec3(x + (2.0 * hx - 1.0) * uK1.x * halfW,
+  vec3 rest = vec3(A0.x + (2.0 * hx - 1.0) * halfW,
                    baseK + (B0.y + (B1.w + float(s) + 0.5) * B0.z) * scaleK,
-                   zF - hz * uK1.y);
+                   zF - hz * A0.z);
   vec3 p = rest;
   if (lead) {
     bool continued = (int(B1.y + 0.5) & 32) != 0;
@@ -151,9 +169,14 @@ void main() {
   vec4 mv = viewMatrix * wp;
   vColor = mix(colr, uFog, haze(w, -mv.z));
   vec4 clip = projectionMatrix * mv;
-  // at least uMinPx device px (2 CSS px), larger where the true size is, grown by sqrt(1 / density)
-  float truePx = uGrainWorld * projectionMatrix[1][1] * 0.5 * uRes.y / clip.w;
-  float rad = 0.5 * max(uMinPx, truePx) * uSizeScale;
+  // grainSizePx: the face area this grain stands for, as a square, grown by uTile, clamped to
+  // [uMinPx, uMaxPx] device px, then grown by sqrt(1 / density)
+  float tilePx = uTile * sqrt(max(2.0 * halfW * B0.z * scaleK * uYScale, 0.0)) * projectionMatrix[1][1] * 0.5 * uRes.y / clip.w;
+  float rad = 0.5 * clamp(tilePx, uMinPx, uMaxPx) * uSizeScale;
+  // grains of 3 px and more each take a slightly different tone (+-5%), so the slab's front reads as
+  // sand; smaller grains stay the flat layer colour (at 2 px a tone per grain would be pixel noise)
+  float tone = u2f(${HASH_NAME}(u ^ 0x9e3779b9u)) - 0.5;
+  vColor *= 1.0 + 0.1 * tone * smoothstep(2.6, 3.4, 2.0 * rad / uDpr);
   float halfQ = uSquare > 0.5 ? rad : rad + 1.0;
   vec2 cn = corner == 0 ? vec2(-1.0, -1.0) : corner == 1 ? vec2(1.0, -1.0) : corner == 2 ? vec2(1.0, 1.0)
           : corner == 3 ? vec2(-1.0, -1.0) : corner == 4 ? vec2(1.0, 1.0) : vec2(-1.0, 1.0);
@@ -192,7 +215,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
   const uniforms = {
     uReq: { value: dummyF }, uBlk: { value: dummyF }, uEpoch: { value: dummyF }, uIds: { value: dummyU },
     uReqCount: { value: 1 }, uColumns: { value: 1 }, uP: { value: 0 },
-    uYScale: { value: yScale }, uGrainWorld: { value: 0 }, uMinPx: { value: 2 }, uSizeScale: { value: 1 },
+    uYScale: { value: yScale }, uTile: { value: GRAIN_TILE }, uMinPx: { value: 2 }, uMaxPx: { value: GRAIN_MAX_PX }, uDpr: { value: 1 }, uSizeScale: { value: 1 },
     uRes: { value: new THREE.Vector2(1, 1) }, uSnap: { value: reducedMotion ? 1 : 0 }, uSquare: { value: 0 },
     uK0: { value: new THREE.Vector4(KERNEL.pourWindow, KERNEL.fallDur, KERNEL.dropHeightTokens, KERNEL.collapseDur) },
     uK1: { value: new THREE.Vector4(KERNEL.jitterX, KERNEL.jitterZ, KERNEL.puckRadius, KERNEL.spiralTurns) },
@@ -249,8 +272,19 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     const ids = new Uint32Array(idsW * idsH);
     ids.set(G.ids);
     const nE = Math.max(1, R.epochs.length);
+    // The grains' own copy of the request table: texel 0 .x becomes the tread centre (grains fill the
+    // tread, which is not centred on the request's x) and .z the grain depth behind the face (the epoch
+    // id there is not read on the GPU; collapse targets come from the block table).
+    const req = new Float32Array(R.data);
+    const reqDepth = new Float64Array(R.count);
+    for (let i = 0; i < R.count; i++) {
+      const o = i * REQ_TEXELS * 4, [t0, t1] = geom.tread(agent, i);
+      const ridge = geom.depth ? geom.depth(agent, R.data[o + 1] * yScale) : GRAIN_DEPTH;
+      req[o] = (t0 + t1) / 2;
+      req[o + 2] = reqDepth[i] = Math.min(GRAIN_DEPTH, ridge > 0 ? ridge : GRAIN_DEPTH);
+    }
     const textures = {
-      req: texture(R.data, R.width, R.height, false),
+      req: texture(req, R.width, R.height, false),
       blk: texture(B.data, B.width, B.height, false),
       epoch: texture(R.epochData.length >= nE * 4 ? R.epochData : new Float32Array(nE * 4), nE, 1, false),
       ids: texture(ids, idsW, idsH, true)
@@ -258,14 +292,20 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uniforms.uReq.value = textures.req; uniforms.uBlk.value = textures.blk;
     uniforms.uEpoch.value = textures.epoch; uniforms.uIds.value = textures.ids;
     uniforms.uReqCount.value = R.count;
-    uniforms.uGrainWorld.value = tables.N0 * yScale;
     const m = B.meta;
-    // per request (CPU): x, context, tread half width, z, for culling boxes
+    // per request (CPU): tread centre, context, tread half width, z, the smallest stratum scale, for
+    // culling boxes and minGrainPx
     const reqX = new Float64Array(R.count), reqCtx = new Float64Array(R.count), reqHalf = new Float64Array(R.count), reqZ = new Float64Array(R.count);
+    const reqScaleMin = new Float64Array(R.count);
     for (let i = 0; i < R.count; i++) {
       const o = i * REQ_TEXELS * 4;
-      reqX[i] = R.data[o]; reqCtx[i] = R.data[o + 1]; reqHalf[i] = R.data[o + 3]; reqZ[i] = R.data[o + 19];
+      reqX[i] = req[o]; reqCtx[i] = R.data[o + 1]; reqHalf[i] = R.data[o + 3]; reqZ[i] = R.data[o + 19];
+      let sm = Infinity;
+      for (const k of [12, 13, 14, 15, 16, 17, 18]) if (R.data[o + k] > 0) sm = Math.min(sm, R.data[o + k]);
+      reqScaleMin[i] = Number.isFinite(sm) ? sm : 1;
     }
+    let stepMin = Infinity;
+    for (let r = 0; r < m.step.length; r++) if (m.step[r] > 0) stepMin = Math.min(stepMin, m.step[r]);
     let maxCtx = 0;
     for (let i = 0; i < R.count; i++) maxCtx = Math.max(maxCtx, reqCtx[i]);
     const chunks = G.chunks.map((c) => {
@@ -280,7 +320,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       const box = new THREE.Box3();
       let top = 0;
       for (let i = i0; i <= i1; i++) top = Math.max(top, reqCtx[i]);
-      box.expandByPoint(new THREE.Vector3(reqX[i0] - reqHalf[i0], 0, reqZ[i0] - KERNEL.jitterZ));
+      box.expandByPoint(new THREE.Vector3(reqX[i0] - reqHalf[i0], 0, reqZ[i0] - GRAIN_DEPTH));
       box.expandByPoint(new THREE.Vector3(reqX[i1] + reqHalf[i1], top * (1 + KERNEL.dropHeightTokens) * yScale, reqZ[i1]));
       for (const e of pucks) {
         const p = R.epochs[e].puck;
@@ -299,7 +339,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       group.add(mesh);
       return { start: c.start, count: c.count, minSeen, maxLast, mesh };
     });
-    cur = { agent, tables, textures, chunks, reqX, reqCtx, reqHalf, reqZ, maxCtx, n: R.count, N0: tables.N0, total: G.count };
+    cur = { agent, tables, textures, chunks, reqX, reqCtx, reqHalf, reqZ, reqDepth, reqScaleMin, stepMin: Number.isFinite(stepMin) ? stepMin : 0, maxCtx, n: R.count, N0: tables.N0, total: G.count };
     return cur;
   }
 
@@ -313,7 +353,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     if (iHi < 0 || iLo > cur.n - 1) return null;
     let top = 0, z0 = Infinity, z1 = -Infinity;
     for (let i = iLo; i <= iHi; i++) { top = Math.max(top, cur.reqCtx[i]); z0 = Math.min(z0, cur.reqZ[i]); z1 = Math.max(z1, cur.reqZ[i]); }
-    frameBox.min.set(cur.reqX[iLo] - cur.reqHalf[iLo], 0, z0 - Math.max(KERNEL.jitterZ, KERNEL.puckRadius));
+    frameBox.min.set(cur.reqX[iLo] - cur.reqHalf[iLo], 0, z0 - Math.max(GRAIN_DEPTH, KERNEL.puckRadius));
     frameBox.max.set(cur.reqX[iHi] + cur.reqHalf[iHi], top * (1 + KERNEL.dropHeightTokens) * yScale, z1 + KERNEL.puckRadius);
     const e = cur.tables.requests.epochs.find((q) => q.start === iLead + 1);
     if (e) {
@@ -339,7 +379,10 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     uniforms.uP.value = f.uP;
     uniforms.uColumns.value = K;
     uniforms.uSizeScale.value = Math.sqrt(1 / Math.max(0.01, f.density));
-    uniforms.uMinPx.value = 2 * (f.dpr || 1);
+    const dpr = f.dpr || 1;
+    uniforms.uMinPx.value = (f.minPx || 2) * dpr;
+    uniforms.uMaxPx.value = GRAIN_MAX_PX * dpr;
+    uniforms.uDpr.value = dpr;
     uniforms.uRes.value.copy(f.res);
     uniforms.uSquare.value = f.square ? 1 : 0;
     uniforms.uAgentEm.value = f.agentEm ?? 1;
@@ -357,16 +400,40 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     }
     last.grains = last.instances;
     if (last.chunks) {
-      // The smallest grain drawn, in CSS px: the vertex shader's own size at the farthest corner of the
-      // drawn columns (a lower bound; no readback). The 2 px clamp makes it at least 2 by construction.
-      let far = 0;
+      // The smallest grain drawn, in CSS px: grainSizePx (the vertex shader's rule) for the narrowest
+      // drawn tread, the thinnest grain step and the smallest stratum scale, at the farthest corner of
+      // the drawn columns. A lower bound, no readback; the floor makes it at least 2 (3 at Layers).
+      let far = 0, halfW = Infinity, scale = Infinity;
       for (let k = 0; k < 8; k++) {
         _v.set(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(f.camera.matrixWorldInverse);
         far = Math.max(far, -_v.z);
       }
-      const truePx = uniforms.uGrainWorld.value * f.camera.projectionMatrix.elements[5] * 0.5 * f.res.y / Math.max(1e-6, far);
-      last.minPx = Math.max(uniforms.uMinPx.value, truePx) * uniforms.uSizeScale.value / (f.dpr || 1);
+      for (let i = Math.max(0, iLo); i <= Math.min(cur.n - 1, iLead); i++) { halfW = Math.min(halfW, cur.reqHalf[i]); scale = Math.min(scale, cur.reqScaleMin[i]); }
+      const px = grainSizePx({
+        halfW: Number.isFinite(halfW) ? halfW : 0, stepWorld: cur.stepMin * (Number.isFinite(scale) ? scale : 1) * yScale,
+        pxPerWorld: f.camera.projectionMatrix.elements[5] * 0.5 * f.res.y / Math.max(1e-6, far),
+        minPx: uniforms.uMinPx.value, maxPx: uniforms.uMaxPx.value, density: f.density
+      });
+      last.minPx = px / dpr;
     }
+  }
+
+  // Draw one hidden grain into the real framebuffer once, so the GPU builds the grain pipeline (alpha to
+  // coverage, masked alpha) at load instead of on the first zoom-in, where it cost one ~80 ms frame that
+  // the density governor then read as slowness. Every vertex lands outside the clip volume: no pixels.
+  function warmUp(camera) {
+    if (!cur || cur.empty || !cur.chunks.length) return false;
+    const c = cur.chunks[0];
+    group.visible = true; c.mesh.visible = true;
+    c.mesh.geometry.setDrawRange(6 * c.start, 6);
+    uniforms.uColumns.value = 1; uniforms.uP.value = -1;
+    const autoClear = renderer.autoClear;
+    renderer.autoClear = false;
+    renderer.render(group, camera);
+    renderer.autoClear = autoClear;
+    c.mesh.visible = false; group.visible = false;
+    c.mesh.geometry.setDrawRange(0, 0);
+    return true;
   }
 
   // Grains actually standing (in context at their column) at this playhead: CPU count from the block
@@ -388,6 +455,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     group, material, uniforms,
     setAgent,
     update,
+    warmUp,
     columnsBox,
     get agent() { return cur ? cur.agent : null; },
     get tables() { return cur ? cur.tables : null; },

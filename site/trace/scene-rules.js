@@ -92,11 +92,12 @@ export function terrainPlacement() {
 }
 
 // Grain columns near the playhead: how many request columns of the focused agent are drawn as grains.
-// None while a column is too narrow on screen to hold 2 px grains (at overview a request is about one
-// pixel wide, so grains would be pixel noise), then 4, 8 and 16 at the Agents, Requests and Layers
-// levels. pxPerColumn is the on-screen width of the leading column's tread. `previous` (the last
-// result) gives both gates hysteresis, so a column that hovers near a threshold does not flicker.
-export const GRAIN_COLUMN_MIN_PX = 2.5;
+// None while a request's tread is under 2 px on screen (at overview a request is about one pixel wide,
+// so grains would be pixel noise), then 4, 8 and 16 at the Agents, Requests and Layers levels. Grains
+// fill their tread edge to edge, so a 2 px tread holds a solid strip of 2 px grains. pxPerColumn is the
+// on-screen width of the agent's mean request pitch. `previous` (the last result) gives both gates
+// hysteresis, so a column that hovers near a threshold does not flicker.
+export const GRAIN_COLUMN_MIN_PX = 2;
 const GRAIN_K = [0, 4, 8, 16];
 export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
   const on = Number.isFinite(pxPerColumn) && pxPerColumn >= GRAIN_COLUMN_MIN_PX * (previous > 0 ? 0.9 : 1);

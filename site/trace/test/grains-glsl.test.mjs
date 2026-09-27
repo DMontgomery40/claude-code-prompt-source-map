@@ -85,19 +85,44 @@ test("the grain shaders are GLSL ES 3.0 with no discard and a degenerate hide", 
 });
 
 // The CPU side of grains.js on a stub renderer: tables upload once per agent, a frame only sets draw
-// ranges (ceil(count * density) grains of each visible chunk, times K columns), and the smallest grain
-// it reports is the vertex shader's size: the 2 px floor grown by sqrt(1 / density), in CSS px.
-test("createGrains: one upload per agent, per-frame draw ranges only, minGrainPx follows the shader's size rule", async () => {
+// ranges (ceil(count * density) grains of each visible chunk, times K columns), grains fill their
+// request's tread and GRAIN_DEPTH behind the face, and the smallest grain reported follows the vertex
+// shader's size rule (grainSizePx) in CSS px.
+test("grain size: the face area a grain stands for, floored, capped, grown by sqrt(1 / density)", async () => {
+  const { grainSizePx, GRAIN_TILE, GRAIN_MAX_PX } = await import("../grains.js");
+  const base = { halfW: 0.065, stepWorld: 3.2e-4, minPx: 2, maxPx: GRAIN_MAX_PX };
+  // Requests on the real session: a tile is 0.13 world units wide x 10 tokens tall, ~0.3 px: the floor
+  assert.equal(grainSizePx({ ...base, pxPerWorld: 20 }), 2);
+  assert.equal(grainSizePx({ ...base, pxPerWorld: 32, minPx: 3 }), 3, "Layers floor");
+  const tile = GRAIN_TILE * Math.sqrt(2 * 0.065 * 3.2e-4);
+  assert.ok(Math.abs(grainSizePx({ ...base, pxPerWorld: 500 }) - tile * 500) < 1e-9, "deep zoom: the tile itself");
+  assert.equal(grainSizePx({ ...base, pxPerWorld: 1e6 }), GRAIN_MAX_PX, "cap");
+  assert.equal(grainSizePx({ ...base, pxPerWorld: 20, density: 0.25 }), 4, "a quarter of the grains, twice as wide");
+  assert.equal(grainSizePx({ ...base, halfW: 0, pxPerWorld: 1e6 }), 2, "a zero-width tread falls to the floor");
+  // coverage: grains of this size cover their tile GRAIN_TILE^2 times over
+  assert.ok(GRAIN_TILE * GRAIN_TILE * Math.PI / 4 >= 3);
+});
+
+test("the grain shader fills the tread and GRAIN_DEPTH, and sizes grains by grainSizePx", async () => {
+  assert.match(GRAIN_VERT, /vec3 rest = vec3\(A0\.x \+ \(2\.0 \* hx - 1\.0\) \* halfW,/);
+  assert.match(GRAIN_VERT, /zF - hz \* A0\.z\);/);
+  assert.match(GRAIN_VERT, /float ctx = mix\(A0\.y, A1\.y, f\), halfW = A0\.w;/);
+  assert.match(GRAIN_VERT, /float tilePx = uTile \* sqrt\(max\(2\.0 \* halfW \* B0\.z \* scaleK \* uYScale, 0\.0\)\) \* projectionMatrix\[1\]\[1\] \* 0\.5 \* uRes\.y \/ clip\.w;/);
+  assert.match(GRAIN_VERT, /float rad = 0\.5 \* clamp\(tilePx, uMinPx, uMaxPx\) \* uSizeScale;/);
+});
+
+test("createGrains: one upload per agent, per-frame draw ranges only, tread and depth tables, minGrainPx by the size rule, a warm-up draw", async () => {
   const THREE = await import("../vendor/three.module.min.js");
-  const { createGrains } = await import("../grains.js");
+  const { createGrains, grainSizePx, GRAIN_DEPTH, GRAIN_MAX_PX } = await import("../grains.js");
   const { loadTrace } = await import("../loader.js");
   const { entriesFor } = await import("../dump.mjs");
-  const { buildTables } = await import("../grain-rules.js");
+  const { buildTables, REQ_TEXELS } = await import("../grain-rules.js");
   const fix = new URL("./fixtures/codex", import.meta.url).pathname;
   const agent = (await loadTrace(await entriesFor([fix]))).trace.agents.find((a) => a.kind === "root");
-  const geom = { x: (a, i) => i * 0.13, tread: (a, i) => [i * 0.13 - 0.065, i * 0.13 + 0.065], z: () => 0, lane: () => -1 };
-  let inits = 0;
-  const renderer = { getContext: () => ({ colorMask() {} }), initTexture() { inits++; } };
+  // treads that are not centred on the request's x, as on a real sloped ridge
+  const geom = { x: (a, i) => i * 0.13, tread: (a, i) => [i * 0.13 - 0.04, i * 0.13 + 0.09], z: () => 0, lane: () => -1, depth: (a, h) => (a === agent ? 7 : 0) };
+  let inits = 0, renders = [];
+  const renderer = { autoClear: true, getContext: () => ({ colorMask() {} }), initTexture() { inits++; }, render(o) { renders.push([o, this.autoClear, o.children.filter((m) => m.visible).length]); } };
   const shared = { uCol: { value: [] }, uEm: { value: [] }, uFog: { value: new THREE.Color() }, uLight: { value: new THREE.Vector3() }, uFocusDist: { value: 100 } };
   const make = (yScale) => {
     const g = createGrains({ THREE, renderer, shared, geom, yScale });
@@ -107,6 +132,23 @@ test("createGrains: one upload per agent, per-frame draw ranges only, minGrainPx
   const g = make(1e-4);
   assert.equal(inits, 4, "request, block, epoch and id textures");
   assert.equal(g.stats().grainUploads, 4);
+  // the uploaded request table: texel 0 .x is the tread centre, .z the grain depth, the rest as built
+  const up = g.uniforms.uReq.value.image.data, built = g.tables.requests.data;
+  for (let i = 0; i < agent.requests.length; i++) {
+    const o = i * REQ_TEXELS * 4;
+    assert.equal(up[o], Math.fround(i * 0.13 + 0.025));
+    assert.equal(up[o + 2], GRAIN_DEPTH);
+    assert.equal(up[o + 1], built[o + 1]); assert.equal(up[o + 3], built[o + 3]);
+    for (let k = 4; k < REQ_TEXELS * 4; k++) assert.equal(up[o + k], built[o + k]);
+  }
+  // warm-up: one draw of the group with every grain hidden (uP = -1), then everything off again
+  assert.equal(g.warmUp(new THREE.PerspectiveCamera()), true);
+  assert.equal(renders.length, 1);
+  assert.equal(renders[0][0], g.group); assert.equal(renders[0][1], false, "no clear"); assert.equal(renders[0][2], 1);
+  assert.equal(renderer.autoClear, true); assert.equal(g.group.visible, false);
+  assert.ok(g.group.children.every((m) => !m.visible && m.geometry.drawRange.count === 0));
+  assert.equal(inits, 4, "the warm-up uploads nothing");
+
   const n = agent.requests.length, iLead = n - 1, K = Math.min(8, n);
   const cam = new THREE.PerspectiveCamera(34, 1920 / 1200, 0.1, 4000);
   const look = (dist) => { cam.position.set(iLead * 0.13, 1, dist); cam.lookAt(iLead * 0.13, 1, 0); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); };
@@ -117,7 +159,9 @@ test("createGrains: one upload per agent, per-frame draw ranges only, minGrainPx
   const full = g.stats();
   assert.ok(full.grainChunks > 0 && full.grains > 0);
   assert.equal(full.grains, drawn());
-  assert.equal(full.minGrainPx, 2, "a 10-token grain is far under 2 px at this distance: the floor");
+  assert.equal(full.minGrainPx, 2, "grains far under their floor at this distance");
+  g.update(frame({ minPx: 3 }));
+  assert.equal(g.stats().minGrainPx, 3, "the Layers floor");
   g.update(frame({ density: 0.25 }));
   assert.equal(g.stats().minGrainPx, 4, "a quarter of the grains, each twice as wide");
   assert.equal(g.stats().grains, drawn());
@@ -130,16 +174,33 @@ test("createGrains: one upload per agent, per-frame draw ranges only, minGrainPx
   cam.lookAt(iLead * 0.13, 1, 60); cam.updateMatrixWorld();
   g.update(frame());
   assert.equal(g.stats().grainChunks, 0, "columns behind the camera are culled");
-  // grains big enough to be drawn at their true size: the size at the drawn columns' farthest corner
-  const big = make(0.2);
-  look(30);
-  big.update(frame());
-  const box = big.columnsBox(iLead, K), inv = cam.matrixWorldInverse;
-  let far = 0;
-  for (let k = 0; k < 8; k++) far = Math.max(far, -new THREE.Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(inv).z);
-  const truePx = big.uniforms.uGrainWorld.value * cam.projectionMatrix.elements[5] * 0.5 * 1200 / far;
-  assert.ok(truePx > 2);
-  assert.ok(Math.abs(big.stats().minGrainPx - truePx) < 1e-9);
-  assert.equal(inits, 8, "updates never upload");
-  g.dispose(); big.dispose();
+  // grains big enough to be sized by their tile: the size rule for the narrowest tread, thinnest step and
+  // smallest scale at the drawn columns' farthest corner; and the cap
+  const tableMin = (tables) => {
+    const R = tables.requests.data;
+    let halfW = Infinity, scale = Infinity;
+    for (let i = iLead - K + 1; i <= iLead; i++) {
+      const o = i * REQ_TEXELS * 4;
+      halfW = Math.min(halfW, R[o + 3]);
+      for (let k = 12; k <= 18; k++) if (R[o + k] > 0) scale = Math.min(scale, R[o + k]);
+    }
+    return { halfW, scale, step: Math.min(...tables.blocks.meta.step.filter((v) => v > 0)) };
+  };
+  for (const [yScale, expectCap] of [[0.05, false], [50, true]]) {
+    const big = make(yScale);
+    look(30);
+    big.update(frame());
+    const box = big.columnsBox(iLead, K), inv = cam.matrixWorldInverse;
+    let far = 0;
+    for (let k = 0; k < 8; k++) far = Math.max(far, -new THREE.Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(inv).z);
+    const t = tableMin(big.tables);
+    const want = grainSizePx({ halfW: t.halfW, stepWorld: t.step * t.scale * yScale, pxPerWorld: cam.projectionMatrix.elements[5] * 0.5 * 1200 / far, minPx: 2, maxPx: GRAIN_MAX_PX });
+    assert.ok(Math.abs(big.stats().minGrainPx - want) < 1e-9);
+    if (expectCap) assert.equal(big.stats().minGrainPx, GRAIN_MAX_PX);
+    else assert.ok(want > 2 && want < GRAIN_MAX_PX, `tile-sized: ${want}`);
+    assert.ok(box.min.z <= -GRAIN_DEPTH, "the culling box covers the grain depth");
+    big.dispose();
+  }
+  assert.equal(inits, 12, "updates never upload");
+  g.dispose();
 });

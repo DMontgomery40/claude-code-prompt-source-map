@@ -12,7 +12,7 @@ import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./rende
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
 import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor } from "./scene-rules.js";
-import { createGrains } from "./grains.js";
+import { createGrains, GRAIN_DEPTH } from "./grains.js";
 import { KERNEL } from "./grain-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
@@ -216,13 +216,21 @@ void main() {
     if (abs(vInst - uCursor) < 0.5) col = col * 1.35 + vec3(0.05);
     else if (abs(vInst - uHover) < 0.5) col = col * 1.18;
   }
+  float ghost = 0.0;
 #ifdef CUT
   // a uniform branch: with no cut and no grains the colour is untouched, bit for bit
   if (uCutX < 1e29 || uGrainOn > 0.5) {
     float fx = max(fwidth(vW.x), 1e-5);
-    float ghost = smoothstep(-0.5, 0.5, (vW.x - uCutX) / fx);
+    ghost = smoothstep(-0.5, 0.5, (vW.x - uCutX) / fx);
     if (uGrainOn > 0.5 && abs(vAgentId - uGrainAgent) < 0.5) ghost = max(ghost, smoothstep(-0.5, 0.5, (vW.x - uGhostX0) / fx));
-    col = mix(col, uFog, 0.72 * ghost);
+    // The future is a ghost: the layer colour without hairlines, vein or emphasis, mostly grey and
+    // sunk into the fog, with a faint 1 px crest line in the layer's colour so the silhouette reads.
+    vec3 g = base * shade;
+    g = mix(g, vec3(dot(g, vec3(0.2126, 0.7152, 0.0722))), 0.7);
+    g = mix(g, uFog, 0.85);
+    float crestLine = N.z > 0.9 && tops[6] > 0.0 ? 1.0 - smoothstep(0.5, 1.5, (tops[6] - vY) / fw) : 0.0;
+    g = mix(g, base, 0.35 * crestLine);
+    col = mix(col, g, ghost);
   }
 #endif
   col = mix(col, uFog, haze(vW, vDepth));
@@ -230,7 +238,7 @@ void main() {
   col = mix(col, uFog, 0.85 * vAg.w);
 #ifdef XRAY
   // Faint fill, crisp crest outline: a hidden ridge reads as an outline behind the one in front.
-  float edge = tops[6] > 0.0 ? 1.0 - smoothstep(0.5, 1.5, abs(tops[6] - vY) / fw) : 0.0;
+  float edge = tops[6] > 0.0 ? (1.0 - smoothstep(0.5, 1.5, abs(tops[6] - vY) / fw)) * (1.0 - 0.65 * ghost) : 0.0;
   gl_FragColor = vec4(mix(col, vec3(0.9, 0.94, 1.0), edge * 0.65), max(uXray, edge * 0.92));
 #elif defined(REFLECT)
   // the polished floor's reflection: clearest at the waterline, gone a few units down
@@ -397,7 +405,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const NO_CUT = 1e30;
   const cutU = {
     uCutX: { value: NO_CUT }, uGrainOn: { value: 0 }, uGrainAgent: { value: -1 }, uGrainX0: { value: NO_CUT }, uGrainX1: { value: -NO_CUT },
-    uGhostX0: { value: NO_CUT }, uGrainZ: { value: 0 }, uRecess: { value: Math.max(KERNEL.jitterZ, KERNEL.puckRadius) + 0.2 }
+    uGhostX0: { value: NO_CUT }, uGrainZ: { value: 0 }, uRecess: { value: Math.max(GRAIN_DEPTH, KERNEL.puckRadius) + 0.2 }
   };
   const strataMaterial = (defines = {}, own = {}) => new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, defines,
@@ -568,7 +576,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   let grainAgent = L.root, grainK = 0, grainUP = play.P, lastRenderAt = 0;
   const grainState = { K: 0, uP: play.P, cutX: NO_CUT, grainX0: NO_CUT, grainX1: -NO_CUT, ghostX0: NO_CUT, pxPerColumn: 0 };
   // the root's tables are built at load, so the first zoom-in does not stall; a subagent's on focus
-  if (grainOpts.enabled && rowZ.has(L.root.id)) grains.setAgent(L.root);
+  if (grainOpts.enabled && rowZ.has(L.root.id)) { grains.setAgent(L.root); grains.warmUp(camera); }
   const clampP = (P) => Math.max(0, Math.min(Math.max(0, rootN - 1), P));
   // The cut's world x: root request x interpolated to the next request; no cut at the last request.
   function cutXOf(P) {
@@ -650,6 +658,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     }
     grains.update({
       camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),
+      minPx: detail.level >= 3 ? 3 : 2, // grains at least 2 px, 3 at Layers and closer
       agentEm: agentData[(AW + ai) * 4], sweep, emissive: grainOpts.emissive
     });
   }
