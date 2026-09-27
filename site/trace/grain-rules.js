@@ -27,6 +27,10 @@ export const GRAIN_CAP = 400_000;
 // settled by i + 0.6; a collapse runs over the last collapseDur, [lastReq + 0.7, lastReq + 1]. P = i +
 // 0.65 (where focusing request i puts the playhead) is request i complete, nothing collapsing.
 export const KERNEL = { pourWindow: 0.35, fallDur: 0.25, dropHeightTokens: 0.12, collapseDur: 0.3, jitterX: 0.35, jitterZ: 0.6, puckRadius: 0.8, spiralTurns: 5 };
+// Where the collapse of a column last in context at lastReq starts, in request space (lastReq + 0.7): the
+// kernel's kC rises from 0 there, and the scene's trench widens for the puck from the same point
+// (scene-rules collapseWidens), so the two cannot drift apart.
+export function collapseStart(lastReq, P = KERNEL) { return lastReq + 1 - P.collapseDur; }
 // A grain rests anywhere across its request's tread (the table's `centre` +- half width) and up to
 // GRAIN_DEPTH world units behind the face (or the ridge's own depth, if less: the table's `depth`), so
 // neighbouring columns meet as one slab. jitterX and jitterZ above are no longer read.
@@ -400,7 +404,7 @@ export function grainPosition(tables, b, s, uT, params = KERNEL) {
   let p = [rest[0], mix(rest[1] + drop, rest[1], kIn), rest[2]];
   let kC = 0;
   if (epoch >= 0) {
-    kC = smoothstep(lastReq + 1 - P.collapseDur, lastReq + 1, uT);
+    kC = smoothstep(collapseStart(lastReq, P), lastReq + 1, uT);
     const e = tables.requests.epochData;
     const puck = [e[epoch * 4], e[epoch * 4 + 1], e[epoch * 4 + 2]];
     const off = spiralOffset(h, puck[1], P);

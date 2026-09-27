@@ -17,6 +17,7 @@ import {
   chooseGrainSize, buildRequestTable, buildBlockTable, buildTables, buildGrains, shuffleBatches,
   hashGrain, hashGrainU32, hashU32, hashDerived, HASH_SALT, spiralOffset, grainPosition, bandsForRequest,
 } from "../grain-rules.js";
+import { collapseWidens } from "../scene-rules.js";
 
 const FIX = fileURLToPath(new URL("./fixtures/", import.meta.url));
 
@@ -425,6 +426,14 @@ test("grain rules: kernel pour, purity and collapse", () => {
     // settled trail column at P = 11 is the same one
     assert.equal(grainPosition(T, row, q, 10.95, P).rest[1], grainPosition(T, row, q, 10.61, P).rest[1]);
   }
+  const NK = STRATA_KEYS.length, k = m.stratum[row];
+  assert.notEqual(T.requests.base[10 * NK + k], T.requests.base[11 * NK + k], "the row's base moves from 10 to 11, so the frozen-height check above discriminates");
+  // The scene's trench widens for the puck exactly while this column collapses (kC > 0): one rule.
+  for (let q = 0; q < 200; q++) {
+    const uT = 20 + (q + 0.5) / 200;
+    assert.equal(collapseWidens(uT, 20), grainPosition(T, row, s, uT, P).kC > 0, `uT ${uT}`);
+  }
+  assert.equal(collapseWidens(20.7, 20), false); assert.equal(grainPosition(T, row, s, 20.7, P).kC, 0);
   // A block still in context at the end never collapses.
   const endRow = [...Array(T.blocks.count).keys()].find((r) => m.blockIndex[r] === 26);
   assert.equal(m.epoch[endRow], -1);

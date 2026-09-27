@@ -11,7 +11,7 @@ import { zoomCamera, panCameraTo } from "./map-camera.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
-import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, sweepColumns, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
+import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor, collapseWidens, sweepColumns, sweepLabelBands, sweepLabelOpacity } from "./scene-rules.js";
 import { createGrains, GRAIN_DEPTH, accentGain } from "./grains.js";
 import { KERNEL, bandsForRequest } from "./grain-rules.js";
 import { createBlockText } from "./block-text.js";
@@ -668,7 +668,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       // a collapse into the puck at the next request: the trench makes room for the whole spiral
       const e = grains.epochStartingAt(iLead + 1);
       let jWall = iFirst;
-      if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) {
+      if (e && collapseWidens(uP, iLead)) {
         const r = KERNEL.puckRadius + 0.1;
         while (jWall > 0 && x0 > e.puck[0] - r) x0 = wallX(--jWall);
         x1 = Math.max(x1, e.puck[0] + r);

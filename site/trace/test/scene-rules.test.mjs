@@ -257,6 +257,26 @@ test("density governor: on-demand rendering while exploring is not slowness, and
   assert.ok(Math.abs(r.cadence - 1000 / 60) < 1e-9, "reset forgets the display interval");
 });
 
+// The trench widens for a compaction's puck only while the leading column collapses (from i + 0.7): the
+// playhead a focused request lands on (transport's playheadForRequest, i + FOCUS) never widens it, for
+// any of 2,001 requests (the float value of i + 0.65 - i varies with i; 1 - 0.3 - 0.05 caught 1,182).
+test("collapse widening: never at a focused request's playhead, always once the collapse starts", async () => {
+  const { collapseWidens } = await import("../scene-rules.js");
+  const { playheadForRequest, FOCUS } = await import("../transport.js");
+  const n = 2001, root = { id: "root", requests: Array.from({ length: n }, () => ({})) };
+  const layout = { root, byId: new Map([["root", root]]) };
+  let oldRule = 0;
+  for (let i = 0; i < n; i++) {
+    const P = playheadForRequest({}, layout, "root", i), iLead = Math.min(n - 1, Math.floor(P));
+    assert.equal(iLead, i);
+    assert.equal(collapseWidens(P, iLead), false, `focused request ${i}: P ${P}`);
+    if (P - iLead > 1 - 0.3 - 0.05) oldRule++;
+    for (const f of [0.7 + 1e-6, 0.8, 0.999]) assert.equal(collapseWidens(i + f, i), true, `${i} + ${f}`);
+    for (const f of [0, 0.3, FOCUS, 0.69]) assert.equal(collapseWidens(i + f, i), false, `${i} + ${f}`);
+  }
+  assert.ok(oldRule > 1000, `the previous threshold fired at ${oldRule} focused requests`);
+});
+
 test("sweep columns: the K grain columns up to the leading request, never back across its ridge segment's start", async () => {
   const { sweepColumns } = await import("../scene-rules.js");
   assert.deepEqual(sweepColumns(900, 16, 850), { iFirst: 885, col0: 0 }, "inside one segment: every column");

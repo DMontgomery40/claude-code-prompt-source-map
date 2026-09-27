@@ -1,4 +1,5 @@
 // Pure rules behind the landscape (no three.js), shared by scene.js and its tests.
+import { collapseStart } from "./grain-rules.js";
 
 export const BASE_W = 220;   // world width of a session with a subagent field
 export const BASE_H = 32;    // world height of the tallest context
@@ -105,6 +106,11 @@ export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
   const prevLevel = Math.max(0, GRAIN_K.indexOf(previous));
   return GRAIN_K[mapDetail(mapZoom, prevLevel).level];
 }
+
+// Whether the grain trench widens for the puck of a compaction at request iLead + 1: exactly while the
+// leading column collapses (the kernel's kC > 0, from lastReq + 0.7), never at iLead + FOCUS (0.65, where
+// focusing a request puts the playhead: request iLead complete, nothing collapsing).
+export function collapseWidens(uP, iLead) { return uP > collapseStart(iLead); }
 
 // The grain columns the re-read sweep crosses: the K columns up to the leading request i, but never back
 // past the start of i's ridge segment (segStart), so the sweep does not bridge an idle gap to the trail
