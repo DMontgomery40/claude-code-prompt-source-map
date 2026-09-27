@@ -20,7 +20,7 @@ async function sniff(entry) {
     const first = JSON.parse(await readFirstLine(entry.source));
     if (isCodexFirstLine(first)) return { product: "codex", meta: codexMeta(first.payload) };
     if (isClaudeRow(first) || /\/subagents\/agent-[^/]+\.jsonl$/.test(entry.path)) return { product: "claude-code", row: first };
-  } catch { /* not a log we know */ }
+  } catch (error) { if (!(error instanceof SyntaxError)) throw error; /* not JSON */ }
   return null;
 }
 
@@ -118,7 +118,7 @@ async function codexHead(source) {
   try {
     const p = codexMeta(JSON.parse(await readFirstLine(source)).payload || {});
     return { parent: p.parent_thread_id || null, threadSource: p.thread_source || null, fullRead: true };
-  } catch { return null; }
+  } catch (error) { if (!(error instanceof SyntaxError)) throw error; return null; }
 }
 
 // Returns { session, found } for the hinted id, or null when the hint names no file.
@@ -236,6 +236,8 @@ export async function loadTrace(entries, { root = null, onProgress = () => {}, i
     if (!sessions.length) throw new Error("No Codex rollout or Claude Code transcript found in the dropped files.");
     pick = (root && sessions.find((s) => s.id === root || s.name.includes(root) || s.entries.some((e) => e.path.includes(root)))) || sessions.slice().sort((a, b) => b.bytes - a.bytes)[0];
   }
+  // Keep byte references stable while the source session continues to grow.
+  await Promise.all([...pick.entries, ...(pick.metas || []), ...(pick.toolResults || [])].map(e => e.source.snapshot?.()));
   const total = pick.entries.reduce((n, e) => n + e.source.size, 0);
   let done = 0;
   const files = [];
