@@ -22,6 +22,9 @@ const MASSIF = Number(new URLSearchParams(location.search).get("massif") ?? 2); 
 const VIEW = (() => { const q = new URLSearchParams(location.search); return { az: Number(q.get("az") ?? -25), el: Number(q.get("el") ?? 40), fov: Number(q.get("fov") ?? 34), paz: Number(q.get("paz") ?? -32), pel: Number(q.get("pel") ?? 42), caz: Number(q.get("caz") ?? -16), cel: Number(q.get("cel") ?? 22), cpaz: Number(q.get("cpaz") ?? -30), cpel: Number(q.get("cpel") ?? 30) }; })();
 const SP = 0.62, CORE_R = 0.24, H1 = 12, LIFT_R = 1.25, LIFT_H = 13;
 const RINGS = 9;
+// A stepped massif's tread starts this far (world units) after the previous one ends, so the riser
+// between them has its own vertices and the grain trench can step back on it (see updatePlayhead).
+const RISER = 1e-4;
 const FOG = new THREE.Color("#0a141e");
 const LIGHT = new THREE.Vector3(-0.38, 0.62, 0.69).normalize();
 
@@ -420,7 +423,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         // one flat tread per request, a riser between: the crest reads request by request
         for (let i = seg.i0; i <= seg.i1; i++) {
           const t = geom.tops(agent, i), [a, b] = geom.tread(agent, i);
-          cols.push({ x: a, t }, { x: b, t });
+          cols.push({ x: Math.min(a + RISER, b), t }, { x: b, t });
         }
       } else {
         for (let i = seg.i0; i <= seg.i1; i++) cols.push({ x: geom.x(agent, i), t: geom.tops(agent, i) });
@@ -611,12 +614,22 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     Object.assign(grainState, { K, uP, cutX, pxPerColumn: px });
     if (K > 0) {
       const iLead = Math.min(n - 1, Math.floor(uP)), iFirst = Math.max(0, iLead - K + 1), iNext = Math.min(n - 1, iLead + 1);
-      let x0 = geom.tread(agent, iFirst)[0], x1 = geom.tread(agent, iNext)[1] + 1e-3;
+      // The trench's walls stand where the face has vertices: on a sloped ridge the stretch of face from
+      // request j - 1 to j is the wall (the solid part's cap), on a stepped massif the riser before tread j.
+      // The focused ridge is a ghost from the far side of the left wall.
+      const stepped = geom.stepped(agent);
+      const wallX = j => geom.tread(agent, j)[0] + (stepped ? RISER / 2 : 0);
+      let x0 = wallX(iFirst), x1 = geom.tread(agent, iNext)[1] + (stepped ? RISER / 2 : 1e-3);
+      const ghostX0 = stepped ? x0 + RISER / 2 : xOf(agent, iFirst);
       // a collapse into the puck at the next request: the trench makes room for the whole spiral
       const e = grains.tables.requests.epochs.find(q => q.start === iLead + 1);
-      if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) { const r = KERNEL.puckRadius + 0.1; x0 = Math.min(x0, e.puck[0] - r); x1 = Math.max(x1, e.puck[0] + r); }
-      Object.assign(grainState, { grainX0: x0, grainX1: x1, ghostX0: xOf(agent, iFirst) });
-      cutU.uGrainX0.value = x0; cutU.uGrainX1.value = x1; cutU.uGhostX0.value = xOf(agent, iFirst);
+      if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) {
+        const r = KERNEL.puckRadius + 0.1;
+        for (let j = iFirst; j > 0 && x0 > e.puck[0] - r;) x0 = wallX(--j);
+        x1 = Math.max(x1, e.puck[0] + r);
+      }
+      Object.assign(grainState, { grainX0: x0, grainX1: x1, ghostX0 });
+      cutU.uGrainX0.value = x0; cutU.uGrainX1.value = x1; cutU.uGhostX0.value = ghostX0;
       cutU.uGrainZ.value = zOf(agent, iLead); cutU.uGrainAgent.value = agentIndex.get(agent.id); cutU.uGrainOn.value = 1;
     } else {
       Object.assign(grainState, { grainX0: NO_CUT, grainX1: -NO_CUT, ghostX0: NO_CUT });
@@ -1252,7 +1265,6 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // Arcs stay faint until their agent is hovered, except in the subagents lens.
     spawnLinks.material.uniforms.uOpacity.value = next === "agents" ? 0.85 : 0.1;
     returnLinks.material.uniforms.uOpacity.value = next === "agents" ? 0.95 : 0.14;
-    markMapStale();
     dirty = 3;
   }
   let focusAgentId = null;
@@ -1414,7 +1426,6 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // ---- state ----
   let level = 0, cursor = -1, mapSelection = null;
   function show(S) {
-    markMapStale();
     mapSelection = S.mapSelection || null;
     const agent = S.agentId ? agents[agentIndex.get(S.agentId)] : null;
     const prevLevel = level;
@@ -1536,22 +1547,6 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     return 2 ** binExp;
   }
   let shownRequests = new Set(), shownAgents = new Set(), heldFocus = "";
-  // Map symbols (flags, beacons, map labels) depend on the view alone. Rebuilding them re-uploads their
-  // instance buffers, so they are refreshed only when the camera or viewport moved, or when state they
-  // show changed (markMapStale); a frame that only moves the playhead does no symbol work.
-  const viewKey = new Float64Array(34);
-  let flagsStale = true, mapStale = true;
-  const markMapStale = () => { flagsStale = mapStale = true; };
-  function viewMoved() {
-    const a = camera.matrixWorld.elements, b = camera.projectionMatrix.elements;
-    let moved = false;
-    for (let k = 0; k < 16; k++) {
-      if (viewKey[k] !== a[k]) { viewKey[k] = a[k]; moved = true; }
-      if (viewKey[16 + k] !== b[k]) { viewKey[16 + k] = b[k]; moved = true; }
-    }
-    if (viewKey[32] !== host.clientWidth || viewKey[33] !== host.clientHeight) { viewKey[32] = host.clientWidth; viewKey[33] = host.clientHeight; moved = true; }
-    return moved;
-  }
   function updateMapDetail(now) {
     camera.updateMatrixWorld();
     mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
@@ -1559,20 +1554,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     host.dataset.mapDetail = detail.name;
     const status = document.querySelector('#zoom-status');
     if (status) status.textContent = level === 0 ? `${mapZoom.toFixed(1)}× · ${detail.name}` : level === 1 ? 'Agent requests' : 'Request layers';
-    if (viewMoved()) markMapStale();
-    if (flagsStale) {
-      flagsStale = false;
-      if (flags.visible) flags.userData.update();
-      if (stage.flags?.visible) stage.flags.userData.update();
-    }
+    if (flags.visible) flags.userData.update();
+    if (stage.flags?.visible) stage.flags.userData.update();
     if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; return; }
     xray.visible = detail.level < 2;
     const linkFade = lens === "agents" ? 1 : Math.min(1, 1 / (mapZoom * mapZoom));
     spawnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.85 : 0.1) * linkFade;
     returnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.95 : 0.14) * linkFade;
-    if (!mapStale) return;
     if (now - detailAt < 90) { dirty = Math.max(dirty, 2); return; }
-    detailAt = now; mapStale = false;
+    detailAt = now;
     // Grouped in world bins set by zoom alone: panning moves beacons, it never regroups them.
     const clusters = clusterStable(beamCandidates, mapBin(), { rank: b => BEAM_RANK[b.kind] ?? 3 })
       .map(({ point, count }) => ({ count, point: { ...point, ...projectMapPoint(new THREE.Vector3(point.x, point.y0, point.z)) } }))
@@ -1669,7 +1659,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (key !== lastFocusKey) { lastFocusKey = key; focusSince = now; }
     if (key !== sentFocusKey) {
       if (now - focusSince >= 180) { sentFocusKey = key; onMapFocus(state); }
-      else { dirty = Math.max(dirty, 2); mapStale = true; } // the focus is still settling: look again
+      else dirty = Math.max(dirty, 2);
     }
   }
 
@@ -1827,7 +1817,6 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     pinUniforms.uDpr.value = renderer.getPixelRatio();
     camera.aspect = w / Math.max(1, h);
     camera.updateProjectionMatrix();
-    markMapStale();
     dirty = 3;
   }
   const ro = new ResizeObserver(() => resize());
@@ -1847,7 +1836,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       camera.position.fromArray(view.position); controls.target.fromArray(view.target);
       camera.zoom = view.zoom; overviewDistance = view.overviewDistance;
       camera.updateProjectionMatrix(); controls.update();
-      detailAt = -Infinity; sentFocusKey = ''; markMapStale(); dirty = 3;
+      detailAt = -Infinity; sentFocusKey = ''; dirty = 3;
     },
     panToRequest(agentId, index, reveal = false) {
       resize();
@@ -1862,7 +1851,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       }
       const point = new THREE.Vector3(xOf(agent, index), crest(agent, index) * 0.55, zOf(agent, index) + 0.1);
       panCameraTo(camera, controls.target, point, (insets.left + host.clientWidth - insets.right) / 2, (insets.top + host.clientHeight - insets.bottom) / 2, host.clientWidth, host.clientHeight);
-      controls.update(); detailAt = -Infinity; markMapStale(); dirty = 3; onViewChange();
+      controls.update(); detailAt = -Infinity; dirty = 3; onViewChange();
     },
     mountMinimap(host, width, height, selection) {
       const a = selection?.agentId && agents[agentIndex.get(selection.agentId)];
@@ -1871,11 +1860,10 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       navigator.mount(host,width,height,point); dirty=3;
     },
     zoom: zoomMap,
-    setLabelDetail(value) { detailedLabels = !!value; markMapStale(); dirty = 3; },
+    setLabelDetail(value) { detailedLabels = !!value; dirty = 3; },
     setInsets(v, preserveView = false) {
       const changed = JSON.stringify(v) !== JSON.stringify(insets);
       insets = v;
-      if (changed) markMapStale();
       if (changed && level === 0 && !fly.on && !preserveView) frameL0(0);
     },
     refit() {
@@ -1913,12 +1901,12 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       const g = grains.stats();
       return {
         calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, gpu: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : "unknown", labels: labels.domElement.childElementCount,
-        grains: g.grains, grainChunks: g.grainChunks, uploads: g.grainUploads,
+        grains: g.grains, grainChunks: g.grainChunks, uploads: g.grainUploads, minGrainPx: g.minGrainPx == null ? null : Math.round(g.minGrainPx * 100) / 100,
         grainColumns: grainState.K, grainDensity: g.grainDensity, grainsResident: g.grainsResident, grainChunksTotal: g.grainChunksTotal,
         grainN0: g.grainN0, grainBuilds: g.grainBuilds, grainBuildMs: g.grainBuildMs, grainAgent: grainAgent.id, grainPxPerColumn: Math.round(grainState.pxPerColumn * 100) / 100,
         // grains in context at their columns (the rest of the submitted quads are degenerate); O(rows), on request
         ...(live ? { grainsLive: grainState.K > 0 ? grains.liveCount(grainState.uP, grainState.K, g.grainDensity) : 0 } : {}),
-        playhead: { P: play.P, playing: play.playing, cutX: grainState.cutX, grainX0: grainState.grainX0, grainX1: grainState.grainX1 }, mapZoom
+        playhead: { P: play.P, playing: play.playing, cutX: grainState.cutX, grainX0: grainState.grainX0, grainX1: grainState.grainX1, ghostX0: grainState.ghostX0 }, mapZoom
       };
     },
     bench(ms = 3000) {

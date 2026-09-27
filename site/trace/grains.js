@@ -212,7 +212,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
 
   let cur = null; // { agent, tables, textures, chunks, meta, ... }
   let uploads = 0, builds = 0, lastBuildMs = 0;
-  const last = { grains: 0, chunks: 0, instances: 0, columns: 0, density: 1 };
+  const last = { grains: 0, chunks: 0, instances: 0, columns: 0, density: 1, minPx: null };
 
   function texture(data, width, height, uint) {
     const t = uint
@@ -326,7 +326,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
 
   function update(f) {
     const K = f.columns | 0;
-    last.grains = 0; last.chunks = 0; last.instances = 0; last.columns = K; last.density = f.density;
+    last.grains = 0; last.chunks = 0; last.instances = 0; last.columns = K; last.density = f.density; last.minPx = null;
     if (!cur || cur.empty || K <= 0) { group.visible = false; return; }
     const iLead = Math.floor(f.uP), iLo = iLead - K + 1;
     const box = columnsBox(f.uP, K);
@@ -356,6 +356,17 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       last.chunks++; last.instances += n * K;
     }
     last.grains = last.instances;
+    if (last.chunks) {
+      // The smallest grain drawn, in CSS px: the vertex shader's own size at the farthest corner of the
+      // drawn columns (a lower bound; no readback). The 2 px clamp makes it at least 2 by construction.
+      let far = 0;
+      for (let k = 0; k < 8; k++) {
+        _v.set(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(f.camera.matrixWorldInverse);
+        far = Math.max(far, -_v.z);
+      }
+      const truePx = uniforms.uGrainWorld.value * f.camera.projectionMatrix.elements[5] * 0.5 * f.res.y / Math.max(1e-6, far);
+      last.minPx = Math.max(uniforms.uMinPx.value, truePx) * uniforms.uSizeScale.value / (f.dpr || 1);
+    }
   }
 
   // Grains actually standing (in context at their column) at this playhead: CPU count from the block
@@ -382,7 +393,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     get tables() { return cur ? cur.tables : null; },
     stats() {
       return {
-        grains: last.grains, grainChunks: last.chunks, grainColumns: last.columns, grainDensity: last.density,
+        grains: last.grains, grainChunks: last.chunks, grainColumns: last.columns, grainDensity: last.density, minGrainPx: last.minPx,
         grainsResident: cur && !cur.empty ? cur.total : 0, grainChunksTotal: cur ? cur.chunks.length : 0,
         grainN0: cur ? cur.N0 || 0 : 0, grainBuilds: builds, grainBuildMs: Math.round(lastBuildMs * 10) / 10, grainUploads: uploads
       };

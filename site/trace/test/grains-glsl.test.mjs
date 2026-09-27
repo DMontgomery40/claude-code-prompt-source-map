@@ -83,3 +83,63 @@ test("the grain shaders are GLSL ES 3.0 with no discard and a degenerate hide", 
   assert.match(GRAIN_VERT, /usampler2D uIds/);
   assert.ok(!/\battribute\b|\bvarying\b|texture2D/.test(code(GRAIN_VERT + GRAIN_FRAG)), "GLSL3 keywords only");
 });
+
+// The CPU side of grains.js on a stub renderer: tables upload once per agent, a frame only sets draw
+// ranges (ceil(count * density) grains of each visible chunk, times K columns), and the smallest grain
+// it reports is the vertex shader's size: the 2 px floor grown by sqrt(1 / density), in CSS px.
+test("createGrains: one upload per agent, per-frame draw ranges only, minGrainPx follows the shader's size rule", async () => {
+  const THREE = await import("../vendor/three.module.min.js");
+  const { createGrains } = await import("../grains.js");
+  const { loadTrace } = await import("../loader.js");
+  const { entriesFor } = await import("../dump.mjs");
+  const { buildTables } = await import("../grain-rules.js");
+  const fix = new URL("./fixtures/codex", import.meta.url).pathname;
+  const agent = (await loadTrace(await entriesFor([fix]))).trace.agents.find((a) => a.kind === "root");
+  const geom = { x: (a, i) => i * 0.13, tread: (a, i) => [i * 0.13 - 0.065, i * 0.13 + 0.065], z: () => 0, lane: () => -1 };
+  let inits = 0;
+  const renderer = { getContext: () => ({ colorMask() {} }), initTexture() { inits++; } };
+  const shared = { uCol: { value: [] }, uEm: { value: [] }, uFog: { value: new THREE.Color() }, uLight: { value: new THREE.Vector3() }, uFocusDist: { value: 100 } };
+  const make = (yScale) => {
+    const g = createGrains({ THREE, renderer, shared, geom, yScale });
+    g.setAgent(agent, buildTables(agent, geom));
+    return g;
+  };
+  const g = make(1e-4);
+  assert.equal(inits, 4, "request, block, epoch and id textures");
+  assert.equal(g.stats().grainUploads, 4);
+  const n = agent.requests.length, iLead = n - 1, K = Math.min(8, n);
+  const cam = new THREE.PerspectiveCamera(34, 1920 / 1200, 0.1, 4000);
+  const look = (dist) => { cam.position.set(iLead * 0.13, 1, dist); cam.lookAt(iLead * 0.13, 1, 0); cam.updateMatrixWorld(); cam.updateProjectionMatrix(); };
+  look(30);
+  const frame = (o) => ({ camera: cam, uP: iLead, columns: K, density: 1, square: false, res: new THREE.Vector2(1920, 1200), dpr: 1, ...o });
+  const drawn = () => g.group.children.filter((m) => m.visible).reduce((s, m) => s + m.geometry.drawRange.count / 6, 0);
+  g.update(frame());
+  const full = g.stats();
+  assert.ok(full.grainChunks > 0 && full.grains > 0);
+  assert.equal(full.grains, drawn());
+  assert.equal(full.minGrainPx, 2, "a 10-token grain is far under 2 px at this distance: the floor");
+  g.update(frame({ density: 0.25 }));
+  assert.equal(g.stats().minGrainPx, 4, "a quarter of the grains, each twice as wide");
+  assert.equal(g.stats().grains, drawn());
+  assert.ok(g.stats().grains < full.grains && g.stats().grains >= full.grains / 4);
+  g.update(frame({ res: new THREE.Vector2(3840, 2400), dpr: 2 }));
+  assert.equal(g.stats().minGrainPx, 2, "CSS px at devicePixelRatio 2");
+  g.update(frame({ columns: 0 }));
+  assert.equal(g.stats().grains, 0);
+  assert.equal(g.stats().minGrainPx, null, "nothing drawn, nothing reported");
+  cam.lookAt(iLead * 0.13, 1, 60); cam.updateMatrixWorld();
+  g.update(frame());
+  assert.equal(g.stats().grainChunks, 0, "columns behind the camera are culled");
+  // grains big enough to be drawn at their true size: the size at the drawn columns' farthest corner
+  const big = make(0.2);
+  look(30);
+  big.update(frame());
+  const box = big.columnsBox(iLead, K), inv = cam.matrixWorldInverse;
+  let far = 0;
+  for (let k = 0; k < 8; k++) far = Math.max(far, -new THREE.Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(inv).z);
+  const truePx = big.uniforms.uGrainWorld.value * cam.projectionMatrix.elements[5] * 0.5 * 1200 / far;
+  assert.ok(truePx > 2);
+  assert.ok(Math.abs(big.stats().minGrainPx - truePx) < 1e-9);
+  assert.equal(inits, 8, "updates never upload");
+  g.dispose(); big.dispose();
+});
