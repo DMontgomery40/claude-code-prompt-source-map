@@ -512,6 +512,14 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
   assert.equal(scrub.getAttribute("aria-valuetext"), readout.textContent);
   tr.seek(playheadForRequest(pb, L, "root", pb.n - 1));
   assert.equal(pb.P, pb.n - 1, "the last request complete is the end: the whole landscape");
+  // A map pin (the Selected card) on root request 849, then on a subagent's request, while playing.
+  tr.seek(100.2); tr.play();
+  tr.seek(playheadForRequest(pb, L, "root", 849));
+  assert.deepEqual([pb.P, pb.playing, readout.textContent.split(" · ")[0]], [849.65, false, "req 850"]);
+  tr.step(-1);
+  assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [848.65, "req 849"], ", from 849.65 gives 848.65");
+  tr.seek(playheadForRequest(pb, L, "worker", 10));
+  assert.ok(pb.P > 1300 && pb.P < 1301 && !pb.playing, "a pin on a subagent's request moves the playhead into its run");
   // A subagent's request: the cut lands where that agent's own playhead reads i + 0.65 (its last at its own x).
   const worker = L.byId.get("worker"), xs = worker.requests.map(r => L.X(r.t));
   let prev = -1;
@@ -531,7 +539,7 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
 
 test(", and . move the readout's request number by exactly one, to that request complete", () => {
   const n = 1701;
-  for (const [P, back, on] of [[899.65, 898.65, 900.65], [900, 899.65, 901.65], [900.4, 899.65, 901.65], [900.95, 899.65, 901.65],
+  for (const [P, back, on] of [[849.65, 848.65, 850.65], [899.65, 898.65, 900.65], [900, 899.65, 901.65], [900.4, 899.65, 901.65], [900.95, 899.65, 901.65],
     [0, 0, 1.65], [0.65, 0, 1.65], [0.3, 0, 1.65], [n - 1, n - 2 + FOCUS, n - 1], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1]]) {
     assert.deepEqual([focusStep(P, -1, n), focusStep(P, 1, n)], [back, on], `from ${P}`);
   }
