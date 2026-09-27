@@ -50,9 +50,11 @@ export const GRAIN_TILE = 2;
 export const GRAIN_MAX_PX = 12;
 
 // The size rule in device px, shared by the vertex shader (below) and stats().minGrainPx:
-// clamp(GRAIN_TILE * sqrt(2 * halfW * stepWorld) * pxPerWorld, minPx, maxPx) * sqrt(1 / density).
-export function grainSizePx({ halfW, stepWorld, pxPerWorld, minPx, maxPx, density = 1 }) {
-  const tile = GRAIN_TILE * Math.sqrt(Math.max(2 * halfW * stepWorld, 0)) * pxPerWorld;
+// clamp(GRAIN_TILE * sqrt((2 * halfW + depthSpread) * stepWorld) * pxPerWorld, minPx, maxPx) * sqrt(1 / density).
+// depthSpread = grain depth x |view direction .x|: seen at an angle, a column's grains spread across its
+// depth as well as its tread, so a narrow column needs wider grains to stay covered.
+export function grainSizePx({ halfW, stepWorld, pxPerWorld, minPx, maxPx, density = 1, depthSpread = 0 }) {
+  const tile = GRAIN_TILE * Math.sqrt(Math.max((2 * halfW + depthSpread) * stepWorld, 0)) * pxPerWorld;
   return Math.min(Math.max(tile, minPx), maxPx) * Math.sqrt(1 / Math.max(0.01, density));
 }
 
@@ -171,7 +173,7 @@ void main() {
   vec4 clip = projectionMatrix * mv;
   // grainSizePx: the face area this grain stands for, as a square, grown by uTile, clamped to
   // [uMinPx, uMaxPx] device px, then grown by sqrt(1 / density)
-  float tilePx = uTile * sqrt(max(2.0 * halfW * B0.z * scaleK * uYScale, 0.0)) * projectionMatrix[1][1] * 0.5 * uRes.y / clip.w;
+  float tilePx = uTile * sqrt(max((2.0 * halfW + A0.z * abs(V.x)) * B0.z * scaleK * uYScale, 0.0)) * projectionMatrix[1][1] * 0.5 * uRes.y / clip.w;
   float rad = 0.5 * clamp(tilePx, uMinPx, uMaxPx) * uSizeScale;
   // grains of 3 px and more each take a slightly different tone (+-5%), so the slab's front reads as
   // sand; smaller grains stay the flat layer colour (at 2 px a tone per grain would be pixel noise)
@@ -344,7 +346,7 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
   }
 
   const frustum = new THREE.Frustum(), pv = new THREE.Matrix4(), frameBox = new THREE.Box3(), sph = new THREE.Sphere();
-  const _v = new THREE.Vector3();
+  const _v = new THREE.Vector3(), _c = new THREE.Vector3();
 
   // The world box the drawn columns can occupy this frame (columns, drop, a collapse's puck), or null.
   function columnsBox(uP, K) {
@@ -403,16 +405,19 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
       // The smallest grain drawn, in CSS px: grainSizePx (the vertex shader's rule) for the narrowest
       // drawn tread, the thinnest grain step and the smallest stratum scale, at the farthest corner of
       // the drawn columns. A lower bound, no readback; the floor makes it at least 2 (3 at Layers).
-      let far = 0, halfW = Infinity, scale = Infinity;
+      let far = 0, halfW = Infinity, scale = Infinity, depth = Infinity;
       for (let k = 0; k < 8; k++) {
         _v.set(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(f.camera.matrixWorldInverse);
         far = Math.max(far, -_v.z);
       }
-      for (let i = Math.max(0, iLo); i <= Math.min(cur.n - 1, iLead); i++) { halfW = Math.min(halfW, cur.reqHalf[i]); scale = Math.min(scale, cur.reqScaleMin[i]); }
+      for (let i = Math.max(0, iLo); i <= Math.min(cur.n - 1, iLead); i++) { halfW = Math.min(halfW, cur.reqHalf[i]); scale = Math.min(scale, cur.reqScaleMin[i]); depth = Math.min(depth, cur.reqDepth[i]); }
+      // the view direction's x at the drawn columns' centre (the shader takes it per grain)
+      box.getCenter(_c); _c.subVectors(f.camera.position, _c).normalize();
       const px = grainSizePx({
         halfW: Number.isFinite(halfW) ? halfW : 0, stepWorld: cur.stepMin * (Number.isFinite(scale) ? scale : 1) * yScale,
         pxPerWorld: f.camera.projectionMatrix.elements[5] * 0.5 * f.res.y / Math.max(1e-6, far),
-        minPx: uniforms.uMinPx.value, maxPx: uniforms.uMaxPx.value, density: f.density
+        minPx: uniforms.uMinPx.value, maxPx: uniforms.uMaxPx.value, density: f.density,
+        depthSpread: (Number.isFinite(depth) ? depth : 0) * Math.abs(_c.x)
       });
       last.minPx = px / dpr;
     }

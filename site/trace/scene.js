@@ -654,7 +654,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     let sweep = null;
     if (play.sweep != null && K > 0) {
       const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
-      sweep = { on: true, x: xOf(agent, i), y: crest(agent, i) * Math.min(1, Math.max(0, play.sweep)) };
+      const [t0, t1] = geom.tread(agent, i); // grains stand across the tread, centred on its middle
+      sweep = { on: true, x: (t0 + t1) / 2, y: crest(agent, i) * Math.min(1, Math.max(0, play.sweep)) };
     }
     grains.update({
       camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),

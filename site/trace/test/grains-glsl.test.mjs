@@ -99,6 +99,12 @@ test("grain size: the face area a grain stands for, floored, capped, grown by sq
   assert.equal(grainSizePx({ ...base, pxPerWorld: 1e6 }), GRAIN_MAX_PX, "cap");
   assert.equal(grainSizePx({ ...base, pxPerWorld: 20, density: 0.25 }), 4, "a quarter of the grains, twice as wide");
   assert.equal(grainSizePx({ ...base, halfW: 0, pxPerWorld: 1e6 }), 2, "a zero-width tread falls to the floor");
+  // seen at an angle a column's grains spread across its depth too: a narrow column's grains grow
+  const narrow = { ...base, halfW: 0.02, pxPerWorld: 300 };
+  const spread = 1.5 * 0.32; // GRAIN_DEPTH x |V.x| at the default view (azimuth 25 deg, elevation 40 deg)
+  assert.ok(Math.abs(grainSizePx({ ...narrow, depthSpread: spread }) - GRAIN_TILE * Math.sqrt((0.04 + spread) * 3.2e-4) * 300) < 1e-9);
+  assert.ok(grainSizePx({ ...narrow, depthSpread: spread }) > 3 * grainSizePx(narrow));
+  assert.equal(grainSizePx({ ...base, pxPerWorld: 20, depthSpread: spread }), 2, "at Requests the floor still wins");
   // coverage: grains of this size cover their tile GRAIN_TILE^2 times over
   assert.ok(GRAIN_TILE * GRAIN_TILE * Math.PI / 4 >= 3);
 });
@@ -107,7 +113,7 @@ test("the grain shader fills the tread and GRAIN_DEPTH, and sizes grains by grai
   assert.match(GRAIN_VERT, /vec3 rest = vec3\(A0\.x \+ \(2\.0 \* hx - 1\.0\) \* halfW,/);
   assert.match(GRAIN_VERT, /zF - hz \* A0\.z\);/);
   assert.match(GRAIN_VERT, /float ctx = mix\(A0\.y, A1\.y, f\), halfW = A0\.w;/);
-  assert.match(GRAIN_VERT, /float tilePx = uTile \* sqrt\(max\(2\.0 \* halfW \* B0\.z \* scaleK \* uYScale, 0\.0\)\) \* projectionMatrix\[1\]\[1\] \* 0\.5 \* uRes\.y \/ clip\.w;/);
+  assert.match(GRAIN_VERT, /float tilePx = uTile \* sqrt\(max\(\(2\.0 \* halfW \+ A0\.z \* abs\(V\.x\)\) \* B0\.z \* scaleK \* uYScale, 0\.0\)\) \* projectionMatrix\[1\]\[1\] \* 0\.5 \* uRes\.y \/ clip\.w;/);
   assert.match(GRAIN_VERT, /float rad = 0\.5 \* clamp\(tilePx, uMinPx, uMaxPx\) \* uSizeScale;/);
 });
 
@@ -194,7 +200,8 @@ test("createGrains: one upload per agent, per-frame draw ranges only, tread and 
     let far = 0;
     for (let k = 0; k < 8; k++) far = Math.max(far, -new THREE.Vector3(k & 1 ? box.max.x : box.min.x, k & 2 ? box.max.y : box.min.y, k & 4 ? box.max.z : box.min.z).applyMatrix4(inv).z);
     const t = tableMin(big.tables);
-    const want = grainSizePx({ halfW: t.halfW, stepWorld: t.step * t.scale * yScale, pxPerWorld: cam.projectionMatrix.elements[5] * 0.5 * 1200 / far, minPx: 2, maxPx: GRAIN_MAX_PX });
+    const vx = Math.abs(cam.position.clone().sub(box.getCenter(new THREE.Vector3())).normalize().x);
+    const want = grainSizePx({ halfW: t.halfW, stepWorld: t.step * t.scale * yScale, pxPerWorld: cam.projectionMatrix.elements[5] * 0.5 * 1200 / far, minPx: 2, maxPx: GRAIN_MAX_PX, depthSpread: GRAIN_DEPTH * vx });
     assert.ok(Math.abs(big.stats().minGrainPx - want) < 1e-9);
     if (expectCap) assert.equal(big.stats().minGrainPx, GRAIN_MAX_PX);
     else assert.ok(want > 2 && want < GRAIN_MAX_PX, `tile-sized: ${want}`);
