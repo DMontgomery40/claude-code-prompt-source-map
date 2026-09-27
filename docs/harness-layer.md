@@ -3,8 +3,8 @@
 A new view in Trace, beside the 3D landscape and the 2D view. It shows what the harness put in front of
 the model: every piece of harness text, where it came from, what put it there, who got it, and when. It
 **adds** a view and replaces nothing. The landscape, the 2D view, every sidebar panel and lens, search,
-the reader, the custody ladder and playback all stay. Grains are the one exception: they may be removed
-(decision 2026-09-27).
+the reader, the custody ladder and playback all stay. Grains were the one exception, and were removed
+on 2026-09-27.
 
 ## What it shows
 - **Pieces.** What reached the model is grouped by the text's own shape, wherever it rode in: its own
@@ -35,7 +35,7 @@ the reader, the custody ladder and playback all stay. Grains are the one excepti
   - `S.mode = "harness"` is a real mode, so back and forward work through view history.
   - Trace's selection and playhead drive the layer.
   - A click in the layer calls `A.openBlockAt`, so the reader, crumbs and playhead follow.
-  - Grains are off through `scene.setGrainOptions({ enabled: false })`.
+  - Grains are gone from Trace (removed 2026-09-27, `port/grains-out`).
   - The patch against the built Trace is small: app.js +21 lines, index.html +3, keys.js +1, palette.js +1, plus a `harness/` folder.
 - **Tested** on one Claude Code session and three Codex/ChatGPT sessions.
 - **Not yet ported into `site/trace`.** The port needs to:
@@ -43,7 +43,6 @@ the reader, the custody ladder and playback all stay. Grains are the one excepti
   - mount the layer as a module in the stage container (no iframe, no second WebGL context);
   - compute pieces in `worker.js` instead of precomputed per-session data;
   - ship a literal index next to `reference-index.json`;
-  - remove `grains.js` and `grain-rules.js` once the playback kernel no longer imports them;
   - add an n/N "next copy of this piece" key.
 - **Known rough edges:**
   - Esc/back can leave the mode.

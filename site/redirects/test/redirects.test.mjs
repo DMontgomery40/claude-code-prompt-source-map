@@ -42,11 +42,16 @@ import path from "node:path";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const dist = path.resolve(here, "../../dist");
 
+// Trace implementation files deleted on purpose after the move (grains were removed, 2026-09-27). They were
+// never pages anyone linked to; their old URLs redirect into /trace/ and simply 404 there.
+const RETIRED = new Set(["trace/grains.js", "trace/grain-rules.js", "trace/block-text.js", "trace/block-text.css"]);
+
 test("every page and file the retired sites served redirects to something the one site serves", { skip: !existsSync(dist) && "build the site first (npm run build)" }, () => {
-  let checked = 0;
+  let checked = 0, retired = 0;
   for (const file of readdirSync(path.join(here, "legacy"))) {
     const host = file.replace(/\.txt$/, "");
     for (const rel of readFileSync(path.join(here, "legacy", file), "utf8").split("\n").filter(Boolean)) {
+      if (RETIRED.has(rel)) { retired++; continue; }
       const url = `https://${host}/${rel.replace(/(^|\/)index\.html$/, "$1")}`;
       const target = new URL(redirectTarget(url));
       let served = decodeURIComponent(target.pathname).replace(/^\//, "");
@@ -55,5 +60,6 @@ test("every page and file the retired sites served redirects to something the on
       checked++;
     }
   }
-  assert.ok(checked > 150, `checked ${checked} legacy URLs`);
+  assert.equal(checked + retired, 155, "the two retired sites served 155 files");
+  assert.equal(retired, 8, "four retired Trace files, on each host");
 });

@@ -13,4 +13,4 @@
 | `ccprompts.dtmont.com`, `gpt6aeon.dtmont.com` | `harness.dtmont.com/claude-code/`, `harness.dtmont.com/codex/` (the old hosts 301 there) |
 
 - `harness-layer.md` covers the new Trace view: its design and status.
-- The grains design (`*-trace-grains-playback*`) describes a feature that is being removed (decision 2026-09-27).
+- The grains design (`*-trace-grains-playback*`) describes a feature that was removed on 2026-09-27; both docs carry a Superseded note.
