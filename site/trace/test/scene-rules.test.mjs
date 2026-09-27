@@ -156,3 +156,49 @@ test('subagent terrain sits in front of the main massif, with disjoint rows at e
     }
   }
 });
+
+test("grain columns: none at overview or while a column is under 2.5 px, then 4 / 8 / 16 by zoom level", async () => {
+  const { grainColumns, GRAIN_COLUMN_MIN_PX } = await import("../scene-rules.js");
+  // measured on the real Claude Code session at each level's entry zoom: column px 0.78, 1.86, 2.89, 4.48
+  assert.equal(grainColumns(1, 0.78), 0, "overview");
+  assert.equal(grainColumns(1, 40), 0, "overview stays solid even where columns are wide");
+  assert.equal(grainColumns(2.4, 1.86), 0, "agents entry: a request is still under 2.5 px");
+  assert.equal(grainColumns(2.4, 3), 4, "agents with room");
+  assert.equal(grainColumns(3.72, 2.89), 8, "requests");
+  assert.equal(grainColumns(5.77, 4.48), 16, "layers");
+  assert.equal(grainColumns(200, 900), 16, "deep layers");
+  assert.equal(GRAIN_COLUMN_MIN_PX, 2.5);
+  // hysteresis: once on, a column may shrink 10% below the threshold before the grains go
+  assert.equal(grainColumns(3.72, 2.4, 8), 8);
+  assert.equal(grainColumns(3.72, 2.2, 8), 0);
+  assert.equal(grainColumns(3.72, 2.4, 0), 0);
+  // the level gate uses mapDetail's hysteresis from the previous result's level
+  assert.equal(grainColumns(4.8, 10, 16), 16, "just under the Layers threshold, still Layers");
+  assert.equal(grainColumns(4.8, 10, 8), 8);
+  for (const bad of [NaN, undefined, -1, 0]) assert.equal(grainColumns(6, bad), 0);
+});
+
+test("density governor: slow frames halve density in steps, calm frames restore it, idle gaps are ignored", async () => {
+  const { createDensityGovernor } = await import("../scene-rules.js");
+  const g = createDensityGovernor();
+  for (let i = 0; i < 29; i++) g.push(40);
+  assert.equal(g.density, 1, "no verdict before a full window");
+  g.push(40);
+  assert.equal(g.density, 0.75);
+  for (let i = 0; i < 30; i++) g.push(40);
+  assert.equal(g.density, 0.75 * 0.75, "one step per window, not per frame");
+  for (let i = 0; i < 3000; i++) g.push(40);
+  assert.equal(g.density, 0.05, "floor");
+  for (let i = 0; i < 119; i++) g.push(8);
+  assert.equal(g.density, 0.05);
+  g.push(8);
+  assert.ok(Math.abs(g.density - 0.055) < 1e-12, "120 calm frames raise it by 10%");
+  const h = createDensityGovernor();
+  for (let i = 0; i < 500; i++) h.push(i % 2 ? 16.7 : 1000);
+  assert.equal(h.density, 1, "intervals over 250 ms are idle time and 60 Hz frames are fine");
+  for (let i = 0; i < 1000; i++) h.push(8);
+  assert.equal(h.density, 1, "never above 1");
+  h.push(NaN); h.push(-3);
+  h.reset();
+  assert.equal(h.density, 1);
+});

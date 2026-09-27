@@ -90,3 +90,43 @@ export function terrainPlacement() {
   const subDepth = 3.4, sideZ = 5.5, spacing = 5.2;
   return { subDepth, sideZ, laneZ: lane => 17 + lane * spacing };
 }
+
+// Grain columns near the playhead: how many request columns of the focused agent are drawn as grains.
+// None while a column is too narrow on screen to hold 2 px grains (at overview a request is about one
+// pixel wide, so grains would be pixel noise), then 4, 8 and 16 at the Agents, Requests and Layers
+// levels. pxPerColumn is the on-screen width of the leading column's tread. `previous` (the last
+// result) gives both gates hysteresis, so a column that hovers near a threshold does not flicker.
+export const GRAIN_COLUMN_MIN_PX = 2.5;
+const GRAIN_K = [0, 4, 8, 16];
+export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
+  const on = Number.isFinite(pxPerColumn) && pxPerColumn >= GRAIN_COLUMN_MIN_PX * (previous > 0 ? 0.9 : 1);
+  if (!on) return 0;
+  const prevLevel = Math.max(0, GRAIN_K.indexOf(previous));
+  return GRAIN_K[mapDetail(mapZoom, prevLevel).level];
+}
+
+// Frame-time governor for grain density: keeps the last `window` frame intervals; every `window`
+// samples, a p90 above `high` ms multiplies density by `down` (never below `floor`); `calm` frames
+// in a row under `low` ms multiply it by `up` (never above 1). Intervals over `gap` ms are idle time
+// between renders, not frame cost, and are ignored.
+export function createDensityGovernor({ window = 30, high = 18, low = 12, calm = 120, down = 0.75, up = 1.1, floor = 0.05, gap = 250 } = {}) {
+  let density = 1, sinceEval = 0, calmRun = 0;
+  const samples = [];
+  return {
+    get density() { return density; },
+    push(dt) {
+      if (!(dt > 0) || dt > gap) return density;
+      samples.push(dt);
+      if (samples.length > window) samples.shift();
+      calmRun = dt < low ? calmRun + 1 : 0;
+      if (++sinceEval >= window && samples.length >= window) {
+        sinceEval = 0;
+        const sorted = [...samples].sort((a, b) => a - b);
+        if (sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.9))] > high) { density = Math.max(floor, density * down); calmRun = 0; }
+      }
+      if (calmRun >= calm) { density = Math.min(1, density * up); calmRun = 0; }
+      return density;
+    },
+    reset() { density = 1; sinceEval = 0; calmRun = 0; samples.length = 0; }
+  };
+}
