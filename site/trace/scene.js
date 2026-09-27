@@ -1869,17 +1869,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     mapLines.geometry.computeBoundingSphere();
     let stratum = null;
     // At Layers with grain columns standing, the stratum labels describe the leading column (the
-    // playhead's request, which the word panes read), not the column nearest the centre; while that
-    // column is off the map (the user looks elsewhere), the column nearest the centre as before.
+    // playhead's request, which the word panes read), not the column nearest the centre; only when none
+    // of its strata is on the map (the user looks elsewhere), the column nearest the centre as before.
     const iLead = Math.floor(grainUP);
-    let strataOf = focus;
-    if (grainK > 0 && grains.agent === grainAgent && iLead >= 0 && iLead < grainAgent.requests.length) {
-      const x = treadCentre(grainAgent, iLead), z = zOf(grainAgent, iLead);
-      if (inMap(projectMapPoint(_pa.set(x, crest(grainAgent, iLead) / 2, z)))) strataOf = { agent: grainAgent, i: iLead, pos: new THREE.Vector3(x, 0, z) };
-    }
-    if (detail.level >= 3 && strataOf) {
+    const lead = grainK > 0 && grains.agent === grainAgent && iLead >= 0 && iLead < grainAgent.requests.length
+      ? { agent: grainAgent, i: iLead, pos: new THREE.Vector3(treadCentre(grainAgent, iLead), 0, zOf(grainAgent, iLead)) } : null;
+    let best = Infinity;
+    const strataLabels = strataOf => {
       const r = strataOf.agent.requests[strataOf.i], tops = geom.tops(strataOf.agent, strataOf.i);
-      let bottom = 0, best = Infinity;
+      let bottom = 0, placed = 0;
       STRATA.forEach((s, j) => {
         const top = tops[j], pos = new THREE.Vector3(strataOf.pos.x, (bottom + top) / 2, strataOf.pos.z + 0.05);
         bottom = top;
@@ -1890,8 +1888,11 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         if (score < best) { best = score; stratum = s.key; }
         const o = label(`${s.name} · ≈ ${fmtTok(r.strata[s.key])}`, `stratum s-${s.key}`, pos, [0, 0.5], g, () => onPick({ level: 3, agentId: strataOf.agent.id, reqIdx: strataOf.i, stratum: s.key }));
         o.element.style.setProperty('--c', s.color); o.userData.flip = true;
+        placed++;
       });
-    }
+      return placed;
+    };
+    if (detail.level >= 3 && !(lead && strataLabels(lead)) && focus) strataLabels(focus);
     updateWords();
     const state = detail.level && focus ? { detail: detail.level, agentId: focus.agent.id, reqIdx: focus.i, stratum } : null;
     const key = state ? `${state.detail}:${state.agentId}:${state.detail > 1 ? state.reqIdx : ''}:${state.stratum || ''}` : 'overview';
