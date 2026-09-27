@@ -178,24 +178,40 @@ test("grain columns: none at overview or while a column is under 2.5 px, then 4 
   for (const bad of [NaN, undefined, -1, 0]) assert.equal(grainColumns(6, bad), 0);
 });
 
-test("density governor: slow frames halve density in steps, calm frames restore it, idle gaps are ignored", async () => {
+test("density governor: dropped frames lower density in steps, calm frames restore it, vsync jitter and idle gaps do not count", async () => {
   const { createDensityGovernor } = await import("../scene-rules.js");
   const g = createDensityGovernor();
   for (let i = 0; i < 29; i++) g.push(40);
   assert.equal(g.density, 1, "no verdict before a full window");
   g.push(40);
-  assert.equal(g.density, 0.75);
+  assert.equal(g.density, 0.75, "a scene slow from its first frame is slow (display interval capped at 60 Hz)");
   for (let i = 0; i < 30; i++) g.push(40);
   assert.equal(g.density, 0.75 * 0.75, "one step per window, not per frame");
   for (let i = 0; i < 3000; i++) g.push(40);
   assert.equal(g.density, 0.05, "floor");
-  for (let i = 0; i < 119; i++) g.push(8);
+  for (let i = 0; i < 119; i++) g.push(16.7);
   assert.equal(g.density, 0.05);
-  g.push(8);
-  assert.ok(Math.abs(g.density - 0.055) < 1e-12, "120 calm frames raise it by 10%");
+  g.push(16.7);
+  assert.ok(Math.abs(g.density - 0.055) < 1e-12, "120 calm frames at 60 Hz raise it by 10%");
+  // 60 Hz with the jitter measured on the M4 (p05 14.7 .. max 18.7 ms): never a verdict of slow
+  const jitter = createDensityGovernor();
+  const q = [14.7, 15.8, 16.2, 16.7, 16.7, 17.3, 17.4, 18.0, 18.4, 18.7];
+  for (let i = 0; i < 3000; i++) jitter.push(q[(i * 7) % q.length]);
+  assert.equal(jitter.density, 1);
+  // 60 Hz with every third frame dropped (33 ms): slow
+  const drops = createDensityGovernor();
+  for (let i = 0; i < 300; i++) drops.push(i % 3 ? 16.7 : 33.4);
+  assert.ok(drops.density < 0.5);
+  // a 120 Hz display is judged by the flat thresholds: 8.3 ms is fine, 20 ms (under 60 fps) is slow
+  const fast = createDensityGovernor();
+  for (let i = 0; i < 300; i++) fast.push(8.3);
+  assert.equal(fast.density, 1);
+  assert.ok(Math.abs(fast.cadence - 8.3) < 1e-9);
+  for (let i = 0; i < 30; i++) fast.push(20);
+  assert.equal(fast.density, 0.75);
   const h = createDensityGovernor();
   for (let i = 0; i < 500; i++) h.push(i % 2 ? 16.7 : 1000);
-  assert.equal(h.density, 1, "intervals over 250 ms are idle time and 60 Hz frames are fine");
+  assert.equal(h.density, 1, "intervals over 250 ms are idle time");
   for (let i = 0; i < 1000; i++) h.push(8);
   assert.equal(h.density, 1, "never above 1");
   h.push(NaN); h.push(-3);

@@ -11,7 +11,9 @@ import { zoomCamera, panCameraTo } from "./map-camera.js";
 import { fitNearPlane, unitsPerPixel, binExponent, clusterStable } from "./render-quality.js";
 import { blockPart } from "./model.js";
 import { createGeometry, topsOf } from "./landscape-geometry.js";
-import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement } from "./scene-rules.js";
+import { BASE_H, landscapeRule, crestEvents, placeLabel, modelSwitches, mapDetail, cappedMarkerHeight, terrainPlacement, grainColumns, createDensityGovernor } from "./scene-rules.js";
+import { createGrains } from "./grains.js";
+import { KERNEL } from "./grain-rules.js";
 
 const H = BASE_H;         // world height of the tallest context
 const STAGE_Z0 = 15;
@@ -39,9 +41,28 @@ varying vec4 vSolid;
 varying vec4 vAg;
 varying float vInst;
 varying float vU;
+varying float vAgentId;
+#ifdef CUT
+// Grain columns stand in a trench: the focused agent's face (and the slope's lip) between uGrainX0 and
+// uGrainX1 steps back by uRecess, deeper than any grain or puck sits behind the face. The mesh stays
+// closed and opaque; the steps between moved and unmoved columns are its side walls.
+uniform float uGrainOn;
+uniform float uGrainAgent;
+uniform float uGrainX0;
+uniform float uGrainX1;
+uniform float uGrainZ;
+uniform float uRecess;
+#endif
 void main() {
   vB0 = aB0; vB1 = aB1; vU = aU;
   vec4 p = vec4(position, 1.0);
+  vAgentId = -1.0;
+#ifdef AGENTS
+  vAgentId = aAgent;
+#if defined(CUT)
+  if (uGrainOn > 0.5 && abs(aAgent - uGrainAgent) < 0.5 && p.x >= uGrainX0 && p.x <= uGrainX1) p.z = min(p.z, uGrainZ - uRecess);
+#endif
+#endif
   vec3 n = normal;
   vInst = -1.0;
 #ifdef USE_INSTANCING
@@ -95,7 +116,16 @@ varying vec4 vSolid;
 varying vec4 vAg;
 varying float vInst;
 varying float vU;
+varying float vAgentId;
 uniform float uXray;
+#ifdef CUT
+// The playhead's cut: everything beyond uCutX is a ghost (fogged, still opaque and depth-writing), and
+// so is the focused agent's ridge behind its grain columns (from uGhostX0).
+uniform float uCutX;
+uniform float uGrainOn;
+uniform float uGrainAgent;
+uniform float uGhostX0;
+#endif
 uniform float uReflect;
 float layerEm(int j) {
   float e = uEm[j];
@@ -182,6 +212,15 @@ void main() {
     if (abs(vInst - uCursor) < 0.5) col = col * 1.35 + vec3(0.05);
     else if (abs(vInst - uHover) < 0.5) col = col * 1.18;
   }
+#ifdef CUT
+  // a uniform branch: with no cut and no grains the colour is untouched, bit for bit
+  if (uCutX < 1e29 || uGrainOn > 0.5) {
+    float fx = max(fwidth(vW.x), 1e-5);
+    float ghost = smoothstep(-0.5, 0.5, (vW.x - uCutX) / fx);
+    if (uGrainOn > 0.5 && abs(vAgentId - uGrainAgent) < 0.5) ghost = max(ghost, smoothstep(-0.5, 0.5, (vW.x - uGhostX0) / fx));
+    col = mix(col, uFog, 0.72 * ghost);
+  }
+#endif
   col = mix(col, uFog, haze(vW, vDepth));
   // ridges other than the focused agent's recede almost to the ground while one agent is open
   col = mix(col, uFog, 0.85 * vAg.w);
@@ -211,11 +250,13 @@ uniform vec2 uRes;
 uniform float uDpr;
 uniform float uHead;
 uniform float uMaxHeight;
+uniform float uCutX;
 varying vec3 vC;
 varying vec2 vP;
 varying float vW;
 varying float vHalf;
 void main() {
+  if (iBase.x > uCutX) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vC = vec3(0.0); vP = vec2(0.0); vW = 0.0; vHalf = 1.0; return; }
   vec4 va = viewMatrix * vec4(iBase, 1.0);
   vec4 vb = viewMatrix * vec4(iBase + vec3(0.0, iLen, 0.0), 1.0);
   vec4 a = projectionMatrix * va;
@@ -346,6 +387,14 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     uLight: { value: LIGHT.clone() },
     uAgents: { value: agentTex }
   };
+  // The playhead's cut and the grain trench (see VERT/FRAG under CUT). Owned by the landscape's own
+  // materials only, never `shared`: the navigator and the L1/L2 cores are not cut. Off by default (no
+  // cut at the end of the session, no trench while no grain columns stand), so the overview is unchanged.
+  const NO_CUT = 1e30;
+  const cutU = {
+    uCutX: { value: NO_CUT }, uGrainOn: { value: 0 }, uGrainAgent: { value: -1 }, uGrainX0: { value: NO_CUT }, uGrainX1: { value: -NO_CUT },
+    uGhostX0: { value: NO_CUT }, uGrainZ: { value: 0 }, uRecess: { value: Math.max(KERNEL.jitterZ, KERNEL.puckRadius) + 0.2 }
+  };
   const strataMaterial = (defines = {}, own = {}) => new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, defines,
     uniforms: { ...shared, uSel: { value: -1 }, uCursor: { value: -1 }, uHover: { value: -1 }, uAgentEm: { value: 1 }, uXray: { value: 0.24 }, uReflect: { value: 0.3 }, ...own },
@@ -461,7 +510,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       if (computeNormals) g.computeVertexNormals();
       return g;
     };
-    const mat = strataMaterial({ AGENTS: "" });
+    const mat = strataMaterial({ AGENTS: "", CUT: "" }, cutU);
     const fm = new THREE.Mesh(mk(front, false), mat);
     const sm = new THREE.Mesh(mk(slope, true), mat);
     // Neighbouring requests differ in height, so the slope's computed normals swing column by column;
@@ -479,7 +528,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const world = new THREE.Group();
   world.add(frontMesh, slopeMesh);
   // Keep occluded agent crests legible when the user orbits behind another row.
-  const xrayMat = strataMaterial({ AGENTS: "", XRAY: "" });
+  const xrayMat = strataMaterial({ AGENTS: "", XRAY: "", CUT: "" }, cutU);
   Object.assign(xrayMat, { transparent: true, depthWrite: false, depthFunc: THREE.GreaterDepth, side: THREE.FrontSide });
   const xray = new THREE.Mesh(frontMesh.geometry, xrayMat);
   xray.frustumCulled = false;
@@ -488,13 +537,107 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // The floor is polished: the terrain stands on its own soft reflection instead of floating in the
   // dark. The floor writes no depth, so the mirrored copy below it shows through wherever nothing
   // above the floor is nearer; everything above the floor is always nearer along the same ray.
-  const reflectMat = strataMaterial({ AGENTS: "", REFLECT: "" });
+  const reflectMat = strataMaterial({ AGENTS: "", REFLECT: "", CUT: "" }, cutU);
   Object.assign(reflectMat, { transparent: true, depthWrite: false });
   const mirror = new THREE.Group();
   mirror.scale.y = -1;
   for (const m of [frontMesh, slopeMesh]) { const r = new THREE.Mesh(m.geometry, reflectMat); r.frustumCulled = false; r.renderOrder = -1; mirror.add(r); }
   world.add(mirror);
   scene.add(world);
+
+  // ---- playhead and grains ----
+  // P is a float in the root's request space (1234.37 is 37% through request 1234); it defaults to the
+  // last request, where nothing is cut and the landscape is exactly today's. The focused agent (the
+  // root unless the view focuses a subagent) shows its last K request columns before the playhead as
+  // grains (grains.js); K comes from the zoom (grainColumns) and is 0 at overview.
+  const glInfo = renderer.getContext().getExtension("WEBGL_debug_renderer_info");
+  const gpuName = glInfo ? String(renderer.getContext().getParameter(glInfo.UNMASKED_RENDERER_WEBGL)) : "unknown";
+  const softwareGpu = /SwiftShader|llvmpipe|Basic Render|softpipe/i.test(gpuName);
+  const rootN = L.root.requests.length;
+  const play = { P: Math.max(0, rootN - 1), playing: false, sweep: null };
+  const grainOpts = { enabled: !softwareGpu, density: null, square: false, columns: null, emissive: 0 };
+  const governor = createDensityGovernor();
+  const grains = createGrains({ THREE, renderer, shared, geom, yScale, reducedMotion });
+  grains.group.renderOrder = 1;
+  world.add(grains.group);
+  let grainAgent = L.root, grainK = 0, grainUP = play.P, lastRenderAt = 0;
+  const grainState = { K: 0, uP: play.P, cutX: NO_CUT, grainX0: NO_CUT, grainX1: -NO_CUT, ghostX0: NO_CUT, pxPerColumn: 0 };
+  // the root's tables are built at load, so the first zoom-in does not stall; a subagent's on focus
+  if (grainOpts.enabled && rowZ.has(L.root.id)) grains.setAgent(L.root);
+  const clampP = (P) => Math.max(0, Math.min(Math.max(0, rootN - 1), P));
+  // The cut's world x: root request x interpolated to the next request; no cut at the last request.
+  function cutXOf(P) {
+    if (!(rootN > 1) || P >= rootN - 1 - 1e-9) return NO_CUT;
+    const i = Math.floor(P), f = P - i;
+    return xOf(L.root, i) + (xOf(L.root, i + 1) - xOf(L.root, i)) * f;
+  }
+  // The focused agent's own request-space playhead: the root's P, or for a subagent the request its
+  // ridge has reached at the cut's x (-1 before its first request).
+  function agentP(agent, P, cutX) {
+    if (agent === L.root) return P;
+    const n = agent.requests.length;
+    if (cutX >= NO_CUT) return n - 1;
+    if (!n || xOf(agent, 0) > cutX) return -1;
+    let lo = 0, hi = n - 1;
+    while (lo < hi) { const m = (lo + hi + 1) >> 1; if (xOf(agent, m) <= cutX) lo = m; else hi = m - 1; }
+    if (lo >= n - 1) return n - 1;
+    const x0 = xOf(agent, lo), x1 = xOf(agent, lo + 1);
+    return lo + (x1 > x0 ? Math.min(1, Math.max(0, (cutX - x0) / (x1 - x0))) : 0);
+  }
+  const _pa = new THREE.Vector3(), _pb = new THREE.Vector3();
+  // Uniforms for this frame: the cut everywhere, and the grain trench and columns on the focused agent.
+  function updatePlayhead() {
+    const cutX = cutXOf(play.P);
+    cutU.uCutX.value = cutX;
+    const agent = grainAgent;
+    const uP = agentP(agent, play.P, cutX);
+    const n = agent.requests.length;
+    let K = 0, px = 0;
+    if (grainOpts.enabled && level === 0 && uP >= 0 && n > 0 && rowZ.has(agent.id)) {
+      // Column width on screen: the agent's mean request pitch (compressed time is irregular: a request's
+      // own tread ranges from 0 to over a unit), measured at the leading column's depth, so K does not
+      // flicker as the playhead crosses bursts. At overview a request is about one pixel: no grains.
+      const iLead = Math.min(n - 1, Math.floor(uP));
+      const pitch = n > 1 ? Math.max(1e-6, (xOf(agent, n - 1) - xOf(agent, 0)) / (n - 1)) : 1;
+      const x = xOf(agent, iLead), y = crest(agent, iLead) * 0.5, z = zOf(agent, iLead);
+      _pa.set(x - pitch / 2, y, z).project(camera); _pb.set(x + pitch / 2, y, z).project(camera);
+      px = Math.hypot((_pb.x - _pa.x) * host.clientWidth, (_pb.y - _pa.y) * host.clientHeight) / 2;
+      K = grainOpts.columns != null ? Math.max(0, grainOpts.columns | 0) : grainColumns(mapZoom, px, grainK);
+    }
+    if (K > 0 && grains.agent !== agent) { grains.setAgent(agent); governor.reset(); }
+    if (K > 0 && !grains.tables?.grains.count) K = 0;
+    if (K > 0 && grainK === 0) governor.reset();
+    grainK = K; grainUP = uP;
+    Object.assign(grainState, { K, uP, cutX, pxPerColumn: px });
+    if (K > 0) {
+      const iLead = Math.min(n - 1, Math.floor(uP)), iFirst = Math.max(0, iLead - K + 1), iNext = Math.min(n - 1, iLead + 1);
+      let x0 = geom.tread(agent, iFirst)[0], x1 = geom.tread(agent, iNext)[1] + 1e-3;
+      // a collapse into the puck at the next request: the trench makes room for the whole spiral
+      const e = grains.tables.requests.epochs.find(q => q.start === iLead + 1);
+      if (e && uP - iLead > 1 - KERNEL.collapseDur - 0.05) { const r = KERNEL.puckRadius + 0.1; x0 = Math.min(x0, e.puck[0] - r); x1 = Math.max(x1, e.puck[0] + r); }
+      Object.assign(grainState, { grainX0: x0, grainX1: x1, ghostX0: xOf(agent, iFirst) });
+      cutU.uGrainX0.value = x0; cutU.uGrainX1.value = x1; cutU.uGhostX0.value = xOf(agent, iFirst);
+      cutU.uGrainZ.value = zOf(agent, iLead); cutU.uGrainAgent.value = agentIndex.get(agent.id); cutU.uGrainOn.value = 1;
+    } else {
+      Object.assign(grainState, { grainX0: NO_CUT, grainX1: -NO_CUT, ghostX0: NO_CUT });
+      cutU.uGrainOn.value = 0; cutU.uGrainX0.value = NO_CUT; cutU.uGrainX1.value = -NO_CUT; cutU.uGhostX0.value = NO_CUT;
+    }
+  }
+  function updateGrains(now) {
+    const K = grainK;
+    if (K > 0 && grains.group.visible && lastRenderAt) governor.push(now - lastRenderAt);
+    const density = grainOpts.density != null ? Math.min(1, Math.max(0.01, grainOpts.density)) : governor.density;
+    const agent = grainAgent, ai = agentIndex.get(agent.id);
+    let sweep = null;
+    if (play.sweep != null && K > 0) {
+      const i = Math.max(0, Math.min(agent.requests.length - 1, Math.floor(grainUP)));
+      sweep = { on: true, x: xOf(agent, i), y: crest(agent, i) * Math.min(1, Math.max(0, play.sweep)) };
+    }
+    grains.update({
+      camera, uP: grainUP, columns: K, density, square: grainOpts.square, res: pinUniforms.uRes.value, dpr: renderer.getPixelRatio(),
+      agentEm: agentData[(AW + ai) * 4], sweep, emissive: grainOpts.emissive
+    });
+  }
 
   const heightAt = geom.heightAtSeg; // (agent, inf, seg, x, taper): face height on one segment, -1 off it
   const nearestReq = (inf, seg, x) => {
@@ -540,13 +683,13 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   const pinUniforms = { uRes: { value: new THREE.Vector2(1, 1) }, uDpr: { value: 1 }, uMaxHeight: { value: PIN_CAP } };
   // Instanced screen-space pins; set(list) with [{ x, y, z, len, color, w (shaft px), r (head px) }].
   // head: "dot" for beacons, "flag" for the pennant on an ask; maxHeight caps the drawn pole in px.
-  function makePins(cap, withHeads, { head: shape = "dot", maxHeight } = {}) {
+  function makePins(cap, withHeads, { head: shape = "dot", maxHeight, cut = false } = {}) {
     const n = Math.max(1, cap);
     const attrs = {
       iBase: new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3), iLen: new THREE.InstancedBufferAttribute(new Float32Array(n), 1),
       iColor: new THREE.InstancedBufferAttribute(new Float32Array(n * 3), 3), iPx: new THREE.InstancedBufferAttribute(new Float32Array(n * 2), 2)
     };
-    const own = maxHeight ? { uMaxHeight: { value: maxHeight } } : {};
+    const own = { ...(maxHeight ? { uMaxHeight: { value: maxHeight } } : {}), uCutX: cut ? cutU.uCutX : { value: NO_CUT } };
     const mk = head => {
       const g = new THREE.InstancedBufferGeometry();
       const y0 = head ? -1 : 0;
@@ -575,8 +718,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   }
   const youHex = STRATA[STRATUM_INDEX.you].color;
   // The user's asks: a pole with a pennant, grouped by the same world bins as the beacons.
-  function flagMeshes(items) { // items: [{x,y,z,h}]
-    const g = makePins(items.length, true, { head: "flag", maxHeight: 40 });
+  function flagMeshes(items, cut = false) { // items: [{x,y,z,h}]; cut: hidden beyond the playhead (map flags, not the stage's)
+    const g = makePins(items.length, true, { head: "flag", maxHeight: 40, cut });
     const asks = items.map((f, i) => ({ ...f, i, kind: "ask" }));
     g.userData.update = () => {
       const kept = clusterStable(asks, mapBin()).map(c => c.point).filter(f => inMap(projectMapPoint(new THREE.Vector3(f.x, f.y, f.z))));
@@ -588,7 +731,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const i = Math.min(Math.max(0, a.request), L.root.requests.length - 1);
     return { x: xOf(L.root, i), y: crest(L.root, i), z: -0.6, h: rule.compact ? 4.6 : 3.6 };
   });
-  const flags = flagMeshes(rootAsks);
+  const flags = flagMeshes(rootAsks, true);
   world.add(flags);
 
   const allActs = [];
@@ -596,7 +739,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (a.kind === "side" || a.kind === "guardian") continue;
     a.requests.forEach((r, i) => { if (r.action && STATUS[r.action.class]) allActs.push({ a, i, cls: r.action.class }); });
   }
-  const pins = makePins(allActs.length, true);
+  const pins = makePins(allActs.length, true, { cut: true });
   let beamCandidates = [];
   const beamPick = []; // [{a, i, x, y0, y1, z}]
   function layoutBeams(lens) {
@@ -629,7 +772,18 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       if (i >= 0) flagged.push({ a, i, b });
     }
   }
-  const warnMesh = new THREE.InstancedMesh(new THREE.OctahedronGeometry(0.55), new THREE.MeshBasicMaterial({ color: STATUS.flag.color, fog: false }), Math.max(1, flagged.length));
+  // Built-in materials (markers, event lines) learn the cut through onBeforeCompile: a vertex beyond
+  // uCutX collapses to a point outside the clip volume.
+  function cutByX(material, instanced = false) {
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms.uCutX = cutU.uCutX;
+      const wx = instanced ? "(modelMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0)).x" : "(modelMatrix * vec4(position, 1.0)).x";
+      shader.vertexShader = "uniform float uCutX;\n" + shader.vertexShader.replace("#include <project_vertex>", `#include <project_vertex>\n  if (${wx} > uCutX) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);`);
+    };
+    material.customProgramCacheKey = () => `trace-cut-${instanced ? "i" : "v"}`;
+    return material;
+  }
+  const warnMesh = new THREE.InstancedMesh(new THREE.OctahedronGeometry(0.55), cutByX(new THREE.MeshBasicMaterial({ color: STATUS.flag.color, fog: false }), true), Math.max(1, flagged.length));
   {
     const m = new THREE.Matrix4();
     flagged.forEach((f, n) => { m.makeScale(1, 1.6, 1).setPosition(xOf(f.a, f.i), crest(f.a, f.i) + 1.6, zOf(f.a, f.i) - 0.4); warnMesh.setMatrixAt(n, m); });
@@ -647,7 +801,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // Side calls (advisor iterations, guardian reviews) are small outcrops beside the main ridge, not
   // spikes in it; their exact context is in the tooltip and panel, so they are not drawn to height scale.
   const outcropGeo = new THREE.CylinderGeometry(0.72, 1, 1, 6, 1).translate(0, 0.5, 0);
-  const cairns = new THREE.InstancedMesh(outcropGeo, strataMaterial(), Math.max(1, sideReqs.length));
+  const cairns = new THREE.InstancedMesh(outcropGeo, strataMaterial({ CUT: "" }, cutU), Math.max(1, sideReqs.length));
   {
     const b0 = new Float32Array(Math.max(1, sideReqs.length) * 4), b1 = new Float32Array(Math.max(1, sideReqs.length) * 4);
     const m = new THREE.Matrix4();
@@ -670,7 +824,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // pixel width with an antialiased core and a soft halo, so they stay clean lines at every zoom
   // instead of sub-pixel strips that break into streaks; each fades in and out at its ends.
   function ribbons(list, widthOf, colorOf) {
-    const pos = [], nxt = [], side = [], at = [], wpx = [], col = [], idx = [], ag = [];
+    const pos = [], nxt = [], side = [], at = [], wpx = [], col = [], idx = [], ag = [], ev = [];
     const c = new THREE.Color();
     const p0 = new THREE.Vector3(), p1 = new THREE.Vector3(), pc = new THREE.Vector3();
     const bez = (t, out) => { const u = 1 - t; return out.set(u * u * p0.x + 2 * u * t * pc.x + t * t * p1.x, u * u * p0.y + 2 * u * t * pc.y + t * t * p1.y, u * u * p0.z + 2 * u * t * pc.z + t * t * p1.z); };
@@ -684,12 +838,13 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       const w = widthOf(l);
       c.set(colorOf(l));
       const ai = agentIndex.get(l.child.id);
+      const evX = Math.max(p0.x, p1.x); // the link appears once the playhead's cut has passed both ends
       const N = 32, v0 = pos.length / 3;
       for (let k = 0; k <= N; k++) {
         bez(k / N, q);
         // the next point along the curve gives the screen direction; the last one looks back and flips
         if (k < N) bez((k + 1) / N, qn); else { bez((k - 1) / N, qn); qn.sub(q).negate().add(q); }
-        for (const sd of [-1, 1]) { pos.push(q.x, q.y, q.z); nxt.push(qn.x, qn.y, qn.z); side.push(sd); at.push(k / N); wpx.push(w); col.push(c.r, c.g, c.b); ag.push(ai); }
+        for (const sd of [-1, 1]) { pos.push(q.x, q.y, q.z); nxt.push(qn.x, qn.y, qn.z); side.push(sd); at.push(k / N); wpx.push(w); col.push(c.r, c.g, c.b); ag.push(ai); ev.push(evX); }
         if (k < N) { const a = v0 + k * 2; idx.push(a, a + 2, a + 3, a, a + 3, a + 1); }
       }
     }
@@ -701,13 +856,15 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     g.setAttribute("aW", new THREE.Float32BufferAttribute(wpx, 1));
     g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
     g.setAttribute("aAgent", new THREE.Float32BufferAttribute(ag, 1));
+    g.setAttribute("aEventX", new THREE.Float32BufferAttribute(ev, 1));
     g.setIndex(idx);
     const mesh = new THREE.Mesh(g, new THREE.ShaderMaterial({
-      uniforms: { uOpacity: { value: 0.3 }, uHover: linkHover, uRes: pinUniforms.uRes, uDpr: pinUniforms.uDpr },
-      vertexShader: `attribute vec3 color; attribute vec3 aNext; attribute float aSide; attribute float aT; attribute float aW; attribute float aAgent;
-        uniform float uHover; uniform vec2 uRes; uniform float uDpr;
+      uniforms: { uOpacity: { value: 0.3 }, uHover: linkHover, uRes: pinUniforms.uRes, uDpr: pinUniforms.uDpr, uCutX: cutU.uCutX },
+      vertexShader: `attribute vec3 color; attribute vec3 aNext; attribute float aSide; attribute float aT; attribute float aW; attribute float aAgent; attribute float aEventX;
+        uniform float uHover; uniform vec2 uRes; uniform float uDpr; uniform float uCutX;
         varying vec3 vC; varying float vOn; varying float vSide; varying float vT; varying float vHalf; varying float vW;
         void main(){
+          if (aEventX > uCutX) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vC = vec3(0.0); vOn = 0.0; vSide = 0.0; vT = 0.0; vHalf = 1.0; vW = 0.0; return; }
           vC = color; vOn = abs(aAgent - uHover) < 0.5 ? 1.0 : 0.0; vSide = aSide; vT = aT;
           vec4 a = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
           vec4 b = projectionMatrix * modelViewMatrix * vec4(aNext, 1.0);
@@ -750,7 +907,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     for (const m of markLines) pts.push(m.x, m.y0, 0.08, m.x, m.y1 + 1.6, 0.08);
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-    cliffLines = new THREE.LineSegments(g, new THREE.LineDashedMaterial({ color: "#eef1f5", dashSize: 0.5, gapSize: 0.35, fog: false }));
+    cliffLines = new THREE.LineSegments(g, cutByX(new THREE.LineDashedMaterial({ color: "#eef1f5", dashSize: 0.5, gapSize: 0.35, fog: false })));
     cliffLines.computeLineDistances();
     world.add(cliffLines);
   }
@@ -779,7 +936,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
     g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
-    eventLines.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ vertexColors: true, fog: false })));
+    eventLines.add(new THREE.LineSegments(g, cutByX(new THREE.LineBasicMaterial({ vertexColors: true, fog: false }))));
   }
   world.add(eventLines);
 
@@ -823,7 +980,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     group.add(o);
     return o;
   }
-  // Hide lower-priority labels that would overlap others or sit under the HUD and panel.
+  // Hide lower-priority labels that would overlap others or sit under the HUD and panel, and landmark
+  // and map labels that stand beyond the playhead's cut.
+  const CUT_LABELS = /\b(event|cliff|cluster|request|focus|stratum|agent)\b/;
   const _v = new THREE.Vector3();
   let lastPlaced = new Set();
   function declutter() {
@@ -836,7 +995,8 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         if (!e._w || e.style.display === "none") continue;
         _v.setFromMatrixPosition(o.matrixWorld).project(camera);
         if (o.userData.cx0 === undefined) o.userData.cx0 = o.center.x;
-        items.push({ o, e, px: (_v.x + 1) / 2 * w, py: (1 - _v.y) / 2 * h, w: e._w, h: e._h, cx: o.userData.cx0, cy: o.center.y, flip: !!o.userData.flip, p: o.userData.prio || 0 });
+        const beyond = (g === labelGroups.l0 || g === labelGroups.map) && o.position.x > cutU.uCutX.value && CUT_LABELS.test(e.className);
+        items.push({ o, e, px: (_v.x + 1) / 2 * w, py: (1 - _v.y) / 2 * h, w: e._w, h: e._h, cx: o.userData.cx0, cy: o.center.y, flip: !!o.userData.flip, p: o.userData.prio || 0, beyond });
       }
     }
     // equal priorities: labels already on screen go first, so they are not traded back and forth
@@ -850,7 +1010,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     for (const it of items) {
       // its own anchor first; a landmark label mirrors its anchor before it gives up its place
       const quietEvent = level === 0 && !detailedLabels && detail.level < 2 && it.e.classList.contains("event");
-      const at = quietEvent || (sparse && it.p < 5) ? null : placeLabel(it, box, placed);
+      const at = quietEvent || it.beyond || (sparse && it.p < 5) ? null : placeLabel(it, box, placed);
       const hide = !at;
       if ((it.e.style.visibility === "hidden") !== hide) it.e.style.visibility = hide ? "hidden" : "";
       if (!at) continue;
@@ -1092,6 +1252,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // Arcs stay faint until their agent is hovered, except in the subagents lens.
     spawnLinks.material.uniforms.uOpacity.value = next === "agents" ? 0.85 : 0.1;
     returnLinks.material.uniforms.uOpacity.value = next === "agents" ? 0.95 : 0.14;
+    markMapStale();
     dirty = 3;
   }
   let focusAgentId = null;
@@ -1226,6 +1387,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     // padded for what hangs off the terrain: ruler and tick labels, the field's label, beacon heads
     depthBox.copy(terrainBounds).expandByScalar(12);
     depthBox.max.y += 18;
+    // grain columns: their drop above the crest and a collapse's puck (already inside the pad, kept honest)
+    const gb = grainK > 0 ? grains.columnsBox(grainUP, grainK) : null;
+    if (gb) depthBox.union(gb);
     if (level > 0 && stage.agent) {
       depthBox.expandByPoint(new THREE.Vector3(stageX(0) - 1, 0, STAGE_Z - 1));
       depthBox.expandByPoint(new THREE.Vector3(stageX(stage.n - 1) + 1, Math.max(H1, LIFT_H + 3), STAGE_Z + 9));
@@ -1250,6 +1414,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
   // ---- state ----
   let level = 0, cursor = -1, mapSelection = null;
   function show(S) {
+    markMapStale();
     mapSelection = S.mapSelection || null;
     const agent = S.agentId ? agents[agentIndex.get(S.agentId)] : null;
     const prevLevel = level;
@@ -1257,6 +1422,9 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     level = S.level;
     selStratum = S.level >= 3 ? S.stratum : null;
     if (S.lens !== lens) setLens(S.lens);
+    // grains follow the root unless the view focuses a subagent ridge; tables rebuild on change only
+    const g = agent && agent.kind === "subagent" && rowZ.has(agent.id) ? agent : L.root;
+    if (g !== grainAgent) { grainAgent = g; governor.reset(); }
     if (level === 0) {
       focusAgentId = null;
       applyFocusEmphasis(0);
@@ -1368,6 +1536,22 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     return 2 ** binExp;
   }
   let shownRequests = new Set(), shownAgents = new Set(), heldFocus = "";
+  // Map symbols (flags, beacons, map labels) depend on the view alone. Rebuilding them re-uploads their
+  // instance buffers, so they are refreshed only when the camera or viewport moved, or when state they
+  // show changed (markMapStale); a frame that only moves the playhead does no symbol work.
+  const viewKey = new Float64Array(34);
+  let flagsStale = true, mapStale = true;
+  const markMapStale = () => { flagsStale = mapStale = true; };
+  function viewMoved() {
+    const a = camera.matrixWorld.elements, b = camera.projectionMatrix.elements;
+    let moved = false;
+    for (let k = 0; k < 16; k++) {
+      if (viewKey[k] !== a[k]) { viewKey[k] = a[k]; moved = true; }
+      if (viewKey[16 + k] !== b[k]) { viewKey[16 + k] = b[k]; moved = true; }
+    }
+    if (viewKey[32] !== host.clientWidth || viewKey[33] !== host.clientHeight) { viewKey[32] = host.clientWidth; viewKey[33] = host.clientHeight; moved = true; }
+    return moved;
+  }
   function updateMapDetail(now) {
     camera.updateMatrixWorld();
     mapZoom = camera.zoom * overviewDistance / Math.max(0.001, camera.position.distanceTo(controls.target));
@@ -1375,15 +1559,20 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     host.dataset.mapDetail = detail.name;
     const status = document.querySelector('#zoom-status');
     if (status) status.textContent = level === 0 ? `${mapZoom.toFixed(1)}× · ${detail.name}` : level === 1 ? 'Agent requests' : 'Request layers';
-    if (flags.visible) flags.userData.update();
-    if (stage.flags?.visible) stage.flags.userData.update();
+    if (viewMoved()) markMapStale();
+    if (flagsStale) {
+      flagsStale = false;
+      if (flags.visible) flags.userData.update();
+      if (stage.flags?.visible) stage.flags.userData.update();
+    }
     if (level !== 0) { labelGroups.map.visible = mapLines.visible = false; return; }
     xray.visible = detail.level < 2;
     const linkFade = lens === "agents" ? 1 : Math.min(1, 1 / (mapZoom * mapZoom));
     spawnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.85 : 0.1) * linkFade;
     returnLinks.material.uniforms.uOpacity.value = (lens === "agents" ? 0.95 : 0.14) * linkFade;
+    if (!mapStale) return;
     if (now - detailAt < 90) { dirty = Math.max(dirty, 2); return; }
-    detailAt = now;
+    detailAt = now; mapStale = false;
     // Grouped in world bins set by zoom alone: panning moves beacons, it never regroups them.
     const clusters = clusterStable(beamCandidates, mapBin(), { rank: b => BEAM_RANK[b.kind] ?? 3 })
       .map(({ point, count }) => ({ count, point: { ...point, ...projectMapPoint(new THREE.Vector3(point.x, point.y0, point.z)) } }))
@@ -1480,7 +1669,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     if (key !== lastFocusKey) { lastFocusKey = key; focusSince = now; }
     if (key !== sentFocusKey) {
       if (now - focusSince >= 180) { sentFocusKey = key; onMapFocus(state); }
-      else dirty = Math.max(dirty, 2);
+      else { dirty = Math.max(dirty, 2); mapStale = true; } // the focus is still settling: look again
     }
   }
 
@@ -1609,15 +1798,19 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       dirty = Math.max(dirty, 1);
     }
     if (bench) { bench.frames.push(now); dirty = 1; controls.target.x += 0; camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.0015); }
+    if (play.playing) dirty = Math.max(dirty, 1);
     if (dirty > 0) {
       coreMirror.count = cores.count; coreMirror.visible = cores.visible;
       // Close in, a mirrored layer is big enough to be read as terrain that is not there: the floor's
       // reflection is an overview effect and fades out as the map zooms in.
       reflectMat.uniforms.uReflect.value = coreReflectMat.uniforms.uReflect.value = 0.3 * (1 - THREE.MathUtils.smoothstep(camera.zoom, 1.4, 4));
       mirror.visible = coreMirrorGroup.visible = reflectMat.uniforms.uReflect.value > 0.004;
-      fitDepth();
+      fitDepth(); // uses last frame's grain columns: their box sits inside the terrain pad anyway
       updateMapDetail(now);
+      updatePlayhead();
+      updateGrains(now);
       renderer.render(scene, camera);
+      lastRenderAt = now;
       labels.render(scene, camera);
       navigator.render(camera, safeNdc());
       measure();
@@ -1634,6 +1827,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
     pinUniforms.uDpr.value = renderer.getPixelRatio();
     camera.aspect = w / Math.max(1, h);
     camera.updateProjectionMatrix();
+    markMapStale();
     dirty = 3;
   }
   const ro = new ResizeObserver(() => resize());
@@ -1653,7 +1847,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       camera.position.fromArray(view.position); controls.target.fromArray(view.target);
       camera.zoom = view.zoom; overviewDistance = view.overviewDistance;
       camera.updateProjectionMatrix(); controls.update();
-      detailAt = -Infinity; sentFocusKey = ''; dirty = 3;
+      detailAt = -Infinity; sentFocusKey = ''; markMapStale(); dirty = 3;
     },
     panToRequest(agentId, index, reveal = false) {
       resize();
@@ -1668,7 +1862,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       }
       const point = new THREE.Vector3(xOf(agent, index), crest(agent, index) * 0.55, zOf(agent, index) + 0.1);
       panCameraTo(camera, controls.target, point, (insets.left + host.clientWidth - insets.right) / 2, (insets.top + host.clientHeight - insets.bottom) / 2, host.clientWidth, host.clientHeight);
-      controls.update(); detailAt = -Infinity; dirty = 3; onViewChange();
+      controls.update(); detailAt = -Infinity; markMapStale(); dirty = 3; onViewChange();
     },
     mountMinimap(host, width, height, selection) {
       const a = selection?.agentId && agents[agentIndex.get(selection.agentId)];
@@ -1677,10 +1871,11 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       navigator.mount(host,width,height,point); dirty=3;
     },
     zoom: zoomMap,
-    setLabelDetail(value) { detailedLabels = !!value; dirty = 3; },
+    setLabelDetail(value) { detailedLabels = !!value; markMapStale(); dirty = 3; },
     setInsets(v, preserveView = false) {
       const changed = JSON.stringify(v) !== JSON.stringify(insets);
       insets = v;
+      if (changed) markMapStale();
       if (changed && level === 0 && !fly.on && !preserveView) frameL0(0);
     },
     refit() {
@@ -1690,10 +1885,41 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
       else if (level >= 2 && lifted.visible) frameL2(350);
       dirty = 3;
     },
-    stats() {
+    // The playhead. P: root request space, clamped to [0, n - 1] (n - 1 = the end: nothing cut). playing:
+    // keep rendering every frame. sweep: 0..1 through the current request, or null. Cheap and idempotent:
+    // it stores state and asks for a frame; the cut, trench and grain columns follow in frame().
+    setPlayhead({ P, playing, sweep } = {}) {
+      if (P != null && Number.isFinite(+P)) play.P = clampP(+P);
+      if (playing !== undefined) play.playing = !!playing;
+      if (sweep !== undefined) play.sweep = sweep == null || !Number.isFinite(+sweep) ? null : Math.min(1, Math.max(0, +sweep));
+      dirty = Math.max(dirty, 1);
+    },
+    getPlayhead() {
+      return { P: play.P, playing: play.playing, sweep: play.sweep, n: rootN, cutX: grainState.cutX, agentId: grainAgent.id, agentP: grainState.uP, columns: grainState.K };
+    },
+    // enabled: grains on or off (off: the cut still works). density: fixed 0.01..1, or null for the
+    // frame-time governor. square: square grains, no coverage (A/B). columns: fixed K, or null for the
+    // zoom rule. emissive: strength of the sweep's glow on grains (0 = none; Task 5).
+    setGrainOptions(o = {}) {
+      for (const k of ["enabled", "square"]) if (o[k] !== undefined) grainOpts[k] = !!o[k];
+      for (const k of ["density", "columns", "emissive"]) if (o[k] !== undefined) grainOpts[k] = o[k] == null ? (k === "emissive" ? 0 : null) : +o[k];
+      if (grainOpts.enabled && !grains.tables && rowZ.has(grainAgent.id)) grains.setAgent(grainAgent);
+      dirty = Math.max(dirty, 2);
+      return { ...grainOpts };
+    },
+    stats({ live = false } = {}) {
       const gl = renderer.getContext();
       const ext = gl.getExtension("WEBGL_debug_renderer_info");
-      return { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, gpu: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : "unknown", labels: labels.domElement.childElementCount };
+      const g = grains.stats();
+      return {
+        calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, gpu: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : "unknown", labels: labels.domElement.childElementCount,
+        grains: g.grains, grainChunks: g.grainChunks, uploads: g.grainUploads,
+        grainColumns: grainState.K, grainDensity: g.grainDensity, grainsResident: g.grainsResident, grainChunksTotal: g.grainChunksTotal,
+        grainN0: g.grainN0, grainBuilds: g.grainBuilds, grainBuildMs: g.grainBuildMs, grainAgent: grainAgent.id, grainPxPerColumn: Math.round(grainState.pxPerColumn * 100) / 100,
+        // grains in context at their columns (the rest of the submitted quads are degenerate); O(rows), on request
+        ...(live ? { grainsLive: grainState.K > 0 ? grains.liveCount(grainState.uP, grainState.K, g.grainDensity) : 0 } : {}),
+        playhead: { P: play.P, playing: play.playing, cutX: grainState.cutX, grainX0: grainState.grainX0, grainX1: grainState.grainX1 }, mapZoom
+      };
     },
     bench(ms = 3000) {
       return new Promise(res => {
@@ -1705,7 +1931,7 @@ export function createScene(host, { trace, layout: L, reducedMotion, onHover, on
         }, ms);
       });
     },
-    dispose() { cancelAnimationFrame(raf); ro.disconnect(); navigator.dispose(); miniMat.dispose(); miniTex.dispose(); renderer.dispose(); host.replaceChildren(); }
+    dispose() { cancelAnimationFrame(raf); ro.disconnect(); navigator.dispose(); miniMat.dispose(); miniTex.dispose(); grains.dispose(); renderer.dispose(); host.replaceChildren(); }
   };
 }
 

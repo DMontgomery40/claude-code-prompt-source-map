@@ -106,23 +106,30 @@ export function grainColumns(mapZoom, pxPerColumn, previous = 0) {
 }
 
 // Frame-time governor for grain density: keeps the last `window` frame intervals; every `window`
-// samples, a p90 above `high` ms multiplies density by `down` (never below `floor`); `calm` frames
-// in a row under `low` ms multiply it by `up` (never above 1). Intervals over `gap` ms are idle time
-// between renders, not frame cost, and are ignored.
+// samples, a p90 above the slow threshold multiplies density by `down` (never below `floor`); `calm`
+// frames in a row under the calm threshold multiply it by `up` (never above 1). The thresholds are
+// `high` / `low` ms, raised to 1.5x / 1.2x the display's frame interval: rAF intervals on a 60 Hz
+// display jitter up to ~18.7 ms with no load at all (p90 18.0-18.4 ms measured, headless and headed),
+// so a flat 18 ms reads vsync jitter as slowness, while a dropped frame is ~33 ms. The display interval
+// is the lowest window p25 seen, capped at 1000/60 (so a scene slow from its first frame still counts
+// as slow). Intervals over `gap` ms are idle time between renders, not frame cost, and are ignored.
 export function createDensityGovernor({ window = 30, high = 18, low = 12, calm = 120, down = 0.75, up = 1.1, floor = 0.05, gap = 250 } = {}) {
-  let density = 1, sinceEval = 0, calmRun = 0;
+  let density = 1, sinceEval = 0, calmRun = 0, cadence = 1000 / 60;
   const samples = [];
+  const pick = (sorted, q) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * q))];
   return {
     get density() { return density; },
+    get cadence() { return cadence; },
     push(dt) {
       if (!(dt > 0) || dt > gap) return density;
       samples.push(dt);
       if (samples.length > window) samples.shift();
-      calmRun = dt < low ? calmRun + 1 : 0;
+      calmRun = dt < Math.max(low, 1.2 * cadence) ? calmRun + 1 : 0;
       if (++sinceEval >= window && samples.length >= window) {
         sinceEval = 0;
         const sorted = [...samples].sort((a, b) => a - b);
-        if (sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.9))] > high) { density = Math.max(floor, density * down); calmRun = 0; }
+        cadence = Math.min(cadence, pick(sorted, 0.25));
+        if (pick(sorted, 0.9) > Math.max(high, 1.5 * cadence)) { density = Math.max(floor, density * down); calmRun = 0; }
       }
       if (calmRun >= calm) { density = Math.min(1, density * up); calmRun = 0; }
       return density;
