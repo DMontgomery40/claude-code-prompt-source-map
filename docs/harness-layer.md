@@ -29,16 +29,28 @@ the reader, the custody ladder and playback all stay. Grains are the one excepti
   sidebar drives the layer.
 
 ## Status
-- Prototyped and integrated as a mock inside built copies of Trace for both products: a Harness button next
-  to 2D/3D, and the `h` key.
-- Tested on one Claude Code session and three Codex/ChatGPT sessions.
-- Not yet ported into `site/trace`. Porting needs:
-  - a first-class mode in `setMode`;
-  - hand-off through `A.openBlockAt`;
-  - rendering as a module rather than an iframe;
-  - pieces computed in `worker.js`;
-  - a shipped literal index next to `reference-index.json`.
-- Open decision: whether an index derived from the binary may ship publicly.
+- **Prototyped and integrated as a real mode in built copies of Trace, for both products.**
+  - A Harness button sits next to 2D/3D, and the `h` key toggles it. Both appear in the "?" sheet and the command palette.
+  - `?view=harness` opens straight into it.
+  - `S.mode = "harness"` is a real mode, so back and forward work through view history.
+  - Trace's selection and playhead drive the layer.
+  - A click in the layer calls `A.openBlockAt`, so the reader, crumbs and playhead follow.
+  - Grains are off through `scene.setGrainOptions({ enabled: false })`.
+  - The patch against the built Trace is small: app.js +21 lines, index.html +3, keys.js +1, palette.js +1, plus a `harness/` folder.
+- **Tested** on one Claude Code session and three Codex/ChatGPT sessions.
+- **Not yet ported into `site/trace`.** The port needs to:
+  - apply those edits to the source;
+  - mount the layer as a module in the stage container (no iframe, no second WebGL context);
+  - compute pieces in `worker.js` instead of precomputed per-session data;
+  - ship a literal index next to `reference-index.json`;
+  - remove `grains.js` and `grain-rules.js` once the playback kernel no longer imports them;
+  - add an n/N "next copy of this piece" key.
+- **Known rough edges:**
+  - Esc/back can leave the mode.
+  - A 2D-only session has no playback or minimap in the layer.
+  - The panel note says "ridge" in Harness mode.
+  - The bottom-left is tight under 980 px.
+- **Open decision:** whether an index derived from the binary may ship publicly.
 
 ## Where the work in progress lives
 Locally, in the gitignored `private/research/restart/`. That covers the brief, discovery scans, the four
