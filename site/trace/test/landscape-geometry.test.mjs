@@ -1,6 +1,6 @@
 // Placement pinned to the landscape as scene.js drew it before the extraction: the ridge face, crest,
 // rows and slopes. The reference below is copied verbatim from createScene's closures, so this test
-// pins the old numbers, not the new module. Grains and playback must land exactly on the solid ridge.
+// pins the old numbers, not the new module. The playhead and the director must land exactly on the solid ridge.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";

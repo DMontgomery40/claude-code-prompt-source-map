@@ -1,6 +1,6 @@
 // Where the landscape puts things (no three.js): the x, row, crest, strata tops, slope depth and
 // profile of every request on every ridge. scene.js draws the solid ridges from these numbers, and
-// anything that must sit exactly on a ridge (grains, the playhead) reads the same ones.
+// anything that must sit exactly on a ridge (the playhead, the director) reads the same ones.
 import { STRATA } from "./panels.js";
 import { BASE_H, landscapeRule, tread, treadAt, terrainPlacement } from "./scene-rules.js";
 

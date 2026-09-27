@@ -261,14 +261,14 @@ test("rule 5 (events): a wait is a main gap over 3x the median with a subagent i
   assert.equal(agentPAt(geom, kid, geom.x(kid, 0) - 1), -1);
 });
 
-test("rule 6: one request before a compaction the camera pulls back over the column, until 0.5 s after the collapse", () => {
+test("rule 6: one request before a compaction the camera pulls back over the column, until 0.5 s after it is crossed", () => {
   const ev = sorted([comp(50, 50)]);
   const r = play(ev, 48.5, 1500);
   const c = r.shots.find(o => o.shot.kind === "compaction");
   assert.ok(c && c.x >= 49 && c.x < 49.1, `from P ${c?.x} (one request before)`);
-  assert.ok(c.shot.box.yTop >= 30 && c.shot.box.x0 <= 49 && c.shot.box.x1 >= 50, "the whole column and the puck");
+  assert.ok(c.shot.box.yTop >= 30 && c.shot.box.x0 <= 49 && c.shot.box.x1 >= 50, "the whole column and the drop after it");
   const release = r.shots.find(o => o.shot.id === c.shot.id && o.shot.releaseAt != null);
-  assert.ok(release.x >= 50 && release.shot.releaseAt === release.now + 500, "the collapse is complete: release in 0.5 s");
+  assert.ok(release.x >= 50 && release.shot.releaseAt === release.now + 500, "the compaction is crossed: release in 0.5 s");
   const back = r.shots.find(o => o.now > release.now);
   assert.ok(back.shot.kind === "follow" && back.now >= release.now + 500 && back.now < release.now + 520);
 });

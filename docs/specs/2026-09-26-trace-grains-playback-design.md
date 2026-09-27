@@ -1,5 +1,12 @@
 # Trace: grains, playback, the re-read sweep, and words at max zoom
 
+> **Superseded (2026-09-27).** Grains are removed from Trace: the pour, the re-read sweep and sweep labels,
+> grain density and its frame-time governor, words at max zoom, and the compaction puck and collapse
+> (`grains.js`, `grain-rules.js`, `block-text.js` are gone). They do not fit Trace's harness-layer
+> framing. Playback stays: the transport, step, speed, scrub, the cut plane, playhead-driven landmarks and
+> the follow director, including its compaction shot (`playback.js`, `transport.js`, `director.js`). Kept
+> for history; do not build on it.
+
 Date: 2026-09-26. Status: approved by David in conversation ("go with your exact recommendation", "when it looks good, ship it"). Scope lives in `site/trace/` and must land byte-identical in both site repos (`gpt6-prompt-source-map`, `claude-code-prompt-source-map`).
 
 ## 1. Why
