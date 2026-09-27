@@ -41,7 +41,8 @@ const files = [...published, ...(existsSync(dist) ? walk(dist) : [])];
 const forbidden = forbiddenValues();
 const found = [];
 for (const file of files) {
-  if (!existsSync(file) || statSync(file).size > 50_000_000) continue;
+  // Only files: an untracked symlink to a folder (a worktree's linked work folder) is not text to scan.
+  if (!existsSync(file) || !statSync(file).isFile() || statSync(file).size > 50_000_000) continue;
   const buf = readFileSync(file);
   if (buf.includes(0)) continue; // binary
   const text = buf.toString("utf8");
