@@ -44,10 +44,12 @@ float haze(vec3 w, float depth) {
 // Grains fill the tread of their request edge to edge and GRAIN_DEPTH world units back from the face, so
 // neighbouring columns meet as one granular slab. A grain is as wide as the face area it stands for
 // (tread width x its tokens' height) times GRAIN_TILE, never under the floor (2 px, 3 at Layers) nor over
-// the cap, so the slab stays covered from Requests to the deepest zoom.
+// the cap, so the slab stays covered from Requests to the deepest zoom. The 24 px cap keeps the widest
+// tread of the Claude Code session (1.72 world units) covered at 256x (1.6% open; 7.1% at 150x), where
+// 12 px left a third of it open.
 export const GRAIN_DEPTH = 1.5;
 export const GRAIN_TILE = 2;
-export const GRAIN_MAX_PX = 12;
+export const GRAIN_MAX_PX = 24;
 
 // The size rule in device px, shared by the vertex shader (below) and stats().minGrainPx:
 // clamp(GRAIN_TILE * sqrt((2 * halfW + depthSpread) * stepWorld) * pxPerWorld, minPx, maxPx) * sqrt(1 / density).
