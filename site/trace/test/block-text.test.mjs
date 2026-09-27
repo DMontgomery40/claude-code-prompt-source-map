@@ -110,7 +110,7 @@ test("block text: a band under 24 px on screen is hidden, one at 24 px or more i
   assert.equal(o.position.z, -0.3);
   assert.equal(o.center.x, 0);
   assert.equal(o.element.style.marginLeft, "5px");
-  group.updateMatrixWorld(true);
+  // no render in between: panes first shown this pass already count in the scene's declutter
   assert.deepEqual(bt.rects(camera, 1000, 1000).map(r => [r.x, r.y + r.h / 2]).sort((a, b) => a[1] - b[1]), [[505, 287.5], [505, 588]], "rects for the scene's declutter");
   // without a ridge depth the column is GRAIN_DEPTH deep
   const { depth, ...flat } = geom;
@@ -231,7 +231,7 @@ test("block text: the cache returns the same promise for the same ref, and at mo
   bt.dispose();
 });
 
-test("block text: a read with no answer in 15 s shows as unavailable but keeps its slot until it settles", async (t) => {
+test("block text: a read with no answer in 15 s, waiting or running, shows as unavailable; running reads keep their slots", async (t) => {
   t.mock.timers.enable({ apis: ["setTimeout"] });
   const calls = [];
   const getText = (agentId, ref) => new Promise(resolve => calls.push({ ref, resolve }));
@@ -243,7 +243,7 @@ test("block text: a read with no answer in 15 s shows as unavailable but keeps i
   t.mock.timers.tick(PANE.timeoutMs);
   await flush();
   const slow = shown(group).filter(o => body(o) === "text unavailable");
-  assert.equal(slow.length, 4, "the 4 panes waiting on a read say so");
+  assert.equal(slow.length, 6, "the 4 running and the 2 queued reads' panes say so (a hung worker cannot leave them blank)");
   assert.equal(bt.stats().inFlight, 4);
   assert.equal(calls.length, 4, "no 5th read while 4 are still out");
   calls[0].resolve("late words");
@@ -280,6 +280,59 @@ test("block text: panes fetch through the cache, show the caption alone while lo
   bt.dispose();
 });
 
+test("block text: a pane that stays on its block follows the band's size and colour from request to request", async () => {
+  const { bt, group } = setup();
+  const { camera, viewport } = view();
+  const { agent, bands } = scene([[100, 300]], { label: () => "memory index" });
+  bt.update({ camera, agent, bands, geom, i: 0, viewport });
+  const o = shown(group)[0];
+  assert.equal(caption(o), "memory index · ≈ 200");
+  // the same block row at the next request: its share of the column was rescaled, and it now stands in
+  // another stratum's colour (a Harness wrapper part keeps the row but not the stratum)
+  bt.update({ camera, agent, bands: [{ ...bands[0], y1: 450 }], geom, i: 1, viewport });
+  assert.equal(shown(group).length, 1);
+  assert.equal(shown(group)[0], o, "the same pane, so the words do not flash");
+  assert.equal(caption(o), "memory index · ≈ 350");
+  bt.update({ camera, agent, bands: [{ ...bands[0], y1: 450, stratum: 0 }], geom, i: 2, viewport });
+  assert.equal(o.element.style["--c"], STRATA[0].color);
+  assert.equal(caption(o), "memory index · product wording · ≈ 350");
+  await flush();
+  bt.dispose();
+});
+
+test("block text: reads for bands that left the view are dropped before they start; a failed read is tried again later", async () => {
+  const calls = [];
+  const getText = (agentId, ref) => new Promise((resolve, reject) => calls.push({ ref, resolve, reject }));
+  const { bt, group } = setup({ getText });
+  const { camera, viewport } = view(1000, 4000);
+  const { agent, bands } = scene(Array.from({ length: 10 }, (_, k) => [k * 300, k * 300 + 200]));
+  bt.update({ camera, agent, bands, geom, i: 0, viewport });
+  assert.equal(calls.length, 4);
+  assert.equal(bt.stats().queued, 6);
+  // the view moves on: only bands 0 and 9 remain; the queued reads of the others are dropped
+  bt.update({ camera, agent, bands: [bands[0], bands[9]], geom, i: 0, viewport });
+  assert.equal(bt.stats().queued, 1, "only band 9's read still waits");
+  for (const c of calls.slice(0, 4)) c.resolve("x");
+  await flush();
+  assert.deepEqual(calls.map(c => c.ref.offset), [0, 100, 200, 300, 900], "no read for bands 4 to 8");
+  // band 9's read fails: its pane says so, and the next time the band is shown it is read again
+  calls[4].reject(new Error("worker error"));
+  await flush();
+  assert.equal(body(shown(group).find(o => o.position.y === 2800)), "text unavailable");
+  bt.clear();
+  bt.update({ camera, agent, bands: [bands[9]], geom, i: 0, viewport });
+  assert.equal(calls.length, 6, "read again");
+  calls[5].resolve("words at last");
+  await flush();
+  assert.equal(body(shown(group)[0]), "words at last");
+  // a dispose while reads are out: nothing throws when they settle later
+  bt.update({ camera, agent, bands: [bands[1]], geom, i: 0, viewport });
+  bt.dispose();
+  for (const c of calls) c.resolve("late");
+  await flush();
+  assert.equal(group.children.length, 0);
+});
+
 test("block text: text is cut to 400 characters ending in an ellipsis", async () => {
   const long = "word ".repeat(300);
   const { bt, group } = setup({ getText: () => Promise.resolve(long) });
@@ -293,6 +346,11 @@ test("block text: text is cut to 400 characters ending in an ellipsis", async ()
   assert.equal(paneText("short").text, "short");
   assert.equal(paneText("x".repeat(400)).text.length, 400);
   assert.ok(!paneText("x".repeat(400)).text.endsWith("…"), "exactly 400 is not cut");
+  // an emoji across the cut is dropped whole, never left as half a surrogate pair
+  const cut = paneText("a".repeat(398) + "😀" + "b".repeat(10)).text;
+  assert.equal(cut, "a".repeat(398) + "…");
+  assert.doesNotMatch(cut, /[\uD800-\uDBFF](?![\uDC00-\uDFFF])/);
+  assert.equal(paneText("a".repeat(397) + "😀" + "b".repeat(10)).text, "a".repeat(397) + "😀…");
   bt.dispose();
 });
 

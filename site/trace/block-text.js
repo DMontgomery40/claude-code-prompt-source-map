@@ -32,7 +32,9 @@ export function refKey(ref) {
 export function paneText(result) {
   const text = typeof result === "string" ? result : result?.text ?? "";
   if (/^data:image\//.test(text)) return { text: NOTE.image, note: true };
-  const words = clip(text, PANE.maxChars);
+  let words = clip(text, PANE.maxChars);
+  // clip counts UTF-16 units: never leave half of an emoji before the ellipsis
+  if (words.endsWith("…") && /[\uD800-\uDBFF]$/.test(words.slice(0, -1))) words = `${words.slice(0, -2)}…`;
   return words ? { text: words, note: false } : { text: NOTE.empty, note: true };
 }
 
@@ -42,10 +44,10 @@ export function paneLines(px) {
 }
 
 export function createBlockText({ getText, group, maxPanes = 24, onChange = () => {} }) {
-  const cache = new Map();   // key -> { promise, resolve, done, value }; oldest first
+  const cache = new Map();   // key -> { promise, resolve, timer, done, value }; oldest first
   const queue = [];          // reads waiting for one of the 4 slots
   const timers = new Set();
-  const pool = [];           // { o, el, label, body, band, textKey, lines, margin, rect }
+  const pool = [];           // { o, el, label, body, band, caption, color, textKey, lines, margin, rect }
   let inFlight = 0, wanted = new Set(), disposed = false;
 
   function show(key, value) {
@@ -54,37 +56,37 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
     for (const p of pool) if (p.textKey === key && p.o.visible) { setBody(p, value); changed = true; }
     if (changed) onChange();
   }
-  function settle(key, entry, value) {
+  // A read ends: its words (or a note) go to the panes showing it. A failed or dropped read leaves the
+  // cache, so the block is read again the next time it comes into view.
+  function settle(key, entry, value, keep) {
+    clearTimeout(entry.timer); timers.delete(entry.timer);
     entry.done = true; entry.value = value;
+    if (!keep && cache.get(key) === entry) cache.delete(key);
     entry.resolve(value);
-    show(key, value);
+    if (value) show(key, value);
   }
   function pump() {
     while (!disposed && inFlight < PANE.fetches && queue.length) {
-      // panes on screen now go first; reads for bands that have gone wait their turn
+      // panes on screen now go first
       const at = Math.max(0, queue.findIndex(j => wanted.has(j.key)));
       const job = queue.splice(at, 1)[0];
-      inFlight++;
-      // a read with no answer in 15 s shows as unavailable (its words replace that if they come), but it
-      // keeps its slot until it settles: never more than 4 at once
-      const timer = setTimeout(() => { timers.delete(timer); show(job.key, { text: NOTE.failed, note: true }); }, PANE.timeoutMs);
-      timers.add(timer);
-      const done = value => {
-        clearTimeout(timer); timers.delete(timer); inFlight--;
-        settle(job.key, job.entry, value);
-        pump();
-      };
+      inFlight++; // a read keeps its slot until it settles: never more than 4 at once
+      const done = (value, keep) => { inFlight--; settle(job.key, job.entry, value, keep); pump(); };
       new Promise(resolve => resolve(getText(job.agentId, job.ref)))
-        .then(r => done(paneText(r)), () => done({ text: NOTE.failed, note: true }));
+        .then(r => done(paneText(r), true), () => done({ text: NOTE.failed, note: true }, false));
     }
   }
-  // The cached read of one block's text: the same promise for the same ref, resolving to { text, note }.
+  // The cached read of one block's text: the same promise for the same ref, resolving to { text, note }
+  // (null for a read dropped before it started because its band left the view).
   function text(agentId, ref) {
     const key = refKey(ref);
     let entry = cache.get(key);
     if (entry) { cache.delete(key); cache.set(key, entry); return entry.promise; }
     entry = { done: false, value: null };
     entry.promise = new Promise(resolve => { entry.resolve = resolve; });
+    // no answer in 15 s, waiting or running: the pane says unavailable; the words replace that if they come
+    entry.timer = setTimeout(() => { timers.delete(entry.timer); show(key, { text: NOTE.failed, note: true }); }, PANE.timeoutMs);
+    timers.add(entry.timer);
     cache.set(key, entry);
     for (const [k, e] of cache) {
       if (cache.size <= PANE.cacheSize) break;
@@ -113,7 +115,7 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
     o.center.set(0, 0.5);
     o.visible = false;
     group.add(o);
-    const p = { o, el, label, body, band: "", textKey: null, lines: 0, margin: 0, rect: null };
+    const p = { o, el, label, body, band: "", caption: null, color: null, textKey: null, lines: 0, margin: 0, rect: null };
     pool.push(p);
     return p;
   }
@@ -227,11 +229,10 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
       if (p.margin !== c.margin) { p.el.style.marginLeft = `${c.margin}px`; p.margin = c.margin; }
       p.o.visible = true;
       p.rect = c.spot;
-      if (fresh) {
-        p.el.style.setProperty("--c", (STRATA[c.b.stratum] || STRATA[0]).color);
-        p.label.textContent = c.info.caption;
-        p.el._w = undefined;
-      }
+      // the caption's size and the colour follow the band at this request (a block's share changes)
+      const color = (STRATA[c.b.stratum] || STRATA[0]).color;
+      if (p.color !== color) { p.el.style.setProperty("--c", color); p.color = color; }
+      if (p.caption !== c.info.caption) { p.label.textContent = c.info.caption; p.caption = c.info.caption; p.el._w = undefined; }
       if (p.lines !== c.lines) { p.el.style.setProperty("--lines", String(c.lines)); p.lines = c.lines; p.el._w = undefined; }
       if (c.info.ref) {
         const k = refKey(c.info.ref);
@@ -242,6 +243,12 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
           if (!cached(c.info.ref)) text(agentId, c.info.ref);
         }
       } else if (fresh) { p.textKey = null; setBody(p, c.info.value); }
+    }
+    // reads not started yet for bands that have left the view are dropped, not fetched later
+    for (let j = queue.length - 1; j >= 0; j--) {
+      if (wanted.has(queue[j].key)) continue;
+      const job = queue.splice(j, 1)[0];
+      settle(job.key, job.entry, null, false);
     }
     // whole-pixel placement (the vendor CSS2DRenderer patch) needs each pane's size
     for (const p of pool) {
@@ -256,7 +263,8 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
     const out = [];
     for (const p of pool) {
       if (!p.o.visible) continue;
-      _a.setFromMatrixPosition(p.o.matrixWorld).project(camera);
+      // from the position set in update, so a pane shown this pass counts before it is first rendered
+      _a.copy(p.o.position).applyMatrix4(group.matrixWorld).project(camera);
       const w = p.el._w || p.rect?.w || PANE.widthPx, h = p.el._h || p.rect?.h || PANE.chromePx;
       const px = (_a.x + 1) / 2 * width, py = (1 - _a.y) / 2 * height;
       out.push({ x: px + p.margin - p.o.center.x * w, y: py - p.o.center.y * h, w, h });
@@ -268,7 +276,7 @@ export function createBlockText({ getText, group, maxPanes = 24, onChange = () =
     update,
     text,
     rects,
-    clear() { for (const p of pool) release(p); wanted = new Set(); },
+    clear() { for (const p of pool) if (p.band) release(p); if (wanted.size) wanted = new Set(); }, // cheap when idle
     stats: () => ({ panes: pool.length, visible: pool.filter(p => p.o.visible).length, inFlight, queued: queue.length, cached: cache.size }),
     dispose() {
       disposed = true;
