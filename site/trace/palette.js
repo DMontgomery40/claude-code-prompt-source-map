@@ -303,6 +303,14 @@ export function createPalette(ctx) {
     goTo(item, terms);
   }
   // The occurrence nearest where the user is: in the open agent at or after the request, else the first.
+  // A trail handed in from outside (every copy of one piece of harness text): moves d from the copy
+  // open now, and n / ⇧N and the bar keep walking it.
+  function walk({ label, list, at = -1 }, d = 1) {
+    if (!list.length) return;
+    trail = { label, items: list.map(x => ({ go: { type: "block", agentId: x.agentId, block: x.block } })), i: at >= 0 ? at : nearest(list), terms: [] };
+    clearHighlight();
+    if (at >= 0) step(d); else goTo(trail.items[trail.i], []);
+  }
   function nearest(list) {
     const S = ctx.state();
     const here = list.findIndex(x => x.agentId === S.agentId && (x.reqIdx ?? 0) >= (S.reqIdx ?? 0));
@@ -461,6 +469,7 @@ export function createPalette(ctx) {
     search: () => open(),
     help: () => (help.hidden ? openHelp() : closeHelp()),
     trail: d => step(d),
+    copies: d => ctx.copies?.(d),
     ends: d => { const S = ctx.state(); if (S.level >= 1 && S.agent?.requests.length) ctx.moveRequest(d * S.agent.requests.length, false); },
     agent: d => stepAgent(d),
     ask: d => stepAsk(d),
@@ -528,7 +537,7 @@ export function createPalette(ctx) {
 
   function agentById(id) { return trace?.agents.find(a => a.id === id) || null; }
   renderBar();
-  return { setTrace, open, close, isOpen, handleKey, openHelp };
+  return { setTrace, open, close, isOpen, handleKey, openHelp, walk };
 }
 
 function marked(text, terms) {

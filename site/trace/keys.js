@@ -10,6 +10,7 @@ export const KEYS = [
   { id: "ends", group: "Move", keys: ["Home", "End"], label: "First / last request", bind: { Home: -1, End: 1 } },
   { id: "agent", group: "Move", keys: ["[", "]"], label: "Previous / next agent", bind: { "[": -1, "]": 1 } },
   { id: "ask", group: "Move", keys: ["a", "⇧A"], label: "Next / previous thing you asked", bind: { a: 1, A: -1 } },
+  { id: "copies", group: "Move", keys: ["c", "⇧C"], label: "Next / previous copy of the open harness text (then n / ⇧N walk them)", bind: { c: 1, C: -1 } },
   { id: "panel", group: "Move", keys: ["j", "k"], label: "Step through the panel's items (Enter opens)", bind: { j: 1, k: -1 } },
   { app: true, group: "Move", keys: ["Enter"], label: "Go into the session or the selected agent" },
   { app: true, group: "Move", keys: ["Esc"], label: "Back out one step" },

@@ -194,6 +194,7 @@ test("plain keys dispatch, modified keys don't; ⌘K and Ctrl+K open search", ()
   const ev = (key, mods = {}) => ({ key, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, ...mods });
   assert.equal(keyFor(ev("/")).row.id, "search");
   assert.deepEqual([keyFor(ev("n")).arg, keyFor(ev("N", { shiftKey: true })).arg], [1, -1]);
+  assert.deepEqual([keyFor(ev("c")).row.id, keyFor(ev("c")).arg, keyFor(ev("C", { shiftKey: true })).arg], ["copies", 1, -1], "c / ⇧C: next / previous copy of the open harness text");
   assert.equal(keyFor(ev("]")).arg, 1);
   assert.equal(keyFor(ev("n", { metaKey: true })), null);
   assert.equal(keyFor(ev("a", { ctrlKey: true })), null);

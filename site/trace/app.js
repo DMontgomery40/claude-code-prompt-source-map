@@ -606,6 +606,7 @@ async function start(trace) {
   transport.load(playbackFor(S.layout));
   dir = null; playCard = null; followZoom = null;
   palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
+    copies: d => harness?.copiesHere().then(r => r && palette.walk(r, d)),
     playback: {
       toggle: () => playbackShown() && transport.toggle(),
       step: d => playbackShown() && transport.step(d),
