@@ -443,7 +443,7 @@ test("claude-code: a subagent's own subagents sit under it at their true depth",
 
 test("claude-code: spawnDepth places a nested subagent nothing names; an unclaimed call just before it links it", async () => {
   const { trace, by } = await loadNested();
-  // a teammate whose meta says spawnDepth 1 is at depth 2; the only call near its start is c1's: root, and a note
+  // a teammate whose meta says spawnDepth 1 is at depth 2; the only call near its start is g1's: root, and a note
   assert.deepEqual([by.d1.parentId, by.d1.depth, by.d1.spawn], [CCN.session, 2, null]);
   const lost = subNotes(trace, "d1");
   assert.equal(lost.length, 1);
@@ -454,7 +454,16 @@ test("claude-code: spawnDepth places a nested subagent nothing names; an unclaim
   // a regular subagent's spawnDepth 1 is the root's own child: unlinked, it stays at depth 1
   assert.deepEqual([by.x1.parentId, by.x1.depth, by.x1.spawn], [CCN.session, 1, null]);
   assert.deepEqual(subNotes(trace, "x1"), ["subagent x1 (general-purpose): no matching Agent tool_use; attached to root"]);
-  assert.deepEqual(trace.notes.filter((n) => n.startsWith("subagent ")).sort(), [...lost, ...subNotes(trace, "x1")].sort());
+  assert.deepEqual(trace.notes.filter((n) => n.startsWith("subagent ")).sort(), [...lost, ...subNotes(trace, "x1"), ...subNotes(trace, "n1")].sort());
+});
+
+test("claude-code: the time fallback never takes a call named for another agent", async () => {
+  const { trace, by } = await loadNested();
+  // b1's Agent {name: "zed"} is unclaimed and 2 s before n1 ("nosy") starts: it spawned zed, not n1
+  assert.deepEqual([by.n1.parentId, by.n1.depth, by.n1.spawn], [CCN.session, 2, null]);
+  const notes = subNotes(trace, "n1");
+  assert.equal(notes.length, 1);
+  assert.match(notes[0], /spawnDepth 1 puts it at depth 2/);
 });
 
 test("claude-code: Workflow-spawned agents link to the Workflow call that launched their run", async () => {

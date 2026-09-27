@@ -161,12 +161,14 @@ export function claudeFiles() {
 // teammates count spawnDepth from 0 at the root, other subagents from 1, and carry the spawning toolUseId.
 //   root: Agent "mid" (request 0); two Agent calls described "review" (1, 2); Workflow calls whose
 //     results name wf_12 (request 3, with runId) then wf_1 (request 4, text only)
-//   b1 "mid" (teammate, spawnDepth 0): Agent "leaf" (request 0), Agent "forkb" (2), an unnamed Agent call (3)
+//   b1 "mid" (teammate, spawnDepth 0): Agent "leaf" (request 0), Agent "forkb" (2), an unnamed Agent call (3),
+//     Agent "zed" (4), whose agent is not on disk
 //   c1 "leaf" (teammate, spawnDepth 1): the grandchild, matched by name inside b1
 //   a0fk "forkb" (fork of b1, spawnDepth 1): replays b1's rows up to its own spawn, "leaf" call included;
 //     its file sorts before b1's, so the replayed copy comes first
 //   e1 "anon" (teammate, spawnDepth 1): no name match; b1's unclaimed call 2 s before its first row
-//   d1 "lost" (teammate, spawnDepth 1): starts 2 s after b1's "leaf" call, which c1 claims; nothing else near
+//   d1 "lost" (teammate, spawnDepth 1): starts 3 s after rv1's unnamed call, which g1 claims; nothing else near
+//   n1 "nosy" (teammate, spawnDepth 1): starts 2 s after b1's "zed" call, which names another agent
 //   rv1 (regular, spawnDepth 1, toolUseId of the first "review" call); g1 (regular, spawnDepth 2), spawned by rv1
 //   x1 (regular, spawnDepth 1): its call is not in any transcript
 //   w1 under workflows/wf_1 (with a journal.jsonl beside it), w2 under workflows/wf_12
@@ -209,6 +211,8 @@ export function claudeNestedFiles() {
     result(9, "tuForkB", "Spawned forkb", sb("b1")),
     call(50, "q3", "tuAnon", "Agent", { description: "unlabelled", prompt: "do anon" }, sb("b1")),
     result(51, "tuAnon", "Spawned", sb("b1")),
+    call(60, "q4", "tuZed", "Agent", { name: "zed", description: "zed", prompt: "do zed" }, sb("b1")),
+    result(61, "tuZed", "Spawned zed", sb("b1")),
   ];
   const fork = [...b1Rows("a0fk"), asst(10, "fkq1", [{ type: "text", text: "forked" }], sb("a0fk"))];
   const rv1 = [
@@ -232,8 +236,10 @@ export function claudeNestedFiles() {
     [`${S}/subagents/agent-c1.meta.json`]: mate({ agentType: "leaf", name: "leaf", description: "leafy", spawnDepth: 1 }),
     [`${S}/subagents/agent-e1.jsonl`]: J(leafRows("e1", 52)),
     [`${S}/subagents/agent-e1.meta.json`]: mate({ agentType: "anon", name: "anon", description: "no such call", spawnDepth: 1 }),
-    [`${S}/subagents/agent-d1.jsonl`]: J(leafRows("d1", 7)),
+    [`${S}/subagents/agent-d1.jsonl`]: J(leafRows("d1", 18)),
     [`${S}/subagents/agent-d1.meta.json`]: mate({ agentType: "lost", name: "lost", description: "no such call", spawnDepth: 1 }),
+    [`${S}/subagents/agent-n1.jsonl`]: J(leafRows("n1", 62)),
+    [`${S}/subagents/agent-n1.meta.json`]: mate({ agentType: "nosy", name: "nosy", description: "not zed", spawnDepth: 1 }),
     [`${S}/subagents/agent-rv1.jsonl`]: J(rv1),
     [`${S}/subagents/agent-rv1.meta.json`]: meta({ agentType: "general-purpose", description: "review", toolUseId: "tuRev", spawnDepth: 1 }),
     [`${S}/subagents/agent-g1.jsonl`]: J(leafRows("g1", 17)),

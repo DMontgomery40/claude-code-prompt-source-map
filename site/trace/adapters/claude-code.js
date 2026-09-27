@@ -521,12 +521,13 @@ export function buildClaudeTrace(parsed, files) {
   }
   // The rest: the meta's spawnDepth says how deep it sits (teammates count from 0 at the root, other
   // subagents from 1). A nested one takes a subagent's unclaimed Agent/Task call in the 5 s before its
-  // first row, closest first; else it hangs from the root at that depth.
+  // first row, closest first, unless the call names another agent (it spawned that one); else it hangs
+  // from the root at that depth.
   for (const p of unlinked.sort((x, y) => (x.firstT ?? Infinity) - (y.firstT ?? Infinity))) {
     const m = p.meta || {};
     const first = p.firstT ?? Infinity;
     const want = !Number.isInteger(m.spawnDepth) ? 1 : m.taskKind === "in_process_teammate" ? m.spawnDepth + 1 : Math.max(1, m.spawnDepth);
-    const near = want > 1 && spawnIndex.filter(({ p: q, s }) => q !== p && q !== root && !claimed.has(s.callId) && (q.firstT ?? Infinity) < first && s.t >= first - 5000 && s.t <= first).sort((x, y) => y.s.t - x.s.t)[0];
+    const near = want > 1 && spawnIndex.filter(({ p: q, s }) => q !== p && q !== root && !claimed.has(s.callId) && !(s.name && s.name !== m.name) && (q.firstT ?? Infinity) < first && s.t >= first - 5000 && s.t <= first).sort((x, y) => y.s.t - x.s.t)[0];
     if (near) { link(p, near.p, near.s, "time"); continue; }
     link(p, root, null);
     if (want > 1) {
