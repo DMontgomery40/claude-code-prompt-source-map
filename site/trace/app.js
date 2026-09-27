@@ -843,7 +843,7 @@ function mapZoomNow() {
 // follow zoom). The scene's onViewChange is not one of them: it fires for the director's framing too.
 function cameraMove(source) { (followZoom ||= scene && createFollowZoom(mapZoomNow))?.camera(source); }
 // The user's hands on the camera, by source: "zoom" (the wheel, a pinch, the zoom buttons and keys), "refit"
-// (Reset view), "drag" (a pan or orbit), "hands" (the scene's onUserCamera, which does not say which).
+// (Reset view, the overview, a lens), "drag" (a pan or orbit), "hands" (the scene's onUserCamera, which does not say which).
 // While playing the director lets go (Follow manual); only a zoom or a refit chooses the follow zoom.
 function userCamera(source) { cameraMove(source); transport?.userCamera(); }
 // The transport sits on the bottom row, centred between the minimap and the view controls; where that
@@ -1012,17 +1012,19 @@ function backToMap() {
   const destination = { ...structuredClone(mapReturn), mapReturn: null };
   viewHistory.navigate(() => restoreView(destination));
 }
+// The overview (the button, `o`, the Session crumb, Escape from a map focus) and the lenses (tabs, 1 to 4,
+// the palette) refit the map: the user's hands on the camera, like Reset view, so a run's director lets go.
 function overview() {
   set({ level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
-  cameraMove("refit");
+  userCamera("refit");
 }
 function selectLens(key) {
   // Each tab opens its session-wide exploration. Retaining a deep layer would
   // otherwise change the scene but leave an unrelated source reader on screen.
   set({ lens: key, level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
-  cameraMove("refit");
+  userCamera("refit");
 }
 function moveRequest(delta, inspect = true) {
   const view = sidebarState();
