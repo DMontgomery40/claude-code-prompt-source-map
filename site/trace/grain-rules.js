@@ -24,6 +24,10 @@ export const GRAIN_CAP = 400_000;
 // dropHeightTokens is a fraction of the column's context (tokens), so every column drops the same
 // share of its height. puckRadius (world units) and spiralTurns shape the compaction puck.
 export const KERNEL = { pourWindow: 0.6, fallDur: 0.5, dropHeightTokens: 0.12, collapseDur: 0.8, jitterX: 0.35, jitterZ: 0.6, puckRadius: 0.8, spiralTurns: 5 };
+// A grain rests anywhere across its request's tread (the table's `centre` +- half width) and up to
+// GRAIN_DEPTH world units behind the face (or the ridge's own depth, if less: the table's `depth`), so
+// neighbouring columns meet as one slab. jitterX and jitterZ above are no longer read.
+export const GRAIN_DEPTH = 1.5;
 
 // Block row flags (texel 1 .y). continued: the row continues the previous row of the same part at
 // the next request (its prefix changed), so it arrives settled and the previous row vanishes in
@@ -127,6 +131,7 @@ export function buildRequestTable(agent, geom) {
   const data = new Float32Array(width * height * 4);
   const base = new Float64Array(n * NK), scale = new Float64Array(n * NK);
   const context = new Float64Array(n), sums = new Float64Array(n);
+  const centre = new Float64Array(n), depth = new Float64Array(n);
   const { epochOf, starts } = epochsOf(agent);
   const fallback = !hasScale(agent);
   const U = unloggedEst(agent);
@@ -156,6 +161,9 @@ export function buildRequestTable(agent, geom) {
     context[j] = ctx;
     sums[j] = sum;
     const [x0, x1] = geom.tread(agent, j);
+    centre[j] = (x0 + x1) / 2;
+    const ridge = geom.depth ? geom.depth(agent, ctx * (geom.yScale ?? 1)) : GRAIN_DEPTH;
+    depth[j] = Math.min(GRAIN_DEPTH, ridge > 0 ? ridge : GRAIN_DEPTH);
     const o = j * REQ_TEXELS * 4;
     data[o] = geom.x(agent, j); data[o + 1] = ctx; data[o + 2] = epochOf[j]; data[o + 3] = (x1 - x0) / 2;
     for (let k = 0; k < 4; k++) data[o + 4 + k] = base[j * NK + k];
@@ -179,7 +187,7 @@ export function buildRequestTable(agent, geom) {
   // Puck table for the GPU (4 floats per epoch): [puckX, puckY (tokens), puckZ, startRequest].
   const epochData = new Float32Array(Math.max(1, epochs.length) * 4);
   epochs.forEach((e, q) => epochData.set([e.puck[0], e.puck[1], e.puck[2], e.start], q * 4));
-  return { data, texels: REQ_TEXELS, width, height, count: n, epochs, epochData, epochOf, base, scale, context, sum: sums };
+  return { data, texels: REQ_TEXELS, width, height, count: n, epochs, epochData, epochOf, base, scale, context, sum: sums, centre, depth };
 }
 
 // ---------- block table ----------
@@ -368,7 +376,7 @@ export function grainPosition(tables, b, s, uT, params = KERNEL) {
   const lerp = (t, c) => mix(reqTexel(req, i0, t)[c], reqTexel(req, i1, t)[c], f);
   const baseK = k < 4 ? lerp(1, k) : lerp(2, k - 4);
   const scaleK = k < 4 ? lerp(3, k) : lerp(4, k - 4);
-  const x = mix(A0[0], A1[0], f), ctx = mix(A0[1], A1[1], f), halfW = mix(A0[3], A1[3], f);
+  const ctx = mix(A0[1], A1[1], f), halfW = A0[3]; // x and depth: request i0's own tread, not interpolated
   const zF = reqTexel(req, i0, 4)[3];
   const sum = reqTexel(req, i0, 2)[3];
 
@@ -376,9 +384,9 @@ export function grainPosition(tables, b, s, uT, params = KERNEL) {
   const u = hashGrainU32(b, s);
   const h = u32ToUnit(u), hx = hashDerived(u, HASH_SALT.x), hz = hashDerived(u, HASH_SALT.z);
   const rest = [
-    x + (2 * hx - 1) * P.jitterX * halfW,
+    req.centre[i0] + (2 * hx - 1) * halfW,
     baseK + (prefix + (slotBase + s + 0.5) * step) * scaleK,
-    zF - hz * P.jitterZ,
+    zF - hz * req.depth[i0],
   ];
   const continued = (flags & FLAGS.continued) !== 0;
   const tIn = continued ? seenBy : seenBy + h * P.pourWindow;

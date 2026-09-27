@@ -13,9 +13,9 @@ import { stratumRows, windowBlocks } from "../model.js";
 import { STRATA } from "../panels.js";
 import { syntheticTrace } from "../dev-synthetic.js";
 import {
-  STRATA_KEYS, KERNEL, REQ_TEXELS, BLOCK_TEXELS, TABLE_WIDTH, MAX_SLOTS, FLAGS, HASH_NAME,
+  STRATA_KEYS, KERNEL, GRAIN_DEPTH, REQ_TEXELS, BLOCK_TEXELS, TABLE_WIDTH, MAX_SLOTS, FLAGS, HASH_NAME,
   chooseGrainSize, buildRequestTable, buildBlockTable, buildTables, buildGrains, shuffleBatches,
-  hashGrain, hashGrainU32, hashU32, spiralOffset, grainPosition, bandsForRequest,
+  hashGrain, hashGrainU32, hashU32, hashDerived, HASH_SALT, spiralOffset, grainPosition, bandsForRequest,
 } from "../grain-rules.js";
 
 const FIX = fileURLToPath(new URL("./fixtures/", import.meta.url));
@@ -419,8 +419,8 @@ test("grain rules: kernel pour, purity and collapse", () => {
   const band = bandsForRequest(T, 15).find((x) => x.b === row);
   const g15 = grainPosition(T, row, s, 15, P);
   assert.ok(g15.y > band.y0 && g15.y < band.y1, "y inside the block's band");
-  assert.ok(Math.abs(g15.x - 15 * 0.13) <= 0.06 * KERNEL.jitterX + 1e-9, "x inside the tread");
-  assert.ok(g15.z <= 0 && g15.z >= -KERNEL.jitterZ, "z just behind the face");
+  assert.ok(Math.abs(g15.x - 15 * 0.13) <= 0.06 + 1e-9, "x inside the tread");
+  assert.ok(g15.z <= 0 && g15.z >= -GRAIN_DEPTH, "z within the grain depth behind the face");
 });
 
 test("grain rules: side agents and empty agents build empty tables", async () => {
@@ -454,4 +454,44 @@ test("grain rules: real sessions (TRACE_REAL_SESSIONS)", { skip: !process.env.TR
     console.log(`# ${name}\n# root ${JSON.stringify(root)}\n# largest subagent ${JSON.stringify(big || null)}`);
     assert.ok(root.grains > 0 && root.grains <= 400_000 + root.rows);
   }
+});
+
+// The JS kernel and the vertex shader place a grain the same way: across its request's whole tread and
+// up to the grain depth behind the face (grains.js GRAIN_VERT), with the request's own tread for the
+// leading column too. Over every grain of a fixture root, at trail and mid-request playheads.
+test("grain rules: the JS kernel places grains across the tread and depth, as the shader does", async () => {
+  const { GRAIN_VERT } = await import("../grains.js");
+  // the shader's expressions, which the JS below mirrors
+  assert.match(GRAIN_VERT, /vec3 rest = vec3\(A0\.x \+ \(2\.0 \* hx - 1\.0\) \* halfW,/);
+  assert.match(GRAIN_VERT, /zF - hz \* A0\.z\);/);
+  assert.match(GRAIN_VERT, /float ctx = mix\(A0\.y, A1\.y, f\), halfW = A0\.w;/);
+  const [[, trace]] = await fixtureTraces();
+  const agent = trace.agents.find((a) => a.kind === "root");
+  // off-centre treads (the request's x is not the tread's middle) and a ridge shallower than the grain depth
+  const geom = { x: (a, i) => i * 0.13, tread: (a, i) => [i * 0.13 - 0.04, i * 0.13 + 0.09], z: (a, i) => 2 + i * 1e-3, lane: () => -1,
+    depth: (a, h) => (h > 50 ? 7 : 0.9), yScale: 1e-3 };
+  const T = buildTables(agent, geom);
+  const R = T.requests, n = R.count, m = T.blocks.meta;
+  for (let i = 0; i < n; i++) {
+    assert.ok(Math.abs(R.centre[i] - (i * 0.13 + 0.025)) < 1e-12);
+    assert.equal(R.depth[i], R.context[i] * 1e-3 > 50 ? GRAIN_DEPTH : 0.9);
+  }
+  let checked = 0;
+  for (let row = 0; row < T.blocks.count; row++) {
+    for (let s = 0; s < Math.min(m.nSlots[row], 40); s++) {
+      for (const uT of [m.seenBy[row] + 0.95, m.lastReq[row], m.seenBy[row] + 0.4]) {
+        const g = grainPosition(T, row, s, uT, { yScale: 1 });
+        const i0 = Math.min(Math.max(Math.floor(uT), 0), n - 1), o = i0 * REQ_TEXELS * 4;
+        const u = hashGrainU32(row, s);
+        const hx = hashDerived(u, HASH_SALT.x), hz = hashDerived(u, HASH_SALT.z);
+        const halfW = R.data[o + 3], zF = R.data[o + 19];
+        assert.equal(g.rest[0], R.centre[i0] + (2 * hx - 1) * halfW, "x: the tread centre +- half its width");
+        assert.equal(g.rest[2], zF - hz * R.depth[i0], "z: up to the depth behind the face");
+        assert.ok(g.rest[0] >= R.centre[i0] - halfW - 1e-9 && g.rest[0] <= R.centre[i0] + halfW + 1e-9, "inside the tread");
+        assert.ok(g.rest[2] <= zF + 1e-12 && g.rest[2] >= zF - R.depth[i0] - 1e-12, "within [zF - d, zF]");
+        checked++;
+      }
+    }
+  }
+  assert.ok(checked > 300, `checked ${checked}`);
 });

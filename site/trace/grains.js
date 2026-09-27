@@ -11,7 +11,7 @@
 //
 // No three.js import: THREE and the renderer are injected, and the GLSL is exported as strings so
 // node tests can check the hash against grain-rules.js without a browser.
-import { REQ_TEXELS, BLOCK_TEXELS, TABLE_WIDTH, KERNEL, HASH_SALT, HASH_NAME, buildTables } from "./grain-rules.js";
+import { REQ_TEXELS, BLOCK_TEXELS, TABLE_WIDTH, KERNEL, HASH_SALT, HASH_NAME, GRAIN_DEPTH, buildTables } from "./grain-rules.js";
 
 const hex = (v) => `0x${(v >>> 0).toString(16).padStart(8, "0")}u`;
 
@@ -47,7 +47,7 @@ float haze(vec3 w, float depth) {
 // the cap, so the slab stays covered from Requests to the deepest zoom. The 24 px cap keeps the widest
 // tread of the Claude Code session (1.72 world units) covered at 256x (1.6% open; 7.1% at 150x), where
 // 12 px left a third of it open.
-export const GRAIN_DEPTH = 1.5;
+export { GRAIN_DEPTH };
 export const GRAIN_TILE = 2;
 export const GRAIN_MAX_PX = 24;
 
@@ -360,13 +360,8 @@ export function createGrains({ THREE, renderer, shared, geom, yScale, onUpload =
     // tread, which is not centred on the request's x) and .z the grain depth behind the face (the epoch
     // id there is not read on the GPU; collapse targets come from the block table).
     const req = new Float32Array(R.data);
-    const reqDepth = new Float64Array(R.count);
-    for (let i = 0; i < R.count; i++) {
-      const o = i * REQ_TEXELS * 4, [t0, t1] = geom.tread(agent, i);
-      const ridge = geom.depth ? geom.depth(agent, R.data[o + 1] * yScale) : GRAIN_DEPTH;
-      req[o] = (t0 + t1) / 2;
-      req[o + 2] = reqDepth[i] = Math.min(GRAIN_DEPTH, ridge > 0 ? ridge : GRAIN_DEPTH);
-    }
+    const reqDepth = R.depth;
+    for (let i = 0; i < R.count; i++) { const o = i * REQ_TEXELS * 4; req[o] = R.centre[i]; req[o + 2] = R.depth[i]; }
     const textures = {
       req: texture(req, R.width, R.height, false),
       blk: texture(B.data, B.width, B.height, false),
