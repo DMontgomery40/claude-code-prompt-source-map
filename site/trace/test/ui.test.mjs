@@ -654,6 +654,23 @@ test("the Follow chip: auto by default; moving the camera during a run makes it 
   assert.ok(frames.size <= 1);
 });
 
+test("a new session's clock starts with Follow auto: off, a held run and 'asked for' do not carry over", () => {
+  const { tr, pb, follow } = transportFixture();
+  const next = () => { const p = createPlayback({ times: [0, 1000, 2000], X: t => t / 2000 }); p.setP(2); return p; };
+  const chip = () => [follow.getAttribute("aria-pressed"), follow.textContent, tr.follow, tr.forced];
+  tr.toggleFollow(); // off
+  tr.load(next());
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "turned off in the last session");
+  tr.toggleFollow(); tr.toggleFollow(); // off, then asked for: follows at the overview too
+  assert.equal(tr.forced, true);
+  tr.load(next());
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "asked for in the last session");
+  tr.load(pb); tr.play(); tr.userCamera(); // held: the user moved the camera during a run
+  assert.equal(tr.follow, "manual");
+  tr.load(next());
+  assert.deepEqual(chip(), ["true", "Follow auto", "auto", false], "held in the last session");
+});
+
 // Every transport control's text at rest, on hover, pressed and playing: at least 7:1 on its own opaque
 // background (the rules as trace.css writes them; hover loses to the pressed and playing rules, which are
 // more specific).

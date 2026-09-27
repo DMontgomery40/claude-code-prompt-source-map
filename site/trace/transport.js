@@ -110,8 +110,8 @@ export function createTransport(host, { onPlayhead = () => {}, onStart = () => {
   }
 
   const api = {
-    // A new session's clock (or null). Nothing is pushed: the scene starts from the same place.
-    load(next) { stop(); pb = next || null; label = ""; sync(); },
+    // A new session's clock (or null), with Follow back to auto. Nothing is pushed: the scene starts from the same place.
+    load(next) { stop(); pb = next || null; label = ""; off = held = forced = false; sync(); },
     get playback() { return pb; },
     get playing() { return !!pb?.playing; },
     toggle() { if (pb?.playing) api.pause(); else api.play(); },
