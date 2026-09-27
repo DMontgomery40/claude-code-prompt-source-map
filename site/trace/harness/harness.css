@@ -56,3 +56,4 @@
 .hv-tip[hidden] { display: none; }
 .hv-tip b { font-weight: 600; display: block; margin-bottom: 2px; }
 .hv-tip .m { display: block; font: 11px var(--mono, ui-monospace, monospace); color: #9aa5b4; }
+.hv-caption .hv-kicker { margin: 0; font-size: 12px; color: #a9b3c1; letter-spacing: .01em; }

@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   createHarnessView, layoutBoard, rungWords, whereText, instructionScore, pickHero, birthSet, laterRequest, compareAgent,
-  normPlate, plateWords, foldPlates, buildRack, PRESETS, PRESET_NAMES, RUNG_CLASS,
+  normPlate, plateWords, foldPlates, buildRack, heroFacts, PRESETS, PRESET_NAMES, RUNG_CLASS,
 } from "../harness/view.js";
 
 // Three agents: the main thread (4 requests, compacted once) and two subagents (2 requests each).
@@ -116,11 +116,11 @@ test("presets: each has its own camera; racks frame what was built", async () =>
     await v.setPreset(name, { instant: true });
     assert.equal(v.state.preset, name);
     const p = v.camera.position.toArray().map(x => +x.toFixed(3)).join(",");
-    if (!["rack", "later", "compare"].includes(name)) assert.equal(p, PRESETS[name].p.join(","), name);
+    if (!["rack", "later", "compare", "hero"].includes(name)) assert.equal(p, PRESETS[name].p.join(","), name);
     seen.set(name, p);
   }
   const fixed = ["hero", "session", "close"].map(n => seen.get(n));
-  assert.equal(new Set(fixed).size, 3, "the board presets each have their own camera");
+  assert.equal(new Set(fixed).size, 3, "the board presets each have their own camera (the hero is framed to its instrument)");
   assert.ok(!fixed.includes(seen.get("rack")) && !fixed.includes(seen.get("compare")), "racks are framed from what was built");
   await v.setPreset("compare", { instant: true });
   assert.equal(v.scene.children.filter(o => o.name === "hv:rack").length, 2, "compare builds two racks");
@@ -205,4 +205,42 @@ test("plate words: the payload first, without the wrapper tags", () => {
   assert.equal(plateWords("<heartbeat> <automation_id>sync-1</automation_id> Continue the task."), "sync-1 Continue the task.");
   assert.equal(plateWords("## My request:"), "My request:");
   assert.equal(plateWords("<only-tag>"), "<only-tag>", "a bare tag stays as it is");
+});
+
+test("hero facts: the sockets tell the rung truthfully, and the readout says who got it or how often", () => {
+  const { model } = fixture({ literals: true });
+  const one = (over) => ({ ...model.pieces[0], ...over });
+  let f = heroFacts(model, one({ rung: "binary-only", where: { kind: "source", shelf: "example source", key: "src/a.rs", pos: 86 } }));
+  assert.equal(f.library.state, "dark"); assert.equal(f.library.text, "not in the library");
+  assert.equal(f.code.state, "lit"); assert.equal(f.code.title, "SHIPPED CODE · IN THE SOURCE"); assert.equal(f.code.text, "src/a.rs:86");
+  f = heroFacts(model, one({ rung: "binary-only", where: { kind: "bundle", key: "main-x.js", pos: 1057778 } }));
+  assert.equal(f.code.title, "SHIPPED CODE · IN THE APP BUNDLE"); assert.equal(f.code.text, "main-x.js @ 1,057,778");
+  f = heroFacts(model, one({ rung: "found-nowhere", where: null }));
+  assert.deepEqual([f.library.state, f.code.state, f.code.text], ["dark", "dark", "not found in the shipped code either"], "not in either");
+  f = heroFacts({ ...model, literals: false, pieces: model.pieces.map(q => ({ ...q, rung: q.rung === "binary-only" ? "found-nowhere" : q.rung })) }, one({ rung: "found-nowhere", where: null }));
+  assert.equal(f.code.text, "not checked (no literal index)");
+  f = heroFacts(model, one({ rung: "in-library-unlinked", record: { page: "p", title: "Example record" }, where: null }));
+  assert.equal(f.library.state, "amber"); assert.equal(f.library.text, "in the library: Example record"); assert.equal(f.code.state, "dark");
+  f = heroFacts(model, one({ rung: "linked", record: { page: "p", title: "Rec" }, where: { shelf: "example binary", key: "chunk-a.js", pos: 5 } }));
+  assert.deepEqual([f.library.state, f.code.state, f.code.text], ["lit", "lit", "chunk-a.js @ 5"]);
+  f = heroFacts(model, one({ rung: "outside", origin: "file", where: null }));
+  assert.deepEqual([f.library.text, f.code.state, f.code.text], ["not harness text", "paper", "from your files"]);
+  f = heroFacts(model, model.pieces[0]);   // two of three agents
+  assert.equal(f.readout.big, "2 OF 3 AGENTS GOT IT");
+  assert.match(f.didNot, /^did not get it: main \(root, born \+0 m\)$/);
+  const single = { ...model, agents: [model.agents[0]] };
+  assert.equal(heroFacts(single, { ...model.pieces[1], n: 3, ev: [[0, 5], [0, 35], [0, 155]] }).readout.big, "3 TIMES OVER 2.5 H");
+  assert.equal(heroFacts(single, { ...model.pieces[1], n: 1, ev: [[0, 40]] }).readout.big, "ONCE, AT 40 M");
+});
+
+test("hero preset: the instrument replaces the board on screen; its sockets and ticks match the facts", async () => {
+  const { model, trace } = fixture({ literals: true }), { v } = view();
+  await v.setModel(model, trace);
+  const hero = v.scene.getObjectByName("hv:hero"), board = v.scene.getObjectByName("hv:board");
+  assert.equal(v.state.preset, "hero"); assert.ok(hero.visible); assert.ok(!board.visible);
+  assert.equal(hero.getObjectByName("hv:socket-library").userData.lit, false);
+  assert.equal(hero.getObjectByName("hv:socket-code").userData.lit, true, "binary-only: the shipped-code socket is lit");
+  assert.equal(hero.getObjectByName("hv:hero-ticks").count, model.pieces[0].ev.length);
+  await v.setPreset("session", { instant: true });
+  assert.ok(!hero.visible); assert.ok(board.visible);
 });
