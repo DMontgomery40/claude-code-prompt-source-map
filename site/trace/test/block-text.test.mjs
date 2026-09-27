@@ -42,6 +42,7 @@ globalThis.document = { createElement: tag => new Element(tag), defaultView: { E
 const THREE = await import("../vendor/three.module.min.js");
 const { createBlockText, refKey, paneText, paneLines, PANE } = await import("../block-text.js");
 const { STRATA } = await import("../panels.js");
+const { GRAIN_DEPTH } = await import("../grains.js");
 const flush = () => new Promise(r => setImmediate(r));
 
 // One world unit is one CSS pixel: an orthographic camera over x 0..W, y 0..H, looking down -z at the
@@ -52,7 +53,10 @@ function view(W = 1000, H = 1000, insets = {}) {
   camera.updateMatrixWorld();
   return { camera, viewport: { width: W, height: H, insets: { top: 0, right: 0, bottom: 0, left: 0, ...insets } } };
 }
-const geom = { yScale: 1, tread: () => [498, 502], z: () => 0 };
+// A tread of 498..502 on a face at z 0 with a ridge 0.6 deep: the column's grains fill x 498..502, z -0.6..0
+// (grains.js: the tread, and GRAIN_DEPTH or the ridge's depth if less), so a pane is anchored on its centre
+// line (500, z -0.3) and carried 2 px + the 3 px gap clear of the grains.
+const geom = { yScale: 1, tread: () => [498, 502], z: () => 0, depth: () => 0.6 };
 const OUTSIDE = STRATA.findIndex(s => s.key === "outside");
 // A band per [y0, y1], each on its own block with a fetchable ref.
 function scene(spans, { flags = 16, label = i => `file ${i}`, kind = "outside" } = {}) {
@@ -100,10 +104,21 @@ test("block text: a band under 40 px on screen is hidden, one at 40 px or more i
     const ys = shown(group).map(o => o.position.y).sort((a, b) => a - b);
     assert.deepEqual(ys, [420.5, 720], "the 41 and 40 px bands, anchored at their centres");
   }
-  // the anchor sits on the face at the tread centre, 0.3 in front of it
+  // the anchor sits on the column's centre line; the pane hangs right of the grains
   const o = shown(group)[0];
   assert.equal(o.position.x, 500);
-  assert.equal(o.position.z, PANE.faceZ);
+  assert.equal(o.position.z, -0.3);
+  assert.equal(o.center.x, 0);
+  assert.equal(o.element.style.marginLeft, "5px");
+  group.updateMatrixWorld(true);
+  assert.deepEqual(bt.rects(camera, 1000, 1000).map(r => [r.x, r.y + r.h / 2]).sort((a, b) => a[1] - b[1]), [[505, 280], [505, 579.5]], "rects for the scene's declutter");
+  // without a ridge depth the column is GRAIN_DEPTH deep
+  const { depth, ...flat } = geom;
+  bt.update({ camera, agent, bands, geom: flat, i: 0, viewport });
+  assert.equal(shown(group)[0].position.z, -GRAIN_DEPTH / 2);
+  // a wider column box from the scene pushes the pane further out
+  bt.update({ camera, agent, bands, geom, i: 0, viewport, column: { x0: 490, x1: 510, z0: -1.5, z1: 0 } });
+  assert.equal(shown(group)[0].element.style.marginLeft, "13px");
   bt.dispose();
 });
 
@@ -145,10 +160,13 @@ test("block text: declutter keeps the tallest band where panes would overlap, an
   const apart = scene([[100, 145], [345, 445]]);
   bt.update({ camera, agent: apart.agent, bands: apart.bands, geom, i: 0, viewport });
   assert.equal(shown(group).length, 2);
-  // at the right edge a pane hangs to the left of its anchor
+  // a column wider than the room beside it (deep zoom): the pane lies on its face from the front edge
+  bt.update({ camera, agent, bands, geom, i: 0, viewport, column: { x0: 100, x1: 900, z0: -1.5, z1: 0 } });
+  assert.ok(shown(group).length > 0 && shown(group).every(o => o.center.x === 0 && o.element.style.marginLeft === "-397px"));
+  // near the right edge a pane hangs to the left of the column instead
   const edge = { ...geom, tread: () => [898, 902] };
   bt.update({ camera, agent, bands, geom: edge, i: 0, viewport });
-  assert.ok(shown(group).length > 0 && shown(group).every(o => o.center.x === 1));
+  assert.ok(shown(group).length > 0 && shown(group).every(o => o.center.x === 1 && o.element.style.marginLeft === "-5px"));
   bt.dispose();
 });
 
