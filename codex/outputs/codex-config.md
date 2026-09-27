@@ -5948,7 +5948,7 @@ Source: `codex-rs/config/src/config_toml.rs:281`, `codex-rs/core/config.schema.j
 
 ## Realtime voice and audio
 
-GPT-Live phone calls are covered separately in [Telephony and SIP](/gpt-live-telephony/). That API path is documented by OpenAI; the `realtime` keys below configure Codex voice sessions.
+GPT-Live phone calls are covered separately in [Telephony and SIP](gpt-live-telephony/). That API path is documented by OpenAI; the `realtime` keys below configure Codex voice sessions.
 
 ### `audio`
 
@@ -6042,7 +6042,7 @@ Type: `table` · Status: undocumented
 
 Source: `codex-rs/config/src/config_toml.rs:446`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
 
-For phone calls, see [GPT-Live telephony and SIP](/gpt-live-telephony/). SIP is an API connection path, not a value of Codex's `realtime.transport` setting.
+For phone calls, see [GPT-Live telephony and SIP](gpt-live-telephony/). SIP is an API connection path, not a value of Codex's `realtime.transport` setting.
 
 ### `realtime.transport`
 

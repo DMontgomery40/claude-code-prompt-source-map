@@ -1,0 +1,9 @@
+{
+  // Retired host ccprompts.dtmont.com: the existing Worker "claude-code-prompt-source-map" already owns this custom domain,
+  // so redeploying it with this script turns it into a 301 path-for-path redirect (see ../redirects/worker.mjs).
+  // Deploy: cd site/redirects && npx wrangler deploy -c wrangler.ccprompts.jsonc
+  "name": "claude-code-prompt-source-map",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-01",
+  "routes": [{ "pattern": "ccprompts.dtmont.com", "custom_domain": true }]
+}

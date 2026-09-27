@@ -19,4 +19,4 @@ The guide also covers transfer, hangup, and outbound calls. Outbound SIP require
 
 ## Evidence boundary
 
-This is a **GPT-Live API capability documented by OpenAI**, not a `config.toml` setting. The bundled Codex CLI `0.158.0-alpha.2` binary contains `gpt-live-1-codex` and `/v1/live`; its `realtime.transport` parser accepts `webrtc` and `websocket` and rejects `sip`. See the [Codex Realtime config entries](/codex-config/#realtime).
+This is a **GPT-Live API capability documented by OpenAI**, not a `config.toml` setting. The bundled Codex CLI `0.158.0-alpha.2` binary contains `gpt-live-1-codex` and `/v1/live`; its `realtime.transport` parser accepts `webrtc` and `websocket` and rejects `sip`. See the [Codex Realtime config entries](codex-config/#realtime).

@@ -1,0 +1,9 @@
+{
+  // Retired host gpt6aeon.dtmont.com: the existing Worker "gpt6-prompt-source-map" already owns this custom domain,
+  // so redeploying it with this script turns it into a 301 path-for-path redirect (see ../redirects/worker.mjs).
+  // Deploy: cd site/redirects && npx wrangler deploy -c wrangler.gpt6aeon.jsonc
+  "name": "gpt6-prompt-source-map",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-01",
+  "routes": [{ "pattern": "gpt6aeon.dtmont.com", "custom_domain": true }]
+}

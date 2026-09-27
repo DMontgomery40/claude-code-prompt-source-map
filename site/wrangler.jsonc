@@ -1,10 +1,10 @@
-// Static hosting on Cloudflare Workers assets. `npm run build`, then `npx wrangler deploy`.
 {
-  "name": "claude-code-prompt-source-map",
+  // The one site: static assets on Cloudflare Workers. Deploy: cd site && npm test && npm run build && npx wrangler deploy
+  "name": "harness-source-map",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash"
   },
-  "routes": [{ "pattern": "ccprompts.dtmont.com", "custom_domain": true }]
+  "routes": [{ "pattern": "harness.dtmont.com", "custom_domain": true }]
 }

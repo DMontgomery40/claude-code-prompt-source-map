@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Self-check the four deliverables: JSON shape, provenance on every item, and no local leaks."""
+import getpass
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -10,9 +12,23 @@ OUT = REPO / "outputs"
 FILES = ["codex-config.json", "codex-env-vars.json", "codex-config.md", "codex-env-vars.md"]
 # Written by 07_cli_prompts.mjs: leak patterns, JSON shape and exact-match provenance only.
 CLI_PROMPT_FILES = ["codex-cli-prompts.md", "codex-cli-bundled-skills.md", "codex-cli-prompts.json"]
+def _local_names():
+    names = {getpass.getuser()}
+    try:
+        email = subprocess.run(["git", "config", "--global", "user.email"], capture_output=True, text=True).stdout.strip()
+        if "@" in email:
+            names.add(email.split("@", 1)[0])
+    except OSError:
+        pass
+    return sorted(n for n in names if len(n) >= 4)
+
+
+LOCAL_NAMES = _local_names()
 LEAK_PATTERNS = {
     "home path": re.compile(r"/Users/|/home/[a-z]"),
-    "local username": re.compile(r"davidmontgomery|dmontg", re.I),
+    # The machine's own user name and git email local part, read at run time so the check never
+    # publishes them itself.
+    "local username": re.compile("|".join(re.escape(v) for v in LOCAL_NAMES), re.I) if LOCAL_NAMES else re.compile(r"(?!)"),
     "api key": re.compile(r"\bsk-[A-Za-z0-9_-]{8,}"),
     "jwt": re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}"),
     "clap env value": re.compile(r"\[env: [A-Z0-9_]+=[^\]]+\]"),
