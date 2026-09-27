@@ -75,10 +75,13 @@ test("layout: every piece gets an origin, a lane, a clamp and a fan; zones run b
   assert.equal(RUNG_CLASS["found-nowhere"], "loose");
 });
 
-test("rung words: binary-only says where in the binary; anything unmatched is only 'not in the library'", () => {
+test("rung words: binary-only says where the text lives (binary, app bundle or source); anything unmatched is only 'not in the library'", () => {
   assert.equal(rungWords(fixture().model)["found-nowhere"], "not in the examplelib library");
   assert.equal(rungWords(fixture({ literals: true }).model)["found-nowhere"], "not in the examplelib library", "never 'found nowhere'");
-  assert.equal(whereText({ rung: "binary-only", where: { shelf: "example binary 1.1", key: "chunk-abc.js", pos: 190114848 } }), "in the binary: chunk-abc.js @ 190,114,848");
+  assert.equal(whereText({ rung: "binary-only", where: { kind: "binary", shelf: "example binary 1.1", key: "chunk-abc.js", pos: 190114848 } }), "in the binary: chunk-abc.js @ 190,114,848");
+  assert.equal(whereText({ rung: "binary-only", where: { kind: "bundle", shelf: "example desktop app", key: "main-x1.js", pos: 1057472 } }), "in the app bundle: main-x1.js @ 1,057,472");
+  assert.equal(whereText({ rung: "binary-only", where: { kind: "source", shelf: "example source tree", key: "src/reply.rs", pos: 41 } }), "in the source: src/reply.rs:41");
+  assert.equal(whereText({ rung: "binary-only", where: { shelf: "example binary 1.1", key: "chunk-abc.js", pos: 7 } }), "in the binary: chunk-abc.js @ 7", "no kind: binary");
   assert.equal(whereText({ rung: "linked", where: { shelf: "lib shelf", key: "a.js", pos: 5, label: "a.js @5" } }), "a.js @5");
   assert.equal(whereText({ rung: "found-nowhere", where: null }), null);
 });

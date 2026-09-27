@@ -23,10 +23,18 @@ export const RUNG_ORDER = { "found-nowhere": 0, "binary-only": 1, "in-library-un
 // the view never claims a piece is found nowhere.
 export const hasLiterals = model => model.literals === true || model.pieces.some(p => p.rung === "binary-only");
 const num = n => Number(n).toLocaleString("en-US");
-// Where a piece's text is anchored, in words: "in the binary: chunk-x.js @ 190,114,848" for binary-only.
+// What kind of place holds a binary-only piece's text: a CLI or app binary, a desktop app bundle (app.asar), or a
+// source tree (file:line). `where.kind` says so; an older model without it is read from the shelf name, else "binary".
+export const whereKind = w => w?.kind || (/app\.asar|bundle/i.test(w?.shelf || "") ? "bundle" : /\bsource\b/i.test(w?.shelf || "") ? "source" : "binary");
+const PLACE = { binary: "in the binary", bundle: "in the app bundle", source: "in the source" };
+// Where a piece's text lives, in words: "in the binary: chunk-x.js @ 190,114,848", "in the app bundle: main.js @ 1,057,472",
+// "in the source: codex-rs/x.rs:41".
 export function whereText(p) {
   const w = p.where; if (!w) return null;
-  if (p.rung === "binary-only") return `in the binary: ${w.key ?? w.shelf}${Number.isFinite(w.pos) ? ` @ ${num(w.pos)}` : ""}`;
+  if (p.rung === "binary-only") {
+    const kind = whereKind(w), at = kind === "source" ? (Number.isFinite(w.pos) ? `:${w.pos}` : "") : Number.isFinite(w.pos) ? ` @ ${num(w.pos)}` : "";
+    return `${PLACE[kind] || PLACE.binary}: ${w.key ?? w.shelf}${at}`;
+  }
   return w.label ?? `${w.key ?? ""}${Number.isFinite(w.pos) ? ` @ ${num(w.pos)}` : ""}`;
 }
 export function rungWords(model) {
@@ -557,7 +565,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
   }
 
   // ----- DOM labels (live only) -----
-  const offTxt = p => `${p.kind === "outside" ? originWord(p.origin) : { linked: "library", typed: "library≠", unlinked: "lib, unlinked", unnamed: "in the binary", composite: "composite", loose: "no record" }[p.cls] || ""} · ${p.reach}/${L.NA}`;
+  const offTxt = p => `${p.kind === "outside" ? originWord(p.origin) : { linked: "library", typed: "library≠", unlinked: "lib, unlinked", unnamed: PLACE[whereKind(p.where)] || PLACE.binary, composite: "composite", loose: "no record" }[p.cls] || ""} · ${p.reach}/${L.NA}`;
   function buildLabels() {
     if (!overlay) return;
     for (const el of overlay.querySelectorAll(".hv-lab, .hv-tag")) el.remove();
@@ -633,7 +641,7 @@ export function createHarnessView({ container, onPick = () => {}, rackFor = null
     const origin = p.rung === "binary-only" && p.where ? `${esc(whereText(p))}<div class="m">not in the ${esc(model.libName)} library</div>`
       : p.where ? `${esc(p.where.shelf)}<div class="m">${esc(whereText(p))}</div>` : esc(p.kind === "outside" ? originWord(p.origin) : words[p.rung]);
     card.innerHTML = `<div class="k">Harness piece · ${p.order + 1} of ${L.P.length}, least explained first</div><h4>${esc(p.name)}</h4>
-      <span class="badge b-${p.cls}">${esc(words[p.rung]).toUpperCase()}</span>
+      <span class="badge b-${p.cls}">${esc(p.rung === "binary-only" ? PLACE[whereKind(p.where)] || words[p.rung] : words[p.rung]).toUpperCase()}</span>
       <dl><dt>Origin</dt><dd>${origin}</dd><dt>Put there</dt><dd>${esc(trigWord(p.trigger))} <span class="m">(observed)</span></dd>
       <dt>Who</dt><dd>${p.reach} of ${L.NA} agents<img class="who" alt="" src="${whoStrip(p, 170, 7)}"></dd>
       <dt>When</dt><dd>${fmtMin(Math.min(...ts))} → ${fmtMin(Math.max(...ts))} · ${p.n.toLocaleString()} deliveries</dd></dl>
