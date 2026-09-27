@@ -540,7 +540,7 @@ test("focusing request i puts the playhead at i + 0.65: request i complete, on t
 test(", and . move the readout's request number by exactly one, to that request complete", () => {
   const n = 1701;
   for (const [P, back, on] of [[849.65, 848.65, 850.65], [899.65, 898.65, 900.65], [900, 899.65, 901.65], [900.4, 899.65, 901.65], [900.95, 899.65, 901.65],
-    [0, 0, 1.65], [0.65, 0, 1.65], [0.3, 0, 1.65], [n - 1, n - 2 + FOCUS, n - 1], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1]]) {
+    [0, FOCUS, 1.65], [0.65, FOCUS, 1.65], [0.3, FOCUS, 1.65], [n - 1, n - 2 + FOCUS, n - 1], [n - 2 + FOCUS, n - 3 + FOCUS, n - 1]]) {
     assert.deepEqual([focusStep(P, -1, n), focusStep(P, 1, n)], [back, on], `from ${P}`);
   }
   const { pb, tr, readout } = transportFixture();
@@ -548,6 +548,9 @@ test(", and . move the readout's request number by exactly one, to that request 
   const seen = [];
   for (const d of [1, 1, -1, -1, -1]) { tr.step(d); seen.push([pb.P, readout.textContent.split(" · ")[0]]); }
   assert.deepEqual(seen, [[900.65, "req 901"], [901.65, "req 902"], [900.65, "req 901"], [899.65, "req 900"], [898.65, "req 899"]]);
+  tr.seek(0.65);
+  tr.step(-1);
+  assert.deepEqual([pb.P, readout.textContent.split(" · ")[0]], [0.65, "req 1"], ", from 0.65 stays at 0.65: request 0 is never un-poured");
 });
 
 // ---------- where Space plays ----------

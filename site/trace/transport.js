@@ -28,9 +28,9 @@ export function playheadForRequest(pb, layout, agentId, i) {
 }
 
 // `,` and `.`: the previous or next request, complete (floor(P) -/+ 1, plus FOCUS), so the readout's
-// request number moves by exactly one. Clamped to [0, n - 1].
+// request number moves by exactly one. Never below FOCUS (request 0 stays poured), never past n - 1.
 export function focusStep(P, d, n) {
-  return Math.max(0, Math.min(n - 1, Math.floor(P) + (d < 0 ? -1 : 1) + FOCUS));
+  return Math.min(n - 1, Math.max(FOCUS, Math.floor(P) + (d < 0 ? -1 : 1) + FOCUS));
 }
 
 // The next speed of the button's cycle (the keys' faster and slower stop at the ends instead).
