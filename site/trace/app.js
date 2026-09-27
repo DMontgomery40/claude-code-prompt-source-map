@@ -626,8 +626,9 @@ async function start(trace) {
   S.mode = !reducedMotion && S.webgl ? "3d" : "2d";
   if (params.get("view") === "2d") S.mode = "2d";
   if (params.get("view") === "3d" && webglAvailable()) S.mode = "3d";
+  // Trace opens in the landscape. The harness layer is reached from it (h, or the Harness button), never
+  // opened first: no URL or saved view starts there (David, 2026-09-27).
   await setMode(S.mode);
-  if (params.get("view") === "harness") await setMode("harness");
   if (!started) {
     started = true;
     setupResizer();

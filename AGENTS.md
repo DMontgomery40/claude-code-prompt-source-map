@@ -32,6 +32,9 @@ It is **not** about token cost or the fact that context is re-read every turn. D
 
 ## Rules
 - Run the gate before calling work done: `npm run check` (build, all tests, link check, leak check).
+- Trace always opens in the 3D landscape (2D only without WebGL or with reduced motion). The harness
+  layer and any new layer are reached from it and never open first, whether by default, URL or saved
+  view (David, 2026-09-27).
 - Trace is one layer-rich tool. New views are **added** as modes. Never remove the existing landscape,
   2D view, sidebar panels, lenses, search, reader, custody ladder or playback. Grains may go (decided
   2026-09-27).

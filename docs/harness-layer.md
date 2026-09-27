@@ -30,7 +30,8 @@ on 2026-09-27.
 
 ## Status (2026-09-27): ported into `site/trace`
 - **The mode.** The Harness button sits beside 3D/2D, and the `h` key toggles it. Both appear in the "?"
-  sheet and the command palette. `?view=harness` opens straight into it, and back and forward work.
+  sheet and the command palette. Trace always opens in the 3D landscape; nothing opens straight into the layer (David,
+  2026-09-27). Back and forward work.
 - **Where it lives.**
   - `harness/pieces.js` builds the model in the worker, lazily, the first time the mode opens. It works on
     any session and links pieces by text.
