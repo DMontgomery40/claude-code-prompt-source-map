@@ -308,6 +308,19 @@ test('a request offers its tool call once, whether or not the map card is showin
   }
 });
 
+test("the map card names where it is: the playhead while playing, the centre of the map, or the selection", () => {
+  const req = { i: 4, t: 1000, tokens: { context: 900 } };
+  const agent = { id: "root", kind: "root", requests: [{}, {}, {}, {}, req], blocks: [], asks: [], compactions: [] };
+  const kicker = extra => {
+    const host = new Element("aside");
+    renderPanel(host, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 4, ...extra }, { focusAction() {}, focusRequest() {}, focusStratum() {} });
+    return host.all(n => n.getAttribute("class") === "kicker")[0]?.textContent;
+  };
+  assert.equal(kicker({ followingMap: true, atPlayhead: true }), "AT THE PLAYHEAD");
+  assert.equal(kicker({ followingMap: true }), "AT THE CENTER OF YOUR MAP");
+  assert.equal(kicker({ mapPinned: true, level: 3 }), "SELECTED REQUEST");
+});
+
 test('tool inspector opens the actual selected call immediately, including every call in multi-call responses', async () => {
   for (const tool of ['Bash', 'Read', 'mcp__web__search']) {
     const ref = { file: 0, offset: 50, length: 20 }, result = { file: 0, offset: 80, length: 20 };

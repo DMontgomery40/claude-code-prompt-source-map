@@ -33,6 +33,7 @@ let pasteRoot = null; // the thread or session id from the paste box, sent as th
 // each history entry carries the playhead's P beside the view.
 let transport = null;
 let dir = null;       // the playback director's per-session state (direct() below)
+let playCard = null, playCardAt = 0; // the map card at the playhead while playing (playCardTick below)
 
 // ---------- loader ----------
 setupLoader();
@@ -88,7 +89,7 @@ function backToLoader() {
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
   transport?.load(null);
   $("#playback").hidden = true;
-  dir = null;
+  dir = null; playCard = null;
   scene?.dispose();
   scene = null;
   Object.assign(S, { trace: null, layout: null, level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -269,7 +270,7 @@ async function switchSession(root) {
     const trace = await parseInWorker(lastFiles, root);
     transport?.load(null);
     $("#playback").hidden = true;
-    dir = null;
+    dir = null; playCard = null;
     scene?.dispose();
     scene = null;
     Object.assign(S, { level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
@@ -557,12 +558,12 @@ async function start(trace) {
   S.layout = buildLayout(S.trace);
   // the speed rides along so the scene can skip sweep labels at 16 requests a second and faster
   transport ||= createTransport($("#playback"), {
-    onPlayhead: p => { scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }); direct(p); },
+    onPlayhead: p => { scene?.setPlayhead({ ...p, speed: transport?.playback?.speed }); direct(p); playCardTick(p); },
     onStart: playFromMap,
     onFollow: () => { if (dir) { dir.prev = null; dir.prevCutX = null; } }
   });
   transport.load(playbackFor(S.layout));
-  dir = null;
+  dir = null; playCard = null;
   palette ||= createPalette({ state: () => S, A, overview, selectLens, moveRequest, getText: A.getText, finder: () => (text === workerText ? worker : null),
     playback: {
       toggle: () => playbackShown() && transport.toggle(),
@@ -1077,7 +1078,26 @@ function renderMinimap() {
   placePlayback();
 }
 
-function sidebarState() { return mapPanelState(S, S.mapFocus); }
+// While playing on the map, the "At the centre of your map" card describes the leading column (the
+// request the playhead is in) instead; paused, the centre again. playCard: { agentId, reqIdx } or null.
+function sidebarState() {
+  if (!playCard || !S.mapFocus) return mapPanelState(S, S.mapFocus);
+  const view = mapPanelState(S, { ...S.mapFocus, ...playCard, stratum: null });
+  return view === S ? view : { ...view, atPlayhead: true };
+}
+// Redrawn when the playhead enters another request, at most every 250 ms; never a history entry.
+function playCardTick(p) {
+  const lead = p.playing && dir && S.mode === "3d" && S.level === 0 && S.mapFocus ? dir.lead : null;
+  const next = lead ? { agentId: lead.agentId, reqIdx: Math.max(0, Math.floor(lead.P)) } : null;
+  if (next ? playCard && next.agentId === playCard.agentId && next.reqIdx === playCard.reqIdx : !playCard) return;
+  const now = performance.now();
+  if (next && playCard && now - playCardAt < 250) return; // a later tick catches up
+  playCard = next; playCardAt = now;
+  renderRequestNav();
+  renderPanel($("#panel"), sidebarState(), A);
+  $("#panel").scrollTop = 0;
+  renderMapLocation();
+}
 function followMap(focus) {
   if (S.level !== 0 || S.mode !== "3d") return;
   S.mapFocus = focus;
@@ -1098,7 +1118,7 @@ function renderMapLocation() {
   const onMap = isLandscape(S);
   location.replaceChildren(
     el('div', {class:'location-copy'},
-      el('b', { text: `${onMap ? (S.mapPinned ? 'Selected' : 'In view') : 'Inspecting'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
+      el('b', { text: `${onMap ? (S.mapPinned ? 'Selected' : view.atPlayhead ? 'At the playhead' : 'In view') : 'Inspecting'} · ${view.agent.kind === 'root' ? 'Main thread' : view.agent.name} · request ${view.reqIdx + 1}` }),
       el('span', { text: `${fmtWhen(r.t)} · ${onMap ? 'Height = context tokens · Colors = sources' : 'Sources within this request'}` })),
     el('button', {type:'button',class:'btn inspect-layers',text:onMap?'Inspect layers':'Back to map',
       onclick:()=>onMap ? A.focusRequest(view.agentId,view.reqIdx) : backToMap()}));
