@@ -46,6 +46,15 @@ export function createHarnessMode({ S, A, transport, request }) {
     return loading;
   }
 
+  // The layer's own view bar sits just under Trace's crumbs, wherever they land (the header's height varies).
+  function place() {
+    const crumbs = document.querySelector("#crumbs"), hv = host.querySelector(".hv");
+    if (!crumbs || !hv) return;
+    const top = Math.round(crumbs.getBoundingClientRect().bottom + 10);
+    hv.style.setProperty("--hv-top", `${Math.max(120, top)}px`);
+  }
+  addEventListener("resize", () => { if (S.mode === "harness") place(); });
+
   async function show() {
     host.hidden = false;
     say("Opening the harness layer…");
@@ -55,6 +64,7 @@ export function createHarnessMode({ S, A, transport, request }) {
     }
     if (S.mode !== "harness") return;                  // left again while loading
     view.show();
+    place();
     if (await ensureModel()) sync(true);
   }
 
@@ -69,6 +79,7 @@ export function createHarnessMode({ S, A, transport, request }) {
     const key = `${S.level}|${S.agentId}|${S.reqIdx}|${S.block}`;
     if (!force && key === last) return;
     last = key;
+    place();
     view.sync({ level: S.level, agentId: S.agentId, reqIdx: S.reqIdx, block: S.block });
   }
 

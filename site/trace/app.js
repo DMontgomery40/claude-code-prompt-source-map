@@ -678,6 +678,7 @@ async function setMode(mode) {
   S.mode = mode;
   $("#mode").textContent = mode === "3d" ? "2D view" : "3D view";
   $("#harness-mode").setAttribute("aria-pressed", String(mode === "harness"));
+  $("#legend").hidden = mode === "harness";   // the landscape's source colours; the layer draws its own legend
   $("#harness-mode").onclick = () => viewHistory.navigate(() => setMode(S.mode === "harness" ? (S.lastMode || "3d") : "harness"));
   $("#reset-view").hidden = mode !== "3d";
   $("#label-detail").hidden = mode !== "3d";
@@ -1149,7 +1150,7 @@ function renderCrumbs() {
     if (i) kids.push(el("span", { class: "sep", "aria-hidden": "true", text: "›" }));
     kids.push(el("button", { type: "button", text: name, onclick: fn, "aria-current": String(i === parts.length - 1) }));
   });
-  if (!TOUCH && S.level === 0) kids.push(el("span", { class: "keys", text: S.mode === "3d" ? "Drag to pan · scroll to zoom · Shift-drag to orbit" : "Select a point to explore" }));
+  if (!TOUCH && S.level === 0) kids.push(el("span", { class: "keys", text: S.mode === "3d" ? "Drag to pan · scroll to zoom · Shift-drag to orbit" : S.mode === "harness" ? "Click a piece to read it · h returns to the landscape" : "Select a point to explore" }));
   c.replaceChildren(...kids);
 }
 
