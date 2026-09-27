@@ -136,3 +136,35 @@ test("worker: a missing session comes back as the error message", async () => {
   assert.ok(posted.some((m) => m.type === "trace"));
   delete globalThis.self;
 });
+
+// Parent metadata has shipped in both the flattened desktop and nested CLI forms.
+// Both intake paths must produce the same hierarchy and layout links, regardless of file order.
+test('Codex nested and mixed parent metadata preserves three generations in intake and layout', async () => {
+  const { findSessions } = await import('../loader.js');
+  const { buildLayout } = await import('../minimap.js');
+  for (const shape of ['nested', 'mixed', 'flat']) {
+    const ids = [1, 2, 3, 4].map(n => uuid7(CODEX_T0 + n * 1000, n));
+    const files = ids.map((id, i) => {
+      const nested = i && (shape === 'nested' || shape === 'mixed' && i % 2);
+      const meta = { id, session_id: id, ...(i ? nested ? { source: { subagent: { thread_spawn: { parent_thread_id: ids[i-1], agent_path: '/root' + '/child'.repeat(i) } } } } : { parent_thread_id: ids[i-1], thread_source: 'subagent' } : { thread_source: 'user' }), base_instructions: { text: 'base' } };
+      return mem(at(CODEX_T0 + i * 1000, id), [row(CODEX_T0 + i * 1000, 'session_meta', meta), usage(CODEX_T0 + 10000 + i * 1000)].join('\n') + '\n');
+    }).reverse();
+    const sessions = await findSessions(files);
+    assert.equal(sessions.length, 1, shape + ': one family');
+    assert.equal(sessions[0].entries.length, 4);
+    for (const root of [null, ids[0]]) {
+      const { trace } = await loadTrace(files, { root });
+      assert.deepEqual(trace.agents.map(a => [a.id, a.parentId, a.depth]), ids.map((id,i) => [id, i ? ids[i-1] : null, i]), shape);
+      assert.deepEqual(buildLayout(trace).links.filter(l => l.type === 'spawn').map(l => [l.parent.id, l.child.id]), [[ids[0],ids[1]],[ids[1],ids[2]],[ids[2],ids[3]]]);
+    }
+  }
+});
+
+test('Codex family discovery follows a long-running child beyond the root time window', async () => {
+  const ids = [uuid7(CODEX_T0, 41), uuid7(CODEX_T0 + 1000, 42), uuid7(CODEX_T0 + 3 * DAY, 43)];
+  const root = mem(at(CODEX_T0, ids[0]), rollout(ids[0], CODEX_T0));
+  const child = mem(at(CODEX_T0 + 1000, ids[1]), rollout(ids[1], CODEX_T0 + 1000, {parent: ids[0]}) + '\n' + usage(CODEX_T0 + 4 * DAY));
+  const grandchild = mem(at(CODEX_T0 + 3 * DAY, ids[2]), rollout(ids[2], CODEX_T0 + 3 * DAY, {parent: ids[1]}));
+  const { trace } = await loadTrace([grandchild, root, child], {root: ids[0]});
+  assert.deepEqual(trace.agents.map(a => a.id), ids);
+});
