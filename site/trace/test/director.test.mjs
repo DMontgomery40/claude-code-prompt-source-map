@@ -54,13 +54,22 @@ test("rule 1: nothing while paused; the overview stays still unless Follow was a
 test("rule 2: follow puts the leading column's top at 42% and moves only past the 8% dead band, eased 600 ms", () => {
   const f = nextShot(state([], 10), null, 0);
   assert.deepEqual([f.kind, f.anchor, f.zoom, f.ease, f.target], ["follow", [0.42, 0.35], "follow", 600, [10, 20, 0]]);
-  assert.equal(nextShot(state([], 11, { leadFx: 0.42 + 0.079 }), f, 16), null, "inside the dead band");
-  assert.equal(nextShot(state([], 11, { leadFx: 0.42 - 0.079 }), f, 16), null);
-  const moved = nextShot(state([], 11, { leadFx: 0.42 + 0.081 }), f, 16);
+  assert.equal(nextShot(state([], 11, { leadFx: 0.42 + 0.079 }), f, 700), null, "inside the dead band");
+  assert.equal(nextShot(state([], 11, { leadFx: 0.42 - 0.079 }), f, 700), null);
+  const moved = nextShot(state([], 11, { leadFx: 0.42 + 0.081 }), f, 700);
   assert.deepEqual([moved.kind, moved.target[0]], ["follow", 11]);
   // Without the column's screen position: drift in world units over the width seen at the column.
-  assert.equal(nextShot(state([], 10 + 0.079 * 30, { span: 30 }), f, 16), null);
-  assert.equal(nextShot(state([], 10 + 0.081 * 30, { span: 30 }), f, 16).kind, "follow");
+  assert.equal(nextShot(state([], 10 + 0.079 * 30, { span: 30 }), f, 700), null);
+  assert.equal(nextShot(state([], 10 + 0.081 * 30, { span: 30 }), f, 700).kind, "follow");
+});
+
+test("rule 2: no new follow aim while the last follow move is easing, however far the column reads from the anchor", () => {
+  const f = nextShot(state([], 10), null, 0);
+  const shots = [];
+  for (let now = 16; now < f.ease; now += 16) { const s = nextShot(state([], 10 + now / 1000, { leadFx: 0.9 }), f, now); if (s) shots.push(s); }
+  assert.equal(shots.length, 0, "the camera is still on its way: one shot for the whole ease");
+  assert.equal(nextShot(state([], 10.6, { leadFx: 0.9 }), f, f.ease).kind, "follow", "once it has arrived and the column is out of the band: one new aim");
+  assert.equal(nextShot(state([], 10.6, { leadFx: 0.45 }), f, f.ease), null, "arrived and inside the band: nothing");
 });
 
 test("rule 3: spawns crossed within 0.6 s of playback are one group, framed with the parent's column and held 2.5 s", () => {

@@ -243,6 +243,8 @@ function holding(prev, s, now) {
 function follow(s, prev, now) {
   const D = DIRECTOR;
   if (prev?.kind === "follow") {
+    // while the last follow move is still easing the column has not reached the anchor yet: no new aim
+    if (now - prev.at < prev.ease) return null;
     const drift = Number.isFinite(s.leadFx) ? Math.abs(s.leadFx - D.anchor[0])
       : Math.abs(s.lead.x - prev.target[0]) / Math.max(1e-6, s.span || s.W);
     if (drift <= D.deadBand) return null;
