@@ -469,6 +469,7 @@ export function createPalette(ctx) {
     zoom: d => click(d > 0 ? "#zoom-in" : "#zoom-out"),
     reset: () => click("#reset-view"),
     mode: () => click("#mode"),
+    harness: () => click("#harness-mode"),
     landmarks: () => click("#label-detail"),
     widen: () => click("#widen"),
     play: () => ctx.playback?.toggle(),

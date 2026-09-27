@@ -18,6 +18,7 @@ export const KEYS = [
   { id: "zoom", group: "View", keys: ["+", "−"], label: "Zoom the map in / out", bind: { "+": 1, "=": 1, "-": -1, "_": -1 } },
   { id: "reset", group: "View", keys: ["r"], label: "Reset the camera", command: "Reset the camera", bind: { r: 0 } },
   { id: "mode", group: "View", keys: ["v"], label: "Switch between the 3D and 2D view", command: "Switch 3D / 2D view", bind: { v: 0 } },
+  { id: "harness", group: "View", keys: ["h"], label: "Show or hide the harness layer", command: "Show / hide the harness layer", bind: { h: 0 } },
   { id: "landmarks", group: "View", keys: ["l"], label: "Show or hide landmark labels", command: "Show / hide landmarks", bind: { l: 0 } },
   { id: "widen", group: "View", keys: ["w"], label: "Expand or compact the reader", command: "Expand / compact the reader", bind: { w: 0 } },
   { id: "play", group: "Playback", keys: ["Space"], label: "Play or pause", command: "Play or pause", detail: "Playback", bind: { " ": 0 } },

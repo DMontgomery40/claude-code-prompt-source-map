@@ -130,6 +130,13 @@ button { font: inherit; color: inherit; }
   background: radial-gradient(1400px 700px at 42% 38%, #151d2a 0%, #0d121a 55%, #080a0e 100%); }
 .stage, .flat { position: absolute; inset: 0; }
 .stage { z-index: 0; }
+/* The harness layer (harness/mode.js + view.js) fills the stage like the landscape; the HUD, sidebar,
+   crumbs, minimap, playback and view controls stay above it. */
+.harness-host { position: absolute; inset: 0; z-index: 0; }
+.harness-host[hidden] { display: none; }
+.harness-status { position: absolute; left: 24px; bottom: 96px; z-index: 2; max-width: min(520px, calc(100% - var(--side-w, 420px) - 64px)); padding: 8px 12px; border-radius: 8px; background: rgba(12, 14, 18, .82); color: var(--ink-2, #c9d1dc); font-size: 13px; }
+.harness-status[hidden], .harness-status:empty { display: none; }
+#harness-mode[aria-pressed="true"] { background: var(--accent-bg, #1f3a2c); border-color: var(--accent, #7de3b1); color: #fff; }
 .stage canvas.gl { display: block; position: absolute; inset: 0; touch-action: none; }
 .stage .labels { position: absolute; inset: 0; pointer-events: none; }
 .app { --side-w: 392px; }

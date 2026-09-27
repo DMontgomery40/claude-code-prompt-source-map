@@ -11,6 +11,7 @@ import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
 import { createTransport, playheadForRequest } from "./transport.js";
 import { nextShot, agentPAt, createFollowZoom } from "./director.js";
+import { createHarnessMode } from "./harness/mode.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -31,6 +32,7 @@ let pasteRoot = null; // the thread or session id from the paste box, sent as th
 // The playback transport (transport.js). Its clock lives outside S: playing never calls set(), and
 // each history entry carries the playhead's P beside the view.
 let transport = null;
+let harness = null; // the harness layer: one more view beside 3D and 2D (harness/mode.js)
 let dir = null;       // the playback director's per-session state (direct() below)
 let playCard = null, playCardAt = 0; // the map card at the playhead while playing (playCardTick below)
 // The zoom runs follow at (director.js createFollowZoom): told of every camera move that chooses a zoom,
@@ -160,7 +162,7 @@ function getWorker() {
         if (data.final && f) {
           const kids = [f.subagents ? `${fmtInt(f.subagents)} subagent${f.subagents === 1 ? "" : "s"}` : null,
             f.guardians ? `${fmtInt(f.guardians)} guardian review${f.guardians === 1 ? "" : "s"}` : null].filter(Boolean);
-          setProgress(0.08, `Found the ${f.product === "codex" ? "Codex" : "Claude Code"} session${kids.length ? ` + ${kids.join(" and ")}` : ""}. Reading…`);
+          setProgress(0.08, `Found the ${f.product === "codex" ? "Codex/ChatGPT" : "Claude Code"} session${kids.length ? ` + ${kids.join(" and ")}` : ""}. Reading…`);
         } else setProgress(data.total ? 0.08 * data.done / data.total : null, `Finding the session: ${fmtInt(data.done)} of ${fmtInt(data.total)} files checked`);
         return;
       }
@@ -176,6 +178,11 @@ function getWorker() {
     } else if (data.type === "text") {
       const p = pendingText.get(data.id);
       if (p) { pendingText.delete(data.id); p.resolve({ text: data.text, mode: data.mode }); }
+    } else if (data.type === "harness-progress") {
+      pendingHarness.get(data.id)?.onProgress(data);
+    } else if (data.type === "harness") {
+      const p = pendingHarness.get(data.id);
+      if (p) { pendingHarness.delete(data.id); data.error ? p.reject(new Error(data.error)) : p.resolve(data.model); }
     }
   });
   worker.addEventListener("error", e => {
@@ -183,6 +190,16 @@ function getWorker() {
     if (pendingLoad) { pendingLoad.reject(new Error(msg)); pendingLoad = null; }
   });
   return worker;
+}
+// The harness model is built in the worker (harness/pieces.js), lazily, the first time the mode opens.
+const pendingHarness = new Map();
+let harnessSeq = 0;
+function requestHarness(onProgress = () => {}) {
+  const id = ++harnessSeq;
+  return new Promise((resolve, reject) => {
+    pendingHarness.set(id, { resolve, reject, onProgress });
+    getWorker().postMessage({ type: "harness", id });
+  });
 }
 let textSeq = 0;
 function workerText(agentId, ref) {
@@ -201,8 +218,20 @@ function loadIndex() {
     .catch(() => null);
   return indexLoad;
 }
+// The literal index (hashes of the binaries' literal text with chunk and offset, no text) lets the harness
+// layer say where an unnamed piece sits in the shipped binary. Optional, like the reference index.
+let literalsLoad = null;
+function loadLiterals() {
+  literalsLoad ||= fetch(new URL("./literal-index.json", import.meta.url))
+    .then(r => (r.ok ? r.json() : null))
+    .catch(() => null);
+  return literalsLoad;
+}
 function sendIndex() {
-  indexSent ||= loadIndex().then(index => { if (index) getWorker().postMessage({ type: "index", index }); });
+  indexSent ||= Promise.all([loadIndex(), loadLiterals()]).then(([index, literals]) => {
+    if (index) getWorker().postMessage({ type: "index", index });
+    if (literals) getWorker().postMessage({ type: "literals", literals });
+  });
   return indexSent;
 }
 async function parseInWorker(files, root) {
@@ -570,7 +599,7 @@ async function start(trace) {
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
   transport ||= createTransport($("#playback"), {
-    onPlayhead: p => { scene?.setPlayhead(p); direct(p); playCardTick(p); },
+    onPlayhead: p => { scene?.setPlayhead(p); direct(p); playCardTick(p); harness?.playhead(p); },
     onStart: playFromMap,
     onFollow: () => { if (dir) { dir.prev = null; dir.prevCutX = null; } }
   });
@@ -586,14 +615,18 @@ async function start(trace) {
     } });
   palette.setTrace(S.trace);
   window.__trace = { S, set, transport };
+  harness ||= createHarnessMode({ S, A, transport, request: requestHarness });
+  harness.reset();
   $("#loader").hidden = true;
   $("#app").hidden = false;
   buildHud();
   const { webglAvailable } = await import("./scene.js").catch(() => ({ webglAvailable: () => false }));
-  S.mode = !reducedMotion && webglAvailable() ? "3d" : "2d";
+  S.webgl = webglAvailable();
+  S.mode = !reducedMotion && S.webgl ? "3d" : "2d";
   if (params.get("view") === "2d") S.mode = "2d";
   if (params.get("view") === "3d" && webglAvailable()) S.mode = "3d";
   await setMode(S.mode);
+  if (params.get("view") === "harness") await setMode("harness");
   if (!started) {
     started = true;
     setupResizer();
@@ -638,19 +671,28 @@ async function start(trace) {
 }
 let started = false;
 
+// Under the harness layer the 3D scene runs hidden, so playback and the session map keep working.
+const webglFor3d = () => S.webgl !== false;
 async function setMode(mode) {
+  if (mode !== "harness") S.lastMode = mode;
   S.mode = mode;
   $("#mode").textContent = mode === "3d" ? "2D view" : "3D view";
+  $("#harness-mode").setAttribute("aria-pressed", String(mode === "harness"));
+  $("#harness-mode").onclick = () => viewHistory.navigate(() => setMode(S.mode === "harness" ? (S.lastMode || "3d") : "harness"));
   $("#reset-view").hidden = mode !== "3d";
   $("#label-detail").hidden = mode !== "3d";
   $("#map-zoom").hidden = mode !== "3d";
   S.mapFocus = null;
   $("#mode").onclick = () => viewHistory.navigate(() => setMode(S.mode === "3d" ? "2d" : "3d"));
-  if (mode === "3d") {
+  if (mode !== "harness") harness?.hide();
+  if (mode === "3d" || (mode === "harness" && webglFor3d())) {
     try {
       const { createScene } = await import("./scene.js");
       $("#flat").hidden = true;
       $("#stage").hidden = false;
+      // Under the harness layer the landscape stays laid out but invisible: display:none would size it to
+      // 0x0 through scene.js's ResizeObserver, and the 3D view came back blank (found in the mock).
+      $("#stage").style.visibility = mode === "harness" ? "hidden" : "";
       if (!scene) {
         scene = createScene($("#stage"), { trace: S.trace, layout: S.layout, reducedMotion, onHover: showTip, onPick: pick, onMapFocus: followMap, onViewChange: saveViewSoon });
         window.__trace.scene = scene;
@@ -661,12 +703,14 @@ async function setMode(mode) {
     } catch (e) {
       console.warn("3D view unavailable, using the 2D view", e);
       $("#mode").hidden = true;
-      return setMode("2d");
+      if (mode !== "harness") return setMode("2d");
     }
   } else {
     $("#stage").hidden = true;
-    $("#flat").hidden = false;
+    $("#stage").style.visibility = "";
+    $("#flat").hidden = mode === "harness";
   }
+  if (mode === "harness") harness.show();
   showPlayback();
   symbolLegend();
   layoutInsets();
@@ -795,9 +839,9 @@ function playbackFor(L) {
   pb.setP(pb.end);
   return pb;
 }
-// The transport shows in the 3D view only; hiding it stops playback.
+// The transport shows in the 3D view and under the harness layer; hiding it stops playback.
 function showPlayback() {
-  const on = S.mode === "3d" && !!scene && !!transport?.playback;
+  const on = (S.mode === "3d" || S.mode === "harness") && !!scene && !!transport?.playback;
   if (!on) transport?.pause();
   $("#playback").hidden = !on;
 }
@@ -1081,6 +1125,7 @@ function render(levelChanged, readerOpened, restoring = false) {
   if (S.mode === "3d" && scene) scene.show({ level: S.mapPinned ? 0 : S.level, agentId: S.agentId, reqIdx: S.reqIdx, stratum: S.stratum, lens: S.lens, mapSelection: S.mapPinned ? { agentId: S.agentId, reqIdx: S.reqIdx } : null });
   renderMapLocation();
   if (S.mode === "2d") renderFlat();
+  if (S.mode === "harness") harness?.sync();
 }
 
 // The reader opens above the block list: bring its top into the panel's view. (Set scrollTop rather
@@ -1110,7 +1155,7 @@ function renderCrumbs() {
 
 function renderMinimap() {
   const host = $("#minimap");
-  if (S.mode !== "3d" || innerWidth <= 980) { host.hidden = true; return; }
+  if ((S.mode !== "3d" && S.mode !== "harness") || innerWidth <= 980) { host.hidden = true; return; }
   host.hidden = false;
   const w = Math.min(350, Math.max(220, innerWidth - sideW - 350));
   scene?.mountMinimap(host, w, 128, {agentId:S.agentId, reqIdx:S.level>=1?S.reqIdx:null});
