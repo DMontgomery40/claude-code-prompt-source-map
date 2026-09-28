@@ -4,8 +4,8 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { buildSearchIndex, clip, excerptsById, loadSearchRecords, normalizeRecord, provenanceOf, recordSpec } from "../../src/shared/search-index.mjs";
-import { indexItems, itemHref, parseQuery, search } from "../../src/shared/search/query.js";
+import { buildSearchIndex, clip, excerptsById, loadSearchRecords, normalizeRecord, provenanceOf, recordSpec, searchTextOf, writeSearchText } from "../../src/shared/search-index.mjs";
+import { attachText, indexItems, indexKey, itemHref, parseQuery, resultSnippet, search } from "../../src/shared/search/query.js";
 import { buildSite } from "../../src/claude-code/build-site.mjs";
 import { categories } from "../../src/claude-code/catalog.mjs";
 import { site } from "../../src/claude-code/config.mjs";
@@ -86,6 +86,40 @@ test("index: record titles match their headings as rendered, then by title alone
   assert.deepEqual(stats.unmatched, {});
 });
 
+test("full text: a word past the excerpt finds its section; each text runs to the next indexed heading", () => {
+  // A standalone page: sidebar and footer around the article, a word deep in a section's body.
+  const filler = "The exporter batches spans before sending them upstream. ".repeat(4);
+  const content = `<p>Intro words here.</p>
+<h2 id="deep">Deep section</h2><p>${filler}The satellite keeps its orbital period.</p>
+<h6>Unindexed</h6><p>Text under an h6 stays with the section above.</p>
+<section class="filter-item" id="next"><h2>Next</h2><div class="item-tags"><button type="button">Chip</button></div><p>Nothing to see.</p></section>`;
+  const page = `<!doctype html><nav class="toc-nav"><a href="#deep">orbit in the sidebar</a></nav><main id="content"><article class="document-page" id="doc-md"><header class="document-page-header"><h1 class="page-title">Doc</h1></header>${content}</article></main><footer>orbit footer</footer>`;
+  const outline = [{ level: 2, text: "Deep section", id: "deep" }, { level: 2, text: "Next", id: "next" }];
+  const { index } = buildSearchIndex({ product: "codex", documents: [{ slug: "doc", title: "Doc", category: "C", html: content, outline }] });
+  const text = searchTextOf(index, slug => (slug === "doc" ? page : null));
+  assert.equal(text.k, indexKey(index));
+  assert.equal(text.t.length, index.pages.length + index.items.length);
+  assert.equal(text.t[0], "Intro words here.");
+  assert.match(text.t[1], /orbital period\. Unindexed Text under an h6 stays with the section above\.$/);
+  assert.equal(text.t[2], "Nothing to see.", "a heading on its <section>; chips are not text");
+  assert.doesNotMatch(text.t.join(" "), /sidebar|footer/);
+
+  const items = indexItems(index, { product: "codex" });
+  const deep = items.find(i => i.title === "Deep section");
+  assert.doesNotMatch(deep.excerpt, /orbit/, "the index alone stops at the excerpt");
+  assert.deepEqual(search(items, parseQuery("orbit")).results, []);
+  assert.equal(attachText(items, text, "another-build"), false);
+  assert.equal(attachText(items, text, indexKey(index)), true);
+  const q = parseQuery("orbit");
+  assert.deepEqual(search(items, q).results.map(r => r.item.title), ["Deep section"]);
+  assert.match(resultSnippet(deep, q), /^….*satellite keeps its orbital period\. Unindexed/);
+  assert.equal(resultSnippet(deep, parseQuery("exporter")), deep.excerpt, "a word the excerpt shows keeps the excerpt");
+  // The section's body has both words, so -orbital drops it; the page's summary has only "exporter".
+  assert.deepEqual(search(items, parseQuery("exporter")).results.map(r => r.item.title), ["Doc", "Deep section"]);
+  assert.deepEqual(search(items, parseQuery("exporter -orbital")).results.map(r => r.item.title), ["Doc"]);
+  assert.deepEqual(search(items, parseQuery('"orbital period"')).results.map(r => r.item.title), ["Deep section"]);
+});
+
 test("excerpts and clipping", () => {
   const ex = excerptsById(html, ["telemetry", "otel-log-raw-api-bodies", "persistent-mode", "missing"]);
   assert.equal(ex.get("telemetry"), "Variables that export traces.");
@@ -146,6 +180,20 @@ test("production: every Codex/ChatGPT page with a records file gets its records"
     assert.deepEqual([top.kind, top.href, top.prov.file], ["setting", "codex-config/#chatgpt-base-url", "codex-rs/config/src/config_toml.rs"]);
     // The display-path rewrite reaches the index as it reaches the pages.
     assert.doesNotMatch(JSON.stringify(index), /token-gremlin/);
+    // The full text: built from the pages, it belongs to this index, and a word from far into a long
+    // section finds that section (the index alone keeps 130 characters of it).
+    await writeSearchText(outDir);
+    const text = JSON.parse(await readFile(path.join(outDir, "search-text.json"), "utf8"));
+    const items = indexItems(index, { product: "codex" });
+    assert.equal(attachText(items, text, indexKey(index)), true);
+    assert(items.filter(i => i.body).length > items.length * 0.9);
+    const long = items.filter(i => i.body.length > 2000).sort((a, b) => b.body.length - a.body.length).slice(0, 15);
+    assert(long.length >= 10);
+    for (const item of long) {
+      const word = item.body.slice(-600).match(/\b[a-z]{7,}\b/g)?.at(-1);
+      if (!word) continue;
+      assert(search(items, parseQuery(word)).results.some(r => r.item === item), `${item.title}: ${word}`);
+    }
     // The Search pill is hidden without script (html:not(.js)), so every page carrying it must mark the page as scripted.
     for (const file of ["index.html", "key-findings/index.html"]) {
       const page = await readFile(path.join(outDir, file), "utf8");

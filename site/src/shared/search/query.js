@@ -176,13 +176,19 @@ function titleScore(item, term) {
   return 0;
 }
 
-function contextScore(item, term) {
-  const s = item.cl, t = term.text;
+// A term found in `s`: `start` where it begins a word, `inside` inside one (three letters or more),
+// 0 when it is not there.
+function foundIn(s, t, start, inside) {
   let i = s.indexOf(t);
   if (i < 0) return 0;
-  for (; i >= 0; i = s.indexOf(t, i + 1)) if (i === 0 || !WORDISH.test(s[i - 1])) return 12;
-  return t.length >= 3 ? 6 : 0;
+  for (; i >= 0; i = s.indexOf(t, i + 1)) if (i === 0 || !WORDISH.test(s[i - 1])) return start;
+  return t.length >= 3 ? inside : 0;
 }
+
+const contextScore = (item, term) => foundIn(item.cl, term.text, 12, 6);
+// The section's full text (search-text.json, once loaded) counts least: below any title or context
+// match, so a body-only hit never outranks one the title or excerpt carries.
+const bodyScore = (item, term) => (item.bl ? foundIn(item.bl, term.text, 4, 2) : 0);
 
 const KIND_BOOST = { page: 14, command: 10, decision: 8, h: 0 };
 const boost = kind => KIND_BOOST[kind] ?? (RECORD_KINDS.has(kind) ? 6 : 0);
@@ -193,7 +199,7 @@ export function passes(item, q, { kinds = q.kinds } = {}) {
   if (kinds.size && !kinds.has(item.kind)) return false;
   if (q.products.size && item.product && !q.products.has(item.product)) return false;
   if (q.documented !== null && item.documented !== q.documented) return false;
-  for (const x of q.excludes) if (item.tl.includes(x.text) || item.cl.includes(x.text)) return false;
+  for (const x of q.excludes) if (item.tl.includes(x.text) || item.cl.includes(x.text) || item.bl?.includes(x.text)) return false;
   return true;
 }
 
@@ -203,7 +209,7 @@ export function scoreItem(item, q) {
   let score = 0, inTitle = 0;
   for (const term of q.terms) {
     const t = titleScore(item, term);
-    const c = t ? 0 : contextScore(item, term);
+    const c = t ? 0 : contextScore(item, term) || bodyScore(item, term);
     if (!t && !c) return 0;
     if (t) inTitle++;
     score += t || c;
@@ -277,7 +283,66 @@ export function matchRanges(text, q, { fuzzy = false } = {}) {
   return merged;
 }
 
+// A window of `text` around the first place a query word occurs (a word start preferred over the
+// inside of a word), cut at spaces, with "…" where it was cut; "" when no word occurs in it.
+export function snippetAround(text, q, width = 140) {
+  const s = String(text ?? ""), l = low(s);
+  let at = -1, len = 0;
+  for (const term of q.terms ?? []) {
+    const t = term.text;
+    if (!t) continue;
+    const first = l.indexOf(t);
+    let i = first;
+    while (i > 0 && WORDISH.test(l[i - 1])) i = l.indexOf(t, i + 1);
+    const pos = i >= 0 ? i : first;
+    if (pos >= 0 && (at < 0 || pos < at)) { at = pos; len = t.length; }
+  }
+  if (at < 0) return "";
+  if (s.length <= width) return s;
+  // A little before the word, more after it.
+  let b = Math.min(s.length, Math.max(at, 0) + len + Math.round((width - len) * 0.7));
+  let a = Math.max(0, b - width);
+  b = Math.min(s.length, a + width);
+  if (a > 0) { const sp = s.indexOf(" ", a); if (sp >= 0 && sp < at) a = sp + 1; }
+  if (b < s.length) { const sp = s.lastIndexOf(" ", b); if (sp > at + len) b = sp; }
+  return `${a > 0 ? "…" : ""}${s.slice(a, b).trim()}${b < s.length ? "…" : ""}`;
+}
+
+// What a result row shows under its title: its excerpt (or when line), unless a query word that the
+// title and excerpt don't show matched in the section's full text; then the passage around it.
+export function resultSnippet(item, q, width = 140) {
+  const shown = item.excerpt || item.when || "";
+  if (!item.bl || !q.terms?.length) return shown;
+  const seen = low(`${item.title} ${item.excerpt ?? ""} ${item.when ?? ""}`);
+  const hidden = q.terms.filter(t => t.text && !seen.includes(t.text));
+  if (!hidden.length) return shown;
+  return snippetAround(item.body, { terms: hidden }, width) || shown;
+}
+
 // ---------- the index file (dist/<section>/search-index.json, site/src/shared/search-index.mjs) ----------
+
+// A short key for one built index: its size and a hash of its pages' slugs and items' ids. The
+// full-text file (search-text.json) carries the key of the index it was built from.
+export function indexKey(index) {
+  let h = 0x811c9dc5;
+  const add = s => {
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    h ^= 10; h = Math.imul(h, 0x01000193);
+  };
+  for (const p of index.pages ?? []) add(String(p.s));
+  for (const it of index.items ?? []) add(`${it.p}#${it.a ?? ""}`);
+  return `${(index.pages?.length ?? 0) + (index.items?.length ?? 0)}-${(h >>> 0).toString(36)}`;
+}
+
+// Adds a section's full text (search-text.json: { v, k, t: [each page's intro…, each item's text…] })
+// to the items indexItems made from the index with key `key`, in the same order. False, and nothing
+// added, when the file belongs to another build of the index.
+export function attachText(items, file, key) {
+  const texts = file?.t;
+  if (!Array.isArray(texts) || texts.length !== items.length || file.k !== key) return false;
+  items.forEach((item, i) => { item.body = texts[i] || ""; item.bl = low(item.body); });
+  return true;
+}
 
 // Where an item leads, relative to its section's root: a page's own URL, or the page plus the id
 // the entry has there. The palette resolves it against the section; check-links against dist.

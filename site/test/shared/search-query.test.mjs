@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { groupResults, hasQuery, indexItems, itemHref, matchRanges, parseQuery, prepare, search, splitWords, wordStarts } from "../../src/shared/search/query.js";
+import { groupResults, hasQuery, indexItems, itemHref, matchRanges, parseQuery, prepare, resultSnippet, search, snippetAround, splitWords, wordStarts } from "../../src/shared/search/query.js";
 
 const item = (title, kind = "h", extra = {}) => prepare({ kind, title, context: "", ...extra });
 const titles = (items, q, opts) => search(items, parseQuery(q), opts).results.map(r => r.item.title);
@@ -94,6 +94,36 @@ test("filters: kinds, products, documented, exclusions; filter-only queries list
   assert.deepEqual(counts, { env: 2, setting: 1, page: 1 });
   assert.equal(total, 4);
   assert.equal(search(items, parseQuery("otel"), { scope: "env" }).results.length, 2);
+});
+
+test("full text: body matches count least, word prefixes match, exclusions and phrases see the body", () => {
+  const withBody = (title, kind, context, body) => Object.assign(item(title, kind, { context }), { body, bl: body.toLowerCase() });
+  const items = [
+    withBody("Orbit", "h", "", ""),
+    withBody("Satellite tools", "tool", "Orbit helpers", ""),
+    withBody("Launch notes", "h", "", "The probe reaches a stable orbital period after the burn."),
+    withBody("Suborbital hops", "prompt", "", ""),
+    withBody("Weather", "h", "", "The suborbital balloon rises."),
+    withBody("Plain", "page", "", "Nothing here.")
+  ];
+  // Title, then context, then body; a word start in the body beats one inside a word.
+  assert.deepEqual(titles(items, "orbit"), ["Orbit", "Suborbital hops", "Satellite tools", "Launch notes", "Weather"]);
+  assert.deepEqual(titles(items, "orbit -balloon"), ["Orbit", "Suborbital hops", "Satellite tools", "Launch notes"]);
+  assert.deepEqual(titles(items, '"stable orbital"'), ["Launch notes"]);
+  assert.deepEqual(titles(items, "probe burn"), ["Launch notes"]);
+  // Without its full text an item is searched as before.
+  assert.deepEqual(titles([item("Launch notes")], "orbit"), []);
+});
+
+test("snippets: the passage around a word found only in the full text", () => {
+  const body = `${"Intro sentence without the word. ".repeat(6)}The probe reaches a stable orbital period after the burn. ${"Trailing words keep going. ".repeat(6)}`;
+  const it = Object.assign(item("Launch notes", "h", { excerpt: "Intro sentence without the word." }), { body, bl: body.toLowerCase() });
+  const snip = resultSnippet(it, parseQuery("orbit"));
+  assert.match(snip, /^….*stable orbital period.*…$/);
+  assert(snip.length <= 142);
+  assert.equal(resultSnippet(it, parseQuery("intro")), "Intro sentence without the word.");
+  assert.equal(snippetAround("short text", parseQuery("text")), "short text");
+  assert.equal(snippetAround("no match here", parseQuery("zzz")), "");
 });
 
 test("groups: strongest kind first, a few rows each, with the full count for 'show all'", () => {

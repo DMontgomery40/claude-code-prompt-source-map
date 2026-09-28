@@ -8,10 +8,15 @@
 // Records are tied to their entry headings by the same key the tag filters use (filters.mjs
 // entryKey: group heading + entry heading), in document order, so an entry whose title repeats
 // (…-2, …-3 ids) links to its own heading, not the first one with that text.
-import { readFile } from "node:fs/promises";
+//
+// Each section also gets its full text (dist/<section>/search-text.json, searchTextOf below): every
+// page's and item's visible text as the standalone page shows it, which the palette fetches after
+// the index when it opens, so a word anywhere in a section finds that section, as Ctrl+F would.
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { entryKey, plain } from "./filters.mjs";
 import { SITE } from "./site.mjs";
+import { indexKey } from "./search/query.js";
 
 // Excerpt caps (characters). Keep the files small: the palette shows two lines at most.
 export const LIMITS = { excerpt: 130, text: 130, when: 150, summary: 170 };
@@ -257,4 +262,51 @@ export function buildSearchIndex({ product, documents, featured = [] }) {
   const ver = [...versions].sort((a, b) => b[1] - a[1])[0]?.[0];
   if (ver) for (const it of items) if (it.r === ver) delete it.r;
   return { index: { v: 1, product, label: SITE.products[product]?.label ?? product, ver, tags, files, pages, items }, stats };
+}
+
+// ---------- the full text ----------
+
+// The full text behind a built index, read from the standalone pages its items lead to: for each
+// page, the text of its article before the first indexed heading; for each item, the text from its
+// heading to the next indexed heading on that page (a heading the index skips, h6 or one without an
+// id, stays in the text of the item above it). pageHtml(slug) → the page's HTML. Returns
+// { v, k: search/query.js indexKey(index), t: [pages' text…, items' text…] }, the order indexItems uses.
+export function searchTextOf(index, pageHtml) {
+  const byPage = new Map();
+  index.items.forEach((it, i) => (byPage.get(it.p) ?? byPage.set(it.p, []).get(it.p)).push(i));
+  const pageText = [], itemText = new Array(index.items.length).fill("");
+  index.pages.forEach((page, p) => {
+    const html = pageHtml(page.s) ?? "";
+    // The document's own content: its <article> after the title header (a bare fragment in tests).
+    const open = html.indexOf("<article");
+    const header = open < 0 ? -1 : html.indexOf("</header>", open);
+    const from = open < 0 ? 0 : header < 0 ? html.indexOf(">", open) + 1 : header + "</header>".length;
+    const close = html.lastIndexOf("</article>");
+    const to = open < 0 || close < from ? html.length : close;
+    const at = new Map();
+    for (const m of html.matchAll(/\sid="([^"]+)"/g)) if (!at.has(m[1])) at.set(m[1], m.index);
+    const found = (byPage.get(p) ?? []).map(i => ({ i, pos: at.get(index.items[i].a) })).filter(x => x.pos !== undefined && x.pos >= from && x.pos < to).sort((a, b) => a.pos - b.pos);
+    const tagStart = pos => html.lastIndexOf("<", pos);
+    const text = (a, b) => textOf(stripChrome(html.slice(a, Math.max(a, b))));
+    pageText[p] = text(from, found.length ? tagStart(found[0].pos) : to);
+    found.forEach((x, j) => {
+      const end = j + 1 < found.length ? tagStart(found[j + 1].pos) : to;
+      const headingEnd = /<\/h[1-6]>/g;
+      headingEnd.lastIndex = x.pos;
+      const h = headingEnd.exec(html);
+      itemText[x.i] = text(h && h.index < end ? h.index + h[0].length : html.indexOf(">", x.pos) + 1, end);
+    });
+  });
+  return { v: 1, k: indexKey(index), t: [...pageText, ...itemText] };
+}
+
+// Writes <dir>/search-text.json beside <dir>/search-index.json from the section's built pages
+// (<dir>/<slug>/index.html). Returns the file's size in bytes.
+export async function writeSearchText(dir) {
+  const index = JSON.parse(await readFile(path.join(dir, "search-index.json"), "utf8"));
+  const pages = new Map();
+  for (const page of index.pages) pages.set(page.s, await readFile(path.join(dir, page.s, "index.html"), "utf8"));
+  const json = JSON.stringify(searchTextOf(index, slug => pages.get(slug)));
+  await writeFile(path.join(dir, "search-text.json"), json);
+  return Buffer.byteLength(json);
 }
