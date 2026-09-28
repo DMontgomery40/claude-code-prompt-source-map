@@ -840,6 +840,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-append-prompt-head",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-artifact",
    "status": "standalone",
    "feeds": []
@@ -1181,11 +1186,6 @@
    "feeds": []
   },
   {
-   "id": "env-claude-code-commit-between-keys",
-   "status": "pending",
-   "feeds": []
-  },
-  {
    "id": "env-claude-code-container-id",
    "status": "pending",
    "feeds": []
@@ -1275,11 +1275,6 @@
   },
   {
    "id": "env-claude-code-diagnostics-file",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-dir-sync-disable-anchoring",
    "status": "standalone",
    "feeds": []
   },
@@ -1793,11 +1788,6 @@
   },
   {
    "id": "env-claude-code-enable-menu-kind-lanes",
-   "status": "pending",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-enable-narration",
    "status": "pending",
    "feeds": []
   },
@@ -2595,7 +2585,7 @@
   },
   {
    "id": "env-claude-code-print-bg-wait-ceiling-ms",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -2660,6 +2650,11 @@
   },
   {
    "id": "env-claude-code-refusal-fallback-catch-all",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-relaunch-home-trust",
    "status": "standalone",
    "feeds": []
   },
@@ -2826,6 +2821,11 @@
   },
   {
    "id": "env-claude-code-sdk-has-oauth-refresh",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-sdk-reads-session-state",
    "status": "pending",
    "feeds": []
   },
@@ -3343,6 +3343,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-whimsical-elephant",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-willow-tern",
    "status": "standalone",
    "feeds": []
@@ -3369,12 +3374,12 @@
   },
   {
    "id": "env-claude-code-workflow-size-warning-agents",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
    "id": "env-claude-code-workflow-size-warning-tokens",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -3402,7 +3407,7 @@
   },
   {
    "id": "env-claude-cowork-memory-extra-guidelines",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -4270,12 +4275,12 @@
   },
   {
    "id": "env-aws-container-credentials-full-uri",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
    "id": "env-aws-container-credentials-relative-uri",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -4315,7 +4320,7 @@
   },
   {
    "id": "env-aws-role-arn",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -4340,7 +4345,7 @@
   },
   {
    "id": "env-aws-web-identity-token-file",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -4462,6 +4467,11 @@
    "feeds": []
   },
   {
+   "id": "env-cloudsdk-auth-access-token",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-cloudsdk-config",
    "status": "pending",
    "feeds": []
@@ -4563,6 +4573,11 @@
   },
   {
    "id": "env-vertex-region-claude-5-5-opus",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-vertex-region-claude-5-5-sonnet",
    "status": "standalone",
    "feeds": []
   },
@@ -6371,6 +6386,11 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-code-append-prompt-head",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-code-artifact",
    "status": "set-only",
    "feeds": []
@@ -6552,11 +6572,6 @@
   },
   {
    "id": "env-set-claude-code-dev-raw-changelog-url",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-claude-code-dir-sync-disable-anchoring",
    "status": "set-only",
    "feeds": []
   },
@@ -7086,6 +7101,11 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-code-relaunch-home-trust",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-code-relaunch-terminal-size",
    "status": "set-only",
    "feeds": []
@@ -7217,6 +7237,11 @@
   },
   {
    "id": "env-set-claude-code-scroll-speed",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-sdk-reads-session-state",
    "status": "set-only",
    "feeds": []
   },

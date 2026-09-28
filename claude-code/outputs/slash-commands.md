@@ -4,9 +4,9 @@
 
 ## Local commands
 
-### /add-dir (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /add-dir (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185658949 · sha256 `5cc485bc…`
+Source: `chunk-ra61p37g.js` · offset 187582641 · sha256 `5cc485bc…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -22,9 +22,9 @@ isHidden: computed at runtime
 Add a new working directory
 ~~~~~~
 
-### /add-dir (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /add-dir (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185659212 · sha256 `5cc485bc…`
+Source: `chunk-ra61p37g.js` · offset 187582904 · sha256 `5cc485bc…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -36,9 +36,9 @@ Argument hint: `<path>`
 Add a new working directory
 ~~~~~~
 
-### /advisor (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /advisor (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185972886 · sha256 `2b611ff8…`
+Source: `chunk-ra61p37g.js` · offset 187900559 · sha256 `2b611ff8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -52,9 +52,9 @@ isHidden: computed at runtime
 Let Claude consult a stronger model at key moments
 ~~~~~~
 
-### /advisor (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /advisor (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185973221 · sha256 `2b611ff8…`
+Source: `chunk-ra61p37g.js` · offset 187900894 · sha256 `2b611ff8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -70,7 +70,7 @@ Let Claude consult a stronger model at key moments
 
 ### /artifacts
 
-Source: `chunk-wyjbafrm.js` · offset 185660459 · sha256 `8b9f20cc…`
+Source: `chunk-ra61p37g.js` · offset 187584151 · sha256 `8b9f20cc…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -82,9 +82,9 @@ isEnabled: computed at runtime
 Browse your published and shared artifacts
 ~~~~~~
 
-### /auto-mode-setup (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /auto-mode-setup (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185659882 · sha256 `8e164cfa…`
+Source: `chunk-ra61p37g.js` · offset 187583574 · sha256 `8e164cfa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -100,9 +100,9 @@ isHidden: computed at runtime
 Teach auto mode about your environment, plus optional rule tweaks
 ~~~~~~
 
-### /auto-mode-setup (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /auto-mode-setup (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185660258 · sha256 `8e164cfa…`
+Source: `chunk-ra61p37g.js` · offset 187583950 · sha256 `8e164cfa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -114,9 +114,9 @@ isEnabled: computed at runtime
 Teach auto mode about your environment, plus optional rule tweaks
 ~~~~~~
 
-### /autocompact (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /autocompact (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185667998 · sha256 `2e29ad95…`
+Source: `chunk-ra61p37g.js` · offset 187591690 · sha256 `2e29ad95…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -132,9 +132,9 @@ isHidden: `false`
 Set how full the context gets before auto-summarizing
 ~~~~~~
 
-### /autocompact (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /autocompact (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185668275 · sha256 `58d6836b…`
+Source: `chunk-ra61p37g.js` · offset 187591967 · sha256 `58d6836b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -150,9 +150,9 @@ isHidden: computed at runtime
 Configure the auto-compact window size
 ~~~~~~
 
-### /autofix-pr (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /autofix-pr (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185660670 · sha256 `6c32fdf3…`
+Source: `chunk-ra61p37g.js` · offset 187584362 · sha256 `6c32fdf3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -166,9 +166,9 @@ isHidden: computed at runtime
 Monitor and autofix any issues with the current PR
 ~~~~~~
 
-### /autofix-pr (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /autofix-pr (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185975128 · sha256 `6c32fdf3…`
+Source: `chunk-ra61p37g.js` · offset 187902801 · sha256 `6c32fdf3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -180,7 +180,7 @@ Monitor and autofix any issues with the current PR
 
 ### /background
 
-Source: `chunk-r03jyy7q.js` · offset 196791241 · sha256 `b7f09c3b…`
+Source: `chunk-rtsj15er.js` · offset 198794900 · sha256 `b7f09c3b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -198,7 +198,7 @@ Send this session to the background and free the terminal
 
 ### /branch
 
-Source: `chunk-wyjbafrm.js` · offset 185965744 · sha256 `5ae03e00…`
+Source: `chunk-ra61p37g.js` · offset 187893417 · sha256 `5ae03e00…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -212,7 +212,7 @@ Create a branch of the current conversation at this point
 
 ### /brief
 
-Source: `chunk-sj18aqg4.js` · offset 196837795 · sha256 `52458610…`
+Source: `chunk-dekwpew8.js` · offset 198884225 · sha256 `52458610…`
 
 Status: undocumented
 
@@ -226,7 +226,7 @@ Toggle brief-only mode
 
 ### /btw
 
-Source: `chunk-wyjbafrm.js` · offset 185660940 · sha256 `52bc31e3…`
+Source: `chunk-ra61p37g.js` · offset 187584632 · sha256 `52bc31e3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -240,7 +240,7 @@ Ask a quick side question without interrupting the main conversation
 
 ### /bug
 
-Source: `chunk-wyjbafrm.js` · offset 185661377 · sha256 `d64ca096…`
+Source: `chunk-ra61p37g.js` · offset 187585069 · sha256 `d64ca096…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -256,7 +256,7 @@ Report a bug or share your conversation
 
 ### /cd
 
-Source: `chunk-wyjbafrm.js` · offset 185661531 · sha256 `bedfe2a5…`
+Source: `chunk-ra61p37g.js` · offset 187585223 · sha256 `bedfe2a5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -270,7 +270,7 @@ Move this session to a new working directory
 
 ### /chrome
 
-Source: `chunk-wyjbafrm.js` · offset 185972338 · sha256 `57d70076…`
+Source: `chunk-ra61p37g.js` · offset 187900011 · sha256 `57d70076…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -284,7 +284,7 @@ Open Claude in Chrome settings
 
 ### /clear
 
-Source: `chunk-wyjbafrm.js` · offset 185661656 · sha256 `d879dc70…`
+Source: `chunk-ra61p37g.js` · offset 187585348 · sha256 `d879dc70…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -300,7 +300,7 @@ Start a new session with empty context; previous session stays on disk (resumabl
 
 ### /cloud-plugins
 
-Source: `chunk-wyjbafrm.js` · offset 185659407 · sha256 `9f8fa961…`
+Source: `chunk-ra61p37g.js` · offset 187583099 · sha256 `9f8fa961…`
 
 Status: undocumented
 
@@ -312,9 +312,9 @@ isEnabled: gated (condition references `CLAUDE_CODE_DISABLE_PLUGIN_FORWARDING`)
 Choose whether cloud sessions use the plugins enabled on this machine
 ~~~~~~
 
-### /color (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /color (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185661967 · sha256 `d97f485c…`
+Source: `chunk-ra61p37g.js` · offset 187585659 · sha256 `d97f485c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -322,15 +322,15 @@ Type: `local-jsx`
 
 Argument hint: `[red|blue|green|yellow|purple|orange|pink|cyan|default]`
 
-Interpolated constants (resolved from code): `kh` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
+Interpolated constants (resolved from code): `Bh` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
 
 ~~~~~~text
 Set the prompt bar color for this session
 ~~~~~~
 
-### /color (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /color (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185662250 · sha256 `d97f485c…`
+Source: `chunk-ra61p37g.js` · offset 187585942 · sha256 `d97f485c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -342,7 +342,7 @@ isEnabled: computed at runtime
 
 isHidden: computed at runtime
 
-Interpolated constants (resolved from code): `kh` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
+Interpolated constants (resolved from code): `Bh` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
 
 ~~~~~~text
 Set the prompt bar color for this session
@@ -350,7 +350,7 @@ Set the prompt bar color for this session
 
 ### /compact
 
-Source: `chunk-wyjbafrm.js` · offset 184006474 · sha256 `6469e86a…`
+Source: `chunk-ra61p37g.js` · offset 185920582 · sha256 `6469e86a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -364,9 +364,9 @@ isEnabled: gated (condition references `DISABLE_COMPACT`)
 Free up context by summarizing the conversation so far
 ~~~~~~
 
-### /config (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /config (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185668575 · sha256 `f0247715…`
+Source: `chunk-ra61p37g.js` · offset 187592267 · sha256 `f0247715…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -380,9 +380,9 @@ Argument hint: `[key=value]`
 Open settings
 ~~~~~~
 
-### /config (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /config (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185668895 · sha256 `bcf0e110…`
+Source: `chunk-ra61p37g.js` · offset 187592587 · sha256 `bcf0e110…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -400,9 +400,9 @@ isHidden: computed at runtime
 Set a setting by key
 ~~~~~~
 
-### /context (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /context (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185669677 · sha256 `5e903685…`
+Source: `chunk-ra61p37g.js` · offset 187593369 · sha256 `5e903685…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -416,9 +416,9 @@ isEnabled: computed at runtime
 Visualize current context usage as a colored grid
 ~~~~~~
 
-### /context (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /context (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185669904 · sha256 `bb97777d…`
+Source: `chunk-ra61p37g.js` · offset 187593596 · sha256 `bb97777d…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -434,7 +434,7 @@ Show current context usage
 
 ### /copy
 
-Source: `chunk-wyjbafrm.js` · offset 185662498 · sha256 `01b91a65…`
+Source: `chunk-ra61p37g.js` · offset 187586190 · sha256 `01b91a65…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -446,7 +446,7 @@ Copy Claude's last response to clipboard (or /copy N for the Nth-latest)
 
 ### /daemon
 
-Source: `chunk-0k5z9v33.js` · offset 196817461 · sha256 `e47cd881…`
+Source: `chunk-zm3f67pt.js` · offset 198864807 · sha256 `e47cd881…`
 
 Status: undocumented
 
@@ -458,7 +458,7 @@ Manage background services and routines
 
 ### /design-login
 
-Source: `chunk-wyjbafrm.js` · offset 185698144 · sha256 `b2e3f9b8…`
+Source: `chunk-ra61p37g.js` · offset 187621836 · sha256 `b2e3f9b8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -472,7 +472,7 @@ Authorize design-system access for /design-sync with your claude.ai account
 
 ### /desktop
 
-Source: `chunk-wyjbafrm.js` · offset 185662728 · sha256 `c1703e0a…`
+Source: `chunk-ra61p37g.js` · offset 187586420 · sha256 `c1703e0a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -490,7 +490,7 @@ Continue the current session in Claude Desktop
 
 ### /diff
 
-Source: `chunk-wyjbafrm.js` · offset 185670045 · sha256 `7c0959a1…`
+Source: `chunk-ra61p37g.js` · offset 187593737 · sha256 `b95a2536…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -500,11 +500,11 @@ isEnabled: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185670045.
+Undocumented; read at `chunk-ra61p37g.js` offset 187593737.
 
-### /effort (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /effort (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185984997 · sha256 `e9ef028a…`
+Source: `chunk-ra61p37g.js` · offset 187912671 · sha256 `e9ef028a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -514,9 +514,9 @@ Type: `local-jsx`
 Set effort level for model usage
 ~~~~~~
 
-### /effort (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /effort (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185985211 · sha256 `e9ef028a…`
+Source: `chunk-ra61p37g.js` · offset 187912885 · sha256 `e9ef028a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -530,9 +530,9 @@ isHidden: computed at runtime
 Set effort level for model usage
 ~~~~~~
 
-### /exit (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /exit (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185975390 · sha256 `000b7e45…`
+Source: `chunk-ra61p37g.js` · offset 187903063 · sha256 `59fffe9f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -542,11 +542,11 @@ Aliases: `/quit`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185975390.
+Undocumented; read at `chunk-ra61p37g.js` offset 187903063.
 
-### /exit (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /exit (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185975560 · sha256 `05e5bfca…`
+Source: `chunk-ra61p37g.js` · offset 187903233 · sha256 `43c51ca3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -554,11 +554,11 @@ Type: `local`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185975560.
+Undocumented; read at `chunk-ra61p37g.js` offset 187903233.
 
 ### /export
 
-Source: `chunk-wyjbafrm.js` · offset 185976052 · sha256 `e7a6fef6…`
+Source: `chunk-ra61p37g.js` · offset 187903725 · sha256 `e7a6fef6…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -570,9 +570,9 @@ Argument hint: `[filename]`
 Export the current conversation to a file or clipboard
 ~~~~~~
 
-### /fast (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /fast (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185964549 · sha256 `b0ff2c4d…`
+Source: `chunk-ra61p37g.js` · offset 187892222 · sha256 `4b7317b8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -584,11 +584,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185964549.
+Undocumented; read at `chunk-ra61p37g.js` offset 187892222.
 
-### /fast (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /fast (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185964758 · sha256 `4b47887b…`
+Source: `chunk-ra61p37g.js` · offset 187892431 · sha256 `77530a31…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -602,11 +602,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185964758.
+Undocumented; read at `chunk-ra61p37g.js` offset 187892431.
 
 ### /feedback
 
-Source: `chunk-wyjbafrm.js` · offset 185661201 · sha256 `48754384…`
+Source: `chunk-ra61p37g.js` · offset 187584893 · sha256 `48754384…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -618,9 +618,9 @@ Argument hint: `[report]`
 Send feedback to Anthropic or report a bug
 ~~~~~~
 
-### /focus (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /focus (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185985662 · sha256 `6f31ffc8…`
+Source: `chunk-ra61p37g.js` · offset 187913336 · sha256 `6f31ffc8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -630,9 +630,9 @@ Type: `local-jsx`
 Toggle focus view: just your prompt, summary, and response
 ~~~~~~
 
-### /focus (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /focus (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185987322 · sha256 `6f31ffc8…`
+Source: `chunk-ra61p37g.js` · offset 187914996 · sha256 `6f31ffc8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -648,9 +648,9 @@ isHidden: computed at runtime
 Toggle focus view: just your prompt, summary, and response
 ~~~~~~
 
-### /fork (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /fork (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185965935 · sha256 `e0997af2…`
+Source: `chunk-ra61p37g.js` · offset 187893608 · sha256 `e0997af2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -664,9 +664,9 @@ isEnabled: computed at runtime
 Spawn a background agent that inherits the full conversation
 ~~~~~~
 
-### /fork (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /fork (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185966146 · sha256 `641ba59c…`
+Source: `chunk-ra61p37g.js` · offset 187893819 · sha256 `641ba59c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -680,9 +680,9 @@ isEnabled: computed at runtime
 Copy this conversation into a new background session and keep working here
 ~~~~~~
 
-### /goal (definition 1 of 2, `chunk-v8q695cg.js`)
+### /goal (definition 1 of 2, `chunk-r5njk73f.js`)
 
-Source: `chunk-v8q695cg.js` · offset 196832828 · sha256 `9a733d16…`
+Source: `chunk-r5njk73f.js` · offset 198833472 · sha256 `9a733d16…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -694,9 +694,9 @@ Argument hint: `[<condition> | clear]`
 Set a goal Claude checks before stopping
 ~~~~~~
 
-### /goal (definition 2 of 2, `chunk-v8q695cg.js`)
+### /goal (definition 2 of 2, `chunk-r5njk73f.js`)
 
-Source: `chunk-v8q695cg.js` · offset 196833019 · sha256 `cc53511f…`
+Source: `chunk-r5njk73f.js` · offset 198833663 · sha256 `cc53511f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -712,7 +712,7 @@ Set a goal — keep working until the condition is met
 
 ### /help
 
-Source: `chunk-wyjbafrm.js` · offset 185670856 · sha256 `23e720a1…`
+Source: `chunk-ra61p37g.js` · offset 187594548 · sha256 `23e720a1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -724,7 +724,7 @@ Show help and available commands
 
 ### /hooks
 
-Source: `chunk-wyjbafrm.js` · offset 185965473 · sha256 `75ca739e…`
+Source: `chunk-ra61p37g.js` · offset 187893146 · sha256 `75ca739e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -736,7 +736,7 @@ View hook configurations for tool events
 
 ### /ide
 
-Source: `chunk-wyjbafrm.js` · offset 185671001 · sha256 `7792c72e…`
+Source: `chunk-ra61p37g.js` · offset 187594693 · sha256 `7792c72e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -748,9 +748,9 @@ Argument hint: `[open]`
 Manage IDE integrations and show status
 ~~~~~~
 
-### /import (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /import (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185672043 · sha256 `5061f6b3…`
+Source: `chunk-ra61p37g.js` · offset 187595735 · sha256 `5061f6b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -766,9 +766,9 @@ isHidden: computed at runtime
 Import config from another AI coding agent
 ~~~~~~
 
-### /import (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /import (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185672264 · sha256 `5061f6b3…`
+Source: `chunk-ra61p37g.js` · offset 187595956 · sha256 `5061f6b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -784,7 +784,7 @@ Import config from another AI coding agent
 
 ### /install
 
-Source: `chunk-z75fnzkj.js` · offset 211815143 · sha256 `235841f2…`
+Source: `chunk-qc5ntwm7.js` · offset 212388702 · sha256 `235841f2…`
 
 Status: undocumented
 
@@ -798,7 +798,7 @@ Install Claude Code native build
 
 ### /install-github-app
 
-Source: `chunk-wyjbafrm.js` · offset 185698781 · sha256 `0c15077b…`
+Source: `chunk-ra61p37g.js` · offset 187622473 · sha256 `0c15077b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -812,7 +812,7 @@ Set up Claude GitHub Actions for a repository
 
 ### /install-slack-app
 
-Source: `chunk-wyjbafrm.js` · offset 185698986 · sha256 `4e344812…`
+Source: `chunk-ra61p37g.js` · offset 187622678 · sha256 `4e344812…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -824,7 +824,7 @@ Install the Claude Slack app
 
 ### /keybindings
 
-Source: `chunk-wyjbafrm.js` · offset 185697446 · sha256 `cc5dbc0a…`
+Source: `chunk-ra61p37g.js` · offset 187621138 · sha256 `cc5dbc0a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -838,7 +838,7 @@ Open your keyboard shortcuts file
 
 ### /list-agents
 
-Source: `chunk-71kmpv1f.js` · offset 196790363 · sha256 `8ffbeeb0…`
+Source: `chunk-7ts6tag1.js` · offset 198832292 · sha256 `8ffbeeb0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -854,7 +854,7 @@ List subagents, teammates, and other Claude sessions you can message
 
 ### /login
 
-Source: `chunk-wyjbafrm.js` · offset 185698271 · sha256 `c39aca88…`
+Source: `chunk-ra61p37g.js` · offset 187621963 · sha256 `28c0482e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -864,11 +864,11 @@ isEnabled: gated (condition references `DISABLE_LOGIN_COMMAND`)
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185698271.
+Undocumented; read at `chunk-ra61p37g.js` offset 187621963.
 
 ### /logout
 
-Source: `chunk-wyjbafrm.js` · offset 185698529 · sha256 `6e6288ca…`
+Source: `chunk-ra61p37g.js` · offset 187622221 · sha256 `6e6288ca…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -882,7 +882,7 @@ Sign out from your Anthropic account
 
 ### /loops
 
-Source: `chunk-wyjbafrm.js` · offset 185965620 · sha256 `54168081…`
+Source: `chunk-ra61p37g.js` · offset 187893293 · sha256 `54168081…`
 
 Status: undocumented
 
@@ -894,9 +894,9 @@ isEnabled: `false`
 List, create, and delete loops
 ~~~~~~
 
-### /mcp (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /mcp (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185699251 · sha256 `c2c551b3…`
+Source: `chunk-ra61p37g.js` · offset 187622943 · sha256 `c2c551b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -912,15 +912,15 @@ isHidden: computed at runtime
 Manage MCP servers
 ~~~~~~
 
-### /mcp (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /mcp (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185699503 · sha256 `c2c551b3…`
+Source: `chunk-ra61p37g.js` · offset 187623195 · sha256 `c2c551b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
 Type: `local-jsx`
 
-Argument hint: `[reconnect <server>|enable|disable [<server>|all]]`
+Argument hint: `[reconnect (<server>|all)|enable|disable [<server>|all]]`
 
 ~~~~~~text
 Manage MCP servers
@@ -928,7 +928,7 @@ Manage MCP servers
 
 ### /memory
 
-Source: `chunk-wyjbafrm.js` · offset 185670396 · sha256 `fb6fd517…`
+Source: `chunk-ra61p37g.js` · offset 187594088 · sha256 `fb6fd517…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -940,7 +940,7 @@ Edit CLAUDE.md files and memory settings
 
 ### /mobile
 
-Source: `chunk-wyjbafrm.js` · offset 185699716 · sha256 `911b1a74…`
+Source: `chunk-ra61p37g.js` · offset 187623414 · sha256 `911b1a74…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -952,9 +952,9 @@ Aliases: `/ios`, `/android`
 Show QR code to download the Claude mobile app
 ~~~~~~
 
-### /model (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /model (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185976235 · sha256 `4ed26d50…`
+Source: `chunk-ra61p37g.js` · offset 187903908 · sha256 `4ed26d50…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -970,9 +970,9 @@ isHidden: computed at runtime
 Set the AI model for Claude Code
 ~~~~~~
 
-### /model (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /model (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185976395 · sha256 `7994ba9f…`
+Source: `chunk-ra61p37g.js` · offset 187904068 · sha256 `3819d381…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -982,11 +982,11 @@ Argument hint: `[model]`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185976395.
+Undocumented; read at `chunk-ra61p37g.js` offset 187904068.
 
 ### /output-style
 
-Source: `chunk-wyjbafrm.js` · offset 185669443 · sha256 `845433e1…`
+Source: `chunk-ra61p37g.js` · offset 187593135 · sha256 `845433e1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1004,7 +1004,7 @@ List output styles or switch to one
 
 ### /passes
 
-Source: `chunk-wyjbafrm.js` · offset 185965002 · sha256 `dd9772c6…`
+Source: `chunk-ra61p37g.js` · offset 187892675 · sha256 `a293185e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1014,11 +1014,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185965002.
+Undocumented; read at `chunk-ra61p37g.js` offset 187892675.
 
 ### /pause-memory
 
-Source: `chunk-wyjbafrm.js` · offset 185670586 · sha256 `d49d7b56…`
+Source: `chunk-ra61p37g.js` · offset 187594278 · sha256 `d49d7b56…`
 
 Status: undocumented
 
@@ -1036,7 +1036,7 @@ Pause automemory for this session
 
 ### /permissions
 
-Source: `chunk-wyjbafrm.js` · offset 185964271 · sha256 `5a68c592…`
+Source: `chunk-ra61p37g.js` · offset 187891944 · sha256 `5a68c592…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1050,7 +1050,7 @@ Manage allow and deny tool permission rules
 
 ### /plan
 
-Source: `chunk-wyjbafrm.js` · offset 185964426 · sha256 `5d041f82…`
+Source: `chunk-ra61p37g.js` · offset 187892099 · sha256 `5d041f82…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1064,7 +1064,7 @@ Enable plan mode or view the current session plan
 
 ### /plugin
 
-Source: `chunk-wyjbafrm.js` · offset 185967161 · sha256 `4ddd75bf…`
+Source: `chunk-ra61p37g.js` · offset 187894834 · sha256 `4ddd75bf…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1078,7 +1078,7 @@ Manage Claude Code plugins
 
 ### /plugin-types
 
-Source: `chunk-wyjbafrm.js` · offset 185967433 · sha256 `bb922139…`
+Source: `chunk-ra61p37g.js` · offset 187895106 · sha256 `bb922139…`
 
 Status: undocumented
 
@@ -1092,7 +1092,7 @@ Write claude-code.d.ts, claude-code-plugins.d.ts and claude-code-mcp.d.ts: the p
 
 ### /powerup
 
-Source: `chunk-wyjbafrm.js` · offset 185700134 · sha256 `08c74ce2…`
+Source: `chunk-ra61p37g.js` · offset 187623832 · sha256 `08c74ce2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1104,7 +1104,7 @@ Discover Claude Code features through quick interactive lessons
 
 ### /privacy-settings
 
-Source: `chunk-wyjbafrm.js` · offset 185965336 · sha256 `787e5dc1…`
+Source: `chunk-ra61p37g.js` · offset 187893009 · sha256 `787e5dc1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1118,7 +1118,7 @@ View and update your privacy settings
 
 ### /radio
 
-Source: `chunk-wyjbafrm.js` · offset 185972714 · sha256 `387887d0…`
+Source: `chunk-ra61p37g.js` · offset 187900387 · sha256 `387887d0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1128,9 +1128,23 @@ Type: `local`
 Listen to Claude FM lo-fi radio
 ~~~~~~
 
+### /rate-limit-options
+
+Source: `chunk-ra61p37g.js` · offset 187906230 · sha256 `1b2d6d5f…`
+
+Status: documented at https://code.claude.com/docs/en/commands
+
+Type: `local-jsx`
+
+isEnabled: computed at runtime
+
+~~~~~~text
+Manage usage limits and upgrade options
+~~~~~~
+
 ### /recap
 
-Source: `chunk-e17w8cjz.js` · offset 196831682 · sha256 `21ea02a9…`
+Source: `chunk-2p2xj0m3.js` · offset 198879543 · sha256 `21ea02a9…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1142,7 +1156,7 @@ Generate a one-line session recap now
 
 ### /release-notes
 
-Source: `chunk-wyjbafrm.js` · offset 185700240 · sha256 `d3750dfd…`
+Source: `chunk-ra61p37g.js` · offset 187623938 · sha256 `d3750dfd…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1154,7 +1168,7 @@ View release notes
 
 ### /reload-plugins
 
-Source: `chunk-wyjbafrm.js` · offset 185967833 · sha256 `277cd7ff…`
+Source: `chunk-ra61p37g.js` · offset 187895506 · sha256 `277cd7ff…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1168,7 +1182,7 @@ Activate pending plugin changes in the current session
 
 ### /reload-skills
 
-Source: `chunk-wyjbafrm.js` · offset 185968112 · sha256 `3b405e96…`
+Source: `chunk-ra61p37g.js` · offset 187895785 · sha256 `3b405e96…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1178,9 +1192,9 @@ Type: `local`
 Pick up skills added or changed on disk during this session
 ~~~~~~
 
-### /remote-control (definition 1 of 2, `chunk-zhpzm0d7.js`)
+### /remote-control (definition 1 of 2, `chunk-2mvpxmqb.js`)
 
-Source: `chunk-zhpzm0d7.js` · offset 196843259 · sha256 `b95dedcc…`
+Source: `chunk-2mvpxmqb.js` · offset 198863842 · sha256 `746a2063…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1194,11 +1208,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-zhpzm0d7.js` offset 196843259.
+Undocumented; read at `chunk-2mvpxmqb.js` offset 198863842.
 
-### /remote-control (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /remote-control (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185974876 · sha256 `dc8b8572…`
+Source: `chunk-ra61p37g.js` · offset 187902549 · sha256 `dc8b8572…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1212,7 +1226,7 @@ Control this session from your phone or claude.ai/code
 
 ### /remote-env
 
-Source: `chunk-wyjbafrm.js` · offset 185976658 · sha256 `e4a76f28…`
+Source: `chunk-ra61p37g.js` · offset 187904331 · sha256 `e4a76f28…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1226,9 +1240,9 @@ isHidden: computed at runtime
 Choose the default environment for cloud agents
 ~~~~~~
 
-### /rename (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /rename (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185700395 · sha256 `791d99d5…`
+Source: `chunk-ra61p37g.js` · offset 187624093 · sha256 `791d99d5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1242,9 +1256,9 @@ Argument hint: `[name]`
 Rename the current conversation
 ~~~~~~
 
-### /rename (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /rename (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185700620 · sha256 `791d99d5…`
+Source: `chunk-ra61p37g.js` · offset 187624318 · sha256 `791d99d5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1264,7 +1278,7 @@ Rename the current conversation
 
 ### /resume
 
-Source: `chunk-wyjbafrm.js` · offset 185700834 · sha256 `1dd9caf3…`
+Source: `chunk-ra61p37g.js` · offset 187624532 · sha256 `1dd9caf3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1280,7 +1294,7 @@ Resume a previous conversation
 
 ### /rewind
 
-Source: `chunk-wyjbafrm.js` · offset 185968311 · sha256 `b04bc5f5…`
+Source: `chunk-ra61p37g.js` · offset 187895984 · sha256 `b04bc5f5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1294,7 +1308,7 @@ Restore the code and/or conversation to a previous point
 
 ### /sandbox
 
-Source: `chunk-wyjbafrm.js` · offset 185971485 · sha256 `81da3eb0…`
+Source: `chunk-ra61p37g.js` · offset 187899158 · sha256 `2da1aade…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1304,11 +1318,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185971485.
+Undocumented; read at `chunk-ra61p37g.js` offset 187899158.
 
-### /schedule (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /schedule (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185975036 · sha256 `9e19563c…`
+Source: `chunk-ra61p37g.js` · offset 187902709 · sha256 `9e19563c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1322,7 +1336,7 @@ Create and manage scheduled remote Claude Code agents
 
 ### /scroll-speed
 
-Source: `chunk-wyjbafrm.js` · offset 185702170 · sha256 `35d4450c…`
+Source: `chunk-ra61p37g.js` · offset 187625868 · sha256 `35d4450c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1336,7 +1350,7 @@ Adjust mouse wheel scroll speed
 
 ### /session
 
-Source: `chunk-wyjbafrm.js` · offset 185701891 · sha256 `d22023b6…`
+Source: `chunk-ra61p37g.js` · offset 187625589 · sha256 `d22023b6…`
 
 Status: undocumented
 
@@ -1354,7 +1368,7 @@ Show cloud session URL and QR code
 
 ### /setup-bedrock
 
-Source: `chunk-wyjbafrm.js` · offset 185701004 · sha256 `9049309c…`
+Source: `chunk-ra61p37g.js` · offset 187624702 · sha256 `9049309c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1368,7 +1382,7 @@ Reconfigure Amazon Bedrock authentication, region, or model pins
 
 ### /setup-vertex
 
-Source: `chunk-wyjbafrm.js` · offset 185701179 · sha256 `f1f7ad1b…`
+Source: `chunk-ra61p37g.js` · offset 187624877 · sha256 `f1f7ad1b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1380,9 +1394,9 @@ isHidden: gated (condition references `CLAUDE_CODE_USE_VERTEX`)
 Reconfigure Google Vertex AI authentication, project, region, or model pins
 ~~~~~~
 
-### /skill-doctor (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /skill-doctor (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185963548 · sha256 `15b184c7…`
+Source: `chunk-ra61p37g.js` · offset 187891221 · sha256 `15b184c7…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1392,9 +1406,9 @@ Type: `local-jsx`
 Show which loaded skills are unused and costing context
 ~~~~~~
 
-### /skill-doctor (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /skill-doctor (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185963696 · sha256 `15b184c7…`
+Source: `chunk-ra61p37g.js` · offset 187891369 · sha256 `15b184c7…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1410,7 +1424,7 @@ Show which loaded skills are unused and costing context
 
 ### /skills
 
-Source: `chunk-wyjbafrm.js` · offset 185702377 · sha256 `f64e79c7…`
+Source: `chunk-ra61p37g.js` · offset 187626075 · sha256 `f64e79c7…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1422,7 +1436,7 @@ List available skills
 
 ### /status
 
-Source: `chunk-wyjbafrm.js` · offset 185702512 · sha256 `caac99e2…`
+Source: `chunk-ra61p37g.js` · offset 187626210 · sha256 `caac99e2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1434,7 +1448,7 @@ Show Claude Code status including version, model, account, API connectivity, and
 
 ### /stickers
 
-Source: `chunk-wyjbafrm.js` · offset 185972553 · sha256 `8350767b…`
+Source: `chunk-ra61p37g.js` · offset 187900226 · sha256 `8350767b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1444,9 +1458,9 @@ Type: `local`
 Order Claude Code stickers
 ~~~~~~
 
-### /stop (definition 1 of 2, `chunk-re1rf623.js`)
+### /stop (definition 1 of 2, `chunk-3b7zf3mv.js`)
 
-Source: `chunk-re1rf623.js` · offset 196757384 · sha256 `251d8826…`
+Source: `chunk-3b7zf3mv.js` · offset 198799235 · sha256 `251d8826…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1458,9 +1472,9 @@ isEnabled: computed at runtime
 Stop this background session; transcript and worktree are kept
 ~~~~~~
 
-### /stop (definition 2 of 2, `chunk-re1rf623.js`)
+### /stop (definition 2 of 2, `chunk-3b7zf3mv.js`)
 
-Source: `chunk-re1rf623.js` · offset 196757542 · sha256 `251d8826…`
+Source: `chunk-3b7zf3mv.js` · offset 198799393 · sha256 `251d8826…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1474,7 +1488,7 @@ Stop this background session; transcript and worktree are kept
 
 ### /subtask
 
-Source: `chunk-wyjbafrm.js` · offset 185966321 · sha256 `9b550321…`
+Source: `chunk-ra61p37g.js` · offset 187893994 · sha256 `9b550321…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1490,7 +1504,7 @@ Send a subagent off with your full context; its result comes back here
 
 ### /tasks
 
-Source: `chunk-wyjbafrm.js` · offset 185702719 · sha256 `765d4e9f…`
+Source: `chunk-ra61p37g.js` · offset 187626417 · sha256 `765d4e9f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1502,9 +1516,9 @@ Aliases: `/bashes`
 View and manage everything running in the background
 ~~~~~~
 
-### /teleport (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /teleport (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185702887 · sha256 `65374137…`
+Source: `chunk-ra61p37g.js` · offset 187626585 · sha256 `65374137…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1520,9 +1534,9 @@ isHidden: computed at runtime
 Send this session to the cloud, or resume one from claude.ai
 ~~~~~~
 
-### /teleport (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /teleport (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185974758 · sha256 `65374137…`
+Source: `chunk-ra61p37g.js` · offset 187902431 · sha256 `65374137…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1536,7 +1550,7 @@ Send this session to the cloud, or resume one from claude.ai
 
 ### /terminal-setup
 
-Source: `chunk-wyjbafrm.js` · offset 185720596 · sha256 `c49b5d7e…`
+Source: `chunk-ra61p37g.js` · offset 187644294 · sha256 `a0c0473a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1544,11 +1558,11 @@ Type: `local-jsx`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185720596.
+Undocumented; read at `chunk-ra61p37g.js` offset 187644294.
 
 ### /theme
 
-Source: `chunk-wyjbafrm.js` · offset 185963960 · sha256 `54b7e334…`
+Source: `chunk-ra61p37g.js` · offset 187891633 · sha256 `54b7e334…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1560,7 +1574,7 @@ Change the theme
 
 ### /tui
 
-Source: `chunk-wyjbafrm.js` · offset 185964089 · sha256 `0b642684…`
+Source: `chunk-ra61p37g.js` · offset 187891762 · sha256 `0b642684…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1572,9 +1586,9 @@ Argument hint: `[default|fullscreen]`
 Set the terminal UI renderer (default | fullscreen)
 ~~~~~~
 
-### /ultraplan (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /ultraplan (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185962727 · sha256 `2d5a0cc7…`
+Source: `chunk-ra61p37g.js` · offset 187890399 · sha256 `8914c9e1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1586,11 +1600,11 @@ isEnabled: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185962727.
+Undocumented; read at `chunk-ra61p37g.js` offset 187890399.
 
-### /ultraplan (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /ultraplan (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185974555 · sha256 `bc843114…`
+Source: `chunk-ra61p37g.js` · offset 187902228 · sha256 `bc843114…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1600,9 +1614,9 @@ Type: `local (built by a command factory)`
 A cloud session drafts a plan you can edit and approve
 ~~~~~~
 
-### /ultrareview (definition 1 of 3, `chunk-wyjbafrm.js`)
+### /ultrareview (definition 1 of 3, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185701531 · sha256 `757af4bb…`
+Source: `chunk-ra61p37g.js` · offset 187625229 · sha256 `27ce695a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1612,11 +1626,11 @@ isEnabled: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185701531.
+Undocumented; read at `chunk-ra61p37g.js` offset 187625229.
 
-### /ultrareview (definition 2 of 3, `chunk-wyjbafrm.js`)
+### /ultrareview (definition 2 of 3, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185701624 · sha256 `4eab9950…`
+Source: `chunk-ra61p37g.js` · offset 187625322 · sha256 `29d59a6b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1628,11 +1642,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185701624.
+Undocumented; read at `chunk-ra61p37g.js` offset 187625322.
 
-### /ultrareview (definition 3 of 3, `chunk-wyjbafrm.js`)
+### /ultrareview (definition 3 of 3, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185974649 · sha256 `414688ad…`
+Source: `chunk-ra61p37g.js` · offset 187902322 · sha256 `414688ad…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1644,7 +1658,7 @@ Find and verify bugs in your branch using a cloud session
 
 ### /upgrade
 
-Source: `chunk-wyjbafrm.js` · offset 185977455 · sha256 `434669de…`
+Source: `chunk-ra61p37g.js` · offset 187905128 · sha256 `434669de…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1656,9 +1670,9 @@ isEnabled: computed at runtime
 Upgrade to Max for higher rate limits and more Opus
 ~~~~~~
 
-### /usage (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /usage (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185963054 · sha256 `258bee07…`
+Source: `chunk-ra61p37g.js` · offset 187890727 · sha256 `258bee07…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1670,9 +1684,9 @@ Aliases: `/cost`, `/stats`
 Show session cost, plan usage, and activity stats
 ~~~~~~
 
-### /usage (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /usage (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185963269 · sha256 `c9d6e91c…`
+Source: `chunk-ra61p37g.js` · offset 187890942 · sha256 `c9d6e91c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1688,9 +1702,9 @@ isHidden: computed at runtime
 Show session cost, plan usage, and what's contributing to your limits
 ~~~~~~
 
-### /usage-credits (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /usage-credits (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185977634 · sha256 `1db112fa…`
+Source: `chunk-ra61p37g.js` · offset 187905307 · sha256 `1db112fa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1702,9 +1716,9 @@ isEnabled: computed at runtime
 Configure usage credits or request them from your admin when you hit a limit
 ~~~~~~
 
-### /usage-credits (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /usage-credits (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185977835 · sha256 `1db112fa…`
+Source: `chunk-ra61p37g.js` · offset 187905508 · sha256 `1db112fa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1718,9 +1732,9 @@ isHidden: computed at runtime
 Configure usage credits or request them from your admin when you hit a limit
 ~~~~~~
 
-### /version (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /version (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185969205 · sha256 `a6a03726…`
+Source: `chunk-ra61p37g.js` · offset 187896878 · sha256 `a6a03726…`
 
 Status: undocumented
 
@@ -1732,9 +1746,9 @@ isEnabled: `false`
 Show this session's version (autoupdate may have a newer one)
 ~~~~~~
 
-### /version (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /version (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185970882 · sha256 `52d48b4d…`
+Source: `chunk-ra61p37g.js` · offset 187898555 · sha256 `52d48b4d…`
 
 Status: undocumented
 
@@ -1750,7 +1764,7 @@ Print the version this session is running (not what autoupdate downloaded)
 
 ### /voice
 
-Source: `chunk-wyjbafrm.js` · offset 185699890 · sha256 `bb20d74f…`
+Source: `chunk-ra61p37g.js` · offset 187623588 · sha256 `bb20d74f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1766,7 +1780,7 @@ Toggle voice mode
 
 ### /web-setup
 
-Source: `chunk-kjq3dw8d.js` · offset 182816119 · sha256 `23d3eee0…`
+Source: `chunk-jt2pa6qd.js` · offset 184738748 · sha256 `23d3eee0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1782,7 +1796,7 @@ Set up cloud sessions with your GitHub account
 
 ### /wellbeing
 
-Source: `chunk-wyjbafrm.js` · offset 185985494 · sha256 `a76d5c4a…`
+Source: `chunk-ra61p37g.js` · offset 187913168 · sha256 `a76d5c4a…`
 
 Status: undocumented
 
@@ -1798,7 +1812,7 @@ Configure optional break reminders and quiet-hours nudges
 
 ### /workflows
 
-Source: `chunk-8s1afcep.js` · offset 196795787 · sha256 `1b3ac0ef…`
+Source: `chunk-fjhvb4b3.js` · offset 198838270 · sha256 `1b3ac0ef…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1814,7 +1828,7 @@ Browse running and completed workflows
 
 ### /init
 
-Source: `chunk-wyjbafrm.js` · offset 185697021 · sha256 `eab5c04d…`
+Source: `chunk-ra61p37g.js` · offset 187620713 · sha256 `ebcb4926…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1822,11 +1836,11 @@ Type: `prompt`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-wyjbafrm.js` offset 185697021.
+Undocumented; read at `chunk-ra61p37g.js` offset 187620713.
 
-### /insights (definition 1 of 2, `chunk-mn8t522g.js`)
+### /insights (definition 1 of 2, `chunk-50qtypn7.js`)
 
-Source: `chunk-mn8t522g.js` · offset 194379292 · sha256 `6a39fdb6…`
+Source: `chunk-50qtypn7.js` · offset 196349602 · sha256 `6a39fdb6…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1836,9 +1850,9 @@ Type: `prompt`
 Generate a report analyzing your Claude Code sessions
 ~~~~~~
 
-### /insights (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /insights (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185988923 · sha256 `6a39fdb6…`
+Source: `chunk-ra61p37g.js` · offset 187916597 · sha256 `6a39fdb6…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1850,7 +1864,7 @@ Generate a report analyzing your Claude Code sessions
 
 ### /security-review
 
-Source: `chunk-wyjbafrm.js` · offset 185719520 · sha256 `61328990…`
+Source: `chunk-ra61p37g.js` · offset 187643218 · sha256 `61328990…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1862,7 +1876,7 @@ Complete a security review of the pending changes on the current branch
 
 ### /statusline
 
-Source: `chunk-wyjbafrm.js` · offset 185983918 · sha256 `05088293…`
+Source: `chunk-ra61p37g.js` · offset 187911583 · sha256 `05088293…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1874,7 +1888,7 @@ Set up Claude Code's status line UI
 
 ### /team-onboarding
 
-Source: `chunk-87phk2en.js` · offset 196815732 · sha256 `0afdbc6f…`
+Source: `chunk-5andxc08.js` · offset 198858215 · sha256 `0afdbc6f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1890,7 +1904,7 @@ Help teammates ramp on Claude Code with a guide from your usage
 
 ### /artifact-capabilities
 
-Source: `chunk-cajb2b5v.js` · offset 191472026 · sha256 `38bc300a…`
+Source: `chunk-s8g6a4jf.js` · offset 193323183 · sha256 `38bc300a…`
 
 Status: undocumented
 
@@ -1908,7 +1922,7 @@ Runtime capabilities a published Artifact page can be granted — behavior stati
 
 ### /artifact-components
 
-Source: `chunk-cajb2b5v.js` · offset 191475338 · sha256 `75f8404b…`
+Source: `chunk-s8g6a4jf.js` · offset 193326647 · sha256 `75f8404b…`
 
 Status: undocumented
 
@@ -1926,7 +1940,7 @@ Embed reusable artifact components in any HTML artifact - first entry: the works
 
 ### /artifact-design
 
-Source: `chunk-cajb2b5v.js` · offset 191476072 · sha256 `bf8ecec6…`
+Source: `chunk-s8g6a4jf.js` · offset 193327381 · sha256 `bf8ecec6…`
 
 Status: undocumented
 
@@ -1942,7 +1956,7 @@ Design guidance and fundamentals for Artifacts.
 
 ### /artifact-diagramming
 
-Source: `chunk-cajb2b5v.js` · offset 191476830 · sha256 `12a6cbe2…`
+Source: `chunk-s8g6a4jf.js` · offset 193328139 · sha256 `12a6cbe2…`
 
 Status: undocumented
 
@@ -1960,7 +1974,7 @@ Diagramming know-how for Artifacts - when a picture earns its place, how to draw
 
 ### /artifact-pr-review
 
-Source: `chunk-cajb2b5v.js` · offset 191643361 · sha256 `874f010b…`
+Source: `chunk-s8g6a4jf.js` · offset 193493818 · sha256 `874f010b…`
 
 Status: undocumented
 
@@ -1978,7 +1992,7 @@ Publish a PR review briefing Artifact from a template
 
 ### /batch
 
-Source: `chunk-cajb2b5v.js` · offset 191487195 · sha256 `fb256681…`
+Source: `chunk-s8g6a4jf.js` · offset 193338068 · sha256 `fb256681…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1994,7 +2008,7 @@ Research and plan a large-scale change, then execute it in parallel across 5–3
 
 ### /claude-api
 
-Source: `chunk-852z40t5.js` · offset 191424301 · sha256 `03b11ab9…`
+Source: `chunk-nmxqbq07.js` · offset 193275356 · sha256 `03b11ab9…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2012,7 +2026,7 @@ Build and debug apps that use the Claude API
 
 ### /claude-code-docs
 
-Source: `chunk-a7n9zamx.js` · offset 207878155 · sha256 `55107626…`
+Source: `chunk-fkd4vat3.js` · offset 209907117 · sha256 `55107626…`
 
 Status: undocumented
 
@@ -2032,7 +2046,7 @@ Answer questions about Claude Code features and settings
 
 ### /claude-in-chrome
 
-Source: `chunk-cajb2b5v.js` · offset 191501359 · sha256 `4c33a9a9…`
+Source: `chunk-s8g6a4jf.js` · offset 193352232 · sha256 `4c33a9a9…`
 
 Status: undocumented
 
@@ -2050,7 +2064,7 @@ Automates your Chrome browser to interact with web pages - clicking elements, fi
 
 ### /code-review
 
-Source: `chunk-cajb2b5v.js` · offset 191542675 · sha256 `1f74433d…`
+Source: `chunk-s8g6a4jf.js` · offset 193393548 · sha256 `1f74433d…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2068,7 +2082,7 @@ Review the current diff or a PR for bugs and cleanups
 
 ### /commit
 
-Source: `chunk-cajb2b5v.js` · offset 191547112 · sha256 `3aa45708…`
+Source: `chunk-s8g6a4jf.js` · offset 193397985 · sha256 `3aa45708…`
 
 Status: documented at https://code.claude.com/docs/en/skills
 
@@ -2086,7 +2100,7 @@ Create a git commit. Use whenever you are about to create a commit, whether the 
 
 ### /cowork-plugin
 
-Source: `chunk-cajb2b5v.js` · offset 191547871 · sha256 `a4ecae0f…`
+Source: `chunk-s8g6a4jf.js` · offset 193398744 · sha256 `a4ecae0f…`
 
 Status: undocumented
 
@@ -2102,7 +2116,7 @@ Create a new Cowork plugin from scratch, or customize an installed plugin for a 
 
 ### /dataviz
 
-Source: `chunk-cajb2b5v.js` · offset 191548652 · sha256 `c2588db3…`
+Source: `chunk-s8g6a4jf.js` · offset 193399525 · sha256 `c2588db3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2118,7 +2132,7 @@ Use this skill whenever you are about to create ANY chart, graph, plot, dashboar
 
 ### /debug
 
-Source: `chunk-cajb2b5v.js` · offset 191550611 · sha256 `97be86ab…`
+Source: `chunk-s8g6a4jf.js` · offset 193401484 · sha256 `97be86ab…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2134,7 +2148,7 @@ Enable debug logging for this session and help diagnose issues
 
 ### /design
 
-Source: `chunk-cajb2b5v.js` · offset 191560104 · sha256 `00412ff6…`
+Source: `chunk-s8g6a4jf.js` · offset 193410665 · sha256 `bab2d75f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2144,11 +2158,11 @@ isEnabled: computed at runtime
 
 userInvocable: `true`
 
-Undocumented; read at `chunk-cajb2b5v.js` offset 191560104.
+Undocumented; read at `chunk-s8g6a4jf.js` offset 193410665.
 
 ### /design-sync
 
-Source: `chunk-cajb2b5v.js` · offset 191560715 · sha256 `54919f73…`
+Source: `chunk-s8g6a4jf.js` · offset 193411172 · sha256 `54919f73…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2166,7 +2180,7 @@ Push a React design system to claude.ai/design. This runs a converter that bundl
 
 ### /doctor
 
-Source: `chunk-cajb2b5v.js` · offset 191610772 · sha256 `0ccc94fb…`
+Source: `chunk-s8g6a4jf.js` · offset 193461229 · sha256 `0ccc94fb…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2186,7 +2200,7 @@ Health-check the user's Claude Code setup and fix issues: diagnose installation 
 
 ### /explain-usage
 
-Source: `chunk-cajb2b5v.js` · offset 191612321 · sha256 `5f8f4685…`
+Source: `chunk-s8g6a4jf.js` · offset 193462778 · sha256 `5f8f4685…`
 
 Status: undocumented
 
@@ -2204,7 +2218,7 @@ Explain where this session's tokens went, with one simple chart in plain languag
 
 ### /fewer-permission-prompts
 
-Source: `chunk-cajb2b5v.js` · offset 191621963 · sha256 `3ee36c59…`
+Source: `chunk-s8g6a4jf.js` · offset 193472420 · sha256 `3ee36c59…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2220,7 +2234,7 @@ Scan your transcripts for common read-only Bash and MCP tool calls, then add a p
 
 ### /keybindings-help
 
-Source: `chunk-cajb2b5v.js` · offset 191628996 · sha256 `4bddaa3f…`
+Source: `chunk-s8g6a4jf.js` · offset 193479453 · sha256 `4bddaa3f…`
 
 Status: undocumented
 
@@ -2236,7 +2250,7 @@ Use when the user wants to customize keyboard shortcuts, rebind keys, add chord 
 
 ### /loop
 
-Source: `chunk-rsvek1zk.js` · offset 207823658 · sha256 `72070ca8…`
+Source: `chunk-b82ys6y1.js` · offset 209956090 · sha256 `72070ca8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2256,7 +2270,7 @@ Run a prompt or slash command on a recurring interval (e.g. /loop 5m /foo). Omit
 
 ### /memory-types
 
-Source: `chunk-cajb2b5v.js` · offset 191631327 · sha256 `3b444f10…`
+Source: `chunk-s8g6a4jf.js` · offset 193481784 · sha256 `3b444f10…`
 
 Status: undocumented
 
@@ -2272,7 +2286,7 @@ Full reference for the memory type taxonomy — what each type captures, when to
 
 ### /pr
 
-Source: `chunk-cajb2b5v.js` · offset 191641412 · sha256 `5988d897…`
+Source: `chunk-s8g6a4jf.js` · offset 193491869 · sha256 `5988d897…`
 
 Status: undocumented
 
@@ -2290,7 +2304,7 @@ Create a GitHub pull request. Use whenever you are about to open a PR, whether t
 
 ### /prototype
 
-Source: `chunk-cajb2b5v.js` · offset 191636489 · sha256 `842294d8…`
+Source: `chunk-s8g6a4jf.js` · offset 193486946 · sha256 `842294d8…`
 
 Status: undocumented
 
@@ -2308,7 +2322,7 @@ Turn an idea into a working proof of concept and publish it as an Artifact - a s
 
 ### /run
 
-Source: `chunk-kww7knqd.js` · offset 207788455 · sha256 `fea68146…`
+Source: `chunk-6d81jq1f.js` · offset 209919360 · sha256 `fea68146…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2324,7 +2338,7 @@ Launch and drive this project's app to see a change working. Use when asked to r
 
 ### /run-skill-generator
 
-Source: `chunk-983pmc3a.js` · offset 207794747 · sha256 `df8af926…`
+Source: `chunk-nbsdmh9f.js` · offset 209925847 · sha256 `df8af926…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2338,9 +2352,9 @@ Menu description: Create a skill that knows how to run this project’s app
 Author or improve the run-<unit> skill - a per-project skill that tells agents how to build, launch, and drive this project's app. Use when the user asks to set up the project, get it running, write run instructions, or verify build/run steps work from a clean environment.
 ~~~~~~
 
-### /schedule (definition 1 of 2, `chunk-2c4wnrn9.js`)
+### /schedule (definition 1 of 2, `chunk-en0nxvah.js`)
 
-Source: `chunk-2c4wnrn9.js` · offset 207856059 · sha256 `cef7f886…`
+Source: `chunk-en0nxvah.js` · offset 209988629 · sha256 `cef7f886…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2360,7 +2374,7 @@ Create, update, list, or run scheduled cloud agents (routines) that execute on a
 
 ### /setup-claude
 
-Source: `chunk-t7m7radx.js` · offset 207801193 · sha256 `5342f75d…`
+Source: `chunk-tqdvvysv.js` · offset 209932488 · sha256 `5342f75d…`
 
 Status: undocumented
 
@@ -2380,7 +2394,7 @@ Guided setup — pick a role, install a matching plugin, try a skill, connect to
 
 ### /simplify
 
-Source: `chunk-cajb2b5v.js` · offset 191646883 · sha256 `ff580043…`
+Source: `chunk-s8g6a4jf.js` · offset 193497340 · sha256 `ff580043…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2396,7 +2410,7 @@ Review the changed code for reuse, simplification, efficiency, and altitude clea
 
 ### /update-config
 
-Source: `chunk-cajb2b5v.js` · offset 191674596 · sha256 `813bb0ef…`
+Source: `chunk-s8g6a4jf.js` · offset 193525053 · sha256 `813bb0ef…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2412,7 +2426,7 @@ Use this skill to configure the Claude Code harness via settings.json. Automated
 
 ### /verify
 
-Source: `chunk-cajb2b5v.js` · offset 191675976 · sha256 `230c901a…`
+Source: `chunk-s8g6a4jf.js` · offset 193526434 · sha256 `230c901a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2426,7 +2440,7 @@ Verify that a code change actually does what it's supposed to by exercising it e
 
 ### /whiteboard
 
-Source: `chunk-cajb2b5v.js` · offset 191636006 · sha256 `7d8425ff…`
+Source: `chunk-s8g6a4jf.js` · offset 193486463 · sha256 `7d8425ff…`
 
 Status: undocumented
 
@@ -2444,7 +2458,7 @@ Pair on a whiteboard artifact — you draw, Claude answers on it
 
 ### /workflow-authoring
 
-Source: `chunk-70v4twvg.js` · offset 205449904 · sha256 `322ef780…`
+Source: `chunk-jbscp9r6.js` · offset 207293681 · sha256 `91d77e77…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2456,7 +2470,7 @@ userInvocable: `true`
 
 Menu description: Load the reference for writing Workflow tool scripts
 
-Interpolated constants (resolved from code): `$d` = `"Workflow"`
+Interpolated constants (resolved from code): `Kd` = `"Workflow"`
 
 ~~~~~~text
 Reference for writing a Workflow tool script (script API and gotchas, resume, quality patterns, worked examples). Load before authoring a script for a workflow the user already opted into; it does not itself authorize running one.
@@ -2464,7 +2478,7 @@ Reference for writing a Workflow tool script (script API and gotchas, resume, qu
 
 ### /workshop
 
-Source: `chunk-cajb2b5v.js` · offset 191474359 · sha256 `ce7c51c9…`
+Source: `chunk-s8g6a4jf.js` · offset 193325668 · sha256 `ce7c51c9…`
 
 Status: undocumented
 
@@ -2484,7 +2498,7 @@ Build a design together with the user, one decision at a time - publish an evolv
 
 ### /__remote-workflow
 
-Source: `chunk-wyjbafrm.js` · offset 185976861 · sha256 `d8310700…`
+Source: `chunk-ra61p37g.js` · offset 187904534 · sha256 `d8310700…`
 
 Status: hidden; undocumented
 
@@ -2498,7 +2512,7 @@ Run the workflow script delivered in this session environment (server-launched s
 
 ### /agents
 
-Source: `chunk-wyjbafrm.js` · offset 185966885 · sha256 `87d89e75…`
+Source: `chunk-ra61p37g.js` · offset 187894558 · sha256 `87d89e75…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2512,7 +2526,7 @@ isHidden: `true`
 
 ### /design-consent
 
-Source: `chunk-wyjbafrm.js` · offset 185697679 · sha256 `96319895…`
+Source: `chunk-ra61p37g.js` · offset 187621371 · sha256 `96319895…`
 
 Status: hidden; undocumented
 
@@ -2528,7 +2542,7 @@ Grant Claude agent access to your Design projects
 
 ### /design-revoke
 
-Source: `chunk-wyjbafrm.js` · offset 185697905 · sha256 `5ad6f04f…`
+Source: `chunk-ra61p37g.js` · offset 187621597 · sha256 `5ad6f04f…`
 
 Status: hidden; undocumented
 
@@ -2542,9 +2556,9 @@ isHidden: `true`
 Revoke Claude agent access to your Design projects
 ~~~~~~
 
-### /extra-usage (definition 1 of 2, `chunk-wyjbafrm.js`)
+### /extra-usage (definition 1 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185978071 · sha256 `bb0a165d…`
+Source: `chunk-ra61p37g.js` · offset 187905744 · sha256 `bb0a165d…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2558,9 +2572,9 @@ isHidden: `true`
 Renamed to /usage-credits
 ~~~~~~
 
-### /extra-usage (definition 2 of 2, `chunk-wyjbafrm.js`)
+### /extra-usage (definition 2 of 2, `chunk-ra61p37g.js`)
 
-Source: `chunk-wyjbafrm.js` · offset 185978231 · sha256 `bb0a165d…`
+Source: `chunk-ra61p37g.js` · offset 187905904 · sha256 `bb0a165d…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2576,7 +2590,7 @@ Renamed to /usage-credits
 
 ### /heapdump
 
-Source: `chunk-wyjbafrm.js` · offset 185968615 · sha256 `35cf05a5…`
+Source: `chunk-ra61p37g.js` · offset 187896288 · sha256 `35cf05a5…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2590,7 +2604,7 @@ Dump the JS heap to the Desktop; on Linux with no Desktop folder, the home direc
 
 ### /pro-trial-expired
 
-Source: `chunk-wyjbafrm.js` · offset 185978410 · sha256 `f99c8fe6…`
+Source: `chunk-ra61p37g.js` · offset 187906083 · sha256 `f99c8fe6…`
 
 Status: hidden; undocumented
 
@@ -2602,25 +2616,9 @@ isHidden: `true`
 Options shown when the Pro plan Claude Code trial has ended
 ~~~~~~
 
-### /rate-limit-options
-
-Source: `chunk-wyjbafrm.js` · offset 185978557 · sha256 `900077bd…`
-
-Status: hidden; documented at https://code.claude.com/docs/en/commands
-
-Type: `local-jsx`
-
-isEnabled: computed at runtime
-
-isHidden: `true`
-
-~~~~~~text
-Show options when rate limit is reached
-~~~~~~
-
 ### /update
 
-Source: `chunk-wyjbafrm.js` · offset 185975791 · sha256 `f9869f8e…`
+Source: `chunk-ra61p37g.js` · offset 187903464 · sha256 `f9869f8e…`
 
 Status: hidden; undocumented
 
@@ -2638,7 +2636,7 @@ Switch to the latest version (conversation continues)
 
 ### /workflow-launch-exec
 
-Source: `chunk-wyjbafrm.js` · offset 185977169 · sha256 `a690fa82…`
+Source: `chunk-ra61p37g.js` · offset 187904842 · sha256 `a690fa82…`
 
 Status: hidden; undocumented
 

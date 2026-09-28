@@ -1,16 +1,19 @@
 // Brings every published record up to a new Claude Code release, mechanically where it can.
 //   node extract/refresh.mjs <version> <npm-integrity>            refresh
 //   node extract/refresh.mjs <version> <npm-integrity> --verify   check after a review
+//   node extract/refresh.mjs <version> <npm-integrity> --allow-older   go back to an older release on purpose
 // Exit 0: done (work/cc-diff.md is empty when nothing a reader would notice changed).
 // Exit 3: done, but records need a review; work/cc-diff.md says which and why.
 // Exit 2: a source or extractor broke; outputs are restored to the previous release.
 // Exit 1: any other failure; outputs are restored.
+// Exit 4: nothing done: the records already describe a newer release (see --allow-older).
 // The last stdout line is JSON: {changed, needs_review, sources}.
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { closeSync, cpSync, existsSync, mkdirSync, openSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { isDerived, knobIndex, validateDecision } from "./decisions-lib.mjs";
+import { compareVersions, describedVersion } from "./versions.mjs";
 
 const [version, integrity, flag] = process.argv.slice(2);
 // Scheduled runs don't inherit a shell profile; the TypeSafe key lives in ~/.env.
@@ -35,7 +38,7 @@ const run = (cmd, args, options = {}) => {
 };
 const readJson = file => JSON.parse(readFileSync(file, "utf8"));
 const status = existsSync(path.join(root, "outputs/status.json")) ? readJson(path.join(root, "outputs/status.json")) : null;
-const previousVersion = readJson(path.join(root, "outputs/tools.json")).version ?? status?.sources?.version;
+const previousVersion = describedVersion(root);
 
 function* provenanceObjects(v) {
   if (Array.isArray(v)) for (const x of v) yield* provenanceObjects(x);
@@ -77,6 +80,14 @@ if (flag === "--verify") {
   }
   console.log(JSON.stringify({ changed: [], needs_review: 0, sources: { version, integrity } }));
   process.exit(0);
+}
+
+// Never move the records back to an older build unless asked: a `latest` tag that trails
+// `next`, or a stale scheduled run, would otherwise undo a newer refresh.
+if (previousVersion && compareVersions(version, previousVersion) < 0 && flag !== "--allow-older") {
+  log(`outputs already describe ${previousVersion}, newer than ${version}; nothing done (pass --allow-older to go back)`);
+  console.log(JSON.stringify({ changed: [], needs_review: 0, sources: status?.sources ?? { version: previousVersion }, skipped: "older" }));
+  process.exit(4);
 }
 
 if (previousVersion === version) {
@@ -129,8 +140,12 @@ try {
 
   // 3. What the default requests look like now, and what --help says.
   run(node, ["extract/capture.mjs", binary, path.join(release, "capture")], { breakCode: 2 });
-  const helpNow = spawnSync(binary, ["--help"], { encoding: "utf8" }).stdout;
-  writeFileSync(path.join(release, "help.txt"), helpNow);
+  // The binary exits before a pipe drains (2.1.284 cut --help at 120 and 230 of 311 lines), so
+  // --help goes straight to a file.
+  const helpFile = path.join(release, "help.txt");
+  const helpFd = openSync(helpFile, "w");
+  try { spawnSync(binary, ["--help"], { stdio: ["ignore", helpFd, "ignore"] }); } finally { closeSync(helpFd); }
+  const helpNow = readFileSync(helpFile, "utf8");
   const previousRelease = previousVersion ? path.join(work, "releases", previousVersion) : null;
   const captureDiff = previousRelease && existsSync(path.join(previousRelease, "capture")) ? compareCaptures(path.join(previousRelease, "capture"), path.join(release, "capture")) : [];
   const helpBefore = previousRelease && existsSync(path.join(previousRelease, "help.txt")) ? readFileSync(path.join(previousRelease, "help.txt"), "utf8") : null;

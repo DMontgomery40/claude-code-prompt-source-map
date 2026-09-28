@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path";
 import { expandFacts } from "../shared/facts.mjs";
 import { renderSite } from "./render.mjs";
+import { loadSearchRecords, logSearchStats } from "../shared/search-index.mjs";
 
 const displayReplacements = [
   ["token-gremlin-https-x-com-tokengremlin", "aeon-daybreak-binwalk-extraction"]
@@ -37,7 +38,9 @@ export async function buildSite({ sourceRoot, outFile, categories }) {
           const tags = JSON.parse(await readFile(path.join(sourceRoot, file.filters.tags), "utf8"));
           filter = { vocabulary: tags.tags, records: records.map(r => ({ group: r.group, title: r.title, tags: tags.items[r.id] ?? [] })) };
         }
-        documents.push({ ...file, category: category.label, source, filter });
+        // The search index's records say what the pages say: the same display-path rewrite.
+        const searchRecords = await loadSearchRecords({ sourceRoot, file, transform: rewriteDisplayPaths });
+        documents.push({ ...file, category: category.label, source, filter, searchRecords });
       } catch (error) {
         throw new Error(`Unable to read ${file.path}: ${error.message}`, {
           cause: error
@@ -54,5 +57,6 @@ export async function buildSite({ sourceRoot, outFile, categories }) {
     const file = page.path === "index.html" ? outFile : path.join(outDir, page.path);
     await mkdir(path.dirname(file), { recursive: true });
     await writeFile(file, page.html, "utf8");
+    if (page.stats) logSearchStats("codex", page.stats);
   }
 }

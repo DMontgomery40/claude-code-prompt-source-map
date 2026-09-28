@@ -438,7 +438,7 @@ export function askWhere(agent, a) {
 // Ask previews read when they scroll into view and kept, so moving between requests doesn't read
 // them again. One observer per panel render.
 export function askPreviewText(text) {
-  return clip(String(text || "").replace(/<\/?teammate-message\b[^>]*>/gi, " ").replace(/<\/?[a-z][\w-]*>/gi, " "), 90) || "(empty)";
+  return clip(String(text || "").replace(/<\/?(?:teammate|cross-session)-message\b[^>]*>/gi, " ").replace(/<\/?[a-z][\w-]*>/gi, " "), 90) || "(empty)";
 }
 const askPreviews = new Map();
 function askPreviewer(agent, A) {
@@ -631,7 +631,7 @@ function reviewSummary(reviews) {
 function askLine(ask, text, parent) {
   if (ask.from !== "agent") return clip(text, 320);
   const hdr = /^Message Type:[ \t]*(\S+)[\s\S]*?^Payload:[ \t]*\n?([\s\S]*)$/m.exec(text);
-  const body = hdr ? hdr[2] : text.replace(/^[\s\S]*?<teammate-message\b[^>]*>/, "").replace(/<\/teammate-message>\s*$/, "");
+  const body = hdr ? hdr[2] : text.replace(/^[\s\S]*?<(?:teammate|cross-session)-message\b[^>]*>/, "").replace(/<\/(?:teammate|cross-session)-message>\s*$/, "");
   const first = (body.split("\n").find(l => l.trim()) || "").trim();
   const what = hdr && !/TASK/i.test(hdr[1]) ? "Message" : "Task";
   const by = ask.by || (hdr && (text.match(/^Sender:[ \t]*(.+)$/m) || [])[1]) || (parent ? (parent.kind === "root" ? "main thread" : parent.name) : "the parent agent");

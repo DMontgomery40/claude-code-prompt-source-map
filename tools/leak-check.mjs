@@ -22,9 +22,14 @@ function forbiddenValues() {
   }
   const strings = text => [...text.matchAll(/"([^"\\]{20,})"/g)].map(m => m[1]);
   for (const file of [path.join(home, ".codex/auth.json"), path.join(home, "Library/Preferences/.wrangler/config/default.toml")]) for (const v of strings(read(file))) values.set(v, "credential");
-  // Private sessions: every session id under private/sessions (file and folder names) is forbidden.
-  const sessions = path.join(repo, "private", "sessions");
-  if (existsSync(sessions)) for (const name of walk(sessions)) for (const id of path.basename(name).match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g) ?? []) values.set(id, "private session id");
+  // Private sessions: every session id under private/sessions and private/research/*/sessions (file and
+  // folder names) is forbidden.
+  const research = path.join(repo, "private", "research");
+  const sessionDirs = [path.join(repo, "private", "sessions"), ...(existsSync(research) ? readdirSync(research).map(d => path.join(research, d, "sessions")) : [])];
+  for (const sessions of sessionDirs) if (existsSync(sessions)) for (const name of walk(sessions)) for (const id of path.basename(name).match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g) ?? []) values.set(id, "private session id");
+  // Identity values seen in private network captures (account, org, device and installation ids, emails),
+  // listed by hand or by a capture helper in private/leak-values.json as a JSON array of strings.
+  try { for (const v of JSON.parse(read(path.join(repo, "private", "leak-values.json")) || "[]")) if (typeof v === "string") values.set(v, "private capture value"); } catch {}
   return [...values].filter(([v]) => v && v.length >= 6);
 }
 

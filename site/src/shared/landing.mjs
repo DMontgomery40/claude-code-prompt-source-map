@@ -1,6 +1,7 @@
 // The site's front door: pick a harness (Claude Code or Codex/ChatGPT), or open Trace, which reads
 // sessions from both. Everything product-specific lives under /claude-code/ and /codex/.
 import { SITE, siteOrigin, ICON_LINKS } from "./site.mjs";
+import { searchField, searchScript } from "./search-ui.mjs";
 
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -47,6 +48,7 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
   <meta property="og:image" content="${origin}/${esc(cardFile)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="${origin}/${esc(cardFile)}">
+  <script>document.documentElement.classList.add("js")</script>
   <style>
     :root{color-scheme:dark;--bg:#0b100e;--panel:#111a14;--line:#2c3d2d;--ink:#eef4e6;--ink-2:#a9b8a3;--accent:#c8f784}
     *{box-sizing:border-box}
@@ -71,9 +73,16 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
     .trace-shot img{display:block;width:100%;height:auto;transition:transform .5s ease}
     .trace-shot:hover img,.trace-shot:focus-visible img{transform:scale(1.012)}
     .trace-shot:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .search-field{display:flex;align-items:center;gap:12px;width:min(680px,100%);margin:0 0 clamp(28px,5vw,44px);padding:13px 14px 13px 16px;border:1px solid #35506a;border-radius:12px;background:#0d141d;color:#b4bfcc;font:16px/1.4 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;text-align:left;cursor:text;transition:border-color .15s}
+    .search-field:hover,.search-field:focus-visible{border-color:#6d9fd6;color:var(--ink);outline:none}
+    .search-field-icon{display:grid;place-items:center;color:#9fc4e8;flex:none}
+    .search-field-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .search-field kbd{flex:none;font:12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);background:#1a2532;border:1px solid #3a4d63;border-radius:5px;padding:3px 6px}
+    html:not(.js) .search-field{display:none}
     footer{display:flex;flex-wrap:wrap;gap:18px;margin-top:40px;color:var(--ink-2);font-size:14px}
     footer a{color:var(--ink-2)}
-    @media (max-width:560px){.trace{grid-template-columns:1fr;padding:18px 14px}.trace-go{justify-self:start}}
+    @media (max-width:560px){.trace{grid-template-columns:1fr;padding:18px 14px}.trace-go{justify-self:start}.search-field kbd{display:none}}
+    @media (prefers-reduced-motion:reduce){.choice,.search-field,.trace-shot img{transition:none}}
   </style>
 </head>
 <body>
@@ -81,6 +90,7 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
     <div class="eyebrow">${esc(SITE.name)}</div>
     <h1>What the agent harness puts in front of the model.</h1>
     <p class="dek">Every prompt, reminder, tool description and setting that Claude Code and Codex/ChatGPT send, read from the shipped binaries, each with its source.</p>
+    ${searchField()}
     <h2 id="pick">Which harness?</h2>
     <nav class="choices" aria-labelledby="pick">${cards}
     </nav>
@@ -94,6 +104,7 @@ export function renderLanding({ cardFile = "social-card.png" } = {}) {
       <a href="${esc(SITE.repo)}">Source on GitHub</a>
     </footer>
   </main>
+  ${searchScript("")}
 </body>
 </html>
 `;

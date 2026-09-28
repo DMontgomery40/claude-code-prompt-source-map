@@ -1,5 +1,294 @@
 # Changelog
 
+## 2026-09-28 · Claude Code 2.1.284
+
+## Claude Code 2.1.284 (from 2.1.283)
+
+npm `next` build; `latest` was still 2.1.283 when this was read.
+
+### What the review found
+
+- **Sonnet 5.5** (`claude-sonnet-5-5`) is in the model catalog: knowledge cutoff June 2026, lean prompt layout, mid-conversation system messages, adaptive thinking (disabled thinking is rejected), and `silent_turn_reminder`, a capability no other catalog model has (the silent-turn reminder itself is also on by default for Opus 5.5, Fable 5.1 and Mythos 5.1).
+- The first-party `sonnet` alias now resolves to `claude-sonnet-5-5` (was `claude-sonnet-5`). Bedrock, Vertex, Foundry, Mantle, Anthropic on AWS and gateway defaults are unchanged. The system prompt's model line now reads `Sonnet 5.5: 'claude-sonnet-5-5'`, and the model picker labels Sonnet 5 "Previous Sonnet version".
+- In the effort, thinking and max-output-token ladders Sonnet 5.5 behaves like Opus 5.5. `VERTEX_REGION_CLAUDE_5_5_SONNET` is new and on the always-safe env list.
+- `allowManagedPermissionRulesOnly`: a plugin now keeps its skills' allowed-tools only when it arrives through a channel an admin or Anthropic vouches for.
+- `ultracode` in settings no longer sets xhigh effort; its description now says "at any effort level".
+- The billing header gains `cc_prompt_index` and `cc_turn_index` on first-party requests.
+- Diskless launches: the agent-hook prompt says there is no transcript file, and the compaction summary drops its pointer to the full transcript.
+- Auto-mode security monitor: a candidate wording with more evaluation rules sits behind the remote flag `tengu_marble_finch`. `CLAUDE_CODE_AUTO_MODE_CANDIDATE_WORDING` is checked through an env accessor with no getter for it, so it has no effect in this build.
+- `/rate-limit-options` is no longer hidden ("Manage usage limits and upgrade options"); `/mcp reconnect` accepts `all`.
+- The terminal status-line narration prompt is gone, with `CLAUDE_CODE_ENABLE_NARRATION`.
+- The statusline-setup agent's input gains `rate_limits.spend_limit.used_usd`, `limit_usd` and `period`.
+
+### Default requests
+
+cli system prompt:
+
+~~~~~~diff
+- x-anthropic-billing-header: cc_version=2.1.283.a2f; cc_entrypoint=cli;
+-  - The most recent Claude models are the Claude 5 family and Haiku 4.5. Model IDs — Fable 5.1: 'claude-fable-5-1', Opus 5.5: 'claude-opus-5-5', Sonnet 5: 'claude-sonnet-5', Haiku 4.5: 'claude-haiku-4-5-20251001'. When building AI applications, default to the latest and most capable Claude models.
++ x-anthropic-billing-header: cc_version=2.1.284.9c3; cc_entrypoint=cli;
++  - The most recent Claude models are the Claude 5 family and Haiku 4.5. Model IDs — Fable 5.1: 'claude-fable-5-1', Opus 5.5: 'claude-opus-5-5', Sonnet 5.5: 'claude-sonnet-5-5', Haiku 4.5: 'claude-haiku-4-5-20251001'. When building AI applications, default to the latest and most capable Claude models.
+~~~~~~
+cli tools: description changed: Artifact, ArtifactData, WebSearch; input schema changed: Artifact, ArtifactData
+sdk system prompt:
+
+~~~~~~diff
+- x-anthropic-billing-header: cc_version=2.1.283.a2f; cc_entrypoint=sdk-cli;
+-  - The most recent Claude models are the Claude 5 family and Haiku 4.5. Model IDs — Fable 5.1: 'claude-fable-5-1', Opus 5.5: 'claude-opus-5-5', Sonnet 5: 'claude-sonnet-5', Haiku 4.5: 'claude-haiku-4-5-20251001'. When building AI applications, default to the latest and most capable Claude models.
++ x-anthropic-billing-header: cc_version=2.1.284.9c3; cc_entrypoint=sdk-cli;
++  - The most recent Claude models are the Claude 5 family and Haiku 4.5. Model IDs — Fable 5.1: 'claude-fable-5-1', Opus 5.5: 'claude-opus-5-5', Sonnet 5.5: 'claude-sonnet-5-5', Haiku 4.5: 'claude-haiku-4-5-20251001'. When building AI applications, default to the latest and most capable Claude models.
+~~~~~~
+sdk tools: description changed: WebSearch
+
+### claude --help
+
+~~~~~~diff
+-                                         model's full name (e.g.
+-                                         'claude-fable-5').
++                                         model's full name.
+~~~~~~
+
+### Environment variables
+
+Added: `CLAUDE_CODE_APPEND_PROMPT_HEAD`, `CLAUDE_CODE_RELAUNCH_HOME_TRUST`, `CLAUDE_CODE_SDK_READS_SESSION_STATE`, `CLAUDE_CODE_WHIMSICAL_ELEPHANT`, `CLOUDSDK_AUTH_ACCESS_TOKEN`, `VERTEX_REGION_CLAUDE_5_5_SONNET`
+Removed: `CLAUDE_CODE_COMMIT_BETWEEN_KEYS`, `CLAUDE_CODE_DIR_SYNC_DISABLE_ANCHORING`, `CLAUDE_CODE_ENABLE_NARRATION`
+
+### Records whose source changed (44)
+
+- **agents** `agent-statusline-setup` (statusline-setup): text inside this range changed
+- **agents** `agent-comment-thread-analyst` (comment-thread-analyst): nearest match is 7 bytes, was 23
+- **cli** `cli-flag-watch-artifact-no-autoreact` (--watch-artifact-no-autoreact <artifact>): same code node, contents changed
+- **cli** `cli-flag-model` (--model <model>): text inside this range changed
+- **cli** `cli-remote-control-help` (claude remote-control help text): text inside this range changed
+- **decisions** `auth-source` (API credential): the decision's function changed beyond renamed identifiers
+- **decisions** `auto-compact` (Auto-compact window): text or code in this range changed
+- **decisions** `auto-memory` (Automatic memory): nearest code node is 190 bytes, was 49
+- **decisions** `bash-output-limit` (Bash output limit): text or code in this range changed
+- **decisions** `effort-level` (Reasoning effort): text changed and no position estimate
+- **decisions** `feedback-survey` (Feedback survey): text changed and no position estimate
+- **decisions** `git-instructions` (Git instructions and status): same bytes occur 2+ times and no position estimate
+- **decisions** `permission-rules` (Which permission rules apply): text or code in this range changed
+- **decisions** `sandbox-network-proxy` (Sandbox network proxy): the decision's function changed beyond renamed identifiers
+- **decisions** `thinking-mode` (Thinking mode): the decision's function changed beyond renamed identifiers
+- **decisions** `total-tokens-reminder` (Total tokens reminder): nearest code node is 693 bytes, was 91
+- **decisions** `total-tokens-reminder-budget` (Tokens-left reminder budget): text or code in this range changed
+- **decisions** `workflow-size-guidance` (Workflow size guideline): nearest code node is 556 bytes, was 66
+- **settings** `setting-ultracode` (ultracode): text inside this range changed
+- **settings** `setting-allow-managed-permission-rules-only` (allowManagedPermissionRulesOnly): nearest match is 217 bytes, was 621
+  - old: "allowManagedPermissionRulesOnly:O().optional().describe(\"When true (and set in managed settings), permission rules from user, project, local, and --settings files and allow rules from --allowedTools are ignored; only managed settings can ad"
+  - new (Jev confidence 0.93): "When true (and set in managed settings), permission rules from user, project, local, and --settings files and allow rules from --allowedTools are ignored; only managed settings can add allow rules through settings. " in `chunk-dq5fzxjx.js`
+- **settings** `setting-sandbox` (sandbox): text or code in this range changed
+- **settings** `settings-safe-env-check` (Safe env check): text changed and no position estimate
+- **settings** `settings-safe-env-set-wl` (Safe env names: any value): same code node, contents changed
+- **slash-commands** `slash-exit-2` (/exit (definition 2 of 2, `chunk-wyjbafrm.js`)): text inside this range changed
+- **slash-commands** `slash-fast-2` (/fast (definition 2 of 2, `chunk-wyjbafrm.js`)): text inside this range changed
+- **slash-commands** `slash-mcp-2` (/mcp (definition 2 of 2, `chunk-wyjbafrm.js`)): text inside this range changed
+- **slash-commands** `slash-stop` (/stop (definition 1 of 2, `chunk-re1rf623.js`)): same bytes occur 2+ times and no position estimate
+- **slash-commands** `slash-stop-2` (/stop (definition 2 of 2, `chunk-re1rf623.js`)): same bytes occur 2+ times and no position estimate
+- **slash-commands** `slash-ultrareview-2` (/ultrareview (definition 2 of 3, `chunk-wyjbafrm.js`)): text inside this range changed
+- **slash-commands** `slash-design` (/design): text or code in this range changed
+- **slash-commands** `slash-rate-limit-options` (/rate-limit-options): nearest match is 15 bytes, was 41
+- **system-prompt** `billing-header` (Billing header block): nearest match is 23 bytes, was 92
+- **system-prompt** `memory-team` (memory: team (text not rendered)): same code node, contents changed
+- **system-reminders** `plan-mode-full-custom` (Plan mode (full, custom workflow)): nearest match is 37 bytes, was 327
+- **system-reminders** `compact-summary-head-truncated` (Compaction: head truncated): nearest match is 26 bytes, was 288
+- **system-reminders** `scheduled-task-prefix` (Scheduled task firing): nearest match is 75 bytes, was 808
+- **system-reminders** `brief-mode-toggle` (Brief mode toggled on): nearest match is 24 bytes, was 135
+- **system-reminders** `brief-mode-toggle-off` (Brief mode toggled off): nearest match is 3 bytes, was 97
+- **utility-prompts** `terminal-narration` (Terminal status-line narration): text or code in this range changed
+- **utility-prompts** `hook-agent-system` (Agent hook: system prompt): text or code in this range changed
+- **utility-prompts** `auto-mode-security-monitor` (Auto mode: security monitor (permission classifier)): text or code in this range changed
+  - old: "`You are a security monitor for autonomous AI coding agents.\n\n## Context\n\nThe agent you are monitoring is an **autonomous coding agent** with shell access, file system access, and API credentials. It operates with **permissions similar to a"
+  - new (Jev confidence 0.9): "You are a security monitor for autonomous AI coding agents.\n\n## Context\n\nThe agent you are monitoring is an **autonomous coding agent** with shell access, file system access, and API credentials. It operates with **permissions similar to a " in `chunk-ra61p37g.js`
+- **utility-prompts** `auto-mode-setup-proposal` (Auto mode: setup proposal from recon): duplicates, none near the expected position
+- **utility-prompts** `command-commit-push-pr` (/commit-push-pr): duplicates, none near the expected position
+- **utility-prompts** `artifact-comment-thread-message` (Artifact comments: thread message): nearest match is 568 bytes, was 39
+
+### Regenerated from the new build (138)
+
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-api` (/claude-api): embedded file content changed
+- **skills** `skill-claude-code-docs` (/claude-code-docs): text inside this range changed
+- **skills** `skill-claude-code-docs` (/claude-code-docs): text inside this range changed
+- **skills** `skill-artifact-design` (/artifact-design): nearest match is 14 bytes, was 5377
+- **skills** `skill-artifact-design` (/artifact-design): embedded file content changed
+- **skills** `skill-artifact-dashboard` (/artifact-dashboard): embedded file content changed
+- **skills** `skill-artifact-dashboard` (/artifact-dashboard): embedded file content changed
+- **skills** `skill-code-review` (/code-review): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review` (/code-review): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review` (/code-review): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review` (/code-review): nearest match is 6 bytes, was 34
+- **skills** `skill-code-review` (/code-review): nearest match is 6 bytes, was 34
+- **skills** `skill-debug` (/debug): duplicates, none near the expected position
+- **skills** `skill-debug` (/debug): duplicates, none near the expected position
+- **skills** `skill-debug` (/debug): duplicates, none near the expected position
+- **skills** `skill-design` (/design): duplicates, none near the expected position
+- **skills** `skill-design` (/design): text or code in this range changed
+- **skills** `skill-doctor` (/doctor): same code node, contents changed
+- **skills** `skill-keybindings-help` (/keybindings-help): duplicates, none near the expected position
+- **skills** `skill-keybindings-help` (/keybindings-help): duplicates, none near the expected position
+- **skills** `skill-keybindings-help` (/keybindings-help): duplicates, none near the expected position
+- **skills** `skill-doc` (/doc): embedded file content changed
+- **skills** `skill-pr` (/pr): nearest match is 81 bytes, was 178
+- **skills** `skill-update-config` (/update-config): nearest match is 23 bytes, was 4173
+- **skills** `skill-loop` (/loop): same code node, contents changed
+- **skills** `skill-loop` (/loop): nearest match is 75 bytes, was 2311
+- **skills** `skill-loop` (/loop): same code node, contents changed
+- **skills** `skill-loop` (/loop): text or code in this range changed
+- **skills** `skill-loop` (/loop): nearest match is 38 bytes, was 2724
+- **skills** `skill-loop` (/loop): text or code in this range changed
+- **skills** `skill-code-review-recipe-medium--if` (/code-review recipe: medium (variant A)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-medium--if` (/code-review recipe: medium (variant A)): nearest match is 6 bytes, was 34
+- **skills** `skill-code-review-recipe-medium--if` (/code-review recipe: medium (variant A)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-medium--else` (/code-review recipe: medium (variant B)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-medium--else` (/code-review recipe: medium (variant B)): nearest match is 6 bytes, was 34
+- **skills** `skill-code-review-recipe-medium--else` (/code-review recipe: medium (variant B)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-high--if` (/code-review recipe: high (variant A)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-high--if` (/code-review recipe: high (variant A)): nearest match is 6 bytes, was 34
+- **skills** `skill-code-review-recipe-high--if` (/code-review recipe: high (variant A)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-high--else` (/code-review recipe: high (variant B)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-high--else` (/code-review recipe: high (variant B)): nearest match is 6 bytes, was 34
+- **skills** `skill-code-review-recipe-high--else` (/code-review recipe: high (variant B)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-xhigh--if` (/code-review recipe: xhigh (variant A)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-xhigh--if` (/code-review recipe: xhigh (variant A)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-xhigh--else` (/code-review recipe: xhigh (variant B)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-xhigh--else` (/code-review recipe: xhigh (variant B)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-max--if` (/code-review recipe: max (variant A)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-max--if` (/code-review recipe: max (variant A)): nearest match is 6 bytes, was 189
+- **skills** `skill-code-review-recipe-max--else` (/code-review recipe: max (variant B)): nearest match is 6 bytes, was 367
+- **skills** `skill-code-review-recipe-max--else` (/code-review recipe: max (variant B)): nearest match is 6 bytes, was 189
+- **skills** `skill-file-design` (/design): embedded file content changed
+- **skills** `skill-file-plugin-authoring` (/plugin-authoring): embedded file content changed
+- **tools** `pipeline-builder-defaults` (Tool builder defaults): same code node, contents changed
+- **tools** `tool-write` (Write): same bytes occur 50+ times and no position estimate
+- **tools** `tool-write` (Write): same bytes occur 50+ times and no position estimate
+- **tools** `tool-write` (Write): same bytes occur 50+ times and no position estimate
+- **tools** `tool-write` (Write): same bytes occur 50+ times and no position estimate
+- **tools** `tool-write` (Write): same bytes occur 50+ times and no position estimate
+- **tools** `tool-edit` (Edit): same bytes occur 50+ times and no position estimate
+- **tools** `tool-edit` (Edit): same bytes occur 50+ times and no position estimate
+- **tools** `tool-edit` (Edit): same bytes occur 50+ times and no position estimate
+- **tools** `tool-edit` (Edit): same bytes occur 50+ times and no position estimate
+- **tools** `tool-notebookedit` (NotebookEdit): same bytes occur 50+ times and no position estimate
+- **tools** `tool-notebookedit` (NotebookEdit): same bytes occur 50+ times and no position estimate
+- **tools** `tool-powershell` (PowerShell): same bytes occur 50+ times and no position estimate
+- **tools** `tool-monitor` (Monitor): same bytes occur 7+ times and no position estimate
+- **tools** `tool-agent` (Agent): same bytes occur 50+ times and no position estimate
+- **tools** `tool-agent` (Agent): same bytes occur 50+ times and no position estimate
+- **tools** `tool-agent` (Agent): same bytes occur 50+ times and no position estimate
+- **tools** `tool-sendmessage` (SendMessage): range too large to match by pattern
+- **tools** `tool-listagents` (ListAgents): same bytes occur 50+ times and no position estimate
+- **tools** `tool-listagents` (ListAgents): same bytes occur 50+ times and no position estimate
+- **tools** `tool-askuserquestion` (AskUserQuestion): same bytes occur 20+ times and no position estimate
+- **tools** `tool-askuserquestion` (AskUserQuestion): same bytes occur 20+ times and no position estimate
+- **tools** `tool-enterplanmode` (EnterPlanMode): same bytes occur 50+ times and no position estimate
+- **tools** `tool-enterplanmode` (EnterPlanMode): same bytes occur 20+ times and no position estimate
+- **tools** `tool-enterplanmode` (EnterPlanMode): same bytes occur 50+ times and no position estimate
+- **tools** `tool-sendfile` (SendFile): same bytes occur 50+ times and no position estimate
+- **tools** `tool-sendfile` (SendFile): same bytes occur 50+ times and no position estimate
+- **tools** `tool-croncreate` (CronCreate): same bytes occur 50+ times and no position estimate
+- **tools** `tool-croncreate` (CronCreate): same bytes occur 50+ times and no position estimate
+- **tools** `tool-fetchinboxmessage` (FetchInboxMessage): same bytes occur 50+ times and no position estimate
+- **tools** `tool-poll` (Poll): text or code in this range changed
+- **tools** `tool-poll` (Poll): duplicates, none near the expected position
+- **tools** `tool-poll` (Poll): text or code in this range changed
+- **tools** `tool-poll` (Poll): same code node, contents changed
+- **tools** `tool-artifact` (Artifact): text or code in this range changed
+- **tools** `tool-artifact` (Artifact): text or code in this range changed
+- **tools** `tool-artifact` (Artifact): text or code in this range changed
+- **tools** `tool-artifact` (Artifact): range too large to match by pattern
+- **tools** `tool-artifactdata` (ArtifactData): text or code in this range changed
+- **tools** `tool-artifactdata` (ArtifactData): text or code in this range changed
+- **tools** `tool-enable-mcp-claude-in-chrome` (enable__mcp__claude-in-chrome): text or code in this range changed
+- **tools** `tool-enable-mcp-remote-devices-claude-browser` (enable__mcp__remote-devices__Claude_Browser): text or code in this range changed
+- **tools** `tool-enable-mcp-remote-devices-computer` (enable__mcp__remote-devices__computer): text or code in this range changed
+- **tools** `tool-memory-list` (memory_list): same bytes occur 23+ times and no position estimate
+- **tools** `tool-memory-list` (memory_list): same bytes occur 16+ times and no position estimate
+- **tools** `tool-memory-list` (memory_list): same bytes occur 23+ times and no position estimate
+- **tools** `tool-memory-read` (memory_read): same bytes occur 17+ times and no position estimate
+- **tools** `tool-memory-read` (memory_read): same bytes occur 16+ times and no position estimate
+- **tools** `tool-memory-read` (memory_read): same bytes occur 23+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 17+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 23+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 17+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 17+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 17+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 16+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 23+ times and no position estimate
+- **tools** `tool-memory-write` (memory_write): same bytes occur 17+ times and no position estimate
+
+### New model-facing text (391, published on "Other model-facing text")
+
+- "Keep each memory file under ${Bt(M7)} including frontmatter (recall shows only the first ${Bt(M7)}) and the description to one specific line; when a file outgro"
+- "Write only to `${n}` — it already exists; write to it directly with the Write tool (do not run mkdir or check for its existence). The shared director${C.length>"
+- " There is no separate private memory directory in this session — save every memory type to the team director${C.length>1?\"ies, bearing in mind they are\":\"y, bea"
+- "**Step 2** — add a pointer to that file in `${Oc}` in the private directory. The single `${Oc}` indexes both private and team memories — use a path like `file.m"
+- "<${axe} url=\"${t}\"/> The user deleted this Artifact from /artifacts: its link no longer works for anyone, it cannot be restored, and it cannot be published to a"
+- " The user's argument was interpreted as a review note, not a base branch: \"${re(e,Dnn)}\". The cloud review runs its standard pass over the branch diff and does "
+- "Runtime capabilities this page declares, as {name: config}. The control plane is the authority on valid names and config shapes. An empty object clears any prev"
+- "${U8e} Your last turn ended without a terminal `mcp__${uc}__*` tool call, so nothing reached the project thread: plain text is not delivered there. Call `${eue}"
+- "This entry for \"${pe(h)}\" in ${Ce[e.source.source]} would run wrapped in your CLAUDE_CODE_SHELL_PREFIX, so this machine cannot pin what actually runs and it is "
+- "Re-queries the tool list of connected MCP servers and updates the set of available tools, reporting which tools were added or removed.\n\nMCP servers normally pus"
+- "${Be} in the coordinator runs only a command it can verify as read-only and that stays in the working directory (no cd, pushd or popd), with no input besides co"
+- "${Be} in the coordinator does not run a command with an argument built from `$(…)`, a variable, a `~name` form, or a `..` after a directory name: it cannot be c"
+- "a dark-mode thumbnail (media=\"(prefers-color-scheme: dark)\") needs a default <link rel=\"artifact-thumbnail\"> as well — add one without a media attribute${t.past"
+- "**Watching for republishes**: not available in this session — nothing notifies it when an artifact is republished elsewhere${e?\" or when a comment on one is sen"
+- "**Responsive**: The page must also work at phone width (about 400px), and the page body must never scroll horizontally. Keep a side gutter of at least 16px at e"
+- "**Theme-aware**: The page renders in the viewer's theme, which has three states: an explicit choice sets `data-theme=\"dark\"` or `data-theme=\"light\"` on the root"
+- "${G} **How to load a library**: `<script src=\"https://cdnjs.cloudflare.com/ajax/libs/<lib>/<exact version>/<file>\">` — pick the UMD build, which defines a globa"
+- "\n<${B7n}>\nThis session began as a fork (copy) of another session that is still running: ${w}. The conversation up to ${u} is shared history with it; the two ses"
+- "\n\n**Sharing** — call the ${WNe} tool twice:\n\n1. **Right after rendering the draft code block** (still in step 5, before the Review questions). Call with `mode='"
+- "Scale factor in [${ort}, ${Ize}] for the returned image; 1 (default) uses the full image token budget, 0.5 returns an image at half the width and height (~quart"
+- "This conversation was forked out of ${Jt?.worktreePath??we()}${Jt?.worktreeBranch?` (branch ${Jt.worktreeBranch})`:\"\"}, a linked worktree the original session i"
+- "The user started this conversation instead of resuming an earlier, inactive one (session ${v.sessionId}), so its history was not re-sent. That conversation's tr"
+- "The user started this session watching the artifact ${v.url} (via claude --watch-artifact). It is the current artifact of interest. ${Ne.contentReadsBlocked??`R"
+- "The user wants to clarify these questions.\n    This means they may have additional information, context or questions for you.\n    Take their response into accou"
+- "${e} is still connected, but its reply to this command was not received (${t} checks about ${Math.round(n/1000)} s apart got no answer, though ${e} answered a l"
+- "${e} stopped answering ${r?\"while this command was running\":\"after this command was s} (${t} checks about ${Math.round(n/1000)} s apart went unanswered). Its st"
+- "A reply that could not be verified says this session is no longer paired with ${e}. ${t?\"It was running there; whether it finished is unknown.\":\"T} Do not retry"
+- "No one approved or denied this within ${Math.round(t/1000)} s, so it was not run on ${e}. Nothing changed there. Continue with work that doesn't need this comma"
+- "${gg} takes a `mode`. Use \"standard\" by default: it is the normal search, quick and cheap. Use \"extended\" only when a \"standard\" result comes back thin, off-tar"
+- "List memory documents (optionally under a path prefix), sorted by path. Returns path, size, and last-updated time for each. Results are capped; use cursor to pa"
+- "Create or update a memory document with full content, in the memory store named by store (call ${Ay} with no arguments to see the stores available in this sessi"
+- "Pass the 12-character version token from your most recent ${cf} or ${ac} of this file. For a file that does not yet exist (not shown in the listing), pass the l"
+- " Its current content is ${l} bytes, over the ${$0t}-byte read cap, so it is withheld here and ${cf} refuses it for the same reason; replace the document wholesa"
+- "@internal Present ('session-task') when the notification reports on work this session itself launched: a background agent, shell command, workflow, monitor, MCP"
+- "@internal Submits a /feedback report (description + current session transcript + sanitized error log) to api.anthropic.com/api/claude_cli_feedback using the CLI"
+- "${l}: old_str does not occur in ${n} of that document, so nothing was written by this call.${d} Copy the text exactly as it appears in the field's value (the de"
+- "${l}: ${v} is an existing document and this delete carried no if_version — nothing was deleted. Read it back and, if it should still be deleted, resend the dele"
+- "${l}: the document is no longer at version ${u.pinned??\"?\"}, the one this write was pinned to — it is now at version ${u.current}; nothing was written. Read it "
+- "${l}: the document is no longer at version ${u?.pinned??\"?\"}, the one this write was pinned to — it has changed or may have been deleted; nothing was written. R"
+- "${i}: writes[${d.index}] (write ${d.index+1} of ${d.total}) targets ${d.path}, which already exists, and carried no if_version — the whole batch wrote nothing. "
+
 ## 2026-09-26 · Claude Code 2.1.283
 
 ## Claude Code 2.1.283 (from 2.1.282)

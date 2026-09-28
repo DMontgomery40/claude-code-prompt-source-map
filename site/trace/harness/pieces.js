@@ -334,7 +334,7 @@ function candidates(b, text, product, drop) {
     return carried(text, "user turn", drop);
   }
   if (kind === "agents") {
-    const env = text.match(/^\s*([^<\n]{0,60}:)?\s*(<teammate-message\b[^>]*>)/);
+    const env = text.match(/^\s*([^<\n]{0,60}:)?\s*(<(?:teammate|cross-session)-message\b[^>]*>)/);
     if (env) {
       const out = [{ text: env[2], vehicle: "agent message", key: "shape:" + shapeOf(env[2]) }];
       if (env[1]) out.unshift({ text: env[1], vehicle: "agent message", key: "shape:" + shapeOf(env[1]) });
@@ -539,7 +539,8 @@ export async function buildHarnessModel({ trace, readText, index, literals = nul
     if (lab === "edited_text_file" || /changed on disk/.test(text.slice(0, 200))) return "after a file changed on disk";
     if (lab === "silent_turn_reminder") return "after turns without a user message";
     if (/while you were working/.test(text.slice(0, 200))) return "when you typed mid-turn";
-    if (d.vehicle === "agent message" || /teammate|cross-session/.test(lab)) return "with a teammate message";
+    if (/^cross-session/.test(lab)) return "with a message from another Claude session";
+    if (d.vehicle === "agent message" || /teammate/.test(lab)) return "with a teammate message";
     if (/^\[Image:/.test(text)) return "when an image was read";
     return regular;
   }

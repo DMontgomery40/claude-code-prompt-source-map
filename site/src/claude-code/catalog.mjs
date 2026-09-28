@@ -33,7 +33,7 @@ export const categories = [
   {
     label: "Provenance",
     files: [
-      { path: "outputs/provenance.md", format: "markdown", title: "Method and inventory", slug: "provenance", summary: "How this was extracted and how to verify it.", data: "outputs/inventory.json", defaultOpen: false }
+      { path: "outputs/provenance.md", format: "markdown", title: "Method and inventory", slug: "provenance", summary: "How this was extracted and how to verify it.", data: "outputs/inventory.json", records: false, defaultOpen: false }
     ]
   }
 ];

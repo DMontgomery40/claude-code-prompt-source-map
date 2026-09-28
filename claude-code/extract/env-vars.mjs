@@ -349,9 +349,11 @@ for (const f of jsFiles) {
         const rowVar = n.property.object.name; const col = lit(n.property.property);
         for (let k = anc.length - 2; k >= 0; k--) {
           if (!/Function/.test(anc[k].type)) continue;
-          let names = null;
-          walk.simple(anc[k].body, { VariableDeclarator(d) { if (!names && d.id.type === "Identifier" && d.id.name === rowVar && d.init?.type === "CallExpression" && d.init.callee.type === "MemberExpression" && d.init.callee.object.type === "Identifier") { const t = constAt("table", d.init.callee.object.name, anc); if (t) names = t.map(r => r[col]); } } });
-          if (names) { const obs = classify(anc, i, fileCtx); for (const el of names) if (typeof lit(el) === "string") record(lit(el), el, "table-lookup", obs, anc); }
+          let names = null, fpl = false;
+          // A table keyed by Claude model ids (model -> region variable) is Claude Code's own, so a
+          // name added with a new model counts as first-party before the docs list it.
+          walk.simple(anc[k].body, { VariableDeclarator(d) { if (!names && d.id.type === "Identifier" && d.id.name === rowVar && d.init?.type === "CallExpression" && d.init.callee.type === "MemberExpression" && d.init.callee.object.type === "Identifier") { const t = constAt("table", d.init.callee.object.name, anc); if (t) { names = t.map(r => r[col]); fpl = t.some(r => r.some(x => /^claude-/.test(lit(x) ?? ""))); } } } });
+          if (names) { const obs = classify(anc, i, fileCtx); for (const el of names) if (typeof lit(el) === "string") record(lit(el), el, "table-lookup", obs, anc, fpl); }
           break;
         }
         return;

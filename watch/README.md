@@ -17,7 +17,10 @@ Keeps gpt6aeon.dtmont.com (Codex desktop / GPT-6 catalog) and ccprompts.dtmont.c
 (Claude Code) current. `com.dtmont.prompt-watch` runs `watch.mjs` hourly at :07.
 
 - Cadence: Codex hourly until the end of 2026-10-06 (America/Denver), then daily; Claude
-  Code daily against the npm `latest` dist-tag.
+  Code daily against the newer of the npm `latest` and `next` dist-tags. A build that is not
+  newer than the one the records describe is skipped, and `extract/refresh.mjs` itself exits 4
+  instead of going back to an older build (`--allow-older` overrides). The version rules are in
+  `claude-code/extract/versions.mjs`.
 - Stage 1: a cheap fingerprint per target; unchanged means exit.
 - Stage 2: the repo's own refresh (extract/codex/refresh.mjs, extract/refresh.mjs).
 - Stage 3: a headless `claude -p` agent only when an extractor breaks or records need review.

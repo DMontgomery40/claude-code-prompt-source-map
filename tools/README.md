@@ -20,3 +20,8 @@ Symlinks under the session roots are skipped. Host checks reject DNS rebinding.
 Verify with `npm test`, `npm run test:local`, and `npm run build` from `site/`.
 The local resolver tests use temporary synthetic sessions and a real HTTP server;
 private user sessions must never be added as fixtures or copied into `site/dist`.
+
+# Network capture
+
+`tools/capture/capture.sh -- claude` (or `-- codex`) records one CLI session's HTTPS traffic to a HAR with
+credentials stripped, for Trace to attach to the session's log. See `tools/capture/README.md`.

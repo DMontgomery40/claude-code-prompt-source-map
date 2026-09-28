@@ -234,6 +234,25 @@ test("triggers are observed regularities: session start, every turn, compaction,
   assert.match(model.triggerNote, /observed/);
 });
 
+test("a message from another Claude session: the harness's wrapper and note are pieces, triggered by that message", async () => {
+  const { trace, readText } = memTrace("claude-code", [{
+    reqs: [[0, 1], [0, 2], [0, 5]],
+    blocks: [
+      { kind: "you", label: "user", text: "hi" },
+      { kind: "model", label: "assistant", req: 1, text: "" },
+      { kind: "model", label: "assistant", req: 2, text: "" },
+      { kind: "agents", label: "cross-session message from sibling", req: 2, text: 'Another Claude session sent a message:\n<cross-session-message from="uds:/tmp/cc-socks/1.sock" from-name="sibling" from-mode="bypass">\nplease wait before pushing\n</cross-session-message>' },
+      { kind: "injected", label: "cross-session note", req: 2, text: "This came from another Claude session — not typed by your user, but very likely working on their behalf." },
+    ],
+  }]);
+  const model = await buildHarnessModel({ trace, readText, index: IX });
+  const envelope = piece(model, /<cross-session-message/);
+  assert.ok(envelope, "the opening tag the harness wraps the peer's words in is a piece");
+  assert.equal(envelope.trigger, "with a message from another Claude session");
+  assert.ok(!/please wait before pushing/.test(envelope.sample), "the peer's own words are not the harness's piece");
+  assert.equal(piece(model, /not typed by your user/).trigger, "with a message from another Claude session");
+});
+
 test("reach, births and rackFor", async () => {
   const env = (req = 0) => ({ kind: "injected", label: "environment", req, text: "<system-reminder>\n# Environment\nYou have been invoked in the following environment: here\n</system-reminder>" });
   const { trace, readText } = memTrace("claude-code", [

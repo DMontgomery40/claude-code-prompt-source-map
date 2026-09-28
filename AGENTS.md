@@ -40,6 +40,5 @@ It is **not** about token cost or the fact that context is re-read every turn. D
   2026-09-27).
 - Name the OpenAI product "Codex/ChatGPT", never "Codex" alone. Component names ("Codex CLI") and quoted
   prompt text stay as they are.
-- David deploys and pushes by hand. Don't deploy, push or change DNS without his explicit OK.
 - Other agents may work here at the same time. Commit your own paths, keep checks focused, and leave
   others' files alone.
