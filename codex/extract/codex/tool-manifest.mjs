@@ -354,7 +354,7 @@ const coverage = {
 
 // ---- write -------------------------------------------------------------------------------------------
 
-const committed = name => { try { return execFileSync("git", ["show", `HEAD:outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }); } catch { return null; } };
+const committed = name => { try { return execFileSync("git", ["show", `HEAD:./outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }); } catch { return null; } };
 const before = new Map([[PAGE, committed(PAGE)]].filter(([, text]) => text != null));
 const changes = renderChangedDocuments(semanticDiff(before, new Map([[PAGE, page]])));
 fs.mkdirSync(outputs, { recursive: true });

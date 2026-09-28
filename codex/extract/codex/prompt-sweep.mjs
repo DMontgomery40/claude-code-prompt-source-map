@@ -133,7 +133,7 @@ for (const [group, test] of GROUPS) {
   }
 }
 const page = `${lines.join("\n").trimEnd()}\n`;
-const committed = (() => { try { return execFileSync("git", ["show", `HEAD:outputs/${PAGE}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }); } catch { return null; } })();
+const committed = (() => { try { return execFileSync("git", ["show", `HEAD:./outputs/${PAGE}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }); } catch { return null; } })();
 const changes = renderChangedDocuments(semanticDiff(new Map(committed == null ? [] : [[PAGE, committed]]), new Map([[PAGE, page]])));
 const diffFile = path.join(work, "desktop-model-facing-diff.md");
 if (changes) fs.writeFileSync(diffFile, `# Desktop app: other model-facing text\n\n${changes}`);

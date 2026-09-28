@@ -1,8 +1,11 @@
-// GPT-6 / Codex desktop → gpt6aeon.dtmont.com
+// Codex/ChatGPT (ChatGPT desktop app, its bundled Codex CLI, the GPT-6 catalog) → the /codex/
+// section of harness.dtmont.com. refresh() regenerates codex/outputs and returns a publish plan;
+// watch.mjs gates, deploys and commits once per cycle for both targets.
 import { existsSync, readFileSync, renameSync, rmSync } from "node:fs";
 import path from "node:path";
+import { productOrigin } from "../../site/src/shared/site.mjs";
 import { runAgent } from "../lib/agent.mjs";
-import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
+import { appendChangelog, writeStatus } from "../lib/publish.mjs";
 import { log, notify, run } from "../lib/run.mjs";
 
 const repo = path.resolve(import.meta.dirname, "../../codex");
@@ -21,7 +24,8 @@ const node = process.execPath;
 export const codex = {
   name: "codex",
   repo,
-  origin: "https://gpt6aeon.dtmont.com",
+  section: "codex",
+  origin: productOrigin("codex"),
   // Hourly through Dev Day (2026-09-29) plus a week, then daily.
   intervalMs: now => (now < Date.parse("2026-10-07T00:00:00-06:00") ? 3600e3 : 86400e3),
   checkedLabel: now => (now < Date.parse("2026-10-07T00:00:00-06:00") ? "hourly" : "daily"),
@@ -43,7 +47,7 @@ export const codex = {
       const c = run("bash", ["extract/codex-config/run_all.sh"], { cwd: repo, timeoutMs: 30 * 60 * 1000 });
       if (c.status !== 0) {
         configNote = `config/env reference not regenerated: ${(c.stderr || c.stdout).slice(-300)}`;
-        notify("gpt6aeon config reference", configNote);
+        notify("Codex/ChatGPT config reference", configNote);
         run("git", ["checkout", "--", "outputs/codex-config.json", "outputs/codex-config.md", "outputs/codex-env-vars.json", "outputs/codex-env-vars.md",
           "outputs/codex-cli-prompts.md", "outputs/codex-cli-bundled-skills.md", "outputs/codex-cli-prompts.json"], { cwd: repo });
       } else if (existsSync(cliPromptDiffFile)) {
@@ -73,7 +77,7 @@ export const codex = {
       const out = run(node, [g.script], { cwd: repo, timeoutMs: 10 * 60 * 1000 });
       if (out.status !== 0) {
         log(`codex ${g.script} failed (${out.status}): ${(out.stderr || out.stdout).slice(-300)}`);
-        if (!dryRun) notify("gpt6aeon generated pages", `${g.script} failed; its pages were left unchanged`);
+        if (!dryRun) notify("Codex/ChatGPT generated pages", `${g.script} failed; its pages were left unchanged`);
         run("git", ["checkout", "--", ...g.outputs.filter(file => existsSync(path.join(repo, file)))], { cwd: repo });
         continue;
       }
@@ -90,7 +94,7 @@ export const codex = {
       run("git", ["checkout", "--", "outputs/desktop-model-facing-text.md"], { cwd: repo });
     } else {
       const swept = JSON.parse(sweep.stdout.trim().split("\n").at(-1));
-      if (swept.jev_unavailable && !dryRun) notify("gpt6aeon prompt sweep", `${swept.unclassified} candidates unclassified: ${swept.jev_unavailable}`);
+      if (swept.jev_unavailable && !dryRun) notify("Codex/ChatGPT prompt sweep", `${swept.unclassified} candidates unclassified: ${swept.jev_unavailable}`);
       if (existsSync(sweepDiffFile)) { sweepDiff = readFileSync(sweepDiffFile, "utf8").trim(); rmSync(sweepDiffFile, { force: true }); }
     }
     // Catalog settings baseline: advanced after a publish, or when nothing needs publishing;
@@ -100,7 +104,7 @@ export const codex = {
       if (!dryRun && existsSync(next)) renameSync(next, path.join(repo, "work/catalog-snapshot.json"));
     };
     const privateSettings = summary.catalog_settings?.private ?? [];
-    if (privateSettings.length && !dryRun) notify("gpt6aeon catalog", `Catalog settings changed (not published, may be account-specific): ${privateSettings.join(", ").slice(0, 300)}`);
+    if (privateSettings.length && !dryRun) notify("Codex/ChatGPT catalog", `Catalog settings changed (not published, may be account-specific): ${privateSettings.join(", ").slice(0, 300)}`);
     const diffFile = path.join(repo, "work/codex-diff.md");
     const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff, ...generatedDiffs, sweepDiff].filter(Boolean).join("\n\n");
     const statusFile = path.join(repo, "outputs/status.json");
@@ -110,13 +114,12 @@ export const codex = {
     // and file names). Publish those too so provenance stays current, without moving the
     // "Updated" date. sources.json alone changes every run (fetch time) and doesn't count.
     const dirty = run("git", ["status", "--porcelain", "--", "outputs", ":(exclude)outputs/sources.json", ":(exclude)outputs/status.json"], { cwd: repo }).stdout.trim();
-    if (!diff && !labelChanged && !dirty) { promoteSnapshot(); return { published: false, summary }; }
+    if (!diff && !labelChanged && !dirty) { promoteSnapshot(); return { summary, publish: null }; }
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: summary.sources, changed: Boolean(diff) || !previousLabel });
     if (diff && !dryRun) appendChangelog(repo, `ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build}), Codex CLI ${summary.sources.cli_version}`, diff);
-    await gate(repo);
-    if (dryRun) return { published: false, summary, wouldPublish: true };
-    await publish(repo, { origin: this.origin, message: diff ? `Refresh: ${summary.changed.length ? `${summary.changed.length} documents changed upstream` : "Codex model settings or CLI prompts changed"}\n\n${diff.slice(0, 3000)}` : dirty ? `Provenance: ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build})` : `Status: now checked ${this.checkedLabel(now)}` });
-    promoteSnapshot();
-    return { published: true, summary };
+    const title = diff
+      ? `Codex/ChatGPT refresh: ${summary.changed.length ? `${summary.changed.length} documents changed upstream` : "model settings or CLI prompts changed"}`
+      : dirty ? `Codex/ChatGPT provenance: ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build})` : `Codex/ChatGPT status: now checked ${this.checkedLabel(now)}`;
+    return { summary, publish: { message: diff ? `${title}\n\n${diff.slice(0, 3000)}` : title, onPublished: promoteSnapshot } };
   }
 };

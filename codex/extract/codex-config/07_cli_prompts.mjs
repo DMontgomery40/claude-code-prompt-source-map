@@ -155,7 +155,7 @@ const provenance = {
 };
 
 // Semantic diff against the committed pages (run_all.sh has not committed anything yet).
-const committed = name => { try { return execFileSync("git", ["show", `HEAD:outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }); } catch { return null; } };
+const committed = name => { try { return execFileSync("git", ["show", `HEAD:./outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }); } catch { return null; } };
 const before = new Map([NAMES.prompts, NAMES.skills].map(name => [name, committed(name)]).filter(([, text]) => text != null));
 const after = new Map([[NAMES.prompts, promptsPage], [NAMES.skills, skillsPage]]);
 const changes = renderChangedDocuments(semanticDiff(before, after));
