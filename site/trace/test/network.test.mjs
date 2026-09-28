@@ -205,6 +205,76 @@ test("captures that can't attach say why: a browser capture, another product, an
   assert.deepEqual(sessionIdsOf(cx), [CXX.thread]);
 });
 
+// ---------------------------------------------------------------- sensitive data in transit
+test("transit: the capture tool's descriptions, cookies and raw JWTs are read without their values", async () => {
+  const { descriptions, parseDescription, splitClaims, cookies, setCookie, decodeJwt, credentialKind } = await import("../network/transit.js");
+  const pipe = parseDescription("JWT | 1849 chars | fp c0ffee00 | alg RS256 | claims aud,https://x.test/profile{email,name},iat | issuer https://auth.x.test | audience https://api.x.test/v1 | scopes openid,email | lifetime 10d");
+  assert.deepEqual([pipe.kind, pipe.chars, pipe.fp, pipe.alg, pipe.issuer, pipe.lifetime], ["JWT", 1849, "c0ffee00", "RS256", "https://auth.x.test", "10d"]);
+  assert.deepEqual(pipe.claims, ["aud", "https://x.test/profile{email,name}", "iat"]);
+  const semi = parseDescription("Anthropic OAuth access token; 108 chars; fp 0a1b2c3d");
+  assert.deepEqual([semi.kind, semi.chars, semi.fp], ["Anthropic OAuth access token", 108, "0a1b2c3d"]);
+  assert.deepEqual(splitClaims("a,b{x,y},c"), ["a", "b{x,y}", "c"]);
+  assert.deepEqual(descriptions("Bearer <redacted 115ch>").map((d) => [d.described, d.chars]), [["old", 115]]);
+  assert.deepEqual(descriptions("<redacted by trace-capture>").map((d) => d.described), ["bare"]);
+  assert.deepEqual(cookies("a=<redacted by trace-capture: cookie value; 30 chars; fp 11>; b=plain").map((c) => c.name), ["a", "b"], "a description's ';' does not split the cookie");
+  const sc = setCookie("__cf_bm=<redacted by trace-capture: cookie value | 163 chars | fp 33>; HttpOnly; SameSite=None; Secure; Path=/");
+  assert.deepEqual([sc.name, sc.secure, sc.httpOnly, sc.sameSite], ["__cf_bm", true, true, "none"]);
+  const j = decodeJwt(PLANTED.jwt);
+  assert.deepEqual([j.alg, j.issuer, j.lifetime], ["RS256", "https://auth.example.test", "10d"]);
+  assert.ok(j.claims.includes("https://api.example.test/profile{email,email_verified,name}"));
+  assert.deepEqual(j.personal.map((p) => p.kind).sort(), ["email", "name"]);
+  assert.equal(credentialKind(PLANTED.npm), "npm token");
+  assert.equal(credentialKind(PLANTED.ddKey, "dd-api-key"), "Datadog client key");
+  assert.equal(credentialKind("sk-ant-oat01-" + "x".repeat(40)), "Anthropic OAuth access token");
+});
+
+async function transitOf(file, trace) { return (await analyzeCapture([har(file)], trace)).capture; }
+
+test("transit: every one of the ten rules fires on the synthetic captures, and a first-party session header fires none", async () => {
+  const cc = await claudeTrace(), cx = await codexTrace();
+  const caps = [await transitOf("claude.har", cc), await transitOf("codex.har", cx), await transitOf("claude-described.har", cc)];
+  const fired = new Set(caps.flatMap((c) => c.transit.rows.flatMap((r) => r.rules)));
+  assert.deepEqual([...fired].sort((a, b) => a - b), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const rows = caps[0].transit.rows;
+  const sessionHeader = rows.find((r) => r.channel === "request header" && r.path === "x-claude-code-session-id");
+  assert.ok(sessionHeader && sessionHeader.party === "first" && !sessionHeader.rules.includes(4));
+  const inPrompt = rows.find((r) => r.kind === "email" && r.channel === "prompt text");
+  assert.ok(inPrompt && inPrompt.rules.includes(1) && inPrompt.calls.includes(0), "the user's email in the system prompt of call 1");
+  assert.ok(rows.some((r) => r.kind === "Datadog client key" && r.party === "third" && r.rules.includes(10)));
+  assert.ok(rows.some((r) => r.kind === "npm token" && r.rules.includes(5)));
+  assert.ok(rows.some((r) => r.kind === "device and environment details" && r.rules.includes(9) && r.party === "third"));
+  assert.ok(rows.some((r) => r.channel === "URL path" && r.kind === "organization id" && r.rules.includes(3)));
+  assert.ok(rows.some((r) => r.channel === "URL query" && r.kind === "account id"));
+  assert.ok(rows.some((r) => r.kind === "plain http" && r.rules.includes(8)));
+  assert.ok(rows.some((r) => r.channel === "set-cookie" && r.rules.includes(8) && r.notes.some((n) => /without Secure and HttpOnly/.test(n))));
+  assert.ok(rows.some((r) => /JSON in a string/.test(r.path) && r.kind === "device id" && r.rules.includes(6)));
+  const bearer = caps[0].transit.credentials.find((c) => c.kind === "bearer token");
+  assert.deepEqual(bearer.hosts.sort(), ["api.anthropic.com", "mcp-proxy.anthropic.com"]);
+  const cxRows = caps[1].transit.rows;
+  const jwt = cxRows.find((r) => r.kind === "JWT" && r.path === "authorization");
+  assert.ok(jwt.rules.includes(2) && jwt.rules.includes(7) && jwt.details.lifetime === "10d");
+  assert.ok(cxRows.some((r) => r.kind === "name" && r.channel === "prompt text" && r.rules.includes(1)), "the name from the token's claims is found in prompt text");
+  assert.ok(cxRows.some((r) => r.kind === "installation id" && r.rules.includes(6) && r.notes.some((n) => /sent twice/.test(n))));
+  for (const c of caps) assert.deepEqual(planted(JSON.stringify(c.transit)), []);
+});
+
+test("transit: the capture tool's fingerprints group one token across hosts; Trace's own are per load", async () => {
+  const cc = await claudeTrace();
+  const d = await transitOf("claude-described.har", cc);
+  const oauth = d.transit.credentials.find((c) => c.kind === "Anthropic OAuth access token");
+  assert.deepEqual([oauth.source, oauth.hosts.length, oauth.fp], ["capture", 2, "0a1b2c3d"]);
+  const cookieRows = d.transit.rows.filter((r) => r.channel === "cookie");
+  assert.deepEqual(cookieRows.map((r) => r.path).sort(), ["a", "b"]);
+  assert.ok(d.transit.rows.some((r) => r.path === "x-api-key" && r.details.chars === 115 && r.details.described === "old"));
+  assert.ok(d.transit.rows.some((r) => r.path === "proxy-authorization" && r.details.described === "bare"));
+  assert.ok(d.transit.rows.some((r) => r.kind === "npm token" && r.rules.includes(5)));
+  assert.ok(!d.transit.rows.some((r) => r.channel === "set-cookie" && r.rules.includes(8)), "a Secure, HttpOnly cookie is fine");
+  const one = await transitOf("claude.har", cc), two = await transitOf("claude.har", cc);
+  const fp = (c) => c.transit.rows.find((r) => r.kind === "bearer token" && r.host === "api.anthropic.com");
+  assert.equal(fp(one).values, 1, "six calls, one token: one value");
+  assert.notEqual(fp(one).fp[0], fp(two).fp[0], "fingerprints differ between loads");
+});
+
 // ---------------------------------------------------------------- provenance
 test("provenance: each header, event and frame the catalog explains is in what ships", { skip: !existsSync(join(HERE, "../../../claude-code/work/extracted")) && "claude-code/work is not here" }, () => {
   const repo = join(HERE, "../../..");

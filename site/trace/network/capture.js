@@ -9,6 +9,7 @@ import {
   claudeModelCall, growthbookFlags, growthbookAttributes, claudeBootstrap, claudeEventLog, claudeDatadog,
   codexSocket, codexModels, codexMetrics, codexAnalytics,
 } from "./findings.js";
+import { collectTransit, reportTransit } from "./transit.js";
 
 const PRODUCT_NAME = { "claude-code": "Claude Code", codex: "Codex/ChatGPT" };
 const EAGER_ROLES = new Set(["model", "side", "flags", "bootstrap", "catalog", "telemetry"]);
@@ -115,6 +116,9 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
     if (j) R.harvest(j);
     for (const f of x.ws ? wsFrames(raw[x.i]) : []) if (f.json) R.harvest(f.json);
   }
+  // Identity inside raw bearer tokens (a JWT's email and name claims) joins the values removed everywhere.
+  const { personal } = collectTransit({ entries: kept.map((x) => ({ entry: raw[x.i], reqJson: reqJson(x.i), resJson: resJson.get(x.i) ?? null })), R });
+  const sockets = new Map(); // entry index -> { offset, frames, frameCall } for the websocket's calls
 
   // ---- findings
   const calls = [], flags = [], telemetry = [], rateSeries = [], catalog = [], metricNames = {}, notes = [];
@@ -158,6 +162,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
       } else {
         if (x.role === "model" && x.ws) {
           const s = codexSocket(e, x, R);
+          sockets.set(x.i, { offset: calls.length, frames: s.frames, frameCall: s.frameCall });
           handshake = handshake || s.handshake;
           for (const c of s.calls) {
             if (c.kind === "prewarm") c.kind = "side";
@@ -200,6 +205,18 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   const join = product === "claude-code" ? joinClaude(calls, trace) : joinCodex(calls, trace);
   const byRequest = {};
   calls.forEach((c, k) => { c.index = k; for (const m of c.matched) byRequest[`${m.agentId}\u0000${m.reqIdx}`] = k; });
+
+  // ---- sensitive data in transit: kinds, places and counts, never values
+  const callOfEntry = new Map();
+  for (const c of calls) if (c.product === "claude-code") callOfEntry.set(c.entry, c.index);
+  const transit = await reportTransit({
+    product, R, personal,
+    entries: kept.map((x) => {
+      const s = sockets.get(x.i);
+      return { info: x, entry: raw[x.i], reqJson: reqJson(x.i), resJson: resJson.get(x.i) ?? null, call: callOfEntry.get(x.i) ?? null,
+        frames: s ? s.frames.map((f, k) => ({ ...f, call: s.frameCall[k] >= 0 ? s.offset + s.frameCall[k] : null })) : [] };
+    }),
+  });
 
   // ---- telemetry: decisions keep their decoded metadata; api success rows point at their call
   const decisions = new Set(DECISIONS[product] || []);
@@ -262,7 +279,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
     product, files: names, total: infos.length, kept: kept.length, elsewhere, otherSessions: [...others].map((s) => `${short(s)}…`), notes,
     entries, roles, calls, byRequest, join, betas: betaList, flags: flagList, attributes, bootstrap, handshake, catalog,
     metrics: { names: metricNames, shadowSelectionMethods: shadow }, events, telemetryCounts, rateLimits: rateSeries.sort((a, b) => (a.t ?? 0) - (b.t ?? 0)),
-    account: { facts, identityFields: [...identityFields] }, headerNames: [...headerNames.values()].sort((a, b) => a.name.localeCompare(b.name)),
+    account: { facts, identityFields: [...identityFields] }, headerNames: [...headerNames.values()].sort((a, b) => a.name.localeCompare(b.name)), transit,
     ms: now() - t0,
   };
   const store = {

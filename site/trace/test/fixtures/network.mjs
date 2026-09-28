@@ -25,11 +25,20 @@ export const PLANTED = {
   orgName: "Synthetic Person Org",
   apiKey: "sk-ant-api03-SYNTHETICkeySYNTHETICkey000",
   projectKey: "sk-proj-SYNTHETICsecretkey0000000000",
-  jwt: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzeW50aGV0aWMifQ.c2lnbmF0dXJlc3ludGg",
+  name: "Casey Synthetic",
   bearer: "synthetic-bearer-token-0000000000",
-  ddKey: "ddSYNTHETICapikey000000000000000",
+  ddKey: "pub0123456789abcdef0123456789abcdef",
   refresh: "rt-SYNTHETICrefresh000000000000",
+  npm: "npm_SYNTHETICnpmToken00000000000000000",
 };
+// A bearer JWT like the ChatGPT access token: identity claims (email, name) readable in its payload, a
+// 10-day lifetime and connector scopes.
+const b64u = (o) => Buffer.from(JSON.stringify(o), "utf8").toString("base64url");
+PLANTED.jwt = `${b64u({ alg: "RS256", typ: "JWT" })}.${b64u({
+  iss: "https://auth.example.test", aud: ["https://api.example.test/v1"], sub: "synthetic-sub-0000", iat: 1767690000, exp: 1767690000 + 864000,
+  scp: ["openid", "profile", "email", "offline_access", "api.connectors.read", "api.connectors.invoke"],
+  "https://api.example.test/profile": { email: PLANTED.email, email_verified: true, name: PLANTED.name },
+})}.c2lnbmF0dXJlLXN5bnRoZXRpYw`;
 
 // ---------------------------------------------------------------- HAR helpers
 const H = (o) => Object.entries(o).map(([name, value]) => ({ name, value: String(value) }));
@@ -143,7 +152,7 @@ function messagesCall({ t, x, cls = "main", session = CCX.session, tools = 3, co
 
 function eventLog(t, list) {
   return entry({ t, method: "POST", url: "https://api.anthropic.com/api/event_logging/v2/batch", req: { authorization: `Bearer ${PLANTED.bearer}` }, resBody: { accepted: list.length },
-    body: { events: list.map(([name, meta, session = CCX.session], k) => ({ event_type: "ClaudeCodeInternalEvent", event_data: { event_id: `ev-${k}`, event_name: name, client_timestamp: new Date(t + k).toISOString(), device_id: PLANTED.device, auth: { account_uuid: PLANTED.account, organization_uuid: PLANTED.org }, session_id: session, model: "claude-synth", additional_metadata: b64(meta) } })) } });
+    body: { events: list.map(([name, meta, session = CCX.session], k) => ({ event_type: "ClaudeCodeInternalEvent", event_data: { event_id: `ev-${k}`, event_name: name, client_timestamp: new Date(t + k).toISOString(), device_id: PLANTED.device, auth: { account_uuid: PLANTED.account, organization_uuid: PLANTED.org }, session_id: session, model: "claude-synth", env: { platform: "darwin", arch: "arm64", terminal: "synthterm", shell: "zsh", package_managers: "npm", runtimes: "node" }, additional_metadata: b64(meta) } })) } });
 }
 
 export function claudeHar({ withOther = false } = {}) {
@@ -182,8 +191,12 @@ export function claudeHar({ withOther = false } = {}) {
       ["tengu_api_success", { requestId: "req_011SYNTHelsewhere" }, CCX.other],
     ]),
     entry({ t: t(9.5), method: "POST", url: "https://http-intake.logs.us5.datadoghq.com/api/v2/logs", req: { "dd-api-key": PLANTED.ddKey, "content-type": "application/json" }, status: 202, resBody: {},
-      body: [{ message: "tengu_api_success", session_id: CCX.session, request_id: RID("A"), ttft_m_s: 800, ttft_ms: 800, user_email: PLANTED.email, device_id: PLANTED.device, ddtags: `device:${PLANTED.device}` }] }),
-    entry({ t: t(9.7), url: "https://registry.npmjs.org/synthetic-mcp", status: 304, resBody: "" }),
+      body: [{ message: "tengu_api_success", session_id: CCX.session, request_id: RID("A"), ttft_m_s: 800, ttft_ms: 800, user_email: PLANTED.email, device_id: PLANTED.device, terminal: "synthterm", shell: "zsh", runtimes: "node", package_managers: "npm" }] }),
+    // npx fetching an MCP package with the user's own npm token; a plain-http mirror setting a loose cookie;
+    // an account id in a query string.
+    entry({ t: t(9.7), url: "https://registry.npmjs.org/synthetic-mcp", req: { authorization: `Bearer ${PLANTED.npm}` }, status: 304, resBody: "" }),
+    entry({ t: t(9.8), url: "http://mirror.example.test/simple/synthetic-mcp", resBody: "ok", mime: "text/plain", res: { "set-cookie": "tracker=synthetic0000; Path=/" } }),
+    entry({ t: t(9.9), url: `https://api.anthropic.com/api/oauth/profile?account_uuid=${PLANTED.account}`, req: auth, resBody: { account: { email_address: PLANTED.email, full_name: PLANTED.name } } }),
   ];
   if (withOther) {
     // A second session in the same capture, and a bootstrap call near it that names no session.
@@ -191,6 +204,26 @@ export function claudeHar({ withOther = false } = {}) {
     list.push(entry({ t: t(59.5), url: "https://api.anthropic.com/api/claude_code_penguin_mode", req: auth, resBody: { enabled: false, disabled_reason: "other" } }));
   }
   return har(list);
+}
+
+// A capture made by the capture tool: credentials already replaced by descriptions, in both separator
+// styles, plus the older bare forms. The same OAuth token (one fingerprint) goes to two hosts.
+export function claudeDescribedHar() {
+  const t = (s) => CCX.t0 + s * 1000;
+  const oauth = "<redacted by trace-capture: Anthropic OAuth access token; 108 chars; fp 0a1b2c3d4e5f6071>";
+  const jwt = "<redacted by trace-capture: JWT | 1849 chars | fp c0c0c0c0d1d1d1d1 | alg RS256 | claims aud,exp,https://api.example.test/profile{email,email_verified,name},iat,iss,scp,sub | issuer https://auth.example.test | audience https://api.example.test/v1 | scopes openid,profile,email,offline_access,api.connectors.read | lifetime 10d>";
+  const call = messagesCall({ t: t(1.5), x: "A" });
+  const set = (list, name, value) => { const h = list.find((x) => x.name.toLowerCase() === name); if (h) h.value = value; else list.push({ name, value }); };
+  set(call.request.headers, "authorization", `Bearer ${oauth}`);
+  set(call.request.headers, "x-api-key", "<redacted 115ch>");
+  set(call.request.headers, "cookie", "a=<redacted by trace-capture: cookie value | 40 chars | fp 1111111111111111>; b=<redacted by trace-capture: cookie value; 30 chars; fp 2222222222222222>");
+  set(call.response.headers, "set-cookie", "__cf_bm=<redacted by trace-capture: cookie value | 163 chars | fp 3333333333333333>; HttpOnly; SameSite=None; Secure; Path=/");
+  return har([
+    call,
+    entry({ t: t(1.8), method: "POST", url: "https://mcp-proxy.anthropic.com/v1/mcp/mcpsrv_01SYNTHETICserver0", req: { authorization: `Bearer ${oauth}`, "proxy-authorization": "<redacted by trace-capture>" }, body: { jsonrpc: "2.0", id: 1, method: "tools/list" }, mime: "text/event-stream", resBody: sse([["message", { jsonrpc: "2.0", id: 1, result: { tools: [] } }]]) }),
+    entry({ t: t(2), url: "https://registry.npmjs.org/synthetic-mcp", req: { authorization: "Bearer <redacted by trace-capture: npm token | 40 chars | fp bbbb2222bbbb2222>" }, status: 304, resBody: "" }),
+    entry({ t: t(2.2), url: "https://api.anthropic.com/api/oauth/account/settings", req: { authorization: `Bearer ${jwt}`, "x-claude-code-session-id": CCX.session }, resBody: { ok: true } }),
+  ]);
 }
 
 // A stream cut off mid-event: no message_delta, no message_stop.
@@ -245,7 +278,7 @@ function frames() {
     create(0.5, { generate: false, input: [tools, { type: "message", id: "msg_SYNTHdev1", role: "developer", content: [] }], client_metadata: { "x-codex-turn-metadata": turn("prewarm"), "x-codex-installation-id": PLANTED.installation, thread_id: CXX.thread, session_id: CXX.thread } }),
     limits(0.6, 10), meta(0.6), created(0.7, "resp_SYNTHprewarm"),
     done(0.8, "resp_SYNTHprewarm", { input_tokens: 900, input_tokens_details: { cached_tokens: 0, cache_write_tokens: 900 }, output_tokens: 0, output_tokens_details: { reasoning_tokens: 0 }, attribution: attr({ at_SYNTH1: a(600, 0), msg_SYNTHdev1: a(300, 0, [[300, 0]]) }) }),
-    create(4.5, { previous_response_id: "resp_SYNTHprewarm", input: [{ type: "message", id: "msg_SYNTHuser1", role: "user" }, { type: "message", id: "msg_SYNTHuser2", role: "user" }], client_metadata: { "x-codex-turn-metadata": turn("turn"), "x-codex-installation-id": PLANTED.installation, thread_id: CXX.thread } }),
+    create(4.5, { previous_response_id: "resp_SYNTHprewarm", input: [{ type: "message", id: "msg_SYNTHuser1", role: "user" }, { type: "message", id: "msg_SYNTHuser2", role: "user", content: [{ type: "input_text", text: `${PLANTED.name} asked: list the files.` }] }], client_metadata: { "x-codex-turn-metadata": turn("turn"), "x-codex-installation-id": PLANTED.installation, thread_id: CXX.thread } }),
     limits(4.6, 11), meta(4.6), created(4.7, "resp_SYNTHA"),
     recv(4.8, { type: "responsesapi.websocket_timing", timing_metrics: { response_id: "resp_SYNTHA", pre_inference_ms: 40, first_sampled_message_ttft_ms: 300 } }),
     recv(4.9, { type: "response.output_text.delta", delta: "hi" }),
@@ -295,6 +328,7 @@ export function networkFiles() {
     "network/browser.har": browserHar(),
     ...codexSession(),
     "network/codex.har": codexHar(),
+    "network/claude-described.har": claudeDescribedHar(),
   };
 }
 

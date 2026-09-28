@@ -217,24 +217,26 @@ export function codexSocket(entry, info, R) {
     frames: frames.length, frameTypes: count(frames, (f) => `${f.dir}:${f.json?.type || "?"}`),
   };
   const calls = [];
+  const frameCall = new Array(frames.length).fill(-1); // frame index -> index in calls (-1: none)
   let cur = null, pre = [];
   const start = (f) => {
     cur = codexCall(f, R, info);
-    for (const p of pre) absorb(cur, p, R);
+    for (const [p, k] of pre) { absorb(cur, p, R); frameCall[k] = calls.length; }
     pre = [];
     calls.push(cur);
   };
-  for (const f of frames) {
+  frames.forEach((f, k) => {
     const type = f.json?.type || null;
-    if (f.dir === "send" && type === "response.create") { start(f); continue; }
-    if (f.dir !== "receive" || !type) continue;
+    if (f.dir === "send" && type === "response.create") { start(f); frameCall[k] = calls.length - 1; return; }
+    if (f.dir !== "receive" || !type) { if (cur) frameCall[k] = calls.length - 1; return; }
     // Frames before the next response.created belong to the create just sent; a rate-limit or metadata
     // frame after a completed response belongs to the next one.
-    if (!cur || (cur.done && (type === "codex.rate_limits" || type === "codex.response.metadata"))) { pre.push(f); continue; }
+    if (!cur || (cur.done && (type === "codex.rate_limits" || type === "codex.response.metadata"))) { pre.push([f, k]); return; }
     absorb(cur, f, R);
-  }
+    frameCall[k] = calls.length - 1;
+  });
   for (const c of calls) delete c.done;
-  return { handshake, calls };
+  return { handshake, calls, frames, frameCall };
 }
 
 function codexCall(f, R, info) {
