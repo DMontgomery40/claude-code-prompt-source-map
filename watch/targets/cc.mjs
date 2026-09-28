@@ -1,14 +1,17 @@
-// Claude Code → ccprompts.dtmont.com. Tracks the npm "latest" dist-tag of the
-// darwin-arm64 build (the tag the default auto-updater follows).
+// Claude Code → ccprompts.dtmont.com. Follows the newest darwin-arm64 build on the npm
+// "latest" or "next" dist-tag (next often carries a release first), and never refreshes to a
+// build that is not newer than the one the published records already describe.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
-import { run } from "../lib/run.mjs";
+import { log, run } from "../lib/run.mjs";
+import { compareVersions, describedVersion, newestTracked } from "../../claude-code/extract/versions.mjs";
 
 const repo = path.resolve(import.meta.dirname, "../../claude-code");
 const node = process.execPath;
 const npm = path.join(path.dirname(process.execPath), "npm");
+const PKG = "@anthropic-ai/claude-code-darwin-arm64";
 
 // Areas with records still marked "needs_review", in file order. Only record lists count: the tag
 // files keep `items` as a map from key to tags.
@@ -26,13 +29,23 @@ export const cc = {
   checkedLabel: () => "daily",
 
   fingerprint() {
-    const r = run(npm, ["view", "@anthropic-ai/claude-code-darwin-arm64@latest", "version", "dist.integrity", "--json"], { timeoutMs: 60 * 1000 });
-    if (r.status !== 0) throw new Error(`npm view failed: ${r.stderr.slice(-300)}`);
-    const v = JSON.parse(r.stdout);
-    return { version: v.version, integrity: v["dist.integrity"] };
+    const view = args => {
+      const r = run(npm, ["view", ...args, "--json"], { timeoutMs: 60 * 1000 });
+      if (r.status !== 0) throw new Error(`npm view failed: ${r.stderr.slice(-300)}`);
+      return JSON.parse(r.stdout);
+    };
+    const version = newestTracked(view([PKG, "dist-tags"]));
+    return { version, integrity: view([`${PKG}@${version}`, "dist.integrity"]) };
   },
 
   async refresh({ now, dryRun, fingerprint }) {
+    // The same release again, or an older one (a tag moved back, or next was ahead of latest):
+    // the records already describe it or something newer, so there is nothing to publish.
+    const described = describedVersion(repo);
+    if (described && compareVersions(fingerprint.version, described) <= 0) {
+      log(`cc: records describe ${described}; ${fingerprint.version} is not newer, nothing to do`);
+      return { published: false, summary: { changed: [] }, note: `records describe ${described}` };
+    }
     const args = ["extract/refresh.mjs", fingerprint.version, fingerprint.integrity];
     const refresh = extra => run(node, [...args, ...extra], { cwd: repo, timeoutMs: 60 * 60 * 1000 });
     let r = refresh([]);
