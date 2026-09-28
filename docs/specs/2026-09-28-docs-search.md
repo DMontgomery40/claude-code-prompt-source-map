@@ -37,7 +37,7 @@ from Trace's palette (`site/trace/palette.js`) but looks the same.
 - The Codex/ChatGPT display-path rewrite is applied to the records the index reads.
 - Sizes on 2026-09-28:
   - Claude Code: 1.40 MB, 306 KB gzipped;
-  - Codex/ChatGPT: 642 KB, 112 KB gzipped.
+  - Codex/ChatGPT: 645 KB, 113 KB gzipped.
 
 ## Client
 
