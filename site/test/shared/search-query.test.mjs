@@ -113,6 +113,10 @@ test("full text: body matches count least, word prefixes match, exclusions and p
   assert.deepEqual(titles(items, "probe burn"), ["Launch notes"]);
   // Without its full text an item is searched as before.
   assert.deepEqual(titles([item("Launch notes")], "orbit"), []);
+  // Scattered letters in an identifier (o·r·b·i·t in model_verbosity) rank below real matches in
+  // a section's text, and an identifier's own text still counts when its title only matches loosely.
+  const scattered = [withBody("model_verbosity", "setting", "", ""), ...items, withBody("tool_retry_budget", "setting", "", "Retries until the orbit settles.")];
+  assert.deepEqual(titles(scattered, "orbit"), ["Orbit", "Suborbital hops", "Satellite tools", "tool_retry_budget", "Launch notes", "Weather", "model_verbosity"]);
 });
 
 test("snippets: the passage around a word found only in the full text", () => {

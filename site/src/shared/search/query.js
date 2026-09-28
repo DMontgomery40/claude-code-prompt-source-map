@@ -171,7 +171,8 @@ function titleScore(item, term) {
   if (bare.length >= 3 && item.ini.includes(bare)) return 22;
   if (bare.length >= 3) {
     const pos = subsequence(item, bare);
-    if (pos) return pos.aligned ? 18 : 8 + Math.round(8 * bare.length / (pos.at(-1) - pos[0] + 1));
+    // Scattered letters rank below a real match in a section's text (bodyScore 2-4).
+    if (pos) return pos.aligned ? 18 : 1;
   }
   return 0;
 }
@@ -206,14 +207,17 @@ export function passes(item, q, { kinds = q.kinds } = {}) {
 // The item's score for the query's words, or 0 when a word matches nowhere. Every word must match.
 export function scoreItem(item, q) {
   if (!q.terms.length) return 1;
-  let score = 0, inTitle = 0;
+  let score = 0, inTitle = 0, loose = 0;
   for (const term of q.terms) {
     const t = titleScore(item, term);
-    const c = t ? 0 : contextScore(item, term) || bodyScore(item, term);
+    const c = t > 1 ? 0 : contextScore(item, term) || bodyScore(item, term);
     if (!t && !c) return 0;
-    if (t) inTitle++;
-    score += t || c;
+    if (t > 1) inTitle++;
+    if (t === 1 && !c) loose++;
+    score += Math.max(t, c);
   }
+  // Matched only by scattered letters: below every real match, whatever its kind.
+  if (loose === q.terms.length) return score;
   if (inTitle === q.terms.length) score += 20;
   const whole = q.terms.map(t => t.text).join(" ");
   if (item.tl === whole || squash(item.title) === squash(whole)) score += 400;
