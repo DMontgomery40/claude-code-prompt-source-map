@@ -522,6 +522,15 @@ test("loader: a session hint loads workflow run folders the same (their metas re
   assert.deepEqual([by.w1.name, by.w1.asks.map((x) => x.from)], ["workflow-subagent", ["agent"]]);
 });
 
+test("adapters carry a network capture's join keys: Claude Code request and message ids, Codex/ChatGPT content parts", async () => {
+  const cc = (await load("claude")).trace;
+  const root = cc.agents.find((a) => a.kind === "root");
+  assert.ok(root.requests.every((r) => r.requestId && r.messageId === "m" + r.requestId), "every request carries requestId and message.id");
+  const cx = (await load("codex")).trace.agents[0];
+  const parts = cx.blocks.filter((b) => b.label === "AGENTS.md" || b.label === "environment_context").map((b) => b.part);
+  assert.deepEqual(parts, [0, 1], "one user message, two content parts");
+});
+
 test("loader: sessions found by first line; a hint picks one", async () => {
   // fixtures/network/ holds the network layer's own sessions (network.test.mjs).
   const entries = (await entriesFor([FIX])).filter((e) => !/\/fixtures\/network\//.test(e.path));

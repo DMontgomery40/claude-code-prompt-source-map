@@ -209,7 +209,12 @@ network and is not shown.
     streams, refusals, transit rules and fingerprints, provenance, private captures;
   - `ui.test.mjs`: the lens and card render with nothing planted in the DOM text;
   - `search.test.mjs`: the Network scope.
-- Performance (this machine, Node): analysing the 31 MB Codex/ChatGPT capture takes about 120–150 ms
-  after `JSON.parse`, and the 3.4 MB Claude Code capture about 140 ms. The 25 MB of plugin-list pages are
-  never parsed unless opened. In headless Chromium a capture attaches in well under a second after the
-  session loads.
+- Performance, measured on this machine in Node, including `JSON.parse` of the whole HAR, redaction,
+  findings, the join and the transit scan:
+  - the 23.5 MB Codex/ChatGPT capture: about 75 ms;
+  - the 30.7 MB one: about 115 ms;
+  - the 3.4 MB Claude Code capture: about 135 ms (most of it the 364-event telemetry batch).
+
+  The plugin-list pages, most of a Codex/ChatGPT capture's bytes, are never parsed unless opened. In
+  headless Chromium, end to end from file pick to capture attached (session parse included), each of the
+  six private captures took about 0.3 s.

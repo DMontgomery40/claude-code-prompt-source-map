@@ -323,6 +323,7 @@ function callCard(cap, c, trace, A, at) {
       ["Cache write", fmtInt(u.cache_creation_input_tokens), r.cacheSplit ? `5 min ${fmtInt(r.cacheSplit.m5)} · 1 h ${fmtInt(r.cacheSplit.h1)}` : null],
       ["Output", fmtInt(u.output_tokens), r.thinking_tokens != null ? `thinking ${fmtInt(r.thinking_tokens)}` : null],
       logged ? ["Against the log", wireContext === logged.context ? "the same context total" : `${fmtInt(wireContext)} on the wire, ${fmtInt(logged.context)} in the log`, "the log's split by source is estimated; these totals are exact"] : null,
+      at && at.req && at.req.strata ? ["Harness, as sent", `${fmtInt(c.system.reduce((s, x) => s + x.chars, 0))} chars of system blocks + ${fmtInt(c.tools.reduce((s, x) => s + x.chars, 0))} chars of tools`, `Trace estimates the harness layer at ≈ ${fmtTok(at.req.strata.harness || 0)} tokens`] : null,
       ["Service", [r.service_tier, r.inference_geo].filter(Boolean).join(" · ") || "–"],
       r.iterations ? ["Iterations", r.iterations.map((x) => `${x.type}${x.model ? ` (${x.model})` : ""}`).join(", ")] : null,
       ["Stop", [r.stop_reason, r.stop_details ? shortJson(r.stop_details, 80) : null].filter(Boolean).join(" · ") || (r.complete === false ? "the stream ended early" : "–")],
@@ -355,16 +356,20 @@ function callCard(cap, c, trace, A, at) {
     if (c.rateLimits) kids.push(el("div", { class: "net-sub" }, el("h4", { text: "Rate limits at this call" }), el("p", { class: "meta", text: shortJson(c.rateLimits, 300) })));
   }
   // Sensitive data sent with this call.
-  const rows = (cap.transit?.rows || []).filter((r) => r.calls.includes(c.index) || (c.product === "claude-code" && r.entries.includes(c.entry)));
-  if (rows.length) {
-    const multi = new Map(cap.transit.credentials.filter((x) => x.hosts.length > 1).map((x) => [x.kind, x]));
-    kids.push(el("div", { class: "net-sub" }, el("h4", { text: "Sensitive data sent with this call" }),
-      el("ul", { class: "net-list" }, rows.map((r) => {
-        const { what, where } = transitLine(r);
-        const also = multi.get(r.kind);
-        return el("li", { class: r.rules.length ? "flagged" : "" }, `${where}: ${what}`, also ? `, same as on ${also.hosts.filter((h) => h !== r.host).join(", ")}` : "", r.prompt ? " (in the prompt text sent to the model)" : "", ...ruleChips(r));
-      }))));
-  }
+  // Codex/ChatGPT: the websocket's handshake (its bearer token, account id, cookies) carries every call on it.
+  const all = cap.transit?.rows || [];
+  const rows = all.filter((r) => r.calls.includes(c.index) || (c.product === "claude-code" && r.entries.includes(c.entry)));
+  const socket = c.product === "codex" ? all.filter((r) => !r.calls.length && r.entries.includes(c.entry)) : [];
+  const multi = new Map((cap.transit?.credentials || []).filter((x) => x.hosts.length > 1).map((x) => [x.kind, x]));
+  const line = (r) => {
+    const { what, where } = transitLine(r);
+    const also = multi.get(r.kind);
+    return el("li", { class: r.rules.length ? "flagged" : "" }, `${where}: ${what}`, also ? `, same as on ${also.hosts.filter((h) => h !== r.host).join(", ")}` : "", r.prompt ? " (in the prompt text sent to the model)" : "", ...ruleChips(r));
+  };
+  if (rows.length || socket.length) kids.push(el("div", { class: "net-sub" }, el("h4", { text: "Sensitive data sent with this call" }),
+    rows.length ? el("ul", { class: "net-list" }, rows.map(line)) : null,
+    socket.length ? el("p", { class: "note", text: "On the websocket handshake (every call on this socket):" }) : null,
+    socket.length ? el("ul", { class: "net-list" }, socket.map(line)) : null));
   card.append(...kids);
   return card;
 }

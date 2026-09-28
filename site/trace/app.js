@@ -1154,7 +1154,8 @@ const A = {
   },
   getText: (agentId, ref) => (text ? text(agentId, ref) : Promise.reject(new Error("no text source"))),
   // The network layer (network/panel.js): its lens, the per-request card, and bodies read on demand.
-  networkLens: view => (S.network ? networkLens({ ...view, network: S.network }, A) : []),
+  // A palette jump (S.netFocus) is revealed once; later renders keep the user's own scroll.
+  networkLens: view => { const out = S.network ? networkLens({ ...view, network: S.network }, A) : []; S.netFocus = null; return out; },
   wireCard: (agent, req) => (S.network ? wireCard(S.network, agent, req, A) : null),
   networkBody,
   rerender: () => render(false, true),

@@ -11,7 +11,8 @@ export function looksLikeHar(head) {
 // Parses HAR text. Throws a plain-language error when it is JSON but no HAR.
 export function parseHar(text) {
   let har;
-  try { har = JSON.parse(text); } catch (e) { throw new Error(`That capture isn't valid JSON (${e.message}).`); }
+  // The engine's message can quote the text around the error (a token, an email): only the position is kept.
+  try { har = JSON.parse(text); } catch (e) { const at = /position (\d+)/.exec(String(e && e.message)); throw new Error(`That capture isn't valid JSON${at ? ` (it breaks at character ${Number(at[1]).toLocaleString("en-US")})` : ""}.`); }
   if (!har || !har.log || !Array.isArray(har.log.entries)) throw new Error("That file is JSON but not a HAR capture (no log.entries).");
   return har;
 }

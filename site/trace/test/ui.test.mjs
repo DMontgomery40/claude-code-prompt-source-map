@@ -896,7 +896,7 @@ test("network lens and On-the-wire card render for both products with nothing pl
     const card = req.all(n => n.getAttribute("class") === "psec net-card")[0];
     assert.ok(card && card.textContent.startsWith("On the wire"), `${file}: the card is there`);
     assert.deepEqual(Object.entries(PLANTED).filter(([, v]) => req.textContent.includes(v)).map(([k]) => k), [], `${file}: the card shows no planted value`);
-    if (dir === "codex") assert.ok(card.textContent.includes("Tokens per input item"));
+    if (dir === "codex") assert.ok(card.textContent.includes("Tokens per input item") && card.textContent.includes("On the websocket handshake") && card.textContent.includes("JWT"), "the socket's bearer token shows on its calls");
     else assert.ok(card.textContent.includes("System blocks as sent") && card.textContent.includes("billing header"));
   }
 });

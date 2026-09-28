@@ -48,6 +48,7 @@ test("HAR recognition: a HAR by its first bytes, never a session log or a subage
   assert.ok(!looksLikeHar('{"agentType":"general-purpose","name":"helper"}'));
   assert.ok(!looksLikeHar('{"type":"session_meta","payload":{}}'));
   assert.throws(() => parseHar("{"), /isn't valid JSON/);
+  assert.throws(() => parseHar(`{"log":{"entries":[{"k":"${PLANTED.apiKey}" x}]}}`), (e) => /isn't valid JSON/.test(e.message) && !e.message.includes(PLANTED.apiKey.slice(0, 12)), "the parse error never quotes the capture");
   assert.throws(() => parseHar('{"log":{}}'), /not a HAR/);
 });
 
