@@ -111,7 +111,14 @@ function build() {
   document.head.append(link);
 
   input.addEventListener("input", () => { active = 0; limit = LIST_STEP; render(); });
-  dialog.addEventListener("keydown", onKey);
+  // Keys reach the palette wherever focus is while it is open (a click on the preview or a header
+  // leaves focus on <body>), and a click inside it that isn't on a control or a text selection
+  // hands focus back to the input.
+  document.addEventListener("keydown", e => { if (!layer.hidden && !e.isComposing) onKey(e); }, true);
+  dialog.addEventListener("pointerup", e => {
+    if (e.target.closest("button, input, a") || String(getSelection?.() ?? "").trim()) return;
+    input.focus({ preventScroll: true });
+  });
   scrim.addEventListener("click", () => close());
   closeBtn.addEventListener("click", () => close());
   bothBtn.addEventListener("click", () => toggleBoth());

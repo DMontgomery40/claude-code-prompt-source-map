@@ -211,7 +211,8 @@ export function scoreItem(item, q) {
   if (inTitle === q.terms.length) score += 20;
   const whole = q.terms.map(t => t.text).join(" ");
   if (item.tl === whole || squash(item.title) === squash(whole)) score += 400;
-  return score + boost(item.kind);
+  // A section's suggested pages (the entry points) win ties with other pages.
+  return score + boost(item.kind) + (item.featured ? 4 : 0);
 }
 
 const byTitle = (a, b) => a.title.length - b.title.length || (a.title < b.title ? -1 : a.title > b.title ? 1 : 0);

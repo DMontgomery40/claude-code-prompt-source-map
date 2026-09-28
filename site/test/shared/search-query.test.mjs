@@ -74,6 +74,8 @@ test("ranking: title beats context, every word must match, ties go to the shorte
   assert.deepEqual(titles(items, "pretooluse hooks"), ["PreToolUse", "Permission prompts"].filter(t => titles(items, "pretooluse hooks").includes(t)));
   assert.deepEqual(titles(items, "hooks nonsenseword"), []);
   assert.deepEqual(titles([item("Plan mode"), item("Plan")], "plan"), ["Plan", "Plan mode"]);
+  // A suggested page wins a tie with another page.
+  assert.deepEqual(titles([item("Persistent tool signals", "page"), item("Persistent mode instructions", "page", { featured: true })], "persistent"), ["Persistent mode instructions", "Persistent tool signals"]);
 });
 
 test("filters: kinds, products, documented, exclusions; filter-only queries list everything they select", () => {

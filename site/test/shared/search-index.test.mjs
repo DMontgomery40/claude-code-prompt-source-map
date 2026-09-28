@@ -139,6 +139,8 @@ test("production: every Codex/ChatGPT page with a records file gets its records"
     const index = JSON.parse(await readFile(path.join(outDir, "search-index.json"), "utf8"));
     const withRecords = codexCategories.flatMap(c => c.files).filter(f => specOf(f)).map(f => f.slug);
     assert(withRecords.length >= 10);
+    // Every suggested page exists (render.mjs SEARCH_FEATURED).
+    assert.equal(index.pages.filter(p => p.f).length, 6);
     for (const slug of withRecords) assert(index.pages.find(p => p.s === slug)?.n > 0, slug);
     const top = search(indexItems(index, { product: "codex" }), parseQuery("chatgpt_base_url")).results[0].item;
     assert.deepEqual([top.kind, top.href, top.prov.file], ["setting", "codex-config/#chatgpt-base-url", "codex-rs/config/src/config_toml.rs"]);
