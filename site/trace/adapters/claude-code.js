@@ -91,26 +91,32 @@ const AGENT_TOOLS = new Set(["Agent", "Task", "SendMessage", "TaskOutput"]);
 const noteIds = (s) => [...s.matchAll(/<(?:task-id|tool-use-id)>\s*([^<\s]+)/g)].map((x) => x[1])
   .concat((s.match(/\b(?:agentId|agent_id|task_id)["=:>\s]+([A-Za-z0-9_-]{6,})/g) || []).map((x) => x.replace(/^.*[=:>\s"]/, "")));
 
-// A user text that opens with <teammate-message> elements (after at most a short harness prefix,
-// "Another Claude session sent a message:") batches several messages: one segment per element,
-// credited to its own sender, the prefix going with the first. Text between and after the elements
-// is reminders or the harness's note on the batch ("This came from another Claude session…"),
-// never the human's; a reminder quoted inside an element stays the sender's. Null when the text is
-// not such a batch.
-function splitTeammates(s) {
-  const open = /<teammate-message\b[^>]*>/g;
+// A user text that opens with <teammate-message> or <cross-session-message> elements (after at most a
+// short harness prefix, "Another Claude session sent a message:") batches several messages: one segment
+// per element, credited to its own sender, the prefix going with the first. Text between and after the
+// elements is reminders or the harness's note on the batch ("This came from another Claude session…",
+// "IMPORTANT: This is NOT from your user…"), never the human's; a reminder quoted inside an element stays
+// the sender's. A teammate is an agent of this session; a cross-session sender is another Claude session
+// (a peer), named by its from-name. Null when the text is not such a batch.
+const AGENT_MESSAGE = /<(teammate-message|cross-session-message)\b[^>]*>/g;
+function splitAgentMessages(s) {
+  const open = new RegExp(AGENT_MESSAGE.source, "g");
   let m = open.exec(s);
   if (!m || m.index > 400 || /<system-reminder>/.test(s.slice(0, m.index))) return null;
   const out = [];
   const gap = (a, b) => { for (const g of splitReminders(s.slice(a, b))) out.push({ ...g, start: a + g.start, end: a + g.end, note: !g.reminder }); };
   let last = 0;
   for (let first = true; m; first = false) {
-    const close = s.indexOf("</teammate-message>", m.index + m[0].length);
-    const end = close < 0 ? s.length : close + "</teammate-message>".length;
+    const closeTag = `</${m[1]}>`;
+    const close = s.indexOf(closeTag, m.index + m[0].length);
+    const end = close < 0 ? s.length : close + closeTag.length;
     if (!first) gap(last, m.index);
     let start = first ? 0 : m.index;
     while (start < m.index && /\s/.test(s[start])) start++;
-    out.push({ start, end, reminder: false, teammate: (m[0].match(/teammate_id="([^"]+)"/) || [])[1] || "teammate" });
+    const attr = (name) => (m[0].match(new RegExp(`${name}="([^"]*)"`)) || [])[1];
+    out.push(m[1] === "teammate-message"
+      ? { start, end, reminder: false, teammate: attr("teammate_id") || "teammate" }
+      : { start, end, reminder: false, peer: { name: attr("from-name") || attr("from") || "another session", mode: attr("from-mode") || null } });
     last = end;
     open.lastIndex = end;
     m = open.exec(s);
@@ -126,7 +132,9 @@ function textKind(s, isSub) {
   const tm = head.match(/<teammate-message[^>]*teammate_id="([^"]+)"/);
   if (tm) return { kind: "agents", label: `teammate-message from ${tm[1]}`, teammate: tm[1], ask: isSub };
   if (/<task-notification>/.test(head)) return { kind: "agents", label: "task-notification" };
-  if (/<cross-session-message/.test(head)) return { kind: "agents", label: "cross-session-message" };
+  const cs = head.match(/<cross-session-message\b[^>]*>/);
+  if (cs) return { kind: "agents", label: `cross-session message from ${(cs[0].match(/from-name="([^"]*)"/) || [])[1] || "another session"}` };
+  if (/^\[Cross-session delivery notice\]/.test(h)) return { kind: "injected", label: "cross-session delivery notice" };
   if (/^<(command-name|command-message|command-args|bash-input)>/.test(h)) return { kind: "you", label: "command", ask: !isSub, human: true };
   if (/^<(local-command-stdout|local-command-stderr|local-command-caveat)>/.test(h)) return { kind: "injected", label: "local-command output" };
   if (/^<(bash-stdout|bash-stderr)>/.test(h)) return { kind: "outside", label: "bash output" };
@@ -188,7 +196,9 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
   }
 
   function textBlocks(s, path, t, uuid, row, forceKind) {
-    const segs = (!forceKind && !row.isMeta && splitTeammates(s)) || splitReminders(s);
+    // A peer session's message is logged as a meta row (origin.kind "peer"); it is still split by sender.
+    const peerRow = !!(row.origin && row.origin.kind === "peer");
+    const segs = (!forceKind && (!row.isMeta || peerRow) && splitAgentMessages(s)) || splitReminders(s);
     for (const seg of segs) {
       const whole = seg.start === 0 && seg.end === s.length;
       const ref = { ...lineRef, path, ...(whole ? {} : { range: [seg.start, seg.end] }) };
@@ -200,6 +210,18 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
         const pm = text.match(/tool-results\/([\w.-]+)/);
         if (pm) b.persisted = pm[1];
         track(uuid, b);
+        continue;
+      }
+      if (seg.peer) {
+        const b = addBlock(agent, { t, kind: "agents", label: `cross-session message from ${seg.peer.name}`, ref, text });
+        const o = peerRow ? row.origin : null;
+        b.peer = { name: seg.peer.name, mode: seg.peer.mode || (o && o.fromMode) || null, verified: !!(o && o.verifiedPeerPid) };
+        track(uuid, b);
+        st.agentBlocks.push({ t, block: b.i, teammate: null, peer: b.peer.name, ids: [] });
+        continue;
+      }
+      if (row.isMeta && /^\s*\[Cross-session delivery notice\]/.test(text)) {
+        track(uuid, addBlock(agent, { t, kind: "injected", label: "cross-session delivery notice", ref, text, render: "literal" }));
         continue;
       }
       if (row.isMeta) {
