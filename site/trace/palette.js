@@ -4,18 +4,19 @@
 // scan (find.js) streams in. Results open through the app's own actions, so the browser's Back
 // returns to where the search started, and n / ⇧N then step through the same results.
 import { el, fmtTok, fmtInt, STRATA, STRATUM_INDEX, STATUS, LENSES } from "./panels.js";
-import { buildSearchIndex, setAskText, search, parseQuery, matchRanges, SCOPES, agentName } from "./search.js";
+import { buildSearchIndex, buildNetworkEntries, setAskText, search, parseQuery, matchRanges, SCOPES, agentName } from "./search.js";
 import { peakRequestIndex, requestCalls } from "./navigation.js";
 import { KEYS, keyFor, isSearchChord, typingInto, inTransport, pressLeavesSpace } from "./keys.js";
 
 const $ = s => document.querySelector(s);
-const SECTION = { command: "Commands", agent: "Agents", ask: "Asks & tasks", call: "Tool calls", block: "Injected & setup", text: "In the text", mine: "Your asks", largest: "Largest blocks in context" };
-const PER_SECTION = { command: 4, agent: 4, ask: 5, call: 8, block: 6, text: 12 };
+const SECTION = { command: "Commands", agent: "Agents", ask: "Asks & tasks", call: "Tool calls", block: "Injected & setup", text: "In the text", mine: "Your asks", largest: "Largest blocks in context", network: "Network" };
+const PER_SECTION = { command: 4, agent: 4, ask: 5, call: 8, block: 6, text: 12, network: 6 };
 const MIN_TEXT = 3;
 const HIGHLIGHT = "trace-find";
 
 // ctx: { state() -> the app's S, A (the app's actions), overview(), selectLens(key),
 //        moveRequest(delta, inspect), finder() -> the parser worker or null, getText(agentId, ref),
+//        network() -> the attached network capture or null (its names join the index as a Network scope),
 //        playback: { toggle(), step(d), slower(), faster(), follow() } for the transport's keys, each
 //        returning false when the transport is hidden }
 export function createPalette(ctx) {
@@ -75,9 +76,13 @@ export function createPalette(ctx) {
     close(false);
     renderBar();
   }
+  // A network capture attached (or dropped): its names join the index, which is rebuilt on next open.
+  function setNetwork() { index = null; rankedFor = null; if (!layer.hidden) { ensureIndex(); render(); } }
   function ensureIndex() {
     if (index || !trace) return;
     index = buildSearchIndex(trace);
+    const net = buildNetworkEntries(ctx.network ? ctx.network() : null);
+    if (net.length) index.entries.push(...net);
     commands = buildCommands();
     largest = largestBlocks(trace);
   }
@@ -111,6 +116,7 @@ export function createPalette(ctx) {
       root?.requests.length ? cmd("Open the main thread", () => ctx.A.focusAgent(root.id, 0), null, `${fmtInt(root.requests.length)} requests`) : null,
       peak >= 0 ? cmd("Jump to peak context", () => ctx.A.focusRequest(root.id, peak), null, `Request ${peak + 1} · ${fmtTok(root.requests[peak].tokens.context)} in context`) : null,
       ...KEYS.filter(k => k.command).map(k => cmd(k.command, () => ACTIONS[k.id](0), k.keys[0], k.detail)),
+      cmd(ctx.network && ctx.network() ? "Replace the network capture" : "Add a network capture (.har)", () => ctx.A.addCapture?.(), null, "What went over the wire, joined to this session"),
       cmd("Load another session", () => $("#back-to-load")?.click(), null, "Back to the loader")
     ];
     return out.filter(Boolean);
@@ -150,7 +156,7 @@ export function createPalette(ctx) {
     // Everything else is typing: the app's shortcuts must not see it.
     e.stopPropagation();
   }
-  function scopes() { return [...SCOPES, ...(ctx.finder() ? [{ key: "text", name: "Any text" }] : [])]; }
+  function scopes() { return [...SCOPES, ...(ctx.network && ctx.network() ? [{ key: "network", name: "Network" }] : []), ...(ctx.finder() ? [{ key: "text", name: "Any text" }] : [])]; }
   function cycleScope(d) {
     const s = scopes(), i = s.findIndex(x => x.key === scope);
     setScope(s[(i + d + s.length) % s.length].key);
@@ -238,6 +244,7 @@ export function createPalette(ctx) {
     if (scope === "call") put("call", entries.filter(e => e.kind === "call").sort((x, y) => y.size - x.size).slice(0, 500), 0);
     if (scope === "block") put("block", entries.filter(e => e.kind === "block").sort((x, y) => y.size - x.size), 0);
     if (scope === "agent") put("agent", entries.filter(e => e.kind === "agent"), 0);
+    if (scope === "network") put("network", entries.filter(e => e.kind === "network" && (e.section === "transit" || e.section === "call" || e.section === "endpoint")), 0);
     if (scope === "text") out.set("text", { items: [], total: 0, all: [], note: `type ${MIN_TEXT}+ characters` });
     return out;
   }
@@ -258,7 +265,8 @@ export function createPalette(ctx) {
     const color = item.cls === "outward" ? STATUS.outward.color : STRATA[STRATUM_INDEX[item.stratum]]?.color || null;
     const badge = item.key ? el("kbd", { class: "pal-key", text: item.key })
       : item.kind === "call" && item.size ? el("span", { class: "pal-size", title: "Context at this request", text: fmtTok(item.size) })
-      : (item.kind === "block" || item.kind === "largest") && item.size ? el("span", { class: "pal-size", text: `≈ ${fmtTok(item.size)}` }) : null;
+      : (item.kind === "block" || item.kind === "largest") && item.size ? el("span", { class: "pal-size", text: `≈ ${fmtTok(item.size)}` })
+      : item.kind === "network" && item.badge ? el("span", { class: "pal-size", text: item.badge }) : null;
     return el("div", { role: "option", id: `pal-o-${i}`, class: `pal-row pal-${item.kind}`, "aria-selected": "false", "data-i": String(i) },
       el("i", { class: "pal-chip", style: color ? `background:${color}` : null, "aria-hidden": "true" }),
       el("div", { class: "pal-main" },
@@ -325,6 +333,8 @@ export function createPalette(ctx) {
       const primary = calls.findIndex(c => c.callId && c.callId === req?.action?.callId);
       if (g.callIndex != null && g.callIndex !== Math.max(0, primary)) ctx.A.focusCall(g.callIndex);
     } else if (g.type === "block") ctx.A.openBlockAt(g.agentId, g.block);
+    else if (g.type === "request") ctx.A.focusRequest(g.agentId, g.reqIdx);
+    else if (g.type === "network") ctx.A.openNetwork?.({ section: g.section, key: g.key });
     highlight(terms);
     renderBar();
   }
@@ -537,7 +547,7 @@ export function createPalette(ctx) {
 
   function agentById(id) { return trace?.agents.find(a => a.id === id) || null; }
   renderBar();
-  return { setTrace, open, close, isOpen, handleKey, openHelp, walk };
+  return { setTrace, setNetwork, open, close, isOpen, handleKey, openHelp, walk };
 }
 
 function marked(text, terms) {

@@ -352,7 +352,8 @@ export async function reportTransit({ product, entries, R, personal }) {
     if (hosts.size > 1) for (const r of rs) { r.rules.add(5); r.notes.add(`same credential on ${hosts.size} hosts: ${[...hosts].join(", ")}`); }
   }
   // A second credential: another kind of user credential (cookies and public client keys don't count).
-  const auth = list.filter((r) => r.cat === "credential" && r.kind !== "cookie value" && !/client key/.test(r.kind));
+  const sentCh = (r) => /^(request |cookie|URL|websocket frame \(sent\))/.test(r.channel);
+  const auth = list.filter((r) => r.cat === "credential" && sentCh(r) && r.kind !== "cookie value" && !/client key/.test(r.kind));
   const kinds = new Map();
   for (const r of auth) kinds.set(r.kind, (kinds.get(r.kind) || 0) + r.count);
   if (kinds.size > 1) {

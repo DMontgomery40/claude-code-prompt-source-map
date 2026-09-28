@@ -88,6 +88,37 @@ export function buildSearchIndex(trace) {
 
 const CLASS_WORDS = { outward: "left the machine", write: "wrote", read: "read", blocked: "blocked" };
 
+// A network capture's searchable names (the palette's Network scope): endpoints, flags, betas, telemetry
+// events, header names, model calls and the sensitive-data rows. go: { type: "network", section, key }
+// opens the network lens at that item, or { type: "request", agentId, reqIdx } for a call in the log.
+export function buildNetworkEntries(capture) {
+  if (!capture) return [];
+  const out = [];
+  const add = (section, key, title, detail, hay, hay2, extra = {}) => out.push({ kind: "network", section, title, detail, hay: low(hay), hay2: low(`${hay2} network`), size: extra.size || 0, t: extra.t ?? null, stratum: null, badge: extra.badge || null, target: extra.target || null, go: extra.go || { type: "network", section, key } });
+  for (const r of capture.roles || []) for (const e of r.endpoints) {
+    const first = (capture.entries || []).find((x) => x.i === e.entries[0]);
+    add("endpoint", `endpoint:${e.label}`, e.label, `${r.name} · ${e.count.toLocaleString("en-US")}× · ${e.reveals}`, `${e.label} ${first ? `${first.host}${first.path}` : ""}`, `endpoint ${r.name} ${r.key} ${e.reveals}`, { badge: "endpoint", target: first ? `${first.method} ${first.host}${first.path}` : null, size: e.bytes });
+  }
+  for (const f of capture.flags || []) add("flag", `flag:${f.name}`, f.name, [f.source, f.experiment ? `experiment ${f.experiment}${f.variation != null ? `, variation ${f.variation}` : ""}` : null].filter(Boolean).join(" · "), f.name, `flag feature experiment ${f.source || ""} ${f.experiment || ""} ${f.valueText}`, { badge: "flag", target: f.valueText });
+  for (const b of capture.betas || []) add("beta", `beta:${b.name}`, b.name, `beta · ${b.source}${b.calls != null ? ` · ${b.calls} calls` : ""}`, b.name, `beta header ${b.source}`, { badge: "beta" });
+  const events = new Map();
+  for (const e of capture.events || []) { const x = events.get(e.name) || events.set(e.name, { n: 0, sink: e.sink, decision: e.decision, t: e.t }).get(e.name); x.n++; }
+  for (const [name, n] of Object.entries(capture.telemetryCounts || {})) if (!events.has(name)) events.set(name, { n, sink: "telemetry", decision: false });
+  for (const [name, x] of events) add("event", `event:${name}`, name, `${x.sink} · ${x.n.toLocaleString("en-US")}×${x.decision ? " · prompt-assembly decision" : ""}`, name, `telemetry event ${x.sink} ${x.decision ? "decision prompt assembly" : ""}`, { badge: "event", t: x.t });
+  for (const h of capture.headerNames || []) add("header", `header:${h.name}`, h.name, `${h.side} header · ${h.count.toLocaleString("en-US")}×${h.redacted ? " · value redacted" : ""}`, h.name, `header ${h.side} ${h.redacted ? "redacted credential identity" : ""}`, { badge: "header" });
+  for (const c of capture.calls || []) {
+    const m = c.matched && c.matched[0];
+    const what = c.product === "codex" ? (c.kind === "side" ? "prewarm" : c.requestKind || "response") : c.requestClass || "main";
+    add("call", `call:${c.index}`, `Model call ${c.index + 1}${m ? "" : " · not in your log"}`, `${what}${c.model ? ` · ${c.model}` : ""}`, `model call ${what}`, `${c.requestId || ""} ${m ? "" : "not in your log side prewarm"} ${c.model || ""}`, { badge: "call", t: c.t, go: m ? { type: "request", agentId: m.agentId, reqIdx: m.reqIdx } : null });
+  }
+  for (const r of (capture.transit && capture.transit.rows) || []) {
+    add("transit", `transit:${r.id}`, r.kind, `${r.cat} · ${r.channel}${r.path ? ` ${r.path}` : ""} · ${r.host}${r.party === "third" ? " (third party)" : ""} · ${r.count.toLocaleString("en-US")}×${r.rules.length ? ` · rules ${r.rules.join(", ")}` : ""}`,
+      `${r.kind} ${r.channel} ${r.host}`, `sensitive transit ${r.cat} ${r.cat === "credential" ? "token credential secret key" : "identity personal id"} ${r.kind === "JWT" ? "jwt" : ""} ${r.party === "third" ? "third party" : ""} ${r.path} ${r.rules.length ? "flagged" : ""} ${r.details && r.details.chars ? "" : ""}`,
+      { badge: r.rules.length ? "flagged" : r.cat, t: r.first, size: r.count });
+  }
+  return out;
+}
+
 // The request whose context window first held block bi (the request the reader opens under).
 function blockRequestLookup(a) {
   return (bi, b) => {
@@ -132,7 +163,7 @@ export function search(entries, q, { scope = "all", limit = 60 } = {}) {
   scored.sort((x, y) => y[0] - x[0] || (y[1].size || 0) - (x[1].size || 0) || (x[1].t || 0) - (y[1].t || 0));
   return { results: scored.slice(0, limit).map(x => x[1]), total: scored.length, terms };
 }
-const KIND_BOOST = { command: 3, agent: 2, ask: 1, block: 1, call: 0 };
+const KIND_BOOST = { command: 3, agent: 2, ask: 1, block: 1, call: 0, network: 0 };
 
 function termScore(e, term) {
   const h = e.hay;

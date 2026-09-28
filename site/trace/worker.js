@@ -46,19 +46,31 @@ import { localFileSource } from "./local-session.js";
 //     -> { type: "harness-progress", done, total }   non-model blocks read
 //     -> { type: "harness", model, ms }               ms: time to compute (0 when cached)
 //     -> { type: "harness-error", message }
+//   postMessage({ type: "network", files: [File | { file, path }], trace? })   a network capture (HAR) to
+//     attach to the loaded session (or to `trace`, for a session not parsed here). Parsed, filtered to the
+//     session, redacted and joined here (network/capture.js); the capture replaces any attached before.
+//     -> { type: "network-progress", phase: "read"|"analyze", done, total }
+//     -> { type: "network", capture }        redacted summary, no body text
+//     -> { type: "network-error", message }
+//   postMessage({ type: "network-body", entry, part: "request"|"response"|"frames"|"headers", id })
+//     -> { type: "network-body", id, text, mode, cut } | { type: "network-body", id, error }   redacted
+//   postMessage({ type: "network-clear" })   drops the attached capture (a new load drops it too)
 //
-// Only the files the user dropped are read. No network requests.
+// Only the files the user dropped are read. No network requests. Capture content stays in this worker's
+// memory: nothing is written to IndexedDB, localStorage or saved views.
 import { fileSource } from "./file-source.js";
 import { loadTrace } from "./loader.js";
 import { readRef, readRefLine, extractText, indexFor } from "./model.js";
 import { findText } from "./find.js";
 import { buildHarnessModel } from "./harness/pieces.js";
+import { analyzeCapture } from "./network/capture.js";
 
 let sources = [];
 let index = null;
 let loaded = null; // the Trace the sources belong to, for find
 let findGen = 0;
 let harness = null; // { trace, promise, ms } for the loaded session
+let network = null; // { trace, store } for the attached capture
 
 // A block's exact text, as the reader shows it (ref.path and ref.range applied), reading each log line once
 // for the blocks that share it.
@@ -99,6 +111,7 @@ self.onmessage = async (e) => {
       sources = s;
       loaded = trace;
       harness = null;
+      network = null;
       findGen++;
       self.postMessage({ type: "trace", trace });
     } catch (err) {
@@ -138,6 +151,37 @@ self.onmessage = async (e) => {
       harness = null;
       self.postMessage({ type: "harness-error", message: String((err && err.message) || err) });
     }
+  } else if (m.type === "network") {
+    try {
+      const trace = m.trace || loaded;
+      if (!trace) throw new Error("Load a session first: a network capture is attached to a session log.");
+      const list = m.files || [];
+      const files = [];
+      let done = 0;
+      const total = list.reduce((s, f) => s + ((f instanceof Blob ? f : f.file).size || 0), 0);
+      for (const f of list) {
+        const file = f instanceof Blob ? f : f.file;
+        self.postMessage({ type: "network-progress", phase: "read", done, total });
+        files.push({ name: (f.path || file.name || "capture.har").split("/").pop(), text: await file.text() });
+        done += file.size || 0;
+      }
+      self.postMessage({ type: "network-progress", phase: "analyze", done: total, total });
+      const { capture, store } = await analyzeCapture(files, trace);
+      network = { trace, store };
+      self.postMessage({ type: "network", capture });
+    } catch (err) {
+      self.postMessage({ type: "network-error", message: String((err && err.message) || err) });
+    }
+  } else if (m.type === "network-body") {
+    try {
+      if (!network) throw new Error("no network capture is attached");
+      const out = m.part === "headers" ? { text: JSON.stringify(network.store.headers(m.entry), null, 2), mode: "headers, redacted", cut: false } : network.store.body(m.entry, m.part);
+      self.postMessage({ type: "network-body", id: m.id, ...out });
+    } catch (err) {
+      self.postMessage({ type: "network-body", id: m.id, error: String((err && err.message) || err) });
+    }
+  } else if (m.type === "network-clear") {
+    network = null;
   } else if (m.type === "find-cancel") {
     findGen++;
   } else if (m.type === "text") {

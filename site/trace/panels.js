@@ -355,6 +355,9 @@ function lensPanel(S, A) {
     const others = trace.agents.filter(a => a.kind !== "root");
     if (!others.some(a => a.kind === "subagent")) out.push(el("p", { class: "empty", text: others.length ? "No subagents in this session. Its side calls and reviews:" : "No subagents in this session." }));
     if (others.length) out.push(agentTable(trace, others, S, A));
+  } else if (lens === "network" && A.networkLens) {
+    // What went over the wire: a network capture attached to the session (network/panel.js).
+    out.push(...A.networkLens(S));
   }
   return out;
 }
@@ -564,6 +567,14 @@ function requestPanel(trace, agent, req, S, A, callOffered = false) {
       ["Output", fmtInt(t.output)], ["Reasoning output", t.reasoning ? fmtInt(t.reasoning) : "–"],
       ["Fresh", fmtInt(freshTokens(req)), "uncached + cache write + output"]]))
   ];
+  // On the wire: the request as a network capture saw it (network/panel.js), when one is attached.
+  const wire = A.wireCard ? A.wireCard(agent, req) : null;
+  if (wire) {
+    out.push(wire);
+    // The card sits below the tokens: a link near the top jumps to it (scrollTop, not scrollIntoView).
+    const jump = btn("On the wire ↓", () => { const p = wire.closest(".panel"); if (p) p.scrollTop += wire.getBoundingClientRect().top - p.getBoundingClientRect().top - 8; }, "linkbtn wire-jump");
+    out.splice(out.findIndex((n) => n && n.classList && n.classList.contains("meta")) + 1, 0, jump);
+  }
   const act = req.action;
   if (act) {
     out.push(section("Action", el("div", { class: `action ${act.class}` },
