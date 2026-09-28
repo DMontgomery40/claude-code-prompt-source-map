@@ -163,7 +163,8 @@ function titleScore(item, term) {
     for (; i >= 0; i = s.indexOf(t, i + 1)) if (item.wsSet.has(i) || !WORDISH.test(s[i - 1])) return 60;
     return 40;
   }
-  if (term.phrase || t.length < 2 || !/^[a-z0-9_.\-/]+$/.test(t)) return 0;
+  // Initials and fuzzy letters are for identifiers (OTEL_LOG_RAW_API_BODIES, promptCacheTtl), not prose.
+  if (term.phrase || t.length < 2 || !/^[a-z0-9_.\-/]+$/.test(t) || /\s/.test(item.title)) return 0;
   const bare = t.replace(/[_.\-/]/g, "");
   if (bare.length >= 2 && item.ini.startsWith(bare)) return 30;
   if (bare.length >= 3 && s.replace(/[^a-z0-9]/g, "").includes(bare)) return 28;

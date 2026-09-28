@@ -1,0 +1,142 @@
+/* Docs search palette (palette.js). The same look as Trace's palette (site/trace/search.css: dark
+   sheet, kbd chips, uppercase section headers, rows with a kind chip and an accent bar), so the site
+   reads as one product. Body >= 14px, support >= 12px, no opacity on text. */
+.ds-layer {
+  --ds-ink: #eef2f6; --ds-ink-2: #b4bfcc; --ds-line: #243345; --ds-accent: #6d9fd6;
+  --ds-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ds-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  position: fixed; inset: 0; z-index: 300; display: flex; justify-content: center; align-items: flex-start;
+  padding: 9vh 16px 16px; color: var(--ds-ink); font: 14px/1.45 var(--ds-sans); text-align: left;
+}
+.ds-layer[hidden] { display: none; }
+html.ds-open { overflow: hidden; }
+.ds-scrim { position: absolute; inset: 0; background: rgba(3, 6, 10, 0.66); }
+.ds-pal {
+  position: relative; width: min(1040px, 100%); max-height: min(80vh, 780px); display: flex; flex-direction: column;
+  background: #0d141d; border: 1px solid #3a526a; border-radius: 14px; box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6); overflow: hidden;
+}
+.ds-pal kbd, .ds-layer kbd {
+  font: 12px/1 var(--ds-mono); color: var(--ds-ink); background: #1a2532; border: 1px solid #3a4d63;
+  border-radius: 5px; padding: 3px 6px; min-width: 22px; text-align: center; display: inline-block;
+}
+.ds-top { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--ds-line); }
+.ds-icon { display: grid; place-items: center; color: #9fc4e8; flex: none; }
+.ds-input {
+  flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--ds-ink); font: 17px/1.4 var(--ds-sans); padding: 4px 0;
+  -webkit-appearance: none; appearance: none;
+}
+.ds-input::-webkit-search-cancel-button { display: none; }
+.ds-input::placeholder { color: #98a4b3; }
+.ds-both {
+  flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid #33465b; border-radius: 999px;
+  background: #111b27; color: var(--ds-ink-2); font: 13px/1.2 var(--ds-sans); cursor: pointer; white-space: nowrap;
+}
+.ds-both:hover { color: var(--ds-ink); border-color: #4d6a88; }
+.ds-both-box { width: 12px; height: 12px; border: 1px solid #6f8399; border-radius: 3px; }
+.ds-both[aria-pressed=true] { background: #1d3552; border-color: var(--ds-accent); color: #fff; }
+.ds-both[aria-pressed=true] .ds-both-box { background: var(--ds-accent); border-color: var(--ds-accent); box-shadow: inset 0 0 0 2px #1d3552; }
+.ds-close { flex: none; padding: 0; border: 0; background: none; cursor: pointer; }
+.ds-both:focus-visible, .ds-close:focus-visible, .ds-scope:focus-visible, .ds-hints button:focus-visible { outline: 2px solid #d9e6f4; outline-offset: 2px; }
+.ds-scopes { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--ds-line); }
+.ds-scope {
+  display: inline-flex; align-items: center; gap: 6px; border: 1px solid #33465b; background: #111b27; color: var(--ds-ink-2);
+  border-radius: 999px; padding: 4px 11px; font: 13px/1.3 var(--ds-sans); cursor: pointer; white-space: nowrap;
+}
+.ds-scope:hover { color: var(--ds-ink); border-color: #4d6a88; }
+.ds-scope[aria-selected=true] { background: #1d3552; border-color: var(--ds-accent); color: #fff; }
+.ds-scope.ds-zero { color: #8593a3; }
+.ds-count { font: 12px var(--ds-mono); color: #c9d6e4; }
+.ds-hints { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 7px 14px; border-bottom: 1px solid var(--ds-line); background: #0b1119; font-size: 12.5px; color: var(--ds-ink-2); }
+.ds-hints-label { font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: 11.5px; color: #aeb9c7; }
+.ds-hints button { padding: 1px 2px; border: 0; background: none; color: var(--ds-ink-2); font: inherit; cursor: pointer; }
+.ds-hints code { font: 12px var(--ds-mono); color: #d9e6f4; background: #152233; border: 1px solid #2c4058; border-radius: 4px; padding: 1px 5px; }
+.ds-hints button:hover code { border-color: var(--ds-accent); }
+.ds-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 340px; }
+.ds-list { overflow-y: auto; overscroll-behavior: contain; padding: 4px 0 8px; min-height: 140px; scrollbar-width: thin; scrollbar-color: #3b5267 transparent; }
+.ds-section {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 12px 16px 5px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #aeb9c7;
+}
+.ds-note { font: 12px var(--ds-mono); letter-spacing: 0; color: #aeb9c7; }
+.ds-row {
+  display: flex; align-items: flex-start; gap: 11px; padding: 8px 12px 8px 13px; margin: 0 6px; border-radius: 9px;
+  border-left: 3px solid transparent; cursor: pointer;
+}
+.ds-row[aria-selected=true] { background: #182838; border-left-color: var(--ds-accent); }
+.ds-chip { flex: none; width: 10px; height: 10px; border-radius: 3px; margin-top: 6px; background: var(--k, #55657a); }
+.ds-chip-hollow, .ds-status .ds-chip { background: none; border: 1px solid #5d6f86; }
+.ds-main { flex: 1; min-width: 0; }
+.ds-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; min-width: 0; }
+.ds-title b { min-width: 0; font-weight: 650; font-size: 14px; overflow-wrap: anywhere; }
+.ds-status .ds-title, .ds-status { color: var(--ds-ink-2); cursor: default; }
+.ds-more .ds-title b { font-weight: 600; color: #b8d4f2; }
+.ds-badge { flex: none; font-size: 11.5px; font-weight: 600; color: #cfe0f2; border: 1px solid #3a526a; border-radius: 999px; padding: 0 7px; }
+.ds-flag { flex: none; font-size: 11.5px; font-weight: 600; color: #ffd28a; border: 1px solid #6a5530; border-radius: 999px; padding: 0 7px; }
+.ds-meta { font-size: 12.5px; color: #aeb9c7; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ds-snip {
+  font-size: 13px; line-height: 1.5; color: #d3dce6; margin-top: 3px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.ds-side { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.ds-kind { flex: none; font-size: 12px; color: #aeb9c7; white-space: nowrap; }
+.ds-copy { display: none; padding: 2px 8px; border: 1px solid #3a526a; border-radius: 6px; background: #122033; color: #d9e6f4; font: 12px/1.4 var(--ds-sans); cursor: pointer; }
+.ds-row[aria-selected=true] .ds-copy { display: inline-block; }
+.ds-copy:hover { border-color: var(--ds-accent); }
+.ds-key { flex: none; }
+.ds-pal mark { background: #ffe27a; color: #111; border-radius: 3px; padding: 0 1px; }
+.ds-empty { margin: 0; padding: 28px 18px; color: var(--ds-ink-2); text-align: center; }
+.ds-preview { overflow-y: auto; border-left: 1px solid var(--ds-line); background: #0a1017; padding: 16px 18px; min-width: 0; }
+.ds-preview:empty::before { content: "Nothing selected."; color: #8593a3; font-size: 13px; }
+.ds-pv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.ds-pv-chip { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid #3a526a; color: #d9e6f4; }
+.ds-pv-chip.ds-pv-doc { border-color: #3e6a47; color: #c8f7a4; }
+.ds-pv-chip.ds-pv-undoc { border-color: #6a5530; color: #ffd28a; }
+.ds-pv-chip[class*="ds-k-"] { border-color: var(--k); color: var(--k); }
+.ds-pv-kicker { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #aeb9c7; }
+.ds-pv-title { margin: 0 0 12px; font-size: 17px; line-height: 1.3; font-weight: 650; overflow-wrap: anywhere; }
+.ds-pv-meta { margin: 0; color: var(--ds-ink-2); font-size: 13px; }
+.ds-pv-rows { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 12px; font-size: 13px; line-height: 1.5; }
+.ds-pv-rows dt { color: #aeb9c7; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding-top: 1px; }
+.ds-pv-rows dd { margin: 0; min-width: 0; color: #dfe6ee; overflow-wrap: anywhere; }
+.ds-pv-rows code { font: 12.5px var(--ds-mono); color: #d9e6f4; }
+.ds-pv-dim { color: #98a4b3; }
+.ds-pv-tag { display: inline-block; margin: 0 5px 5px 0; padding: 0 7px; border: 1px solid #33465b; border-radius: 999px; font-size: 12px; color: #cfe0f2; }
+.ds-pv-open { margin: 16px 0 0; font-size: 12px; color: #aeb9c7; }
+.ds-pv-open kbd { padding: 2px 5px; font-size: 11px; }
+.ds-foot {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 9px 14px; border-top: 1px solid var(--ds-line);
+  font-size: 12.5px; color: #aeb9c7; background: #0a1017;
+}
+.ds-foot kbd { padding: 2px 5px; font-size: 11.5px; margin-right: 2px; }
+.ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Kind colors: the chip on a row, the kind chip in the preview. */
+.ds-k-page { --k: #c8f784; } .ds-k-h { --k: #8d9aab; } .ds-k-decision { --k: #ffd479; } .ds-k-env { --k: #83bfd8; }
+.ds-k-setting { --k: #b9a6f2; } .ds-k-cli { --k: #f0b86e; } .ds-k-hook { --k: #f29a9a; } .ds-k-tool { --k: #6ed6b8; }
+.ds-k-slash { --k: #e0d36a; } .ds-k-prompt { --k: #dba6e8; } .ds-k-reminder { --k: #a8c8ec; } .ds-k-agent { --k: #9fe07a; }
+.ds-k-skill { --k: #eeaac0; } .ds-k-command { --k: #5d6f86; }
+.ds-k-command .ds-chip { background: none; border: 1px solid #5d6f86; }
+
+@media (max-width: 980px) {
+  .ds-body { grid-template-columns: minmax(0, 1fr); }
+  .ds-preview { display: none; }
+  .ds-pal { width: min(760px, 100%); }
+}
+/* Phones: a full-screen sheet; the kind tabs scroll sideways inside it, never the page. */
+@media (max-width: 640px) {
+  .ds-layer { padding: 0; }
+  .ds-pal { width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; }
+  .ds-top { padding: 10px 12px; }
+  .ds-scopes { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 8px 12px; }
+  .ds-scopes::-webkit-scrollbar { display: none; }
+  .ds-hints { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
+  .ds-hints::-webkit-scrollbar { display: none; }
+  .ds-both { padding: 5px 8px; font-size: 12px; }
+  .ds-foot { display: none; }
+  .ds-row { margin: 0 4px; padding: 9px 10px; }
+  .ds-kind { display: none; }
+  .ds-list { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-pal *, .ds-layer * { transition: none !important; animation: none !important; }
+}

@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { SITE, productOrigin } from "./src/shared/site.mjs";
 import { buildTrace } from "./src/shared/trace-build.mjs";
 import { renderLanding } from "./src/shared/landing.mjs";
+import { SEARCH_CLIENT_FILES } from "./src/shared/search-ui.mjs";
 import { buildSite as buildClaudeCode } from "./src/claude-code/build-site.mjs";
 import { categories as claudeCodeCategories } from "./src/claude-code/catalog.mjs";
 import { site as claudeCodeSite } from "./src/claude-code/config.mjs";
@@ -42,6 +43,9 @@ for (const [i, product] of PRODUCTS.entries()) {
 await writeFile(path.join(dist, "trace", "reference-index.json"), JSON.stringify({ byProduct }));
 
 await writeFile(path.join(dist, "index.html"), renderLanding({ cardFile: "social-card.png" }));
+// The docs search palette (every section page and the landing load dist/search/palette.js).
+await mkdir(path.join(dist, "search"), { recursive: true });
+for (const [from, to] of SEARCH_CLIENT_FILES) await copyFile(path.join(siteRoot, "src", "shared", from), path.join(dist, "search", to));
 await copyFile(path.join(siteRoot, "assets", "shared", "social-card.png"), path.join(dist, "social-card.png"));
 // The landing page's Trace screenshot (sRGB WebP, metadata stripped) at two widths, and the site's icon.
 for (const file of ["trace-landscape-1000.webp", "trace-landscape-2000.webp", "favicon.svg", "favicon.ico", "apple-touch-icon.png"]) await copyFile(path.join(siteRoot, "assets", "shared", file), path.join(dist, file));

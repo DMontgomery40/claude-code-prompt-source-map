@@ -12,6 +12,7 @@ import { site } from "../../src/claude-code/config.mjs";
 import { buildSite as buildCodex } from "../../src/codex/build-site.mjs";
 import { categories as codexCategories } from "../../src/codex/catalog.mjs";
 import { recordSpec as specOf } from "../../src/shared/search-index.mjs";
+import { renderLanding } from "../../src/shared/landing.mjs";
 
 // A standalone page's content as renderSite hands it over: a filter-wrapped group with two entries
 // titled alike (the second got a -2 id), a heading that opens a <section id>, chips and a review tag.
@@ -165,6 +166,15 @@ test("production: the Claude Code index resolves every item to an id on its stan
       const [slug, id] = itemHref(index, it).split("/#");
       assert(ids.get(slug)?.has(id), `${slug}#${id}`);
     }
+    // Every page loads the palette by a path relative to itself and carries the Search pill.
+    const home = await readFile(path.join(outDir, "index.html"), "utf8");
+    const hooksPage = await readFile(path.join(outDir, "hooks", "index.html"), "utf8");
+    assert.match(home, /<script type="module" src="\.\.\/search\/palette\.js"><\/script>/);
+    assert.match(hooksPage, /<script type="module" src="\.\.\/\.\.\/search\/palette\.js"><\/script>/);
+    for (const html of [home, hooksPage]) assert.match(html, /<div class="corner-links">[\s\S]*?<button class="search-link"[^>]*data-search-section="claude-code"[\s\S]*?<\/div>/);
+    const landing = renderLanding();
+    assert.match(landing, /<button class="search-field"[^>]*data-search-section="all"/);
+    assert.match(landing, /<script type="module" src="search\/palette\.js"><\/script>/);
     // Every suggested page exists (config.mjs searchFeatured).
     assert.deepEqual(index.pages.filter(p => p.f).map(p => p.s).sort(), [...site.searchFeatured].sort());
     const items = indexItems(index, { product: "claude-code", label: "Claude Code" });

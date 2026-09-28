@@ -57,6 +57,8 @@ test("ranking: exact title > prefix > word start > inside a word > fuzzy", () =>
   assert.deepEqual(titles(fuzzy, "prompt_cache"), ["PROMPT_CACHE", "CLAUDE_CODE_PROMPT_CACHE_TTL"]);
   // Scattered letters are not a match.
   assert.deepEqual(titles([item("a very long heading about nothing in particular")], "zq"), []);
+  // Prose titles match by their words, never by scattered letters.
+  assert.deepEqual(titles([item("Memory is one of several persistence mechanisms available to you")], "persistent"), []);
 });
 
 test("ranking: title beats context, every word must match, ties go to the shorter title", () => {
