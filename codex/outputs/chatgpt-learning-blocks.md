@@ -1,6 +1,6 @@
 # ChatGPT learning blocks
 
-Learning blocks are the interactive math, physics, chemistry, biology and data visualizations ChatGPT shows next to an answer: a graph, a 3D scene or an animation, often with sliders and switches the user can change. This build ships **1622 block types**, 1591 with a view registered: 22 three.js 3D scenes, 761 Lottie animations and 808 SVG or HTML views. 784 have an animated Lottie thumbnail, 101 stand for a named formula, and 220 take parameters the server can set.
+Learning blocks are the interactive math, physics, chemistry, biology and data visualizations ChatGPT shows next to an answer: a graph, a 3D scene or an animation, often with sliders and switches the user can change. This build ships **1621 block types**, 1592 with a view registered: 22 three.js 3D scenes, 761 Lottie animations and 809 other views (neither three.js nor Lottie). 784 have an animated Lottie thumbnail, 160 stand for a named formula, and 451 take parameters the server can set.
 
 Source: ChatGPT desktop 26.924.22138 (build 11645), `app.asar` → `webview/assets/`: the block registry `analytics-bc3295dda721.js` (1665 registered views), 1006 manifest modules (`type-*.js`) and the type enum `chatgpt_math_blocks-1c0e05f75070.js`.
 
@@ -8,29 +8,33 @@ Source: ChatGPT desktop 26.924.22138 (build 11645), `app.asar` → `webview/asse
 
 - A block arrives as a **content reference** on an assistant message, category `learning_block`. Its data names the block (`matched_type`), the widget (`widget_type`), the server's block version (`server_learning_block_version`) and the starting parameter values (`encoded_initial_values`). The model's answer text is not changed; the app renders the matched block beside it, inline or as a card (`display_mode`).
 - The render source the app reports for these blocks is `CHATGPT_MATH_BLOCK_RENDER_SOURCE_GENUI_LEARNING_BLOCK`: the server's generative-UI layer matched the answer to a block type. The app does not choose blocks itself.
-- Formula blocks carry a `canonicalFormula` and optional `canonicalFormulaAliases` in their manifest: the equation forms a block stands for (for example `PV = nRT`).
+- Formula blocks carry a `canonicalFormula` (and some `canonicalFormulaAliases`) in their manifest. The app uses the formula only as display text: it shows it when the reference's `content_type` is `canonical_formula` or `placeholder`, and otherwise shows the content the server sent. No app code reads the aliases, so no matching of the model's equations happens in the app.
 - Feedback on a block is posted to `POST /conversation/message/learning-blocks/feedback` with the matched type, the rendered and server block versions, the initial values, whether the user edited the block, and the chosen reasons.
-- A block can offer follow-up questions. Choosing one sends a new user message whose metadata marks it `followups_v2_followup_source: "learning_block_suggested_followup"`, so the next turn's context records that the question came from a block.
+- A block can offer follow-up questions. Choosing one sends a new user message whose metadata marks it `followups_v2_followup_source: "learning_block_suggested_followup"`, so the request records that the question came from a block.
 - Generative-UI widgets on a message that are still being completed are polled through `POST /conversation/{conversation_id}/message/{message_id}/genui/refresh_widget` (message metadata `genui_refresh`).
 - Analytics actions: `CODEX_LEARNING_BLOCK_ACTION_IMPRESSION`, `_FALLBACK`, `_FOLLOW_UP_SHOWN`, `_FOLLOW_UP_SELECTED`, `_FEEDBACK_OPENED`, `_FEEDBACK_SUBMITTED` and `_FEEDBACK_FAILED`.
 
-Counting: a block type is one manifest `type` (or, for a view whose manifest is inline in the registry, its analytics type); where a type ships more than one view or manifest version, the highest version is listed. The type enum (`CHATGPT_MATH_BLOCK_TYPE_*`) has 962 values; 125 of them have no registered view or manifest in this build (`ABSOLUTE_VALUE_DISTANCE`, `ADULT_CPR_AED_SEQUENCE`, `ALCOHOL_OXIDATION`, `APPLYING_A_SCREEN_PROTECTOR`, `APPLYING_CAULK`, `APPLYING_SUNSCREEN`, `ASTHMA_AIRWAY_FLOW`, `BACTERIAL_GROWTH_CURVE`, `BASKETBALL_LAYUP`, `BLOOD_PRESSURE_REGULATION`, `BOHR_MODEL`, `BOND_ENTHALPY`, …; all are in the JSON). Blocks registered without an analytics type (`UNSPECIFIED`) are identified by their manifest. 616 blocks keep their manifest inline in the registry chunk; their parameters are not listed here. 1 manifest modules could not be evaluated and are listed from their literals only. A title is the block's thumbnail animation name where it has one, otherwise its type name in words; the sentence under it is the view's own accessibility label.
+Counting: a block type is one manifest `type` (or, for a view whose manifest is inline in the registry, its analytics type); where a type ships more than one view or manifest version, the highest version is listed. The type enum (`CHATGPT_MATH_BLOCK_TYPE_*`) has 962 values; 126 of them have no registered view or manifest in this build (`ABSOLUTE_VALUE_DISTANCE`, `ADULT_CPR_AED_SEQUENCE`, `ALCOHOL_OXIDATION`, `APPLYING_A_SCREEN_PROTECTOR`, `APPLYING_CAULK`, `APPLYING_SUNSCREEN`, `ASTHMA_AIRWAY_FLOW`, `BACTERIAL_GROWTH_CURVE`, `BASKETBALL_LAYUP`, `BOHR_MODEL`, `BOND_ENTHALPY`, `BOWLINE_KNOT`, …; all are in the JSON). Blocks registered without an analytics type (`UNSPECIFIED`) are identified by their manifest. 384 blocks have no separate manifest module (378 of them are defined inside the registry chunk); their parameters are not listed here. 1 manifest modules could not be evaluated and are listed from their literals only. A title is the block's thumbnail animation name where it has one, otherwise its type name in words; the sentence under it is the view's own accessibility label.
 
 ## Blocks
 
 ### three.js 3D scenes (22)
 
-#### Column space
+#### Column space: `A\mathbf{x}\in\operatorname{span}(A)`
 
-Type `COLUMN_SPACE` · manifest v?.
+Type `COLUMN_SPACE` · manifest v1 · formula `A\mathbf{x}\in\operatorname{span}(A)`, also `\operatorname{Col}(A)=\operatorname{span}\{\mathbf{a}_1,\mathbf{a}_2,\mathbf{a}_3\}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-74d9d119e6e1.js` → `ColumnSpaceVisualization`.
+Parameters: `rank` (integer, default `1`, range 1 to 3); `inputX` (number, default `1`, range -1.5 to 1.5); `inputY` (number, default `0`, range -1.5 to 1.5); `inputZ` (number, default `0`, range -1.5 to 1.5).
 
-#### Cylindrical coordinates
+Source: manifest `model-44d6ee3a3108.js`; view `visualization-74d9d119e6e1.js` → `ColumnSpaceVisualization`.
 
-Type `CYLINDRICAL_COORDINATES` · manifest v?.
+#### Cylindrical coordinates: `\int_{a_z}^{b_z}\int_{a_{\theta}}^{b_{\theta}}\int_{a_r}^{b_r}r\,dr\,d\theta\,dz`
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-344609314a1a.js` → `CylindricalCoordinatesVisualization`.
+Type `CYLINDRICAL_COORDINATES` · manifest v1 · formula `\int_{a_z}^{b_z}\int_{a_{\theta}}^{b_{\theta}}\int_{a_r}^{b_r}r\,dr\,d\theta\,dz`.
+
+Parameters: `rStart` (number, default `0`, range 0 to 5); `r` (number, default `3`, range 0 to 5); `thetaStart` (number, default `0`, range 0 to 6.283185307179586); `theta` (number, default `6.283185307179586`, range 0 to 6.283185307179586); `zStart` (number, default `0`, range 0 to 5); `z` (number, default `3`, range 0 to 5); `shape` (enum, default `cylinder`, one of `cylinder`, `sector`, `cylindrical-shell`).
+
+Source: manifest `content-c9925bc5b917.js`; view `visualization-344609314a1a.js` → `CylindricalCoordinatesVisualization`.
 
 #### Divergence theorem flux: `\iint_{\partial V}\mathbf F\cdot\mathbf n\,dS=\iiint_V\nabla\cdot\mathbf F\,dV`
 
@@ -42,7 +46,7 @@ Source: manifest `type-a59f58f3e3e0.js`; view `visualization-6ec065ffebcf.js` �
 
 #### Double integral cartesian
 
-Type `DOUBLE_INTEGRAL_CARTESIAN` · manifest v?.
+Type `DOUBLE_INTEGRAL_CARTESIAN`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4bcce384ed11.js` → `CartesianDoubleIntegralVisualization`.
 
@@ -62,81 +66,99 @@ Parameters: `scale` (number, default `1.4`, range 0.7 to 2); `shear` (number, de
 
 Source: manifest `type-f72a37ec91c5.js`; view `visualization-2134a9ef1532.js` → `JacobianGridTransformationVisualization`.
 
-#### Lagrange gradient parallelism
+#### Lagrange gradient parallelism: `\nabla f=\lambda\nabla g`
 
-Type `LAGRANGE_GRADIENT_PARALLELISM` · manifest v?.
+Type `LAGRANGE_GRADIENT_PARALLELISM` · manifest v1 · formula `\nabla f=\lambda\nabla g`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7d3d4b275750.js` → `LagrangeGradientParallelismVisualization`.
+Parameters: `example` (enum, default `linear`, one of `linear`, `product`, `ellipse`); `angleDegrees` (number, default `30`, range 0 to 360).
 
-#### Line integral
-
-Line-integral parameter {parameter}
-
-Type `LINE_INTEGRAL` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7a10a5a1d142.js` → `LineIntegralVisualization`.
+Source: manifest `model-b583204f43e9.js`; view `visualization-7d3d4b275750.js` → `LagrangeGradientParallelismVisualization`.
 
 #### Line integral work
 
-Type `LINE_INTEGRAL_WORK` · manifest v?.
+Type `LINE_INTEGRAL_WORK`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-64987c5f8fcb.js` → `LineIntegralWorkVisualization`.
 
-#### Multivariable limit paths
+#### Multivariable limit paths: `f(x,y)=\frac{x^2-y^2}{x^2+y^2}`
 
-Type `MULTIVARIABLE_LIMIT_PATHS` · manifest v?.
+Type `MULTIVARIABLE_LIMIT_PATHS` · manifest v1 · formula `f(x,y)=\frac{x^2-y^2}{x^2+y^2}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b70b204af987.js` → `MultivariableLimitPathsVisualization`.
+Parameters: `mode` (enum, default `dne`, one of `dne`, `exists`); `path` (enum, default `y-zero`, one of `y-zero`, `x-zero`); `distance` (number, default `0.75`, range 0 to 1.2).
 
-#### Null space
+Source: manifest `model-2e64cf87fd64.js`; view `visualization-b70b204af987.js` → `MultivariableLimitPathsVisualization`.
 
-Type `NULL_SPACE` · manifest v?.
+#### Null space: `A\mathbf{x}=\mathbf{0}`
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-70debc735c49.js` → `NullSpaceVisualization`.
+Type `NULL_SPACE` · manifest v1 · formula `A\mathbf{x}=\mathbf{0}`, also `\operatorname{Null}(A)=\ker(A)`.
+
+Parameters: `rank` (integer, default `1`, range 1 to 3).
+
+Source: manifest `model-b86e7b9561e2.js`; view `visualization-70debc735c49.js` → `NullSpaceVisualization`.
+
+#### Parametrized line 2d
+
+Line-integral parameter {parameter}
+
+Type `PARAMETRIZED_LINE_2D` · manifest v1 (also v1).
+
+Parameters: `t` (number, default `0`, range -12.566370614359172 to 12.566370614359172).
+
+Source: manifest `model-e5ade770ac2f.js`; view `visualization-7a10a5a1d142.js` → `LineIntegralVisualization`.
 
 #### Parametrized line 3d
 
 Curve parameter {parameter}
 
-Type `PARAMETRIZED_LINE_3D` · manifest v?.
+Type `PARAMETRIZED_LINE_3D` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bbf1ecff6c4b.js` → `ParametrizedLine3DVisualization`.
+Parameters: `t` (number, default `0`, range -12.566370614359172 to 12.566370614359172).
+
+Source: manifest `model-2139461cc43f.js`; view `visualization-bbf1ecff6c4b.js` → `ParametrizedLine3DVisualization`.
 
 #### Parametrized surfaces
 
-Type `PARAMETRIZED_SURFACES` · manifest v?.
+Type `PARAMETRIZED_SURFACES` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a5b2efc9743d.js` → `ParametrizedSurfacesVisualization`.
+Parameters: `t` (number, default `1`, range -2 to 2); `s` (number, default `1.5707963267948966`, range -6.283185307179586 to 6.283185307179586).
+
+Source: manifest `model-a4f0614d0c79.js`; view `visualization-a5b2efc9743d.js` → `ParametrizedSurfacesVisualization`.
 
 #### Power iteration
 
-Type `POWER_ITERATION` · manifest v?.
+Type `POWER_ITERATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7d370ae7166e.js` → `PowerIterationVisualization`.
 
-#### Shifted inverse iteration
+#### Shifted inverse iteration: `\mathbf{x}_{k+1}=\frac{B\mathbf{x}_k}{\lVert B\mathbf{x}_k\rVert}`
 
-Type `SHIFTED_INVERSE_ITERATION` · manifest v?.
+Type `SHIFTED_INVERSE_ITERATION` · manifest v1 · formula `\mathbf{x}_{k+1}=\frac{B\mathbf{x}_k}{\lVert B\mathbf{x}_k\rVert}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4d697dad205e.js` → `ShiftedInverseIterationVisualization`.
+Parameters: `mode` (enum, default `shifted`, one of `shifted`, `inverse`, `shifted_inverse`).
+
+Source: manifest `model-7393bb1ed478.js`; view `visualization-4d697dad205e.js` → `ShiftedInverseIterationVisualization`.
 
 #### Solar system
 
-Type `SOLAR_SYSTEM` · manifest v?.
+Type `SOLAR_SYSTEM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1525798f22d9.js` → `SolarSystemVisualization`.
 
-#### Spherical coordinates
+#### Spherical coordinates: `\int_{a_p}^{b_p}\int_{a_{\phi}}^{b_{\phi}}\int_{a_{\theta}}^{b_{\theta}}p^2\sin\phi\,d\theta\,d\phi\,dp`
 
-Type `SPHERICAL_COORDINATES` · manifest v?.
+Type `SPHERICAL_COORDINATES` · manifest v1 · formula `\int_{a_p}^{b_p}\int_{a_{\phi}}^{b_{\phi}}\int_{a_{\theta}}^{b_{\theta}}p^2\sin\phi\,d\theta\,d\phi\,dp`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-832c0c82e5ad.js` → `SphericalCoordinatesVisualization`.
+Parameters: `p` (number, default `3`, range 0 to 5); `phi` (number, default `3.141592653589793`, range 0 to 3.141592653589793); `theta` (number, default `6.283185307179586`, range 0 to 6.283185307179586); `radialInnerFraction` (number, default `0`, range 0 to 1); `polarLowerFraction` (number, default `0`, range 0 to 1); `azimuthalLowerFraction` (number, default `0`, range 0 to 1); `shape` (enum, default `sphere`, one of `sphere`, `cone`, `donut`).
+
+Source: manifest `content-cd9720b3fd21.js`; view `visualization-832c0c82e5ad.js` → `SphericalCoordinatesVisualization`.
 
 #### Surface level curves
 
-Type `SURFACE_LEVEL_CURVES` · manifest v?.
+Type `SURFACE_LEVEL_CURVES` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-383479e19d16.js` → `SurfaceLevelCurvesVisualization`.
+Parameters: `axis` (enum, default `z`, one of `x`, `y`, `z`); `level` (number, default `1`, range -2 to 2).
+
+Source: manifest `model-8407dd056273.js`; view `visualization-383479e19d16.js` → `SurfaceLevelCurvesVisualization`.
 
 #### Tangent plane linearization: `\small f(x_0,y_0)+\nabla f(x_0,y_0)\cdot{\langle x-x_0,y-y_0\rangle}`
 
@@ -148,7 +170,7 @@ Source: manifest `type-3e5d3f81a72e.js`; view `visualization-9d17d4dc40f8.js` �
 
 #### Triple integral cartesian
 
-Type `TRIPLE_INTEGRAL_CARTESIAN` · manifest v?.
+Type `TRIPLE_INTEGRAL_CARTESIAN`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f37c6d24e71b.js` → `CartesianTripleIntegralVisualization`.
 
@@ -162,9 +184,11 @@ Source: manifest `type-2a06847ff944.js`; view `visualization-f42845076aac.js` �
 
 #### Vsepr geometry
 
-Type `VSEPR_GEOMETRY` · manifest v?.
+Type `VSEPR_GEOMETRY` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bb05651eb1d0.js` → `VseprGeometryVisualization`.
+Parameters: `configuration` (enum, default `AX4`, one of `AX2`, `AX3`, `AX2E`, `AX4`, `AX3E`, `AX2E2`, `AX5`, `AX4E`, `AX3E2`, `AX2E3`, `AX6`, `AX5E`, `AX4E2`, `AX3E3`, `AX2E4`).
+
+Source: manifest `model-cde8f9761457.js`; view `visualization-bb05651eb1d0.js` → `VseprGeometryVisualization`.
 
 ### Lottie animations (761)
 
@@ -296,7 +320,7 @@ Source: manifest `type-7e0ee9100ae8.js`; view `visualization-d9eb44da13a3.js` �
 
 #### ABA versus gibberellin seed dormancy
 
-Type `ABA_VERSUS_GIBBERELLIN_SEED_DORMANCY` · manifest v1 · animated thumbnail · not in the type enum.
+Type `ABA_VERSUS_GIBBERELLIN_SEED_DORMANCY` · manifest v1 (also v1, v1, v1) · animated thumbnail · not in the type enum.
 
 Source: manifest `type-888603d16da6.js`; view `visualization-f161439a954f.js` → `Visualization`.
 
@@ -5204,13 +5228,15 @@ Type `YEAST_BUDDING_REPRODUCTION` · manifest v1 · animated thumbnail · not in
 
 Source: manifest `type-76a5aa97f57d.js`; view `visualization-420745178b50.js` → `Visualization`.
 
-### SVG and HTML (808)
+### Other views (no three.js or Lottie dependency) (809)
 
 #### Abo rh blood typing
 
-Type `ABO_RH_BLOOD_TYPING` · manifest v?.
+Type `ABO_RH_BLOOD_TYPING` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f01c4d0d1c86.js` → `AboRhBloodTypingVisualization`.
+Parameters: `initial_blood_type` (enum, default `A+`, one of `O-`, `O+`, `A-`, `A+`, `B-`, `B+`, `AB-`, `AB+`).
+
+Source: manifest `model-20fa5aabbc94.js`; view `visualization-f01c4d0d1c86.js` → `AboRhBloodTypingVisualization`.
 
 #### Abo rh transfusion compatibility
 
@@ -5240,7 +5266,7 @@ Source: manifest `type-796063db4408.js`; view `visualization-fcbd0d16e145.js` �
 
 #### Accrual vs cash accounting
 
-Type `ACCRUAL_VS_CASH_ACCOUNTING` · manifest v?.
+Type `ACCRUAL_VS_CASH_ACCOUNTING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1d9b5e6c9b0f.js` → `AccrualVsCashAccountingVisualization`.
 
@@ -5258,7 +5284,7 @@ Source: manifest `type-c3de85d12da6.js`; view `visualization-9829e93353a9.js` �
 
 Reaction example
 
-Type `ACID_BASE_PROTON_TRANSFER` · manifest v?.
+Type `ACID_BASE_PROTON_TRANSFER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8438f0926fe9.js` → `Visualization`.
 
@@ -5266,21 +5292,25 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8438f
 
 Diprotic-acid fractional-distribution plot from pH 0 to 14, with pKa1 {pKa1} and pKa2 {pKa2}. At pH {pH}, H2A is {h2a}, HA minus is {ha}, and A two-minus is {a}; {takeaway}.
 
-Type `ACID_BASE_SPECIATION` · manifest v?.
+Type `ACID_BASE_SPECIATION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a7fae2d40314.js` → `AcidBaseSpeciationVisualization`.
+Parameters: `pKa1` (number, default `6.35`, range 0 to 6.5); `pKa2` (number, default `10.33`, range 7.5 to 14).
+
+Source: manifest `model-579301f7f78f.js`; view `visualization-a7fae2d40314.js` → `AcidBaseSpeciationVisualization`.
 
 #### Acid base titration
 
-Type `ACID_BASE_TITRATION` · manifest v?.
+Type `ACID_BASE_TITRATION` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2e86b9cfe34f.js` → `AcidBaseTitrationVisualization`.
+Parameters: `experiment` (enum, default `strong-strong`, one of `strong-strong`, `strong-weak`, `weak-strong`); `acidVolumeMl` (number, default `0`, range 0 to 20).
+
+Source: manifest `model-b31ccf83cf9c.js`; view `visualization-2e86b9cfe34f.js` → `AcidBaseTitrationVisualization`.
 
 #### Acid deposition
 
 Acid-deposition pathway stage
 
-Type `ACID_DEPOSITION` · manifest v?.
+Type `ACID_DEPOSITION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a6ce05d6e4b4.js` → `Visualization`.
 
@@ -5288,15 +5318,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a6ce0
 
 Acidity comparison
 
-Type `ACID_STRENGTH_AND_CONJUGATE_BASE_STABILITY` · manifest v?.
+Type `ACID_STRENGTH_AND_CONJUGATE_BASE_STABILITY` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-344497562408.js` → `Visualization`.
+Parameters: `comparison` (enum, default `resonance`, one of `resonance`, `inductive`, `atom-trend`, `hybridization`).
+
+Source: manifest `model-7206de562b9d.js`; view `visualization-344497562408.js` → `Visualization`.
 
 #### Action potential neuron
 
 Action potential stage
 
-Type `ACTION_POTENTIAL_NEURON` · manifest v?.
+Type `ACTION_POTENTIAL_NEURON`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-676a7cad51cc.js` → `Visualization`.
 
@@ -5304,13 +5336,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-676a7
 
 Action potential position
 
-Type `ACTION_POTENTIAL_NODES` · manifest v?.
+Type `ACTION_POTENTIAL_NODES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-394cce444c3f.js` → `ActionPotentialNodesVisualization`.
 
 #### Action potential voltage
 
-Type `ACTION_POTENTIAL_VOLTAGE` · manifest v?.
+Type `ACTION_POTENTIAL_VOLTAGE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cbacd54e61c0.js` → `ActionPotentialVoltageVisualization`.
 
@@ -5326,21 +5358,23 @@ Source: manifest `type-a73db772b207.js`; view `visualization-528696af2c1e.js` �
 
 #### Active vs passive immunity
 
-Type `ACTIVE_VS_PASSIVE_IMMUNITY` · manifest v?.
+Type `ACTIVE_VS_PASSIVE_IMMUNITY` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a7122b04fa29.js` → `Visualization`.
+Parameters: `initial_example` (enum, default `vaccination`, one of `infection-and-recovery`, `vaccination`, `maternal-antibodies`, `immune-globulin`).
+
+Source: manifest `model-c57d1e222f54.js`; view `visualization-a7122b04fa29.js` → `Visualization`.
 
 #### Acute inflammation
 
 Acute inflammation stage
 
-Type `ACUTE_INFLAMMATION` · manifest v?.
+Type `ACUTE_INFLAMMATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8af27e8441e8.js` → `AcuteInflammationVisualization`.
 
 #### Acute triangle
 
-Type `ACUTE_TRIANGLE` · manifest v?.
+Type `ACUTE_TRIANGLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1a84125140e4.js` → `AcuteTriangleVisualization`.
 
@@ -5354,21 +5388,25 @@ Source: manifest `type-4b5ff0bb4ae8.js`; view `visualization-7e5aee2f5834.js` �
 
 #### Adding integers
 
-Type `ADDING_INTEGERS` · manifest v?.
+Type `ADDING_INTEGERS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1507bc3ab0a3.js` → `AddingIntegersVisualization`.
+Parameters: `firstAddend` (integer, default `3`, range 1 to 12); `secondAddend` (integer, default `6`, range 1 to 12).
+
+Source: manifest `model-1ff2e69cbdc9.js`; view `visualization-1507bc3ab0a3.js` → `AddingIntegersVisualization`.
 
 #### Adding negative integer
 
-Type `ADDING_NEGATIVE_INTEGER` · manifest v?.
+Type `ADDING_NEGATIVE_INTEGER` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eb8bdd7ca67e.js` → `AddingNegativeIntegerVisualization`.
+Parameters: `positiveInteger` (integer, default `7`, range 1 to 12); `negativeInteger` (integer, default `-4`, range -12 to -1).
+
+Source: manifest `model-5b5c3055d254.js`; view `visualization-eb8bdd7ca67e.js` → `AddingNegativeIntegerVisualization`.
 
 #### Adsr envelope
 
 ADSR parameter
 
-Type `ADSR_ENVELOPE` · manifest v?.
+Type `ADSR_ENVELOPE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cd24dea94a2f.js` → `AdsrEnvelopeVisualization`.
 
@@ -5384,7 +5422,7 @@ Source: manifest `type-19661ffd37c1.js`; view `visualization-b648b7e2421d.js` �
 
 #### Aggregate demand
 
-Type `AGGREGATE_DEMAND` · manifest v?.
+Type `AGGREGATE_DEMAND`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-47261ba0bd99.js` → `AggregateDemandVisualization`.
 
@@ -5392,7 +5430,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-47261
 
 Aggregate demand position
 
-Type `AGGREGATE_DEMAND_AND_SUPPLY` · manifest v?.
+Type `AGGREGATE_DEMAND_AND_SUPPLY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bb6c9f5f61d1.js` → `AdAsEquilibriumVisualization`.
 
@@ -5400,19 +5438,21 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bb6c9
 
 Erosion stage
 
-Type `AGRICULTURAL_SOIL_EROSION` · manifest v?.
+Type `AGRICULTURAL_SOIL_EROSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b6f0e1d50783.js` → `Visualization`.
 
 #### Alcohol oxidation products
 
-Type `ALCOHOL_OXIDATION_PRODUCTS` · manifest v?.
+Type `ALCOHOL_OXIDATION_PRODUCTS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f384c0966011.js` → `AlcoholOxidationProductsVisualization`.
+Parameters: `oxidationConditions` (enum, default `dess_martin`, one of `dess_martin`, `jones_reagent`).
+
+Source: manifest `model-9f7763fa34f6.js`; view `visualization-f384c0966011.js` → `AlcoholOxidationProductsVisualization`.
 
 #### Alkene e z stereochemistry
 
-Type `ALKENE_E_Z_STEREOCHEMISTRY` · manifest v?.
+Type `ALKENE_E_Z_STEREOCHEMISTRY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-335d6f4adb35.js` → `Visualization`.
 
@@ -5420,7 +5460,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-335d6
 
 Addition pathway
 
-Type `ALKENE_STEREOCHEMICAL_ADDITIONS` · manifest v?.
+Type `ALKENE_STEREOCHEMICAL_ADDITIONS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9faf106e0d23.js` → `Visualization`.
 
@@ -5428,7 +5468,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9faf1
 
 Gas to emphasize
 
-Type `ALVEOLAR_GAS_EXCHANGE` · manifest v?.
+Type `ALVEOLAR_GAS_EXCHANGE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cf163446f97e.js` → `AlveolarGasExchangeVisualization`.
 
@@ -5436,7 +5476,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cf163
 
 Amino-acid pair
 
-Type `AMINO_ACIDS_AND_PEPTIDE_BONDS` · manifest v?.
+Type `AMINO_ACIDS_AND_PEPTIDE_BONDS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-327017a12d9d.js` → `Visualization`.
 
@@ -5458,33 +5498,37 @@ Parameters: `animal` (enum, default `butterfly`, one of `butterfly`, `frog`, `ch
 
 Source: manifest `type-11d77b78e3d4.js`; view `visualization-e72244bb955b.js` → `AnimalLifeCycleVisualization`.
 
-#### Anova decomposition
+#### Anova decomposition: `F = \frac{\text{between-group variation}}{\text{within-group variation}}`
 
 Data view
 
-Type `ANOVA_DECOMPOSITION` · manifest v?.
+Type `ANOVA_DECOMPOSITION` · manifest v4 · formula `F = \frac{\text{between-group variation}}{\text{within-group variation}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c2d17a4b6c18.js` → `AnovaDecompositionVisualization`.
+Parameters: `groupA1` (number, default `32`, range 0 to 100); `groupA2` (number, default `36`, range 0 to 100); `groupA3` (number, default `38`, range 0 to 100); `groupA4` (number, default `40`, range 0 to 100); `groupA5` (number, default `43`, range 0 to 100); `groupA6` (number, default `45`, range 0 to 100); `groupB1` (number, default `44`, range 0 to 100); `groupB2` (number, default `47`, range 0 to 100); `groupB3` (number, default `49`, range 0 to 100); `groupB4` (number, default `51`, range 0 to 100); `groupB5` (number, default `53`, range 0 to 100); `groupB6` (number, default `56`, range 0 to 100); `groupC1` (number, default `55`, range 0 to 100); `groupC2` (number, default `58`, range 0 to 100); `groupC3` (number, default `60`, range 0 to 100); `groupC4` (number, default `62`, range 0 to 100); `groupC5` (number, default `65`, range 0 to 100); `groupC6` (number, default `66`, range 0 to 100).
+
+Source: manifest `model-2ea1a60fd78b.js`; view `visualization-c2d17a4b6c18.js` → `AnovaDecompositionVisualization`.
 
 #### Anova interaction plot
 
 Choose an interaction pattern
 
-Type `ANOVA_INTERACTION_PLOT` · manifest v?.
+Type `ANOVA_INTERACTION_PLOT` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c7a3e6250990.js` → `Visualization`.
+Parameters: `initial_pattern` (enum, default `no-interaction`, one of `no-interaction`, `non-crossover-interaction`, `crossover-interaction`).
+
+Source: manifest `model-485af57b772f.js`; view `visualization-c7a3e6250990.js` → `Visualization`.
 
 #### Antibiotic resistance
 
 Antibiotic resistance stage
 
-Type `ANTIBIOTIC_RESISTANCE` · manifest v?.
+Type `ANTIBIOTIC_RESISTANCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9d958facb6e0.js` → `Visualization`.
 
 #### Antibody structure
 
-Type `ANTIBODY_STRUCTURE` · manifest v?.
+Type `ANTIBODY_STRUCTURE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-52377431fc2a.js` → `Visualization`.
 
@@ -5492,13 +5536,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-52377
 
 Initiating signal
 
-Type `APOPTOSIS` · manifest v?.
+Type `APOPTOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f0410ebea62b.js` → `Visualization`.
 
 #### Aquifer and groundwater
 
-Type `AQUIFER_AND_GROUNDWATER` · manifest v?.
+Type `AQUIFER_AND_GROUNDWATER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d269e5fb4dee.js` → `Visualization`.
 
@@ -5506,7 +5550,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d269e
 
 Arc-length proof step
 
-Type `ARC_LENGTH` · manifest v?.
+Type `ARC_LENGTH`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-271e6540097a.js` → `ArcLengthVisualization`.
 
@@ -5520,23 +5564,27 @@ Parameters: `observation1` (integer, default `2`, range 1 to 10); `observation2`
 
 Source: manifest `type-501bb4244183.js`; view `visualization-7caebdd5de43.js` → `ArithmeticMeanVisualization`.
 
-#### Arithmetic sequence
+#### Arithmetic sequence: `a_n = a_1 + (n - 1)d`
 
-Type `ARITHMETIC_SEQUENCE` · manifest v?.
+Type `ARITHMETIC_SEQUENCE` · manifest v4 · formula `a_n = a_1 + (n - 1)d`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4c404c2be44a.js` → `ArithmeticSequenceVisualization`.
+Parameters: `firstTerm` (integer, default `2`, range -6 to 6); `commonDifference` (integer, default `3`, range -4 to 4); `termNumber` (integer, default `5`, range 1 to 6).
+
+Source: manifest `model-d8a81301bcce.js`; view `visualization-4c404c2be44a.js` → `ArithmeticSequenceVisualization`.
 
 #### Arithmetic sequence sum formula
 
-Type `ARITHMETIC_SEQUENCE_SUM_FORMULA` · manifest v?.
+Type `ARITHMETIC_SEQUENCE_SUM_FORMULA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c056eae7d2bd.js` → `ArithmeticSequenceSumVisualization`.
 
-#### Arithmetic vs geometric
+#### Arithmetic vs geometric: `\begin{aligned} a_n &= a_1 + (n - 1)d \\ g_n &= a_1 r^{n - 1} \end{aligned}`
 
-Type `ARITHMETIC_VS_GEOMETRIC` · manifest v?.
+Type `ARITHMETIC_VS_GEOMETRIC` · manifest v3 · formula `\begin{aligned} a_n &= a_1 + (n - 1)d \\ g_n &= a_1 r^{n - 1} \end{aligned}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-95290b600eaf.js` → `ArithmeticVsGeometricVisualization`.
+Parameters: `commonDifference` (number, default `2`, range -20 to 20); `commonRatio` (number, default `2`, range -3 to 3).
+
+Source: manifest `model-5dd2c88fcae7.js`; view `visualization-95290b600eaf.js` → `ArithmeticVsGeometricVisualization`.
 
 #### Aromaticity and huckels rule
 
@@ -5552,15 +5600,17 @@ Source: manifest `type-4644d5bf838d.js`; view `visualization-8ba13bf06edc.js` �
 
 Queue mode
 
-Type `ARRAY_QUEUE_FRONT_REAR` · manifest v?.
+Type `ARRAY_QUEUE_FRONT_REAR` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-46593c3d8626.js` → `ArrayQueueFrontRearVisualization`.
+Parameters: `mode` (enum, default `linear`, one of `linear`, `circular`).
+
+Source: manifest `model-9eabfa87d180.js`; view `visualization-46593c3d8626.js` → `ArrayQueueFrontRearVisualization`.
 
 #### Asymmetric key roles
 
 Choose the security goal
 
-Type `ASYMMETRIC_KEY_ROLES` · manifest v?.
+Type `ASYMMETRIC_KEY_ROLES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4261a2e635a1.js` → `AsymmetricKeyRolesVisualization`.
 
@@ -5578,7 +5628,7 @@ Source: manifest `type-c62486043386.js`; view `visualization-41e6ebeef86f.js` �
 
 Atmospheric temperature profile. At {altitudeCount, plural, one {{altitude} kilometer} other {{altitude} kilometers}}, the selected point is in the {layer}; temperature generally {trend} with further ascent. The nearest boundary is the {boundary} near {boundaryAltitudeCount, plural, one {{boundaryAltitude} kilometer} other {{boundaryAltitude} kilometers}}.
 
-Type `ATMOSPHERIC_LAYERS` · manifest v?.
+Type `ATMOSPHERIC_LAYERS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-526c20dc215d.js` → `AtmosphericLayersVisualization`.
 
@@ -5594,7 +5644,7 @@ Source: manifest `type-b367cfc0fc69.js`; view `visualization-d53ea466bcbd.js` �
 
 #### Atomic composition
 
-Type `ATOMIC_COMPOSITION` · manifest v?.
+Type `ATOMIC_COMPOSITION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e4406b1e132b.js` → `AtomicCompositionVisualization`.
 
@@ -5602,7 +5652,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e4406
 
 ATP cycle phase
 
-Type `ATP_CYCLE` · manifest v?.
+Type `ATP_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1c149a24b219.js` → `AtpCycleVisualization`.
 
@@ -5610,23 +5660,25 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1c149
 
 Time-series pattern
 
-Type `AUTOCORRELATION` · manifest v?.
+Type `AUTOCORRELATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-82f35af984a3.js` → `Visualization`.
 
 #### Average speed distance time
 
-Type `AVERAGE_SPEED_DISTANCE_TIME` · manifest v?.
+Type `AVERAGE_SPEED_DISTANCE_TIME`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bb6d9e34b571.js` → `AverageSpeedDistanceTimeVisualization`.
 
-#### Avogadros law
+#### Avogadros law: `\frac{V_1}{n_1}=\frac{V_2}{n_2}`
 
 Amount of gas relative to the reference
 
-Type `AVOGADROS_LAW` · manifest v?.
+Type `AVOGADROS_LAW` · manifest v2 · formula `\frac{V_1}{n_1}=\frac{V_2}{n_2}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8a73483282fe.js` → `Visualization`.
+Parameters: `reference_amount_mol` (number, default `1`, range 0.25 to 5); `reference_volume_l` (number, default `22.4`, range 1 to 120).
+
+Source: manifest `model-5a84276bd5aa.js`; view `visualization-8a73483282fe.js` → `Visualization`.
 
 #### Balancing equations
 
@@ -5638,29 +5690,33 @@ Parameters: `reaction_example` (enum, default `hydrogen-and-oxygen-to-water`, on
 
 Source: manifest `type-ee78dd3b1e31.js`; view `visualization-cdd97b6e0074.js` → `BalancingEquationsVisualization`.
 
-#### Bank credit money multiplier
+#### Bank credit money multiplier: `m = \frac{1}{r}`
 
-Type `BANK_CREDIT_MONEY_MULTIPLIER` · manifest v?.
+Type `BANK_CREDIT_MONEY_MULTIPLIER` · manifest v3 · formula `m = \frac{1}{r}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b94aa0d2a10e.js` → `BankCreditMoneyMultiplierVisualization`.
+Parameters: `initialDepositUsd` (number, default `1000`, range 100 to 2000); `reserveRatioPercent` (number, default `10`, range 5 to 50).
+
+Source: manifest `model-deaf0a16998f.js`; view `visualization-b94aa0d2a10e.js` → `BankCreditMoneyMultiplierVisualization`.
 
 #### Bar magnet field strength
 
-Type `BAR_MAGNET_FIELD_STRENGTH` · manifest v?.
+Type `BAR_MAGNET_FIELD_STRENGTH`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a3c28b974733.js` → `BarMagnetFieldStrengthVisualization`.
 
 #### Bayes theorem
 
-Type `BAYES_THEOREM` · manifest v?.
+Type `BAYES_THEOREM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-65621ccef177.js` → `BayesTheoremVisualization`.
 
 #### Bayesian beta binomial updating
 
-Type `BAYESIAN_BETA_BINOMIAL_UPDATING` · manifest v?.
+Type `BAYESIAN_BETA_BINOMIAL_UPDATING` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-17421d3211ef.js` → `BayesianBetaBinomialVisualization`.
+Parameters: `prior_alpha` (number, default `5`, range 1.5 to 6); `prior_beta` (number, default `5`, range 1.5 to 6); `observed_successes` (integer, default `6`, range 0 to 12); `observed_failures` (integer, default `2`, range 0 to 12).
+
+Source: manifest `model-65899196f0dd.js`; view `visualization-17421d3211ef.js` → `BayesianBetaBinomialVisualization`.
 
 #### Beer lambert law: `A = \varepsilon c l`
 
@@ -5672,7 +5728,7 @@ Source: manifest `type-b34069051dae.js`; view `visualization-2ffd2d7ad26f.js` �
 
 #### Beta oxidation cycle
 
-Type `BETA_OXIDATION_CYCLE` · manifest v?.
+Type `BETA_OXIDATION_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1aca5434b81a.js` → `BetaOxidationVisualization`.
 
@@ -5680,7 +5736,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1aca5
 
 Traversal algorithm
 
-Type `BFS_DFS_TRAVERSAL` · manifest v?.
+Type `BFS_DFS_TRAVERSAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b506efdc87b4.js` → `Visualization`.
 
@@ -5688,15 +5744,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b506e
 
 Input size n
 
-Type `BIG_O_GROWTH_COMPARISON` · manifest v?.
+Type `BIG_O_GROWTH_COMPARISON` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-36595112514c.js` → `BigOGrowthComparisonVisualization`.
+Parameters: `n` (integer, default `10`, range 1 to 20).
+
+Source: manifest `model-d45c8c7b3dc6.js`; view `visualization-36595112514c.js` → `BigOGrowthComparisonVisualization`.
 
 #### Big o time complexity
 
 Input size n
 
-Type `BIG_O_TIME_COMPLEXITY` · manifest v?.
+Type `BIG_O_TIME_COMPLEXITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8943e77daee3.js` → `BigOTimeComplexityVisualization`.
 
@@ -5704,51 +5762,63 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8943e
 
 Heap operation
 
-Type `BINARY_HEAP_OPERATIONS` · manifest v?.
+Type `BINARY_HEAP_OPERATIONS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8105621dc4ae.js` → `BinaryHeapOperationsVisualization`.
+Parameters: `heap_kind` (enum, default `min-heap`, one of `min-heap`, `max-heap`); `initial_operation` (enum, default `insert`, one of `insert`, `remove-root`).
+
+Source: manifest `model-775baaf06261.js`; view `visualization-8105621dc4ae.js` → `BinaryHeapOperationsVisualization`.
 
 #### Binary place value
 
 Decimal value from 0 to 255
 
-Type `BINARY_PLACE_VALUE` · manifest v?.
+Type `BINARY_PLACE_VALUE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-51aec3593d50.js` → `BinaryPlaceValueVisualization`.
+Parameters: `initial_value` (integer, default `45`, range 0 to 255).
+
+Source: manifest `model-e76cabbd5aab.js`; view `visualization-51aec3593d50.js` → `BinaryPlaceValueVisualization`.
 
 #### Binary search
 
 Target value; type an exact value or use the slider
 
-Type `BINARY_SEARCH` · manifest v?.
+Type `BINARY_SEARCH` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7db8086fea1e.js` → `BinarySearchVisualization`.
+Parameters: `target` (integer, default `55`, range 10 to 100).
+
+Source: manifest `model-d9cf6b8411c6.js`; view `visualization-7db8086fea1e.js` → `BinarySearchVisualization`.
 
 #### Binary search tree insertion
 
 Insertion order
 
-Type `BINARY_SEARCH_TREE_INSERTION` · manifest v?.
+Type `BINARY_SEARCH_TREE_INSERTION` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-23b86a2e6d9f.js` → `BinarySearchTreeInsertionVisualization`.
+Parameters: `insertionSequence` (enum, default `mixed`, one of `mixed`, `balanced`, `ascending`).
+
+Source: manifest `model-5abcde22832d.js`; view `visualization-23b86a2e6d9f.js` → `BinarySearchTreeInsertionVisualization`.
 
 #### Binomial distribution
 
-Type `BINOMIAL_DISTRIBUTION` · manifest v?.
+Type `BINOMIAL_DISTRIBUTION` · manifest v6.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ec8b3c2d54e9.js` → `BinomialDistributionVisualization`.
+Parameters: `trials` (integer, default `6`, range 1 to 10); `successPercent` (number, default `50`, range 0 to 100).
+
+Source: manifest `model-4378a4161730.js`; view `visualization-ec8b3c2d54e9.js` → `BinomialDistributionVisualization`.
 
 #### Binomial square
 
-Type `BINOMIAL_SQUARE` · manifest v?.
+Type `BINOMIAL_SQUARE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9bcaf2a2049c.js` → `BinomialSquareVisualization`.
 
-#### Binomial theorem pascal triangle
+#### Binomial theorem pascal triangle: `(a+b)^n = \sum_{k=0}^{n}\binom{n}{k}a^{n-k}b^k`
 
-Type `BINOMIAL_THEOREM_PASCAL_TRIANGLE` · manifest v?.
+Type `BINOMIAL_THEOREM_PASCAL_TRIANGLE` · manifest v2 · formula `(a+b)^n = \sum_{k=0}^{n}\binom{n}{k}a^{n-k}b^k`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c5a292f8b66f.js` → `BinomialTheoremPascalTriangleVisualization`.
+Parameters: `n` (integer, default `5`, range 0 to 6).
+
+Source: manifest `model-3791234ec878.js`; view `visualization-c5a292f8b66f.js` → `BinomialTheoremPascalTriangleVisualization`.
 
 #### Biological ph and buffers: `\mathrm{pH}=\mathrm{p}K_a+\log_{10}\!\left(\frac{[A^-]}{[HA]}\right)`
 
@@ -5764,9 +5834,11 @@ Source: manifest `type-9b7b6f94e6e1.js`; view `visualization-3c05bc879e3b.js` �
 
 Food-chain stage
 
-Type `BIOMAGNIFICATION` · manifest v?.
+Type `BIOMAGNIFICATION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bb79b0ac202c.js` → `Visualization`.
+Parameters: `contaminant` (enum, default `DDT`, one of `DDT`, `methylmercury`, `PCBs`).
+
+Source: manifest `model-aae321d23dad.js`; view `visualization-bb79b0ac202c.js` → `Visualization`.
 
 #### Biome climatograph
 
@@ -5780,37 +5852,53 @@ Source: manifest `type-894614f7a446.js`; view `visualization-2c99676a31a2.js` �
 
 #### Blockchain hash chain
 
-Type `BLOCKCHAIN_HASH_CHAIN` · manifest v?.
+Type `BLOCKCHAIN_HASH_CHAIN` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f16370da6926.js` → `BlockchainHashChainVisualization`.
+Parameters: `chainState` (enum, default `original`, one of `original`, `tamper_block_1`, `tamper_block_2`, `tamper_block_3`).
+
+Source: manifest `model-c23e01a5b875.js`; view `visualization-f16370da6926.js` → `BlockchainHashChainVisualization`.
 
 #### Blood circulation
 
-Type `BLOOD_CIRCULATION` · manifest v?.
+Type `BLOOD_CIRCULATION` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5a5b952c74dd.js` → `BloodCirculationVisualization`.
+Parameters: `circulation` (enum, default `pulmonary`, one of `pulmonary`, `systemic`).
+
+Source: manifest `model-135f4cf52f9c.js`; view `visualization-5a5b952c74dd.js` → `BloodCirculationVisualization`.
 
 #### Blood glucose regulation
 
-Type `BLOOD_GLUCOSE_REGULATION` · manifest v?.
+Type `BLOOD_GLUCOSE_REGULATION` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cb42d91e2a1d.js` → `BloodGlucoseVisualization`.
+Parameters: `initial_condition` (enum, default `high`, one of `high`, `low`).
+
+Source: manifest `model-106204ffd60a.js`; view `visualization-cb42d91e2a1d.js` → `BloodGlucoseVisualization`.
+
+#### Blood pressure regulation
+
+Type `BLOOD_PRESSURE_REGULATION` · manifest v2.
+
+Parameters: `initial_pressure_condition` (enum, default `high`, one of `low`, `normal`, `high`).
+
+Source: manifest `model-e9d53ce0f19d.js`; view `visualization-c332938cc9e1.js` → `BloodPressureVisualization`.
 
 #### Blue white screening
 
 Vector state
 
-Type `BLUE_WHITE_SCREENING` · manifest v?.
+Type `BLUE_WHITE_SCREENING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-221d8b8213bd.js` → `BlueWhiteScreeningVisualization`.
 
-#### Boiling point elevation
+#### Boiling point elevation: `\Delta T_b=iK_bm`
 
 Solute molality
 
-Type `BOILING_POINT_ELEVATION` · manifest v?.
+Type `BOILING_POINT_ELEVATION` · manifest v3 · formula `\Delta T_b=iK_bm`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-08cc11972fec.js` → `BoilingPointElevationVisualization`.
+Parameters: `solvent` (enum, default `benzene`, one of `water`, `benzene`); `initial_solute_molality` (number, default `0.15`, range 0 to 0.25); `initial_particle_factor` (integer, default `2`, range 1 to 3).
+
+Source: manifest `model-aed74d60f0d7.js`; view `visualization-08cc11972fec.js` → `BoilingPointElevationVisualization`.
 
 #### Bomb calorimetry
 
@@ -5826,17 +5914,19 @@ Source: manifest `type-cb7946b61519.js`; view `visualization-f0f7d99574e5.js` �
 
 Covalent bond order
 
-Type `BOND_ENERGY_CURVE` · manifest v?.
+Type `BOND_ENERGY_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-927dcecaea8c.js` → `BondEnergyCurveVisualization`.
 
-#### Bond polarity
+#### Bond polarity: `\Delta \chi = |\chi_2 - \chi_1|`
 
 {atomName} ({symbol}), Pauling electronegativity {electronegativity}
 
-Type `BOND_POLARITY` · manifest v?.
+Type `BOND_POLARITY` · manifest v2 · formula `\Delta \chi = |\chi_2 - \chi_1|`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ad676972bf64.js` → `BondPolarityVisualization`.
+Parameters: `atom1` (enum, default `H`, one of `H`, `C`, `O`, `F`, `Cl`); `atom2` (enum, default `Cl`, one of `H`, `C`, `O`, `F`, `Cl`).
+
+Source: manifest `model-940064895671.js`; view `visualization-ad676972bf64.js` → `BondPolarityVisualization`.
 
 #### Boolean logic
 
@@ -5848,15 +5938,17 @@ Source: manifest `type-8da18ccae221.js`; view `visualization-2925ab9916b1.js` �
 
 #### Boolean truth table
 
-Type `BOOLEAN_TRUTH_TABLE` · manifest v?.
+Type `BOOLEAN_TRUTH_TABLE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a0078e1b16a6.js` → `BooleanTruthTableVisualization`.
+Parameters: `inputA` (boolean, default `true`); `inputB` (boolean, default `true`); `operator` (enum, default `OR`, one of `AND`, `OR`, `XOR`, `XNOR`).
+
+Source: manifest `model-57f01654f1a3.js`; view `visualization-a0078e1b16a6.js` → `BooleanTruthTableVisualization`.
 
 #### Bootstrap distribution
 
 Central confidence level
 
-Type `BOOTSTRAP_DISTRIBUTION` · manifest v?.
+Type `BOOTSTRAP_DISTRIBUTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b40fe61e46a.js` → `BootstrapDistributionVisualization`.
 
@@ -5864,13 +5956,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b40f
 
 Ionic compound
 
-Type `BORN_HABER_CYCLE` · manifest v?.
+Type `BORN_HABER_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4cc015e85a1e.js` → `Visualization`.
 
 #### Break even quantity
 
-Type `BREAK_EVEN_QUANTITY` · manifest v?.
+Type `BREAK_EVEN_QUANTITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6bb9126813a3.js` → `BreakEvenQuantityVisualization`.
 
@@ -5878,7 +5970,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6bb91
 
 Breathing phase
 
-Type `BREATHING_MECHANICS` · manifest v?.
+Type `BREATHING_MECHANICS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-54605d2b01a4.js` → `Visualization`.
 
@@ -5886,9 +5978,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-54605
 
 Bubble sort actions
 
-Type `BUBBLE_SORT` · manifest v?.
+Type `BUBBLE_SORT` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-76dd623bf208.js` → `BubbleSortVisualization`.
+Parameters: `initialOrder` (enum, default `mixed`, one of `mixed`, `reversed`, `nearly_sorted`, `few_swaps`).
+
+Source: manifest `model-37272c97cf25.js`; view `visualization-76dd623bf208.js` → `BubbleSortVisualization`.
 
 #### Buffer composition: `\mathrm{pH}=\mathrm{p}K_a+\log_{10}\!\left(\frac{[A^-]}{[HA]}\right)`
 
@@ -5902,13 +5996,15 @@ Source: manifest `type-4aeefa8d363c.js`; view `visualization-3b152003115a.js` �
 
 #### Buffer ph strong acid base
 
-Type `BUFFER_PH_STRONG_ACID_BASE` · manifest v?.
+Type `BUFFER_PH_STRONG_ACID_BASE` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-19438d18ed3e.js` → `BufferPhStrongAcidBaseVisualization`.
+Parameters: `netStrongAcidMinusBaseMoles` (number, default `0`, range -0.02 to 0.02).
+
+Source: manifest `model-cf55e77d3f7b.js`; view `visualization-19438d18ed3e.js` → `BufferPhStrongAcidBaseVisualization`.
 
 #### Buoyancy
 
-Type `BUOYANCY` · manifest v?.
+Type `BUOYANCY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fd6de8cda090.js` → `BuoyancyVisualization`.
 
@@ -5916,33 +6012,37 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fd6de
 
 Examined time in the business cycle
 
-Type `BUSINESS_CYCLES` · manifest v?.
+Type `BUSINESS_CYCLES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8a96d62ed5f9.js` → `BusinessCyclesVisualization`.
 
 #### C array pointer arithmetic
 
-Type `C_ARRAY_POINTER_ARITHMETIC` · manifest v?.
+Type `C_ARRAY_POINTER_ARITHMETIC` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f88a75a08c4d.js` → `CArrayPointerArithmeticVisualization`.
+Parameters: `index` (integer, default `3`, range 0 to 7).
+
+Source: manifest `model-d82ec1ece7ce.js`; view `visualization-f88a75a08c4d.js` → `CArrayPointerArithmeticVisualization`.
 
 #### Cadences
 
-Type `CADENCES` · manifest v?.
+Type `CADENCES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9f1fd4834d3d.js` → `Visualization`.
 
 #### Calcium pth calcitonin feedback
 
-Type `CALCIUM_PTH_CALCITONIN_FEEDBACK` · manifest v?.
+Type `CALCIUM_PTH_CALCITONIN_FEEDBACK` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-de7e68836feb.js` → `CalciumFeedbackVisualization`.
+Parameters: `calciumCondition` (enum, default `low`, one of `low`, `high`).
+
+Source: manifest `model-ff8cd9e1b433.js`; view `visualization-de7e68836feb.js` → `CalciumFeedbackVisualization`.
 
 #### Calvin cycle
 
 Calvin-cycle phase
 
-Type `CALVIN_CYCLE` · manifest v?.
+Type `CALVIN_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d838a1d37039.js` → `CalvinCycleVisualization`.
 
@@ -5960,13 +6060,13 @@ Source: manifest `type-f530fb4543f1.js`; view `visualization-9a893a9d2ca9.js` �
 
 Domestic versus foreign real interest rate
 
-Type `CAPITAL_FLOWS` · manifest v?.
+Type `CAPITAL_FLOWS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-892592c98946.js` → `CapitalFlowsVisualization`.
 
 #### Carbohydrate structure
 
-Type `CARBOHYDRATE_STRUCTURE` · manifest v?.
+Type `CARBOHYDRATE_STRUCTURE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ca247791662d.js` → `Visualization`.
 
@@ -5974,15 +6074,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ca247
 
 Carbon pathway
 
-Type `CARBON_CYCLE` · manifest v?.
+Type `CARBON_CYCLE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-832a61703911.js` → `CarbonCycleVisualization`.
+Parameters: `initial_pathway` (enum, default `biological cycle`, one of `biological cycle`, `ocean exchange`, `long-term storage and combustion`).
+
+Source: manifest `model-2389f073136d.js`; view `visualization-832a61703911.js` → `CarbonCycleVisualization`.
 
 #### Carbonyl nucleophilic addition
 
 Carbonyl substrate
 
-Type `CARBONYL_NUCLEOPHILIC_ADDITION` · manifest v?.
+Type `CARBONYL_NUCLEOPHILIC_ADDITION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-896d2eea2b71.js` → `Visualization`.
 
@@ -5990,7 +6092,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-896d2
 
 Ventricular action-potential phase
 
-Type `CARDIAC_ACTION_POTENTIAL` · manifest v?.
+Type `CARDIAC_ACTION_POTENTIAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-570d5662d7d8.js` → `CardiacActionPotentialVisualization`.
 
@@ -5998,7 +6100,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-570d5
 
 Cardiac-cycle phase
 
-Type `CARDIAC_CYCLE` · manifest v?.
+Type `CARDIAC_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-80a193605824.js` → `Visualization`.
 
@@ -6026,15 +6128,17 @@ Source: manifest `type-af7f92e44cfd.js`; view `visualization-441df9ed1a85.js` �
 
 Cathodic-protection state
 
-Type `CATHODIC_PROTECTION` · manifest v?.
+Type `CATHODIC_PROTECTION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8676f5b1314.js` → `Visualization`.
+Parameters: `anode_material` (enum, default `magnesium`, one of `magnesium`, `zinc`).
+
+Source: manifest `model-a538838ccb34.js`; view `visualization-b8676f5b1314.js` → `Visualization`.
 
 #### Cell cycle
 
 Cell-cycle phase
 
-Type `CELL_CYCLE` · manifest v?.
+Type `CELL_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bf00cef167da.js` → `CellCycleVisualization`.
 
@@ -6042,7 +6146,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bf00c
 
 Checkpoint
 
-Type `CELL_CYCLE_CHECKPOINTS` · manifest v?.
+Type `CELL_CYCLE_CHECKPOINTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7cace9cee8e3.js` → `CellCycleCheckpointsVisualization`.
 
@@ -6050,7 +6154,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7cace
 
 Selected epithelial junction
 
-Type `CELL_JUNCTIONS` · manifest v?.
+Type `CELL_JUNCTIONS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4bd36767aa08.js` → `Visualization`.
 
@@ -6058,15 +6162,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4bd36
 
 Transport mechanism
 
-Type `CELL_MEMBRANE_TRANSPORT` · manifest v?.
+Type `CELL_MEMBRANE_TRANSPORT` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e56c65825dfd.js` → `Visualization`.
+Parameters: `mechanism` (enum, default `diffusion`, one of `diffusion`, `facilitatedDiffusion`, `activeTransport`).
+
+Source: manifest `model-89c283b46546.js`; view `visualization-e56c65825dfd.js` → `Visualization`.
 
 #### Cell organelles
 
 Cell type
 
-Type `CELL_ORGANELLES` · manifest v?.
+Type `CELL_ORGANELLES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3b908912d373.js` → `Visualization`.
 
@@ -6074,7 +6180,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3b908
 
 Cell signaling stage
 
-Type `CELL_SIGNALING_PATHWAY` · manifest v?.
+Type `CELL_SIGNALING_PATHWAY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dd2fd9f9d59a.js` → `CellSignalingPathwayVisualization`.
 
@@ -6082,7 +6188,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dd2fd
 
 {glucose, plural, one {# glucose molecule} other {# glucose molecules}}
 
-Type `CELLULAR_RESPIRATION_INPUTS_OUTPUTS` · manifest v?.
+Type `CELLULAR_RESPIRATION_INPUTS_OUTPUTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b12d7e091968.js` → `CellularRespirationVisualization`.
 
@@ -6104,11 +6210,13 @@ Parameters: `massKilograms` (number, default `2`, range 0.5 to 5); `speedMetersP
 
 Source: manifest `type-3b03c35824de.js`; view `visualization-724b910ab3b6.js` → `CentripetalForceVisualization`.
 
-#### Change of basis
+#### Change of basis: `P_B\mathbf{v}_B=\mathbf{v}`
 
-Type `CHANGE_OF_BASIS` · manifest v?.
+Type `CHANGE_OF_BASIS` · manifest v1 · formula `P_B\mathbf{v}_B=\mathbf{v}`, also `[\mathbf v]_{\mathrm{std}}=P[\mathbf v]_B`, `[\mathbf v]_B=P^{-1}[\mathbf v]_{\mathrm{std}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c565aa08e2ff.js` → `ChangeOfBasisVisualization`.
+Parameters: `vectorX` (number, default `3`, range -5 to 5); `vectorY` (number, default `1`, range -5 to 5); `basis1X` (number, default `1`, range -4 to 4); `basis1Y` (number, default `0`, range -4 to 4); `basis2X` (number, default `0`, range -4 to 4); `basis2Y` (number, default `1`, range -4 to 4).
+
+Source: manifest `model-17f47a9d9054.js`; view `visualization-c565aa08e2ff.js` → `ChangeOfBasisVisualization`.
 
 #### Charles law: `\frac{V_1}{T_1} = \frac{V_2}{T_2}`
 
@@ -6122,7 +6230,7 @@ Source: manifest `type-fa03d5dd9600.js`; view `visualization-68e3a9daf6ad.js` �
 
 Chemiosmosis process stage
 
-Type `CHEMIOSMOSIS` · manifest v?.
+Type `CHEMIOSMOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ab918e1b9c3b.js` → `ChemiosmosisVisualization`.
 
@@ -6130,9 +6238,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ab918
 
 Degrees of freedom
 
-Type `CHI_SQUARE_DISTRIBUTION` · manifest v?.
+Type `CHI_SQUARE_DISTRIBUTION` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bd06a0bcf94f.js` → `ChiSquareDistributionVisualization`.
+Parameters: `degrees_of_freedom` (integer, default `5`, range 1 to 20); `observed_value` (number, default `11.1`, range 0 to 30).
+
+Source: manifest `model-a66b5ddc2f62.js`; view `visualization-bd06a0bcf94f.js` → `ChiSquareDistributionVisualization`.
 
 #### Chi square goodness of fit: `\chi^2 = \sum \frac{(O_i-E_i)^2}{E_i}`
 
@@ -6146,21 +6256,23 @@ Source: manifest `type-f50250083878.js`; view `visualization-e8c3cb7ed74d.js` �
 
 #### Chi square independence
 
-Type `CHI_SQUARE_INDEPENDENCE` · manifest v?.
+Type `CHI_SQUARE_INDEPENDENCE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6e5c5bd2d5b9.js` → `ChiSquareIndependenceVisualization`.
+Parameters: `observedTopLeft` (integer, default `54`, range 20 to 60); `observedTopRight` (integer, default `26`, range 20 to 60); `observedBottomLeft` (integer, default `30`, range 20 to 60); `observedBottomRight` (integer, default `30`, range 20 to 60).
+
+Source: manifest `model-12b1180c259e.js`; view `visualization-6e5c5bd2d5b9.js` → `ChiSquareIndependenceVisualization`.
 
 #### Chirality and r s configuration
 
 Choose a stereochemistry example
 
-Type `CHIRALITY_AND_R_S_CONFIGURATION` · manifest v?.
+Type `CHIRALITY_AND_R_S_CONFIGURATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c903aa361f6e.js` → `Visualization`.
 
 #### Chord construction
 
-Type `CHORD_CONSTRUCTION` · manifest v?.
+Type `CHORD_CONSTRUCTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8d4472cda5f2.js` → `Visualization`.
 
@@ -6168,21 +6280,25 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8d447
 
 Chromatogram development
 
-Type `CHROMATOGRAPHY` · manifest v?.
+Type `CHROMATOGRAPHY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-render-22fea844a534.js` → `Visualization`.
 
-#### Circle area
+#### Circle area: `A = \pi r^2`
 
-Type `CIRCLE_AREA` · manifest v?.
+Type `CIRCLE_AREA` · manifest v3 · formula `A = \pi r^2`, also `A = \frac{\pi d^2}{4}`, `\pi r^2`, `\frac{\pi d^2}{4}`, `pir^2=a`, `pid^2/4=a`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-decacaaaa2b9.js` → `CircleAreaVisualization`.
+Parameters: `radius` (number, default `3`, range 0.01 to 10000).
 
-#### Circle circumference
+Source: manifest `template-f75272b4eabf.js`; view `visualization-decacaaaa2b9.js` → `CircleAreaVisualization`.
 
-Type `CIRCLE_CIRCUMFERENCE` · manifest v?.
+#### Circle circumference: `C = 2\pi r`
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5634d03745c9.js` → `CircleCircumferenceVisualization`.
+Type `CIRCLE_CIRCUMFERENCE` · manifest v5 · formula `C = 2\pi r`, also `2\pi r = C`, `C = \pi d`, `\pi d = C`, `r = \frac{C}{2\pi}`, `d = \frac{C}{\pi}`.
+
+Parameters: `radius` (number, default `3`, range 0.01 to 10000).
+
+Source: manifest `template-d09a2fe7dec8.js`; view `visualization-5634d03745c9.js` → `CircleCircumferenceVisualization`.
 
 #### Classes of levers
 
@@ -6194,7 +6310,7 @@ Source: manifest `type-93019a122ac1.js`; view `visualization-451fb5c3a8b2.js` �
 
 #### Classical conditioning
 
-Type `CLASSICAL_CONDITIONING` · manifest v?.
+Type `CLASSICAL_CONDITIONING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-267440d1aba5.js` → `ClassicalConditioningVisualization`.
 
@@ -6210,7 +6326,7 @@ Source: manifest `type-dca95d451915.js`; view `visualization-b03dc44eb8f4.js` �
 
 Revealed tree depth
 
-Type `CLASSIFICATION_TREE` · manifest v?.
+Type `CLASSIFICATION_TREE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-626d5075c58e.js` → `ClassificationTreeVisualization`.
 
@@ -6238,7 +6354,7 @@ Source: manifest `type-6a0aad7ace5c.js`; view `visualization-b9ed1a0c327b.js` �
 
 Clonal-selection stage
 
-Type `CLONAL_SELECTION_AND_IMMUNE_MEMORY` · manifest v?.
+Type `CLONAL_SELECTION_AND_IMMUNE_MEMORY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fa4ce5283796.js` → `ClonalSelectionVisualization`.
 
@@ -6246,23 +6362,27 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fa4ce
 
 Climate time span
 
-Type `CO2_AND_TEMPERATURE_TIME_SERIES` · manifest v?.
+Type `CO2_AND_TEMPERATURE_TIME_SERIES` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5e4bd82a77e1.js` → `Visualization`.
+Parameters: `initial_time_span` (enum, default `industrial-era`, one of `industrial-era`, `paleoclimate`).
+
+Source: manifest `model-7fd3bf30713f.js`; view `visualization-5e4bd82a77e1.js` → `Visualization`.
 
 #### Coal power plant
 
 Generation stage
 
-Type `COAL_POWER_PLANT` · manifest v?.
+Type `COAL_POWER_PLANT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eb0fb4c8b40d.js` → `CoalPowerPlantVisualization`.
 
 #### Codon chart
 
-Type `CODON_CHART` · manifest v?.
+Type `CODON_CHART` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-228e45c43fca.js` → `CodonChartVisualization`.
+Parameters: `first_base` (enum, default `A`, one of `U`, `C`, `A`, `G`); `second_base` (enum, default `U`, one of `U`, `C`, `A`, `G`); `third_base` (enum, default `G`, one of `U`, `C`, `A`, `G`).
+
+Source: manifest `model-7fc37b4d721d.js`; view `visualization-228e45c43fca.js` → `CodonChartVisualization`.
 
 #### Cohens d: `d = \frac{\bar{x}_2 - \bar{x}_1}{s_{\mathrm{pooled}}}`
 
@@ -6276,13 +6396,13 @@ Source: manifest `type-8848a63b92ff.js`; view `visualization-7fd64fee5266.js` �
 
 #### Coin flipping
 
-Type `COIN_FLIPPING` · manifest v?.
+Type `COIN_FLIPPING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ddf8c024b16f.js` → `CoinFlippingVisualization`.
 
 #### Collision orientation
 
-Type `COLLISION_ORIENTATION` · manifest v?.
+Type `COLLISION_ORIENTATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-91f3020deb3b.js` → `CollisionOrientationVisualization`.
 
@@ -6304,7 +6424,7 @@ Source: manifest `type-1635fe6bba2b.js`; view `visualization-4446fc85d276.js` �
 
 #### Combined gas law
 
-Type `COMBINED_GAS_LAW` · manifest v?.
+Type `COMBINED_GAS_LAW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-71aa23e1fc0c.js` → `CombinedGasLawVisualization`.
 
@@ -6312,29 +6432,33 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-71aa2
 
 Example {number}: {expression}
 
-Type `COMBINING_LIKE_TERMS_TILES` · manifest v?.
+Type `COMBINING_LIKE_TERMS_TILES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-34edf98b37f6.js` → `CombiningLikeTermsTilesVisualization`.
 
 #### Common ion effect
 
-Type `COMMON_ION_EFFECT` · manifest v?.
+Type `COMMON_ION_EFFECT` · manifest v5.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-18a4f729b67b.js` → `CommonIonEffectVisualization`.
+Parameters: `salt_example` (enum, default `AgCl with NaCl`, one of `AgCl with NaCl`, `CaF2 with NaF`, `Mg(OH)2 with KOH`).
+
+Source: manifest `model-e104bfbc6342.js`; view `visualization-18a4f729b67b.js` → `CommonIonEffectVisualization`.
 
 #### Common normal intervals
 
 Number of standard deviations from the mean
 
-Type `COMMON_NORMAL_INTERVALS` · manifest v?.
+Type `COMMON_NORMAL_INTERVALS` · manifest v5.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b82316485d5.js` → `CommonNormalIntervalsVisualization`.
+Parameters: `z` (number, default `1`, range 0 to 4).
+
+Source: manifest `model-69143636c0d5.js`; view `visualization-8b82316485d5.js` → `CommonNormalIntervalsVisualization`.
 
 #### Comparative advantage trade
 
 Producer A capacity allocated to Good X, percent
 
-Type `COMPARATIVE_ADVANTAGE_TRADE` · manifest v?.
+Type `COMPARATIVE_ADVANTAGE_TRADE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-71e1512b689d.js` → `ComparativeAdvantageTradeVisualization`.
 
@@ -6342,15 +6466,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-71e15
 
 Preferred-resource similarity
 
-Type `COMPETITION_AND_NICHES` · manifest v?.
+Type `COMPETITION_AND_NICHES` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-36ef0b11b9d2.js` → `CompetitionAndNichesVisualization`.
+Parameters: `resource_dimension` (enum, default `food size`, one of `food size`, `habitat space`, `feeding time`).
+
+Source: manifest `model-dc560f6410fb.js`; view `visualization-36ef0b11b9d2.js` → `CompetitionAndNichesVisualization`.
 
 #### Competitive firm loss
 
 Market price
 
-Type `COMPETITIVE_FIRM_LOSS` · manifest v?.
+Type `COMPETITIVE_FIRM_LOSS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-18a959db0b8c.js` → `CompetitiveFirmLossVisualization`.
 
@@ -6358,13 +6484,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-18a95
 
 Market price
 
-Type `COMPETITIVE_FIRM_PROFIT` · manifest v?.
+Type `COMPETITIVE_FIRM_PROFIT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f13e5f81d847.js` → `CompetitiveFirmProfitVisualization`.
 
 #### Competitive labor hiring
 
-Type `COMPETITIVE_LABOR_HIRING` · manifest v?.
+Type `COMPETITIVE_LABOR_HIRING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5610ebafc07b.js` → `CompetitiveLaborHiringVisualization`.
 
@@ -6398,7 +6524,7 @@ Source: manifest `type-58df9aa6d32b.js`; view `visualization-2782131e7539.js` �
 
 Compressor transfer curve with threshold {threshold} decibels, ratio {ratio}, and knee width {knee} decibels. At an input of {input} decibels, output is {output} decibels with {reduction} decibels of gain reduction.
 
-Type `COMPRESSOR_CURVE` · manifest v?.
+Type `COMPRESSOR_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-144bc1831d49.js` → `Visualization`.
 
@@ -6414,7 +6540,7 @@ Source: manifest `type-facf186bb1fa.js`; view `visualization-e3fcd843d810.js` �
 
 #### Conditional probability definition
 
-Type `CONDITIONAL_PROBABILITY_DEFINITION` · manifest v?.
+Type `CONDITIONAL_PROBABILITY_DEFINITION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4677715c283e.js` → `ConditionalProbabilityDefinitionVisualization`.
 
@@ -6422,7 +6548,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-46777
 
 Volume of sodium hydroxide added
 
-Type `CONDUCTOMETRIC_TITRATION` · manifest v?.
+Type `CONDUCTOMETRIC_TITRATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b06b77ca7049.js` → `Visualization`.
 
@@ -6456,21 +6582,27 @@ Source: manifest `type-1e1a69bc5852.js`; view `visualization-13bb8ff69ba4.js` �
 
 Regression plot at x equals {x}, with {count} observed responses. The {level} confidence interval for the mean is {meanLow} to {meanHigh}; the wider {level} prediction interval for one new response is {predictionLow} to {predictionHigh}. Both are centered on the fitted response {mean}.
 
-Type `CONFIDENCE_VS_PREDICTION_BANDS` · manifest v?.
+Type `CONFIDENCE_VS_PREDICTION_BANDS` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8e366224bae8.js` → `ConfidenceVsPredictionBandsVisualization`.
+Parameters: `confidence_level` (enum, default `95%`, one of `90%`, `95%`, `99%`).
+
+Source: manifest `model-ceec6b52318c.js`; view `visualization-8e366224bae8.js` → `ConfidenceVsPredictionBandsVisualization`.
 
 #### Confusion matrix metrics
 
-Type `CONFUSION_MATRIX_METRICS` · manifest v?.
+Type `CONFUSION_MATRIX_METRICS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f9b8a9313cab.js` → `ConfusionMatrixMetricsVisualization`.
+Parameters: `truePositiveCount` (integer, default `32`, range 0 to 100); `falsePositiveCount` (integer, default `8`, range 0 to 100); `trueNegativeCount` (integer, default `48`, range 0 to 100); `falseNegativeCount` (integer, default `12`, range 0 to 100).
+
+Source: manifest `model-f8363e95e559.js`; view `visualization-f9b8a9313cab.js` → `ConfusionMatrixMetricsVisualization`.
 
 #### Conjugated dienes and diels alder
 
-Type `CONJUGATED_DIENES_AND_DIELS_ALDER` · manifest v?.
+Type `CONJUGATED_DIENES_AND_DIELS_ALDER` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cd6ba7d916f3.js` → `DielsAlderVisualization`.
+Parameters: `example` (enum, default `butadiene-and-ethene`, one of `butadiene-and-ethene`, `butadiene-and-methyl-vinyl-ketone`, `butadiene-and-maleic-anhydride`).
+
+Source: manifest `model-456ae69d4c49.js`; view `visualization-cd6ba7d916f3.js` → `DielsAlderVisualization`.
 
 #### Consumer and producer surplus
 
@@ -6480,17 +6612,19 @@ Parameters: `demand_shift` (number, default `0`, range -2.5 to 2.5).
 
 Source: manifest `type-1a390930447d.js`; view `visualization-f8e6ae17459a.js` → `Visualization`.
 
-#### Consumer budget line comparative statics
+#### Consumer budget line comparative statics: `M = P_x X + P_y Y`
 
 Budget change scenario
 
-Type `CONSUMER_BUDGET_LINE_COMPARATIVE_STATICS` · manifest v?.
+Type `CONSUMER_BUDGET_LINE_COMPARATIVE_STATICS` · manifest v4 · formula `M = P_x X + P_y Y`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-aaf8f436ab7e.js` → `ConsumerBudgetLineVisualization`.
+Parameters: `changeScenario` (enum, default `income_increase`, one of `income_increase`, `income_decrease`, `price_x_increase`, `price_x_decrease`); `changeMagnitudePercent` (number, default `30`, range 5 to 55).
+
+Source: manifest `model-bbcfc45a37c2.js`; view `visualization-aaf8f436ab7e.js` → `ConsumerBudgetLineVisualization`.
 
 #### Context free grammar ambiguity
 
-Type `CONTEXT_FREE_GRAMMAR_AMBIGUITY` · manifest v?.
+Type `CONTEXT_FREE_GRAMMAR_AMBIGUITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-60fb5e2f4e61.js` → `Visualization`.
 
@@ -6508,7 +6642,7 @@ Source: manifest `type-19d8b437a2d9.js`; view `visualization-2218ed2936b9.js` �
 
 Route endpoint A. Use arrow keys to move A.
 
-Type `CONTOUR_LINES_AND_RELIEF` · manifest v?.
+Type `CONTOUR_LINES_AND_RELIEF`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4cecbd55002e.js` → `Visualization`.
 
@@ -6516,13 +6650,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4cecb
 
 Coral bleaching stage
 
-Type `CORAL_BLEACHING` · manifest v?.
+Type `CORAL_BLEACHING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a5ca1d0c2874.js` → `CoralBleachingVisualization`.
 
 #### Corrective policy
 
-Type `CORRECTIVE_POLICY` · manifest v?.
+Type `CORRECTIVE_POLICY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-760bd55c85de.js` → `CorrectivePolicyVisualization`.
 
@@ -6530,21 +6664,25 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-760bd
 
 Correlation direction
 
-Type `CORRELATION` · manifest v?.
+Type `CORRELATION` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ebe45bb8c09c.js` → `CorrelationVisualization`.
+Parameters: `pattern` (enum, default `positive`, one of `negative`, `none`, `positive`).
+
+Source: manifest `model-624ee5d1bac5.js`; view `visualization-ebe45bb8c09c.js` → `CorrelationVisualization`.
 
 #### Correlation matrix
 
 Variable pair
 
-Type `CORRELATION_MATRIX` · manifest v?.
+Type `CORRELATION_MATRIX` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d3d4bc296ea1.js` → `CorrelationMatrixVisualization`.
+Parameters: `exampleContext` (enum, default `body-measurements`, one of `body-measurements`, `vehicle-features`, `student-survey`).
+
+Source: manifest `model-60673a8e81e9.js`; view `visualization-d3d4bc296ea1.js` → `CorrelationMatrixVisualization`.
 
 #### Cortisol regulation
 
-Type `CORTISOL_REGULATION` · manifest v?.
+Type `CORTISOL_REGULATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1f23860d1169.js` → `CortisolRegulationVisualization`.
 
@@ -6558,23 +6696,27 @@ Source: manifest `type-98e888d7432f.js`; view `visualization-5989f3f846f9.js` �
 
 #### Counting sequences
 
-Type `COUNTING_SEQUENCES` · manifest v?.
+Type `COUNTING_SEQUENCES` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7e5cdac470d2.js` → `CountingSequencesVisualization`.
+Parameters: `optionCount` (integer, default `6`, range 4 to 8); `sequenceLength` (integer, default `3`, range 2 to 4); `replacementMode` (enum, default `with`, one of `with`, `without`).
+
+Source: manifest `model-5170f20e545d.js`; view `visualization-7e5cdac470d2.js` → `CountingSequencesVisualization`.
 
 #### Cpu fetch decode execute
 
 Instruction-cycle step
 
-Type `CPU_FETCH_DECODE_EXECUTE` · manifest v?.
+Type `CPU_FETCH_DECODE_EXECUTE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-31245ab54f0a.js` → `CpuFetchDecodeExecuteVisualization`.
+Parameters: `instructionExample` (enum, default `load`, one of `load`, `add`, `branch`).
+
+Source: manifest `model-21889c1e147f.js`; view `visualization-31245ab54f0a.js` → `CpuFetchDecodeExecuteVisualization`.
 
 #### Crispr cas9
 
 Target site
 
-Type `CRISPR_CAS9` · manifest v?.
+Type `CRISPR_CAS9`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-866f65ef32ed.js` → `Visualization`.
 
@@ -6590,17 +6732,21 @@ Source: manifest `type-945e0105df87.js`; view `visualization-9680b2d624d4.js` �
 
 Activity {task} duration in days
 
-Type `CRITICAL_PATH_NETWORK` · manifest v?.
+Type `CRITICAL_PATH_NETWORK` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-80db478a1349.js` → `CriticalPathNetworkVisualization`.
+Parameters: `durationADays` (number, default `3`, range 1 to 10); `durationBDays` (number, default `4`, range 1 to 10); `durationCDays` (number, default `4`, range 1 to 10); `durationDDays` (number, default `3`, range 1 to 10); `durationEDays` (number, default `4`, range 1 to 10); `durationFDays` (number, default `5`, range 1 to 10).
 
-#### Cross price elasticity
+Source: manifest `model-8a2addb2a518.js`; view `visualization-80db478a1349.js` → `CriticalPathNetworkVisualization`.
+
+#### Cross price elasticity: `E_{xy} = \frac{\%\Delta Q_x}{\%\Delta P_y}`
 
 Product relationship
 
-Type `CROSS_PRICE_ELASTICITY` · manifest v?.
+Type `CROSS_PRICE_ELASTICITY` · manifest v4 · formula `E_{xy} = \frac{\%\Delta Q_x}{\%\Delta P_y}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dcbcd3c02373.js` → `CrossPriceElasticityVisualization`.
+Parameters: `relationship` (enum, default `substitutes`, one of `substitutes`, `complements`); `priceChangeDirection` (enum, default `increase`, one of `increase`, `decrease`); `priceChangeMagnitudePercent` (number, default `30`, range 5 to 60).
+
+Source: manifest `model-71c00d3e4c5e.js`; view `visualization-dcbcd3c02373.js` → `CrossPriceElasticityVisualization`.
 
 #### Cross product geometry: `|a\times b|=|a||b|\sin(\theta)`
 
@@ -6614,13 +6760,13 @@ Source: manifest `type-25a004ce6551.js`; view `visualization-f61f046288a8.js` �
 
 Crossing over stage
 
-Type `CROSSING_OVER` · manifest v?.
+Type `CROSSING_OVER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-63710b333d74.js` → `CrossingOverVisualization`.
 
 #### Crowding out
 
-Type `CROWDING_OUT` · manifest v?.
+Type `CROWDING_OUT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ca98395cd3a3.js` → `Visualization`.
 
@@ -6628,23 +6774,25 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ca983
 
 Cubic unit-cell type
 
-Type `CRYSTAL_UNIT_CELLS` · manifest v?.
+Type `CRYSTAL_UNIT_CELLS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a718698538ee.js` → `Visualization`.
 
 #### Currency appreciation
 
-Type `CURRENCY_APPRECIATION` · manifest v?.
+Type `CURRENCY_APPRECIATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-97cef07aec84.js` → `CurrencyAppreciationVisualization`.
 
-#### Current to magnetic field
+#### Current to magnetic field: `B = \frac{\mu_0 I}{2\pi r}`
 
 Direction of current through the wire
 
-Type `CURRENT_TO_MAGNETIC_FIELD` · manifest v?.
+Type `CURRENT_TO_MAGNETIC_FIELD` · manifest v3 · formula `B = \frac{\mu_0 I}{2\pi r}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9e3f91c7593a.js` → `CurrentToMagneticFieldVisualization`.
+Parameters: `currentDirection` (enum, default `up`, one of `up`, `down`); `currentStrengthAmperes` (number, default `5`, range 1 to 10).
+
+Source: manifest `model-b39b238c2140.js`; view `visualization-9e3f91c7593a.js` → `CurrentToMagneticFieldVisualization`.
 
 #### Current to magnetic field direction
 
@@ -6660,7 +6808,7 @@ Source: manifest `type-8ea75e03943c.js`; view `visualization-713049f1d3db.js` �
 
 Substituted cyclohexane example
 
-Type `CYCLOHEXANE_CHAIR_FLIPS` · manifest v?.
+Type `CYCLOHEXANE_CHAIR_FLIPS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3413f1e88925.js` → `Visualization`.
 
@@ -6690,9 +6838,11 @@ Source: manifest `type-b72953d55796.js`; view `visualization-c59cf037d42c.js` �
 
 #### Decision tree classification path
 
-Type `DECISION_TREE_CLASSIFICATION_PATH` · manifest v?.
+Type `DECISION_TREE_CLASSIFICATION_PATH` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e588c881079d.js` → `DecisionTreeClassificationPathVisualization`.
+Parameters: `x1` (number, default `5.5`, range 0 to 10); `x2` (number, default `3.5`, range 0 to 10).
+
+Source: manifest `model-23fec778784f.js`; view `visualization-e588c881079d.js` → `DecisionTreeClassificationPathVisualization`.
 
 #### Degree of unsaturation
 
@@ -6706,15 +6856,17 @@ Source: manifest `type-60f4e9362b4d.js`; view `visualization-8153a0645399.js` �
 
 Reaction direction
 
-Type `DEHYDRATION_SYNTHESIS_VS_HYDROLYSIS` · manifest v?.
+Type `DEHYDRATION_SYNTHESIS_VS_HYDROLYSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-778ea5b8bb6c.js` → `Visualization`.
 
 #### Delta g k e relationship
 
-Type `DELTA_G_K_E_RELATIONSHIP` · manifest v?.
+Type `DELTA_G_K_E_RELATIONSHIP` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-91e371b0967c.js` → `DeltaGKERelationshipVisualization`.
+Parameters: `standard_cell_potential_volts` (number, default `0.12`, range -0.3 to 0.3); `electrons_transferred` (integer, default `2`, range 1 to 6); `temperature_kelvin` (number, default `298.15`, range 250 to 400).
+
+Source: manifest `model-873e0c320c3b.js`; view `visualization-91e371b0967c.js` → `DeltaGKERelationshipVisualization`.
 
 #### Demand curve
 
@@ -6728,13 +6880,13 @@ Source: manifest `type-759e4fab0713.js`; view `visualization-ca7e47c0d986.js` �
 
 Demand responsiveness
 
-Type `DEMAND_ELASTICITY` · manifest v?.
+Type `DEMAND_ELASTICITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-542bf9571edd.js` → `Visualization`.
 
 #### Demand shock
 
-Type `DEMAND_SHOCK` · manifest v?.
+Type `DEMAND_SHOCK`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-477abe2925ef.js` → `DemandShockVisualization`.
 
@@ -6748,9 +6900,19 @@ Parameters: `server_capacity` (integer, default `120`, range 100 to 300); `legit
 
 Source: manifest `type-253ef788d0bb.js`; view `visualization-d0d141c913ff.js` → `Visualization`.
 
+#### Density dependence
+
+Current population density index
+
+Type `DENSITY_DEPENDENCE` · manifest v2.
+
+Parameters: `carrying_capacity` (integer, default `100`, range 40 to 200); `intrinsic_growth_rate` (number, default `0.4`, range 0.1 to 0.8).
+
+Source: manifest `model-43a9f02da387.js`; view `visualization-9fb2fae3a486.js` → `DensityDependenceVisualization`.
+
 #### Derivative
 
-Type `DERIVATIVE` · manifest v?.
+Type `DERIVATIVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-667f54f92ebb.js` → `DerivativeVisualization`.
 
@@ -6776,19 +6938,21 @@ Source: manifest `type-3f3e34153e7c.js`; view `visualization-e8ef2ad5a3ef.js` �
 
 Relative detergent amount
 
-Type `DETERGENT_MICELLE_GREASE` · manifest v?.
+Type `DETERGENT_MICELLE_GREASE` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6bb3517deee2.js` → `DetergentMicelleGreaseVisualization`.
+Parameters: `relativeDetergentAmountPercent` (number, default `40`, range 0 to 100).
+
+Source: manifest `model-94e102697f8c.js`; view `visualization-6bb3517deee2.js` → `DetergentMicelleGreaseVisualization`.
 
 #### Dice rolling
 
-Type `DICE_ROLLING` · manifest v?.
+Type `DICE_ROLLING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-852a09cf6fc3.js` → `DiceRollingVisualization`.
 
 #### Dichotomous key
 
-Type `DICHOTOMOUS_KEY` · manifest v?.
+Type `DICHOTOMOUS_KEY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a206454903b7.js` → `DichotomousKeyVisualization`.
 
@@ -6802,13 +6966,13 @@ Source: manifest `type-62bcf9304582.js`; view `visualization-49a0c2b52117.js` �
 
 #### Difference of squares
 
-Type `DIFFERENCE_OF_SQUARES` · manifest v?.
+Type `DIFFERENCE_OF_SQUARES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9deff093a7b5.js` → `DifferenceOfSquaresVisualization`.
 
 #### Diffusion
 
-Type `DIFFUSION` · manifest v?.
+Type `DIFFUSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a7c6b2d70f0b.js` → `DiffusionVisualization`.
 
@@ -6816,19 +6980,21 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a7c6b
 
 Nutrient to trace
 
-Type `DIGESTIVE_TRACT_ABSORPTION` · manifest v?.
+Type `DIGESTIVE_TRACT_ABSORPTION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-346f6131bb53.js` → `DigestiveTractAbsorptionVisualization`.
+Parameters: `nutrient` (enum, default `carbohydrate`, one of `carbohydrate`, `protein`, `long-chain fat`).
+
+Source: manifest `model-7f8b73e7da12.js`; view `visualization-346f6131bb53.js` → `DigestiveTractAbsorptionVisualization`.
 
 #### Dijkstra shortest path
 
-Type `DIJKSTRA_SHORTEST_PATH` · manifest v?.
+Type `DIJKSTRA_SHORTEST_PATH`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e39d693d1989.js` → `DijkstraShortestPathVisualization`.
 
 #### Diminishing marginal returns
 
-Type `DIMINISHING_MARGINAL_RETURNS` · manifest v?.
+Type `DIMINISHING_MARGINAL_RETURNS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f2379a6876c2.js` → `MarginalProductVisualization`.
 
@@ -6836,7 +7002,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f2379
 
 Marginal and total utility graph. {quantity, plural, =0 {No units are selected} one {Unit 1 contributes {marginal, number} utility} other {Unit {quantity, number} contributes {marginal, number} utility}}; total utility is {total, number}. Marginal utility falls with each unit, while total utility rises more slowly, levels off, and eventually falls.
 
-Type `DIMINISHING_MARGINAL_UTILITY` · manifest v?.
+Type `DIMINISHING_MARGINAL_UTILITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4de2eeea680d.js` → `Visualization`.
 
@@ -6860,7 +7026,7 @@ Source: manifest `type-178545bdd851.js`; view `visualization-cf42ccd675fe.js` �
 
 #### Discriminant
 
-Type `DISCRIMINANT` · manifest v?.
+Type `DISCRIMINANT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-53972df5c5a6.js` → `DiscriminantVisualization`.
 
@@ -6868,29 +7034,33 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-53972
 
 Dissolution stage
 
-Type `DISSOLUTION` · manifest v?.
+Type `DISSOLUTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8cd8d35e841e.js` → `Visualization`.
 
 #### Distance formula
 
-Type `DISTANCE_FORMULA` · manifest v?.
+Type `DISTANCE_FORMULA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-19f5929d5f24.js` → `DistanceFormulaVisualization`.
 
 #### Distance traveled vs displacement
 
-Type `DISTANCE_TRAVELED_VS_DISPLACEMENT` · manifest v?.
+Type `DISTANCE_TRAVELED_VS_DISPLACEMENT` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-459ca56e75bc.js` → `DistanceTraveledVsDisplacementVisualization`.
+Parameters: `route` (enum, default `detour`, one of `direct`, `detour`, `round_trip`).
+
+Source: manifest `model-3fc8a8edee3e.js`; view `visualization-459ca56e75bc.js` → `DistanceTraveledVsDisplacementVisualization`.
 
 #### Distillation
 
 Distillation stage
 
-Type `DISTILLATION` · manifest v?.
+Type `DISTILLATION` · manifest v5.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-837ac24663f7.js` → `DistillationVisualization`.
+Parameters: `mixture_example` (enum, default `salt water`, one of `salt water`, `colored solution`, `widely separated liquids`).
+
+Source: manifest `model-a11bd7ff405e.js`; view `visualization-837ac24663f7.js` → `DistillationVisualization`.
 
 #### Distributive property: `a(b+c)=ab+ac`
 
@@ -6920,13 +7090,13 @@ Source: manifest `type-72629e85a720.js`; view `visualization-8585a3e8189c.js` �
 
 #### Dna replication fork
 
-Type `DNA_REPLICATION_FORK` · manifest v?.
+Type `DNA_REPLICATION_FORK`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-664a4d20a8ec.js` → `DnaReplicationForkVisualization`.
 
 #### Dna transcription
 
-Type `DNA_TRANSCRIPTION` · manifest v?.
+Type `DNA_TRANSCRIPTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2a97ecd87416.js` → `DnaTranscriptionVisualization`.
 
@@ -6934,13 +7104,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2a97e
 
 Cache miss: follow the nameserver hierarchy
 
-Type `DNS_RESOLUTION` · manifest v?.
+Type `DNS_RESOLUTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b13c4dc77770.js` → `DnsResolutionVisualization`.
 
 #### Doppler effect
 
-Type `DOPPLER_EFFECT` · manifest v?.
+Type `DOPPLER_EFFECT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4ea82f5a7a73.js` → `DopplerEffectVisualization`.
 
@@ -6948,7 +7118,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4ea82
 
 Potency shift: same efficacy, different potency
 
-Type `DOSE_RESPONSE_CURVE` · manifest v?.
+Type `DOSE_RESPONSE_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4a5781452a96.js` → `DoseResponseVisualization`.
 
@@ -6956,27 +7126,23 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4a578
 
 Data set
 
-Type `DOT_PLOT` · manifest v?.
+Type `DOT_PLOT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a6e7deaa0954.js` → `DotPlotVisualization`.
 
-#### Dot product angle
-
-Type `DOT_PRODUCT_ANGLE` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-beb55cb7e12e.js` → `DotProductAngleVisualization`.
-
 #### Double entry transaction effects
 
-Type `DOUBLE_ENTRY_TRANSACTION_EFFECTS` · manifest v?.
+Type `DOUBLE_ENTRY_TRANSACTION_EFFECTS` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eb7583bdf175.js` → `DoubleEntryTransactionEffectsVisualization`.
+Parameters: `transaction_type` (enum, default `owner investment for cash`, one of `owner investment for cash`, `equipment purchase for cash`, `supplies purchase on account`, `payment of accounts payable`).
+
+Source: manifest `model-2922d86b57c4.js`; view `visualization-eb7583bdf175.js` → `DoubleEntryTransactionEffectsVisualization`.
 
 #### Double fertilization
 
 Double-fertilization stage
 
-Type `DOUBLE_FERTILIZATION` · manifest v?.
+Type `DOUBLE_FERTILIZATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7af7ea820386.js` → `Visualization`.
 
@@ -6984,7 +7150,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7af7e
 
 Choose eighth-note or sixteenth-note subdivision
 
-Type `DRUM_GRID_NOTATION` · manifest v?.
+Type `DRUM_GRID_NOTATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ee6526004d2f.js` → `DrumGridNotationVisualization`.
 
@@ -6992,13 +7158,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ee652
 
 Reactant-rich start
 
-Type `DYNAMIC_EQUILIBRIUM` · manifest v?.
+Type `DYNAMIC_EQUILIBRIUM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-df3adbf3e175.js` → `Visualization`.
 
 #### Dynamics and articulation
 
-Type `DYNAMICS_AND_ARTICULATION` · manifest v?.
+Type `DYNAMICS_AND_ARTICULATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b88a8ae3fac8.js` → `Visualization`.
 
@@ -7006,7 +7172,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b88a8
 
 Mantle-convection stage
 
-Type `EARTH_LAYERS_AND_CONVECTION` · manifest v?.
+Type `EARTH_LAYERS_AND_CONVECTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e3dd0b9e51cc.js` → `Visualization`.
 
@@ -7022,33 +7188,37 @@ Source: manifest `type-e177a5957273.js`; view `visualization-e6f3b0fdd180.js` �
 
 Stage {number, number}: {stage}
 
-Type `ECOLOGICAL_SUCCESSION_STAGES` · manifest v?.
+Type `ECOLOGICAL_SUCCESSION_STAGES` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e9f2bf6bb07f.js` → `EcologicalSuccessionVisualization`.
+Parameters: `successionType` (enum, default `primary`, one of `primary`, `secondary`).
+
+Source: manifest `model-f721c5cf751c.js`; view `visualization-e9f2bf6bb07f.js` → `EcologicalSuccessionVisualization`.
 
 #### Ecological tolerance curve
 
 Relative {factor} condition from low to high
 
-Type `ECOLOGICAL_TOLERANCE_CURVE` · manifest v?.
+Type `ECOLOGICAL_TOLERANCE_CURVE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-20b2983a62fc.js` → `EcologicalToleranceCurveVisualization`.
+Parameters: `environmental_factor` (enum, default `temperature`, one of `temperature`, `salinity`, `pH`, `dissolved oxygen`, `moisture`).
+
+Source: manifest `model-d1b5eccccd13.js`; view `visualization-20b2983a62fc.js` → `EcologicalToleranceCurveVisualization`.
 
 #### Economic externalities
 
-Type `ECONOMIC_EXTERNALITIES` · manifest v?.
+Type `ECONOMIC_EXTERNALITIES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-91b2e864b5b4.js` → `NegativeExternalityVisualization`.
 
 #### Economic order quantity
 
-Type `ECONOMIC_ORDER_QUANTITY` · manifest v?.
+Type `ECONOMIC_ORDER_QUANTITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c32f94a2230f.js` → `EconomicOrderQuantityVisualization`.
 
 #### Economies of scale
 
-Type `ECONOMIES_OF_SCALE` · manifest v?.
+Type `ECONOMIES_OF_SCALE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-857ec2d9d8ca.js` → `LongRunAtcVisualization`.
 
@@ -7062,7 +7232,7 @@ Source: manifest `type-9dd1c641b080.js`; view `visualization-570e19431f8b.js` �
 
 #### Ekg parts
 
-Type `EKG_PARTS` · manifest v?.
+Type `EKG_PARTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-76c278f5b358.js` → `EkgPartsVisualization`.
 
@@ -7078,7 +7248,7 @@ Source: manifest `type-44fc1ec684df.js`; view `visualization-9f09ed89c7ba.js` �
 
 Price
 
-Type `ELASTICITY_TOTAL_REVENUE` · manifest v?.
+Type `ELASTICITY_TOTAL_REVENUE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-320c0f68fb8d.js` → `ElasticityTotalRevenueVisualization`.
 
@@ -7090,15 +7260,17 @@ Parameters: `packetRatePerSecond` (number, default `4`, range 1 to 8); `chargePe
 
 Source: manifest `type-dcb1b5569c53.js`; view `visualization-f08fa5395c00.js` → `ElectricCurrentChargeFlowVisualization`.
 
-#### Electric field
+#### Electric field: `E\propto\frac{1}{r^2}`
 
-Type `ELECTRIC_FIELD` · manifest v?.
+Type `ELECTRIC_FIELD` · manifest v3 · formula `E\propto\frac{1}{r^2}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f13c1d8ba890.js` → `ElectricFieldVisualization`.
+Parameters: `polarity` (enum, default `positive`, one of `positive`, `negative`).
+
+Source: manifest `model-51dd0b398611.js`; view `visualization-f13c1d8ba890.js` → `ElectricFieldVisualization`.
 
 #### Electric field multiple charges
 
-Type `ELECTRIC_FIELD_MULTIPLE_CHARGES` · manifest v?.
+Type `ELECTRIC_FIELD_MULTIPLE_CHARGES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b1ee914d2eb6.js` → `ElectricFieldMultipleChargesVisualization`.
 
@@ -7114,7 +7286,7 @@ Source: manifest `type-8d1ac0d714c4.js`; view `visualization-aedb8e2ae175.js` �
 
 #### Electrical resistance factors
 
-Type `ELECTRICAL_RESISTANCE_FACTORS` · manifest v?.
+Type `ELECTRICAL_RESISTANCE_FACTORS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e0ba7a46f357.js` → `ElectricalResistanceFactorsVisualization`.
 
@@ -7130,23 +7302,29 @@ Source: manifest `type-ba543fe66918.js`; view `visualization-8ec33178602d.js` �
 
 #### Electrolytic cell
 
-Type `ELECTROLYTIC_CELL` · manifest v?.
+Type `ELECTROLYTIC_CELL` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dd74066d258b.js` → `Visualization`.
+Parameters: `electrolyte` (enum, default `molten sodium chloride`, one of `molten sodium chloride`, `molten lead(II) bromide`).
+
+Source: manifest `model-ffbb570f1ec8.js`; view `visualization-dd74066d258b.js` → `Visualization`.
 
 #### Electromagnetic spectrum
 
 Electromagnetic band
 
-Type `ELECTROMAGNETIC_SPECTRUM` · manifest v?.
+Type `ELECTROMAGNETIC_SPECTRUM` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-19840ed7156b.js` → `ElectromagneticSpectrumVisualization`.
+Parameters: `focus_band` (enum, default `visible`, one of `radio`, `microwave`, `infrared`, `visible`, `ultraviolet`, `x-ray`, `gamma-ray`).
+
+Source: manifest `model-e044398b5fd7.js`; view `visualization-19840ed7156b.js` → `ElectromagneticSpectrumVisualization`.
 
 #### Electron orbital filling
 
-Type `ELECTRON_ORBITAL_FILLING` · manifest v?.
+Type `ELECTRON_ORBITAL_FILLING` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-45933547bfdc.js` → `ElectronOrbitalFillingVisualization`.
+Parameters: `atomicNumber` (integer, default `10`, range 1 to 36).
+
+Source: manifest `model-b586e91ccccc.js`; view `visualization-45933547bfdc.js` → `ElectronOrbitalFillingVisualization`.
 
 #### Element vs compound vs mixture
 
@@ -7158,25 +7336,29 @@ Parameters: `initial_sample` (enum, default `monatomic element`, one of `monatom
 
 Source: manifest `type-ea91da6d3b05.js`; view `visualization-8b502e9b3702.js` → `Visualization`.
 
-#### Elementary row operations
+#### Elementary row operations: `\left[A\mid\mathbf{b}\right]\sim\left[I\mid\mathbf{x}\right]`
 
 Gaussian elimination step
 
-Type `ELEMENTARY_ROW_OPERATIONS` · manifest v?.
+Type `ELEMENTARY_ROW_OPERATIONS` · manifest v1 · formula `\left[A\mid\mathbf{b}\right]\sim\left[I\mid\mathbf{x}\right]`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a13a41387fe6.js` → `ElementaryRowOperationsVisualization`.
+Parameters: `solutionX` (number, default `1`, range -2 to 2); `solutionY` (number, default `2`, range -2 to 2).
+
+Source: manifest `model-41a7cd3908a8.js`; view `visualization-a13a41387fe6.js` → `ElementaryRowOperationsVisualization`.
 
 #### Empirical rule
 
 Within {count, plural, one {# standard deviation} other {# standard deviations}}
 
-Type `EMPIRICAL_RULE` · manifest v?.
+Type `EMPIRICAL_RULE` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b341819433a1.js` → `EmpiricalRuleVisualization`.
+Parameters: `mean` (number, default `100`, range -10000 to 10000); `standard_deviation` (number, default `15`, range 0.1 to 3000).
+
+Source: manifest `model-8bc3f47e8528.js`; view `visualization-b341819433a1.js` → `EmpiricalRuleVisualization`.
 
 #### Empirical vs molecular formula
 
-Type `EMPIRICAL_VS_MOLECULAR_FORMULA` · manifest v?.
+Type `EMPIRICAL_VS_MOLECULAR_FORMULA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1058102ac051.js` → `Visualization`.
 
@@ -7184,15 +7366,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-10581
 
 Peripheral-hormone state
 
-Type `ENDOCRINE_FEEDBACK_AXIS` · manifest v?.
+Type `ENDOCRINE_FEEDBACK_AXIS` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2237b638f4d4.js` → `Visualization`.
+Parameters: `axis` (enum, default `thyroid`, one of `thyroid`, `adrenal`).
+
+Source: manifest `model-5a5542c48ccf.js`; view `visualization-2237b638f4d4.js` → `Visualization`.
 
 #### Endocytosis and exocytosis
 
 Transport stage
 
-Type `ENDOCYTOSIS_AND_EXOCYTOSIS` · manifest v?.
+Type `ENDOCYTOSIS_AND_EXOCYTOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-42d513148bfa.js` → `Visualization`.
 
@@ -7200,15 +7384,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-42d51
 
 Cargo destination
 
-Type `ENDOMEMBRANE_PATHWAY` · manifest v?.
+Type `ENDOMEMBRANE_PATHWAY` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b758d418a1f3.js` → `Visualization`.
+Parameters: `cargo_destination` (enum, default `secretion`, one of `secretion`, `plasma membrane`, `lysosome`).
+
+Source: manifest `model-6d0fe1644e34.js`; view `visualization-b758d418a1f3.js` → `Visualization`.
 
 #### Energy coupling
 
 ATP cycle path
 
-Type `ENERGY_COUPLING` · manifest v?.
+Type `ENERGY_COUPLING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fe871f0ddfab.js` → `EnergyCouplingVisualization`.
 
@@ -7222,35 +7408,41 @@ Parameters: `energy_system` (enum, default `light bulb`, one of `light bulb`, `e
 
 Source: manifest `type-c20db913b337.js`; view `visualization-847e4d172d2d.js` → `EnergyEfficiencySankeyVisualization`.
 
-#### Enthalpy
+#### Enthalpy: `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`
 
-Type `ENTHALPY` · manifest v?.
+Type `ENTHALPY` · manifest v4 · formula `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2b2034fc95a4.js` → `EnthalpyVisualization`.
+Parameters: `enthalpyChangeKilojoules` (number, default `-50`, range -100 to 100).
+
+Source: manifest `model-c5cda5a90fb9.js`; view `visualization-2b2034fc95a4.js` → `EnthalpyVisualization`.
 
 #### Entropy and dispersal
 
-Type `ENTROPY_AND_DISPERSAL` · manifest v?.
+Type `ENTROPY_AND_DISPERSAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-493a8d56f448.js` → `Visualization`.
 
 #### Enzyme and temperature
 
-Type `ENZYME_AND_TEMPERATURE` · manifest v?.
+Type `ENZYME_AND_TEMPERATURE` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-869fd4ad696f.js` → `EnzymeAndTemperatureVisualization`.
+Parameters: `temperatureCelsius` (number, default `25`, range 0 to 70).
+
+Source: manifest `model-f5d8a0ad0545.js`; view `visualization-869fd4ad696f.js` → `EnzymeAndTemperatureVisualization`.
 
 #### Enzyme inhibition rate effects
 
 Relative substrate concentration
 
-Type `ENZYME_INHIBITION_RATE_EFFECTS` · manifest v?.
+Type `ENZYME_INHIBITION_RATE_EFFECTS` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-20498cc1ea9e.js` → `EnzymeInhibitionRateEffectsVisualization`.
+Parameters: `relativeSubstrateConcentration` (number, default `2`, range 0 to 10); `inhibitorLevel` (enum, default `low`, one of `none`, `low`, `high`).
+
+Source: manifest `model-7ecafb9fbe11.js`; view `visualization-20498cc1ea9e.js` → `EnzymeInhibitionRateEffectsVisualization`.
 
 #### Enzyme lock key cycle
 
-Type `ENZYME_LOCK_KEY_CYCLE` · manifest v?.
+Type `ENZYME_LOCK_KEY_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-714d7e209691.js` → `EnzymeLockKeyCycleVisualization`.
 
@@ -7258,13 +7450,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-714d7
 
 Chromatin state
 
-Type `EPIGENETICS` · manifest v?.
+Type `EPIGENETICS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ec548b3209b9.js` → `Visualization`.
 
 #### Epsp ipsp summation
 
-Type `EPSP_IPSP_SUMMATION` · manifest v?.
+Type `EPSP_IPSP_SUMMATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d1a680eabf68.js` → `EpspIpspSummationVisualization`.
 
@@ -7272,13 +7464,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d1a68
 
 Center frequency in hertz
 
-Type `EQ_CURVE` · manifest v?.
+Type `EQ_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6d10f2db2ae2.js` → `Visualization`.
 
 #### Equilateral triangle
 
-Type `EQUILATERAL_TRIANGLE` · manifest v?.
+Type `EQUILATERAL_TRIANGLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-75418d3a2c36.js` → `EquilateralTriangleVisualization`.
 
@@ -7286,29 +7478,43 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-75418
 
 Species added at equilibrium
 
-Type `EQUILIBRIUM_CONCENTRATION_GRAPH` · manifest v?.
+Type `EQUILIBRIUM_CONCENTRATION_GRAPH` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5136e13364ea.js` → `EquilibriumConcentrationVisualization`.
+Parameters: `equilibrium_constant` (number, default `2`, range 0.25 to 4); `initial_total_concentration` (number, default `1`, range 0.5 to 2).
+
+Source: manifest `model-0b71968a76c7.js`; view `visualization-5136e13364ea.js` → `EquilibriumConcentrationVisualization`.
+
+#### Er diagram relational tables
+
+ER mapping stage
+
+Type `ER_DIAGRAM_RELATIONAL_TABLES` · manifest v2.
+
+Parameters: `relationship_kind` (enum, default `one-to-many`, one of `one-to-one`, `one-to-many`, `many-to-many`); `include_relationship_attribute` (boolean, default `true`).
+
+Source: manifest `model-b729a24f3575.js`; view `visualization-4fcbc8f32ad7.js` → `ErDiagramVisualization`.
 
 #### Eukaryotic gene regulation
 
 Chromatin accessibility
 
-Type `EUKARYOTIC_GENE_REGULATION` · manifest v?.
+Type `EUKARYOTIC_GENE_REGULATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-704313df2f73.js` → `Visualization`.
 
 #### Euler formula
 
-Type `EULER_FORMULA` · manifest v?.
+Type `EULER_FORMULA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8da26cb234d9.js` → `EulerFormulaVisualization`.
 
 #### Eutrophication
 
-Type `EUTROPHICATION` · manifest v?.
+Type `EUTROPHICATION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cb43ad4b85c0.js` → `EutrophicationVisualization`.
+Parameters: `waterBody` (enum, default `freshwater lake`, one of `freshwater lake`, `estuary`, `coastal bay`).
+
+Source: manifest `model-6d7b03cccde0.js`; view `visualization-cb43ad4b85c0.js` → `EutrophicationVisualization`.
 
 #### Evaporation rate factors
 
@@ -7322,19 +7528,21 @@ Source: manifest `type-119bdab76cbe.js`; view `visualization-e3dfff296f24.js` �
 
 #### Even odd function symmetry
 
-Type `EVEN_ODD_FUNCTION_SYMMETRY` · manifest v?.
+Type `EVEN_ODD_FUNCTION_SYMMETRY` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4030ae450a3e.js` → `EvenOddFunctionSymmetryVisualization`.
+Parameters: `symmetryType` (enum, default `even`, one of `even`, `odd`, `neither`); `x` (number, default `3`, range 1.25 to 4.5).
+
+Source: manifest `model-4d3238eeddf7.js`; view `visualization-4030ae450a3e.js` → `EvenOddFunctionSymmetryVisualization`.
 
 #### Expected value weighted average
 
-Type `EXPECTED_VALUE_WEIGHTED_AVERAGE` · manifest v?.
+Type `EXPECTED_VALUE_WEIGHTED_AVERAGE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-87fa6b607431.js` → `ExpectedValueWeightedAverageVisualization`.
 
 #### Exponent laws repeated multiplication
 
-Type `EXPONENT_LAWS_REPEATED_MULTIPLICATION` · manifest v?.
+Type `EXPONENT_LAWS_REPEATED_MULTIPLICATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3c4a811c5466.js` → `ExponentLawsRepeatedMultiplicationVisualization`.
 
@@ -7346,17 +7554,19 @@ Parameters: `initial` (number, default `6`, range 0.01 to 10000); `decay` (numbe
 
 Source: manifest `type-33f0d487d38b.js`; view `visualization-5c9ca0146ef3.js` → `ExponentialDecayVisualization`.
 
-#### Exponential distribution
+#### Exponential distribution: `f(t)=\lambda e^{-\lambda t},\quad t\ge 0`
 
 Constant event rate
 
-Type `EXPONENTIAL_DISTRIBUTION` · manifest v?.
+Type `EXPONENTIAL_DISTRIBUTION` · manifest v3 · formula `f(t)=\lambda e^{-\lambda t},\quad t\ge 0`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3db00c160211.js` → `ExponentialDistributionVisualization`.
+Parameters: `rate` (number, default `0.5`, range 0.25 to 1); `waiting_time` (number, default `5`, range 0 to 12).
+
+Source: manifest `model-1f7a57227d2e.js`; view `visualization-3db00c160211.js` → `ExponentialDistributionVisualization`.
 
 #### Exports
 
-Type `EXPORTS` · manifest v?.
+Type `EXPORTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-54e48c1bf756.js` → `ExportsVisualization`.
 
@@ -7382,9 +7592,11 @@ Source: manifest `type-ba89e7f5dcc4.js`; view `visualization-144b57aab714.js` �
 
 Rows in the array
 
-Type `FACTOR_PAIRS_ARRAYS` · manifest v?.
+Type `FACTOR_PAIRS_ARRAYS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2e63cc21350a.js` → `FactorPairsArraysVisualization`.
+Parameters: `wholeNumber` (integer, default `24`, range 1 to 36).
+
+Source: manifest `model-b7e30c22fb74.js`; view `visualization-2e63cc21350a.js` → `FactorPairsArraysVisualization`.
 
 #### Fahrenheit celsius scale: `F = \frac{9}{5}C + 32`
 
@@ -7396,33 +7608,41 @@ Parameters: `celsius` (number, default `0`, range -40 to 120).
 
 Source: manifest `type-7ff60fd7b3ba.js`; view `visualization-ad66e0ef223a.js` → `FahrenheitCelsiusScaleVisualization`.
 
-#### Faradays law electrolysis
+#### Faradays law electrolysis: `m=\frac{MQ}{zF},\quad Q=It`
 
 Total charge passed
 
-Type `FARADAYS_LAW_ELECTROLYSIS` · manifest v?.
+Type `FARADAYS_LAW_ELECTROLYSIS` · manifest v4 · formula `m=\frac{MQ}{zF},\quad Q=It`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-437a7118b72c.js` → `Visualization`.
+Parameters: `electrolyte` (enum, default `silver nitrate`, one of `silver nitrate`, `copper(II) sulfate`).
+
+Source: manifest `model-a414c3bf04d3.js`; view `visualization-437a7118b72c.js` → `Visualization`.
 
 #### Fatty acid saturation
 
-Type `FATTY_ACID_SATURATION` · manifest v?.
+Type `FATTY_ACID_SATURATION` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cddea43a7390.js` → `FattyAcidSaturationVisualization`.
+Parameters: `doubleBonds` (integer, default `1`, range 0 to 3); `temperatureCelsius` (number, default `20`, range 0 to 50).
+
+Source: manifest `model-a41a580621d5.js`; view `visualization-cddea43a7390.js` → `FattyAcidSaturationVisualization`.
 
 #### Fermentation
 
 Fermentation route
 
-Type `FERMENTATION` · manifest v?.
+Type `FERMENTATION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f5df8d5f3572.js` → `FermentationVisualization`.
+Parameters: `fermentation_type` (enum, default `lactic acid`, one of `lactic acid`, `alcohol`).
+
+Source: manifest `model-e9d1e1169b7a.js`; view `visualization-f5df8d5f3572.js` → `FermentationVisualization`.
 
 #### Fifo lifo cost flow
 
-Type `FIFO_LIFO_COST_FLOW` · manifest v?.
+Type `FIFO_LIFO_COST_FLOW` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6f9a1f597d7c.js` → `FifoLifoCostFlowVisualization`.
+Parameters: `unitsSold` (integer, default `180`, range 0 to 300); `priceTrend` (enum, default `rising`, one of `falling`, `flat`, `rising`).
+
+Source: manifest `model-8ce870eed550.js`; view `visualization-6f9a1f597d7c.js` → `FifoLifoCostFlowVisualization`.
 
 #### Filling rates: `r_{\mathrm{net}}=r_{\mathrm{in}}-r_{\mathrm{out}}`
 
@@ -7436,13 +7656,13 @@ Source: manifest `type-33d5b92afbca.js`; view `visualization-4c46b74c06c8.js` �
 
 Starting mixture
 
-Type `FILTRATION` · manifest v?.
+Type `FILTRATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5848c0b8feab.js` → `Visualization`.
 
 #### Finite state machine
 
-Type `FINITE_STATE_MACHINE` · manifest v?.
+Type `FINITE_STATE_MACHINE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-929f23419b4f.js` → `FiniteStateMachineVisualization`.
 
@@ -7450,7 +7670,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-929f2
 
 Fire diagram
 
-Type `FIRE_TRIANGLE_FIRE_TETRAHEDRON` · manifest v?.
+Type `FIRE_TRIANGLE_FIRE_TETRAHEDRON`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a35da19faaa2.js` → `Visualization`.
 
@@ -7458,7 +7678,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a35da
 
 Selected output quantity
 
-Type `FIRM_COST_CURVES` · manifest v?.
+Type `FIRM_COST_CURVES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-899098305537.js` → `FirmCostCurvesVisualization`.
 
@@ -7466,13 +7686,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-89909
 
 Initial value y at x equals {initialX}
 
-Type `FIRST_ORDER_ODE` · manifest v?.
+Type `FIRST_ORDER_ODE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f09df8e51832.js` → `FirstOrderOdeVisualization`.
 
 #### Fiscal policy
 
-Type `FISCAL_POLICY` · manifest v?.
+Type `FISCAL_POLICY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dbcf4987be77.js` → `FiscalPolicyVisualization`.
 
@@ -7480,7 +7700,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dbcf4
 
 Fishing effort index
 
-Type `FISHERIES_AND_MAXIMUM_SUSTAINABLE_YIELD` · manifest v?.
+Type `FISHERIES_AND_MAXIMUM_SUSTAINABLE_YIELD`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-24a9f6bc972c.js` → `FisheriesAndMaximumSustainableYieldVisualization`.
 
@@ -7488,15 +7708,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-24a9f
 
 Selective environment
 
-Type `FITNESS_AND_ADAPTATION` · manifest v?.
+Type `FITNESS_AND_ADAPTATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2ed9aa3a73ee.js` → `FitnessAndAdaptationVisualization`.
 
-#### Fixed perimeter rectangle area
+#### Fixed perimeter rectangle area: `A = w \times h`
 
-Type `FIXED_PERIMETER_RECTANGLE_AREA` · manifest v?.
+Type `FIXED_PERIMETER_RECTANGLE_AREA` · manifest v2 · formula `A = w \times h`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e45c965e039c.js` → `FixedPerimeterRectangleAreaVisualization`.
+Parameters: `width` (number, default `4`, range 1 to 11).
+
+Source: manifest `model-b128078a1c67.js`; view `visualization-e45c965e039c.js` → `FixedPerimeterRectangleAreaVisualization`.
 
 #### Fixed ratio scaling
 
@@ -7510,13 +7732,15 @@ Source: manifest `type-6d69838b61ac.js`; view `visualization-67be01b3ccbf.js` �
 
 Pollination type
 
-Type `FLOWER_POLLINATION` · manifest v?.
+Type `FLOWER_POLLINATION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4da5e7ac419a.js` → `FlowerPollinationVisualization`.
+Parameters: `pollination_type` (enum, default `cross-pollination`, one of `self-pollination`, `cross-pollination`).
+
+Source: manifest `model-eed880ff8885.js`; view `visualization-4da5e7ac419a.js` → `FlowerPollinationVisualization`.
 
 #### Fluid mosaic membrane
 
-Type `FLUID_MOSAIC_MEMBRANE` · manifest v?.
+Type `FLUID_MOSAIC_MEMBRANE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5c308f39bf3f.js` → `Visualization`.
 
@@ -7532,13 +7756,25 @@ Source: manifest `type-49e9f66a2d98.js`; view `visualization-889603c0aa15.js` �
 
 Trace the food chain
 
-Type `FOOD_CHAIN` · manifest v?.
+Type `FOOD_CHAIN` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-82767a161fb7.js` → `Visualization`.
+Parameters: `ecosystem` (enum, default `grassland`, one of `grassland`, `pond`, `ocean`).
+
+Source: manifest `model-b3392fd69f76.js`; view `visualization-82767a161fb7.js` → `Visualization`.
+
+#### Food web
+
+Food-chain path
+
+Type `FOOD_WEB` · manifest v1.
+
+Parameters: `ecosystem` (enum, default `terrestrial`, one of `terrestrial`, `freshwater`, `marine`).
+
+Source: manifest `model-c8be72ed6ac0.js`; view `visualization-923e9889a384.js` → `FoodWebVisualization`.
 
 #### Foreign exchange market
 
-Type `FOREIGN_EXCHANGE_MARKET` · manifest v?.
+Type `FOREIGN_EXCHANGE_MARKET`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-64b7ee282a83.js` → `Visualization`.
 
@@ -7546,7 +7782,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-64b7e
 
 Regeneration method
 
-Type `FORESTRY_METHODS` · manifest v?.
+Type `FORESTRY_METHODS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-616ac467d4df.js` → `Visualization`.
 
@@ -7564,7 +7800,7 @@ Source: manifest `type-23b0e0e9a23b.js`; view `visualization-b3d5865f8dc0.js` �
 
 Fuel pathway
 
-Type `FOSSIL_FUEL_FORMATION` · manifest v?.
+Type `FOSSIL_FUEL_FORMATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3affe8b48f69.js` → `FossilFuelFormationVisualization`.
 
@@ -7572,21 +7808,25 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3affe
 
 Chance-sampling event
 
-Type `FOUNDER_EFFECT_AND_BOTTLENECK` · manifest v?.
+Type `FOUNDER_EFFECT_AND_BOTTLENECK`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-96d29f83111e.js` → `Visualization`.
 
 #### Four to one multiplexer
 
-Type `FOUR_TO_ONE_MULTIPLEXER` · manifest v?.
+Type `FOUR_TO_ONE_MULTIPLEXER` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e04a31cafc83.js` → `FourToOneMultiplexerVisualization`.
+Parameters: `input0` (boolean, default `false`); `input1` (boolean, default `true`); `input2` (boolean, default `false`); `input3` (boolean, default `true`); `select1` (boolean, default `false`); `select0` (boolean, default `true`).
+
+Source: manifest `model-85aa75328d7c.js`; view `visualization-e04a31cafc83.js` → `FourToOneMultiplexerVisualization`.
 
 #### Fractions number line
 
-Type `FRACTIONS_NUMBER_LINE` · manifest v?.
+Type `FRACTIONS_NUMBER_LINE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a8bebdf5fab9.js` → `FractionsNumberLineVisualization`.
+Parameters: `numerator` (integer, default `7`, range 0 to 36); `denominator` (integer, default `4`, range 2 to 12).
+
+Source: manifest `model-e01a7cfd8d48.js`; view `visualization-a8bebdf5fab9.js` → `FractionsNumberLineVisualization`.
 
 #### Free fall: `h(t) = h_0 + v_0t - \frac{1}{2}gt^2`
 
@@ -7596,17 +7836,19 @@ Parameters: `initialHeightMeters` (number, default `14`, range 4 to 18); `initia
 
 Source: manifest `type-f5876f848904.js`; view `visualization-5c1f7388dde7.js` → `FreeFallVisualization`.
 
-#### Freezing point depression
+#### Freezing point depression: `\Delta T_f = iK_fm`
 
 Solute molality in moles per kilogram of solvent
 
-Type `FREEZING_POINT_DEPRESSION` · manifest v?.
+Type `FREEZING_POINT_DEPRESSION` · manifest v3 · formula `\Delta T_f = iK_fm`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5e03e049203b.js` → `FreezingPointDepressionVisualization`.
+Parameters: `solvent` (enum, default `water`, one of `water`, `benzene`, `cyclohexane`).
+
+Source: manifest `model-ebe02413f5a3.js`; view `visualization-5e03e049203b.js` → `FreezingPointDepressionVisualization`.
 
 #### Frequency spectrum
 
-Type `FREQUENCY_SPECTRUM` · manifest v?.
+Type `FREQUENCY_SPECTRUM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-923b2515d58b.js` → `FrequencySpectrumVisualization`.
 
@@ -7614,7 +7856,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-923b2
 
 Program moment
 
-Type `FUNCTION_CALL_STACK` · manifest v?.
+Type `FUNCTION_CALL_STACK`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-17f53cc836e0.js` → `FunctionCallStackVisualization`.
 
@@ -7628,23 +7870,27 @@ Source: manifest `type-08ab5fc42dc6.js`; view `visualization-0b4f421b434d.js` �
 
 #### Futures hedge locked revenue
 
-Type `FUTURES_HEDGE_LOCKED_REVENUE` · manifest v?.
+Type `FUTURES_HEDGE_LOCKED_REVENUE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2b88d6324703.js` → `FuturesHedgeLockedRevenueVisualization`.
 
 #### Fx net exports ad
 
-Type `FX_NET_EXPORTS_AD` · manifest v?.
+Type `FX_NET_EXPORTS_AD` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7ac7202b7a4c.js` → `FxNetExportsAdVisualization`.
+Parameters: `currency_value` (number, default `1`, range -2 to 2).
+
+Source: manifest `model-1bcf71fb73f9.js`; view `visualization-7ac7202b7a4c.js` → `FxNetExportsAdVisualization`.
 
 #### Gains from trade
 
 Good 1 produced
 
-Type `GAINS_FROM_TRADE` · manifest v?.
+Type `GAINS_FROM_TRADE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cf06ad4e8bf9.js` → `GainsFromTradeVisualization`.
+Parameters: `production_wheat` (number, default `7`, range 5 to 9); `trade_rate` (number, default `1.6`, range 0.4 to 1.8).
+
+Source: manifest `model-80ffe0775316.js`; view `visualization-cf06ad4e8bf9.js` → `GainsFromTradeVisualization`.
 
 #### Galvanic cell
 
@@ -7658,23 +7904,25 @@ Source: manifest `type-448ce06dc011.js`; view `visualization-404aad54fdd4.js` �
 
 #### Gas solubility
 
-Type `GAS_SOLUBILITY` · manifest v?.
+Type `GAS_SOLUBILITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a8e8ed3e92ac.js` → `GasSolubilityVisualization`.
 
 #### Gaussian surface symmetry
 
-Type `GAUSSIAN_SURFACE_SYMMETRY` · manifest v?.
+Type `GAUSSIAN_SURFACE_SYMMETRY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7711cc8b7b75.js` → `GaussianSurfaceSymmetryVisualization`.
 
-#### Gay lussacs law
+#### Gay lussacs law: `\frac{P_1}{T_1}=\frac{P_2}{T_2}`
 
 Pressure-temperature plot for the same sealed rigid gas sample. State 1 is {temperatureOneCount, plural, one {{temperatureOne} kelvin} other {{temperatureOne} kelvin}} and {pressureOneCount, plural, one {{pressureOne} kilopascal} other {{pressureOne} kilopascals}}. State 2 is {temperatureTwoCount, plural, one {{temperatureTwo} kelvin} other {{temperatureTwo} kelvin}} and {pressureTwoCount, plural, one {{pressureTwo} kilopascal} other {{pressureTwo} kilopascals}}. Volume and gas amount are fixed, so pressure changes in the same proportion as Kelvin temperature.
 
-Type `GAY_LUSSACS_LAW` · manifest v?.
+Type `GAY_LUSSACS_LAW` · manifest v4 · formula `\frac{P_1}{T_1}=\frac{P_2}{T_2}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ba1540ae2fec.js` → `GayLussacsLawVisualization`.
+Parameters: `initial_temperature_k` (number, default `300`, range 250 to 400); `initial_pressure_kpa` (number, default `100`, range 50 to 160).
+
+Source: manifest `model-235829f7022e.js`; view `visualization-ba1540ae2fec.js` → `GayLussacsLawVisualization`.
 
 #### Gcd
 
@@ -7696,7 +7944,7 @@ Source: manifest `type-aff47f4eaed1.js`; view `visualization-aa43cc6ed3a3.js` �
 
 #### Gdp expenditure identity
 
-Type `GDP_EXPENDITURE_IDENTITY` · manifest v?.
+Type `GDP_EXPENDITURE_IDENTITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c136ba1aa622.js` → `GdpExpenditureIdentityVisualization`.
 
@@ -7710,31 +7958,35 @@ Source: manifest `type-18452383754a.js`; view `visualization-aa4f0613babb.js` �
 
 #### Genetic drift
 
-Type `GENETIC_DRIFT` · manifest v?.
+Type `GENETIC_DRIFT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-47710bb8450b.js` → `Visualization`.
 
-#### Geometric distribution
+#### Geometric distribution: `P(X=k)=p(1-p)^{k-1}`
 
 Per-trial success probability p
 
-Type `GEOMETRIC_DISTRIBUTION` · manifest v?.
+Type `GEOMETRIC_DISTRIBUTION` · manifest v4 · formula `P(X=k)=p(1-p)^{k-1}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1c8b2f62180e.js` → `GeometricDistributionVisualization`.
+Parameters: `success_probability` (number, default `0.25`, range 0.05 to 0.8); `selected_trial` (integer, default `4`, range 1 to 16).
+
+Source: manifest `model-435009a98def.js`; view `visualization-1c8b2f62180e.js` → `GeometricDistributionVisualization`.
 
 #### Geometric series
 
 First term {variable}
 
-Type `GEOMETRIC_SERIES` · manifest v?.
+Type `GEOMETRIC_SERIES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bf4baaf7f3fa.js` → `GeometricSeriesVisualization`.
 
 #### Geothermal power
 
-Type `GEOTHERMAL_POWER` · manifest v?.
+Type `GEOTHERMAL_POWER` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ac0a1a52e723.js` → `GeothermalPowerVisualization`.
+Parameters: `plant_type` (enum, default `dry steam`, one of `dry steam`, `flash steam`, `binary cycle`).
+
+Source: manifest `model-f5fc9c2ff44e.js`; view `visualization-ac0a1a52e723.js` → `GeothermalPowerVisualization`.
 
 #### Ghk membrane potential: `P_{\mathrm{ion}}\uparrow \Rightarrow V_m \to E_{\mathrm{ion}}`
 
@@ -7758,7 +8010,7 @@ Source: manifest `type-7d87631529a2.js`; view `visualization-7e11be41728f.js` �
 
 Circulation cell
 
-Type `GLOBAL_ATMOSPHERIC_CIRCULATION` · manifest v?.
+Type `GLOBAL_ATMOSPHERIC_CIRCULATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-efb639131ab5.js` → `Visualization`.
 
@@ -7766,7 +8018,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-efb63
 
 Glycolysis stage
 
-Type `GLYCOLYSIS` · manifest v?.
+Type `GLYCOLYSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eaf697fcd3ac.js` → `GlycolysisVisualization`.
 
@@ -7774,9 +8026,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eaf69
 
 G-protein pathway
 
-Type `GPCR_SIGNALING` · manifest v?.
+Type `GPCR_SIGNALING` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c032329c84c0.js` → `GpcrSignalingVisualization`.
+Parameters: `pathway` (enum, default `Gs`, one of `Gs`, `Gi`, `Gq`).
+
+Source: manifest `model-e7c8cc43e8df.js`; view `visualization-c032329c84c0.js` → `GpcrSignalingVisualization`.
 
 #### Gpp vs npp: `\mathrm{NPP}=\mathrm{GPP}-R_a`
 
@@ -7800,31 +8054,31 @@ Source: manifest `type-6ec40c0e5685.js`; view `visualization-4b847b117fd2.js` �
 
 Choose an octave
 
-Type `GRAND_STAFF_PIANO_MAP` · manifest v?.
+Type `GRAND_STAFF_PIANO_MAP`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3833693d5f3e.js` → `Visualization`.
 
 #### Graphable function
 
-Type `GRAPHABLE_FUNCTION` · manifest v?.
+Type `GRAPHABLE_FUNCTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8de20535a32d.js` → `GraphableFunctionVisualization`.
 
 #### Graphable function (v2)
 
-Type `GRAPHABLE_FUNCTION_V2` · manifest v?.
+Type `GRAPHABLE_FUNCTION_V2`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-99f16fd8ae72.js` → `GraphableFunctionV2Visualization`.
 
 #### Greenhouse infrared trapping
 
-Type `GREENHOUSE_INFRARED_TRAPPING` · manifest v?.
+Type `GREENHOUSE_INFRARED_TRAPPING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ac7275af6191.js` → `GreenhouseInfraredTrappingVisualization`.
 
 #### Guitar chord chart
 
-Type `GUITAR_CHORD_CHART` · manifest v?.
+Type `GUITAR_CHORD_CHART`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-194d54002f4a.js` → `Visualization`.
 
@@ -7832,13 +8086,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-194d5
 
 Highlight a pitch class
 
-Type `GUITAR_FRETBOARD_MAP` · manifest v?.
+Type `GUITAR_FRETBOARD_MAP`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9ff06061066d.js` → `Visualization`.
 
 #### Guitar scale patterns
 
-Type `GUITAR_SCALE_PATTERNS` · manifest v?.
+Type `GUITAR_SCALE_PATTERNS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7390fbbffb41.js` → `Visualization`.
 
@@ -7846,7 +8100,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7390f
 
 Patch connectivity
 
-Type `HABITAT_FRAGMENTATION` · manifest v?.
+Type `HABITAT_FRAGMENTATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4e57cdae72b2.js` → `HabitatFragmentationVisualization`.
 
@@ -7860,31 +8114,37 @@ Source: manifest `type-6637f6f4ce37.js`; view `visualization-cd5f9cccbb7c.js` �
 
 #### Half life relation
 
-Type `HALF_LIFE_RELATION` · manifest v?.
+Type `HALF_LIFE_RELATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f91fff1fbcc8.js` → `HalfLifeRelationVisualization`.
 
 #### Halogen reactivity trend
 
-Type `HALOGEN_REACTIVITY_TREND` · manifest v?.
+Type `HALOGEN_REACTIVITY_TREND` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-14035ed0d6c9.js` → `HalogenReactivityVisualization`.
+Parameters: `initial_halogen` (enum, default `chlorine`, one of `chlorine`, `bromine`, `iodine`); `initial_halide` (enum, default `bromide`, one of `chloride`, `bromide`, `iodide`).
 
-#### Hardy weinberg equilibrium
+Source: manifest `model-9811711de13c.js`; view `visualization-14035ed0d6c9.js` → `HalogenReactivityVisualization`.
+
+#### Hardy weinberg equilibrium: `p^2 + 2pq + q^2 = 1`
 
 Frequency of allele A
 
-Type `HARDY_WEINBERG_EQUILIBRIUM` · manifest v?.
+Type `HARDY_WEINBERG_EQUILIBRIUM` · manifest v3 · formula `p^2 + 2pq + q^2 = 1`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-32593bbcd8ea.js` → `HardyWeinbergVisualization`.
+Parameters: `allele_frequency_p` (number, default `0.5`, range 0 to 1).
 
-#### Hash table collisions
+Source: manifest `model-e6350a687712.js`; view `visualization-32593bbcd8ea.js` → `HardyWeinbergVisualization`.
+
+#### Hash table collisions: `h(k)=k\bmod 7`
 
 Collision-resolution strategy
 
-Type `HASH_TABLE_COLLISIONS` · manifest v?.
+Type `HASH_TABLE_COLLISIONS` · manifest v2 · formula `h(k)=k\bmod 7`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-724a6d5b82a5.js` → `HashTableCollisionsVisualization`.
+Parameters: `resolution_strategy` (enum, default `separate chaining`, one of `separate chaining`, `linear probing`).
+
+Source: manifest `model-8a1ce53f2bd0.js`; view `visualization-724a6d5b82a5.js` → `HashTableCollisionsVisualization`.
 
 #### Hemoglobin curve
 
@@ -7900,29 +8160,33 @@ Source: manifest `type-9f5bb286483b.js`; view `visualization-3bd0b1ce38e5.js` �
 
 Hemostasis stage
 
-Type `HEMOSTASIS_AND_CLOTTING` · manifest v?.
+Type `HEMOSTASIS_AND_CLOTTING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-16284a368884.js` → `HemostasisVisualization`.
 
 #### Herons formula area
 
-Type `HERONS_FORMULA_AREA` · manifest v?.
+Type `HERONS_FORMULA_AREA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a7f94feb7f78.js` → `HeronsFormulaAreaVisualization`.
 
 #### Heteroskedasticity
 
-Type `HETEROSKEDASTICITY` · manifest v?.
+Type `HETEROSKEDASTICITY` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-db53855cfdc8.js` → `HeteroskedasticityVisualization`.
+Parameters: `initial_variance_pattern` (enum, default `constant`, one of `constant`, `increasing`, `decreasing`, `bulge`).
+
+Source: manifest `model-45fb684d19d6.js`; view `visualization-db53855cfdc8.js` → `HeteroskedasticityVisualization`.
 
 #### Histogram
 
 Distribution shape
 
-Type `HISTOGRAM` · manifest v?.
+Type `HISTOGRAM` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-49e7b62d1d1b.js` → `HistogramVisualization`.
+Parameters: `distribution_shape` (enum, default `roughly symmetric`, one of `roughly symmetric`, `skewed right`, `bimodal`, `gap or outlier`).
+
+Source: manifest `model-dbdb00b115a8.js`; view `visualization-49e7b62d1d1b.js` → `HistogramVisualization`.
 
 #### Homogeneous ode roots: `ay''+by'+cy=0`
 
@@ -7936,7 +8200,7 @@ Source: manifest `type-9e1fda92abdc.js`; view `visualization-e87c852014f4.js` �
 
 #### Homogeneous vs heterogeneous mixture
 
-Type `HOMOGENEOUS_VS_HETEROGENEOUS_MIXTURE` · manifest v?.
+Type `HOMOGENEOUS_VS_HETEROGENEOUS_MIXTURE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-14b40402185d.js` → `Visualization`.
 
@@ -7944,13 +8208,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-14b40
 
 Trace a corresponding bone group
 
-Type `HOMOLOGOUS_STRUCTURES` · manifest v?.
+Type `HOMOLOGOUS_STRUCTURES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a8059c29507a.js` → `HomologousStructuresVisualization`.
 
 #### Hookes law
 
-Type `HOOKES_LAW` · manifest v?.
+Type `HOOKES_LAW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e7a7edb70461.js` → `HookesLawVisualization`.
 
@@ -7958,7 +8222,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e7a7e
 
 {protocol} exchange step
 
-Type `HTTP_PROTOCOL` · manifest v?.
+Type `HTTP_PROTOCOL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9f07a41fcc9b.js` → `HttpProtocolVisualization`.
 
@@ -7966,9 +8230,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9f07a
 
 Select an organ system
 
-Type `HUMAN_BODY_SYSTEMS_MAP` · manifest v?.
+Type `HUMAN_BODY_SYSTEMS_MAP` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-df936a279291.js` → `Visualization`.
+Parameters: `focus_system` (enum, default `respiratory`, one of `integumentary`, `skeletal`, `muscular`, `nervous`, `endocrine`, `cardiovascular`, `lymphatic-immune`, `respiratory`, `digestive`, `urinary-excretory`, `reproductive`).
+
+Source: manifest `model-31563588c1d0.js`; view `visualization-df936a279291.js` → `Visualization`.
 
 #### Hybridization sigma pi bonds
 
@@ -7980,13 +8246,13 @@ Source: manifest `type-6fafbd960065.js`; view `visualization-c132408c5a62.js` �
 
 #### Hydrocarbon structures
 
-Type `HYDROCARBON_STRUCTURES` · manifest v?.
+Type `HYDROCARBON_STRUCTURES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-14b167c39b7f.js` → `Visualization`.
 
 #### Hydroelectric dam
 
-Type `HYDROELECTRIC_DAM` · manifest v?.
+Type `HYDROELECTRIC_DAM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5b2fe3eeee6d.js` → `Visualization`.
 
@@ -7994,17 +8260,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5b2fe
 
 Fuel-cell process stage
 
-Type `HYDROGEN_FUEL_CELL` · manifest v?.
+Type `HYDROGEN_FUEL_CELL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b8e8e501723.js` → `HydrogenFuelCellVisualization`.
 
-#### Hypergeometric distribution
+#### Hypergeometric distribution: `P(X=k)=\frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}`
 
 Successes in the population
 
-Type `HYPERGEOMETRIC_DISTRIBUTION` · manifest v?.
+Type `HYPERGEOMETRIC_DISTRIBUTION` · manifest v5 · formula `P(X=k)=\frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c4bb9ecdd60b.js` → `HypergeometricDistributionVisualization`.
+Parameters: `population_size` (integer, default `12`, range 12 to 24); `population_successes` (integer, default `5`, range 0 to 12); `sample_size` (integer, default `7`, range 1 to 12).
+
+Source: manifest `model-e077e5821034.js`; view `visualization-c4bb9ecdd60b.js` → `HypergeometricDistributionVisualization`.
 
 #### Hyperopia
 
@@ -8024,11 +8292,13 @@ Parameters: `turnsRatio` (number, default `2`, range 0.1 to 10); `loadResistance
 
 Source: manifest `type-f90cbc2eec2d.js`; view `visualization-e037f61faf2f.js` → `IdealTransformerVisualization`.
 
-#### Ieee 754 floating point
+#### Ieee 754 floating point: `x=(-1)^s(1.f)_2\,2^{E-\mathrm{bias}}`
 
-Type `IEEE_754_FLOATING_POINT` · manifest v?.
+Type `IEEE_754_FLOATING_POINT` · manifest v2 · formula `x=(-1)^s(1.f)_2\,2^{E-\mathrm{bias}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b3f1bfbd9414.js` → `Ieee754Visualization`.
+Parameters: `precision` (enum, default `single`, one of `single`, `double`).
+
+Source: manifest `model-cdb21fd8d79e.js`; view `visualization-b3f1bfbd9414.js` → `Ieee754Visualization`.
 
 #### If statement execution flow
 
@@ -8044,7 +8314,7 @@ Source: manifest `type-62569be7b3b6.js`; view `visualization-f72c4bac791e.js` �
 
 Slow underground cooling
 
-Type `IGNEOUS_COOLING_RATE_AND_CRYSTAL_SIZE` · manifest v?.
+Type `IGNEOUS_COOLING_RATE_AND_CRYSTAL_SIZE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b5ac7531070.js` → `Visualization`.
 
@@ -8052,19 +8322,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b5ac
 
 Phagocytosis stage
 
-Type `IMMUNE_CELL_PHAGOCYTOSIS` · manifest v?.
+Type `IMMUNE_CELL_PHAGOCYTOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cb550fcfea9a.js` → `ImmuneCellPhagocytosisVisualization`.
 
 #### Import quota
 
-Type `IMPORT_QUOTA` · manifest v?.
+Type `IMPORT_QUOTA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3572a1a8ab93.js` → `ImportQuotaVisualization`.
 
 #### Incidence vs prevalence
 
-Type `INCIDENCE_VS_PREVALENCE` · manifest v?.
+Type `INCIDENCE_VS_PREVALENCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a8e94be4ad96.js` → `IncidenceVsPrevalenceVisualization`.
 
@@ -8082,29 +8352,31 @@ Source: manifest `type-dc5d4e4fe966.js`; view `visualization-3d68aaa572ee.js` �
 
 Metaphase-I orientation
 
-Type `INDEPENDENT_ASSORTMENT` · manifest v?.
+Type `INDEPENDENT_ASSORTMENT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c347bad01aab.js` → `Visualization`.
 
 #### Independent probability intersection
 
-Type `INDEPENDENT_PROBABILITY_INTERSECTION` · manifest v?.
+Type `INDEPENDENT_PROBABILITY_INTERSECTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1c8e44478ccd.js` → `IndependentProbabilityIntersectionVisualization`.
 
-#### Initial rate experiment
+#### Initial rate experiment: `\frac{r_{0,2}}{r_{0,1}}=\left(\frac{[X]_{0,2}}{[X]_{0,1}}\right)^p`
 
 Vary reactant {reactant}
 
-Type `INITIAL_RATE_EXPERIMENT` · manifest v?.
+Type `INITIAL_RATE_EXPERIMENT` · manifest v3 · formula `\frac{r_{0,2}}{r_{0,1}}=\left(\frac{[X]_{0,2}}{[X]_{0,1}}\right)^p`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8cb83c81ac76.js` → `InitialRateExperimentVisualization`.
+Parameters: `order_a` (enum, default `first`, one of `zero`, `first`, `second`); `order_b` (enum, default `second`, one of `zero`, `first`, `second`).
+
+Source: manifest `model-353d6b580655.js`; view `visualization-8cb83c81ac76.js` → `InitialRateExperimentVisualization`.
 
 #### Innate vs adaptive immunity
 
 Immune-response timeline
 
-Type `INNATE_VS_ADAPTIVE_IMMUNITY` · manifest v?.
+Type `INNATE_VS_ADAPTIVE_IMMUNITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7d3653bd2d7a.js` → `Visualization`.
 
@@ -8112,37 +8384,39 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7d365
 
 Insertion sort actions
 
-Type `INSERTION_SORT` · manifest v?.
+Type `INSERTION_SORT` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5d74f4651416.js` → `InsertionSortVisualization`.
+Parameters: `value1` (number, default `7`, range 1 to 9); `value2` (number, default `3`, range 1 to 9); `value3` (number, default `8`, range 1 to 9); `value4` (number, default `2`, range 1 to 9); `value5` (number, default `6`, range 1 to 9); `value6` (number, default `4`, range 1 to 9); `value7` (number, default `5`, range 1 to 9).
+
+Source: manifest `model-9ce2e0b98e4f.js`; view `visualization-5d74f4651416.js` → `InsertionSortVisualization`.
 
 #### Instrument families
 
-Type `INSTRUMENT_FAMILIES` · manifest v?.
+Type `INSTRUMENT_FAMILIES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-46cdd329b51f.js` → `Visualization`.
 
 #### Insulin deficiency vs resistance
 
-Type `INSULIN_DEFICIENCY_VS_RESISTANCE` · manifest v?.
+Type `INSULIN_DEFICIENCY_VS_RESISTANCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f268c8cfff62.js` → `Visualization`.
 
 #### Integral
 
-Type `INTEGRAL` · manifest v?.
+Type `INTEGRAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-91864adce3e1.js` → `IntegralVisualization`.
 
 #### Integration by parts
 
-Type `INTEGRATION_BY_PARTS` · manifest v?.
+Type `INTEGRATION_BY_PARTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e8ee2533f3aa.js` → `IntegrationByPartsVisualization`.
 
 #### Integration estimation
 
-Type `INTEGRATION_ESTIMATION` · manifest v?.
+Type `INTEGRATION_ESTIMATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3a0c29afd536.js` → `IntegrationEstimationVisualization`.
 
@@ -8166,9 +8440,11 @@ Source: manifest `type-df5248337cc3.js`; view `visualization-6b1864f0e75e.js` �
 
 #### Ionic bond formation
 
-Type `IONIC_BOND_FORMATION` · manifest v?.
+Type `IONIC_BOND_FORMATION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-de15c783ed9a.js` → `IonicBondFormationVisualization`.
+Parameters: `compound` (enum, default `sodium chloride`, one of `sodium chloride`, `magnesium oxide`, `magnesium chloride`, `sodium oxide`).
+
+Source: manifest `model-483deeec96b8.js`; view `visualization-de15c783ed9a.js` → `IonicBondFormationVisualization`.
 
 #### Ionic formulas
 
@@ -8184,7 +8460,7 @@ Source: manifest `type-892c2b1ba446.js`; view `visualization-b5bb13bd6b7d.js` �
 
 Sodium ion center
 
-Type `IONIC_LATTICE` · manifest v?.
+Type `IONIC_LATTICE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6014cc5cdb89.js` → `Visualization`.
 
@@ -8198,15 +8474,17 @@ Source: manifest `type-72520cdd5971.js`; view `visualization-6de963031d61.js` �
 
 #### Ir spectroscopy
 
-Type `IR_SPECTROSCOPY` · manifest v?.
+Type `IR_SPECTROSCOPY` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-247303f2053e.js` → `Visualization`.
+Parameters: `initial_molecular_class` (enum, default `alcohol`, one of `alkane`, `alcohol`, `ketone`, `carboxylic acid`, `nitrile`).
+
+Source: manifest `model-4e2972a7ab7b.js`; view `visualization-247303f2053e.js` → `Visualization`.
 
 #### Irrigation and salinization
 
 Drainage condition
 
-Type `IRRIGATION_AND_SALINIZATION` · manifest v?.
+Type `IRRIGATION_AND_SALINIZATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-81f9e3f2f58f.js` → `IrrigationVisualization`.
 
@@ -8214,13 +8492,15 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-81f9e
 
 Island-biogeography equilibrium graph for a {case}. Equilibrium richness is {richness} of {sourcePool} source-pool species. Immigration and extinction are equal at a nonzero turnover rate of {turnover}. The four cases run from small and far, with the fewest species, to large and near, with the most.
 
-Type `ISLAND_BIOGEOGRAPHY` · manifest v?.
+Type `ISLAND_BIOGEOGRAPHY` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-82343f130f78.js` → `Visualization`.
+Parameters: `island_area` (enum, default `large`, one of `small`, `large`); `isolation` (enum, default `near`, one of `near`, `far`).
+
+Source: manifest `model-a8957b9529f0.js`; view `visualization-82343f130f78.js` → `Visualization`.
 
 #### Isosceles triangle
 
-Type `ISOSCELES_TRIANGLE` · manifest v?.
+Type `ISOSCELES_TRIANGLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-67f96b1e6f6f.js` → `IsoscelesTriangleVisualization`.
 
@@ -8236,7 +8516,7 @@ Source: manifest `type-b5e0ca3b765a.js`; view `visualization-6ba3dcfddb37.js` �
 
 #### Iupac hydrocarbon naming
 
-Type `IUPAC_HYDROCARBON_NAMING` · manifest v?.
+Type `IUPAC_HYDROCARBON_NAMING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7199aa7e5da0.js` → `Visualization`.
 
@@ -8244,15 +8524,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7199a
 
 {rowLabel} and {columnLabel}: {count, plural, one {# student} other {# students}}
 
-Type `JOINT_MARGINAL_CONDITIONAL_TABLE` · manifest v?.
+Type `JOINT_MARGINAL_CONDITIONAL_TABLE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-67d2db6ee7e4.js` → `JointMarginalConditionalTableVisualization`.
+Parameters: `probabilityQuestion` (enum, default `passed_and_studied`, one of `passed_and_studied`, `passed_and_did_not_study`, `did_not_pass_and_studied`, `did_not_pass_and_did_not_study`, `passed`, `did_not_pass`, `studied`, `did_not_study`, `studied_given_passed`, `did_not_study_given_passed`, `studied_given_did_not_pass`, `did_not_study_given_did_not_pass`, `passed_given_studied`, `did_not_pass_given_studied`, `passed_given_did_not_study`, `did_not_pass_given_did_not_study`).
+
+Source: manifest `model-fd7375308d68.js`; view `visualization-67d2db6ee7e4.js` → `JointMarginalConditionalTableVisualization`.
 
 #### Kaplan meier survival curve
 
 No censoring
 
-Type `KAPLAN_MEIER_SURVIVAL_CURVE` · manifest v?.
+Type `KAPLAN_MEIER_SURVIVAL_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fec0b6b636cf.js` → `Visualization`.
 
@@ -8260,7 +8542,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fec0b
 
 Marginal propensity to consume
 
-Type `KEYNESIAN_CROSS` · manifest v?.
+Type `KEYNESIAN_CROSS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f313f2f80ebe.js` → `KeynesianCrossVisualization`.
 
@@ -8268,7 +8550,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f313f
 
 Keystone present
 
-Type `KEYSTONE_SPECIES_AND_TROPHIC_CASCADE` · manifest v?.
+Type `KEYSTONE_SPECIES_AND_TROPHIC_CASCADE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-14e7268bbaa4.js` → `KeystoneCascadeVisualization`.
 
@@ -8276,29 +8558,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-14e72
 
 Kinase cascade stage
 
-Type `KINASE_CASCADE` · manifest v?.
+Type `KINASE_CASCADE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-be4374aaa2bc.js` → `KinaseCascadeVisualization`.
 
-#### Kinematics displacement uniform acceleration
+#### Kinematics velocity: `v_f = v_i + at`
 
-Type `KINEMATICS_DISPLACEMENT_UNIFORM_ACCELERATION` · manifest v?.
+Type `KINEMATICS_VELOCITY` · manifest v3 (also v3, v3, v3) · formula `v_f = v_i + at`, also `v = u + at`, `v = v_0 + at`, `u + at = v`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7c945c47656f.js` → `KinematicsDisplacementUniformAccelerationVisualization`.
+Parameters: `initialVelocityMetersPerSecond` (number, default `2`, range -6 to 10); `accelerationMetersPerSecondSquared` (number, default `1`, range -2 to 4); `timeSeconds` (number, default `5`, range 1 to 9).
 
-#### Kinematics position
-
-Type `KINEMATICS_POSITION` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-404144f8c36b.js` → `KinematicsPositionVisualization`.
-
-#### Kinematics velocity squared
-
-Position-time plot from zero to {time} seconds, ending at displacement {displacement} meters.
-
-Type `KINEMATICS_VELOCITY_SQUARED` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b6b5e2aa02ab.js` → `KinematicsVelocitySquaredVisualization`.
+Source: manifest `type-ce7a4fb22b44.js`; view `visualization-7c945c47656f.js` → `KinematicsDisplacementUniformAccelerationVisualization`.
 
 #### Kinetic and potential energy: `E_{\text{total}} = PE + KE`
 
@@ -8320,45 +8590,47 @@ Source: manifest `type-e6de8eed347a.js`; view `visualization-77ab11428b41.js` �
 
 Number of nearest neighbors
 
-Type `KNN_NEIGHBOR_VOTING` · manifest v?.
+Type `KNN_NEIGHBOR_VOTING` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d1d65447b667.js` → `KnnNeighborVotingVisualization`.
+Parameters: `k` (integer, default `5`, range 1 to 9); `queryX` (number, default `5.2`, range 0 to 10); `queryY` (number, default `3.3`, range 0 to 10).
+
+Source: manifest `model-9d831e60e68f.js`; view `visualization-d1d65447b667.js` → `KnnNeighborVotingVisualization`.
 
 #### Labeled drum kit
 
 Drum-kit component
 
-Type `LABELED_DRUM_KIT` · manifest v?.
+Type `LABELED_DRUM_KIT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d76939aa3fba.js` → `LabeledDrumKitVisualization`.
 
 #### Labor force flows
 
-Type `LABOR_FORCE_FLOWS` · manifest v?.
+Type `LABOR_FORCE_FLOWS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-63fcca3f0393.js` → `LaborForceFlowsVisualization`.
 
 #### Labor markets
 
-Type `LABOR_MARKETS` · manifest v?.
+Type `LABOR_MARKETS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d2c4565a6cd4.js` → `FactorMarketEquilibriumVisualization`.
 
 #### Lac operon
 
-Type `LAC_OPERON` · manifest v?.
+Type `LAC_OPERON`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7244de6148f.js` → `Visualization`.
 
 #### Laffer curve
 
-Type `LAFFER_CURVE` · manifest v?.
+Type `LAFFER_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-91ba8f9f020f.js` → `Visualization`.
 
 #### Land and sea breeze
 
-Type `LAND_AND_SEA_BREEZE` · manifest v?.
+Type `LAND_AND_SEA_BREEZE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7afd1e86c10.js` → `Visualization`.
 
@@ -8366,7 +8638,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7afd
 
 Water entry, from dry to heavy rainfall
 
-Type `LANDFILL_DESIGN` · manifest v?.
+Type `LANDFILL_DESIGN`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d345970e3414.js` → `Visualization`.
 
@@ -8374,19 +8646,23 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d3459
 
 Movement type
 
-Type `LANDSLIDE_RISK_AND_MOVEMENT_TYPES` · manifest v?.
+Type `LANDSLIDE_RISK_AND_MOVEMENT_TYPES` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fd0dc8c32d7e.js` → `Visualization`.
+Parameters: `initial_movement_type` (enum, default `fall`, one of `fall`, `topple`, `rotational slide`, `translational slide`, `spread`, `flow`).
+
+Source: manifest `model-a050f4969274.js`; view `visualization-fd0dc8c32d7e.js` → `Visualization`.
 
 #### Latitude longitude
 
-Type `LATITUDE_LONGITUDE` · manifest v?.
+Type `LATITUDE_LONGITUDE` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5b932d4d2838.js` → `Visualization`.
+Parameters: `latitude` (integer, default `30`, range -90 to 90); `longitude` (integer, default `45`, range -180 to 180).
+
+Source: manifest `model-fe09a72207e2.js`; view `visualization-5b932d4d2838.js` → `Visualization`.
 
 #### Law of cosines
 
-Type `LAW_OF_COSINES` · manifest v?.
+Type `LAW_OF_COSINES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-30e6c7abec7e.js` → `LawOfCosinesVisualization`.
 
@@ -8394,15 +8670,17 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-30e6c
 
 Sample-size multiplier
 
-Type `LAW_OF_DEFINITE_PROPORTIONS` · manifest v?.
+Type `LAW_OF_DEFINITE_PROPORTIONS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2ef7fef93cc8.js` → `LawOfDefiniteProportionsVisualization`.
 
-#### Law of reflection
+#### Law of reflection: `\theta_i = \theta_r`
 
-Type `LAW_OF_REFLECTION` · manifest v?.
+Type `LAW_OF_REFLECTION` · manifest v3 · formula `\theta_i = \theta_r`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-93257daf5e31.js` → `LawOfReflectionVisualization`.
+Parameters: `incidentAngleDeg` (number, default `40`, range 10 to 75).
+
+Source: manifest `model-2bccbf866c14.js`; view `visualization-93257daf5e31.js` → `LawOfReflectionVisualization`.
 
 #### Lcm
 
@@ -8416,15 +8694,17 @@ Source: manifest `type-afc86e267b1f.js`; view `visualization-1a70da605ca4.js` �
 
 Administered dose in milligrams per kilogram
 
-Type `LD50_DOSE_RESPONSE_CURVE` · manifest v?.
+Type `LD50_DOSE_RESPONSE_CURVE` · manifest v5.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-deec159ae545.js` → `Visualization`.
+Parameters: `reference_ld50_mg_per_kg` (number, default `100`, range 3 to 300); `comparison_ld50_mg_per_kg` (number, default `30`, range 3 to 300).
+
+Source: manifest `model-5e134de0146d.js`; view `visualization-deec159ae545.js` → `Visualization`.
 
 #### Le chateliers principle
 
 Select the equilibrium stress
 
-Type `LE_CHATELIERS_PRINCIPLE` · manifest v?.
+Type `LE_CHATELIERS_PRINCIPLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bd0696bd7246.js` → `Visualization`.
 
@@ -8432,7 +8712,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bd069
 
 Observed data points
 
-Type `LEAST_SQUARE_REGRESSION` · manifest v?.
+Type `LEAST_SQUARE_REGRESSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1cfda69f5108.js` → `LeastSquareRegressionVisualization`.
 
@@ -8446,7 +8726,7 @@ Source: manifest `type-2b5f6faeedd9.js`; view `visualization-91664be5ef37.js` �
 
 #### Levels of organization
 
-Type `LEVELS_OF_ORGANIZATION` · manifest v?.
+Type `LEVELS_OF_ORGANIZATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c2c655c67598.js` → `Visualization`.
 
@@ -8464,9 +8744,11 @@ Source: manifest `type-84ec9bea3a73.js`; view `visualization-cd336bea44a3.js` �
 
 Molecule or ion
 
-Type `LEWIS_STRUCTURE_BUILDER` · manifest v?.
+Type `LEWIS_STRUCTURE_BUILDER` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-423d33571198.js` → `Visualization`.
+Parameters: `molecule` (enum, default `carbon dioxide`, one of `water`, `ammonia`, `carbon dioxide`, `hydrogen cyanide`, `formate ion`, `nitrite ion`).
+
+Source: manifest `model-afc621595d57.js`; view `visualization-423d33571198.js` → `Visualization`.
 
 #### Likelihood function: `L(p\mid k,n) \propto p^k(1-p)^{n-k}`
 
@@ -8482,7 +8764,7 @@ Source: manifest `type-8c2ee062fabe.js`; view `visualization-3202f6e3a214.js` �
 
 Starting hydrogen molecules
 
-Type `LIMITING_REACTANT` · manifest v?.
+Type `LIMITING_REACTANT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ba15760cd576.js` → `LimitingReactantVisualization`.
 
@@ -8498,7 +8780,7 @@ Source: manifest `type-f010dd668ee0.js`; view `visualization-687a87384a8b.js` �
 
 #### Linear equation two vars simple
 
-Type `LINEAR_EQUATION_TWO_VARS_SIMPLE` · manifest v?.
+Type `LINEAR_EQUATION_TWO_VARS_SIMPLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6f83e6be9c2e.js` → `LinearEquationTwoVarsSimpleVisualization`.
 
@@ -8514,39 +8796,43 @@ Source: manifest `type-630959edaee6.js`; view `visualization-2bfcee02b175.js` �
 
 Bounded feasible region preset
 
-Type `LINEAR_INEQUALITIES_FEASIBLE_REGION` · manifest v?.
+Type `LINEAR_INEQUALITIES_FEASIBLE_REGION` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-31ce05f0f149.js` → `LinearInequalitiesFeasibleRegionVisualization`.
+Parameters: `slope1` (number, default `1`, range -4 to 4); `intercept1` (number, default `-2`, range -6 to 6); `relation1` (enum, default `>=`, one of `<=`, `>=`, `<`, `>`); `slope2` (number, default `-1`, range -4 to 4); `intercept2` (number, default `-2`, range -6 to 6); `relation2` (enum, default `>=`, one of `<=`, `>=`, `<`, `>`); `slope3` (number, default `0`, range -4 to 4); `intercept3` (number, default `3`, range -6 to 6); `relation3` (enum, default `<=`, one of `<=`, `>=`, `<`, `>`).
 
-#### Linear inequality solution ray
+Source: manifest `model-84524f724fa2.js`; view `visualization-31ce05f0f149.js` → `LinearInequalitiesFeasibleRegionVisualization`.
+
+#### Linear inequality solution ray: `ax + b \lessgtr c`
 
 Coefficient {a}
 
-Type `LINEAR_INEQUALITY_SOLUTION_RAY` · manifest v?.
+Type `LINEAR_INEQUALITY_SOLUTION_RAY` · manifest v1 · formula `ax + b \lessgtr c`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7e666f0feee4.js` → `LinearInequalitySolutionRayVisualization`.
+Parameters: `a` (integer, default `-3`, range -5 to 5); `b` (number, default `2`, range -12 to 12); `c` (number, default `11`, range -12 to 12); `relation` (enum, default `greater_than`, one of `less_than`, `greater_than`).
+
+Source: manifest `model-f27f59868f2e.js`; view `visualization-7e666f0feee4.js` → `LinearInequalitySolutionRayVisualization`.
 
 #### Lipids and phospholipids
 
-Type `LIPIDS_AND_PHOSPHOLIPIDS` · manifest v?.
+Type `LIPIDS_AND_PHOSPHOLIPIDS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5d0583776207.js` → `Visualization`.
 
 #### Loanable funds
 
-Type `LOANABLE_FUNDS` · manifest v?.
+Type `LOANABLE_FUNDS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1da799ad4cc9.js` → `LoanableFundsVisualization`.
 
 #### Logarithm inverse exponential
 
-Type `LOGARITHM_INVERSE_EXPONENTIAL` · manifest v?.
+Type `LOGARITHM_INVERSE_EXPONENTIAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-285ba273295a.js` → `LogarithmInverseExponentialVisualization`.
 
 #### Logistic growth
 
-Type `LOGISTIC_GROWTH` · manifest v?.
+Type `LOGISTIC_GROWTH`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-883e6a6ab2a1.js` → `LogisticGrowthVisualization`.
 
@@ -8570,7 +8856,7 @@ Source: manifest `type-eb0199ee4cef.js`; view `visualization-10d354b04cd8.js` �
 
 #### Long run growth
 
-Type `LONG_RUN_GROWTH` · manifest v?.
+Type `LONG_RUN_GROWTH`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f8f6c014c83c.js` → `LongRunGrowthVisualization`.
 
@@ -8596,9 +8882,11 @@ Source: manifest `type-a513a18b2ee6.js`; view `visualization-9151635b817b.js` �
 
 #### Lras
 
-Type `LRAS` · manifest v?.
+Type `LRAS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-16920f1300fe.js` → `LrasVisualization`.
+Parameters: `capacity_change_percent` (number, default `15`, range -35 to 35).
+
+Source: manifest `model-182295b28076.js`; view `visualization-16920f1300fe.js` → `LrasVisualization`.
 
 #### Lung gas gradient
 
@@ -8624,13 +8912,13 @@ Source: manifest `type-ee3c6146db4d.js`; view `visualization-9e7b1236208e.js` �
 
 Magnet motion animation controls
 
-Type `MAGNET_INDUCED_CURRENT` · manifest v?.
+Type `MAGNET_INDUCED_CURRENT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d19c751ebfa8.js` → `MagnetInducedCurrentVisualization`.
 
 #### Magnet induced current direction
 
-Type `MAGNET_INDUCED_CURRENT_DIRECTION` · manifest v?.
+Type `MAGNET_INDUCED_CURRENT_DIRECTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9c19f003aca4.js` → `MagnetInducedCurrentDirectionVisualization`.
 
@@ -8648,7 +8936,7 @@ Source: manifest `type-f09422f3bf66.js`; view `visualization-654e508bbe1a.js` �
 
 {point} horizontal position
 
-Type `MAP_MEASUREMENT` · manifest v?.
+Type `MAP_MEASUREMENT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8c0adfb7a16.js` → `MapMeasurementVisualization`.
 
@@ -8656,7 +8944,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8c0a
 
 Selected quantity
 
-Type `MARGINAL_ANALYSIS` · manifest v?.
+Type `MARGINAL_ANALYSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7995e645e5a1.js` → `MarginalAnalysisVisualization`.
 
@@ -8664,7 +8952,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7995e
 
 HBr-addition step
 
-Type `MARKOVNIKOV_ALKENE_ADDITION` · manifest v?.
+Type `MARKOVNIKOV_ALKENE_ADDITION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-aadc700733fd.js` → `Visualization`.
 
@@ -8700,9 +8988,11 @@ Source: manifest `type-a880aebad1b1.js`; view `visualization-1055aee47d8f.js` �
 
 Choose matched-pairs design variant
 
-Type `MATCHED_PAIRS_DESIGN` · manifest v?.
+Type `MATCHED_PAIRS_DESIGN` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-881c7180f6e7.js` → `Visualization`.
+Parameters: `design_variant` (enum, default `separate-units`, one of `separate-units`, `self-paired`).
+
+Source: manifest `model-3df69373af20.js`; view `visualization-881c7180f6e7.js` → `Visualization`.
 
 #### Matrix inverse 2d: `A^{-1}A=I\quad A^{-1}Ax=x`
 
@@ -8714,9 +9004,17 @@ Source: manifest `type-654523ab98b5.js`; view `visualization-b2ff047558e0.js` �
 
 #### Matrix multiplication row column rule
 
-Type `MATRIX_MULTIPLICATION_ROW_COLUMN_RULE` · manifest v?.
+Type `MATRIX_MULTIPLICATION_ROW_COLUMN_RULE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-53d842acbc57.js` → `MatrixMultiplicationRowColumnRuleVisualization`.
+
+#### Matrix transformation 2d: `A\vec{v}=\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}`
+
+Type `MATRIX_TRANSFORMATION_2D` · manifest v1 · formula `A\vec{v}=\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}`.
+
+Parameters: `matrixA` (number, default `2`, range -2 to 2); `matrixB` (number, default `0`, range -2 to 2); `matrixC` (number, default `0`, range -2 to 2); `matrixD` (number, default `2`, range -2 to 2); `vectorX` (number, default `1`, range -1.5 to 1.5); `vectorY` (number, default `1`, range -1.5 to 1.5).
+
+Source: manifest `type-e537504d901a.js`; view `visualization-f8eab00dbb93.js` → `MatrixTransformationVisualization`.
 
 #### Maxwell boltzmann distribution
 
@@ -8730,21 +9028,25 @@ Source: manifest `type-f22c71cb1245.js`; view `visualization-20f67cf9baa5.js` �
 
 Data set
 
-Type `MEAN_AS_BALANCE_POINT` · manifest v?.
+Type `MEAN_AS_BALANCE_POINT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ff5603355f5e.js` → `MeanAsBalancePointVisualization`.
 
-#### Mean value theorem
+#### Mean value theorem: `f'(c) = \frac{f(b) - f(a)}{b - a}`
 
-Type `MEAN_VALUE_THEOREM` · manifest v?.
+Type `MEAN_VALUE_THEOREM` · manifest v3 · formula `f'(c) = \frac{f(b) - f(a)}{b - a}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-86ceaea48b91.js` → `MeanValueTheoremVisualization`.
+Parameters: `cubicCoefficient` (number, default `0`, range -5 to 5); `quadraticCoefficient` (number, default `-0.25`, range -10 to 10); `linearCoefficient` (number, default `0.8`, range -20 to 20); `constantTerm` (number, default `4`, range -100 to 100); `intervalCenter` (number, default `5`, range -8 to 8); `intervalWidth` (number, default `2`, range 0.5 to 16).
+
+Source: manifest `model-816de77e9772.js`; view `visualization-86ceaea48b91.js` → `MeanValueTheoremVisualization`.
 
 #### Mean vs median
 
-Type `MEAN_VS_MEDIAN` · manifest v?.
+Type `MEAN_VS_MEDIAN` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-74bacfa52692.js` → `MeanVsMedianVisualization`.
+Parameters: `outlierMode` (enum, default `without`, one of `without`, `with`).
+
+Source: manifest `model-34404a0ff6b5.js`; view `visualization-74bacfa52692.js` → `MeanVsMedianVisualization`.
 
 #### Mediation indirect effect: `c = c^{\prime} + a \times b`
 
@@ -8758,21 +9060,23 @@ Source: manifest `type-e52ae9a5f679.js`; view `visualization-b4c537ae010f.js` �
 
 #### Meiosis
 
-Type `MEIOSIS` · manifest v?.
+Type `MEIOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e93c512b3fa9.js` → `MeiosisVisualization`.
 
 #### Meiosis nondisjunction
 
-Type `MEIOSIS_NONDISJUNCTION` · manifest v?.
+Type `MEIOSIS_NONDISJUNCTION` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-36057f1bc8e1.js` → `MeiosisNondisjunctionVisualization`.
+Parameters: `errorDivision` (enum, default `meiosis-one`, one of `meiosis-one`, `meiosis-two`).
+
+Source: manifest `model-265ef64a42f0.js`; view `visualization-36057f1bc8e1.js` → `MeiosisNondisjunctionVisualization`.
 
 #### Memory hierarchy
 
 Level where the requested value is found
 
-Type `MEMORY_HIERARCHY` · manifest v?.
+Type `MEMORY_HIERARCHY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9f7655c186bf.js` → `Visualization`.
 
@@ -8780,23 +9084,27 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9f765
 
 No implantation
 
-Type `MENSTRUAL_CYCLE_FERTILIZATION` · manifest v?.
+Type `MENSTRUAL_CYCLE_FERTILIZATION` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2a4ee4e1d2d8.js` → `MenstrualCycleFertilizationVisualization`.
+Parameters: `day` (integer, default `1`, range 1 to 28); `outcome` (enum, default `noImplantation`, one of `noImplantation`, `successfulImplantation`).
+
+Source: manifest `model-6d9c94a4186b.js`; view `visualization-2a4ee4e1d2d8.js` → `MenstrualCycleFertilizationVisualization`.
 
 #### Merge sort
 
 Input length
 
-Type `MERGE_SORT` · manifest v?.
+Type `MERGE_SORT` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-92cc84c65f6b.js` → `MergeSortVisualization`.
+Parameters: `value1` (integer, default `38`, range 1 to 99); `value2` (integer, default `12`, range 1 to 99); `value3` (integer, default `27`, range 1 to 99); `value4` (integer, default `43`, range 1 to 99); `value5` (integer, default `9`, range 1 to 99); `value6` (integer, default `31`, range 1 to 99); `value7` (integer, default `18`, range 1 to 99); `value8` (integer, default `25`, range 1 to 99).
+
+Source: manifest `model-1a2ca3b0dc37.js`; view `visualization-92cc84c65f6b.js` → `MergeSortVisualization`.
 
 #### Meta analysis
 
 Focal study effect estimate
 
-Type `META_ANALYSIS` · manifest v?.
+Type `META_ANALYSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dab831c0431b.js` → `MetaAnalysisVisualization`.
 
@@ -8810,13 +9118,15 @@ Source: manifest `type-72e940cb9aa1.js`; view `visualization-aaedd5ed44b9.js` �
 
 #### Metal reactivity series
 
-Type `METAL_REACTIVITY_SERIES` · manifest v?.
+Type `METAL_REACTIVITY_SERIES` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-df00dd9bcf44.js` → `MetalReactivitySeriesVisualization`.
+Parameters: `initial_solid_metal` (enum, default `zinc`, one of `magnesium`, `zinc`, `iron`, `copper`, `silver`); `initial_aqueous_metal` (enum, default `copper`, one of `magnesium`, `zinc`, `iron`, `copper`, `silver`).
+
+Source: manifest `model-71af2c81ea03.js`; view `visualization-df00dd9bcf44.js` → `MetalReactivitySeriesVisualization`.
 
 #### Metallic bonding
 
-Type `METALLIC_BONDING` · manifest v?.
+Type `METALLIC_BONDING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1f801faf34a6.js` → `Visualization`.
 
@@ -8832,13 +9142,15 @@ Source: manifest `type-aa70f27546d0.js`; view `visualization-7f5f51fff9b8.js` �
 
 Antigen-presentation pathway
 
-Type `MHC_I_VS_MHC_II_PRESENTATION` · manifest v?.
+Type `MHC_I_VS_MHC_II_PRESENTATION` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1193f35458cd.js` → `MhcPresentationVisualization`.
+Parameters: `initial_pathway` (enum, default `MHC I (endogenous)`, one of `MHC I (endogenous)`, `MHC II (exogenous)`).
+
+Source: manifest `model-d908b4b52347.js`; view `visualization-1193f35458cd.js` → `MhcPresentationVisualization`.
 
 #### Michaelis menten dynamics
 
-Type `MICHAELIS_MENTEN_DYNAMICS` · manifest v?.
+Type `MICHAELIS_MENTEN_DYNAMICS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b648d4516fbf.js` → `MichaelisMentenDynamicsVisualization`.
 
@@ -8846,27 +9158,29 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b648d
 
 Microbial temperature group
 
-Type `MICROBIAL_TOLERANCE_CURVE` · manifest v?.
+Type `MICROBIAL_TOLERANCE_CURVE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ca9f74d9a99a.js` → `MicrobialToleranceCurveVisualization`.
+Parameters: `microbial_group` (enum, default `mesophile`, one of `psychrophile`, `mesophile`, `thermophile`, `hyperthermophile`); `temperature_c` (number, default `37`, range -10 to 110).
+
+Source: manifest `model-28116a0d525d.js`; view `visualization-ca9f74d9a99a.js` → `MicrobialToleranceCurveVisualization`.
 
 #### Microphone polar patterns
 
 Polar pattern
 
-Type `MICROPHONE_POLAR_PATTERNS` · manifest v?.
+Type `MICROPHONE_POLAR_PATTERNS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c5ee237d47e0.js` → `Visualization`.
 
 #### Midpoint formula
 
-Type `MIDPOINT_FORMULA` · manifest v?.
+Type `MIDPOINT_FORMULA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-27a84da1a82d.js` → `MidpointFormulaVisualization`.
 
 #### Minimum wage
 
-Type `MINIMUM_WAGE` · manifest v?.
+Type `MINIMUM_WAGE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3aeedf782e4f.js` → `MinimumWageVisualization`.
 
@@ -8874,7 +9188,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3aeed
 
 Choose a tonic for the natural minor scale
 
-Type `MINOR_SCALE_FORMULA` · manifest v?.
+Type `MINOR_SCALE_FORMULA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7790b3ed553f.js` → `Visualization`.
 
@@ -8888,15 +9202,17 @@ Source: manifest `type-763c6e0ad6c9.js`; view `visualization-8f9f8d95cd5d.js` �
 
 #### Mitosis
 
-Type `MITOSIS` · manifest v?.
+Type `MITOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ad16202cc4ba.js` → `MitosisVisualization`.
 
 #### Mixed numbers
 
-Type `MIXED_NUMBERS` · manifest v?.
+Type `MIXED_NUMBERS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f506ffcaaffd.js` → `MixedNumbersVisualization`.
+Parameters: `numerator` (integer, default `23`, range 7 to 35).
+
+Source: manifest `model-6ab8da229be6.js`; view `visualization-f506ffcaaffd.js` → `MixedNumbersVisualization`.
 
 #### Mixing solutions: `C_{\mathrm{mix}}=\frac{C_1V_1+C_2V_2}{V_1+V_2}`
 
@@ -8908,7 +9224,7 @@ Source: manifest `type-cbd0267ff3a9.js`; view `visualization-b96f63f3a5e7.js` �
 
 #### Molarity moles per liter
 
-Type `MOLARITY_MOLES_PER_LITER` · manifest v?.
+Type `MOLARITY_MOLES_PER_LITER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b65ec79c5f2d.js` → `MolarityMolesPerLiterVisualization`.
 
@@ -8942,13 +9258,13 @@ Source: manifest `type-85baef7164cd.js`; view `visualization-16071f02614d.js` �
 
 #### Monetary policy
 
-Type `MONETARY_POLICY` · manifest v?.
+Type `MONETARY_POLICY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2c0a26d3e4cf.js` → `Visualization`.
 
 #### Money market
 
-Type `MONEY_MARKET` · manifest v?.
+Type `MONEY_MARKET`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1fbee33f7379.js` → `MoneyMarketVisualization`.
 
@@ -8964,13 +9280,13 @@ Source: manifest `type-1d713bfd423d.js`; view `visualization-736e43029171.js` �
 
 Highlighted benchmark
 
-Type `MONOPOLY_INEFFICIENCY` · manifest v?.
+Type `MONOPOLY_INEFFICIENCY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6e7eed779415.js` → `MonopolyInefficiencyVisualization`.
 
 #### Monopoly pricing
 
-Type `MONOPOLY_PRICING` · manifest v?.
+Type `MONOPOLY_PRICING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b69778a9b898.js` → `MonopolyProfitVisualization`.
 
@@ -8978,33 +9294,35 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b6977
 
 Monopsony labor market graph. Monopsony employment is {lm} and wage is {wm}; competitive employment is {lc} and wage is {wc}.
 
-Type `MONOPSONY_LABOR_MARKET_POWER` · manifest v?.
+Type `MONOPSONY_LABOR_MARKET_POWER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ba4f87b3c663.js` → `MonopsonyLaborMarketPowerVisualization`.
 
 #### Moon phases
 
-Type `MOON_PHASES` · manifest v?.
+Type `MOON_PHASES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-785d15f3f43f.js` → `MoonPhasesVisualization`.
 
 #### Mosaic plot
 
-Type `MOSAIC_PLOT` · manifest v?.
+Type `MOSAIC_PLOT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d458cc7832df.js` → `Visualization`.
 
 #### Mrna translation
 
-Type `MRNA_TRANSLATION` · manifest v?.
+Type `MRNA_TRANSLATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9f808d2ab532.js` → `MrnaTranslationVisualization`.
 
 #### Multiplication as repeated addition
 
-Type `MULTIPLICATION_AS_REPEATED_ADDITION` · manifest v?.
+Type `MULTIPLICATION_AS_REPEATED_ADDITION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5bcf21f7294d.js` → `Visualization`.
+Parameters: `groupCount` (integer, default `4`, range 1 to 6); `itemsPerGroup` (integer, default `3`, range 1 to 6).
+
+Source: manifest `model-5e0ebac94978.js`; view `visualization-5bcf21f7294d.js` → `Visualization`.
 
 #### Musical harmonic series
 
@@ -9028,7 +9346,7 @@ Source: manifest `type-d4074e9cd37d.js`; view `visualization-e0df258a6761.js` �
 
 #### Mutation types
 
-Type `MUTATION_TYPES` · manifest v?.
+Type `MUTATION_TYPES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a36061138318.js` → `MutationTypesVisualization`.
 
@@ -9046,13 +9364,13 @@ Source: manifest `type-d92a49fbb130.js`; view `visualization-40f5a1f1a632.js` �
 
 Choose fair-return pricing
 
-Type `NATURAL_MONOPOLY` · manifest v?.
+Type `NATURAL_MONOPOLY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-862126040b84.js` → `NaturalMonopolyVisualization`.
 
 #### Natural selection allele frequency
 
-Type `NATURAL_SELECTION_ALLELE_FREQUENCY` · manifest v?.
+Type `NATURAL_SELECTION_ALLELE_FREQUENCY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-33c7d62b4196.js` → `NaturalSelectionAlleleFrequencyVisualization`.
 
@@ -9060,53 +9378,63 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-33c7d
 
 Negative-feedback stage
 
-Type `NEGATIVE_FEEDBACK_LOOP` · manifest v?.
+Type `NEGATIVE_FEEDBACK_LOOP` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6040807af78f.js` → `NegativeFeedbackVisualization`.
+Parameters: `example` (enum, default `body_temperature`, one of `body_temperature`, `blood_glucose`, `thermostat`); `initial_deviation` (enum, default `above`, one of `above`, `below`).
+
+Source: manifest `model-66d4b6ae060b.js`; view `visualization-6040807af78f.js` → `NegativeFeedbackVisualization`.
 
 #### Nephron
 
 Filtrate pathway stage
 
-Type `NEPHRON` · manifest v?.
+Type `NEPHRON`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-17e07659cee3.js` → `NephronVisualization`.
 
-#### Nernst equation
+#### Nernst equation: `E_{\mathrm{cell}}=E^\circ_{\mathrm{cell}}-\frac{0.0592\,\mathrm{V}}{n}\log_{10}Q`
 
 log ten Q
 
-Type `NERNST_EQUATION` · manifest v?.
+Type `NERNST_EQUATION` · manifest v3 · formula `E_{\mathrm{cell}}=E^\circ_{\mathrm{cell}}-\frac{0.0592\,\mathrm{V}}{n}\log_{10}Q`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eca0cef4dd00.js` → `NernstEquationVisualization`.
+Parameters: `standard_cell_potential_v` (number, default `1.1`, range 0.1 to 1.3); `transferred_electrons` (integer, default `2`, range 1 to 4).
+
+Source: manifest `model-37f1f0ea4383.js`; view `visualization-eca0cef4dd00.js` → `NernstEquationVisualization`.
 
 #### Net ionic equations
 
 Choose an aqueous reaction
 
-Type `NET_IONIC_EQUATIONS` · manifest v?.
+Type `NET_IONIC_EQUATIONS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dec5402b4126.js` → `Visualization`.
+Parameters: `reaction_example` (enum, default `silver-chloride-precipitation`, one of `silver-chloride-precipitation`, `barium-sulfate-precipitation`, `strong-acid-base-neutralization`).
+
+Source: manifest `model-1cc997c09d9b.js`; view `visualization-dec5402b4126.js` → `Visualization`.
 
 #### Network fault tolerance
 
 Packet delivery from A to B
 
-Type `NETWORK_FAULT_TOLERANCE` · manifest v?.
+Type `NETWORK_FAULT_TOLERANCE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-94d518996244.js` → `NetworkFaultToleranceVisualization`.
+Parameters: `topology` (enum, default `ring`, one of `ring`, `mesh`, `star`, `tree`).
+
+Source: manifest `model-cf3822ac6f6a.js`; view `visualization-94d518996244.js` → `NetworkFaultToleranceVisualization`.
 
 #### Newman projections
 
 Molecule
 
-Type `NEWMAN_PROJECTIONS` · manifest v?.
+Type `NEWMAN_PROJECTIONS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1883e1a480e3.js` → `NewmanProjectionVisualization`.
+Parameters: `molecule` (enum, default `butane`, one of `ethane`, `butane`).
+
+Source: manifest `model-5e45c222a8d6.js`; view `visualization-1883e1a480e3.js` → `NewmanProjectionVisualization`.
 
 #### Newton first law
 
-Type `NEWTON_FIRST_LAW` · manifest v?.
+Type `NEWTON_FIRST_LAW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dc9c70cb0599.js` → `NewtonFirstLawVisualization`.
 
@@ -9120,13 +9448,13 @@ Source: manifest `type-5028a1c12442.js`; view `visualization-9b6d820c3864.js` �
 
 #### Newton third law
 
-Type `NEWTON_THIRD_LAW` · manifest v?.
+Type `NEWTON_THIRD_LAW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-444aa3884e34.js` → `NewtonThirdLawVisualization`.
 
 #### Newtons gravitation law
 
-Type `NEWTONS_GRAVITATION_LAW` · manifest v?.
+Type `NEWTONS_GRAVITATION_LAW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-62d1288578d6.js` → `NewtonsGravitationLawVisualization`.
 
@@ -9134,23 +9462,27 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-62d12
 
 Nitrogen-cycle process
 
-Type `NITROGEN_CYCLE` · manifest v?.
+Type `NITROGEN_CYCLE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ee358d0c8585.js` → `NitrogenCycleVisualization`.
+Parameters: `focus_process` (enum, default `whole cycle`, one of `whole cycle`, `fixation`, `assimilation and food web`, `ammonification`, `nitrification`, `denitrification`).
+
+Source: manifest `model-4ade1fb3e1f8.js`; view `visualization-ee358d0c8585.js` → `NitrogenCycleVisualization`.
 
 #### Normal approximation to binomial
 
 Integer success count k
 
-Type `NORMAL_APPROXIMATION_TO_BINOMIAL` · manifest v?.
+Type `NORMAL_APPROXIMATION_TO_BINOMIAL` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c3820583e6ce.js` → `NormalApproximationVisualization`.
+Parameters: `trials` (integer, default `40`, range 10 to 80); `success_probability` (number, default `0.5`, range 0.02 to 0.98); `success_count` (integer, default `20`, range 0 to 80); `event` (enum, default `at_most`, one of `at_most`, `at_least`, `exactly`).
+
+Source: manifest `model-dff7e5b52187.js`; view `visualization-c3820583e6ce.js` → `NormalApproximationVisualization`.
 
 #### Nuclear decay modes
 
 {mode}: parent {parentMass} {parentSymbol} becomes daughter {daughterMass} {daughterSymbol}; {radiation}. Mass number changes by {massChange}, atomic number by {atomicChange}, protons by {protonChange}, and neutrons by {neutronChange}.
 
-Type `NUCLEAR_DECAY_MODES` · manifest v?.
+Type `NUCLEAR_DECAY_MODES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9767598cd914.js` → `Visualization`.
 
@@ -9158,7 +9490,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-97675
 
 Fission-chain outcome
 
-Type `NUCLEAR_FISSION` · manifest v?.
+Type `NUCLEAR_FISSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b960b4a21002.js` → `Visualization`.
 
@@ -9166,13 +9498,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b960b
 
 Fusion reaction stage
 
-Type `NUCLEAR_FUSION` · manifest v?.
+Type `NUCLEAR_FUSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5af709fcf5e1.js` → `Visualization`.
 
 #### Nuclear power plant
 
-Type `NUCLEAR_POWER_PLANT` · manifest v?.
+Type `NUCLEAR_POWER_PLANT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a8806a34ca27.js` → `Visualization`.
 
@@ -9180,13 +9512,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a8806
 
 Select DNA or RNA
 
-Type `NUCLEOTIDES_DNA_AND_RNA` · manifest v?.
+Type `NUCLEOTIDES_DNA_AND_RNA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-33c40ce165b9.js` → `Visualization`.
 
 #### Obtuse triangle
 
-Type `OBTUSE_TRIANGLE` · manifest v?.
+Type `OBTUSE_TRIANGLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6066038700a6.js` → `ObtuseTriangleVisualization`.
 
@@ -9194,7 +9526,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-60660
 
 Atmospheric carbon dioxide
 
-Type `OCEAN_ACIDIFICATION` · manifest v?.
+Type `OCEAN_ACIDIFICATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-62512bcd9056.js` → `OceanAcidificationVisualization`.
 
@@ -9202,7 +9534,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-62512
 
 Cumulative-frequency graph for {total} grouped rent observations. The current class from {classLower} to {classUpper} adds {frequencyCount, plural, one {{frequency} observation} other {{frequency} observations}}, so the curve {slope}. Below {threshold}, about {countCount, plural, one {{count} observation} other {{count} observations}} or {percent} accumulate. At {percentile}, the estimated rent is {value}. Two empty classes keep the curve level near the top.
 
-Type `OGIVE` · manifest v?.
+Type `OGIVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b94a364a2754.js` → `OgiveVisualization`.
 
@@ -9218,7 +9550,7 @@ Source: manifest `type-4b769e1efbb8.js`; view `visualization-b95c4e4c6db1.js` �
 
 Elapsed time after spill
 
-Type `OIL_SPILL_FATE` · manifest v?.
+Type `OIL_SPILL_FATE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-80df3f199b6f.js` → `OilSpillFateVisualization`.
 
@@ -9226,41 +9558,45 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-80df3
 
 Output gap relative to potential output
 
-Type `OKUNS_LAW` · manifest v?.
+Type `OKUNS_LAW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fcf240f15103.js` → `OkunsLawVisualization`.
 
-#### One sample t test
+#### One sample t test: `t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}`
 
 Observed sample mean
 
-Type `ONE_SAMPLE_T_TEST` · manifest v?.
+Type `ONE_SAMPLE_T_TEST` · manifest v3 · formula `t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-bd8ca10e2bc1.js` → `OneSampleTTestVisualization`.
+Parameters: `hypothesized_mean` (number, default `50`, range 0 to 100); `sample_mean` (number, default `54`, range 0 to 100); `sample_standard_deviation` (number, default `10`, range 0.1 to 100); `sample_size` (integer, default `16`, range 3 to 100); `alternative` (enum, default `two-sided`, one of `two-sided`, `greater`, `less`); `significance_level` (number, default `0.05`, range 0.001 to 0.2).
+
+Source: manifest `model-bc3413504a24.js`; view `visualization-bd8ca10e2bc1.js` → `OneSampleTTestVisualization`.
 
 #### Operant conditioning
 
-Type `OPERANT_CONDITIONING` · manifest v?.
+Type `OPERANT_CONDITIONING` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2d8afa5e407f.js` → `OperantConditioningVisualization`.
+Parameters: `behaviorEffect` (enum, default `more_likely`, one of `more_likely`, `less_likely`); `stimulusChange` (enum, default `added`, one of `added`, `removed`).
+
+Source: manifest `model-68a88869b001.js`; view `visualization-2d8afa5e407f.js` → `OperantConditioningVisualization`.
 
 #### Orbital shapes
 
 Select an atomic subshell
 
-Type `ORBITAL_SHAPES` · manifest v?.
+Type `ORBITAL_SHAPES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d803d141c9ed.js` → `Visualization`.
 
 #### Orchestra seating
 
-Type `ORCHESTRA_SEATING` · manifest v?.
+Type `ORCHESTRA_SEATING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b66559039450.js` → `Visualization`.
 
 #### Osmosis
 
-Type `OSMOSIS` · manifest v?.
+Type `OSMOSIS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5318b9d7e205.js` → `OsmosisVisualization`.
 
@@ -9308,9 +9644,11 @@ Source: manifest `type-ede084b98a92.js`; view `visualization-c0c0e2ae1e69.js` �
 
 Common after-minus-before change
 
-Type `PAIRED_T_TEST` · manifest v?.
+Type `PAIRED_T_TEST` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a426d60bc92e.js` → `PairedTTestVisualization`.
+Parameters: `number_of_pairs` (integer, default `10`, range 4 to 16); `alternative` (enum, default `two-sided`, one of `two-sided`, `greater`, `less`).
+
+Source: manifest `model-a8a79b39391c.js`; view `visualization-a426d60bc92e.js` → `PairedTTestVisualization`.
 
 #### Parallel line
 
@@ -9322,17 +9660,9 @@ Parameters: `slope` (number, default `0.6`, range -1 to 1); `referenceIntercept`
 
 Source: manifest `type-5ace481a4856.js`; view `visualization-306df547ba14.js` → `ParallelLineVisualization`.
 
-#### Parametrized line 2d
-
-Curve parameter {parameter}
-
-Type `PARAMETRIZED_LINE_2D` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d54c3fcd0614.js` → `ParametrizedLine2DVisualization`.
-
 #### Particulate matter size
 
-Type `PARTICULATE_MATTER_SIZE` · manifest v?.
+Type `PARTICULATE_MATTER_SIZE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a1ef2a925738.js` → `ParticulateMatterSizeVisualization`.
 
@@ -9348,7 +9678,7 @@ Source: manifest `type-9d02b768e9bf.js`; view `visualization-be4c644f6103.js` �
 
 #### Pcr cycle
 
-Type `PCR_CYCLE` · manifest v?.
+Type `PCR_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8e3330be4fe.js` → `PcrCycleVisualization`.
 
@@ -9356,25 +9686,29 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8e33
 
 Inheritance example
 
-Type `PEDIGREE` · manifest v?.
+Type `PEDIGREE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f43a8d9dfad6.js` → `PedigreeVisualization`.
+Parameters: `inheritance_pattern` (enum, default `autosomal-dominant`, one of `autosomal-dominant`, `autosomal-recessive`, `x-linked-recessive`).
+
+Source: manifest `model-a39f1b9e2e01.js`; view `visualization-f43a8d9dfad6.js` → `PedigreeVisualization`.
 
 #### Percent part whole proportion
 
-Type `PERCENT_PART_WHOLE_PROPORTION` · manifest v?.
+Type `PERCENT_PART_WHOLE_PROPORTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a3fae81be119.js` → `PercentPartWholeProportionVisualization`.
 
 #### Perfect competition
 
-Type `PERFECT_COMPETITION` · manifest v?.
+Type `PERFECT_COMPETITION` · manifest v6.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7bd22ad6d782.js` → `LongRunCompetitiveEquilibriumVisualization`.
+Parameters: `adjustment` (enum, default `profit_entry`, one of `profit_entry`, `loss_exit`).
+
+Source: manifest `model-3deda9c55881.js`; view `visualization-7bd22ad6d782.js` → `LongRunCompetitiveEquilibriumVisualization`.
 
 #### Perfect competition market firm
 
-Type `PERFECT_COMPETITION_MARKET_FIRM` · manifest v?.
+Type `PERFECT_COMPETITION_MARKET_FIRM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a03afe2c4381.js` → `PerfectCompetitionMarketFirmVisualization`.
 
@@ -9388,7 +9722,7 @@ Source: manifest `type-af2e2029147a.js`; view `visualization-496a487b36da.js` �
 
 #### Periodic table explorer
 
-Type `PERIODIC_TABLE_EXPLORER` · manifest v?.
+Type `PERIODIC_TABLE_EXPLORER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3e3204c0afbf.js` → `PeriodicTableVisualization`.
 
@@ -9410,7 +9744,7 @@ Source: manifest `type-1af4bc023ce6.js`; view `visualization-3351ec94519f.js` �
 
 #### Permutations vs combinations
 
-Type `PERMUTATIONS_VS_COMBINATIONS` · manifest v?.
+Type `PERMUTATIONS_VS_COMBINATIONS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f05419341469.js` → `PermutationsVsCombinationsVisualization`.
 
@@ -9426,7 +9760,7 @@ Source: manifest `type-edfc78ae68b7.js`; view `visualization-af3dcef57f05.js` �
 
 Pesticide treadmill stage
 
-Type `PESTICIDE_TREADMILL` · manifest v?.
+Type `PESTICIDE_TREADMILL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-67b7c7f8b3c3.js` → `PesticideTreadmillVisualization`.
 
@@ -9452,13 +9786,15 @@ Source: manifest `type-a0444b690340.js`; view `visualization-6187c9dda15f.js` �
 
 Phase change
 
-Type `PHASE_CHANGE_CYCLE` · manifest v?.
+Type `PHASE_CHANGE_CYCLE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8783e33542c2.js` → `PhaseChangeCycleVisualization`.
+Parameters: `initial_transition` (enum, default `melting`, one of `melting`, `freezing`, `vaporization`, `condensation`, `sublimation`, `deposition`).
+
+Source: manifest `model-f0617ef38ba2.js`; view `visualization-8783e33542c2.js` → `PhaseChangeCycleVisualization`.
 
 #### Phase diagram
 
-Type `PHASE_DIAGRAM` · manifest v?.
+Type `PHASE_DIAGRAM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-26fa65038781.js` → `PhaseDiagramVisualization`.
 
@@ -9466,13 +9802,13 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-26fa6
 
 Aggregate demand strength
 
-Type `PHILLIPS_CURVE` · manifest v?.
+Type `PHILLIPS_CURVE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e51eeb60b5e4.js` → `PhillipsCurveVisualization`.
 
 #### Phillips curve shifts
 
-Type `PHILLIPS_CURVE_SHIFTS` · manifest v?.
+Type `PHILLIPS_CURVE_SHIFTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ffb76cba2c57.js` → `PhillipsCurveShiftsVisualization`.
 
@@ -9480,7 +9816,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ffb76
 
 Phosphorus-cycle process
 
-Type `PHOSPHORUS_CYCLE` · manifest v?.
+Type `PHOSPHORUS_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3a71ed21487f.js` → `PhosphorusCycleVisualization`.
 
@@ -9488,7 +9824,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3a71e
 
 Time of day
 
-Type `PHOTOCHEMICAL_SMOG` · manifest v?.
+Type `PHOTOCHEMICAL_SMOG`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-0c1e59ce449f.js` → `PhotochemicalSmogVisualization`.
 
@@ -9506,7 +9842,7 @@ Source: manifest `type-389cfab21292.js`; view `visualization-73b09fccd75a.js` �
 
 Select an element
 
-Type `PHOTOELECTRON_SPECTRUM` · manifest v?.
+Type `PHOTOELECTRON_SPECTRUM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5b29aa570e96.js` → `Visualization`.
 
@@ -9520,19 +9856,21 @@ Parameters: `lightIntensity` (enum, default `low`, one of `low`, `medium`, `high
 
 Source: manifest `type-b4bcce60d760.js`; view `visualization-b90368c40c85.js` → `PhotosynthesisVisualization`.
 
-#### Photosynthesis overview
+#### Photosynthesis overview: `6CO_2 + 6H_2O + \text{light energy} \rightarrow C_6H_{12}O_6 + 6O_2`
 
 Photosynthesis stage focus
 
-Type `PHOTOSYNTHESIS_OVERVIEW` · manifest v?.
+Type `PHOTOSYNTHESIS_OVERVIEW` · manifest v1 · formula `6CO_2 + 6H_2O + \text{light energy} \rightarrow C_6H_{12}O_6 + 6O_2`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5ebe75e08815.js` → `PhotosynthesisOverviewVisualization`.
+Parameters: `initial_focus` (enum, default `whole process`, one of `whole process`, `light reactions`, `Calvin cycle`).
+
+Source: manifest `model-7354fd8cc5a6.js`; view `visualization-5ebe75e08815.js` → `PhotosynthesisOverviewVisualization`.
 
 #### Photosynthetic pigment spectrum
 
 Visible-light wavelength in nanometres
 
-Type `PHOTOSYNTHETIC_PIGMENT_SPECTRUM` · manifest v?.
+Type `PHOTOSYNTHETIC_PIGMENT_SPECTRUM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f57117711488.js` → `PhotosyntheticPigmentSpectrumVisualization`.
 
@@ -9540,7 +9878,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f5711
 
 Phototropism response stage
 
-Type `PHOTOTROPISM` · manifest v?.
+Type `PHOTOTROPISM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2e939439b472.js` → `Visualization`.
 
@@ -9548,7 +9886,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2e939
 
 {first} and {second}
 
-Type `PHYLOGENETIC_TREE` · manifest v?.
+Type `PHYLOGENETIC_TREE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c8b8b387d4c1.js` → `Visualization`.
 
@@ -9556,7 +9894,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c8b8b
 
 Examples
 
-Type `PHYSICAL_VS_CHEMICAL_PROCESS` · manifest v?.
+Type `PHYSICAL_VS_CHEMICAL_PROCESS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c283d19d658e.js` → `Visualization`.
 
@@ -9574,13 +9912,13 @@ Source: manifest `type-f409ad2953b1.js`; view `visualization-105eaff600c9.js` �
 
 Selected piano key
 
-Type `PIANO_KEYBOARD_NOTE_NAMES` · manifest v?.
+Type `PIANO_KEYBOARD_NOTE_NAMES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-43fe5569dab6.js` → `Visualization`.
 
 #### Piano roll
 
-Type `PIANO_ROLL` · manifest v?.
+Type `PIANO_ROLL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c31bbe238b74.js` → `PianoRollVisualization`.
 
@@ -9608,13 +9946,15 @@ Source: manifest `type-a2c1e373aef7.js`; view `visualization-8bcb83567555.js` �
 
 Plant life-cycle stage
 
-Type `PLANT_LIFE_CYCLE` · manifest v?.
+Type `PLANT_LIFE_CYCLE` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1498d37617b3.js` → `PlantLifeCycleVisualization`.
+Parameters: `initial_stage` (enum, default `germination`, one of `germination`, `seedling`, `mature flowering plant`, `pollination`, `seed formation`, `seed dispersal`).
+
+Source: manifest `model-9badbb3726c5.js`; view `visualization-1498d37617b3.js` → `PlantLifeCycleVisualization`.
 
 #### Plant vs animal cell
 
-Type `PLANT_VS_ANIMAL_CELL` · manifest v?.
+Type `PLANT_VS_ANIMAL_CELL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d05dc75d9434.js` → `Visualization`.
 
@@ -9622,7 +9962,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d05dc
 
 Plate boundary type
 
-Type `PLATE_BOUNDARIES` · manifest v?.
+Type `PLATE_BOUNDARIES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eb326feb4c9b.js` → `Visualization`.
 
@@ -9642,15 +9982,27 @@ Parameters: `pointX` (number, default `1.5`, range -3 to 3); `pointY` (number, d
 
 Source: manifest `type-96ed8dbb8a85.js`; view `visualization-a04f447b76bf.js` → `PointToPlaneDistanceVisualization`.
 
+#### Poisson distribution: `P(X=k)=\frac{e^{-\lambda}\lambda^k}{k!}`
+
+Expected events in the interval
+
+Type `POISSON_DISTRIBUTION` · manifest v2 · formula `P(X=k)=\frac{e^{-\lambda}\lambda^k}{k!}`.
+
+Parameters: `lambda` (number, default `5`, range 0.5 to 20); `count` (integer, default `5`, range 0 to 40).
+
+Source: manifest `model-253b6086c636.js`; view `visualization-9eeaa7389c86.js` → `PoissonDistributionVisualization`.
+
 #### Polar curves
 
-Type `POLAR_CURVES` · manifest v?.
+Type `POLAR_CURVES` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-437f82723a77.js` → `PolarCurvesVisualization`.
+Parameters: `offset` (number, default `1`, range 0 to 2); `amplitude` (number, default `2`, range 0 to 2).
+
+Source: manifest `model-eb52e6c3fc55.js`; view `visualization-437f82723a77.js` → `PolarCurvesVisualization`.
 
 #### Polar double integral
 
-Type `POLAR_DOUBLE_INTEGRAL` · manifest v?.
+Type `POLAR_DOUBLE_INTEGRAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-eefbac0c6a6a.js` → `PolarDoubleIntegralVisualization`.
 
@@ -9666,37 +10018,41 @@ Source: manifest `type-e574ac8a1abb.js`; view `visualization-132cc094a45b.js` �
 
 Alkene monomer
 
-Type `POLYMERIZATION` · manifest v?.
+Type `POLYMERIZATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-482977f08189.js` → `Visualization`.
 
-#### Polynomial multiplicity intercepts
+#### Polynomial multiplicity intercepts: `f(x) = k(x-r_1)^{m_1}(x-r_2)^{m_2}`
 
-Type `POLYNOMIAL_MULTIPLICITY_INTERCEPTS` · manifest v?.
+Type `POLYNOMIAL_MULTIPLICITY_INTERCEPTS` · manifest v2 · formula `f(x) = k(x-r_1)^{m_1}(x-r_2)^{m_2}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5fc6e4f2a624.js` → `PolynomialMultiplicityInterceptsVisualization`.
+Parameters: `rootCenter` (number, default `0`, range -2 to 2); `rootSeparation` (number, default `4`, range 1 to 4); `leftRootMultiplicity` (integer, default `2`, range 1 to 3); `rightRootMultiplicity` (integer, default `3`, range 1 to 3).
+
+Source: manifest `model-397adfbb4078.js`; view `visualization-5fc6e4f2a624.js` → `PolynomialMultiplicityInterceptsVisualization`.
 
 #### Polyprotic titration
 
 Equivalents of strong base added
 
-Type `POLYPROTIC_TITRATION` · manifest v?.
+Type `POLYPROTIC_TITRATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-36a44309959c.js` → `Visualization`.
 
-#### Population density
+#### Population density: `D = \frac{P}{A}`
 
 Population
 
-Type `POPULATION_DENSITY` · manifest v?.
+Type `POPULATION_DENSITY` · manifest v2 · formula `D = \frac{P}{A}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-75f8d73bd5c7.js` → `PopulationDensityVisualization`.
+Parameters: `population` (integer, default `500000`, range 1000 to 1000000); `landAreaSquareKilometers` (number, default `100`, range 5 to 1000).
+
+Source: manifest `model-72ba9b7b6395.js`; view `visualization-75f8d73bd5c7.js` → `PopulationDensityVisualization`.
 
 #### Positive externality
 
 Marginal external benefit
 
-Type `POSITIVE_EXTERNALITY` · manifest v?.
+Type `POSITIVE_EXTERNALITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c375727319f2.js` → `PositiveExternalityVisualization`.
 
@@ -9704,9 +10060,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c3757
 
 Feedback example
 
-Type `POSITIVE_FEEDBACK_LOOP` · manifest v?.
+Type `POSITIVE_FEEDBACK_LOOP` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4e9fb2e76e15.js` → `PositiveFeedbackVisualization`.
+Parameters: `example` (enum, default `childbirth`, one of `childbirth`, `ice-albedo`).
+
+Source: manifest `model-1d9447e10398.js`; view `visualization-4e9fb2e76e15.js` → `PositiveFeedbackVisualization`.
 
 #### Ppc growth
 
@@ -9718,15 +10076,17 @@ Source: manifest `type-358342ea04f6.js`; view `visualization-8fd0d1bcb78e.js` �
 
 #### Ppc opportunity cost
 
-Type `PPC_OPPORTUNITY_COST` · manifest v?.
+Type `PPC_OPPORTUNITY_COST` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-79d72169ce5e.js` → `Visualization`.
+Parameters: `extraWheat` (number, default `5`, range 0.5 to 6).
+
+Source: manifest `model-7f6fce9d5547.js`; view `visualization-79d72169ce5e.js` → `Visualization`.
 
 #### Precipitation reactions
 
 Reactants
 
-Type `PRECIPITATION_REACTIONS` · manifest v?.
+Type `PRECIPITATION_REACTIONS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-6c6d17061ecc.js` → `PrecipitationReactionsVisualization`.
 
@@ -9744,19 +10104,23 @@ Source: manifest `type-3465f183219c.js`; view `visualization-da5f74bedefb.js` �
 
 Starting balance
 
-Type `PREDATOR_PREY_DYNAMICS` · manifest v?.
+Type `PREDATOR_PREY_DYNAMICS` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e8d92bdbdbeb.js` → `PredatorPreyVisualization`.
+Parameters: `initial_prey_abundance` (number, default `1.4`, range 0.65 to 1.4); `initial_predator_abundance` (number, default `0.65`, range 0.65 to 1.4).
+
+Source: manifest `model-cec47be50a46.js`; view `visualization-e8d92bdbdbeb.js` → `PredatorPreyVisualization`.
 
 #### Presbyopia
 
-Type `PRESBYOPIA` · manifest v?.
+Type `PRESBYOPIA` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-68d5124ea084.js` → `PresbyopiaVisualization`.
+Parameters: `condition` (enum, default `presbyopia`, one of `typical`, `presbyopia`); `objectDistanceCentimeters` (number, default `35`, range 25 to 200).
+
+Source: manifest `model-cb61e61a81ef.js`; view `visualization-68d5124ea084.js` → `PresbyopiaVisualization`.
 
 #### Present value discounting
 
-Type `PRESENT_VALUE_DISCOUNTING` · manifest v?.
+Type `PRESENT_VALUE_DISCOUNTING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4bb6c1b97e75.js` → `PresentValueDiscountingVisualization`.
 
@@ -9770,7 +10134,7 @@ Source: manifest `type-e210bd3bc009.js`; view `visualization-85c592a9fc92.js` �
 
 #### Price ceilings and floors
 
-Type `PRICE_CEILINGS_AND_FLOORS` · manifest v?.
+Type `PRICE_CEILINGS_AND_FLOORS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-afc41ec876f5.js` → `PriceCeilingsAndFloorsVisualization`.
 
@@ -9778,7 +10142,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-afc41
 
 Pricing mode
 
-Type `PRICE_DISCRIMINATION` · manifest v?.
+Type `PRICE_DISCRIMINATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9d1213cfd5bd.js` → `PriceDiscriminationVisualization`.
 
@@ -9786,19 +10150,23 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9d121
 
 Formation pathway
 
-Type `PRIMARY_VS_SECONDARY_POLLUTANTS` · manifest v?.
+Type `PRIMARY_VS_SECONDARY_POLLUTANTS` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a7ee5499301d.js` → `PrimaryVsSecondaryPollutantsVisualization`.
+Parameters: `initial_pathway` (enum, default `photochemical-smog`, one of `photochemical-smog`, `secondary-particles`).
+
+Source: manifest `model-5ba45a3a952c.js`; view `visualization-a7ee5499301d.js` → `PrimaryVsSecondaryPollutantsVisualization`.
 
 #### Primes
 
-Type `PRIMES` · manifest v?.
+Type `PRIMES` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2df93bdfaecc.js` → `PrimesVisualization`.
+Parameters: `number` (integer, default `100`, range 2 to 1000).
+
+Source: manifest `model-24b2fb9cdc75.js`; view `visualization-2df93bdfaecc.js` → `PrimesVisualization`.
 
 #### Probability intersection
 
-Type `PROBABILITY_INTERSECTION` · manifest v?.
+Type `PROBABILITY_INTERSECTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d0b3e5a86170.js` → `ProbabilityIntersectionVisualization`.
 
@@ -9816,13 +10184,15 @@ Source: manifest `type-bb80ea70b787.js`; view `visualization-d8973bd8b278.js` �
 
 Process mean
 
-Type `PROCESS_CAPABILITY_CP_CPK` · manifest v?.
+Type `PROCESS_CAPABILITY_CP_CPK` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5f8b4a4357a7.js` → `ProcessCapabilityVisualization`.
+Parameters: `lower_specification_limit` (number, default `90`, range 80 to 95); `upper_specification_limit` (number, default `110`, range 105 to 120); `process_mean` (number, default `100`, range 80 to 120); `process_standard_deviation` (number, default `2.5`, range 1 to 4).
+
+Source: manifest `model-9f44ebe8bcfd.js`; view `visualization-5f8b4a4357a7.js` → `ProcessCapabilityVisualization`.
 
 #### Production function
 
-Type `PRODUCTION_FUNCTION` · manifest v?.
+Type `PRODUCTION_FUNCTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f61b8f67690b.js` → `ProductionFunctionVisualization`.
 
@@ -9836,15 +10206,17 @@ Source: manifest `type-f06e3a1bfe5a.js`; view `visualization-6594dd6d019a.js` �
 
 #### Projectile motion
 
-Type `PROJECTILE_MOTION` · manifest v?.
+Type `PROJECTILE_MOTION` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-433ff4deff70.js` → `ProjectileMotionVisualization`.
+Parameters: `initialSpeedMetersPerSecond` (number, default `18`, range 12 to 25); `launchAngleDegrees` (number, default `45`, range 25 to 65).
+
+Source: manifest `model-7239f4550c95.js`; view `visualization-433ff4deff70.js` → `ProjectileMotionVisualization`.
 
 #### Prokaryotic vs eukaryotic cells
 
 Select a cell feature focus
 
-Type `PROKARYOTIC_VS_EUKARYOTIC_CELLS` · manifest v?.
+Type `PROKARYOTIC_VS_EUKARYOTIC_CELLS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7de97463a8a.js` → `Visualization`.
 
@@ -9852,7 +10224,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7de9
 
 Environmental stress
 
-Type `PROTEIN_DENATURATION` · manifest v?.
+Type `PROTEIN_DENATURATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c2597f83e8d6.js` → `ProteinDenaturationVisualization`.
 
@@ -9860,7 +10232,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c2597
 
 Protein structure level
 
-Type `PROTEIN_STRUCTURE_LEVELS` · manifest v?.
+Type `PROTEIN_STRUCTURE_LEVELS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c417f40dca77.js` → `ProteinStructureVisualization`.
 
@@ -9878,19 +10250,19 @@ Source: manifest `type-ec08a0c3755f.js`; view `visualization-4a9ea3c28f7c.js` �
 
 Lung condition
 
-Type `PULMONARY_SURFACTANT_AND_COMPLIANCE` · manifest v?.
+Type `PULMONARY_SURFACTANT_AND_COMPLIANCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a994423d64c7.js` → `Visualization`.
 
 #### Punnett squares
 
-Type `PUNNETT_SQUARES` · manifest v?.
+Type `PUNNETT_SQUARES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4a23c35cf0a5.js` → `PunnettSquareVisualization`.
 
 #### Pupillary light reflex
 
-Type `PUPILLARY_LIGHT_REFLEX` · manifest v?.
+Type `PUPILLARY_LIGHT_REFLEX`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2683734a8bbd.js` → `PupillaryLightReflexVisualization`.
 
@@ -9912,17 +10284,21 @@ Source: manifest `type-8d5332dc0d4a.js`; view `visualization-785844b8dee6.js` �
 
 #### Python range for loop
 
-Type `PYTHON_RANGE_FOR_LOOP` · manifest v?.
+Type `PYTHON_RANGE_FOR_LOOP` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5eb765c4186a.js` → `PythonRangeForLoopVisualization`.
+Parameters: `start` (integer, default `2`, range -4 to 10); `stop` (integer, default `10`, range -4 to 10); `step` (integer, default `2`, range -4 to 4).
+
+Source: manifest `model-5a0d6a0ec95c.js`; view `visualization-5eb765c4186a.js` → `PythonRangeForLoopVisualization`.
 
 #### Q vs k
 
 Q is less than K
 
-Type `Q_VS_K` · manifest v?.
+Type `Q_VS_K` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-80475393480d.js` → `QVsKVisualization`.
+Parameters: `equilibrium_constant` (number, default `1`, range 1e-100 to 1e+100); `initial_reaction_quotient` (number, default `0.1`, range 0 to 1e+101).
+
+Source: manifest `model-aa3adbeb5d62.js`; view `visualization-80475393480d.js` → `QVsKVisualization`.
 
 #### Qt prolongation torsades
 
@@ -9942,25 +10318,29 @@ Parameters: `a` (number, default `1`, range -5 to 5); `b` (number, default `0`, 
 
 Source: manifest `type-46bd62c7daa0.js`; view `visualization-fb308780d5fc.js` → `QuadraticFormulaVisualization`.
 
-#### Quadratic inequalities
+#### Quadratic inequalities: `ax^2 + bx + c > 0`
 
 {operator} zero
 
-Type `QUADRATIC_INEQUALITIES` · manifest v?.
+Type `QUADRATIC_INEQUALITIES` · manifest v2 · formula `ax^2 + bx + c > 0`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cbbd72b543f7.js` → `QuadraticInequalitiesVisualization`.
+Parameters: `a` (number, default `1`, range 0.1 to 10); `b` (number, default `-1`, range -20 to 20); `c` (number, default `-6`, range -20 to 20); `operator` (enum, default `>`, one of `>`, `<`, `>=`, `<=`).
 
-#### Quadratic vertex form
+Source: manifest `model-dcf2f0fdafb4.js`; view `visualization-cbbd72b543f7.js` → `QuadraticInequalitiesVisualization`.
 
-Type `QUADRATIC_VERTEX_FORM` · manifest v?.
+#### Quadratic vertex form: `y = a(x - h)^2 + k`
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-579b9d68d02f.js` → `QuadraticVertexFormVisualization`.
+Type `QUADRATIC_VERTEX_FORM` · manifest v3 · formula `y = a(x - h)^2 + k`.
+
+Parameters: `h` (number, default `0`, range -5 to 5); `k` (number, default `0`, range -5 to 5).
+
+Source: manifest `model-870129d9ea20.js`; view `visualization-579b9d68d02f.js` → `QuadraticVertexFormVisualization`.
 
 #### Quicksort
 
 Starting arrangement
 
-Type `QUICKSORT` · manifest v?.
+Type `QUICKSORT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-71d3621a0de8.js` → `QuicksortVisualization`.
 
@@ -9968,9 +10348,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-71d36
 
 RAAS and ADH causal stage
 
-Type `RAAS_AND_ADH` · manifest v?.
+Type `RAAS_AND_ADH` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4a3d0e27389e.js` → `Visualization`.
+Parameters: `initial_condition` (enum, default `volume loss`, one of `normal`, `volume loss`, `increased osmolality`).
+
+Source: manifest `model-f92e3f01a456.js`; view `visualization-4a3d0e27389e.js` → `Visualization`.
 
 #### Radiation penetration
 
@@ -9984,13 +10366,15 @@ Source: manifest `type-7a83abf1c6c4.js`; view `visualization-d0bba17d6c69.js` �
 
 #### Radiometric dating
 
-Type `RADIOMETRIC_DATING` · manifest v?.
+Type `RADIOMETRIC_DATING` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5a3c61867f27.js` → `RadiometricDatingVisualization`.
+Parameters: `isotope_system` (enum, default `carbon-14-to-nitrogen-14`, one of `carbon-14-to-nitrogen-14`, `potassium-40-to-argon-40`, `uranium-238-to-lead-206`).
+
+Source: manifest `model-d7a1e636d00a.js`; view `visualization-5a3c61867f27.js` → `RadiometricDatingVisualization`.
 
 #### Rain shadow effect
 
-Type `RAIN_SHADOW_EFFECT` · manifest v?.
+Type `RAIN_SHADOW_EFFECT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5f224ad8ed52.js` → `RainShadowVisualization`.
 
@@ -9998,7 +10382,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5f224
 
 Trial phase
 
-Type `RANDOMIZED_CONTROLLED_TRIAL_FLOW` · manifest v?.
+Type `RANDOMIZED_CONTROLLED_TRIAL_FLOW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-64fa033f6b2d.js` → `Visualization`.
 
@@ -10014,25 +10398,29 @@ Source: manifest `type-b2315d4b532d.js`; view `visualization-c1ba73048882.js` �
 
 #### Rates and bonds
 
-Type `RATES_AND_BONDS` · manifest v?.
+Type `RATES_AND_BONDS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-57808137f3a5.js` → `RatesAndBondsVisualization`.
+Parameters: `yieldChangePercentagePoints` (number, default `0`, range -3 to 3).
+
+Source: manifest `model-57ce9234be9d.js`; view `visualization-57808137f3a5.js` → `RatesAndBondsVisualization`.
 
 #### Rational inequality sign chart
 
 Step 1: Find critical values
 
-Type `RATIONAL_INEQUALITY_SIGN_CHART` · manifest v?.
+Type `RATIONAL_INEQUALITY_SIGN_CHART`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8062c6d9d192.js` → `RationalInequalitySignChartVisualization`.
 
-#### Rational limits at infinity
+#### Rational limits at infinity: `\lim_{x\to\pm\infty}\left(f(x)-q(x)\right)=0`
 
 Numerator leading coefficient {variable}
 
-Type `RATIONAL_LIMITS_AT_INFINITY` · manifest v?.
+Type `RATIONAL_LIMITS_AT_INFINITY` · manifest v1 · formula `\lim_{x\to\pm\infty}\left(f(x)-q(x)\right)=0`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-adf87cd26bcd.js` → `RationalLimitsAtInfinityVisualization`.
+Parameters: `numeratorDegree` (integer, default `1`, range 0 to 3); `denominatorDegree` (integer, default `2`, range 1 to 3); `numeratorLeadingCoefficient` (number, default `2`, range 0.5 to 5); `denominatorLeadingCoefficient` (number, default `1`, range 0.5 to 5).
+
+Source: manifest `model-65944a036c44.js`; view `visualization-adf87cd26bcd.js` → `RationalLimitsAtInfinityVisualization`.
 
 #### Reaction order plots
 
@@ -10048,9 +10436,11 @@ Source: manifest `type-d93f8783cbfc.js`; view `visualization-37c85d548853.js` �
 
 Observed species
 
-Type `REACTION_RATE_OVER_TIME` · manifest v?.
+Type `REACTION_RATE_OVER_TIME` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-76c42db2dcaa.js` → `ReactionRateVisualization`.
+Parameters: `observed_species` (enum, default `reactant`, one of `reactant`, `product`).
+
+Source: manifest `model-501467f4520d.js`; view `visualization-76c42db2dcaa.js` → `ReactionRateVisualization`.
 
 #### Reaction thermodynamics: `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`
 
@@ -10064,7 +10454,7 @@ Source: manifest `type-f44192a3e2d7.js`; view `visualization-6f6e6641055b.js` �
 
 #### Reaction type explorer
 
-Type `REACTION_TYPE_EXPLORER` · manifest v?.
+Type `REACTION_TYPE_EXPLORER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-609396e7fce0.js` → `ReactionTypeExplorerVisualization`.
 
@@ -10072,19 +10462,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-60939
 
 Low cold solubility
 
-Type `RECRYSTALLIZATION_PURIFICATION` · manifest v?.
+Type `RECRYSTALLIZATION_PURIFICATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cfb820b2834b.js` → `RecrystallizationVisualization`.
 
 #### Rectangle area
 
-Type `RECTANGLE_AREA` · manifest v?.
+Type `RECTANGLE_AREA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b9cc087bc809.js` → `RectangleAreaVisualization`.
 
 #### Rectangular prism volume
 
-Type `RECTANGULAR_PRISM_VOLUME` · manifest v?.
+Type `RECTANGULAR_PRISM_VOLUME`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-960cb61ffc47.js` → `RectangularPrismVolumeVisualization`.
 
@@ -10092,7 +10482,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-960cb
 
 Reaction stage
 
-Type `REDOX_ELECTRON_TRANSFER` · manifest v?.
+Type `REDOX_ELECTRON_TRANSFER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f6f7f290173a.js` → `Visualization`.
 
@@ -10100,15 +10490,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f6f7f
 
 Point
 
-Type `REFLECTION_TRANSFORMATION_COORDINATE_PLANE` · manifest v?.
+Type `REFLECTION_TRANSFORMATION_COORDINATE_PLANE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-424b3d479de9.js` → `ReflectionTransformationCoordinatePlaneVisualization`.
+Parameters: `objectMode` (enum, default `triangle`, one of `point`, `triangle`); `reflectionLine` (enum, default `y_equals_x`, one of `x_axis`, `y_axis`, `y_equals_x`, `y_equals_negative_x`); `ax` (number, default `-3.5`, range -5.5 to 5.5); `ay` (number, default `0.25`, range -5.5 to 5.5); `triangleCenterX` (number, default `-2`, range -2 to 2); `triangleCenterY` (number, default `1`, range -2 to 2); `triangleWidth` (number, default `3`, range 1 to 4); `triangleHeight` (number, default `2.5`, range 1 to 4); `triangleRotationDegrees` (number, default `0`, range -90 to 90).
+
+Source: manifest `model-965ba7ea53bb.js`; view `visualization-424b3d479de9.js` → `ReflectionTransformationCoordinatePlaneVisualization`.
 
 #### Reorder point and safety stock
 
-Type `REORDER_POINT_AND_SAFETY_STOCK` · manifest v?.
+Type `REORDER_POINT_AND_SAFETY_STOCK` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5f975ed73590.js` → `ReorderPointAndSafetyStockVisualization`.
+Parameters: `initialInventory` (number, default `240`, range 220 to 300); `demandRateUnitsPerDay` (number, default `20`, range 20 to 40); `leadTimeDays` (number, default `4`, range 2 to 4); `safetyStock` (number, default `40`, range 20 to 60).
+
+Source: manifest `model-63190570fb43.js`; view `visualization-5f975ed73590.js` → `ReorderPointAndSafetyStockVisualization`.
 
 #### Resistors in parallel equivalent: `\frac{1}{R_T} = \frac{1}{R_1} + \frac{1}{R_2} + \frac{1}{R_3}`
 
@@ -10130,7 +10524,7 @@ Source: manifest `type-ff1e86d5dbe7.js`; view `visualization-591029000e37.js` �
 
 Resonance example
 
-Type `RESONANCE_STRUCTURES` · manifest v?.
+Type `RESONANCE_STRUCTURES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f8a153e2f8e3.js` → `Visualization`.
 
@@ -10138,7 +10532,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f8a15
 
 Choose a rest value to compare
 
-Type `REST_VALUE_CHART` · manifest v?.
+Type `REST_VALUE_CHART`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b7aa190aef5a.js` → `Visualization`.
 
@@ -10146,9 +10540,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b7aa1
 
 Restriction digest
 
-Type `RESTRICTION_ENZYME_MAP` · manifest v?.
+Type `RESTRICTION_ENZYME_MAP` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b36e962182f5.js` → `Visualization`.
+Parameters: `molecule_topology` (enum, default `circular plasmid`, one of `circular plasmid`, `linear DNA`).
+
+Source: manifest `model-6e039b1d844f.js`; view `visualization-b36e962182f5.js` → `Visualization`.
 
 #### Rgb additive mixing
 
@@ -10162,19 +10558,19 @@ Source: manifest `type-8b177dd67695.js`; view `visualization-66a8d4e1bd24.js` �
 
 #### Riemann sums
 
-Type `RIEMANN_SUMS` · manifest v?.
+Type `RIEMANN_SUMS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fab1fd665275.js` → `IntegrationEstimationVisualization`.
 
 #### Right triangle
 
-Type `RIGHT_TRIANGLE` · manifest v?.
+Type `RIGHT_TRIANGLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ebeb1c61d3d4.js` → `RightTriangleVisualization`.
 
 #### Rna processing
 
-Type `RNA_PROCESSING` · manifest v?.
+Type `RNA_PROCESSING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-962f18507504.js` → `Visualization`.
 
@@ -10192,65 +10588,73 @@ Source: manifest `type-c65766b09e91.js`; view `visualization-26586fe27987.js` �
 
 Starting material
 
-Type `ROCK_CYCLE` · manifest v?.
+Type `ROCK_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-12f7c15a6615.js` → `RockCycleVisualization`.
 
 #### Rods cones light levels
 
-Type `RODS_CONES_LIGHT_LEVELS` · manifest v?.
+Type `RODS_CONES_LIGHT_LEVELS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d0b826dbabbd.js` → `RodsConesLightLevelsVisualization`.
 
-#### Rolles theorem
+#### Rolles theorem: `f(a)=f(b)\implies\exists\,c\in(a,b):f'(c)=0`
 
-Type `ROLLES_THEOREM` · manifest v?.
+Type `ROLLES_THEOREM` · manifest v3 · formula `f(a)=f(b)\implies\exists\,c\in(a,b):f'(c)=0`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5a4cc563cacf.js` → `RollesTheoremVisualization`.
+Parameters: `endpointY` (number, default `-2`, range -10 to 10); `vertexOffset` (number, default `6`, range -10 to 10).
+
+Source: manifest `model-d7d56680b09d.js`; view `visualization-5a4cc563cacf.js` → `RollesTheoremVisualization`.
 
 #### Root power equivalence
 
-Type `ROOT_POWER_EQUIVALENCE` · manifest v?.
+Type `ROOT_POWER_EQUIVALENCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fc85f0fae92f.js` → `RootPowerEquivalenceVisualization`.
 
 #### Rotation transformation coordinate plane
 
-Type `ROTATION_TRANSFORMATION_COORDINATE_PLANE` · manifest v?.
+Type `ROTATION_TRANSFORMATION_COORDINATE_PLANE` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-aa46077b8f3b.js` → `RotationTransformationCoordinatePlaneVisualization`.
+Parameters: `angleDeg` (number, default `90`, range -180 to 180).
+
+Source: manifest `model-50addbd68e43.js`; view `visualization-aa46077b8f3b.js` → `RotationTransformationCoordinatePlaneVisualization`.
 
 #### Round robin cpu scheduling
 
 Time quantum
 
-Type `ROUND_ROBIN_CPU_SCHEDULING` · manifest v?.
+Type `ROUND_ROBIN_CPU_SCHEDULING` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cf3dd795dbf4.js` → `RoundRobinCpuSchedulingVisualization`.
+Parameters: `time_quantum` (integer, default `3`, range 1 to 8); `workload` (enum, default `mixed-bursts`, one of `mixed-bursts`, `one-long-two-short`, `equal-bursts`).
+
+Source: manifest `model-5fdbc0dfab74.js`; view `visualization-cf3dd795dbf4.js` → `RoundRobinCpuSchedulingVisualization`.
 
 #### Rutherford gold foil experiment
 
 Choose the atomic model
 
-Type `RUTHERFORD_GOLD_FOIL_EXPERIMENT` · manifest v?.
+Type `RUTHERFORD_GOLD_FOIL_EXPERIMENT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cb5d14c56709.js` → `Visualization`.
 
 #### Saltwater intrusion
 
-Type `SALTWATER_INTRUSION` · manifest v?.
+Type `SALTWATER_INTRUSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e2919236ff7d.js` → `Visualization`.
 
 #### Sample space grid
 
-Type `SAMPLE_SPACE_GRID` · manifest v?.
+Type `SAMPLE_SPACE_GRID` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-a67a31a345d2.js` → `SampleSpaceGridVisualization`.
+Parameters: `event` (enum, default `sum equals 7`, one of `sum equals 5`, `sum equals 7`, `sum at least 10`, `matching values`).
+
+Source: manifest `model-f4dbaa3dfc38.js`; view `visualization-a67a31a345d2.js` → `SampleSpaceGridVisualization`.
 
 #### Sample variance
 
-Type `SAMPLE_VARIANCE` · manifest v?.
+Type `SAMPLE_VARIANCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-0343d34601ec.js` → `SampleVarianceVisualization`.
 
@@ -10258,9 +10662,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-0343d
 
 Population shape
 
-Type `SAMPLING_DISTRIBUTION` · manifest v?.
+Type `SAMPLING_DISTRIBUTION` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b71883b6e8be.js` → `SamplingDistributionVisualization`.
+Parameters: `population_shape` (enum, default `normal`, one of `normal`, `right-skewed`); `population_mean` (number, default `50`, range -10000 to 10000); `population_standard_deviation` (number, default `12`, range 0.1 to 1000); `sample_size` (integer, default `10`, range 2 to 100).
+
+Source: manifest `model-935d6fe1930e.js`; view `visualization-b71883b6e8be.js` → `SamplingDistributionVisualization`.
 
 #### Sampling without replacement
 
@@ -10274,7 +10680,7 @@ Source: manifest `type-9a0c50e93ce3.js`; view `visualization-727f8f66b859.js` �
 
 #### Sarcomere structure
 
-Type `SARCOMERE_STRUCTURE` · manifest v?.
+Type `SARCOMERE_STRUCTURE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-acf40c7e0ef5.js` → `SarcomereStructureVisualization`.
 
@@ -10282,27 +10688,29 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-acf40
 
 Solid solute added
 
-Type `SATURATED_VS_UNSATURATED_SOLUTION` · manifest v?.
+Type `SATURATED_VS_UNSATURATED_SOLUTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-2a741051a105.js` → `Visualization`.
 
 #### Scalene triangle
 
-Type `SCALENE_TRIANGLE` · manifest v?.
+Type `SCALENE_TRIANGLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f5544fcb9566.js` → `ScaleneTriangleVisualization`.
 
-#### Scientific notation
+#### Scientific notation: `a \times 10^n`
 
-Type `SCIENTIFIC_NOTATION` · manifest v?.
+Type `SCIENTIFIC_NOTATION` · manifest v2 · formula `a \times 10^n`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-55f74eb1f7f5.js` → `ScientificNotationVisualization`.
+Parameters: `coefficient` (number, default `2.12`, range 1 to 9.99); `exponent` (integer, default `5`, range -9 to 9).
+
+Source: manifest `model-d8a30bda1b33.js`; view `visualization-55f74eb1f7f5.js` → `ScientificNotationVisualization`.
 
 #### Sea level rise
 
 Observation interval
 
-Type `SEA_LEVEL_RISE` · manifest v?.
+Type `SEA_LEVEL_RISE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ed8f21e7d924.js` → `Visualization`.
 
@@ -10316,7 +10724,7 @@ Source: manifest `type-afd9de5814d9.js`; view `visualization-b50d087774c3.js` �
 
 #### Seed germination
 
-Type `SEED_GERMINATION` · manifest v?.
+Type `SEED_GERMINATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d9fe4e5ee1c6.js` → `SeedGerminationVisualization`.
 
@@ -10348,21 +10756,25 @@ Source: manifest `type-979c1644f178.js`; view `visualization-56a33c304034.js` �
 
 #### Set operations venn regions
 
-Type `SET_OPERATIONS_VENN_REGIONS` · manifest v?.
+Type `SET_OPERATIONS_VENN_REGIONS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c6af391014f2.js` → `SetOperationsVennRegionsVisualization`.
+Parameters: `operation` (enum, default `union`, one of `union`, `intersection`, `a_minus_b`, `b_minus_a`, `a_complement`, `b_complement`).
 
-#### Shadow price
+Source: manifest `model-ec0b6a77f077.js`; view `visualization-c6af391014f2.js` → `SetOperationsVennRegionsVisualization`.
+
+#### Shadow price: `P = 3x + 4y`
 
 Resource limit {variable}
 
-Type `SHADOW_PRICE` · manifest v?.
+Type `SHADOW_PRICE` · manifest v1 · formula `P = 3x + 4y`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ee0df7123bfb.js` → `ShadowPriceVisualization`.
+Parameters: `resourceLimit` (number, default `12`, range 8 to 18).
+
+Source: manifest `model-f675b47b1a69.js`; view `visualization-ee0df7123bfb.js` → `ShadowPriceVisualization`.
 
 #### Shutdown decision
 
-Type `SHUTDOWN_DECISION` · manifest v?.
+Type `SHUTDOWN_DECISION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7db3a89c28b.js` → `ShutdownDecisionVisualization`.
 
@@ -10370,9 +10782,11 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f7db3
 
 Comparison-group median
 
-Type `SIDE_BY_SIDE_BOX_PLOTS` · manifest v?.
+Type `SIDE_BY_SIDE_BOX_PLOTS` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8e0324b32f6.js` → `SideBySideBoxPlotsVisualization`.
+Parameters: `initial_comparison` (enum, default `same-median-different-iqr`, one of `same-median-different-iqr`, `different-median-same-iqr`, `different-median-different-iqr`).
+
+Source: manifest `model-7b21f981f07c.js`; view `visualization-b8e0324b32f6.js` → `SideBySideBoxPlotsVisualization`.
 
 #### Similar triangles
 
@@ -10384,9 +10798,11 @@ Source: manifest `type-57ca60bb3e4c.js`; view `visualization-1588d8e0646a.js` �
 
 #### Simple division
 
-Type `SIMPLE_DIVISION` · manifest v?.
+Type `SIMPLE_DIVISION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-83f0e4048e66.js` → `SimpleDivisionVisualization`.
+Parameters: `dividend` (integer, default `14`, range 1 to 30); `divisor` (integer, default `4`, range 1 to 10).
+
+Source: manifest `model-1b1a0d17905e.js`; view `visualization-83f0e4048e66.js` → `SimpleDivisionVisualization`.
 
 #### Simple pendulum: `T \approx 2\pi\sqrt{\frac{L}{g}}`
 
@@ -10406,7 +10822,7 @@ Source: manifest `type-b2d049022561.js`; view `visualization-c7c84808699b.js` �
 
 #### Simpson rule
 
-Type `SIMPSON_RULE` · manifest v?.
+Type `SIMPSON_RULE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-88fe6f4b97e3.js` → `SimpsonRuleVisualization`.
 
@@ -10428,33 +10844,37 @@ Source: manifest `type-3a822ada5784.js`; view `visualization-5f43c808cee0.js` �
 
 #### Skeleton and muscle movement
 
-Type `SKELETON_AND_MUSCLE_MOVEMENT` · manifest v?.
+Type `SKELETON_AND_MUSCLE_MOVEMENT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1d7579856410.js` → `SkeletonAndMuscleMovementVisualization`.
 
 #### Skewness direction
 
-Type `SKEWNESS_DIRECTION` · manifest v?.
+Type `SKEWNESS_DIRECTION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-31af11c9afdd.js` → `SkewnessDirectionVisualization`.
+Parameters: `direction` (enum, default `right`, one of `left`, `right`); `skewStrength` (number, default `0.6`, range 0 to 1).
+
+Source: manifest `model-f7b391d4c9ce.js`; view `visualization-31af11c9afdd.js` → `SkewnessDirectionVisualization`.
 
 #### Sleep cycle hypnogram
 
-Type `SLEEP_CYCLE_HYPNOGRAM` · manifest v?.
+Type `SLEEP_CYCLE_HYPNOGRAM` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-fd58dd9ee294.js` → `Visualization`.
+Parameters: `sleep_duration_hours` (number, default `8`, range 5 to 10).
+
+Source: manifest `model-af359ee5ae9b.js`; view `visualization-fd58dd9ee294.js` → `Visualization`.
 
 #### Sliding filament muscle contraction
 
 Calcium absent
 
-Type `SLIDING_FILAMENT_MUSCLE_CONTRACTION` · manifest v?.
+Type `SLIDING_FILAMENT_MUSCLE_CONTRACTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5b449e3844d3.js` → `SlidingFilamentVisualization`.
 
 #### Slope equation
 
-Type `SLOPE_EQUATION` · manifest v?.
+Type `SLOPE_EQUATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f11a7ef4aa41.js` → `SlopeEquationVisualization`.
 
@@ -10470,7 +10890,7 @@ Source: manifest `type-110ca488953a.js`; view `visualization-fb1ef6309bd6.js` �
 
 Substitution mechanism
 
-Type `SN1_VS_SN2_SUBSTITUTION` · manifest v?.
+Type `SN1_VS_SN2_SUBSTITUTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8f37dd3a82d.js` → `Visualization`.
 
@@ -10478,7 +10898,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8f37
 
 Soil-water state
 
-Type `SOIL_FIELD_CAPACITY_AND_WILTING_POINT` · manifest v?.
+Type `SOIL_FIELD_CAPACITY_AND_WILTING_POINT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4b4e47357208.js` → `SoilWaterVisualization`.
 
@@ -10486,7 +10906,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4b4e4
 
 Emphasized soil texture
 
-Type `SOIL_TEXTURE_AND_WATER_RETENTION` · manifest v?.
+Type `SOIL_TEXTURE_AND_WATER_RETENTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-701a43589661.js` → `SoilTextureAndWaterRetentionVisualization`.
 
@@ -10528,13 +10948,25 @@ Parameters: `savingRatePercent` (number, default `40`, range 20 to 50); `depreci
 
 Source: manifest `type-3ecced4722ba.js`; view `visualization-35828fd6843e.js` → `SolowSteadyStateVisualization`.
 
+#### Solubility curve
+
+Potassium nitrate
+
+Type `SOLUBILITY_CURVE` · manifest v2.
+
+Parameters: `solute` (enum, default `potassium nitrate`, one of `potassium nitrate`, `sodium chloride`, `cerium(III) sulfate`).
+
+Source: manifest `model-17f916a4e975.js`; view `visualization-21ca67136f97.js` → `SolubilityCurveVisualization`.
+
 #### Solubility equilibrium
 
 Initial ion product relative to Ksp
 
-Type `SOLUBILITY_EQUILIBRIUM` · manifest v?.
+Type `SOLUBILITY_EQUILIBRIUM` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-50dbf2b667e2.js` → `SolubilityEquilibriumVisualization`.
+Parameters: `dissolution_stoichiometry` (enum, default `MX`, one of `MX`, `MX2`, `M2X3`); `ksp` (number, default `8.5e-17`, range 1e-18 to 1e-16).
+
+Source: manifest `model-57d17e7a5c30.js`; view `visualization-50dbf2b667e2.js` → `SolubilityEquilibriumVisualization`.
 
 #### Solution dilution: `M_1V_1=M_2V_2`
 
@@ -10548,7 +10980,7 @@ Source: manifest `type-b20da9986277.js`; view `visualization-cf855229b019.js` �
 
 Speciation stage
 
-Type `SPECIATION` · manifest v?.
+Type `SPECIATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-59e8ce74f08f.js` → `SpeciationVisualization`.
 
@@ -10572,53 +11004,61 @@ Source: manifest `type-6b1390f6b07f.js`; view `visualization-142b52c9ea2b.js` �
 
 #### Spreadsheet if function
 
-Type `SPREADSHEET_IF_FUNCTION` · manifest v?.
+Type `SPREADSHEET_IF_FUNCTION` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b3cbab7d3e01.js` → `SpreadsheetIfVisualization`.
+Parameters: `comparison_operator` (enum, default `>=`, one of `>`, `>=`, `<`, `<=`); `initial_input_value` (number, default `8`, range 0 to 20); `initial_comparison_value` (number, default `10`, range 0 to 20).
+
+Source: manifest `model-379965cd8d4f.js`; view `visualization-b3cbab7d3e01.js` → `SpreadsheetIfVisualization`.
 
 #### Spreadsheet text extraction
 
 Choose LEFT, RIGHT, or MID
 
-Type `SPREADSHEET_TEXT_EXTRACTION` · manifest v?.
+Type `SPREADSHEET_TEXT_EXTRACTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-dc646bbae4bb.js` → `Visualization`.
 
 #### Sql ddl vs dml
 
-Type `SQL_DDL_VS_DML` · manifest v?.
+Type `SQL_DDL_VS_DML`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d410b4b058c0.js` → `Visualization`.
 
 #### Sql group by
 
-Type `SQL_GROUP_BY` · manifest v?.
+Type `SQL_GROUP_BY` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1c4040df0329.js` → `SqlGroupByVisualization`.
+Parameters: `groupBy` (enum, default `country`, one of `country`, `age`).
+
+Source: manifest `model-a061927447b9.js`; view `visualization-1c4040df0329.js` → `SqlGroupByVisualization`.
 
 #### Sql join
 
-Type `SQL_JOIN` · manifest v?.
+Type `SQL_JOIN` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5c0155dfd443.js` → `SqlJoinVisualization`.
+Parameters: `joinType` (enum, default `inner`, one of `inner`, `left`, `right`, `full`).
+
+Source: manifest `model-f4de27b0379a.js`; view `visualization-5c0155dfd443.js` → `SqlJoinVisualization`.
 
 #### Sql primary foreign key constraints
 
 Insert a child with an existing parent
 
-Type `SQL_PRIMARY_FOREIGN_KEY_CONSTRAINTS` · manifest v?.
+Type `SQL_PRIMARY_FOREIGN_KEY_CONSTRAINTS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5a4b6de6a14f.js` → `Visualization`.
 
 #### Sql transaction commit rollback
 
-Type `SQL_TRANSACTION_COMMIT_ROLLBACK` · manifest v?.
+Type `SQL_TRANSACTION_COMMIT_ROLLBACK` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-87ef2bf8072f.js` → `SqlTransactionVisualization`.
+Parameters: `transfer_amount` (number, default `150`, range 25 to 500).
+
+Source: manifest `model-b26f29efe99c.js`; view `visualization-87ef2bf8072f.js` → `SqlTransactionVisualization`.
 
 #### Square area
 
-Type `SQUARE_AREA` · manifest v?.
+Type `SQUARE_AREA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ea9b4edc5bbb.js` → `SquareAreaVisualization`.
 
@@ -10626,17 +11066,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ea9b4
 
 Signed short-run aggregate supply shift
 
-Type `SRAS` · manifest v?.
+Type `SRAS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-7242f8a70295.js` → `SrasVisualization`.
 
-#### Standard deviation
+#### Standard deviation: `\sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^2}`
 
 Population standard deviation
 
-Type `STANDARD_DEVIATION` · manifest v?.
+Type `STANDARD_DEVIATION` · manifest v1 · formula `\sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^2}`, also `\sigma=\sqrt{\frac{\sum(x_i-\mu)^2}{N}}`, `\sigma = \sqrt{E[(X-\mu)^2]}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-d4ada51c7cb2.js` → `StandardDeviationVisualization`.
+Parameters: `sigma` (number, default `1.5`, range 0 to 3).
+
+Source: manifest `model-a45393aa052e.js`; view `visualization-d4ada51c7cb2.js` → `StandardDeviationVisualization`.
 
 #### Standard score z: `z = \frac{x - \mu}{\sigma}`
 
@@ -10650,7 +11092,7 @@ Source: manifest `type-3941c7525dca.js`; view `visualization-1bcd3561dba4.js` �
 
 State of matter
 
-Type `STATES_OF_MATTER_PARTICLE_MODEL` · manifest v?.
+Type `STATES_OF_MATTER_PARTICLE_MODEL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-580d1efb59ff.js` → `Visualization`.
 
@@ -10658,17 +11100,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-580d1
 
 Adjust stereo pan
 
-Type `STEREO_FIELD` · manifest v?.
+Type `STEREO_FIELD`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-55b75f8cb47b.js` → `StereoFieldVisualization`.
 
-#### Stoichiometric mole ratios
+#### Stoichiometric mole ratios: `2\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\mathrm{H_2O}`
 
 Amount of {name} in moles
 
-Type `STOICHIOMETRIC_MOLE_RATIOS` · manifest v?.
+Type `STOICHIOMETRIC_MOLE_RATIOS` · manifest v3 · formula `2\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\mathrm{H_2O}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f29df7fea597.js` → `StoichiometricMoleRatiosVisualization`.
+Parameters: `reactionExtentMoles` (number, default `1`, range 0.5 to 5).
+
+Source: manifest `model-4a23866f1ccf.js`; view `visualization-f29df7fea597.js` → `StoichiometricMoleRatiosVisualization`.
 
 #### Stopping distance safe following: `d_{\mathrm{stop}}=d_{\mathrm{reaction}}+d_{\mathrm{braking}}`
 
@@ -10684,29 +11128,33 @@ Source: manifest `type-23e40668163a.js`; view `visualization-b3af0e7812a8.js` �
 
 Rainfall-intensity plot. Peak rainfall occurs at {hour, plural, one {# hour} other {# hours}}; the rainfall event is separate from river discharge and bankfull capacity.
 
-Type `STORM_HYDROGRAPH` · manifest v?.
+Type `STORM_HYDROGRAPH`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4d7c9797ca6f.js` → `Visualization`.
 
-#### Straight line depreciation
+#### Straight line depreciation: `D = \frac{C-S}{L}`
 
-Type `STRAIGHT_LINE_DEPRECIATION` · manifest v?.
+Type `STRAIGHT_LINE_DEPRECIATION` · manifest v3 · formula `D = \frac{C-S}{L}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-891018cba9f8.js` → `StraightLineDepreciationVisualization`.
+Parameters: `costUsd` (number, default `60000`, range 20000 to 100000); `salvageFraction` (number, default `0.1`, range 0 to 0.5); `usefulLifeYears` (integer, default `5`, range 3 to 10); `ageFraction` (number, default `0.4`, range 0 to 1).
+
+Source: manifest `model-586cf7d3fcc3.js`; view `visualization-891018cba9f8.js` → `StraightLineDepreciationVisualization`.
 
 #### Stratospheric ozone depletion
 
 Typical stratosphere
 
-Type `STRATOSPHERIC_OZONE_DEPLETION` · manifest v?.
+Type `STRATOSPHERIC_OZONE_DEPLETION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-18df26a2c4c5.js` → `Visualization`.
 
 #### Stress strain material limits
 
-Type `STRESS_STRAIN_MATERIAL_LIMITS` · manifest v?.
+Type `STRESS_STRAIN_MATERIAL_LIMITS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f48e062180e1.js` → `StressStrainVisualization`.
+Parameters: `material` (enum, default `steel`, one of `steel`, `aluminum`, `copper`).
+
+Source: manifest `model-dc171645f526.js`; view `visualization-f48e062180e1.js` → `StressStrainVisualization`.
 
 #### Strong vs weak acid
 
@@ -10722,21 +11170,25 @@ Source: manifest `type-e8c4aa2e5b51.js`; view `visualization-ba00db39b762.js` �
 
 Example family
 
-Type `STRUCTURAL_ISOMERS` · manifest v?.
+Type `STRUCTURAL_ISOMERS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8b48f6cdac2c.js` → `Visualization`.
 
 #### Subtracting integers
 
-Type `SUBTRACTING_INTEGERS` · manifest v?.
+Type `SUBTRACTING_INTEGERS` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-beed21851e82.js` → `SubtractingIntegersVisualization`.
+Parameters: `minuend` (integer, default `7`, range 1 to 12); `subtrahend` (integer, default `4`, range 1 to 12).
 
-#### Subtracting negative integers
+Source: manifest `model-daf7badaab95.js`; view `visualization-beed21851e82.js` → `SubtractingIntegersVisualization`.
 
-Type `SUBTRACTING_NEGATIVE_INTEGERS` · manifest v?.
+#### Subtracting negative integers: `a - n = a + |n|, \quad n < 0`
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c8b795a80842.js` → `SubtractingNegativeIntegersVisualization`.
+Type `SUBTRACTING_NEGATIVE_INTEGERS` · manifest v1 · formula `a - n = a + |n|, \quad n < 0`.
+
+Parameters: `positiveInteger` (integer, default `7`, range 1 to 12); `negativeInteger` (integer, default `-4`, range -12 to -1).
+
+Source: manifest `model-fd2977478028.js`; view `visualization-c8b795a80842.js` → `SubtractingNegativeIntegersVisualization`.
 
 #### Successive percent change: `100\left(1+\frac{p_1}{100}\right)\left(1+\frac{p_2}{100}\right)`
 
@@ -10750,9 +11202,11 @@ Source: manifest `type-d21946d43d46.js`; view `visualization-13cbbb35e267.js` �
 
 #### Supply and demand
 
-Type `SUPPLY_AND_DEMAND` · manifest v?.
+Type `SUPPLY_AND_DEMAND` · manifest v4.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-df04a8bbf315.js` → `MarketEquilibriumShiftsVisualization`.
+Parameters: `demand_shift` (number, default `10`, range -20 to 20); `supply_shift` (number, default `0`, range -20 to 20).
+
+Source: manifest `model-4017459b0c00.js`; view `visualization-df04a8bbf315.js` → `MarketEquilibriumShiftsVisualization`.
 
 #### Supply curve
 
@@ -10766,21 +11220,23 @@ Source: manifest `type-592d41260a2e.js`; view `visualization-49db0b531524.js` �
 
 Signed supply shock
 
-Type `SUPPLY_SHOCK` · manifest v?.
+Type `SUPPLY_SHOCK`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-aab9da065218.js` → `SupplyShockVisualization`.
 
 #### Surface area cube
 
-Type `SURFACE_AREA_CUBE` · manifest v?.
+Type `SURFACE_AREA_CUBE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-54a1fedfce2c.js` → `SurfaceAreaCubeVisualization`.
 
-#### Surface area sphere
+#### Surface area sphere: `S = 4\pi r^2`
 
-Type `SURFACE_AREA_SPHERE` · manifest v?.
+Type `SURFACE_AREA_SPHERE` · manifest v3 · formula `S = 4\pi r^2`, also `S = 4\pi r^2;`, `a=4pir^2`, `4pir^2=a`, `4pir^2=s`, `4pir^2`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-db350bbdc5e5.js` → `SurfaceAreaSphereVisualization`.
+Parameters: `radius` (number, default `3`, range 0.01 to 10000).
+
+Source: manifest `template-c6ddf2ee2bfb.js`; view `visualization-db350bbdc5e5.js` → `SurfaceAreaSphereVisualization`.
 
 #### Surface area to volume ratio
 
@@ -10794,13 +11250,13 @@ Source: manifest `type-96f57cd357c8.js`; view `visualization-f4983a4d5f73.js` �
 
 Relative age as a percentage of maximum lifespan
 
-Type `SURVIVORSHIP_CURVES` · manifest v?.
+Type `SURVIVORSHIP_CURVES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c58d645b851e.js` → `Visualization`.
 
 #### Synaptic transmission
 
-Type `SYNAPTIC_TRANSMISSION` · manifest v?.
+Type `SYNAPTIC_TRANSMISSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-455561cc845a.js` → `SynapticTransmissionVisualization`.
 
@@ -10808,37 +11264,43 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-45556
 
 LFO destination
 
-Type `SYNTH_SIGNAL_FLOW` · manifest v?.
+Type `SYNTH_SIGNAL_FLOW`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-60f261401eb4.js` → `Visualization`.
 
 #### Synthetic division
 
-Type `SYNTHETIC_DIVISION` · manifest v?.
+Type `SYNTHETIC_DIVISION` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-88bdade97016.js` → `SyntheticDivisionVisualization`.
+Parameters: `dividendCoefficient3` (integer, default `4`, range -20 to 20); `dividendCoefficient2` (integer, default `7`, range -20 to 20); `dividendCoefficient1` (integer, default `-13`, range -20 to 20); `dividendCoefficient0` (integer, default `6`, range -20 to 20); `divisorConstant` (integer, default `3`, range -5 to 5).
+
+Source: manifest `model-dabd83a67c23.js`; view `visualization-88bdade97016.js` → `SyntheticDivisionVisualization`.
 
 #### System of equations
 
-Type `SYSTEM_OF_EQUATIONS` · manifest v?.
+Type `SYSTEM_OF_EQUATIONS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-12c3833b7fa1.js` → `SystemOfEquationsVisualization`.
 
-#### T distribution
+#### T distribution: `T=\frac{\bar{x}-\mu}{s/\sqrt{n}}`
 
 Degrees of freedom
 
-Type `T_DISTRIBUTION` · manifest v?.
+Type `T_DISTRIBUTION` · manifest v2 · formula `T=\frac{\bar{x}-\mu}{s/\sqrt{n}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ba68d93d837f.js` → `Visualization`.
+Parameters: `degrees_of_freedom` (integer, default `5`, range 3 to 60); `central_probability` (number, default `0.95`, range 0.9 to 0.99).
+
+Source: manifest `model-23ef77a43b60.js`; view `visualization-ba68d93d837f.js` → `Visualization`.
 
 #### T stat p score
 
 Observed t-statistic
 
-Type `T_STAT_P_SCORE` · manifest v?.
+Type `T_STAT_P_SCORE` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-94e1e68ce9a3.js` → `TStatPScoreVisualization`.
+Parameters: `tStatistic` (number, default `2`, range -5 to 5); `degreesOfFreedom` (integer, default `10`, range 1 to 50); `testType` (enum, default `two_sided`, one of `one_sided`, `two_sided`).
+
+Source: manifest `model-2519c21474d3.js`; view `visualization-94e1e68ce9a3.js` → `TStatPScoreVisualization`.
 
 #### Tangent segments common point: `PA = PB`
 
@@ -10850,27 +11312,31 @@ Source: manifest `type-32562c107c2d.js`; view `visualization-01f0830feedc.js` �
 
 #### Tariff
 
-Type `TARIFF` · manifest v?.
+Type `TARIFF`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e69718094d3c.js` → `Visualization`.
 
 #### Tax incidence and elasticity
 
-Type `TAX_INCIDENCE_AND_ELASTICITY` · manifest v?.
+Type `TAX_INCIDENCE_AND_ELASTICITY` · manifest v5.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-16cde0f54c24.js` → `ExciseTaxVisualization`.
+Parameters: `taxPerUnit` (number, default `10`, range 5 to 35); `relativeElasticity` (enum, default `balanced`, one of `balanced`, `demand_more_inelastic`, `supply_more_inelastic`).
+
+Source: manifest `model-49a33d251c4c.js`; view `visualization-16cde0f54c24.js` → `ExciseTaxVisualization`.
 
 #### Taxes and subsidies
 
 Subsidy per unit
 
-Type `TAXES_AND_SUBSIDIES` · manifest v?.
+Type `TAXES_AND_SUBSIDIES` · manifest v5.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4b98d67bbebe.js` → `Visualization`.
+Parameters: `subsidy_per_unit` (number, default `1.2`, range 0 to 4.2).
+
+Source: manifest `model-cc02c8adab2a.js`; view `visualization-4b98d67bbebe.js` → `Visualization`.
 
 #### Taylor series expansion
 
-Type `TAYLOR_SERIES_EXPANSION` · manifest v?.
+Type `TAYLOR_SERIES_EXPANSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-435c5086167f.js` → `TaylorSeriesExpansionVisualization`.
 
@@ -10878,27 +11344,31 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-435c5
 
 TCP handshake stage
 
-Type `TCP_THREE_WAY_HANDSHAKE` · manifest v?.
+Type `TCP_THREE_WAY_HANDSHAKE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4c95818c2ec2.js` → `TcpThreeWayHandshakeVisualization`.
+Parameters: `client_initial_sequence` (integer, default `100`, range 0 to 9998); `server_initial_sequence` (integer, default `400`, range 0 to 9998).
+
+Source: manifest `model-11da4540b9d5.js`; view `visualization-4c95818c2ec2.js` → `TcpThreeWayHandshakeVisualization`.
 
 #### Tcp vs udp
 
-Type `TCP_VS_UDP` · manifest v?.
+Type `TCP_VS_UDP` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9c70449f03c0.js` → `TcpVsUdpVisualization`.
+Parameters: `protocol` (enum, default `tcp`, one of `tcp`, `udp`); `lossMode` (enum, default `drop_packet_3`, one of `none`, `drop_packet_3`).
+
+Source: manifest `model-a7c5b23f898c.js`; view `visualization-9c70449f03c0.js` → `TcpVsUdpVisualization`.
 
 #### Tempo marking chart
 
 Select a tempo marking
 
-Type `TEMPO_MARKING_CHART` · manifest v?.
+Type `TEMPO_MARKING_CHART`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-3e25e3d6ff0c.js` → `Visualization`.
 
 #### Tendon reflex
 
-Type `TENDON_REFLEX` · manifest v?.
+Type `TENDON_REFLEX`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-67d5e7429a2f.js` → `TendonReflexVisualization`.
 
@@ -10906,63 +11376,65 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-67d5e
 
 AA, homozygous dominant
 
-Type `TEST_CROSS` · manifest v?.
+Type `TEST_CROSS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b39b1786799b.js` → `Visualization`.
 
 #### Thermohaline circulation
 
-Type `THERMOHALINE_CIRCULATION` · manifest v?.
+Type `THERMOHALINE_CIRCULATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e32cda290664.js` → `Visualization`.
 
-#### Three set inclusion exclusion
+#### Three set inclusion exclusion: `|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|`
 
 Inclusion-exclusion step
 
-Type `THREE_SET_INCLUSION_EXCLUSION` · manifest v?.
+Type `THREE_SET_INCLUSION_EXCLUSION` · manifest v1 · formula `|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-cdff458bb8e1.js` → `ThreeSetInclusionExclusionVisualization`.
+Parameters: `setACount` (integer, default `21`, range 12 to 30); `setBCount` (integer, default `21`, range 12 to 30); `setCCount` (integer, default `18`, range 12 to 30).
+
+Source: manifest `model-92f4db76ba27.js`; view `visualization-cdff458bb8e1.js` → `ThreeSetInclusionExclusionVisualization`.
 
 #### Thyroid regulation
 
-Type `THYROID_REGULATION` · manifest v?.
+Type `THYROID_REGULATION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-48a1119ac114.js` → `ThyroidRegulationVisualization`.
 
 #### Torque
 
-Type `TORQUE` · manifest v?.
+Type `TORQUE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-68d2dcd3a5ca.js` → `TorqueVisualization`.
 
 #### Transversal angle relationships
 
-Type `TRANSVERSAL_ANGLE_RELATIONSHIPS` · manifest v?.
+Type `TRANSVERSAL_ANGLE_RELATIONSHIPS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-37847fe1567e.js` → `TransversalAngleRelationshipsVisualization`.
 
 #### Trapezoid area
 
-Type `TRAPEZOID_AREA` · manifest v?.
+Type `TRAPEZOID_AREA`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c611f43ae106.js` → `TrapezoidAreaVisualization`.
 
 #### Trapezoidal rule
 
-Type `TRAPEZOIDAL_RULE` · manifest v?.
+Type `TRAPEZOIDAL_RULE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1ffae35cd6f6.js` → `IntegrationEstimationVisualization`.
 
 #### Triangle angle sum
 
-Type `TRIANGLE_ANGLE_SUM` · manifest v?.
+Type `TRIANGLE_ANGLE_SUM`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b6ee7c51a63f.js` → `TriangleAngleSumVisualization`.
 
 #### Triangle angle sum proof
 
-Type `TRIANGLE_ANGLE_SUM_PROOF` · manifest v?.
+Type `TRIANGLE_ANGLE_SUM_PROOF`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ea29eee49ae4.js` → `TriangleAngleSumProofVisualization`.
 
@@ -10976,25 +11448,13 @@ Source: manifest `type-cb23494cad1e.js`; view `visualization-bf6d6326f0c4.js` �
 
 #### Trig angle sum identity
 
-Type `TRIG_ANGLE_SUM_IDENTITY` · manifest v?.
+Type `TRIG_ANGLE_SUM_IDENTITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8fe47c212579.js` → `TrigAngleSumIdentityVisualization`.
 
-#### Trig component x
-
-Type `TRIG_COMPONENT_X` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b8f135415f77.js` → `TrigComponentXVisualization`.
-
-#### Trig component y
-
-Type `TRIG_COMPONENT_Y` · manifest v?.
-
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-160875840d03.js` → `TrigComponentYVisualization`.
-
 #### Trig identity pythagorean
 
-Type `TRIG_IDENTITY_PYTHAGOREAN` · manifest v?.
+Type `TRIG_IDENTITY_PYTHAGOREAN`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1488f4207bdb.js` → `TrigIdentityVisualization`.
 
@@ -11002,7 +11462,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-1488f
 
 Graph of the inverse trigonometric function. The highlighted point has input {inputValue} and theta {angleRadiansCount, plural, one {{angleRadians} radian} other {{angleRadians} radians}}, about {angleDegreesCount, plural, one {{angleDegrees} degree} other {{angleDegrees} degrees}}.
 
-Type `TRIG_INVERSE` · manifest v?.
+Type `TRIG_INVERSE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-58e87872b140.js` → `TrigInverseVisualization`.
 
@@ -11026,43 +11486,51 @@ Source: manifest `type-3854ea3b6661.js`; view `visualization-e2265127ebad.js` �
 
 First two-digit factor
 
-Type `TWO_DIGIT_MULTIPLY` · manifest v?.
+Type `TWO_DIGIT_MULTIPLY` · manifest v1.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-94c739a0e9a7.js` → `TwoDigitMultiplyVisualization`.
+Parameters: `factor1` (integer, default `24`, range 10 to 99); `factor2` (integer, default `87`, range 10 to 99).
+
+Source: manifest `model-848a1637af6a.js`; view `visualization-94c739a0e9a7.js` → `TwoDigitMultiplyVisualization`.
 
 #### Two dimensional array indexing
 
 Row index
 
-Type `TWO_DIMENSIONAL_ARRAY_INDEXING` · manifest v?.
+Type `TWO_DIMENSIONAL_ARRAY_INDEXING` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c65d96e23ff5.js` → `Visualization`.
+Parameters: `rows` (integer, default `3`, range 2 to 5); `columns` (integer, default `5`, range 2 to 6).
+
+Source: manifest `model-6157f9be0476.js`; view `visualization-c65d96e23ff5.js` → `Visualization`.
 
 #### Two sample t test
 
 Observed difference between group means
 
-Type `TWO_SAMPLE_T_TEST` · manifest v?.
+Type `TWO_SAMPLE_T_TEST` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5384166c9598.js` → `TwoSampleTTestVisualization`.
+Parameters: `meanDifference` (number, default `1.5`, range -3 to 3); `standardError` (number, default `0.75`, range 0.75 to 3); `degreesOfFreedom` (number, default `20`, range 2 to 200).
+
+Source: manifest `model-2470e84b6d61.js`; view `visualization-5384166c9598.js` → `TwoSampleTTestVisualization`.
 
 #### Twos complement
 
-Type `TWOS_COMPLEMENT` · manifest v?.
+Type `TWOS_COMPLEMENT` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-201ab5e68a05.js` → `TwosComplementVisualization`.
+Parameters: `bit_width` (enum, default `8`, one of `4`, `8`, `16`); `initial_value` (integer, default `-4`, range -32768 to 32767).
+
+Source: manifest `model-467b7dfbb450.js`; view `visualization-201ab5e68a05.js` → `TwosComplementVisualization`.
 
 #### Type i type ii power
 
 Significance level
 
-Type `TYPE_I_TYPE_II_POWER` · manifest v?.
+Type `TYPE_I_TYPE_II_POWER`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-f5aea01a4833.js` → `TypeITypeIIPowerVisualization`.
 
 #### Union probability inclusion exclusion
 
-Type `UNION_PROBABILITY_INCLUSION_EXCLUSION` · manifest v?.
+Type `UNION_PROBABILITY_INCLUSION_EXCLUSION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-35d935555ef3.js` → `UnionProbabilityInclusionExclusionVisualization`.
 
@@ -11078,7 +11546,7 @@ Source: manifest `type-4677b661e846.js`; view `visualization-1d3bd3bed867.js` �
 
 Land cover
 
-Type `URBANIZATION_AND_IMPERVIOUS_SURFACES` · manifest v?.
+Type `URBANIZATION_AND_IMPERVIOUS_SURFACES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-817ac4990409.js` → `UrbanizationVisualization`.
 
@@ -11090,17 +11558,19 @@ Parameters: `initial_temperature_c` (number, default `25`, range 0 to 60); `surr
 
 Source: manifest `type-15f2f7d7853c.js`; view `visualization-9ffa51dd8c8d.js` → `VaporPressureVisualization`.
 
-#### Vapor pressure lowering
+#### Vapor pressure lowering: `P_{\mathrm{solution}}=X_{\mathrm{solvent}}P^\circ_{\mathrm{solvent}}`
 
 Nonvolatile-solute mole fraction
 
-Type `VAPOR_PRESSURE_LOWERING` · manifest v?.
+Type `VAPOR_PRESSURE_LOWERING` · manifest v3 · formula `P_{\mathrm{solution}}=X_{\mathrm{solvent}}P^\circ_{\mathrm{solvent}}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ce50e4ee5ab2.js` → `VaporPressureLoweringVisualization`.
+Parameters: `pure_solvent_vapor_pressure_kpa` (number, default `100`, range 10 to 200).
+
+Source: manifest `model-715993df7e45.js`; view `visualization-ce50e4ee5ab2.js` → `VaporPressureLoweringVisualization`.
 
 #### Variance
 
-Type `VARIANCE` · manifest v?.
+Type `VARIANCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-73be326f2a2c.js` → `VarianceVisualization`.
 
@@ -11116,39 +11586,41 @@ Source: manifest `type-f1e9ea4637a1.js`; view `visualization-6fa0a496dff1.js` �
 
 Vector {vector}, {component} component
 
-Type `VECTOR_DOT_PRODUCT` · manifest v?.
+Type `VECTOR_DOT_PRODUCT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-9658b8ec9ec2.js` → `VectorDotProductVisualization`.
 
 #### Vector projection
 
-Type `VECTOR_PROJECTION` · manifest v?.
+Type `VECTOR_PROJECTION`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-306028075547.js` → `VectorProjectionVisualization`.
 
-#### Velocity as slope graph
+#### Velocity as slope graph: `v = \frac{\Delta x}{\Delta t}`
 
 Position point at {timeCount, plural, one {{time} second} other {{time} seconds}} and {positionCount, plural, one {{position} meter} other {{position} meters}}. Drag vertically or use the Up and Down arrow keys to change its position.
 
-Type `VELOCITY_AS_SLOPE_GRAPH` · manifest v?.
+Type `VELOCITY_AS_SLOPE_GRAPH` · manifest v5 · formula `v = \frac{\Delta x}{\Delta t}`.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-5d022265a4bb.js` → `VelocityAsSlopeGraphVisualization`.
+Parameters: `positionAt0SecondsMeters` (number, default `-3`, range -10 to 10); `positionAt2_5SecondsMeters` (number, default `4`, range -10 to 10); `positionAt5SecondsMeters` (number, default `4`, range -10 to 10); `positionAt7_5SecondsMeters` (number, default `-2`, range -10 to 10); `positionAt10SecondsMeters` (number, default `3`, range -10 to 10).
+
+Source: manifest `model-372acd82c554.js`; view `visualization-5d022265a4bb.js` → `VelocityAsSlopeGraphVisualization`.
 
 #### Venn diagram two set counting
 
-Type `VENN_DIAGRAM_TWO_SET_COUNTING` · manifest v?.
+Type `VENN_DIAGRAM_TWO_SET_COUNTING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-68fb0a5e3cfa.js` → `VennDiagramTwoSetCountingVisualization`.
 
 #### Virus life cycle
 
-Type `VIRUS_LIFE_CYCLE` · manifest v?.
+Type `VIRUS_LIFE_CYCLE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c0dc64de3c4b.js` → `VirusLifeCycleVisualization`.
 
 #### Visual fields
 
-Type `VISUAL_FIELDS` · manifest v?.
+Type `VISUAL_FIELDS`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-741a3eab6de1.js` → `VisualFieldsVisualization`.
 
@@ -11156,19 +11628,19 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-741a3
 
 Vocal classification
 
-Type `VOCAL_RANGES` · manifest v?.
+Type `VOCAL_RANGES`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-e456bf447773.js` → `Visualization`.
 
 #### Volume cube
 
-Type `VOLUME_CUBE` · manifest v?.
+Type `VOLUME_CUBE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b93e5f11d166.js` → `VolumeCubeVisualization`.
 
 #### Waste hierarchy
 
-Type `WASTE_HIERARCHY` · manifest v?.
+Type `WASTE_HIERARCHY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ffcaf6e7ac8e.js` → `Visualization`.
 
@@ -11176,7 +11648,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ffcaf
 
 Wastewater treatment stage
 
-Type `WASTEWATER_TREATMENT` · manifest v?.
+Type `WASTEWATER_TREATMENT`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ebeb8457b83e.js` → `WastewaterTreatmentVisualization`.
 
@@ -11194,7 +11666,7 @@ Source: manifest `type-9acfe2203543.js`; view `visualization-4db97a6705cb.js` �
 
 Move neighboring water horizontally
 
-Type `WATER_POLARITY` · manifest v?.
+Type `WATER_POLARITY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b5aaf9cb457b.js` → `Visualization`.
 
@@ -11202,7 +11674,7 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-b5aaf
 
 Magnitude of the negative solute potential on the right
 
-Type `WATER_POTENTIAL` · manifest v?.
+Type `WATER_POTENTIAL`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-51350225caa1.js` → `WaterPotentialVisualization`.
 
@@ -11218,7 +11690,7 @@ Source: manifest `type-ac19101079c5.js`; view `visualization-51ad4b5172e6.js` �
 
 Choose the horizontal axis
 
-Type `WAVEFORM_ANATOMY` · manifest v?.
+Type `WAVEFORM_ANATOMY`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-df4ceac4812c.js` → `WaveformAnatomyVisualization`.
 
@@ -11234,7 +11706,7 @@ Source: manifest `type-722d579b6777.js`; view `visualization-58ce41c0cf27.js` �
 
 Wetland condition
 
-Type `WETLAND_FILTRATION_AND_FLOOD_BUFFERING` · manifest v?.
+Type `WETLAND_FILTRATION_AND_FLOOD_BUFFERING`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-4c3bb4cf91f3.js` → `Visualization`.
 
@@ -11252,9 +11724,11 @@ Source: manifest `type-161aea9178de.js`; view `visualization-595829a5da15.js` �
 
 Sample pattern
 
-Type `WILCOXON_RANK_SUM` · manifest v?.
+Type `WILCOXON_RANK_SUM` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-ceefcde82be1.js` → `WilcoxonRankSumVisualization`.
+Parameters: `initial_pattern` (enum, default `intermingled`, one of `intermingled`, `group-a-lower`, `group-a-higher`, `ties`).
+
+Source: manifest `model-65fc78301123.js`; view `visualization-ceefcde82be1.js` → `WilcoxonRankSumVisualization`.
 
 #### Wind turbine
 
@@ -11270,13 +11744,13 @@ Source: manifest `type-3f4953af8baf.js`; view `visualization-3935fee61dec.js` �
 
 Withdrawal reflex stage
 
-Type `WITHDRAWAL_REFLEX` · manifest v?.
+Type `WITHDRAWAL_REFLEX`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-c3ff75499a1f.js` → `WithdrawalReflexVisualization`.
 
 #### Work done by force
 
-Type `WORK_DONE_BY_FORCE` · manifest v?.
+Type `WORK_DONE_BY_FORCE`.
 
 Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8db8211a2091.js` → `WorkDoneByForceVisualization`.
 
@@ -11284,17 +11758,21 @@ Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-8db82
 
 Observed z-score
 
-Type `Z_SCORE_P_VALUE` · manifest v?.
+Type `Z_SCORE_P_VALUE` · manifest v3.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-aaa311fa003b.js` → `ZScorePValueVisualization`.
+Parameters: `zScore` (number, default `1.96`, range -3.5 to 3.5); `testType` (enum, default `two-sided`, one of `one-sided`, `two-sided`).
+
+Source: manifest `model-a9901c18f348.js`; view `visualization-aaa311fa003b.js` → `ZScorePValueVisualization`.
 
 #### Zero based array indexing
 
-Type `ZERO_BASED_ARRAY_INDEXING` · manifest v?.
+Type `ZERO_BASED_ARRAY_INDEXING` · manifest v2.
 
-Source: manifest `analytics-bc3295dda721.js (inline)`; view `visualization-30b371fa43ba.js` → `ZeroBasedArrayIndexingVisualization`.
+Parameters: `initial_length` (integer, default `6`, range 1 to 8).
 
-### Manifest only (no renderer registered in this build) (31)
+Source: manifest `model-f9237046088a.js`; view `visualization-30b371fa43ba.js` → `ZeroBasedArrayIndexingVisualization`.
+
+### Manifest only (no renderer registered in this build) (29)
 
 #### Animal pollination
 
@@ -11395,22 +11873,6 @@ Type `IPV4_SUBNETTING_CIDR` · manifest v2.
 Parameters: `address_octet_1` (integer, default `192`, range 128 to 223); `address_octet_2` (integer, default `168`, range 128 to 239); `address_octet_3` (integer, default `1`, range 0 to 255); `address_octet_4` (integer, default `75`, range 0 to 255); `prefix_length` (integer, default `26`, range 24 to 30).
 
 Source: manifest `type-103197d7f37d.js`.
-
-#### Kinematics velocity: `v_f = v_i + at`
-
-Type `KINEMATICS_VELOCITY` · manifest v3 (also v) · formula `v_f = v_i + at`, also `v = u + at`, `v = v_0 + at`, `u + at = v`.
-
-Parameters: `initialVelocityMetersPerSecond` (number, default `2`, range -6 to 10); `accelerationMetersPerSecondSquared` (number, default `1`, range -2 to 4); `timeSeconds` (number, default `5`, range 1 to 9).
-
-Source: manifest `type-ce7a4fb22b44.js`.
-
-#### Matrix transformation 2d: `A\vec{v}=\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}`
-
-Type `MATRIX_TRANSFORMATION_2D` · manifest v1 (also v) · formula `A\vec{v}=\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}`.
-
-Parameters: `matrixA` (number, default `2`, range -2 to 2); `matrixB` (number, default `0`, range -2 to 2); `matrixC` (number, default `0`, range -2 to 2); `matrixD` (number, default `2`, range -2 to 2); `vectorX` (number, default `1`, range -1.5 to 1.5); `vectorY` (number, default `1`, range -1.5 to 1.5).
-
-Source: manifest `type-e537504d901a.js`.
 
 #### Monthly temperature and precipitation climograph
 

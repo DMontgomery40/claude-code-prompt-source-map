@@ -36,7 +36,7 @@ export const RENDERERS = [
   { key: "three", label: "three.js 3D scenes", test: dep => /^three[.-]/.test(dep) },
   { key: "jsxgraph", label: "JSXGraph 2D graphs", test: dep => /^jsxgraph-/.test(dep) },
   { key: "lottie", label: "Lottie animations", test: dep => /lottie/.test(dep) },
-  { key: "svg", label: "SVG and HTML", test: () => false }
+  { key: "svg", label: "Other views (no three.js or Lottie dependency)", test: () => false }
 ];
 const UNREGISTERED = { key: "none", label: "Manifest only (no renderer registered in this build)" };
 
@@ -52,8 +52,8 @@ export const TRIGGER_FACTS = [
     text: "The render source the app reports for these blocks is `CHATGPT_MATH_BLOCK_RENDER_SOURCE_GENUI_LEARNING_BLOCK`: the server's generative-UI layer matched the answer to a block type. The app does not choose blocks itself."
   },
   {
-    anchors: ["canonicalFormula", "canonicalFormulaAliases"],
-    text: "Formula blocks carry a `canonicalFormula` and optional `canonicalFormulaAliases` in their manifest: the equation forms a block stands for (for example `PV = nRT`)."
+    anchors: ["canonicalFormula", "`canonical_formula`", "content_is_placeholder"],
+    text: "Formula blocks carry a `canonicalFormula` (and some `canonicalFormulaAliases`) in their manifest. The app uses the formula only as display text: it shows it when the reference's `content_type` is `canonical_formula` or `placeholder`, and otherwise shows the content the server sent. No app code reads the aliases, so no matching of the model's equations happens in the app."
   },
   {
     anchors: ["/conversation/message/learning-blocks/feedback", "rendered_learning_block_version", "user_edited_learning_block"],
@@ -61,7 +61,7 @@ export const TRIGGER_FACTS = [
   },
   {
     anchors: ["learning_block_suggested_followup", "followups_v2_followup_source"],
-    text: "A block can offer follow-up questions. Choosing one sends a new user message whose metadata marks it `followups_v2_followup_source: \"learning_block_suggested_followup\"`, so the next turn's context records that the question came from a block."
+    text: "A block can offer follow-up questions. Choosing one sends a new user message whose metadata marks it `followups_v2_followup_source: \"learning_block_suggested_followup\"`, so the request records that the question came from a block."
   },
   {
     anchors: ["/conversation/{conversation_id}/message/{message_id}/genui/refresh_widget", "genui_refresh"],
@@ -291,8 +291,22 @@ export function buildDocument(asar, app) {
       }
     });
   };
+  // A view's manifest: the first module it imports (or one of those imports) that ships a
+  // manifest literal and evaluates to {type, version}; type-*.js first.
+  const probed = new Map();
+  const probe = dep => {
+    if (!probed.has(dep)) probed.set(dep, Boolean(evaluator.manifest(dep)?.type));
+    return probed.get(dep);
+  };
+  const holdsManifest = dep => byName.has(dep) && (text(dep) ?? "").includes("thumbnailAssetKey");
+  const manifestOf = view => {
+    const direct = staticImports(text(view) ?? "").filter(dep => !/^(rolldown-runtime|app-shared)-/.test(dep));
+    const ordered = [...direct.filter(d => /^type-/.test(d)), ...direct.filter(d => !/^type-/.test(d))];
+    const candidates = [...ordered.filter(holdsManifest), ...ordered.flatMap(d => staticImports(text(d) ?? "").filter(holdsManifest))];
+    return [...new Set(candidates)].find(dep => probe(dep)) ?? candidates.find(d => /^type-/.test(d)) ?? null;
+  };
   for (const reg of registry.values()) {
-    const manifestFile = staticImports(text(reg.module) ?? "").find(dep => /^type-[0-9a-f]+\.js$/.test(dep)) ?? null;
+    const manifestFile = manifestOf(reg.module);
     if (manifestFile) reachedManifests.add(manifestFile);
     add({ manifestFile, reg });
   }
@@ -322,6 +336,7 @@ export function buildDocument(asar, app) {
     type_enum_values: enumTypes.length,
     registered_renderers: unique.filter(b => b.renderer !== UNREGISTERED.key).length,
     inline_manifests: unique.filter(b => b.manifest_evaluated === null).length,
+    inline_manifests_in_registry: unique.filter(b => b.manifest_evaluated === null && text(registryFile).includes(`\`${b.type}\``)).length,
     thumbnail_animations: unique.filter(b => b.thumbnail_animation).length,
     with_formula: unique.filter(b => b.canonical_formula).length,
     with_parameters: unique.filter(b => b.parameters && Object.keys(b.parameters).length).length,
@@ -344,7 +359,7 @@ function renderMarkdown({ app, unique, counts, facts, enumWithoutManifest, regis
   const lines = [
     "# ChatGPT learning blocks",
     "",
-    `Learning blocks are the interactive math, physics, chemistry, biology and data visualizations ChatGPT shows next to an answer: a graph, a 3D scene or an animation, often with sliders and switches the user can change. This build ships **${counts.block_types} block types**, ${counts.registered_renderers} with a view registered: ${counts.by_renderer.three} three.js 3D scenes, ${counts.by_renderer.jsxgraph ? `${counts.by_renderer.jsxgraph} JSXGraph 2D graphs, ` : ""}${counts.by_renderer.lottie} Lottie animations and ${counts.by_renderer.svg} SVG or HTML views. ${counts.thumbnail_animations} have an animated Lottie thumbnail, ${counts.with_formula} stand for a named formula, and ${counts.with_parameters} take parameters the server can set.`,
+    `Learning blocks are the interactive math, physics, chemistry, biology and data visualizations ChatGPT shows next to an answer: a graph, a 3D scene or an animation, often with sliders and switches the user can change. This build ships **${counts.block_types} block types**, ${counts.registered_renderers} with a view registered: ${counts.by_renderer.three} three.js 3D scenes, ${counts.by_renderer.jsxgraph ? `${counts.by_renderer.jsxgraph} JSXGraph 2D graphs, ` : ""}${counts.by_renderer.lottie} Lottie animations and ${counts.by_renderer.svg} other views (neither three.js nor Lottie). ${counts.thumbnail_animations} have an animated Lottie thumbnail, ${counts.with_formula} stand for a named formula, and ${counts.with_parameters} take parameters the server can set.`,
     "",
     `Source: ChatGPT desktop ${app.version} (build ${app.build}), \`app.asar\` → \`${ASSETS}\`: the block registry \`${registryFile}\` (${counts.registered_views} registered views), ${counts.manifest_modules} manifest modules (\`type-*.js\`) and the type enum \`${enumFile}\`.`,
     "",
@@ -352,7 +367,7 @@ function renderMarkdown({ app, unique, counts, facts, enumWithoutManifest, regis
     "",
     ...facts.flatMap(f => [`- ${f.found ? f.text : `${NOT_FOUND}: ${f.anchors.map(a => code(a)).join(", ")}.`}`]),
     "",
-    `Counting: a block type is one manifest \`type\` (or, for a view whose manifest is inline in the registry, its analytics type); where a type ships more than one view or manifest version, the highest version is listed. The type enum (\`${ENUM_PREFIX}*\`) has ${counts.type_enum_values} values; ${enumWithoutManifest.length ? `${enumWithoutManifest.length} of them have no registered view or manifest in this build (${enumWithoutManifest.slice(0, 12).map(t => code(t)).join(", ")}${enumWithoutManifest.length > 12 ? ", …; all are in the JSON" : ""})` : "every one has a block"}. Blocks registered without an analytics type (\`UNSPECIFIED\`) are identified by their manifest. ${counts.inline_manifests} blocks keep their manifest inline in the registry chunk; their parameters are not listed here.${counts.manifests_from_literals ? ` ${counts.manifests_from_literals} manifest modules could not be evaluated and are listed from their literals only.` : ""} A title is the block's thumbnail animation name where it has one, otherwise its type name in words; the sentence under it is the view's own accessibility label.`,
+    `Counting: a block type is one manifest \`type\` (or, for a view whose manifest is inline in the registry, its analytics type); where a type ships more than one view or manifest version, the highest version is listed. The type enum (\`${ENUM_PREFIX}*\`) has ${counts.type_enum_values} values; ${enumWithoutManifest.length ? `${enumWithoutManifest.length} of them have no registered view or manifest in this build (${enumWithoutManifest.slice(0, 12).map(t => code(t)).join(", ")}${enumWithoutManifest.length > 12 ? ", …; all are in the JSON" : ""})` : "every one has a block"}. Blocks registered without an analytics type (\`UNSPECIFIED\`) are identified by their manifest. ${counts.inline_manifests} blocks have no separate manifest module (${counts.inline_manifests_in_registry} of them are defined inside the registry chunk); their parameters are not listed here.${counts.manifests_from_literals ? ` ${counts.manifests_from_literals} manifest modules could not be evaluated and are listed from their literals only.` : ""} A title is the block's thumbnail animation name where it has one, otherwise its type name in words; the sentence under it is the view's own accessibility label.`,
     "",
     "## Blocks",
     ""
@@ -364,7 +379,8 @@ function renderMarkdown({ app, unique, counts, facts, enumWithoutManifest, regis
     for (const block of group) {
       lines.push(`#### ${block.title}${block.canonical_formula && block.title_source === "type name" ? `: ${code(block.canonical_formula)}` : ""}`, "");
       if (block.description) lines.push(block.description.replace(/\s+/g, " "), "");
-      const facts = [`Type ${code(block.type)}`, `manifest v${block.version ?? "?"}${block.other_versions.length ? ` (also v${block.other_versions.join(", v")})` : ""}`];
+      const facts = [`Type ${code(block.type)}`];
+      if (block.version != null) facts.push(`manifest v${block.version}${block.other_versions.filter(v => v != null).length ? ` (also v${block.other_versions.filter(v => v != null).join(", v")})` : ""}`);
       if (block.canonical_formula) facts.push(`formula ${code(block.canonical_formula)}${block.canonical_formula_aliases.length ? `, also ${block.canonical_formula_aliases.map(a => code(a)).join(", ")}` : ""}`);
       if (block.thumbnail_animation) facts.push("animated thumbnail");
       if (!block.in_type_enum) facts.push("not in the type enum");

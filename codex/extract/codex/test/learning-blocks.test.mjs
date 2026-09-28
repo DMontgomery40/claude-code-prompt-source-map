@@ -51,15 +51,19 @@ const FILES = {
   [`${A}visualization-333333333333.js`]: 'import{n as e}from"./rolldown-runtime-000000000000.js";import{n as m,t as i}from"./type-aaaaaaaaaaaa.js";var z=({i:t})=>t.formatMessage({id:`learningBlock.pythagorean.x`,defaultMessage:`Legs`});var y={ariaLabel:l.formatMessage({id:`learningBlock.pythagorean.ariaLabel`,defaultMessage:`Right triangle whose legs a and b set the hypotenuse c.`})};export{y as PythagoreanVisualization};',
   [`${A}visualization-444444444444.js`]: 'import{n as e}from"./rolldown-runtime-000000000000.js";import{n as i,t as a}from"./responsive-lottie-visualization-555555555555.js";import{n as l,t as u}from"./type-bbbbbbbbbbbb.js";var p={};export{p as Visualization};',
   [`${A}visualization-666666666666.js`]: "var q={};export{q as OrbitalMotionVisualization};",
+  // A view whose manifest lives in a shared model module it imports, not a type-*.js file.
+  [`${A}visualization-abcabcabcabc.js`]: 'import{n as e}from"./rolldown-runtime-000000000000.js";import{t as m}from"./model-121212121212.js";var v={};export{v as ProjectileMotionVisualization};',
+  [`${A}model-121212121212.js`]: manifestModule("t=`PROJECTILE_MOTION`,n=`projectile-motion-v1`,r={launchAngleDegrees:{kind:`number`,defaultValue:45,min:25,max:65}},i={type:t,version:4,thumbnailAssetKey:n,parameters:r}"),
   [`${A}responsive-lottie-visualization-555555555555.js`]: "export{};",
   [`${A}three.module-777777777777.js`]: "export{};",
   [`${A}analytics-888888888888.js`]:
-    'const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./visualization-333333333333.js","./three.module-777777777777.js","./visualization-444444444444.js","./responsive-lottie-visualization-555555555555.js","./visualization-666666666666.js"])))=>i.map(i=>d[i]);' +
+    'const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./visualization-333333333333.js","./three.module-777777777777.js","./visualization-444444444444.js","./responsive-lottie-visualization-555555555555.js","./visualization-666666666666.js","./visualization-abcabcabcabc.js"])))=>i.map(i=>d[i]);' +
     slot("PYTHAGOREAN_THEOREM", "visualization-333333333333.js", "PythagoreanVisualization", "0,1") +
     slot("UNSPECIFIED", "visualization-444444444444.js", "Visualization", "2,3") +
-    slot("ORBITAL_MOTION", "visualization-666666666666.js", "OrbitalMotionVisualization", "4"),
+    slot("ORBITAL_MOTION", "visualization-666666666666.js", "OrbitalMotionVisualization", "4") +
+    slot("PROJECTILE_MOTION", "visualization-abcabcabcabc.js", "ProjectileMotionVisualization", "5"),
   // Some trigger anchors present, one fact's anchors absent.
-  [`${A}learning-block-999999999999.js`]: "category:`learning_block`;matched_type;server_learning_block_version;encoded_initial_values;CHATGPT_MATH_BLOCK_RENDER_SOURCE_GENUI_LEARNING_BLOCK;canonicalFormula;canonicalFormulaAliases"
+  [`${A}learning-block-999999999999.js`]: "category:`learning_block`;matched_type;server_learning_block_version;encoded_initial_values;CHATGPT_MATH_BLOCK_RENDER_SOURCE_GENUI_LEARNING_BLOCK;canonicalFormula;canonicalFormulaAliases;`canonical_formula`;content_is_placeholder"
 };
 
 const APP = { version: "1.0.0", build: "1" };
@@ -68,8 +72,11 @@ test("every registered view becomes a block, joined to the manifest module it im
   const { md, json, counts } = buildDocument(openAsar(writeAsar(FILES)), APP);
   const data = JSON.parse(json);
   const byType = Object.fromEntries(data.blocks.map(b => [b.type, b]));
-  assert.deepEqual(Object.keys(byType).sort(), ["CELL_MEMBRANE_TRANSPORT", "ORBITAL_MOTION", "PYTHAGOREAN_THEOREM", "UNUSED_MANIFEST"]);
-  assert.equal(counts.registered_views, 3);
+  assert.deepEqual(Object.keys(byType).sort(), ["CELL_MEMBRANE_TRANSPORT", "ORBITAL_MOTION", "PROJECTILE_MOTION", "PYTHAGOREAN_THEOREM", "UNUSED_MANIFEST"]);
+  assert.equal(counts.registered_views, 4);
+  const projectile = byType.PROJECTILE_MOTION;
+  assert.equal(projectile.source.manifest, `${A}model-121212121212.js`);
+  assert.deepEqual(Object.keys(projectile.parameters), ["launchAngleDegrees"]);
 
   // A manifest filled in by its lazy initializer is read in full (live binding), and modules that
   // reuse the same local names do not overwrite each other.
@@ -109,6 +116,7 @@ test("every registered view becomes a block, joined to the manifest module it im
   assert.match(md, /^#### Orbital motion$/m);
   // Trigger facts: published when their anchors are in the app, otherwise marked not found.
   assert.match(md, /category `learning_block`/);
+  assert.match(md, /uses the formula only as display text/);
   assert.match(md, /Not found in this build: `\/conversation\/message\/learning-blocks\/feedback`/);
   assert.doesNotMatch(md, /\/Users\/|webview\/assets\/type-aaaaaaaaaaaa\.js`; view/);
 });
@@ -126,7 +134,8 @@ test("registry parsing keys registrations by view module and keeps each one's an
   assert.deepEqual([...registry.values()].map(r => [r.module, r.analyticsType, r.exportName]), [
     ["visualization-333333333333.js", "PYTHAGOREAN_THEOREM", "PythagoreanVisualization"],
     ["visualization-444444444444.js", "UNSPECIFIED", "Visualization"],
-    ["visualization-666666666666.js", "ORBITAL_MOTION", "OrbitalMotionVisualization"]
+    ["visualization-666666666666.js", "ORBITAL_MOTION", "OrbitalMotionVisualization"],
+    ["visualization-abcabcabcabc.js", "PROJECTILE_MOTION", "ProjectileMotionVisualization"]
   ]);
   assert.deepEqual(registry.get("visualization-333333333333.js").preload, ["visualization-333333333333.js", "three.module-777777777777.js"]);
 });
