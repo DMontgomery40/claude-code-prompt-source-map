@@ -284,6 +284,12 @@ export const categories = [
     ]
   },
   {
+    label: "Build intel",
+    files: [
+      { path: "outputs/package-scan.md", anchor: "package-scan-md", slug: "package-scan", format: "markdown", title: "Package scan (this build)", defaultOpen: false }
+    ]
+  },
+  {
     label: "Evidence and archive",
     files: [
       {

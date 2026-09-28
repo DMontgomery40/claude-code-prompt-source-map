@@ -22,7 +22,9 @@ const GENERATED = [
 // Early-warning scans (run after the generators and the sweep). A script not yet on main is skipped.
 const SCANS = [
   { script: "extract/codex/surface-scan.mjs", diff: "work/surfaces-diff.md", label: "new surfaces",
-    outputs: ["outputs/app-surfaces.json"] }
+    outputs: ["outputs/app-surfaces.json"] },
+  { script: "extract/codex/package-scan.mjs", diff: "work/package-diff.md", label: "package scan",
+    outputs: ["outputs/package-scan.json", "outputs/package-scan.md"] }
 ];
 const node = process.execPath;
 
