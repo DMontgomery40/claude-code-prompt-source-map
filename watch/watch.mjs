@@ -8,10 +8,12 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { commitPaths, deploy, dirtyPaths, foreignChanges, gate, producedSince, pushWithinBudget, restore, ROOT } from "./lib/publish.mjs";
-import { log, notify } from "./lib/run.mjs";
+import { log, notify, run } from "./lib/run.mjs";
 import { cc } from "./targets/cc.mjs";
 import { codex } from "./targets/codex.mjs";
 
+// A skipped deploy that should run again next cycle for the same upstream version.
+class Retry extends Error {}
 const here = new URL(".", import.meta.url).pathname;
 const stateFile = `${here}state.json`;
 const lockFile = `${here}.lock`;
@@ -40,9 +42,6 @@ const productDir = target => path.relative(ROOT, target.repo);
 
 try {
   const now = Date.now();
-  // Commits that waited for the GitHub budget go out as soon as a slot is free (never in a dry run).
-  if (!dryRun) try { pushWithinBudget(ROOT); } catch (error) { log(`pending push failed: ${error.message}`); }
-
   // Uncommitted work by someone else under the site's inputs would be deployed without being
   // committed. Wait for it to be committed (or dropped) instead; a dry run only warns.
   const blocked = foreignChanges();
@@ -57,6 +56,12 @@ try {
     log(`dry run: would pause for ${summary}`);
   }
   delete state.blockedBy;
+
+  // The watcher runs from its own clone (~/harness-watch). Start every cycle from GitHub's main:
+  // fast-forward, or rebase commits that waited for the push budget; a conflict pauses the cycle.
+  if (!dryRun) syncWithOrigin();
+  // Commits that waited for the GitHub budget go out as soon as a slot is free (never in a dry run).
+  if (!dryRun) try { pushWithinBudget(ROOT); } catch (error) { log(`pending push failed: ${error.message}`); }
 
   const before = dirtyPaths();
   const cycle = [];
@@ -112,7 +117,11 @@ try {
       } else {
         // Someone may have changed the site's inputs while the cycle ran; don't deploy their work.
         const late = foreignChanges(new Set(allProduced));
-        if (late.length) throw new Error(`uncommitted changes appeared during the run, not deploying: ${late.slice(0, 5).join(", ")}`);
+        if (late.length) throw new Retry(`uncommitted changes appeared during the run, not deploying: ${late.slice(0, 5).join(", ")}`);
+        // Someone else may have pushed (and deployed) a newer site while the cycle ran; deploying
+        // this checkout would roll it back. Skip and try again next hour from the new main.
+        run("git", ["fetch", "-q", "origin"], { cwd: ROOT });
+        if (run("git", ["merge-base", "--is-ancestor", "origin/main", "HEAD"], { cwd: ROOT }).status !== 0) throw new Retry("GitHub's main moved during the run; not deploying over it (next cycle starts from it)");
         const unverified = await deploy(publishing.map(c => c.target.section));
         if (unverified.length) notify("harness watcher", `Deployed, but not yet serving the new build: ${unverified.join(", ")}`);
         for (const c of publishing) {
@@ -121,12 +130,14 @@ try {
           c.s.fingerprint = c.key; delete c.s.failedFingerprint; delete c.s.lastError;
           notify(`${c.target.origin.replace("https://", "")} updated`, c.result.publish.message.split("\n")[0]);
         }
-        pushWithinBudget(ROOT);
+        // Deployed and committed; a failed push waits for the next cycle's sync.
+        try { pushWithinBudget(ROOT); } catch (error) { log(`push failed, retried next cycle: ${error.message}`); }
       }
     } catch (error) {
       log(`publish failed: ${error.message}`);
       restore(allProduced);
-      if (!dryRun) for (const c of publishing) c.s.failedFingerprint = c.key;
+      // A retry is not this version's failure: the same fingerprint publishes next cycle.
+      if (!dryRun && !(error instanceof Retry)) for (const c of publishing) c.s.failedFingerprint = c.key;
       notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
     }
   }
@@ -140,3 +151,20 @@ try {
 }
 
 function Paused() {}
+
+function syncWithOrigin() {
+  const git = (...a) => run("git", a, { cwd: ROOT });
+  if (git("fetch", "-q", "origin").status !== 0) { log("fetch failed; continuing from the local main"); return; }
+  if (git("merge-base", "--is-ancestor", "HEAD", "origin/main").status === 0) {
+    if (git("merge", "--ff-only", "-q", "origin/main").status !== 0) { notify("harness watcher paused", "could not fast-forward to origin/main"); throw new Paused(); }
+    return;
+  }
+  if (git("merge-base", "--is-ancestor", "origin/main", "HEAD").status === 0) return; // local commits wait for the budget
+  if (git("rebase", "-q", "origin/main").status !== 0) {
+    git("rebase", "--abort");
+    log("paused: local commits conflict with origin/main");
+    notify("harness watcher paused", "Its unpushed commits conflict with GitHub's main; resolve in the watcher clone");
+    throw new Paused();
+  }
+  log("rebased waiting commits onto origin/main");
+}

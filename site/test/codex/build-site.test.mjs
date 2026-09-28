@@ -234,7 +234,8 @@ test("production catalog keeps supporting tool evidence accessible", async () =>
     await buildSite({ sourceRoot: root, outFile, categories });
     const html = await readFile(outFile, "utf8");
 
-    assert.match(html, />Observed runtime and tools</);
+    // Supporting tool evidence sits in the shared "Evidence and archive" section (site/src/shared/sections.mjs).
+    assert.match(html, />Evidence and archive</);
     assert.match(html, /href="#aeon-tools-and-tool-calls-md"/);
     assert.match(html, /id="aeon-tools-and-tool-calls-md"/);
   } finally {
@@ -287,9 +288,9 @@ test("production reference publishes the complete current instruction and tool s
       assert(publishedPaths.includes(requiredPath), `${requiredPath} must be published`);
     }
 
-    assert.match(html, />Codex\/ChatGPT GPT-6 instructions</);
+    assert.match(html, />Model instructions</);
     assert.match(html, /href="#aeon-current-responses-2026-09-24-json"/);
-    assert.match(html, />Extraction evidence</);
+    assert.match(html, />Evidence and archive</);
     assert.match(html, /href="#binwalk-aeon-daybreak-report-md"/);
     assert.match(html, /href="#binwalk-method-diff-json"/);
     assert.match(html, /href="#binwalk-codename-byte-scan-json"/);
@@ -308,11 +309,11 @@ test("production reference publishes the complete current instruction and tool s
 });
 
 test("primary evidence opens by default and raw records stay collapsed", () => {
-  const map = categories.find(category => category.label === "Findings");
-  const current = categories.find(category => category.label === "Codex/ChatGPT GPT-6 instructions");
-  const voice = categories.find(category => category.label === "Codex/ChatGPT voice prompts");
-  const supporting = categories.find(category => category.label === "Observed runtime and tools");
-  const archive = categories.find(category => category.label === "Historical archive");
+  const section = label => categories.find(category => category.label === label);
+  const file = filePath => categories.flatMap(category => category.files).find(f => f.path === filePath);
+  const map = section("Overview");
+  const current = section("Model instructions");
+  const archive = section("Evidence and archive");
 
   assert(map?.files.filter(file => file.format === "markdown").every(file => file.defaultOpen === true));
   assert(map?.files.filter(file => file.format === "source").every(file => file.defaultOpen === false));
@@ -321,9 +322,11 @@ test("primary evidence opens by default and raw records stay collapsed", () => {
   assert(current.files.some(file => file.path.includes("sol-base") && file.defaultOpen === false));
   assert(current.files.some(file => file.path.includes("luna-base") && file.defaultOpen === false));
   assert(current.files.filter(file => file.format === "source").every(file => file.defaultOpen === false));
-  assert(voice?.files.every(file => file.defaultOpen === true));
-  assert(supporting?.files.every(file => file.defaultOpen === false));
-  assert(archive?.files.every(file => file.defaultOpen === false));
+  assert.equal(file("outputs/voice-prompts.md")?.defaultOpen, true);
+  // Supporting runtime and tool evidence stays collapsed wherever its section is.
+  for (const supporting of ["outputs/desktop-tool-manifest.md", "outputs/current-host-tool-manifest-2026-09-24.json", "outputs/aeon-native-tools-2026-09-24.md",
+    "outputs/aeon-current-responses-2026-09-24.json", "outputs/aeon-tools-and-tool-calls.md"]) assert.equal(file(supporting)?.defaultOpen, false, supporting);
+  assert(archive?.files.every(f => f.defaultOpen === false));
 });
 
 test("Astra instruction snapshots contain every non-null model message module", async () => {
