@@ -554,10 +554,8 @@ if (pendingReveal) {
 
 // ?q=term opens the palette with the term.
 const deepQuery = new URLSearchParams(location.search).get("q");
+// The index (up to 1.4 MB) is fetched only on intent: opening, or hovering or focusing the Search pill.
 if (deepQuery != null) open(deepQuery);
-else if ("requestIdleCallback" in window && !navigator.connection?.saveData && section !== "all") {
-  requestIdleCallback(() => loadIndex(section).catch(() => {}), { timeout: 6000 });
-}
 
 // For tests and the console: the module's state and actions.
 export const palette = { open, close, reveal, loadIndex, get rows() { return rows; }, get scope() { return scope; }, get both() { return both; } };

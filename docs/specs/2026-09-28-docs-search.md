@@ -49,7 +49,7 @@ from Trace's palette (`site/trace/palette.js`) but looks the same.
 - Pages load `palette.js` by a relative path. The palette resolves the indexes and every link against
   `import.meta.url`.
 - The index is fetched on first open. It is prefetched when the user hovers over or focuses the pill,
-  or when the browser is idle on a section page.
+  never on idle: a reader who never searches doesn't download it (up to 1.4 MB, 306 KB gzipped).
 - `tools/check-links.mjs` resolves every index entry through `itemHref`. It fails if the page file or
   the id is missing.
 
