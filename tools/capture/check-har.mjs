@@ -11,6 +11,8 @@ export const SECRET_PATTERNS = [
   ["JWT", /\beyJ(?:hbGci|0eXAi|raWQi)[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\./],
   ["Anthropic API key", /\bsk-ant-[A-Za-z0-9_-]{20,}/],
   ["OpenAI API key", /\bsk-(?:proj-)?[A-Za-z0-9]{32,}/],
+  ["npm token", /\bnpm_[A-Za-z0-9]{30,}/],
+  ["GitHub token", /\bgh[pousr]_[A-Za-z0-9]{30,}/],
   ["OAuth token field", /\\?"(?:access_token|refresh_token|id_token|accessToken|refreshToken)\\?"\s*:\s*\\?"(?!<redacted)[^"\\]{16,}/]
 ];
 

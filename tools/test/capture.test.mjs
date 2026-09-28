@@ -3,7 +3,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -68,18 +68,69 @@ test("the CLI exits non-zero, and says why, when the HAR is missing or dirty", (
   assert.equal(existsSync(dirty), false);
 });
 
-// The addon's scrub_text must leave nothing check-har would flag, and must be idempotent.
+// The addon, run without mitmproxy: its functions only need plain strings and a small query stand-in.
 const python = spawnSync("python3", ["-c", "import re"]).status === 0;
-test("trace_capture.py scrubs every credential kind, idempotently", { skip: !python && "python3 not available" }, () => {
-  const input = Object.values(FAKE).join("\n");
-  const script = `import importlib.util, sys, types
+function runAddon(body) {
+  const script = `import importlib.util, json, sys, types
 m = types.ModuleType("mitmproxy"); m.http = types.SimpleNamespace(HTTPFlow=object); sys.modules["mitmproxy"] = m
 spec = importlib.util.spec_from_file_location("tc", sys.argv[1]); tc = importlib.util.module_from_spec(spec); spec.loader.exec_module(tc)
-text = sys.stdin.read(); once = tc.scrub_text(text); twice = tc.scrub_text(once)
-sys.stdout.write(once + "\\n----\\n" + str(once == twice))`;
-  const out = execFileSync("python3", ["-B", "-c", script, addon], { input, encoding: "utf8" });
-  const [scrubbed, same] = out.split("\n----\n");
-  assert.deepEqual(findSecrets(scrubbed), []);
-  assert.equal(same, "True");
-  assert.equal(readFileSync(addon, "utf8").includes("PLACEHOLDER"), true);
+class Query:
+    def __init__(self, pairs): self.pairs = pairs
+    def keys(self): return list(dict.fromkeys(k for k, _ in self.pairs))
+    def get_all(self, k): return [v for n, v in self.pairs if n == k]
+    def set_all(self, k, vs): self.pairs = [(n, v) for n, v in self.pairs if n != k] + [(k, v) for v in vs]
+data = json.loads(sys.stdin.read())
+${body}`;
+  return JSON.parse(execFileSync("python3", ["-B", "-c", script, addon], { input: JSON.stringify(FAKE), encoding: "utf8" }));
+}
+const JWT_WITH_CLAIMS = [
+  Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url"),
+  Buffer.from(JSON.stringify({ iss: "https://auth.example.test", aud: ["https://api.example.test/v1"], sub: "user-SECRETSUBJECT", email: "someone@example.test", "https://api.example.test/auth": { account_id: "acct-SECRET", plan: "pro" }, scp: ["openid", "offline_access"], iat: 1790000000, exp: 1790864000 })).toString("base64url"),
+  "c2lnbmF0dXJlc2lnbmF0dXJl"
+].join(".");
+
+test("trace_capture.py replaces every credential kind with a description, idempotently", { skip: !python && "python3 not available" }, () => {
+  const r = runAddon(`text = "\\n".join(data.values()); once = tc.scrub_text(text)
+print(json.dumps({"once": once, "same": once == tc.scrub_text(once)}))`);
+  assert.deepEqual(findSecrets(r.once), []);
+  assert.equal(r.same, true);
+  assert.match(r.once, /Bearer <redacted by trace-capture: opaque token \| 32 chars \| fp [0-9a-f]{8}>/);
+  assert.match(r.once, /<redacted by trace-capture: Anthropic API key \| \d+ chars \| fp [0-9a-f]{8}>/);
+  assert.match(r.once, /"access_token":"<redacted by trace-capture: opaque token \| 30 chars \| fp [0-9a-f]{8}>"/);
+});
+
+test("a JWT is described by its shape (algorithm, claim names, issuer, audience, scopes, lifetime), never its identity claims", { skip: !python && "python3 not available" }, () => {
+  const r = runAddon(`print(json.dumps(tc.describe(${JSON.stringify(JWT_WITH_CLAIMS)})))`);
+  assert.match(r, /^<redacted by trace-capture: JWT \| \d+ chars \| fp [0-9a-f]{8} \| alg RS256 \| /);
+  assert.match(r, /claims aud,email,exp,https:\/\/api\.example\.test\/auth\{account_id,plan\},iat,iss,scp,sub/);
+  assert.match(r, /issuer https:\/\/auth\.example\.test \| audience https:\/\/api\.example\.test\/v1 \| scopes openid,offline_access \| lifetime 10d>$/);
+  for (const secret of ["SECRETSUBJECT", "someone@", "acct-SECRET", "pro;"]) assert.equal(r.includes(secret), false, secret);
+});
+
+test("the same value gets the same fingerprint within a capture, a different value a different one", { skip: !python && "python3 not available" }, () => {
+  const r = runAddon(`print(json.dumps([tc.fingerprint("a" * 40), tc.fingerprint("a" * 40), tc.fingerprint("b" * 40)]))`);
+  assert.equal(r[0], r[1]);
+  assert.notEqual(r[0], r[2]);
+});
+
+test("cookies keep their names and attributes; token-like query parameters are described", { skip: !python && "python3 not available" }, () => {
+  const r = runAddon(`q = Query([("limit", "20"), ("access_token", "abcdefghijklmnopqrstuv"), ("k", "client-public-key"), ("x", data["anthropic"])])
+req = types.SimpleNamespace(query=q); tc.scrub_query(req); once = list(q.pairs); tc.scrub_query(req)
+print(json.dumps({
+  "cookie": tc.scrub_header("Cookie", "session=abcdef123456; theme=dark"),
+  "set": tc.scrub_header("Set-Cookie", "__Secure-session=abcdef123456; Path=/; Secure; HttpOnly; SameSite=Lax"),
+  "auth": tc.scrub_header("Authorization", data["bearer"]),
+  "account": tc.scrub_header("chatgpt-account-id", "0a1b2c3d-0000-4000-8000-000000000000"),
+  "again": tc.scrub_header("Authorization", tc.scrub_header("Authorization", data["bearer"])),
+  "query": dict(once), "stable": once == q.pairs}))`);
+  assert.match(r.cookie, /^session=<redacted by trace-capture: cookie value \| 12 chars \| fp [0-9a-f]{8}>; theme=<redacted by trace-capture: cookie value \| 4 chars \| fp [0-9a-f]{8}>$/);
+  assert.match(r.set, /^__Secure-session=<redacted by trace-capture: cookie value \| 12 chars \| fp [0-9a-f]{8}>; Path=\/; Secure; HttpOnly; SameSite=Lax$/);
+  assert.match(r.auth, /^Bearer <redacted by trace-capture: opaque token \| 32 chars \| fp [0-9a-f]{8}>$/);
+  assert.match(r.account, /^<redacted by trace-capture: ChatGPT account id \| 36 chars \| fp [0-9a-f]{8}>$/);
+  assert.equal(r.again.match(/redacted/g).length, 1);
+  assert.equal(r.query.limit, "20");
+  assert.equal(r.query.k, "client-public-key");
+  assert.match(r.query.access_token, /^<redacted by trace-capture: opaque token \| 22 chars/);
+  assert.match(r.query.x, /^<redacted by trace-capture: Anthropic API key \|/);
+  assert.equal(r.stable, true);
 });

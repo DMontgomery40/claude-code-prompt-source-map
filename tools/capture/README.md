@@ -23,17 +23,24 @@ Needs `mitmproxy` (`brew install mitmproxy`), `python3` and `node`.
   (Codex/ChatGPT), and it reaches the proxy through `HTTPS_PROXY`. Nothing is added to the system keychain. The CA is
   deleted when the command exits. `localhost` traffic (local MCP servers) is not proxied.
 - `trace_capture.py` (the mitmproxy addon) scrubs each flow after it has gone upstream, so requests still authenticate
-  but nothing saved holds a credential. It removes auth, cookie and API-key headers, and bearer tokens, API keys and
-  OAuth token fields in bodies and websocket frames. Server-sent event streams pass through as they arrive, so an
-  interactive session still streams, and are teed into the recording.
+  but nothing saved holds a credential. What was sent, and how, stays documented: each credential is replaced where it
+  was by a description such as `Bearer <redacted by trace-capture: JWT | 1849 chars | fp 04b7401a | alg RS256 | claims
+  aud,exp,…,https://api.openai.com/profile{email,email_verified,name},… | issuer https://auth.openai.com | lifetime 10d>`:
+  its kind (OAuth access token, API key, npm token, JWT, cookie…), length, a fingerprint that matches the same value
+  elsewhere in the same capture (and is meaningless outside it), and for a JWT its algorithm, claim names, issuer,
+  audience, scopes and lifetime, never claim values. Cookies keep their names and Set-Cookie attributes. It covers auth,
+  cookie and API-key headers, bearer tokens, JWTs, API keys and OAuth token fields in bodies and websocket frames, and
+  token-like URL query parameters. Server-sent event streams pass through as they arrive, so an interactive session
+  still streams, and are teed into the recording.
 - The HAR is written once, when the command exits. Websocket traffic (Codex/ChatGPT's model connection) is kept in each
   entry's `_webSocketMessages`, the field Chrome DevTools uses.
 - `check-har.mjs` then scans the file for anything that still looks like a credential and deletes the file on a hit.
 
 ## What stays in the file
 
-Credentials are removed. Everything else stays, including your prompts, file contents the agent read, and account
-details (email, account and organization ids, plan). Treat a capture like the session log itself and keep it private.
+Credential values are removed; the fact that each one was sent, where, and in what form stays (see above). Everything
+else stays, including your prompts, file contents the agent read, and account details (email, account and organization
+ids, plan). Treat a capture like the session log itself and keep it private.
 Trace hides identity fields when it shows a capture, and it never uploads or stores one.
 
 ## Limits
