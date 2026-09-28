@@ -201,6 +201,19 @@ export const categories = [
     ]
   },
   {
+    label: "ChatGPT learning blocks",
+    files: [
+      {
+        path: "outputs/chatgpt-learning-blocks.md",
+        anchor: "chatgpt-learning-blocks-md",
+        slug: "chatgpt-learning-blocks",
+        format: "markdown",
+        title: "Math and science learning blocks",
+        defaultOpen: false
+      }
+    ]
+  },
+  {
     label: "Codex/ChatGPT configuration",
     files: [
       {

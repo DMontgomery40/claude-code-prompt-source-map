@@ -15,7 +15,39 @@ For direct SIP, the guide specifies TLS for SIP signaling and SRTP for call audi
 2. Make one accept or reject decision for the call. The [accept endpoint](https://developers.openai.com/api/reference/resources/live/subresources/sessions/methods/accept) is `POST /v1/live/sessions/{session_id}/accept`; the [reject endpoint](https://developers.openai.com/api/reference/resources/live/subresources/sessions/methods/reject) uses the same session path with `/reject`.
 3. After acceptance, attach the backend at `wss://api.openai.com/v1/live/sessions/{session_id}/attach` when it needs transcripts, delegation, tools, or commands. The SIP path continues to carry call audio.
 
-The guide also covers transfer, hangup, and outbound calls. Outbound SIP requires organization enablement. Existing integrations may still receive the deprecated `live.call.incoming` event during migration. See the [full guide](https://developers.openai.com/api/docs/guides/voice-sip) for the current event and request contracts.
+Existing integrations may still receive the deprecated `live.call.incoming` event during migration.
+
+## Transfer and hangup
+
+- **Transfer:** `POST /v1/live/sessions/{session_id}/refer` with `{"target_uri": "sip:agent@example.com"}` (a `sip:` or `tel:` URI). Returns `200 OK` with an empty body.
+- **Hang up:** `POST /v1/live/sessions/{session_id}/hangup` with no request body. Returns `200 OK`.
+
+## Outbound calls
+
+`POST /v1/live/sessions` with a SIP transport places a call:
+
+| Field | Value |
+| --- | --- |
+| `transport.type` | `"sip"` |
+| `transport.destination` | the number to call, E.164 (`+14155550123`) |
+| `transport.trunk.provider_url` | the provider's SIP endpoint, `sips:` (`sips:sip.example.com:5061`) |
+| `transport.trunk.auth.type`, `.username`, `.password` | `"digest"` and the trunk credentials |
+| `transport.trunk.caller_number` | the caller ID, E.164 |
+
+Outbound SIP must be enabled for the organization; otherwise the call is refused with `403` `outbound_sip_not_enabled`. Limits: 1 MiB request body, 3 minutes of ringing, 2 hours connected.
+
+## Addresses, keypad and audio
+
+- **SIP addresses:** `sip:$PROJECT_ID@sip.api.openai.com;transport=tls`, or `sip-eu.api.openai.com` for the EU region.
+- **Keypad (DTMF):** the sideband carries `transport.dtmf.received` and `transport.dtmf.send`; `event` is one of `0`–`9`, `*`, `#`, `A`–`D`.
+- **Late attach:** the sideband replays only the preceding 3 seconds of events, with their original event IDs, so a backend that attaches late can miss earlier call progress.
+- **Audio:** SIP negotiates Opus. The WebSocket bridge takes raw G.711 μ-law or A-law at 8 kHz.
+
+## Realtime API call path
+
+The same guide documents a Realtime API path for SIP calls, separate from GPT-Live sessions: webhook event `realtime.call.incoming`, then `POST /v1/realtime/calls/{call_id}/accept`, `/reject`, `/refer` and `/hangup`, with model `gpt-realtime-2.1`.
+
+See the [full guide](https://developers.openai.com/api/docs/guides/voice-sip) for the current event and request contracts. Checked against the guide on September 28, 2026.
 
 ## Evidence boundary
 

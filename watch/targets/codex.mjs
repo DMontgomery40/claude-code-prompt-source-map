@@ -12,7 +12,9 @@ const GENERATED = [
   { script: "extract/codex/bundle-resources.mjs", diff: "work/bundle-resources-diff.md",
     outputs: ["outputs/chatgpt-bundled-plugins.md", "outputs/chatgpt-bundled-plugins.json", "outputs/computer-use-prompts.md", "outputs/computer-use-prompts.json"] },
   { script: "extract/codex/tool-manifest.mjs", diff: "work/tool-manifest-diff.md",
-    outputs: ["outputs/desktop-tool-manifest.md", "outputs/desktop-tool-manifest.json"] }
+    outputs: ["outputs/desktop-tool-manifest.md", "outputs/desktop-tool-manifest.json"] },
+  { script: "extract/codex/learning-blocks.mjs", diff: "work/learning-blocks-diff.md",
+    outputs: ["outputs/chatgpt-learning-blocks.md", "outputs/chatgpt-learning-blocks.json"] }
 ];
 const node = process.execPath;
 

@@ -17,7 +17,8 @@ const TWO_LEVEL = {
   "codex-cli-prompts.md": 2, "codex-cli-bundled-skills.md": 2, "desktop-model-facing-text.md": 2,
   "chatgpt-conversation-prompts.md": 2, "chatgpt-gpt-builder-prompts.md": 2, "chatgpt-work-prompts.md": 2,
   "chatgpt-finance-health-prompts.md": 2, "chatgpt-sites-artifacts-prompts.md": 2,
-  "chatgpt-bundled-plugins.md": 2, "computer-use-prompts.md": 2, "desktop-tool-manifest.md": 2
+  "chatgpt-bundled-plugins.md": 2, "computer-use-prompts.md": 2, "desktop-tool-manifest.md": 2,
+  "chatgpt-learning-blocks.md": 3
 };
 
 function unitHeading(name, line) {
