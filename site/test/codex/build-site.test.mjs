@@ -308,6 +308,15 @@ test("production reference publishes the complete current instruction and tool s
   }
 });
 
+test("the current binwalk scan is under Build intel and the September 24 run is labelled as the archive", () => {
+  const files = categories.flatMap(category => category.files.map(file => ({ ...file, section: category.label })));
+  const current = files.find(file => file.path === "outputs/binwalk-scan.md");
+  const archived = files.find(file => file.path === "outputs/binwalk-aeon-daybreak-report.md");
+  assert.equal(current?.section, "Build intel");
+  assert.equal(archived?.section, "Evidence and archive");
+  assert.match(archived.title, /archive/i);
+});
+
 test("primary evidence opens by default and raw records stay collapsed", () => {
   const section = label => categories.find(category => category.label === label);
   const file = filePath => categories.flatMap(category => category.files).find(f => f.path === filePath);

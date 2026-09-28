@@ -1,5 +1,7 @@
 # Binwalk of the installed Codex desktop payload
 
+> **Archive.** This is the September 24, 2026 hand run on ChatGPT desktop `26.917.71314`. The current scan, of ChatGPT desktop {{value:binwalk-scan app.version}} and regenerated for every build by the watcher, is the [Binwalk scan (this build)](binwalk-scan/).
+
 Scanned September 24, 2026 (America/Denver). This follows the linked Aeon/Daybreak investigation and examines the **same installed build**: ChatGPT Desktop `26.917.71314`, bundled Codex `0.155.0-alpha.16.4`. The Codex executable SHA-256 is `93169e745735930598e867ad837abf3fdc50774a3ad7e7aa89c0d0c51b0189a5`; `app.asar` is `03108a728bdb1616958ab89587c5495cab0cf4cd1bbe109bdfb186df0a113804`.
 
 This extraction identifies particular embedded payloads. It is not a complete inventory of the application's icons, resources, or remote configuration.

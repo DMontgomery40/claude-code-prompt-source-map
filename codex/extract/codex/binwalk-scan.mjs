@@ -414,7 +414,7 @@ export function renderCodexPage(scan, { since }) {
   const lines = [
     "# Binwalk scan of the ChatGPT desktop app (this build)",
     "",
-    `Every embedded payload binwalk ${scan.binwalk} reports in the OpenAI executables of ChatGPT desktop ${scan.app.version} (build ${scan.app.build}) and its \`app.asar\`, regenerated for each build. Each payload is carved at binwalk's offset and size, hashed, decompressed when it is compressed, and identified by its structure. A change between builds (a new, removed or changed payload, or a protocol method added or removed) is reported by the watcher. The September 24, 2026 hand run of the same method is kept as the [Binwalk report](binwalk-report/).`,
+    `Every embedded payload binwalk ${scan.binwalk} reports in the OpenAI executables of ChatGPT desktop ${scan.app.version} (build ${scan.app.build}) and its \`app.asar\`, regenerated for each build. Each payload is carved at binwalk's offset and size, hashed, decompressed when it is compressed, and identified by its structure. A change between builds (a new, removed or changed payload, or a protocol method added or removed) is reported by the watcher. The September 24, 2026 hand run of the same method is kept as an archive: [Binwalk report, September 24](binwalk-report/).`,
     "",
     "## Scanned files",
     "",

@@ -383,7 +383,7 @@ export const categories = [
         slug: "binwalk-report",
         snapshot: "September 24, 2026",
         format: "markdown",
-        title: "Binwalk report",
+        title: "Binwalk report, September 24 (archive)",
         defaultOpen: false
       },
       {
