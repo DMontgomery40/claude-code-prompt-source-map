@@ -1,32 +1,62 @@
-# prompt-watch
+# Watcher
 
-> **Moved into harness-source-map (2026-09-27).** The watcher now lives in `watch/` of the one repo, and its
-> targets point at `claude-code/` and `codex/`. It is still **disabled**. Its publish stage (tests, build, leak check,
-> deploy, push) predates the one-site layout: it still expects a `site/` inside each product folder and one
-> deploy per product. Rework it for the single site (`npm run check`, one `wrangler deploy` from `site/`) before
-> re-enabling. The launchd plist is now a template (`com.dtmont.prompt-watch.plist.template`, fill in NODE,
-> REPO and HOME).
+Keeps both sections of harness.dtmont.com current: `/codex/` (ChatGPT desktop app, its bundled
+Codex CLI, the GPT-6 catalog) and `/claude-code/` (the Claude Code npm build). It runs hourly from a
+LaunchAgent and publishes only when an upstream source changed and the repo's gate passes.
 
+**State: not installed.** It was switched off on 2026-09-26 at David's request, then moved into this
+repo. The publish step has been reworked for the one site (below). Install it only when David says
+to turn it on:
 
-**Disabled 2026-09-26 16:11 MDT at David's request: he updates the sites manually now.**
-The LaunchAgent is booted out and disabled; the plist is kept. Do not re-enable it without
-his say-so. To re-enable: `launchctl enable gui/$(id -u)/com.dtmont.prompt-watch && launchctl
-bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dtmont.prompt-watch.plist`.
+```sh
+watch/install-launchd.sh --print    # show the plist it would write (changes nothing)
+watch/install-launchd.sh            # write ~/Library/LaunchAgents/com.dtmont.prompt-watch.plist, load it
+watch/install-launchd.sh --remove   # stop it and remove the plist
+```
 
-Keeps gpt6aeon.dtmont.com (Codex desktop / GPT-6 catalog) and ccprompts.dtmont.com
-(Claude Code) current. `com.dtmont.prompt-watch` runs `watch.mjs` hourly at :07.
+The installer renders `com.dtmont.prompt-watch.plist.template` for this checkout (the node on PATH,
+this repo, $HOME) and replaces the older plist, which ran the pre-merge `~/prompt-watch` repo; the
+old file is kept as `.bak-<time>`.
 
-- Cadence: Codex hourly until the end of 2026-10-06 (America/Denver), then daily; Claude
-  Code daily against the newer of the npm `latest` and `next` dist-tags. A build that is not
-  newer than the one the records describe is skipped, and `extract/refresh.mjs` itself exits 4
-  instead of going back to an older build (`--allow-older` overrides). The version rules are in
-  `claude-code/extract/versions.mjs`.
-- Stage 1: a cheap fingerprint per target; unchanged means exit.
-- Stage 2: the repo's own refresh (extract/codex/refresh.mjs, extract/refresh.mjs).
-- Stage 3: a headless `claude -p` agent only when an extractor breaks or records need review.
-  It cannot run git, deploy, or fetch URLs, and has a spending cap.
-- Stage 4: tests, build and leak check, then Cloudflare deploy, a check that the live site
-  serves the build, a commit, and a push within the shared GitHub budget (3 per repo per 3 h).
+## A cycle
 
-Commands: `node watch.mjs`, `node watch.mjs --dry-run --force codex|cc`.
-Logs: logs/watch.log. State: state.json.
+1. **Pause check.** If anything under the site's inputs (`site/`, `codex/`, `claude-code/`, `tools/`,
+   `package*.json`) is uncommitted, the watcher does nothing this hour and notifies once: that work
+   would otherwise be deployed without being committed. Other dirty paths (`video/`, docs) don't
+   matter.
+2. **Fingerprint** each due target cheaply (Codex/ChatGPT: app build, CLI hash, catalog hash;
+   Claude Code: npm dist-tags). Unchanged means nothing more for that target.
+3. **Refresh** a changed target with the product's own scripts (`codex/extract/codex/refresh.mjs`
+   and the generators after it; `claude-code/extract/refresh.mjs`). A broken extractor starts a
+   headless `claude -p` repair agent with a spending cap; it can't run git, deploy or fetch.
+   A target whose refresh changed nothing (or only byte-level provenance such as fetch times) has
+   its files put back.
+4. **Gate, once:** `npm run check` at the repo root (build, all tests, link check, leak check), plus
+   the local-identity scan and the Jev narrative lint for each product being published.
+5. **Publish, once:** one `wrangler deploy` from `site/`, then a check that
+   `https://harness.dtmont.com/<section>/` serves the page that was built. Each target's commit holds
+   only the files that cycle produced inside its product folder (clean before, changed after); other
+   agents' dirty or staged files are never committed. Push to `main` within the shared GitHub budget
+   (3 pushes per 3 hours); commits over the budget go out in a later cycle.
+
+A failed refresh or gate restores the files the cycle produced and marks that upstream version as
+failed, so the watcher waits for a newer one instead of retrying every hour.
+
+Cadence: Codex/ChatGPT hourly through 2026-10-06 (Dev Day plus a week), then daily; Claude Code
+daily, against the newer of the npm `latest` and `next` dist-tags, never going back to an older build
+than the records describe.
+
+## Running it by hand
+
+```sh
+node watch/watch.mjs                          # one normal cycle
+node watch/watch.mjs --dry-run --force codex  # refresh + gate for Codex/ChatGPT; no deploy, commit or push
+node watch/watch.mjs --dry-run --force cc     # the same for Claude Code
+```
+
+A dry run restores every file it produced, so the checkout is left as it was. With `--force` the
+gate runs even when nothing changed.
+
+Local, gitignored: `watch/logs/watch.log` (every run), `watch/logs/agent-*.log` (repair agents),
+`watch/state.json` (fingerprints, failed versions), `watch/.lock`. `narrative-lint-cache.json` holds
+Jev's cached lint verdicts.

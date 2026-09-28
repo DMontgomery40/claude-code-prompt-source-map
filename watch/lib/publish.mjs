@@ -1,12 +1,58 @@
-// The gate: nothing reaches the live site or GitHub unless tests, build, and checks pass.
+// The gate and the publish step for the one site (harness.dtmont.com). Nothing reaches the live
+// site or GitHub unless the repo's own gate passes: `npm run check` at the repo root (build, all
+// tests, link check, leak check), plus the watcher's local-identity scan and the narrative lint
+// for each product that changed.
+//
+// Other agents work in the same checkout. The watcher therefore commits only the files a cycle
+// produced (clean before the cycle, dirty after, inside that product's folder), and refuses to
+// deploy while anything else that feeds the site build is uncommitted.
 import { createHash } from "node:crypto";
-import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { productOrigin } from "../../site/src/shared/site.mjs";
 import { narrativeLint } from "./narrative-lint.mjs";
 import { log, must, run } from "./run.mjs";
 
+export const ROOT = path.resolve(import.meta.dirname, "../..");
 const sha = value => createHash("sha256").update(value).digest("hex");
+
+// Paths whose contents go into the deployed site or its gate. Uncommitted changes here that the
+// cycle did not produce would be deployed without being committed, so they block publishing.
+export const SITE_INPUTS = ["site", "codex", "claude-code", "tools", "package.json", "package-lock.json"];
+const under = (file, dir) => file === dir || file.startsWith(`${dir}/`);
+
+// Every path git reports as changed or untracked (not ignored), repo-root relative.
+export function dirtyPaths() {
+  const out = must("git", ["status", "--porcelain=v1", "-z", "-uall"], { cwd: ROOT }).stdout.split("\0");
+  const paths = new Set();
+  for (let i = 0; i < out.length; i += 1) {
+    const entry = out[i];
+    if (!entry) continue;
+    paths.add(entry.slice(3));
+    if (entry[0] === "R" || entry[0] === "C") paths.add(out[++i]);
+  }
+  return paths;
+}
+
+// Uncommitted changes under SITE_INPUTS that are not in `allowed`.
+export function foreignChanges(allowed = new Set()) {
+  return [...dirtyPaths()].filter(file => SITE_INPUTS.some(dir => under(file, dir)) && !allowed.has(file)).sort();
+}
+
+// What a step produced inside `productDir`: paths dirty now that were clean in `before`.
+export function producedSince(before, productDir) {
+  return [...dirtyPaths()].filter(file => under(file, productDir) && !before.has(file)).sort();
+}
+
+// Puts produced paths back as committed: tracked files are checked out, new files removed.
+export function restore(paths) {
+  if (!paths.length) return;
+  const tracked = new Set(run("git", ["ls-files", "--", ...paths], { cwd: ROOT }).stdout.split("\n").filter(Boolean));
+  const known = paths.filter(file => tracked.has(file));
+  if (known.length) run("git", ["checkout", "--", ...known], { cwd: ROOT });
+  for (const file of paths.filter(f => !tracked.has(f))) rmSync(path.join(ROOT, file), { force: true });
+}
 
 // Public outputs must never carry this machine's identity or secrets. Prompt texts contain
 // placeholder examples (ghp_your_token, /Users/me), so the check looks for the actual local
@@ -38,20 +84,14 @@ export function leakCheck(repo) {
   if (found.length) throw new Error(`leak check failed (${found.length}):\n${found.slice(0, 20).join("\n")}`);
 }
 
-// The extraction's own unit tests (Claude Code: extract/test; Codex: extract/codex/test).
-function extractTests(repo) {
-  return ["extract/test", "extract/codex/test"].map(dir => path.join(repo, dir)).filter(existsSync)
-    .flatMap(dir => readdirSync(dir).filter(name => name.endsWith(".test.mjs")).map(name => path.join(dir, name)));
-}
-
-export async function gate(repo) {
-  const tests = extractTests(repo);
-  if (tests.length) must(process.execPath, ["--test", ...tests], { cwd: repo, timeoutMs: 5 * 60 * 1000 });
-  must("npm", ["test"], { cwd: path.join(repo, "site"), timeoutMs: 5 * 60 * 1000 });
-  must("npm", ["run", "build"], { cwd: path.join(repo, "site"), timeoutMs: 5 * 60 * 1000 });
-  leakCheck(repo);
-  const stale = await narrativeLint(repo);
-  if (stale.length) throw new Error(`narrative lint: ${stale.length} typed statistic(s) must be {{count:…}}/{{value:…}} tokens:\n${stale.slice(0, 10).map(f => `${f.file}: ${f.sentence.slice(0, 160)}`).join("\n")}`);
+// The gate for one cycle: the repo's own check once, then the per-product checks.
+export async function gate(productRepos) {
+  must("npm", ["run", "check"], { cwd: ROOT, timeoutMs: 30 * 60 * 1000 });
+  for (const repo of productRepos) {
+    leakCheck(repo);
+    const stale = await narrativeLint(repo);
+    if (stale.length) throw new Error(`narrative lint (${path.basename(repo)}): ${stale.length} typed statistic(s) must be {{count:…}}/{{value:…}} tokens, or the generated page listed in narrative-lint.json:\n${stale.slice(0, 10).map(f => `${f.file}: ${f.sentence.slice(0, 160)}`).join("\n")}`);
+  }
 }
 
 // last_changed moves only when content changed; source versions always reflect the build shown.
@@ -68,35 +108,48 @@ export function appendChangelog(repo, title, body) {
   writeFileSync(file, `# Changelog\n\n## ${new Date().toISOString().slice(0, 10)} · ${title}\n\n${body.trim()}\n\n${previous}`);
 }
 
-// Deploys, verifies the live root matches the build, commits, and pushes.
-export async function publish(repo, { origin, message }) {
-  const site = path.join(repo, "site");
-  must("wrangler", ["deploy"], { cwd: site, env: { CI: "1" }, timeoutMs: 5 * 60 * 1000 });
-  const want = sha(readFileSync(path.join(site, "dist/index.html")));
-  let live = "";
-  for (let i = 0; i < 24 && live !== want; i += 1) {
-    const r = run("curl", ["-s", "--max-time", "20", `${origin}/?watch=${Date.now()}`]);
-    live = sha(r.stdout);
-    if (live !== want) await new Promise(resolve => setTimeout(resolve, 5000));
+// One deploy of the built site (site/dist, from the gate's build), then a check that each changed
+// section serves exactly the page that was built. Returns the sections not yet serving it (the
+// deploy itself succeeded, so the caller still commits what went live).
+export async function deploy(sections) {
+  const site = path.join(ROOT, "site");
+  const local = path.join(site, "node_modules/.bin/wrangler");
+  const [command, args] = existsSync(local) ? [local, ["deploy"]] : ["npx", ["--yes", "wrangler", "deploy"]];
+  must(command, args, { cwd: site, env: { CI: "1" }, timeoutMs: 10 * 60 * 1000 });
+  const unverified = [];
+  for (const section of sections) {
+    const origin = productOrigin(section);
+    const want = sha(readFileSync(path.join(site, "dist", section, "index.html")));
+    let live = "";
+    for (let i = 0; i < 36 && live !== want; i += 1) {
+      const r = run("curl", ["-s", "--max-time", "30", `${origin}/?watch=${Date.now()}`]);
+      live = sha(r.stdout);
+      if (live !== want) await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+    if (live === want) log(`live: ${origin}/ serves the new build`);
+    else unverified.push(`${origin}/`);
   }
-  if (live !== want) throw new Error(`deployed, but ${origin} does not serve the new build yet`);
-  // Stage only paths that exist: CHANGELOG.md appears with the first content change.
-  const paths = ["outputs", "extract", "site", "CHANGELOG.md", "narrative-lint.json"].filter(p => existsSync(path.join(repo, p)));
-  must("git", ["add", "-A", ...paths], { cwd: repo });
-  if (run("git", ["diff", "--cached", "--quiet"], { cwd: repo }).status !== 0) {
-    must("git", ["commit", "-q", "-m", message], { cwd: repo });
-  }
-  pushWithinBudget(repo);
-  log(`published ${origin}`);
+  return unverified;
+}
+
+// Commits exactly `paths` (other staged or dirty files stay out of the commit).
+export function commitPaths(paths, message) {
+  if (!paths.length) return false;
+  must("git", ["add", "--", ...paths], { cwd: ROOT });
+  if (run("git", ["diff", "--cached", "--quiet", "--", ...paths], { cwd: ROOT }).status === 0) return false;
+  must("git", ["commit", "-q", "-m", message, "--", ...paths], { cwd: ROOT });
+  return true;
 }
 
 // Every GitHub push emails the operator. Share the budget his Claude hook enforces
 // (~/.claude/hooks/github_action_budget.py): at most 3 per repo per 3 hours. The live site
 // is deployed regardless; commits beyond the budget wait locally and go out together.
 const budgetLog = path.join(os.homedir(), ".claude/state/github-actions.log");
-export function pushWithinBudget(repo) {
+export function pushWithinBudget(repo = ROOT) {
   const ahead = run("git", ["rev-list", "--count", "@{u}..HEAD"], { cwd: repo }).stdout.trim();
   if (!Number(ahead)) return false;
+  const branch = run("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: repo }).stdout.trim();
+  if (branch !== "main") { log(`push skipped: checkout is on ${branch}, not main`); return false; }
   const url = run("git", ["remote", "get-url", "origin"], { cwd: repo }).stdout.trim();
   const slug = url.split("github.com/").at(-1).replace(/^.*:/, "").replace(/\.git$/, "");
   const now = Date.now() / 1000;

@@ -1,3 +1,4 @@
+# Local watcher state: run logs, the per-target fingerprints, and the run lock.
 logs/
 state.json
 .lock

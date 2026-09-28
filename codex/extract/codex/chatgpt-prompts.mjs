@@ -205,7 +205,7 @@ function main() {
   const committed = new Map();
   for (const name of docs.keys()) {
     try {
-      committed.set(name, execFileSync("git", ["show", `HEAD:outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }));
+      committed.set(name, execFileSync("git", ["show", `HEAD:./outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }));
     } catch {
       // A page not yet committed is new.
     }

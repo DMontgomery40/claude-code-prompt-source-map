@@ -1,10 +1,13 @@
-// Claude Code → ccprompts.dtmont.com. Follows the newest darwin-arm64 build on the npm
-// "latest" or "next" dist-tag (next often carries a release first), and never refreshes to a
-// build that is not newer than the one the published records already describe.
+// Claude Code → the /claude-code/ section of harness.dtmont.com. Follows the newest darwin-arm64
+// build on the npm "latest" or "next" dist-tag (next often carries a release first), and never
+// refreshes to a build that is not newer than the one the published records already describe.
+// refresh() regenerates claude-code/outputs and returns a publish plan; watch.mjs gates, deploys
+// and commits once per cycle for both targets.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { productOrigin } from "../../site/src/shared/site.mjs";
 import { runAgent } from "../lib/agent.mjs";
-import { appendChangelog, gate, publish, writeStatus } from "../lib/publish.mjs";
+import { appendChangelog, writeStatus } from "../lib/publish.mjs";
 import { log, run } from "../lib/run.mjs";
 import { compareVersions, describedVersion, newestTracked } from "../../claude-code/extract/versions.mjs";
 
@@ -24,7 +27,8 @@ export function reviewAreas(dir = path.join(repo, "outputs")) {
 export const cc = {
   name: "cc",
   repo,
-  origin: "https://ccprompts.dtmont.com",
+  section: "claude-code",
+  origin: productOrigin("claude-code"),
   intervalMs: () => 86400e3,
   checkedLabel: () => "daily",
 
@@ -44,7 +48,7 @@ export const cc = {
     const described = describedVersion(repo);
     if (described && compareVersions(fingerprint.version, described) <= 0) {
       log(`cc: records describe ${described}; ${fingerprint.version} is not newer, nothing to do`);
-      return { published: false, summary: { changed: [] }, note: `records describe ${described}` };
+      return { summary: { changed: [] }, publish: null, note: `records describe ${described}` };
     }
     const args = ["extract/refresh.mjs", fingerprint.version, fingerprint.integrity];
     const refresh = extra => run(node, [...args, ...extra], { cwd: repo, timeoutMs: 60 * 60 * 1000 });
@@ -57,7 +61,7 @@ export const cc = {
     }
     if (r.status === 3) {
       // Records whose source changed need a careful update of their text and conditions.
-      if (dryRun) return { published: false, summary: JSON.parse(r.stdout.trim().split("\n").at(-1)), wouldPublish: true, note: "review agent would run" };
+      if (dryRun) return { summary: JSON.parse(r.stdout.trim().split("\n").at(-1)), publish: { message: `Refresh for Claude Code ${fingerprint.version}` }, note: "review agent would run" };
       // One bounded agent per area, in series: each owns only its area's two files, so a
       // budget running out in one area cannot leave another half-edited.
       const report = readFileSync(path.join(repo, "work/cc-diff.md"), "utf8");
@@ -88,9 +92,6 @@ export const cc = {
     const diff = existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "";
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: { ...summary.sources, version: fingerprint.version, integrity: fingerprint.integrity }, changed: Boolean(diff) });
     if (diff && !dryRun) appendChangelog(repo, `Claude Code ${fingerprint.version}`, diff);
-    await gate(repo);
-    if (dryRun) return { published: false, summary, wouldPublish: true };
-    await publish(repo, { origin: this.origin, message: `Refresh for Claude Code ${fingerprint.version}\n\n${diff.slice(0, 3000) || "No prompt or reference changes; provenance moved to the new build."}` });
-    return { published: true, summary };
+    return { summary, publish: { message: `Claude Code refresh for ${fingerprint.version}\n\n${diff.slice(0, 3000) || "No prompt or reference changes; provenance moved to the new build."}` } };
   }
 };

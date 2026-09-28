@@ -1,10 +1,12 @@
 import { spawnSync } from "node:child_process";
-import { appendFileSync } from "node:fs";
+import { appendFileSync, mkdirSync } from "node:fs";
+import path from "node:path";
 
 const logFile = new URL("../logs/watch.log", import.meta.url).pathname;
 
 export function log(message) {
   const line = `${new Date().toISOString()} ${message}`;
+  mkdirSync(path.dirname(logFile), { recursive: true });
   appendFileSync(logFile, `${line}\n`);
   console.log(line);
 }

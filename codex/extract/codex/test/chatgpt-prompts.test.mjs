@@ -199,6 +199,36 @@ test("CLI: a changed app exits 0 with every entry not found; a missing app exits
   assert.match(missing.stderr, /cannot read the app/);
 });
 
+test("CLI: in a product folder of a larger repo, an unchanged rerun reports no change", () => {
+  // The product folder (codex/) is not the git root. Committed pages must be looked up relative
+  // to it (HEAD:./outputs/…); otherwise every run looks changed and the watcher publishes hourly.
+  const app = path.join(tmp("chatgpt-app-"), "ChatGPT.app");
+  const write = (rel, content) => {
+    fs.mkdirSync(path.dirname(path.join(app, rel)), { recursive: true });
+    fs.writeFileSync(path.join(app, rel), content);
+  };
+  write("Contents/Info.plist", plist({ CFBundleExecutable: "ChatGPT", CFBundleShortVersionString: "9.9", CFBundleVersion: "99" }));
+  write("Contents/Resources/app.asar", asarBytes({ "webview/assets/empty-0123456789ab.js": "var a=`Nothing here.`;" }));
+  write("Contents/Resources/codex-cli/codex-package.json", JSON.stringify({ layoutVersion: 1, entrypoint: "bin/codex" }));
+  write("Contents/Resources/codex-cli/bin/codex", "#!/bin/sh\nexec \"$bin_dir/../CodexCLI.app/Contents/MacOS/codex\" \"$@\"\n");
+  write("Contents/Resources/codex-cli/CodexCLI.app/Contents/Info.plist", plist({ CFBundleExecutable: "codex" }));
+  write("Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex", "");
+  const gitRoot = tmp("chatgpt-monorepo-");
+  const product = path.join(gitRoot, "codex");
+  fs.mkdirSync(product);
+  const git = (...args) => spawnSync("git", ["-c", "user.name=t", "-c", "user.email=t@example.invalid", ...args], { cwd: gitRoot, encoding: "utf8" });
+  git("init", "-q");
+  const env = { ...process.env, CODEX_APP_PATH: app, CHATGPT_PROMPTS_ROOT: product };
+  const first = spawnSync(process.execPath, [script], { encoding: "utf8", env });
+  assert.equal(first.status, 0, first.stderr);
+  git("add", "-A");
+  assert.equal(git("commit", "-q", "-m", "pages").status, 0);
+  const second = spawnSync(process.execPath, [script], { encoding: "utf8", env });
+  assert.equal(second.status, 0, second.stderr);
+  assert.equal(JSON.parse(second.stdout.trim().split("\n").at(-1)).changed, false);
+  assert.equal(fs.existsSync(path.join(product, "work", "chatgpt-prompts-diff.md")), false);
+});
+
 const installed = "/Applications/ChatGPT.app/Contents/Resources/app.asar";
 test("installed app: every page renders with a Source line under each entry", { skip: !fs.existsSync(installed) && "ChatGPT.app not installed" }, () => {
   const asar = openAsar(installed);

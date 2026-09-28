@@ -699,7 +699,7 @@ function main() {
   for (const [name, text] of Object.entries(outputs)) {
     if (/client-[A-Za-z0-9]{16,}/.test(text)) throw new Error(`${name} would publish a client key; refusing to write`);
   }
-  const committed = name => { try { return execFileSync("git", ["show", `HEAD:outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }); } catch { return null; } };
+  const committed = name => { try { return execFileSync("git", ["show", `HEAD:./outputs/${name}`], { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }); } catch { return null; } };
   const before = new Map([NAMES.plugins, NAMES.cu].map(name => [name, committed(name)]).filter(([, text]) => text != null));
   const changes = renderChangedDocuments(semanticDiff(before, new Map(Object.entries(result.pages))));
   const diffFile = path.join(workDir, "bundle-resources-diff.md");
