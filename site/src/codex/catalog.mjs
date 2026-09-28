@@ -286,6 +286,7 @@ export const categories = [
   {
     label: "Build intel",
     files: [
+      { path: "outputs/binwalk-scan.md", anchor: "binwalk-scan-md", slug: "binwalk-scan", format: "markdown", title: "Binwalk scan (this build)", defaultOpen: false },
       { path: "outputs/package-scan.md", anchor: "package-scan-md", slug: "package-scan", format: "markdown", title: "Package scan (this build)", defaultOpen: false }
     ]
   },

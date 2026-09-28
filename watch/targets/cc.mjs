@@ -3,18 +3,22 @@
 // refreshes to a build that is not newer than the one the published records already describe.
 // refresh() regenerates claude-code/outputs and returns a publish plan; watch.mjs gates, deploys
 // and commits once per cycle for both targets.
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, writeStatus } from "../lib/publish.mjs";
-import { log, run } from "../lib/run.mjs";
+import { log, notify, run } from "../lib/run.mjs";
 import { compareVersions, describedVersion, newestTracked } from "../../claude-code/extract/versions.mjs";
 
 const repo = path.resolve(import.meta.dirname, "../../claude-code");
 const node = process.execPath;
 const npm = path.join(path.dirname(process.execPath), "npm");
 const PKG = "@anthropic-ai/claude-code-darwin-arm64";
+// Early-warning scans of the new release (after the refresh). A script not yet on main is skipped.
+const SCANS = [
+  { script: "extract/binwalk-scan.mjs", diff: "work/binwalk-diff.md", label: "binwalk", outputs: ["outputs/binwalk-scan.json", "outputs/binwalk-scan.md"] }
+];
 
 // Areas with records still marked "needs_review", in file order. Only record lists count: the tag
 // files keep `items` as a map from key to tags.
@@ -88,8 +92,26 @@ export const cc = {
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
+    // Findings are notified and go into the changelog; a failing scan never fails the refresh.
+    const scanDiffs = [];
+    for (const sc of SCANS) {
+      if (!existsSync(path.join(repo, sc.script))) continue;
+      const scanDiff = path.join(repo, sc.diff);
+      rmSync(scanDiff, { force: true });
+      const out = run(node, [sc.script], { cwd: repo, timeoutMs: 20 * 60 * 1000 });
+      if (out.status !== 0) {
+        log(`cc ${sc.script} failed (${out.status}): ${(out.stderr || out.stdout).slice(-300)}`);
+        if (!dryRun) notify(`Claude Code ${sc.label}`, `${sc.script} exited ${out.status}; its outputs were left unchanged`);
+        run("git", ["checkout", "--", ...sc.outputs.filter(file => existsSync(path.join(repo, file)))], { cwd: repo });
+        continue;
+      }
+      if (!existsSync(scanDiff)) continue;
+      scanDiffs.push(readFileSync(scanDiff, "utf8").trim());
+      rmSync(scanDiff, { force: true });
+      if (!dryRun) notify(`Claude Code ${sc.label}`, `New in ${fingerprint.version}: ${out.stdout.trim().split("\n").at(-1).slice(0, 250)}`);
+    }
     const diffFile = path.join(repo, "work/cc-diff.md");
-    const diff = existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "";
+    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", ...scanDiffs].filter(Boolean).join("\n\n");
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: { ...summary.sources, version: fingerprint.version, integrity: fingerprint.integrity }, changed: Boolean(diff) });
     if (diff && !dryRun) appendChangelog(repo, `Claude Code ${fingerprint.version}`, diff);
     return { summary, publish: { message: `Claude Code refresh for ${fingerprint.version}\n\n${diff.slice(0, 3000) || "No prompt or reference changes; provenance moved to the new build."}` } };

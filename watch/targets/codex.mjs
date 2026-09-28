@@ -24,7 +24,9 @@ const SCANS = [
   { script: "extract/codex/surface-scan.mjs", diff: "work/surfaces-diff.md", label: "new surfaces",
     outputs: ["outputs/app-surfaces.json"] },
   { script: "extract/codex/package-scan.mjs", diff: "work/package-diff.md", label: "package scan",
-    outputs: ["outputs/package-scan.json", "outputs/package-scan.md"] }
+    outputs: ["outputs/package-scan.json", "outputs/package-scan.md"] },
+  { script: "extract/codex/binwalk-scan.mjs", diff: "work/binwalk-diff.md", label: "binwalk",
+    outputs: ["outputs/binwalk-scan.json", "outputs/binwalk-scan.md"] }
 ];
 const node = process.execPath;
 

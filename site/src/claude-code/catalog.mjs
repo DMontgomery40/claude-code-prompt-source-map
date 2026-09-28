@@ -152,6 +152,12 @@ export const categories = [
     ]
   },
   {
+    label: "Build intel",
+    files: [
+      { path: "outputs/binwalk-scan.md", format: "markdown", title: "Binwalk scan (this release)", slug: "binwalk-scan", summary: "Embedded payloads binwalk finds in the Claude Code binary, carved, decoded and diffed against the previous release." }
+    ]
+  },
+  {
     label: "Evidence and archive",
     files: [
       {
