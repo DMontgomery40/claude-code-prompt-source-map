@@ -863,3 +863,40 @@ test("while the transport is hidden, playback keys decline and the page keeps th
   p.hide(false);
   assert.deepEqual(p.press(p.body), [true, true, "toggle"], "shown again, Space plays");
 });
+
+// ---------- the network layer: the lens and the On-the-wire card render, and no planted value reaches the DOM ----------
+test("network lens and On-the-wire card render for both products with nothing planted in the text", async () => {
+  const { renderPanel } = await import("../panels.js");
+  const { networkLens, wireCard } = await import("../network/panel.js");
+  const { analyzeCapture } = await import("../network/capture.js");
+  const { PLANTED } = await import("./fixtures/network.mjs");
+  const { readFileSync } = await import("node:fs");
+  const NET = FIX + "network/";
+  for (const [dir, file] of [["claude", "claude.har"], ["codex", "codex.har"], ["claude", "claude-described.har"]]) {
+    const entries = await entriesFor([NET + dir]);
+    let trace;
+    try { trace = (await loadTrace(entries)).trace; } finally { await Promise.all(entries.map(e => e.source.close())); }
+    const { capture } = await analyzeCapture([{ name: file, text: readFileSync(NET + file, "utf8") }], trace);
+    let focused = null;
+    const A = { focusRequest: (id, i) => { focused = [id, i]; }, focusStratum() {}, focusAction() {}, openBlockAt() {}, addCapture() {}, getText: () => Promise.resolve({ text: "" }), networkBody: () => Promise.resolve({ text: "", mode: "" }) };
+    A.networkLens = view => networkLens({ ...view, network: capture }, A);
+    A.wireCard = (agent, req) => wireCard(capture, agent, req, A);
+    const lens = new Element("aside");
+    renderPanel(lens, { trace, level: 0, lens: "network", mode: "3d" }, A);
+    const text = lens.textContent;
+    assert.ok(text.includes("What went over the wire") && text.includes("Sensitive data in transit") && text.includes("Endpoints by role"), file);
+    assert.deepEqual(Object.entries(PLANTED).filter(([, v]) => text.includes(v)).map(([k]) => k), [], `${file}: the lens shows no planted value`);
+    // A call in the log opens its request; the request inspector then carries the card.
+    const call = lens.all(n => n.tagName === "BUTTON" && n.className === "item" && !/not in your log/.test(n.textContent))[0];
+    call.dispatch("click");
+    assert.ok(focused, `${file}: a call in the log opens its request`);
+    const agent = trace.agents.find(a => a.id === focused[0]);
+    const req = new Element("aside");
+    renderPanel(req, { trace, level: 2, agent, agentId: agent.id, reqIdx: focused[1] }, A);
+    const card = req.all(n => n.getAttribute("class") === "psec net-card")[0];
+    assert.ok(card && card.textContent.startsWith("On the wire"), `${file}: the card is there`);
+    assert.deepEqual(Object.entries(PLANTED).filter(([, v]) => req.textContent.includes(v)).map(([k]) => k), [], `${file}: the card shows no planted value`);
+    if (dir === "codex") assert.ok(card.textContent.includes("Tokens per input item"));
+    else assert.ok(card.textContent.includes("System blocks as sent") && card.textContent.includes("billing header"));
+  }
+});

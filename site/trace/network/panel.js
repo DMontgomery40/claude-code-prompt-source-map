@@ -226,7 +226,7 @@ function flagTable(cap, focus) {
     el("td", { text: f.experiment ? `${f.experiment}${f.variation != null ? ` · variation ${f.variation}` : ""}${f.inExperiment === false ? " (not in it)" : ""}` : "–" })));
   const table = el("table", { class: "atable net-flags" }, el("thead", {}, el("tr", {}, el("th", { text: "Flag" }), el("th", { text: "Value" }), el("th", { text: "Source" }), el("th", { text: "Experiment" }))), el("tbody", {}, rows));
   const filter = () => {
-    const q = input.value.trim().toLowerCase();
+    const q = String(input.value || "").trim().toLowerCase();
     let n = 0;
     cap.flags.forEach((f, i) => { const hit = !q || `${f.name} ${f.valueText} ${f.source} ${f.experiment || ""}`.toLowerCase().includes(q); rows[i].hidden = !hit; if (hit) n++; });
     count.textContent = q ? `${fmtInt(n)} of ${fmtInt(cap.flags.length)} flags` : `${fmtInt(cap.flags.length)} flags · ${fmtInt(cap.flags.filter((f) => f.source === "experiment").length)} from experiments`;
