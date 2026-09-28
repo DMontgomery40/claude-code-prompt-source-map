@@ -19,6 +19,11 @@ const GENERATED = [
   { script: "extract/codex/learning-blocks.mjs", diff: "work/learning-blocks-diff.md",
     outputs: ["outputs/chatgpt-learning-blocks.md", "outputs/chatgpt-learning-blocks.json"] }
 ];
+// Early-warning scans (run after the generators and the sweep). A script not yet on main is skipped.
+const SCANS = [
+  { script: "extract/codex/surface-scan.mjs", diff: "work/surfaces-diff.md", label: "new surfaces",
+    outputs: ["outputs/app-surfaces.json"] }
+];
 const node = process.execPath;
 
 export const codex = {
@@ -97,6 +102,29 @@ export const codex = {
       if (swept.jev_unavailable && !dryRun) notify("Codex/ChatGPT prompt sweep", `${swept.unclassified} candidates unclassified: ${swept.jev_unavailable}`);
       if (existsSync(sweepDiffFile)) { sweepDiff = readFileSync(sweepDiffFile, "utf8").trim(); rmSync(sweepDiffFile, { force: true }); }
     }
+    // Early-warning scans of the build: new feature surfaces, embedded payloads, the whole
+    // package. Each writes its baseline under outputs/ and a diff file only when something
+    // changed; findings are notified and go into the changelog. Never fails the refresh.
+    const scanDiffs = [];
+    for (const s of SCANS) {
+      if (!existsSync(path.join(repo, s.script))) continue;
+      const diffFile = path.join(repo, s.diff);
+      rmSync(diffFile, { force: true });
+      const out = run(node, [s.script], { cwd: repo, timeoutMs: s.timeoutMs ?? 15 * 60 * 1000 });
+      if (out.status !== 0) {
+        log(`codex ${s.script} failed (${out.status}): ${(out.stderr || out.stdout).slice(-300)}`);
+        if (!dryRun) notify(`Codex/ChatGPT ${s.label}`, `${s.script} exited ${out.status}; its outputs were left unchanged`);
+        run("git", ["checkout", "--", ...s.outputs.filter(file => existsSync(path.join(repo, file)))], { cwd: repo });
+        continue;
+      }
+      if (!existsSync(diffFile)) continue;
+      const text = readFileSync(diffFile, "utf8").trim();
+      rmSync(diffFile, { force: true });
+      scanDiffs.push(text);
+      let line = "";
+      try { line = out.stdout.trim().split("\n").at(-1); } catch {}
+      if (!dryRun) notify(`Codex/ChatGPT ${s.label}`, `New in ChatGPT desktop ${summary.sources.app_version}: ${line.slice(0, 250)}`);
+    }
     // Catalog settings baseline: advanced after a publish, or when nothing needs publishing;
     // never in a dry run, so a failed gate or a dry run can't swallow a change.
     const promoteSnapshot = () => {
@@ -106,7 +134,7 @@ export const codex = {
     const privateSettings = summary.catalog_settings?.private ?? [];
     if (privateSettings.length && !dryRun) notify("Codex/ChatGPT catalog", `Catalog settings changed (not published, may be account-specific): ${privateSettings.join(", ").slice(0, 300)}`);
     const diffFile = path.join(repo, "work/codex-diff.md");
-    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff, ...generatedDiffs, sweepDiff].filter(Boolean).join("\n\n");
+    const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", cliPromptDiff, ...generatedDiffs, sweepDiff, ...scanDiffs].filter(Boolean).join("\n\n");
     const statusFile = path.join(repo, "outputs/status.json");
     const previousLabel = existsSync(statusFile) ? JSON.parse(readFileSync(statusFile, "utf8")).checked : null;
     const labelChanged = previousLabel !== this.checkedLabel(now);
