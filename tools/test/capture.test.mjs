@@ -121,12 +121,15 @@ print(json.dumps({
   "set": tc.scrub_header("Set-Cookie", "__Secure-session=abcdef123456; Path=/; Secure; HttpOnly; SameSite=Lax"),
   "auth": tc.scrub_header("Authorization", data["bearer"]),
   "account": tc.scrub_header("chatgpt-account-id", "0a1b2c3d-0000-4000-8000-000000000000"),
+  "dd": [tc.SECRET_HEADER.match("DD-API-KEY") is not None, tc.scrub_header("DD-API-KEY", "pub" + "0" * 32)],
   "again": tc.scrub_header("Authorization", tc.scrub_header("Authorization", data["bearer"])),
   "query": dict(once), "stable": once == q.pairs}))`);
   assert.match(r.cookie, /^session=<redacted by trace-capture: cookie value \| 12 chars \| fp [0-9a-f]{8}>; theme=<redacted by trace-capture: cookie value \| 4 chars \| fp [0-9a-f]{8}>$/);
   assert.match(r.set, /^__Secure-session=<redacted by trace-capture: cookie value \| 12 chars \| fp [0-9a-f]{8}>; Path=\/; Secure; HttpOnly; SameSite=Lax$/);
   assert.match(r.auth, /^Bearer <redacted by trace-capture: opaque token \| 32 chars \| fp [0-9a-f]{8}>$/);
   assert.match(r.account, /^<redacted by trace-capture: ChatGPT account id \| 36 chars \| fp [0-9a-f]{8}>$/);
+  assert.equal(r.dd[0], true);
+  assert.match(r.dd[1], /^<redacted by trace-capture: Datadog client key \| 35 chars \| fp [0-9a-f]{8}>$/);
   assert.equal(r.again.match(/redacted/g).length, 1);
   assert.equal(r.query.limit, "20");
   assert.equal(r.query.k, "client-public-key");

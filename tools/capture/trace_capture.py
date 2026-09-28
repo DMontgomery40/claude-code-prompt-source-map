@@ -30,7 +30,8 @@ PREFIX = "<redacted by trace-capture"
 RUN_KEY = secrets.token_bytes(32)
 SECRET_HEADER = re.compile(
     r"^(authorization|proxy-authorization|cookie|set-cookie|x-api-key|anthropic-api-key|api-key"
-    r"|chatgpt-account-id|openai-organization|openai-project|x-csrf-token|openai-sentinel-.*|x-oai-.*token.*)$",
+    r"|chatgpt-account-id|openai-organization|openai-project|x-csrf-token|openai-sentinel-.*|x-oai-.*token.*"
+    r"|dd-api-key|dd-application-key|dd-client-token)$",
     re.I,
 )
 HEADER_KIND = {
@@ -38,6 +39,9 @@ HEADER_KIND = {
     "openai-organization": "OpenAI organization id",
     "openai-project": "OpenAI project id",
     "x-csrf-token": "CSRF token",
+    "dd-api-key": "Datadog client key",
+    "dd-application-key": "Datadog application key",
+    "dd-client-token": "Datadog client token",
 }
 TOKEN_FIELD = re.compile(
     r'("(?:access_token|refresh_token|id_token|api_key|apiKey|session_token|sentinel_token|proof_token'
