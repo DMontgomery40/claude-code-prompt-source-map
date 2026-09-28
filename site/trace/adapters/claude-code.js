@@ -238,14 +238,15 @@ export async function parseClaudeFile(source, fileIndex, { meta = null, agentId 
       if (k === msgIts.length - 1) tokens.reasoning = (u.output_tokens_details && u.output_tokens_details.thinking_tokens) || 0;
       else tokens.reasoning = 0;
       if (!tokens.context && !tokens.output) return;
-      const req = { i: agent.requests.length, t, model: m.model || null, tokens, window: [windowStart, end], strata: null, action: null, reasoning: null, requestId: r.requestId || m.id || null };
+      // requestId (the API's request-id) and messageId (message.id) are the keys a network capture joins on.
+      const req = { i: agent.requests.length, t, model: m.model || null, tokens, window: [windowStart, end], strata: null, action: null, reasoning: null, requestId: r.requestId || m.id || null, messageId: m.id || null };
       if (msgIts.length > 1) { req.iteration = k; req.iterations = msgIts.length; }
       req._perm = { ...perm };
       agent.requests.push(req);
       list.push(req);
       if (lastCompaction && lastCompaction.post == null) lastCompaction.post = tokens.context;
     });
-    for (const it of its) if (it.type && it.type !== "message") st.side.push({ t, model: it.model || m.model || null, kind: it.type, tokens: tokensClaude(it), parentRequest: list.length ? list[0].i : null, requestId: r.requestId || null });
+    for (const it of its) if (it.type && it.type !== "message") st.side.push({ t, model: it.model || m.model || null, kind: it.type, tokens: tokensClaude(it), parentRequest: list.length ? list[0].i : null, requestId: r.requestId || null, messageId: m.id || null });
     return list;
   }
 
@@ -600,7 +601,7 @@ export function buildClaudeTrace(parsed, files) {
     for (const [key, list] of groups) {
       const kindName = list[0].kind === "advisor_message" ? "advisor" : list[0].kind;
       const a = newAgent({ id: `${p.agent.id}:${key}`, parentId: p.agent.id, kind: "side", name: `${kindName} (${list[0].model || "?"})`, model: list[0].model, depth: p.agent.depth + 1, file: p.agent.file });
-      a.requests = list.map((s, i) => ({ i, t: s.t, model: s.model, tokens: s.tokens, window: null, strata: null, action: null, reasoning: null, requestId: s.requestId, parentRequest: s.parentRequest }));
+      a.requests = list.map((s, i) => ({ i, t: s.t, model: s.model, tokens: s.tokens, window: null, strata: null, action: null, reasoning: null, requestId: s.requestId, messageId: s.messageId || null, parentRequest: s.parentRequest }));
       a.spawn = { t: list[0].t, parentRequest: list[0].parentRequest, callId: null };
       a.bursts = [];
       finalizeAgent(a);

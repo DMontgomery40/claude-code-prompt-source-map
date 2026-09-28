@@ -523,7 +523,8 @@ test("loader: a session hint loads workflow run folders the same (their metas re
 });
 
 test("loader: sessions found by first line; a hint picks one", async () => {
-  const entries = await entriesFor([FIX]);
+  // fixtures/network/ holds the network layer's own sessions (network.test.mjs).
+  const entries = (await entriesFor([FIX])).filter((e) => !/\/fixtures\/network\//.test(e.path));
   const sessions = await findSessions(entries);
   assert.deepEqual(sessions.map((s) => [s.product, s.id, s.entries.length]).sort(), [["claude-code", CC.session, 2], ["codex", CODEX.root, 3]]);
   const { trace } = await loadTrace(entries, { root: CODEX.root });
