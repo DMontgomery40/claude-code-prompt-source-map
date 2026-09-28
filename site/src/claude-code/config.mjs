@@ -22,6 +22,8 @@ export const site = {
   },
   introLabel: "PROMPTS / TOOLS / ENV / FIELD REPORT",
   themeColor: "#101710",
+  // The search palette's suggested pages (slugs), shown before anything is typed.
+  searchFeatured: ["what-wins", "system-prompt", "env-vars", "system-reminders", "tools", "hooks"],
   // "index": the home page lists the documents instead of embedding all of them.
   homeMode: "index"
 };

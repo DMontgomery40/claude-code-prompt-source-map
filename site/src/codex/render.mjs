@@ -3,6 +3,10 @@ import { guideStyles, renderGuide } from "./guide.mjs";
 import { filterBar, filterScript, filterStyles, wrapFilterable } from "../shared/filters.mjs";
 import { createRoutes } from "./routes.mjs";
 import { SITE, productOrigin, ICON_LINKS } from "../shared/site.mjs";
+import { buildSearchIndex } from "../shared/search-index.mjs";
+
+// The search palette's suggested pages (slugs), shown before anything is typed.
+const SEARCH_FEATURED = ["key-findings", "persistent-mode-instructions", "codex-config", "codex-env-vars", "codex-cli-prompts", "tool-manifest"];
 
 const ORIGIN = productOrigin("codex");
 import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } from "./toc.mjs";
@@ -208,6 +212,8 @@ function renderDocument(document, ids) {
     profile: document.instructionProfile,
     source: document.source,
     defaultOpen: document.defaultOpen,
+    promptText: document.promptText === true,
+    records: document.searchRecords,
     content: body,
     filterVocabulary: document.filter?.vocabulary,
     outline
@@ -250,18 +256,38 @@ function statusLine(status) {
   return status.checked ? `Updated ${date} · checked ${status.checked}` : `Updated ${date}`;
 }
 
+// The section's search index (site/src/shared/search-index.mjs), from each document's standalone
+// page: its content and heading ids exactly as <slug>/index.html has them.
+export function searchIndex(rendered, routes) {
+  return buildSearchIndex({
+    product: "codex",
+    featured: SEARCH_FEATURED,
+    documents: rendered.map(document => ({
+      slug: routes.slug(document.anchor),
+      title: document.title,
+      category: document.category,
+      html: routes.localize(document.content, document.anchor),
+      outline: document.outline.map(item => ({ ...item, id: routes.localId(item.id, document.anchor) })),
+      records: document.records,
+      inline: source => (document.promptText ? promptMarkdown : markdown).parseInline(source)
+    }))
+  });
+}
+
 // Renders the single-page reference at index.html plus one page per document at
-// <slug>/index.html.
+// <slug>/index.html, and the search index at search-index.json.
 export function renderSite({ categories, documents, status = null }) {
   const ids = new Set();
   const rendered = documents.map(document => renderDocument(document, ids));
   const routes = createRoutes(rendered);
+  const { index, stats } = searchIndex(rendered, routes);
   return [
     { path: "index.html", html: renderPage({ categories, rendered, routes, status }) },
     ...rendered.map(current => ({
       path: `${routes.slug(current.anchor)}/index.html`,
       html: renderPage({ categories, rendered, routes, current, status })
-    }))
+    })),
+    { path: "search-index.json", html: JSON.stringify(index), stats }
   ];
 }
 

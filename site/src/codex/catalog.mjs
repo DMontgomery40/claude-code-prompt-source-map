@@ -1,3 +1,5 @@
+// `records` (optional) names the structured records the search index ties to a page's entry
+// headings (site/src/shared/search-index.mjs recordSpec); tag-filter records count already.
 export const categories = [
   {
     label: "Findings",
@@ -155,6 +157,7 @@ export const categories = [
         path: "outputs/chatgpt-conversation-prompts.md",
         anchor: "chatgpt-conversation-prompts-md",
         slug: "chatgpt-conversation-prompts",
+        records: "outputs/chatgpt-conversation-prompts.json",
         format: "markdown",
         title: "Conversation prompts",
         defaultOpen: false
@@ -163,6 +166,7 @@ export const categories = [
         path: "outputs/chatgpt-gpt-builder-prompts.md",
         anchor: "chatgpt-gpt-builder-prompts-md",
         slug: "chatgpt-gpt-builder-prompts",
+        records: "outputs/chatgpt-gpt-builder-prompts.json",
         format: "markdown",
         title: "GPT builder prompts",
         defaultOpen: false
@@ -171,6 +175,7 @@ export const categories = [
         path: "outputs/chatgpt-work-prompts.md",
         anchor: "chatgpt-work-prompts-md",
         slug: "chatgpt-work-prompts",
+        records: "outputs/chatgpt-work-prompts.json",
         format: "markdown",
         title: "Work prompts",
         defaultOpen: false
@@ -179,6 +184,7 @@ export const categories = [
         path: "outputs/chatgpt-finance-health-prompts.md",
         anchor: "chatgpt-finance-health-prompts-md",
         slug: "chatgpt-finance-health-prompts",
+        records: "outputs/chatgpt-finance-health-prompts.json",
         format: "markdown",
         title: "Finance and health prompts",
         defaultOpen: false
@@ -187,6 +193,7 @@ export const categories = [
         path: "outputs/chatgpt-sites-artifacts-prompts.md",
         anchor: "chatgpt-sites-artifacts-prompts-md",
         slug: "chatgpt-sites-artifacts-prompts",
+        records: "outputs/chatgpt-sites-artifacts-prompts.json",
         format: "markdown",
         title: "Sites and artifacts prompts",
         defaultOpen: false
@@ -250,6 +257,7 @@ export const categories = [
         path: "outputs/chatgpt-bundled-plugins.md",
         anchor: "chatgpt-bundled-plugins-md",
         slug: "chatgpt-bundled-plugins",
+        records: { file: "outputs/chatgpt-bundled-plugins.json", kind: "skill" },
         format: "markdown",
         title: "Bundled plugins and skills",
         defaultOpen: false
@@ -258,6 +266,7 @@ export const categories = [
         path: "outputs/computer-use-prompts.md",
         anchor: "computer-use-prompts-md",
         slug: "computer-use-prompts",
+        records: "outputs/computer-use-prompts.json",
         format: "markdown",
         title: "Computer Use prompts and tool descriptions",
         defaultOpen: false
@@ -301,6 +310,7 @@ export const categories = [
         path: "outputs/codex-cli-prompts.md",
         anchor: "codex-cli-prompts-md",
         slug: "codex-cli-prompts",
+        records: "outputs/codex-cli-prompts.json",
         format: "markdown",
         title: "CLI prompt templates",
         defaultOpen: false
@@ -309,6 +319,7 @@ export const categories = [
         path: "outputs/codex-cli-bundled-skills.md",
         anchor: "codex-cli-bundled-skills-md",
         slug: "codex-cli-bundled-skills",
+        records: { file: "outputs/codex-cli-prompts.json", kind: "skill" },
         format: "markdown",
         title: "CLI bundled skills",
         defaultOpen: false
@@ -330,6 +341,7 @@ export const categories = [
         path: "outputs/desktop-tool-manifest.md",
         anchor: "desktop-tool-manifest-md",
         slug: "tool-manifest",
+        records: { file: "outputs/desktop-tool-manifest.json", list: "tools", kind: "tool" },
         format: "markdown",
         title: "Tool manifest (live)",
         defaultOpen: false
