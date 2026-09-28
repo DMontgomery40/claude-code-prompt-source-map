@@ -17,7 +17,8 @@ const npm = path.join(path.dirname(process.execPath), "npm");
 const PKG = "@anthropic-ai/claude-code-darwin-arm64";
 // Early-warning scans of the new release (after the refresh). A script not yet on main is skipped.
 const SCANS = [
-  { script: "extract/binwalk-scan.mjs", diff: "work/binwalk-diff.md", label: "binwalk", outputs: ["outputs/binwalk-scan.json", "outputs/binwalk-scan.md"] }
+  { script: "extract/binwalk-scan.mjs", diff: "work/binwalk-diff.md", label: "binwalk", outputs: ["outputs/binwalk-scan.json", "outputs/binwalk-scan.md"] },
+  { script: "extract/package-scan.mjs", diff: "work/package-diff.md", label: "package scan", outputs: ["outputs/package-scan.json", "outputs/package-scan.md"] }
 ];
 
 // Areas with records still marked "needs_review", in file order. Only record lists count: the tag
