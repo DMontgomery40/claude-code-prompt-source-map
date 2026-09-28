@@ -38,6 +38,10 @@ It is **not** about token cost or the fact that context is re-read every turn. D
 - Trace is one layer-rich tool. New views are **added** as modes. Never remove the existing landscape,
   2D view, sidebar panels, lenses, search, reader, custody ladder or playback. Grains may go (decided
   2026-09-27).
+- The sidebar has a fixed set of sections shared by both products, defined in `site/src/shared/sections.mjs`: Overview,
+  Model instructions, Prompts, Tools and features, Configuration, Build intel, Evidence and archive. Put a new page in
+  the section whose definition fits. Never add a top-level group for one feature; `site/test/shared/sections.test.mjs`
+  fails if you do (David, 2026-09-28).
 - Name the OpenAI product "Codex/ChatGPT", never "Codex" alone. Component names ("Codex CLI") and quoted
   prompt text stay as they are.
 - Other agents may work here at the same time. Commit your own paths, keep checks focused, and leave

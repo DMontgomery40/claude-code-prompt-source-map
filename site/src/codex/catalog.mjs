@@ -2,7 +2,7 @@
 // headings (site/src/shared/search-index.mjs recordSpec); tag-filter records count already.
 export const categories = [
   {
-    label: "Findings",
+    label: "Overview",
     files: [
       {
         path: "outputs/security-review-map-2026-09-24.md",
@@ -21,46 +21,11 @@ export const categories = [
         format: "markdown",
         title: "ChatGPT Work",
         defaultOpen: true
-      },
-      {
-        path: "outputs/chatgpt-work-gpt6-client-trace-2026-09-24.json",
-        anchor: "chatgpt-work-gpt6-client-trace-2026-09-24-json",
-        slug: "sanitized-gpt-6-work-client-trace",
-        snapshot: "September 24, 2026",
-        format: "source",
-        title: "Sanitized GPT-6 Work client trace",
-        defaultOpen: false
-      },
-      {
-        path: "outputs/voice-tool-surface-2026-09-24.md",
-        anchor: "voice-tool-surface-2026-09-24-md",
-        slug: "voice-tools",
-        snapshot: "September 24, 2026",
-        format: "markdown",
-        title: "Voice tools",
-        defaultOpen: true
-      },
-      {
-        path: "outputs/model-comparison.json",
-        anchor: "codex-gpt6-model-prompt-comparison-2026-09-24-json",
-        slug: "three-model-prompt-comparison",
-        format: "source",
-        title: "Three-model prompt comparison",
-        defaultOpen: false
-      },
-      {
-        path: "outputs/codex-luna-surface-check-2026-09-24.json",
-        anchor: "codex-luna-surface-check-2026-09-24-json",
-        slug: "astra-luna-source-check",
-        snapshot: "September 24, 2026",
-        format: "source",
-        title: "Astra/Luna source check",
-        defaultOpen: false
       }
     ]
   },
   {
-    label: "Codex/ChatGPT GPT-6 instructions",
+    label: "Model instructions",
     files: [
       {
         path: "outputs/persistent-instructions.md",
@@ -99,15 +64,6 @@ export const categories = [
         defaultOpen: false
       },
       {
-        path: "outputs/other-catalog-models.md",
-        anchor: "other-catalog-models-md",
-        slug: "other-catalog-models",
-        format: "markdown",
-        title: "Other models in the catalog",
-        promptText: true,
-        defaultOpen: false
-      },
-      {
         path: "outputs/gpt-6-instruction-modules.md",
         anchor: "gpt-6-astra-instruction-modules-2026-09-24-md",
         slug: "conditional-instruction-modules",
@@ -117,41 +73,26 @@ export const categories = [
         defaultOpen: true
       },
       {
-        path: "outputs/gpt-6-astra-model-record.json",
-        anchor: "gpt-6-astra-model-messages-2026-09-24-json",
-        slug: "raw-captured-astra-record",
-        format: "source",
-        title: "Raw captured Astra record",
+        path: "outputs/other-catalog-models.md",
+        anchor: "other-catalog-models-md",
+        slug: "other-catalog-models",
+        format: "markdown",
+        title: "Other models in the catalog",
+        promptText: true,
         defaultOpen: false
       },
       {
-        path: "outputs/gpt-6-sol-model-record.json",
-        anchor: "gpt-6-sol-model-messages-2026-09-24-json",
-        slug: "raw-captured-sol-record",
+        path: "outputs/model-comparison.json",
+        anchor: "codex-gpt6-model-prompt-comparison-2026-09-24-json",
+        slug: "three-model-prompt-comparison",
         format: "source",
-        title: "Raw captured Sol record",
-        defaultOpen: false
-      },
-      {
-        path: "outputs/gpt-6-luna-model-record.json",
-        anchor: "gpt-6-luna-model-messages-2026-09-24-json",
-        slug: "raw-captured-luna-record",
-        format: "source",
-        title: "Raw captured Luna record",
-        defaultOpen: false
-      },
-      {
-        path: "outputs/capture-metadata.json",
-        anchor: "gpt-6-astra-instruction-stack-2026-09-24-metadata-json",
-        slug: "capture-and-verification-metadata",
-        format: "source",
-        title: "Capture and verification metadata",
+        title: "Three-model prompt comparison",
         defaultOpen: false
       }
     ]
   },
   {
-    label: "ChatGPT prompts",
+    label: "Prompts",
     files: [
       {
         path: "outputs/chatgpt-conversation-prompts.md",
@@ -197,12 +138,110 @@ export const categories = [
         format: "markdown",
         title: "Sites and artifacts prompts",
         defaultOpen: false
+      },
+      {
+        path: "outputs/voice-prompts.md",
+        anchor: "codex-voice-prompts-2026-09-24-md",
+        slug: "bundled-codex-voice-prompts",
+        format: "markdown",
+        title: "Bundled Codex/ChatGPT voice prompts",
+        instructionProfile: "voice",
+        defaultOpen: true
+      },
+      {
+        path: "outputs/desktop-helper-prompts.md",
+        anchor: "codex-desktop-helper-prompts-2026-09-24-md",
+        slug: "codex-helper-prompt-inventory",
+        format: "markdown",
+        title: "Codex/ChatGPT helper prompt inventory",
+        promptText: true,
+        defaultOpen: false
+      },
+      {
+        path: "outputs/desktop-model-facing-text.md",
+        anchor: "desktop-model-facing-text-md",
+        slug: "desktop-model-facing-text",
+        format: "markdown",
+        title: "Other model-facing text",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-cli-prompts.md",
+        anchor: "codex-cli-prompts-md",
+        slug: "codex-cli-prompts",
+        records: "outputs/codex-cli-prompts.json",
+        format: "markdown",
+        title: "CLI prompt templates",
+        defaultOpen: false
       }
     ]
   },
   {
-    label: "ChatGPT learning blocks",
+    label: "Tools and features",
     files: [
+      {
+        path: "outputs/desktop-tool-manifest.md",
+        anchor: "desktop-tool-manifest-md",
+        slug: "tool-manifest",
+        records: { file: "outputs/desktop-tool-manifest.json", list: "tools", kind: "tool" },
+        format: "markdown",
+        title: "Tool manifest (live)",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/current-host-tool-manifest-2026-09-24.json",
+        anchor: "current-host-tool-manifest-2026-09-24-json",
+        slug: "complete-host-tool-manifest",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Complete host tool manifest",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/aeon-native-tools-2026-09-24.md",
+        anchor: "aeon-native-tools-2026-09-24-md",
+        slug: "persistent-tool-signals",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Persistent tool signals",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/chatgpt-bundled-plugins.md",
+        anchor: "chatgpt-bundled-plugins-md",
+        slug: "chatgpt-bundled-plugins",
+        records: { file: "outputs/chatgpt-bundled-plugins.json", kind: "skill" },
+        format: "markdown",
+        title: "Bundled plugins and skills",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-cli-bundled-skills.md",
+        anchor: "codex-cli-bundled-skills-md",
+        slug: "codex-cli-bundled-skills",
+        records: { file: "outputs/codex-cli-prompts.json", kind: "skill" },
+        format: "markdown",
+        title: "CLI bundled skills",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/computer-use-prompts.md",
+        anchor: "computer-use-prompts-md",
+        slug: "computer-use-prompts",
+        records: "outputs/computer-use-prompts.json",
+        format: "markdown",
+        title: "Computer Use prompts and tool descriptions",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/voice-tool-surface-2026-09-24.md",
+        anchor: "voice-tool-surface-2026-09-24-md",
+        slug: "voice-tools",
+        snapshot: "September 24, 2026",
+        format: "markdown",
+        title: "Voice tools",
+        defaultOpen: true
+      },
       {
         path: "outputs/chatgpt-learning-blocks.md",
         anchor: "chatgpt-learning-blocks-md",
@@ -210,11 +249,19 @@ export const categories = [
         format: "markdown",
         title: "Math and science learning blocks",
         defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-live-telephony.md",
+        anchor: "gpt-live-telephony-md",
+        slug: "gpt-live-telephony",
+        format: "markdown",
+        title: "GPT-Live telephony and SIP",
+        defaultOpen: false
       }
     ]
   },
   {
-    label: "Codex/ChatGPT configuration",
+    label: "Configuration",
     files: [
       {
         path: "outputs/codex-config.md",
@@ -237,104 +284,14 @@ export const categories = [
     ]
   },
   {
-    label: "GPT-Live API",
+    label: "Evidence and archive",
     files: [
-      {
-        path: "outputs/gpt-live-telephony.md",
-        anchor: "gpt-live-telephony-md",
-        slug: "gpt-live-telephony",
-        format: "markdown",
-        title: "GPT-Live telephony and SIP",
-        defaultOpen: false
-      }
-    ]
-  },
-  {
-    label: "Codex/ChatGPT voice prompts",
-    files: [
-      {
-        path: "outputs/voice-prompts.md",
-        anchor: "codex-voice-prompts-2026-09-24-md",
-        slug: "bundled-codex-voice-prompts",
-        format: "markdown",
-        title: "Bundled Codex/ChatGPT voice prompts",
-        instructionProfile: "voice",
-        defaultOpen: true
-      }
-    ]
-  },
-  {
-    label: "ChatGPT plugins and Computer Use",
-    files: [
-      {
-        path: "outputs/chatgpt-bundled-plugins.md",
-        anchor: "chatgpt-bundled-plugins-md",
-        slug: "chatgpt-bundled-plugins",
-        records: { file: "outputs/chatgpt-bundled-plugins.json", kind: "skill" },
-        format: "markdown",
-        title: "Bundled plugins and skills",
-        defaultOpen: false
-      },
-      {
-        path: "outputs/computer-use-prompts.md",
-        anchor: "computer-use-prompts-md",
-        slug: "computer-use-prompts",
-        records: "outputs/computer-use-prompts.json",
-        format: "markdown",
-        title: "Computer Use prompts and tool descriptions",
-        defaultOpen: false
-      }
-    ]
-  },
-  {
-    label: "Other desktop prompts",
-    files: [
-      {
-        path: "outputs/desktop-helper-prompts.md",
-        anchor: "codex-desktop-helper-prompts-2026-09-24-md",
-        slug: "codex-helper-prompt-inventory",
-        format: "markdown",
-        title: "Codex/ChatGPT helper prompt inventory",
-        promptText: true,
-        defaultOpen: false
-      },
-      {
-        path: "outputs/desktop-model-facing-text.md",
-        anchor: "desktop-model-facing-text-md",
-        slug: "desktop-model-facing-text",
-        format: "markdown",
-        title: "Other model-facing text",
-        defaultOpen: false
-      },
       {
         path: "outputs/prompt-provenance-inventory.json",
         anchor: "codex-prompt-provenance-inventory-2026-09-24-json",
         slug: "prompt-provenance-inventory",
         format: "source",
         title: "Prompt provenance inventory",
-        defaultOpen: false
-      }
-    ]
-  },
-  {
-    label: "Codex CLI prompts",
-    files: [
-      {
-        path: "outputs/codex-cli-prompts.md",
-        anchor: "codex-cli-prompts-md",
-        slug: "codex-cli-prompts",
-        records: "outputs/codex-cli-prompts.json",
-        format: "markdown",
-        title: "CLI prompt templates",
-        defaultOpen: false
-      },
-      {
-        path: "outputs/codex-cli-bundled-skills.md",
-        anchor: "codex-cli-bundled-skills-md",
-        slug: "codex-cli-bundled-skills",
-        records: { file: "outputs/codex-cli-prompts.json", kind: "skill" },
-        format: "markdown",
-        title: "CLI bundled skills",
         defaultOpen: false
       },
       {
@@ -344,19 +301,55 @@ export const categories = [
         format: "source",
         title: "CLI prompt provenance",
         defaultOpen: false
-      }
-    ]
-  },
-  {
-    label: "Observed runtime and tools",
-    files: [
+      },
       {
-        path: "outputs/desktop-tool-manifest.md",
-        anchor: "desktop-tool-manifest-md",
-        slug: "tool-manifest",
-        records: { file: "outputs/desktop-tool-manifest.json", list: "tools", kind: "tool" },
-        format: "markdown",
-        title: "Tool manifest (live)",
+        path: "outputs/capture-metadata.json",
+        anchor: "gpt-6-astra-instruction-stack-2026-09-24-metadata-json",
+        slug: "capture-and-verification-metadata",
+        format: "source",
+        title: "Capture and verification metadata",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-astra-model-record.json",
+        anchor: "gpt-6-astra-model-messages-2026-09-24-json",
+        slug: "raw-captured-astra-record",
+        format: "source",
+        title: "Raw captured Astra record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-sol-model-record.json",
+        anchor: "gpt-6-sol-model-messages-2026-09-24-json",
+        slug: "raw-captured-sol-record",
+        format: "source",
+        title: "Raw captured Sol record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6-luna-model-record.json",
+        anchor: "gpt-6-luna-model-messages-2026-09-24-json",
+        slug: "raw-captured-luna-record",
+        format: "source",
+        title: "Raw captured Luna record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/chatgpt-work-gpt6-client-trace-2026-09-24.json",
+        anchor: "chatgpt-work-gpt6-client-trace-2026-09-24-json",
+        slug: "sanitized-gpt-6-work-client-trace",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Sanitized GPT-6 Work client trace",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/codex-luna-surface-check-2026-09-24.json",
+        anchor: "codex-luna-surface-check-2026-09-24-json",
+        slug: "astra-luna-source-check",
+        snapshot: "September 24, 2026",
+        format: "source",
+        title: "Astra/Luna source check",
         defaultOpen: false
       },
       {
@@ -369,15 +362,6 @@ export const categories = [
         defaultOpen: false
       },
       {
-        path: "outputs/aeon-native-tools-2026-09-24.md",
-        anchor: "aeon-native-tools-2026-09-24-md",
-        slug: "persistent-tool-signals",
-        snapshot: "September 24, 2026",
-        format: "markdown",
-        title: "Persistent tool signals",
-        defaultOpen: false
-      },
-      {
         path: "outputs/aeon-tools-and-tool-calls.md",
         anchor: "aeon-tools-and-tool-calls-md",
         slug: "tool-and-call-inventory-notes",
@@ -386,20 +370,6 @@ export const categories = [
         title: "Tool and call inventory notes",
         defaultOpen: false
       },
-      {
-        path: "outputs/current-host-tool-manifest-2026-09-24.json",
-        anchor: "current-host-tool-manifest-2026-09-24-json",
-        slug: "complete-host-tool-manifest",
-        snapshot: "September 24, 2026",
-        format: "source",
-        title: "Complete host tool manifest",
-        defaultOpen: false
-      }
-    ]
-  },
-  {
-    label: "Extraction evidence",
-    files: [
       {
         path: "outputs/binwalk-aeon-daybreak-report.md",
         anchor: "binwalk-aeon-daybreak-report-md",
@@ -426,12 +396,7 @@ export const categories = [
         format: "source",
         title: "Model alias byte scan",
         defaultOpen: false
-      }
-    ]
-  },
-  {
-    label: "Historical archive",
-    files: [
+      },
       {
         path: "outputs/aeon-core-instructions.md",
         anchor: "aeon-core-instructions-md",
