@@ -29,6 +29,7 @@
     "outputs/chatgpt-sites-artifacts-prompts.md",
     "outputs/chatgpt-bundled-plugins.md",
     "outputs/computer-use-prompts.md",
-    "outputs/desktop-tool-manifest.md"
+    "outputs/desktop-tool-manifest.md",
+    "outputs/chatgpt-learning-blocks.md"
   ]
 }
