@@ -473,8 +473,8 @@
       "field": "model_messages.instructions_template",
       "source_type": "authenticated remote catalog record",
       "activation_status": "catalog default for model",
-      "prompt_sha256": "b1dd8718c037906c53a305c5cbccb4a4be35ccbb7837461ec349bfc495412f0d",
-      "character_count": 18992
+      "prompt_sha256": "fb0c2f8caf7ed05166f176a9f86c51d7443405f0ea722eb86c3d9356acd6652f",
+      "character_count": 21768
     },
     {
       "id": "gpt-6-sol:model_messages.approvals.on_request_auto_review",

@@ -55,8 +55,8 @@
         "sha256": "bc87e2f1d9e808f69c3e7aa3883b54310cd3cda6e56949e3c7481b7e608318fb"
       },
       "instructions_template": {
-        "utf8_bytes": 19207,
-        "sha256": "e6c49d2c8f46fb07e88fafbdd66af96cc994541bb0bf5b652b30f887a50ebd0d"
+        "utf8_bytes": 22009,
+        "sha256": "f6b17ebbe581b8ed9cb1385063a22b15d1d925440cbad8f7ac79a00a75de5b32"
       },
       "instructions_variables": {
         "utf8_bytes": 4,

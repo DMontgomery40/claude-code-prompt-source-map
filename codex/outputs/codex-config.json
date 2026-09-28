@@ -4293,20 +4293,22 @@
       "kind": "setting",
       "text": null,
       "when": null,
-      "documented": false,
+      "documented": true,
       "details": {
         "path": "auto_review.extra_policy",
         "type": "string",
         "values": null,
         "default": null,
         "description": {
-          "text": "Additional policy text inserted into the Guardian template's `{{ extra_policy }}` slot.",
-          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_toml.rs:576"
+          "text": "Additional local Markdown policy for automatic review, included alongside the main policy. Managed `guardian_extra_policy` takes precedence. Blank values are ignored.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
         },
-        "status": "undocumented",
-        "source_comment": null,
-        "docs_type": null,
-        "docs_urls": [],
+        "status": "documented",
+        "source_comment": "Additional policy text inserted into the Guardian template's `{{ extra_policy }}` slot.",
+        "docs_type": "string",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
         "default_claims": [],
         "profile_overridable": null,
         "binary": {
@@ -6620,7 +6622,7 @@
         },
         "status": "documented",
         "source_comment": null,
-        "docs_type": "unelevated | elevated",
+        "docs_type": "unelevated | elevated | mxc",
         "docs_urls": [
           "https://developers.openai.com/codex/config-file/config-reference"
         ],
@@ -46108,63 +46110,6 @@
       ]
     },
     {
-      "id": "config:windows.sandbox_private_desktop",
-      "title": "windows.sandbox_private_desktop",
-      "group": "Documented but not accepted by this build",
-      "kind": "setting",
-      "text": null,
-      "when": "Windows only",
-      "documented": true,
-      "details": {
-        "path": "windows.sandbox_private_desktop",
-        "type": "boolean",
-        "values": null,
-        "default": null,
-        "description": {
-          "text": "Run the final sandboxed child process on a private desktop by default on native Windows. Set `false` only for compatibility with the older `Winsta0\\\\Default` behavior.",
-          "source": "https://developers.openai.com/codex/config-file/config-reference"
-        },
-        "status": "documented; rejected by this binary's config parser (--strict-config probe)",
-        "docs_urls": [
-          "https://developers.openai.com/codex/config-file/config-reference"
-        ],
-        "docs_type": "boolean",
-        "config_source_field": null,
-        "binary": {
-          "present": true,
-          "strength": "distinctive"
-        },
-        "strict_config_probe": {
-          "path": "windows.sandbox_private_desktop",
-          "toml": "[windows]\nsandbox_private_desktop = true\n",
-          "accepted": false,
-          "result": "rejected while parsing config.toml (unknown field or wrong type)",
-          "output": "Error: failed to load config.toml",
-          "baseline_toml": "[windows]\n",
-          "baseline_result": "accepted (config loaded)"
-        },
-        "default_claims": []
-      },
-      "provenance": [
-        {
-          "source": "https://developers.openai.com/codex/config-file/config-reference",
-          "note": "listed in the config.toml reference table"
-        },
-        {
-          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/core/config.schema.json",
-          "note": "absent from the generated schema at this tag"
-        },
-        {
-          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
-          "note": "key string `sandbox_private_desktop` present in binary (distinctive match)"
-        },
-        {
-          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
-          "note": "--strict-config probe: rejected while parsing config.toml (unknown field or wrong type)"
-        }
-      ]
-    },
-    {
       "id": "config:windows_wsl_setup_acknowledged",
       "title": "windows_wsl_setup_acknowledged",
       "group": "Documented but not accepted by this build",
@@ -46214,6 +46159,49 @@
         {
           "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
           "note": "--strict-config probe: rejected while parsing config.toml (unknown field or wrong type)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:additional_developer_instructions",
+      "title": "additional_developer_instructions",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "additional_developer_instructions",
+        "type": "string",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Managed developer instructions added as a separate developer message. Codex rejects instructions that exceed a limit of 10,000 estimated tokens, including context markers.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "string",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:199"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `additional_developer_instructions` present in binary (distinctive match)"
         }
       ]
     },
@@ -46902,6 +46890,135 @@
         {
           "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
           "note": "key string `approval_mode` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:auto_review",
+      "title": "auto_review",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "auto_review",
+        "type": "table",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Managed automatic-review requirements.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "table",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:1072"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `auto_review` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:auto_review.ignore_rules",
+      "title": "auto_review.ignore_rules",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "auto_review.ignore_rules",
+        "type": "array<string>",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Full model slugs for which Codex ignores `allow` prefix rules in command execution policy. Match the slug exactly, including its provider namespace when present; unlike `required_on_models`, this does not accept a namespace-free alias. Deny and network rules still apply.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "array<string>",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:1082"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `ignore_rules` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:auto_review.required_on_models",
+      "title": "auto_review.required_on_models",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "auto_review.required_on_models",
+        "type": "array<string>",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Model slugs that must use automatic review. Slugs must be non-empty, omit provider namespaces, and have no surrounding whitespace. Lists from multiple requirements sources are combined.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "array<string>",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:1081"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `required_on_models` present in binary (distinctive match)"
         }
       ]
     },
@@ -49010,6 +49127,49 @@
       ]
     },
     {
+      "id": "config:requirements:experimental_network.domains.<pattern>",
+      "title": "experimental_network.domains.<pattern>",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "experimental_network.domains.<pattern>",
+        "type": "allow | deny",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Allow or deny sandboxed network access for the matching domain pattern. A deny rule wins when several patterns match.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "allow | deny",
+        "binary": {
+          "present": true,
+          "strength": "generic"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:434"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `domains` present in binary (generic match)"
+        }
+      ]
+    },
+    {
       "id": "config:requirements:experimental_network.enabled",
       "title": "experimental_network.enabled",
       "group": "Managed requirements (requirements.toml)",
@@ -49195,7 +49355,7 @@
         "values": null,
         "default": null,
         "description": {
-          "text": "Administrator-managed Unix socket policy for sandboxed networking.",
+          "text": "Administrator-managed Unix socket allowlist for sandboxed networking on macOS. Paths must be absolute.",
           "source": "https://developers.openai.com/codex/config-file/config-reference"
         },
         "status": "documented (requirements.toml)",
@@ -49203,6 +49363,49 @@
           "https://developers.openai.com/codex/config-file/config-reference"
         ],
         "docs_type": "map<string, allow | deny>",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:438"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `unix_sockets` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:experimental_network.unix_sockets.<path>",
+      "title": "experimental_network.unix_sockets.<path>",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "experimental_network.unix_sockets.<path>",
+        "type": "allow | deny",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "On macOS, `allow` adds an absolute Unix socket path to the allowlist; `deny` leaves it out. A `deny` entry cannot block a socket when allow-all Unix sockets is enabled.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "allow | deny",
         "binary": {
           "present": true,
           "strength": "distinctive"
@@ -49637,6 +49840,126 @@
       ]
     },
     {
+      "id": "config:requirements:features.in_app_chat",
+      "title": "features.in_app_chat",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "features.in_app_chat",
+        "type": "boolean",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Set to `false` to hide ChatGPT and ChatGPT Work conversation screens and related cloud automation UI in the ChatGPT desktop app. This setting does not block ChatGPT Voice or stop existing cloud tasks. Setting it to `true` does not bypass account, workspace-permission, or rollout checks.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "boolean",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `in_app_chat` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:features.in_app_dictation",
+      "title": "features.in_app_dictation",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "features.in_app_dictation",
+        "type": "boolean",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Set to `false` to disable in-app dictation in the desktop app. Setting it to `true` does not bypass other availability checks.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "boolean",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `in_app_dictation` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:features.in_app_local_automation",
+      "title": "features.in_app_local_automation",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "features.in_app_local_automation",
+        "type": "boolean",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Set to `false` to disable local scheduled tasks in the desktop app. Setting it to `true` does not bypass other availability checks.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "boolean",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `in_app_local_automation` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
       "id": "config:requirements:features.in_app_updates",
       "title": "features.in_app_updates",
       "group": "Managed requirements (requirements.toml)",
@@ -49840,6 +50163,46 @@
       ]
     },
     {
+      "id": "config:requirements:features.realtime_conversation",
+      "title": "features.realtime_conversation",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "features.realtime_conversation",
+        "type": "boolean",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Set to `false` to disable the experimental `/voice` command in the Codex CLI. Do not rely on this setting to block [ChatGPT Voice](https://developers.openai.com/codex/features/voice) in the desktop app or app-server voice sessions. Setting it to `true` does not bypass client or rollout checks.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "boolean",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `realtime_conversation` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
       "id": "config:requirements:features.remote_plugin",
       "title": "features.remote_plugin",
       "group": "Managed requirements (requirements.toml)",
@@ -50002,6 +50365,49 @@
         {
           "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
           "note": "key string `enabled` present in binary (generic match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:guardian_extra_policy",
+      "title": "guardian_extra_policy",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "guardian_extra_policy",
+        "type": "string",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Additional managed Markdown policy for automatic review, included alongside the main policy. This takes precedence over local `[auto_review].extra_policy`. Blank values are ignored.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "string",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:1076"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `guardian_extra_policy` present in binary (distinctive match)"
         }
       ]
     },
@@ -51432,6 +51838,135 @@
       ]
     },
     {
+      "id": "config:requirements:model_provider",
+      "title": "model_provider",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "model_provider",
+        "type": "string",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Enforce the model provider ID, overriding local and session configuration.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "string",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:171"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `model_provider` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:model_providers",
+      "title": "model_providers",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "model_providers",
+        "type": "map<string, table>",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Managed model provider definitions. Each entry replaces the complete configured provider with the same ID; fields aren't merged with the user's definition. Providers with other IDs remain available.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "map<string, table>",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:172"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `model_providers` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
+      "id": "config:requirements:model_providers.<id>",
+      "title": "model_providers.<id>",
+      "group": "Managed requirements (requirements.toml)",
+      "kind": "setting",
+      "text": null,
+      "when": "requirements.toml (admin-managed), not config.toml",
+      "documented": true,
+      "details": {
+        "path": "model_providers.<id>",
+        "type": "table",
+        "values": null,
+        "default": null,
+        "description": {
+          "text": "Complete managed provider definition. Uses the same provider fields as `config.toml`, including `name`, `base_url`, authentication, and transport settings.",
+          "source": "https://developers.openai.com/codex/config-file/config-reference"
+        },
+        "status": "documented (requirements.toml)",
+        "docs_urls": [
+          "https://developers.openai.com/codex/config-file/config-reference"
+        ],
+        "docs_type": "table",
+        "binary": {
+          "present": true,
+          "strength": "distinctive"
+        },
+        "default_claims": [],
+        "file": "requirements.toml"
+      },
+      "provenance": [
+        {
+          "source": "https://developers.openai.com/codex/config-file/config-reference",
+          "note": "requirements.toml reference table"
+        },
+        {
+          "source": "codex-rs@rust-v0.158.0-alpha.2.1:codex-rs/config/src/config_requirements.rs:172"
+        },
+        {
+          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
+          "note": "key string `model_providers` present in binary (distinctive match)"
+        }
+      ]
+    },
+    {
       "id": "config:requirements:models",
       "title": "models",
       "group": "Managed requirements (requirements.toml)",
@@ -52846,7 +53381,7 @@
         "values": null,
         "default": null,
         "description": {
-          "text": "Allowed native Windows sandbox implementations for `windows.sandbox` (`elevated` and `unelevated`). The list must not be empty. When both are allowed and no mode is selected, Codex prefers `elevated`.",
+          "text": "Allowed legacy native Windows sandbox implementations (`elevated` and `unelevated`). The list must not be empty. When both are allowed and no mode is selected, Codex prefers `elevated`. This list does not restrict the `mxc` sandbox when it is available.",
           "source": "https://developers.openai.com/codex/config-file/config-reference"
         },
         "status": "documented (requirements.toml)",
@@ -52872,46 +53407,6 @@
         {
           "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
           "note": "key string `allowed_sandbox_implementations` present in binary (distinctive match)"
-        }
-      ]
-    },
-    {
-      "id": "config:requirements:windows.sandbox_private_desktop",
-      "title": "windows.sandbox_private_desktop",
-      "group": "Managed requirements (requirements.toml)",
-      "kind": "setting",
-      "text": null,
-      "when": "requirements.toml (admin-managed), not config.toml",
-      "documented": true,
-      "details": {
-        "path": "windows.sandbox_private_desktop",
-        "type": "boolean",
-        "values": null,
-        "default": null,
-        "description": {
-          "text": "Enforce whether the native Windows sandbox starts its child process on a private desktop.",
-          "source": "https://developers.openai.com/codex/config-file/config-reference"
-        },
-        "status": "documented (requirements.toml)",
-        "docs_urls": [
-          "https://developers.openai.com/codex/config-file/config-reference"
-        ],
-        "docs_type": "boolean",
-        "binary": {
-          "present": true,
-          "strength": "distinctive"
-        },
-        "default_claims": [],
-        "file": "requirements.toml"
-      },
-      "provenance": [
-        {
-          "source": "https://developers.openai.com/codex/config-file/config-reference",
-          "note": "requirements.toml reference table"
-        },
-        {
-          "source": "codex binary sha256 3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a (codex-cli 0.158.0-alpha.2.1)",
-          "note": "key string `sandbox_private_desktop` present in binary (distinctive match)"
         }
       ]
     }

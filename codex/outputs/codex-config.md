@@ -1,6 +1,6 @@
 # Codex/ChatGPT `config.toml` reference
 
-This reference covers every `config.toml` key accepted by the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.924.22138; `codex-cli 0.158.0-alpha.2.1`, binary sha256 `3e11ccc743e8198a…`). Keys come from the generated `ConfigToml` JSON Schema and config structs in openai/codex at tag `rust-v0.158.0-alpha.2.1` (the exact release tag for this binary), the feature registry, and probes of the shipped binary with a throwaway `CODEX_HOME`. It lists 966 `config.toml` entries. 502 appear in the official Codex docs, and 464 are undocumented. The entries include 150 feature flags (57 under development, 47 stable, 39 removed, 4 deprecated, 3 experimental), 12 hidden, legacy, or alias keys that the generated schema leaves out, and 7 keys that the official reference lists but this build rejects. The last section lists 158 `requirements.toml` keys for admin-managed policy. Labels: **documented** means the key is in the official config reference or another Codex docs page; **undocumented** means it is only in source and the binary; **hidden** means the schema generator skips it, but the deserializer still recognizes it (sometimes only to raise a targeted error). Descriptions quote the docs where they exist, and the Rust doc comment otherwise. Defaults are shown only where a source states them.
+This reference covers every `config.toml` key accepted by the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.924.22138; `codex-cli 0.158.0-alpha.2.1`, binary sha256 `3e11ccc743e8198a…`). Keys come from the generated `ConfigToml` JSON Schema and config structs in openai/codex at tag `rust-v0.158.0-alpha.2.1` (the exact release tag for this binary), the feature registry, and probes of the shipped binary with a throwaway `CODEX_HOME`. It lists 965 `config.toml` entries. 502 appear in the official Codex docs, and 463 are undocumented. The entries include 150 feature flags (57 under development, 47 stable, 39 removed, 4 deprecated, 3 experimental), 12 hidden, legacy, or alias keys that the generated schema leaves out, and 6 keys that the official reference lists but this build rejects. The last section lists 171 `requirements.toml` keys for admin-managed policy. Labels: **documented** means the key is in the official config reference or another Codex docs page; **undocumented** means it is only in source and the binary; **hidden** means the schema generator skips it, but the deserializer still recognizes it (sometimes only to raise a targeted error). Descriptions quote the docs where they exist, and the Rust doc comment otherwise. Defaults are shown only where a source states them.
 
 Placeholders: `<id>`, `<name>`, `<key>` and similar stand for any table key you choose; `[]` marks an array of tables. Profiles (`profiles.<name>`) accept a subset of the top-level keys, listed under that entry rather than repeated.
 
@@ -22,8 +22,8 @@ Placeholders: `<id>`, `<name>`, `<key>` and similar stand for any table key you 
 - [Other settings](#other-settings) (4)
 - [Terminal UI keymap](#terminal-ui-keymap) (167)
 - [Hidden, legacy and alias keys (not in the generated schema)](#hidden-legacy-and-alias-keys-not-in-the-generated-schema) (12)
-- [Documented but not accepted by this build](#documented-but-not-accepted-by-this-build) (7)
-- [Managed requirements (requirements.toml)](#managed-requirements-requirementstoml) (158)
+- [Documented but not accepted by this build](#documented-but-not-accepted-by-this-build) (6)
+- [Managed requirements (requirements.toml)](#managed-requirements-requirementstoml) (171)
 
 ## Model and provider selection
 
@@ -911,13 +911,13 @@ Source: `codex-rs/config/src/config_toml.rs:578`, `codex-rs/core/config.schema.j
 
 ### `auto_review.extra_policy`
 
-Type: `string` · Status: undocumented
+Type: `string` · Status: documented
 
-> Additional policy text inserted into the Guardian template's `{{ extra_policy }}` slot.
+> Additional local Markdown policy for automatic review, included alongside the main policy. Managed `guardian_extra_policy` takes precedence. Blank values are ignored.
 >
-> — `codex-rs/config/src/config_toml.rs:576`
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/config/src/config_toml.rs:576`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/config/src/config_toml.rs:576`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `auto_review.policy`
 
@@ -9472,20 +9472,6 @@ Binary check (`--strict-config`): rejected while parsing config.toml (unknown fi
 
 Source: `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
-### `windows.sandbox_private_desktop`
-
-Type: `boolean` · Status: documented; rejected by this binary's config parser (--strict-config probe) · When: Windows only
-
-> Run the final sandboxed child process on a private desktop by default on native Windows. Set `false` only for compatibility with the older `Winsta0\\Default` behavior.
->
-> — [docs](https://developers.openai.com/codex/config-file/config-reference)
-
-Config struct field with this name: none found
-
-Binary check (`--strict-config`): rejected while parsing config.toml (unknown field or wrong type)
-
-Source: `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
-
 ### `windows_wsl_setup_acknowledged`
 
 Type: `boolean` · Status: documented; rejected by this binary's config parser (--strict-config probe)
@@ -9503,6 +9489,16 @@ Source: `codex-rs/core/config.schema.json` · Docs: [config-file/config-referenc
 ## Managed requirements (requirements.toml)
 
 `requirements.toml` is the admin-managed policy file. It constrains what `config.toml` may set. The keys come from the official reference, and the source location is given where a matching field exists.
+
+### `additional_developer_instructions`
+
+Type: `string` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Managed developer instructions added as a separate developer message. Codex rejects instructions that exceed a limit of 10,000 estimated tokens, including context markers.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:199` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
 ### `allow_appshots`
 
@@ -9663,6 +9659,36 @@ Type: `auto | prompt | writes | approve` · Status: documented (requirements.tom
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
 Source: `codex-rs/config/src/config_requirements.rs:902` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `auto_review`
+
+Type: `table` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Managed automatic-review requirements.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:1072` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `auto_review.ignore_rules`
+
+Type: `array<string>` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Full model slugs for which Codex ignores `allow` prefix rules in command execution policy. Match the slug exactly, including its provider namespace when present; unlike `required_on_models`, this does not accept a namespace-free alias. Deny and network rules still apply.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:1082` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `auto_review.required_on_models`
+
+Type: `array<string>` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Model slugs that must use automatic review. Slugs must be non-empty, omit provider namespaces, and have no surrounding whitespace. Lists from multiple requirements sources are combined.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:1081` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
 ### `browser_use`
 
@@ -10154,6 +10180,16 @@ Type: `map<string, allow | deny>` · Status: documented (requirements.toml) · W
 
 Source: `codex-rs/config/src/config_requirements.rs:434` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
+### `experimental_network.domains.<pattern>`
+
+Type: `allow | deny` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Allow or deny sandboxed network access for the matching domain pattern. A deny rule wins when several patterns match.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:434` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
 ### `experimental_network.enabled`
 
 Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
@@ -10198,7 +10234,17 @@ Source: `codex-rs/config/src/config_requirements.rs:430` · Docs: [config-file/c
 
 Type: `map<string, allow | deny>` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
 
-> Administrator-managed Unix socket policy for sandboxed networking.
+> Administrator-managed Unix socket allowlist for sandboxed networking on macOS. Paths must be absolute.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:438` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `experimental_network.unix_sockets.<path>`
+
+Type: `allow | deny` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> On macOS, `allow` adds an absolute Unix socket path to the allowlist; `deny` leaves it out. A `deny` entry cannot block a socket when allow-all Unix sockets is enabled.
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
@@ -10304,6 +10350,36 @@ Type: `boolean` · Status: documented (requirements.toml) · When: requirements.
 
 Source: `codex-rs/config/src/config_requirements.rs:1057` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
+### `features.in_app_chat`
+
+Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Set to `false` to hide ChatGPT and ChatGPT Work conversation screens and related cloud automation UI in the ChatGPT desktop app. This setting does not block ChatGPT Voice or stop existing cloud tasks. Setting it to `true` does not bypass account, workspace-permission, or rollout checks.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `features.in_app_dictation`
+
+Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Set to `false` to disable in-app dictation in the desktop app. Setting it to `true` does not bypass other availability checks.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `features.in_app_local_automation`
+
+Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Set to `false` to disable local scheduled tasks in the desktop app. Setting it to `true` does not bypass other availability checks.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
 ### `features.in_app_updates`
 
 Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
@@ -10354,6 +10430,16 @@ Type: `boolean` · Status: documented (requirements.toml) · When: requirements.
 
 Source: `codex-rs/config/src/config_requirements.rs:189` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
+### `features.realtime_conversation`
+
+Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Set to `false` to disable the experimental `/voice` command in the Codex CLI. Do not rely on this setting to block [ChatGPT Voice](https://developers.openai.com/codex/features/voice) in the desktop app or app-server voice sessions. Setting it to `true` does not bypass client or rollout checks.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
 ### `features.remote_plugin`
 
 Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
@@ -10393,6 +10479,16 @@ Type: `boolean` · Status: documented (requirements.toml) · When: requirements.
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
 Source: `codex-rs/config/src/config_requirements.rs:428` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `guardian_extra_policy`
+
+Type: `string` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Additional managed Markdown policy for automatic review, included alongside the main policy. This takes precedence over local `[auto_review].extra_policy`. Blank values are ignored.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:1076` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
 ### `guardian_policy_config`
 
@@ -10734,6 +10830,36 @@ Type: `string (path)` · Status: documented (requirements.toml) · When: require
 
 Source: `codex-rs/config/src/config_requirements.rs:170` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
 
+### `model_provider`
+
+Type: `string` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Enforce the model provider ID, overriding local and session configuration.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:171` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `model_providers`
+
+Type: `map<string, table>` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Managed model provider definitions. Each entry replaces the complete configured provider with the same ID; fields aren't merged with the user's definition. Providers with other IDs remain available.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:172` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
+### `model_providers.<id>`
+
+Type: `table` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
+
+> Complete managed provider definition. Uses the same provider fields as `config.toml`, including `name`, `base_url`, authentication, and transport settings.
+>
+> — [docs](https://developers.openai.com/codex/config-file/config-reference)
+
+Source: `codex-rs/config/src/config_requirements.rs:172` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
+
 ### `models`
 
 Type: `table` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
@@ -11068,18 +11194,8 @@ Source: `codex-rs/config/src/config_requirements.rs:1058` · Docs: [config-file/
 
 Type: `array<string>` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
 
-> Allowed native Windows sandbox implementations for `windows.sandbox` (`elevated` and `unelevated`). The list must not be empty. When both are allowed and no mode is selected, Codex prefers `elevated`.
+> Allowed legacy native Windows sandbox implementations (`elevated` and `unelevated`). The list must not be empty. When both are allowed and no mode is selected, Codex prefers `elevated`. This list does not restrict the `mxc` sandbox when it is available.
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
 Source: `codex-rs/config/src/config_requirements.rs:872` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)
-
-### `windows.sandbox_private_desktop`
-
-Type: `boolean` · Status: documented (requirements.toml) · When: requirements.toml (admin-managed), not config.toml
-
-> Enforce whether the native Windows sandbox starts its child process on a private desktop.
->
-> — [docs](https://developers.openai.com/codex/config-file/config-reference)
-
-Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference)

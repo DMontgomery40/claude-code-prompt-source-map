@@ -15,28 +15,28 @@
    "label": "Prompt and instructions",
    "kind": "topic",
    "definition": "Settings that supply, replace or toggle text injected into the model's context: base or developer instructions, instruction files, AGENTS.md / project-doc discovery and size limits, compaction or startup prompts, and switches that include or omit context blocks (environment, permissions, apps, collaboration-mode instructions). It applies in any group, including features.* flags and requirements: variants. It does not cover settings that only change model behavior without adding text, or that store transcripts.",
-   "count": 34
+   "count": 36
   },
   {
    "id": "model-reasoning",
    "label": "Model and reasoning",
    "kind": "topic",
    "definition": "Settings that choose which model runs or how it thinks and answers: model slug, reasoning effort and summaries, verbosity, context window and auto-compaction limit, service tier, model catalogs, and per-role or managed defaults for these. It applies in any group, including features.* flags and requirements: variants. It does not cover provider endpoints, credentials or keybindings that change effort.",
-   "count": 35
+   "count": 37
   },
   {
    "id": "auth-providers",
    "label": "Auth, providers and network",
    "kind": "topic",
    "definition": "Settings and environment variables for signing in and reaching model backends: login method and credential storage, API keys and access tokens, model provider definitions and base URLs, cloud-provider credentials (such as AWS/Bedrock), HTTP proxies, CA certificates and request headers. It applies in any group, including requirements: variants. It does not cover the sandbox's network allowlist for commands the agent runs, or MCP-server-specific auth.",
-   "count": 101
+   "count": 104
   },
   {
    "id": "sandbox-approvals",
    "label": "Sandbox and approvals",
    "kind": "topic",
    "definition": "Settings that limit or approve what the agent may execute or touch: sandbox mode and permission profiles, filesystem and network access for commands, approval policy and approvals reviewer (including guardian auto-review), exec-policy / prefix rules, shell environment policy, and variables Codex sets to mark or escalate sandboxed processes. It applies in any group, including features.* flags and requirements: variants. It does not cover keybindings in approval dialogs or generic terminal-detection variables.",
-   "count": 169
+   "count": 173
   },
   {
    "id": "built-in-tools",
@@ -78,7 +78,7 @@
    "label": "Realtime voice",
    "kind": "topic",
    "definition": "Settings for realtime speech sessions and audio devices: realtime transport, model, voice, startup instructions or context, and microphone or speaker selection. It applies in any group, including features.* flags. It does not cover ordinary streaming timeouts or terminal sounds.",
-   "count": 15
+   "count": 16
   },
   {
    "id": "telemetry-storage",
@@ -92,19 +92,19 @@
    "label": "Terminal and desktop UI",
    "kind": "topic",
    "definition": "Settings and environment variables that change how the terminal UI or desktop app looks and behaves for the user: TUI options, keymaps and vim mode, themes and rendering, notices and prompts, desktop-app window or runtime behavior, and terminal detection. It applies in any group. It does not cover what the model can do, or third-party library variables that only happen to be read by the desktop bundle.",
-   "count": 241
+   "count": 240
   },
   {
    "id": "documented",
    "label": "Documented",
    "kind": "status",
-   "count": 660
+   "count": 673
   },
   {
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 464
+   "count": 463
   },
   {
    "id": "hidden",
@@ -128,13 +128,13 @@
    "id": "rejected",
    "label": "Rejected by this build",
    "kind": "status",
-   "count": 7
+   "count": 6
   },
   {
    "id": "requirements",
    "label": "requirements.toml",
    "kind": "status",
-   "count": 158
+   "count": 171
   },
   {
    "id": "stage-under-development",
@@ -531,7 +531,7 @@
    "sandbox-approvals"
   ],
   "config:auto_review.extra_policy": [
-   "undocumented",
+   "documented",
    "prompt-instructions",
    "sandbox-approvals"
   ],
@@ -4256,15 +4256,14 @@
    "rejected",
    "built-in-tools"
   ],
-  "config:windows.sandbox_private_desktop": [
-   "documented",
-   "rejected",
-   "sandbox-approvals",
-   "ui"
-  ],
   "config:windows_wsl_setup_acknowledged": [
    "documented",
    "rejected"
+  ],
+  "config:requirements:additional_developer_instructions": [
+   "documented",
+   "requirements",
+   "prompt-instructions"
   ],
   "config:requirements:allow_appshots": [
    "documented",
@@ -4343,6 +4342,22 @@
   "config:requirements:apps.<id>.tools.<tool>.approval_mode": [
    "documented",
    "requirements",
+   "sandbox-approvals"
+  ],
+  "config:requirements:auto_review": [
+   "documented",
+   "requirements",
+   "sandbox-approvals"
+  ],
+  "config:requirements:auto_review.ignore_rules": [
+   "documented",
+   "requirements",
+   "sandbox-approvals"
+  ],
+  "config:requirements:auto_review.required_on_models": [
+   "documented",
+   "requirements",
+   "model-reasoning",
    "sandbox-approvals"
   ],
   "config:requirements:browser_use": [
@@ -4606,6 +4621,11 @@
    "requirements",
    "sandbox-approvals"
   ],
+  "config:requirements:experimental_network.domains.<pattern>": [
+   "documented",
+   "requirements",
+   "sandbox-approvals"
+  ],
   "config:requirements:experimental_network.enabled": [
    "documented",
    "requirements",
@@ -4625,6 +4645,11 @@
    "requirements"
   ],
   "config:requirements:experimental_network.unix_sockets": [
+   "documented",
+   "requirements",
+   "sandbox-approvals"
+  ],
+  "config:requirements:experimental_network.unix_sockets.<path>": [
    "documented",
    "requirements",
    "sandbox-approvals"
@@ -4676,6 +4701,18 @@
    "built-in-tools",
    "ui"
   ],
+  "config:requirements:features.in_app_chat": [
+   "documented",
+   "requirements"
+  ],
+  "config:requirements:features.in_app_dictation": [
+   "documented",
+   "requirements"
+  ],
+  "config:requirements:features.in_app_local_automation": [
+   "documented",
+   "requirements"
+  ],
   "config:requirements:features.in_app_updates": [
    "documented",
    "requirements"
@@ -4700,6 +4737,11 @@
    "requirements",
    "mcp-plugins"
   ],
+  "config:requirements:features.realtime_conversation": [
+   "documented",
+   "requirements",
+   "realtime-voice"
+  ],
   "config:requirements:features.remote_plugin": [
    "documented",
    "requirements",
@@ -4718,6 +4760,12 @@
    "documented",
    "requirements",
    "telemetry-storage"
+  ],
+  "config:requirements:guardian_extra_policy": [
+   "documented",
+   "requirements",
+   "prompt-instructions",
+   "sandbox-approvals"
   ],
   "config:requirements:guardian_policy_config": [
    "documented",
@@ -4892,6 +4940,22 @@
    "model-reasoning",
    "persistent-mode"
   ],
+  "config:requirements:model_provider": [
+   "documented",
+   "requirements",
+   "model-reasoning",
+   "auth-providers"
+  ],
+  "config:requirements:model_providers": [
+   "documented",
+   "requirements",
+   "auth-providers"
+  ],
+  "config:requirements:model_providers.<id>": [
+   "documented",
+   "requirements",
+   "auth-providers"
+  ],
   "config:requirements:models": [
    "documented",
    "requirements",
@@ -5060,11 +5124,6 @@
    "sandbox-approvals"
   ],
   "config:requirements:windows.allowed_sandbox_implementations": [
-   "documented",
-   "requirements",
-   "sandbox-approvals"
-  ],
-  "config:requirements:windows.sandbox_private_desktop": [
    "documented",
    "requirements",
    "sandbox-approvals"
