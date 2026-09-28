@@ -1,14 +1,14 @@
 // Docs search palette: ⌘K / Ctrl+K anywhere, "/" when not typing, the "Search" pill in the corner
 // links, or ?q=term in the URL. Searches this section's index (dist/<section>/search-index.json,
-// fetched on first use or when the pill is hovered) and, with the toggle or on the landing page,
-// both products'. The ranker and query language are query.js (pure, Node-tested); product paths and
+// fetched on first use or when the pill is hovered) and then its full text (search-text.json,
+// fetched once the palette is open) and, with the toggle or on the landing page, both products'. The ranker and query language are query.js (pure, Node-tested); product paths and
 // labels come from site.js (a copy of site/src/shared/site.mjs). Every URL is resolved against this
 // module's own URL, so the site works from any mount point.
 //
 // Landing on a result reveals it: a tag filter hiding it is cleared, closed <details> open, the
 // home intro goes, and the section is scrolled to and highlighted (the query's words through the
 // CSS Custom Highlight API where supported, an outline around the section always).
-import { KIND, KINDS, groupResults, hasQuery, indexItems, matchRanges, parseQuery, prepare, search } from "./query.js";
+import { KIND, KINDS, attachText, groupResults, hasQuery, indexItems, indexKey, matchRanges, parseQuery, prepare, resultSnippet, search } from "./query.js";
 import { SITE } from "./site.js";
 
 const ROOT = new URL("../", import.meta.url);
@@ -59,6 +59,7 @@ function loadIndex(id) {
         const base = sectionUrl(id);
         const items = indexItems(index, { product: id, label });
         for (const item of items) item.url = new URL(item.href, base).href;
+        keys.set(id, indexKey(index));
         loaded.set(id, items);
         return items;
       })
@@ -66,6 +67,24 @@ function loadIndex(id) {
     indexes.set(id, p);
   }
   return indexes.get(id);
+}
+
+// Each section's full text (search-text.json, larger than the index) is fetched once the palette is
+// open and that section's index has loaded; until it arrives, titles and excerpts are searched. A
+// failed or mismatched file leaves the search as it was.
+const keys = new Map(); // product id → indexKey of the loaded index
+const texts = new Map(); // product id → Promise
+const textDone = new Set(); // product ids whose full text arrived (or can't)
+function loadText(id) {
+  if (!texts.has(id)) {
+    const url = new URL("search-text.json", sectionUrl(id));
+    texts.set(id, fetch(url, { credentials: "same-origin" })
+      .then(r => { if (!r.ok) throw new Error(`${r.status} ${url.pathname}`); return r.json(); })
+      .then(file => { attachText(loaded.get(id), file, keys.get(id)); })
+      .catch(() => { /* titles and excerpts still search */ })
+      .finally(() => textDone.add(id)));
+  }
+  return texts.get(id);
 }
 
 // ---------- state ----------
@@ -272,7 +291,10 @@ function render() {
   const pending = products.filter(id => !loaded.has(id));
   for (const id of pending) loadIndex(id).then(() => { if (!dom.layer.hidden) render(); }, () => { if (!dom.layer.hidden) render(); });
   const failed = products.filter(id => loaded.get(id) instanceof Error);
-  const items = products.flatMap(id => (Array.isArray(loaded.get(id)) ? loaded.get(id) : []));
+  const ready = products.filter(id => Array.isArray(loaded.get(id)));
+  for (const id of ready) if (!texts.has(id)) loadText(id).then(() => { if (!dom.layer.hidden) render(); });
+  const reading = ready.filter(id => !textDone.has(id));
+  const items = ready.flatMap(id => loaded.get(id));
   const multi = products.length > 1;
   dom.dialog.classList.toggle("ds-multi", multi);
 
@@ -303,11 +325,14 @@ function render() {
   }
   if (pending.length) groups.unshift({ title: "", rows: [{ type: "status", text: `Loading the ${pending.map(id => SITE.products[id].label).join(" and ")} index…` }] });
   if (failed.length) groups.unshift({ title: "", rows: [{ type: "status", text: `Couldn't load the ${failed.map(id => SITE.products[id].label).join(" and ")} index. Press Enter to retry.`, retry: true }] });
+  // Below the results, so rows don't move when the full text arrives.
+  const searchingText = q.terms.length > 0 && reading.length > 0;
+  if (searchingText) groups.push({ title: "", rows: [{ type: "status", text: `Searching the full text of ${reading.map(id => SITE.products[id].label).join(" and ")}…` }] });
 
   rows = groups.flatMap(g => g.rows);
   active = Math.min(active, Math.max(0, rows.length - 1));
   renderTabs(items, q, counts, total, querying);
-  renderList(groups, q, multi, querying && !pending.length && !rows.some(r => r.type !== "status"));
+  renderList(groups, q, multi, querying && !pending.length && !searchingText && !rows.some(r => r.type !== "status"));
   const found = querying ? `${total.toLocaleString("en-US")} ${total === 1 ? "result" : "results"}` : "";
   if (dom.status.textContent !== found) dom.status.textContent = found;
 }
@@ -335,7 +360,7 @@ function rowHtml(r, i, q, multi) {
   if (r.type === "more") return `<div ${base}><span class="ds-chip ds-chip-hollow"></span><div class="ds-main"><div class="ds-title"><b>${r.page ? `Show ${Math.min(LIST_STEP, r.n).toLocaleString("en-US")} more` : `Show all ${r.n.toLocaleString("en-US")} ${esc((KIND[r.kind]?.label ?? r.kind).toLowerCase())}`}</b></div></div><kbd class="ds-key">Enter</kbd></div>`;
   const it = r.item;
   const title = marked(it.title, matchRanges(it.title, q, { fuzzy: true }));
-  const snippetSource = it.kind === "command" ? it.sub : it.excerpt || it.when || "";
+  const snippetSource = it.kind === "command" ? it.sub : resultSnippet(it, q);
   const snippet = snippetSource ? `<div class="ds-snip">${marked(snippetSource, matchRanges(snippetSource, q))}</div>` : "";
   const meta = it.kind === "command" ? "" : it.kind === "page" ? [it.category, it.count ? `${it.count.toLocaleString("en-US")} records` : ""].filter(Boolean).join(" · ") : crumbText(it);
   const status = it.documented === false ? `<span class="ds-flag">undocumented</span>` : "";
@@ -389,6 +414,9 @@ function renderPreview(r) {
     add("Where", esc([it.page, ...(it.crumbs ?? [])].filter(Boolean).join(" › ")));
     if (it.when) add("When", marked(it.when, matchRanges(it.when, q)));
     if (it.excerpt) add(it.kind === "h" ? "Text" : "Says", marked(it.excerpt, matchRanges(it.excerpt, q)));
+    // A word found only further into the section: the passage around it.
+    const match = resultSnippet(it, q, 360);
+    if (match && match !== (it.excerpt || it.when || "")) add("Match", marked(match, matchRanges(match, q)));
     if (it.prov?.file) {
       const where = it.prov.offset != null ? ` <span class="ds-pv-dim">offset</span> ${esc(it.prov.offset.toLocaleString("en-US"))}` : it.prov.line != null ? ` <span class="ds-pv-dim">line</span> ${esc(it.prov.line)}` : "";
       add("Source", `<code>${esc(it.prov.file)}</code>${where}${it.prov.version ? ` <span class="ds-pv-dim">·</span> ${esc(it.prov.version)}` : ""}`);
@@ -554,7 +582,8 @@ if (pendingReveal) {
 
 // ?q=term opens the palette with the term.
 const deepQuery = new URLSearchParams(location.search).get("q");
-// The index (up to 1.4 MB) is fetched only on intent: opening, or hovering or focusing the Search pill.
+// The index (up to 1.4 MB) is fetched only on intent: opening, or hovering or focusing the Search
+// pill; the full text (search-text.json, larger) only once the palette is open.
 if (deepQuery != null) open(deepQuery);
 
 // For tests and the console: the module's state and actions.

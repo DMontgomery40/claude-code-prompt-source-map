@@ -2,10 +2,11 @@
 // Every internal link, script and image in the built site (site/dist) must resolve to a file it serves,
 // and every search index entry (dist/<section>/search-index.json) must lead to a page that exists and
 // to an id that page has. Index hrefs are computed by the palette's own itemHref (search/query.js).
+// Each index's full text (search-text.json) must be the one built from that index (query.js indexKey).
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { itemHref } from "../site/src/shared/search/query.js";
+import { indexKey, itemHref } from "../site/src/shared/search/query.js";
 
 const dist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../site/dist");
 if (!existsSync(dist)) { console.error("build the site first (npm run build)"); process.exit(1); }
@@ -47,6 +48,10 @@ for (const section of indexes) {
     if (!ids) broken.push(`${section}/search-index.json -> ${href} (no such page)`);
     else if (id && !ids.has(decodeURIComponent(id))) broken.push(`${section}/search-index.json -> ${href} (no such id)`);
   }
+  const textFile = path.join(dist, section, "search-text.json");
+  const text = existsSync(textFile) ? JSON.parse(readFileSync(textFile, "utf8")) : null;
+  if (!text) broken.push(`${section}/search-text.json missing`);
+  else if (text.k !== indexKey(index) || text.t?.length !== all.length) broken.push(`${section}/search-text.json was not built from ${section}/search-index.json`);
 }
 if (!indexes.length) broken.push("no search-index.json in any section");
 

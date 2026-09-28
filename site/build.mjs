@@ -7,6 +7,7 @@ import { SITE, productOrigin } from "./src/shared/site.mjs";
 import { buildTrace } from "./src/shared/trace-build.mjs";
 import { renderLanding } from "./src/shared/landing.mjs";
 import { SEARCH_CLIENT_FILES } from "./src/shared/search-ui.mjs";
+import { writeSearchText } from "./src/shared/search-index.mjs";
 import { buildSite as buildClaudeCode } from "./src/claude-code/build-site.mjs";
 import { categories as claudeCodeCategories } from "./src/claude-code/catalog.mjs";
 import { site as claudeCodeSite } from "./src/claude-code/config.mjs";
@@ -30,6 +31,9 @@ for (const product of PRODUCTS) {
   const section = SITE.products[product.id].path;
   await product.build({ sourceRoot: path.join(repoRoot, product.id), outFile: path.join(dist, section, "index.html"), categories: product.categories });
   for (const file of product.assets) await copyFile(path.join(siteRoot, "assets", product.id, file), path.join(dist, section, file));
+  // The section's full text for the search palette, from the pages just built.
+  const bytes = await writeSearchText(path.join(dist, section));
+  if (process.env.SEARCH_INDEX_QUIET !== "1") console.log(`search text ${product.id}: ${(bytes / 1e6).toFixed(1)} MB`);
 }
 
 // One viewer, one index file holding both products; the viewer picks by the session's product.
