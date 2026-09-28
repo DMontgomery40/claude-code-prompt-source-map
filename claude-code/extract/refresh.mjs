@@ -8,7 +8,7 @@
 // The last stdout line is JSON: {changed, needs_review, sources}.
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { closeSync, cpSync, existsSync, mkdirSync, openSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { isDerived, knobIndex, validateDecision } from "./decisions-lib.mjs";
 
@@ -129,8 +129,12 @@ try {
 
   // 3. What the default requests look like now, and what --help says.
   run(node, ["extract/capture.mjs", binary, path.join(release, "capture")], { breakCode: 2 });
-  const helpNow = spawnSync(binary, ["--help"], { encoding: "utf8" }).stdout;
-  writeFileSync(path.join(release, "help.txt"), helpNow);
+  // The binary exits before a pipe drains (2.1.284 cut --help at 120 and 230 of 311 lines), so
+  // --help goes straight to a file.
+  const helpFile = path.join(release, "help.txt");
+  const helpFd = openSync(helpFile, "w");
+  try { spawnSync(binary, ["--help"], { stdio: ["ignore", helpFd, "ignore"] }); } finally { closeSync(helpFd); }
+  const helpNow = readFileSync(helpFile, "utf8");
   const previousRelease = previousVersion ? path.join(work, "releases", previousVersion) : null;
   const captureDiff = previousRelease && existsSync(path.join(previousRelease, "capture")) ? compareCaptures(path.join(previousRelease, "capture"), path.join(release, "capture")) : [];
   const helpBefore = previousRelease && existsSync(path.join(previousRelease, "help.txt")) ? readFileSync(path.join(previousRelease, "help.txt"), "utf8") : null;

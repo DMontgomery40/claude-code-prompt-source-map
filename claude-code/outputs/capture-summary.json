@@ -1,5 +1,5 @@
 {
- "version": "2.1.283",
+ "version": "2.1.284",
  "cli": {
   "entrypoint": "cli",
   "identity": "You are Claude Code, Anthropic's official CLI for Claude.",
@@ -38,7 +38,7 @@
    "Write"
   ],
   "system_blocks": 3,
-  "main_prompt_chars": 6062,
+  "main_prompt_chars": 6066,
   "trailing_role": "system",
   "trailing_chars": 9598,
   "betas": [
@@ -102,7 +102,7 @@
    "Write"
   ],
   "system_blocks": 3,
-  "main_prompt_chars": 5803,
+  "main_prompt_chars": 5807,
   "trailing_role": "system",
   "trailing_chars": 7646,
   "betas": [

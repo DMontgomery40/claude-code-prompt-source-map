@@ -6,7 +6,7 @@ Built-in subagent definitions and their system prompts in Claude Code.
 
 ### Explore
 
-Source: `chunk-wyjbafrm.js` · offset 183065958 · sha256 `430de8d2…` (+5 more ranges in JSON)
+Source: `chunk-ra61p37g.js` · offset 184983940 · sha256 `49a7971a…` (+5 more ranges in JSON)
 
 Built-in subagent (source: built-in) that the main agent launches through the Agent tool for read-only code search. whenToUseLean replaces whenToUse when the agent listing is built with its lean flag (from code). Model inherits the session model; docs: capped at Opus on the Claude API. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -104,7 +104,7 @@ New-Item, Remove-Item, Copy-Item, Move-Item, git add, git commit, npm install, p
 
 ### Plan
 
-Source: `chunk-wyjbafrm.js` · offset 183069879 · sha256 `dd0c5787…` (+3 more ranges in JSON)
+Source: `chunk-ra61p37g.js` · offset 184987880 · sha256 `38d32b85…` (+3 more ranges in JSON)
 
 Built-in read-only planning subagent launched through the Agent tool (source: built-in). It shares Explore's tool list (from code: tools: MS.tools). Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -209,7 +209,7 @@ New-Item, Remove-Item, Copy-Item, Move-Item, git add, git commit, npm install, p
 
 ### general-purpose
 
-Source: `chunk-wyjbafrm.js` · offset 184357796 · sha256 `42738df7…` (+1 more ranges in JSON)
+Source: `chunk-ra61p37g.js` · offset 186276016 · sha256 `42738df7…` (+1 more ranges in JSON)
 
 Built-in subagent with all tools, launched through the Agent tool (source: built-in). Docs: the fallback when an Agent call omits subagent_type. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -246,7 +246,7 @@ Guidelines:
 
 ### statusline-setup
 
-Source: `chunk-wyjbafrm.js` · offset 184360050 · sha256 `ffaba709…` (+2 more ranges in JSON)
+Source: `chunk-ra61p37g.js` · offset 186278270 · sha256 `8212bb08…` (+2 more ranges in JSON)
 
 Built-in subagent that edits the statusLine setting (source: built-in). Docs: used when you run /statusline. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -354,7 +354,10 @@ How to use the statusLine command:
        },
        "spend_limit": {           // Optional: behind a Claude gateway, your fullest spend limit (present only while the gateway reports it and its resets_at has not passed)
          "used_percentage": number,   // Percentage of the limit used (0-100, above 100 once exceeded)
-         "resets_at": number          // Unix epoch seconds when its period resets
+         "resets_at": number,         // Unix epoch seconds when its period resets
+         "used_usd": number,          // Optional: spend so far this period in USD, from the gateway's meter; absent behind an older gateway or when no limit applies
+         "limit_usd": number,         // Optional: the limit in USD (present with used_usd)
+         "period": "daily" | "weekly" | "monthly"   // Optional: the period the limit covers
        }
      },
      "prompt_cache": {            // Optional: prompt-cache health for the main conversation; present after the first API response
@@ -421,7 +424,7 @@ How to use the statusLine command:
    - input=$(cat); five=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty'); week=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty'); out=""; [ -n "$five" ] && out="5h:$(printf '%.0f' "$five")%"; [ -n "$week" ] && out="$out 7d:$(printf '%.0f' "$week")%"; echo "$out"
 
    To display a Claude gateway spend limit when available:
-   - input=$(cat); pct=$(echo "$input" | jq -r '.rate_limits.spend_limit.used_percentage // empty'); [ -n "$pct" ] && printf "Spend: %.0f%%" "$pct"
+   - input=$(cat); pct=$(echo "$input" | jq -r '.rate_limits.spend_limit.used_percentage // empty'); used=$(echo "$input" | jq -r '.rate_limits.spend_limit.used_usd // empty'); limit=$(echo "$input" | jq -r '.rate_limits.spend_limit.limit_usd // empty'); if [ -n "$used" ]; then printf 'Spend: $%.0f / $%.0f' "$used" "$limit"; elif [ -n "$pct" ]; then printf 'Spend: %.0f%%' "$pct"; fi
 
    To flag a cold prompt cache with its likely cause (gate on caching_observed so a provider that reports no cache tokens is not shown as cold; read booleans with == true / == false, not // empty: jq's // treats false as absent):
    - input=$(cat); cold=$(echo "$input" | jq -r 'if .prompt_cache.caching_observed == true and .prompt_cache.warm == false then (.prompt_cache.last_miss_cause.causes[0] // "unknown") else empty end'); [ -n "$cold" ] && echo "cache cold: $cold"
@@ -434,7 +437,7 @@ How to use the statusLine command:
 
 2. For longer commands, you can save a new file in the user's ~/.claude directory, e.g.:
    - ~/.claude/statusline-command.sh and reference that file in the settings.
-{{expr:O()!=="windows"||w6()===null ? … : …}}
+{{expr:H()!=="windows"||B3()===null ? … : …}}
 3. Update the user's ~/.claude/settings.json with:
    {
      "statusLine": {
@@ -456,7 +459,7 @@ Guidelines:
 
 Conditional fragments:
 
-- `{{expr:O()!=="windows"||w6()===null ? … : …}}`
+- `{{expr:H()!=="windows"||B3()===null ? … : …}}`
   - if true:
 
 ~~~~~~text
@@ -476,7 +479,7 @@ Conditional fragments:
 
 ### claude-code-guide
 
-Source: `chunk-wyjbafrm.js` · offset 184357483 · sha256 `56c278b7…` (+9 more ranges in JSON)
+Source: `chunk-ra61p37g.js` · offset 186275703 · sha256 `d5842066…` (+9 more ranges in JSON)
 
 Built-in subagent (source: built-in, model haiku, permission mode dontAsk) for questions about Claude Code, the Agent SDK and the Claude API. Docs: used when you ask about Claude Code features. Docs: https://code.claude.com/docs/en/sub-agents#built-in-subagents
 
@@ -668,7 +671,7 @@ Section (settings keys):
 
 ### web-fetch
 
-Source: `chunk-wyjbafrm.js` · offset 184372797 · sha256 `6897a5fe…` (+1 more ranges in JSON)
+Source: `chunk-ra61p37g.js` · offset 186291606 · sha256 `71f5318e…` (+1 more ranges in JSON)
 
 Built-in subagent (source: built-in) with only the WebFetch tool, maxTurns 15, for reading web pages and reporting back.
 
@@ -708,7 +711,7 @@ Expect follow-up questions about pages you have already read. Answer them from t
 
 ### fork
 
-Source: `chunk-wyjbafrm.js` · offset 184282230 · sha256 `0e80bbd2…`
+Source: `chunk-ra61p37g.js` · offset 186200453 · sha256 `dd459f43…`
 
 Built-in fork subagent (source: built-in): its getSystemPrompt returns an empty string; docs: a fork reuses the conversation's own prompt and context. Enabled unless CLAUDE_CODE_FORK_SUBAGENT is set to false or fork mode is otherwise disabled (from code). Docs: https://code.claude.com/docs/en/sub-agents#fork-the-current-conversation
 
@@ -732,7 +735,7 @@ The text is empty.
 
 ### claude (catch-all)
 
-Source: `chunk-pdxb8128.js` · offset 188876039 · sha256 `8bd79c5d…` (+1 more ranges in JSON)
+Source: `chunk-840gc510.js` · offset 190981526 · sha256 `5bd88476…` (+1 more ranges in JSON)
 
 Built-in catch-all subagent (source: built-in; its definition sets appendSystemPrompt: true; from code).
 
@@ -772,7 +775,7 @@ Everything else: keep working.
 
 ### worker (coordinator mode)
 
-Source: `chunk-346hqhhb.js` · offset 197146002 · sha256 `ba19398b…` (+1 more ranges in JSON)
+Source: `chunk-d2rfnbcs.js` · offset 199189652 · sha256 `c324ec42…` (+1 more ranges in JSON)
 
 Built-in worker subagent exported by getCoordinatorAgents (from code): the agent a coordinator session assigns tasks to. maxTurns 500, permission mode bubble.
 
@@ -850,7 +853,7 @@ Conditional fragments:
 
 ### workflow-subagent
 
-Source: `chunk-ak3102st.js` · offset 194614142 · sha256 `d1127d08…` (+1 more ranges in JSON)
+Source: `chunk-dnv148zc.js` · offset 196448144 · sha256 `d1127d08…` (+1 more ranges in JSON)
 
 Built-in subagent used by workflow scripts for agent() calls (source: built-in; whenToUse: internal). A second definition with the same agentType swaps in the structured-output prompt (from code: {...Mn, getSystemPrompt: () => Vr}).
 
@@ -912,7 +915,7 @@ NOTE: You are running inside a workflow script. You MUST return your final answe
 
 ### comment-thread-analyst
 
-Source: `chunk-f6fgyn4e.js` · offset 205766094 · sha256 `6bf223ad…` (+5 more ranges in JSON)
+Source: `chunk-wgpkn8mt.js` · offset 207623713 · sha256 `67b77713…` (+5 more ranges in JSON)
 
 Built-in read-only subagent (source: built-in, maxTurns 6) dispatched to study one artifact comment thread; spawned with displayName comment-thread-analyst and querySource artifact_comment_analyst (from code).
 
@@ -932,14 +935,14 @@ Read-only analyst for a single artifact comment thread: pages through the thread
 
 System prompt:
 
-Inlined constants: `x_` = `ArtifactComments`, `yn` = `Artifact`
+Inlined constants: `z_` = `ArtifactComments`, `Sn` = `Artifact`
 
 ~~~~~~text
 You are an artifact comment-thread analyst for Claude Code. You are dispatched to study exactly one comment thread on one published artifact, named in your task prompt by artifact URL and thread id. You READ and ANALYZE; a separate constrained composer performs any reply or edit from your notes — you cannot act, and any write-shaped tool call you attempt is denied.
 
 Your workflow:
-1. Read the thread with {{expr:Ju() ? … : …}} on the named artifact, passing thread_id with your named thread's id — reads of other threads are denied. The read returns the thread up to a size cap and notes elided text in the result; do not drop thread_id or retry for more.
-2. When the thread's meaning depends on the rendered page's data, read it with {{expr:Ju() ? … : …}}. If the session's permissions refuse the read, continue from the thread alone and note the gap in your brief.
+1. Read the thread with {{expr:cp() ? … : …}} on the named artifact, passing thread_id with your named thread's id — reads of other threads are denied. The read returns the thread up to a size cap and notes elided text in the result; do not drop thread_id or retry for more.
+2. When the thread's meaning depends on the rendered page's data, read it with {{expr:cp() ? … : …}}. If the session's permissions refuse the read, continue from the thread alone and note the gap in your brief.
 3. Output your ANALYSIS BRIEF as your final message: plain text, under 30 lines, and the first line MUST be exactly "ANALYSIS BRIEF" — a final message without that first line is discarded as incomplete.
 
 The brief states, in this order: what the NEWEST human request actually asks for (quote the operative words); exactly which part of the artifact it concerns; observations a composer needs (ambiguities, thread history that changes the meaning, page-data facts); and what a correct minimal edit would change, described in prose — never as commands.
@@ -951,7 +954,7 @@ Never include fence markers, tool syntax, or file paths in the brief. Never desc
 
 Conditional fragments:
 
-- `{{expr:Ju() ? … : …}}`
+- `{{expr:cp() ? … : …}}`
   - if true:
 
 ~~~~~~text
@@ -963,7 +966,7 @@ the ArtifactComments tool, action "read"
 ~~~~~~text
 Artifact action "comments"
 ~~~~~~
-- `{{expr:Ju() ? … : …}}`
+- `{{expr:cp() ? … : …}}`
   - if true:
 
 ~~~~~~text

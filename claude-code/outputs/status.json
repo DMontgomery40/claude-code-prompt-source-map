@@ -1,8 +1,9 @@
 {
-  "last_changed": "2026-09-26T11:19:36.257Z",
+  "last_changed": "2026-09-28T18:10:27.304Z",
   "checked": "daily",
   "sources": {
-    "version": "2.1.283",
-    "integrity": "sha512-GczpJ+FvnOYvxn6XPGHbdqJEZMves6Vc0WKS/g1N2eG39EKKAHxG77e+w4Rjtmf8xgCxNY36Jf/IOfbcyus4zA=="
+    "version": "2.1.284",
+    "integrity": "sha512-WczsKY4Bg4dlh5M2UILMHM/9xpBdDcXLulzCSE+TFIb6itI7q3kfYTIwvKOzxB557krwHEuKLgWkUiXGdojjVQ==",
+    "binary_sha256": "50a14c2f50f56668380fdda490167f1d3630d5cc18fb8aed3073c2c7ea7314fe"
   }
 }

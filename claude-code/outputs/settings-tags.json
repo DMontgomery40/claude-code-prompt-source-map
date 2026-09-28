@@ -50,7 +50,7 @@
    "label": "Models, thinking and context window",
    "kind": "topic",
    "definition": "settings.json keys that choose which Claude model runs, how much it thinks, and how much it holds. Counts: the model, fallback models, the allowlist of selectable models and /model picker entries; effort, maximum effort and per-model settings; ultracode's effort; thinking on or off and thinking summaries; fast mode; the advisor model; switching models when safeguards flag a message; and auto-compaction on or off, its window, and precomputed compaction. Applies whatever group the key is in. Does NOT include mapping model IDs to provider-specific IDs (Providers), prompt-cache TTLs (Prompt caching), prices used for cost figures (modelPricing), or text injected into the prompt, including budgets for how much of the context window the skill listing may use (Prompt and instructions).",
-   "count": 20
+   "count": 22
   },
   {
    "id": "prompt-instructions",
@@ -139,7 +139,7 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 45
+   "count": 47
   },
   {
    "id": "internal",
@@ -163,7 +163,7 @@
    "id": "fixed-values",
    "label": "Fixed values",
    "kind": "status",
-   "count": 37
+   "count": 38
   },
   {
    "id": "invalid-value-dropped",
@@ -1339,6 +1339,15 @@
   ],
   "setting-xaa-idp--callback-port": [
    "authentication",
+   "undocumented"
+  ],
+  "setting-available-models-match": [
+   "models-context",
+   "undocumented",
+   "fixed-values"
+  ],
+  "setting-denied-models": [
+   "models-context",
    "undocumented"
   ],
   "setting-prepend-plugins": [
