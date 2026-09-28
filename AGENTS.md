@@ -22,7 +22,10 @@ It is **not** about token cost or the fact that context is re-read every turn. D
   - Trace is `site/trace/`. It is shared by both products and picks the reference index by the session's
     product.
 - **Redirects** for the retired hosts: `site/redirects/`.
-- **Watcher** (disabled): `watch/`.
+- **Watcher:** `watch/`, hourly at :07 (launchd `com.dtmont.prompt-watch`), from its own clone `~/harness-watch`. Each
+  cycle refreshes both products, runs the Jev sweeps and the Build intel scans (new surfaces, package scan,
+  binwalk), runs `npm run check`, deploys, commits and pushes. `git pull` before any manual `wrangler deploy`, or
+  you roll back what it published. Turn it off with `watch/install-launchd.sh --remove`.
 - **Video pipelines:** `video/teaser`, `video/explainer`. Their media is in `private/video/`.
 - **Docs:** `docs/specs`, `docs/plans`, `docs/harness-layer.md`.
 - **Private (gitignored, local only):** `private/sessions` (frozen Claude Code and Codex/ChatGPT
