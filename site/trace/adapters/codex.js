@@ -92,7 +92,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
     const role = msg.role;
     const made = [];
     const gs = { inT: false, planned: false, asked: false };
-    content.forEach((c, k) => {
+    const one = (c, k) => {
       const path = pathBase.concat(["content", k]);
       const kind0 = kinds[k] || "";
       if (c.type === "input_image" || c.type === "image") {
@@ -167,7 +167,9 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       if (kind0 === "goal.internal_context") { made.push(addBlock(agent, { t, kind: "you", label: "goal (your objective)", ref: { ...lineRef, path: tpath }, text, carried, own: true, source: "goal", userSpans: between(text, /<objective>\n?/, /\n?<\/objective>/) })); return; }
       const label = kind0 === "environments.environment_context" ? "environment_context" : kind0 || firstLine(text);
       made.push(addBlock(agent, { t, kind: "injected", label, ref: { ...lineRef, path: tpath }, text, carried }));
-    });
+    };
+    // Each block remembers its content part: a capture's usage attribution counts tokens per part.
+    content.forEach((c, k) => { const n0 = made.length; one(c, k); for (let j = n0; j < made.length; j++) made[j].part = k; });
     return made;
   }
 
@@ -215,8 +217,13 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
 
   let lineRef = null;
   let rowNo = -1;
+  // Blocks made from a response_item row carry its id (msg_…, ctc_…, ctco_…): a capture's usage attribution
+  // names input items by these ids. Tagged when the next row starts, once the row's blocks exist.
+  let tagFrom = 0, tagId = null;
+  const flushTag = () => { if (tagId) for (let j = tagFrom; j < agent.blocks.length; j++) agent.blocks[j].itemId = tagId; tagId = null; };
   for await (const line of readLines(source, { onProgress })) {
     rowNo++;
+    flushTag();
     let r;
     try { r = JSON.parse(line.text); } catch { if (!line.partial) th.badLines++; continue; }
     th.bytesRead = line.offset + line.length + (line.partial ? 0 : 1);
@@ -312,6 +319,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       continue;
     }
     if (r.type !== "response_item") continue;
+    if (typeof p.id === "string" && p.id) { tagFrom = agent.blocks.length; tagId = p.id; }
 
     const pb = ["payload"];
     if (p.type === "message") {
@@ -383,6 +391,7 @@ export async function parseCodexThread(source, fileIndex, { onProgress, index = 
       continue;
     }
   }
+  flushTag();
   for (const call of calls.values()) finishCall(call);
   return th;
 }

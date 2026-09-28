@@ -79,6 +79,13 @@ on 2026-09-27.
   - **Size.** The literal index is 1.7 MB (Claude Code) and 1.2 MB (Codex/ChatGPT) gzipped, and loads
     only when the layer opens.
 
+## Beside it: the network layer (2026-09-28)
+A network capture (HAR) attached to the session adds lens 5, "What went over the wire", and an "On the
+wire" card in the request inspector. They show what the log can't: the system blocks and tools as sent,
+betas, flags, `client_data`, telemetry decisions, and requests that are not in the log. They also show
+where credentials and identity travel. Like this layer it is reached from the landscape and never opens
+first. See `docs/specs/2026-09-28-network-layer.md`.
+
 ## Where the work in progress lives
 Locally, in the gitignored `private/research/restart/`. That covers the brief, discovery scans, the four
 prototypes with their reports, and the combined build (`combined/`: data builders, the page,

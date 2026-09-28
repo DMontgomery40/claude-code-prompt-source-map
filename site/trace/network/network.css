@@ -1,0 +1,76 @@
+/* The network layer (network/panel.js): a capture attached to the session. Same tokens as trace.css. */
+.side-actions { display: flex; gap: 14px; align-items: center; }
+.net-status {
+  margin: 0 0 4px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+  color: var(--ink-2); font-size: 12.5px; flex: none;
+}
+.net-status[data-kind=ok] { border-color: #3d6b4a; }
+.net-status[data-kind=error] { border-color: #8a4b3a; color: #ffc49b; }
+.net-status[data-kind=busy] { border-color: #3a4f6b; }
+.net-sec h4, .net-card h4 { font-size: 12.5px; color: var(--ink-3); margin: 12px 0 6px; font-weight: 650; letter-spacing: .01em; }
+.net-source { margin: 4px 0 8px; }
+.net-notes { margin: 4px 0 0; padding-left: 18px; }
+.net-fold { margin: 6px 0; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; background: #0b0f15; }
+.net-fold > summary { cursor: pointer; color: var(--ink-2); font-size: 13.5px; padding: 3px 0; }
+.net-fold[open] > summary { margin-bottom: 4px; }
+.net-entries { list-style: none; padding: 0; margin: 4px 0 8px; display: grid; gap: 3px; font-size: 12.5px; }
+.net-entries code { color: var(--ink-2); overflow-wrap: anywhere; }
+.net-bodies { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+.net-bodies .linkbtn { font-size: 12px; }
+.net-actions { margin: 6px 0; }
+.net-chip { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 6px; border: 1px solid var(--line-2); font-size: 11.5px; color: var(--ink-2); background: #121821; }
+.net-chip.warn, .net-chip.third { border-color: #8a5a3a; color: #ffc49b; }
+.net-chip.first { border-color: #33506e; color: #b9d6f5; }
+.net-rule { display: inline-grid; place-items: center; min-width: 18px; height: 18px; margin-left: 5px; border-radius: 9px; background: #4a2a1c; color: #ffd2b5; font-size: 11.5px; font-weight: 700; padding: 0 5px; cursor: help; }
+.net-rules { margin: 6px 0 10px; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+.net-rules li { font-size: 13px; }
+.panel .net-rules .note { display: inline; }
+.net-transit-list { gap: 6px; }
+.net-transit { border-left: 3px solid var(--line-2); padding: 3px 0 3px 9px; }
+.net-transit.flagged { border-left-color: var(--warn); }
+.net-transit-head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; }
+.net-cat { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3); margin-right: 4px; }
+.net-cat.credential { color: #ffb38a; }
+.net-cat.identity { color: #b9d6f5; }
+.net-focus { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+.net-betas { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; font-size: 13px; }
+.net-doc { font-family: var(--mono); font-size: 12.5px; overflow-wrap: anywhere; }
+.net-counts { list-style: none; padding: 0; margin: 4px 0; columns: 2; column-gap: 18px; font-size: 12.5px; }
+.net-counts li { break-inside: avoid; overflow-wrap: anywhere; }
+.net-timeline { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 5px; font-size: 13px; }
+.net-timeline b { font-family: var(--mono); font-size: 12.5px; font-weight: 600; }
+.net-meta { overflow-wrap: anywhere; }
+.net-scroll { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+.net-flags td code { overflow-wrap: anywhere; }
+.net-flags td:first-child { max-width: 220px; overflow-wrap: anywhere; }
+.net-json { max-height: 240px; overflow: auto; background: #080a0e; border: 1px solid var(--line); border-radius: 8px; padding: 8px; font: 12.5px/1.45 var(--mono); white-space: pre-wrap; }
+.net-gauges { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.net-gauge { display: grid; grid-template-columns: minmax(80px, 1fr) 2fr auto 120px; align-items: center; gap: 8px; font-size: 13px; }
+.net-gauge-name { color: var(--ink-2); overflow-wrap: anywhere; }
+.net-bar { height: 8px; background: #1a212c; border-radius: 4px; overflow: hidden; }
+.net-bar i { display: block; height: 100%; background: #5f9be6; }
+.net-spark { width: 120px; height: 24px; }
+.net-spark polyline { fill: none; stroke: #93c7ff; stroke-width: 1.5; }
+.net-card { border: 1px solid #33506e; border-radius: 10px; padding: 10px 12px; background: #0b111a; }
+.net-card > h3 { color: #b9d6f5; }
+.net-sub { margin-top: 8px; }
+.net-kv { grid-template-columns: minmax(80px, auto) minmax(0, 1fr); }
+.net-kv dd { min-width: 0; overflow-wrap: anywhere; }
+.net-kv dd code { overflow-wrap: anywhere; }
+.net-blocks { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 13px; }
+.net-blocks li.billing b { color: #ffc49b; }
+.panel .net-blocks .meta { display: block; overflow-wrap: anywhere; }
+.net-tools, .net-betas-inline { margin: 0; line-height: 1.9; font-size: 12.5px; }
+.net-tool { display: inline-block; padding: 0 6px; border: 1px solid var(--line-2); border-radius: 6px; font-family: var(--mono); margin: 0 2px 2px 0; }
+.net-tool.deferred { border-style: dashed; color: var(--ink-3); }
+.net-list { margin: 0; padding-left: 18px; font-size: 13px; display: grid; gap: 3px; }
+.net-list li { overflow-wrap: anywhere; }
+.net-list li.flagged::marker { color: var(--warn); }
+.net-attr tr.net-miss td { color: #ffc49b; }
+.lenses.with-network button[data-lens=network] { grid-column: 1 / -1; }
+.lenses.with-network button[data-lens=network] .lens-icon { color: #93c7ff; }
+@media (max-width: 980px) {
+  .net-gauge { grid-template-columns: 1fr 1fr auto; }
+  .net-spark { display: none; }
+  .net-counts { columns: 1; }
+}

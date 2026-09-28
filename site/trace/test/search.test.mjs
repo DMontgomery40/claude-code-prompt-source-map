@@ -221,3 +221,37 @@ test("playback keys: six rows of their own, each a palette command; Space, , . <
   assert.equal(keyFor(ev(" ", { metaKey: true })), null);
   // Where Space plays, and that the page keeps it when playback declines: ui.test.mjs, on the fake DOM.
 });
+
+// ---------- the Network scope: a capture's names, each leading somewhere that exists ----------
+test("network entries: endpoints, flags, betas, events, headers, calls and sensitive data, all reachable", async () => {
+  const { buildNetworkEntries } = await import("../search.js");
+  const { analyzeCapture } = await import("../network/capture.js");
+  const { readFileSync } = await import("node:fs");
+  const NET = FIX + "network/";
+  for (const [dir, file] of [["claude", "claude.har"], ["codex", "codex.har"]]) {
+    const { trace, capture } = await withFixture(`network/${dir}`, async trace => ({ trace, capture: (await analyzeCapture([{ name: file, text: readFileSync(NET + file, "utf8") }], trace)).capture }));
+    const entries = buildNetworkEntries(capture);
+    const sections = new Set(entries.map(e => e.section));
+    for (const s of ["endpoint", "beta", "event", "header", "call", "transit"]) assert.ok(sections.has(s), `${dir}: no ${s} entries`);
+    if (dir === "claude") assert.ok(sections.has("flag"));
+    for (const e of entries) {
+      assert.equal(e.kind, "network");
+      if (e.go.type === "request") assert.ok(trace.agents.find(a => a.id === e.go.agentId)?.requests[e.go.reqIdx], `${dir}: ${e.title} names a missing request`);
+      else assert.equal(e.go.type, "network");
+    }
+    const words = q => search(entries, q, { limit: 50 }).results;
+    if (dir === "claude") {
+      assert.ok(words("datadog").some(e => e.section === "endpoint"), "datadog finds the Datadog sink");
+      assert.ok(words("datadog").some(e => e.section === "transit"), "datadog finds what was sent to it");
+      assert.ok(words("email").some(e => e.section === "transit" && e.title === "email"));
+      assert.ok(words("tengu_velvet_tide").some(e => e.section === "flag"));
+      assert.ok(words("context-1m").some(e => e.section === "beta"));
+      assert.ok(words("not in your log").some(e => e.section === "call"));
+    } else {
+      assert.ok(words("jwt").some(e => e.section === "transit" && e.title === "JWT"));
+      assert.ok(words("prewarm").some(e => e.section === "call"));
+      assert.ok(words("token").some(e => e.section === "transit"));
+    }
+  }
+  assert.deepEqual(buildNetworkEntries(null), []);
+});
