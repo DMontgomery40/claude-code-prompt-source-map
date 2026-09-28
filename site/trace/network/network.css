@@ -54,6 +54,9 @@
 .net-card { border: 1px solid #33506e; border-radius: 10px; padding: 10px 12px; background: #0b111a; }
 .net-card > h3 { color: #b9d6f5; }
 .net-sub { margin-top: 8px; }
+.net-kv { grid-template-columns: minmax(80px, auto) minmax(0, 1fr); }
+.net-kv dd { min-width: 0; overflow-wrap: anywhere; }
+.net-kv dd code { overflow-wrap: anywhere; }
 .net-blocks { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 13px; }
 .net-blocks li.billing b { color: #ffc49b; }
 .panel .net-blocks .meta { display: block; overflow-wrap: anywhere; }
