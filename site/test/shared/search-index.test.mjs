@@ -146,6 +146,12 @@ test("production: every Codex/ChatGPT page with a records file gets its records"
     assert.deepEqual([top.kind, top.href, top.prov.file], ["setting", "codex-config/#chatgpt-base-url", "codex-rs/config/src/config_toml.rs"]);
     // The display-path rewrite reaches the index as it reaches the pages.
     assert.doesNotMatch(JSON.stringify(index), /token-gremlin/);
+    // The Search pill is hidden without script (html:not(.js)), so every page carrying it must mark the page as scripted.
+    for (const file of ["index.html", "key-findings/index.html"]) {
+      const page = await readFile(path.join(outDir, file), "utf8");
+      assert.match(page, /<button class="search-link"[^>]*data-search-section="codex"/, file);
+      assert.match(page, /<script>document\.documentElement\.classList\.add\("js"\)<\/script>/, file);
+    }
   } finally {
     if (saved === undefined) delete process.env.SEARCH_INDEX_QUIET; else process.env.SEARCH_INDEX_QUIET = saved;
     await rm(outDir, { recursive: true, force: true });
@@ -174,8 +180,10 @@ test("production: the Claude Code index resolves every item to an id on its stan
     assert.match(home, /<script type="module" src="\.\.\/search\/palette\.js"><\/script>/);
     assert.match(hooksPage, /<script type="module" src="\.\.\/\.\.\/search\/palette\.js"><\/script>/);
     for (const html of [home, hooksPage]) assert.match(html, /<div class="corner-links">[\s\S]*?<button class="search-link"[^>]*data-search-section="claude-code"[\s\S]*?<\/div>/);
+    for (const html of [home, hooksPage]) assert.match(html, /<script>document\.documentElement\.classList\.add\("js"\)<\/script>/);
     const landing = renderLanding();
     assert.match(landing, /<button class="search-field"[^>]*data-search-section="all"/);
+    assert.match(landing, /<script>document\.documentElement\.classList\.add\("js"\)<\/script>/);
     assert.match(landing, /<script type="module" src="search\/palette\.js"><\/script>/);
     // Every suggested page exists (config.mjs searchFeatured).
     assert.deepEqual(index.pages.filter(p => p.f).map(p => p.s).sort(), [...site.searchFeatured].sort());

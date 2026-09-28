@@ -18,3 +18,4 @@ video/*/edit/node_modules/
 video/*/edit/out/
 video/*/edit/public/
 __pycache__/
+.claude/worktrees/

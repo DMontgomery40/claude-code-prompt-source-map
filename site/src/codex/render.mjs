@@ -334,6 +334,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
   <meta name="twitter:image:alt" content="Dark GPT-6 prompt source map card with a lime green winking face and Good takes detected stamp.">
   ${ICON_LINKS}
   <noscript><style>.intro{display:none}${tocNoscriptStyles}</style></noscript>
+  <script>document.documentElement.classList.add("js")</script>
   <style>
     :root{color-scheme:dark;--bg:#111210;--panel:#171816;--panel-2:#1c1d1b;--text:#f2f2ed;--muted:#8d918b;--subtle:#6f736d;--line:#2a2c29;--link:#b8c7d9;--focus:#d9e6f4;--entry-accent:#ffd479}
     *{box-sizing:border-box}
