@@ -3,6 +3,7 @@ import path from "node:path";
 import { expandFacts } from "../shared/facts.mjs";
 import { escapeHtml, renderSite } from "./render.mjs";
 import { headingSlug } from "./toc.mjs";
+import { loadSearchRecords, logSearchStats } from "../shared/search-index.mjs";
 
 // Document pages are regenerated on every build so renamed documents leave no stale pages.
 async function removeDocumentPages(outDir) {
@@ -59,7 +60,8 @@ export async function buildSite({ sourceRoot, outFile, categories }) {
           filter = { vocabulary: tags.tags, records: records.map(r => ({ group: r.group, title: r.title, tags: tags.items[r.id] ?? [], feeds: (feedsById.get(r.id) ?? []).map(feedLink) })) };
         }
         const ladders = file.ladders ? titleKnobs(JSON.parse(await readFile(path.join(sourceRoot, file.ladders), "utf8")).items, await knobTitles(sourceRoot)) : undefined;
-        documents.push({ ...file, category: category.label, source, count, filter, ladders });
+        const searchRecords = await loadSearchRecords({ sourceRoot, file });
+        documents.push({ ...file, category: category.label, source, count, filter, ladders, searchRecords });
       } catch (error) {
         throw new Error(`Unable to read ${file.path}: ${error.message}`, {
           cause: error
@@ -80,5 +82,6 @@ export async function buildSite({ sourceRoot, outFile, categories }) {
     const file = page.path === "index.html" ? outFile : path.join(outDir, page.path);
     await mkdir(path.dirname(file), { recursive: true });
     await writeFile(file, page.html, "utf8");
+    if (page.stats) logSearchStats("claude-code", page.stats);
   }
 }

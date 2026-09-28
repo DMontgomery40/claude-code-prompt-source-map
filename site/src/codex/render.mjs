@@ -3,6 +3,11 @@ import { guideStyles, renderGuide } from "./guide.mjs";
 import { filterBar, filterScript, filterStyles, wrapFilterable } from "../shared/filters.mjs";
 import { createRoutes } from "./routes.mjs";
 import { SITE, productOrigin, ICON_LINKS } from "../shared/site.mjs";
+import { buildSearchIndex } from "../shared/search-index.mjs";
+import { searchScript, searchTrigger, searchTriggerStyles } from "../shared/search-ui.mjs";
+
+// The search palette's suggested pages (slugs), shown before anything is typed.
+const SEARCH_FEATURED = ["key-findings", "persistent-mode-instructions", "codex-config", "codex-env-vars", "codex-cli-prompts", "tool-manifest"];
 
 const ORIGIN = productOrigin("codex");
 import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } from "./toc.mjs";
@@ -208,6 +213,8 @@ function renderDocument(document, ids) {
     profile: document.instructionProfile,
     source: document.source,
     defaultOpen: document.defaultOpen,
+    promptText: document.promptText === true,
+    records: document.searchRecords,
     content: body,
     filterVocabulary: document.filter?.vocabulary,
     outline
@@ -250,18 +257,38 @@ function statusLine(status) {
   return status.checked ? `Updated ${date} · checked ${status.checked}` : `Updated ${date}`;
 }
 
+// The section's search index (site/src/shared/search-index.mjs), from each document's standalone
+// page: its content and heading ids exactly as <slug>/index.html has them.
+export function searchIndex(rendered, routes) {
+  return buildSearchIndex({
+    product: "codex",
+    featured: SEARCH_FEATURED,
+    documents: rendered.map(document => ({
+      slug: routes.slug(document.anchor),
+      title: document.title,
+      category: document.category,
+      html: routes.localize(document.content, document.anchor),
+      outline: document.outline.map(item => ({ ...item, id: routes.localId(item.id, document.anchor) })),
+      records: document.records,
+      inline: source => (document.promptText ? promptMarkdown : markdown).parseInline(source)
+    }))
+  });
+}
+
 // Renders the single-page reference at index.html plus one page per document at
-// <slug>/index.html.
+// <slug>/index.html, and the search index at search-index.json.
 export function renderSite({ categories, documents, status = null }) {
   const ids = new Set();
   const rendered = documents.map(document => renderDocument(document, ids));
   const routes = createRoutes(rendered);
+  const { index, stats } = searchIndex(rendered, routes);
   return [
     { path: "index.html", html: renderPage({ categories, rendered, routes, status }) },
     ...rendered.map(current => ({
       path: `${routes.slug(current.anchor)}/index.html`,
       html: renderPage({ categories, rendered, routes, current, status })
-    }))
+    })),
+    { path: "search-index.json", html: JSON.stringify(index), stats }
   ];
 }
 
@@ -398,6 +425,7 @@ function renderPage({ categories, rendered, routes, current = null, status = nul
 ${tocStyles}
 ${filterStyles}
 ${guideStyles}
+${searchTriggerStyles}
   </style>
 </head>
 <body>
@@ -421,6 +449,7 @@ ${current ? "" : `  <div class="intro" id="intro" role="dialog" aria-modal="true
     <a class="follow-link" href="https://x.com/_DMontgomery40" target="_blank" rel="noopener noreferrer" aria-label="Follow @_DMontgomery40 on X"><span class="follow-link-mark" aria-hidden="true">X</span><span>Follow <strong>@_DMontgomery40</strong></span></a>
     <a class="github-link" href="${SITE.repo}" target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub"><span class="github-link-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span><span class="github-link-label">GitHub</span></a>
     <a class="trace-link" href="/trace/" aria-label="Trace a session: explore your own agent session log, in your browser"><span class="trace-link-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" focusable="false"><rect x="2" y="3" width="12" height="2.2" rx="1.1"/><rect x="3.5" y="6.9" width="9" height="2.2" rx="1.1"/><rect x="2" y="10.8" width="12" height="2.2" rx="1.1"/></svg></span><span class="trace-link-label">Trace a session</span></a>
+    ${searchTrigger("codex")}
   </div>
   ${renderToc(categories, outlines, href, SITE_NAME)}
   <main id="content" class="main">
@@ -461,6 +490,7 @@ ${rendered.map(documentPanel).join("\n")}`}
 ${tocScript}
 ${filterScript}
   </script>
+  ${searchScript(current ? "../../" : "../")}
 </body>
 </html>`;
 }
