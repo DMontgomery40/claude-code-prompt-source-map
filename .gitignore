@@ -11,6 +11,9 @@ site/.wrangler/
 .worktrees/
 .superpowers/
 
+# Local secrets (the tour's voiceover key lives here). Never committed.
+.env
+
 # Local only: frozen sessions, video media, research. Never published (tools/leak-check.mjs).
 private/
 # Video pipelines: installed deps and render output

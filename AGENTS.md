@@ -26,7 +26,7 @@ It is **not** about token cost or the fact that context is re-read every turn. D
   cycle refreshes both products, runs the Jev sweeps and the Build intel scans (new surfaces, package scan,
   binwalk), runs `npm run check`, deploys, commits and pushes. `git pull` before any manual `wrangler deploy`, or
   you roll back what it published. Turn it off with `watch/install-launchd.sh --remove`.
-- **Video pipelines:** `video/teaser`, `video/explainer`. Their media is in `private/video/`.
+- **Video pipelines:** `video/teaser`, `video/explainer`, `video/tour`. Their media is in `private/video/`.
 - **Docs:** `docs/specs`, `docs/plans`, `docs/harness-layer.md`.
 - **Private (gitignored, local only):** `private/sessions` (frozen Claude Code and Codex/ChatGPT
   sessions), `private/video`, `private/research`. Never copy anything from `private/` into a tracked

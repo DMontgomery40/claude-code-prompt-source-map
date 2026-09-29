@@ -1,0 +1,251 @@
+{
+ "voice": "cjVigY5qzO86Huf0OWal",
+ "voice_name": "Eric - Smooth, Trustworthy",
+ "model": "eleven_v4_turbo",
+ "settings": {
+  "stability": 0.5,
+  "similarity_boost": 0.75
+ },
+ "beats": [
+  {
+   "id": "hook",
+   "phrases": [
+    [
+     "Ever wonder why your coding agent did what it did?"
+    ],
+    [
+     "The model sees far more than you typed:"
+    ],
+    [
+     "a system prompt, tool definitions, reminders slipped between your turns."
+    ],
+    [
+     "You never see it, and almost none of it is documented."
+    ]
+   ]
+  },
+  {
+   "id": "what",
+   "phrases": [
+    [
+     "It's written by the harness: the program around the model, like Claude Code or Codex.",
+     "It's written by the harness: the program around the model, like Claude Code or Codex/ChatGPT."
+    ],
+    [
+     "Harness Source Map reads all of it out of the shipped apps."
+    ]
+   ]
+  },
+  {
+   "id": "docs_cc",
+   "phrases": [
+    [
+     "How does plan mode stop Claude Code from editing?"
+    ],
+    [
+     "Here's the exact reminder it inserts, and where it ships."
+    ]
+   ]
+  },
+  {
+   "id": "docs_cx",
+   "phrases": [
+    [
+     "The same for Codex and ChatGPT,",
+     "The same for Codex/ChatGPT,"
+    ],
+    [
+     "including GPT-6's persistent-mode instructions."
+    ]
+   ]
+  },
+  {
+   "id": "wins",
+   "phrases": [
+    [
+     "What wins shows which setting Claude Code obeys."
+    ],
+    [
+     "Anthropic can flip this flag without a release;"
+    ],
+    [
+     "your environment variable still wins."
+    ]
+   ]
+  },
+  {
+   "id": "loader",
+   "phrases": [
+    [
+     "That's what the harness can send."
+    ],
+    [
+     "Trace shows what it actually sent, in your own session:"
+    ],
+    [
+     "a day and four hours, ninety subagents.",
+     "1 day 4 hours, 90 subagents."
+    ]
+   ]
+  },
+  {
+   "id": "legend",
+   "phrases": [
+    [
+     "Time runs left to right."
+    ],
+    [
+     "Height is how much text the model had in front of it."
+    ],
+    [
+     "Gray is the harness, pink is what it injected, green is you."
+    ]
+   ]
+  },
+  {
+   "id": "fly",
+   "phrases": [
+    [
+     "Zoom in: each request is a stack of these layers."
+    ]
+   ]
+  },
+  {
+   "id": "open",
+   "phrases": [
+    [
+     "Open the pink one: instructions from your MCP servers, never shown in your chat."
+    ],
+    [
+     "Here, under a tenth came from you."
+    ],
+    [
+     "Almost half came from the harness."
+    ]
+   ]
+  },
+  {
+   "id": "search",
+   "phrases": [
+    [
+     "Search the session: your Claude dot M D went out ninety-four times,",
+     "Search the session: your CLAUDE.md went out 94 times,"
+    ],
+    [
+     "to ninety-one agents, the main thread and every subagent.",
+     "to 91 agents, the main thread and every subagent."
+    ]
+   ]
+  },
+  {
+   "id": "egress",
+   "phrases": [
+    [
+     "Press two for everything that left your machine.",
+     "Press 2 for everything that left your machine."
+    ],
+    [
+     "Open a deploy to see why it ran:"
+    ],
+    [
+     "you asked for it mid-turn, and bypass-permissions mode let it through.",
+     "you asked for it mid-turn, and bypassPermissions let it through."
+    ]
+   ]
+  },
+  {
+   "id": "attach",
+   "phrases": [
+    [
+     "The log still leaves things out."
+    ],
+    [
+     "Record a short session's network traffic, attach the capture, and Trace lines it up with the log."
+    ]
+   ]
+  },
+  {
+   "id": "wireA",
+   "phrases": [
+    [
+     "Now see what the model was really sent:"
+    ],
+    [
+     "a billing header in the system prompt,"
+    ]
+   ]
+  },
+  {
+   "id": "wireB",
+   "phrases": [
+    [
+     "all eighteen tools,",
+     "all 18 tools,"
+    ]
+   ]
+  },
+  {
+   "id": "wireC",
+   "phrases": [
+    [
+     "and a forty-five-thousand-character system message.",
+     "and a 45,000-character system message."
+    ],
+    [
+     "None of it is in your log."
+    ]
+   ]
+  },
+  {
+   "id": "data",
+   "phrases": [
+    [
+     "And where your data went:"
+    ],
+    [
+     "your login token to two Anthropic hosts,",
+     "your login token to 2 Anthropic hosts,"
+    ],
+    [
+     "your device details to Datadog."
+    ]
+   ]
+  },
+  {
+   "id": "flags",
+   "phrases": [
+    [
+     "Every flag your account was served: seven hundred twenty-eight.",
+     "Every flag your account was served: 728."
+    ]
+   ]
+  },
+  {
+   "id": "turnson",
+   "phrases": [
+    [
+     "Click one to see what it turns on:"
+    ],
+    [
+     "When you have enough information to act, act.",
+     "“When you have enough information to act, act.”"
+    ]
+   ]
+  },
+  {
+   "id": "close",
+   "phrases": [
+    [
+     "Harness Source Map."
+    ],
+    [
+     "It runs in your browser."
+    ],
+    [
+     "See what your agent was really told."
+    ]
+   ]
+  }
+ ],
+ "tempo": 1.05
+}
