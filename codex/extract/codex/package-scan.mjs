@@ -18,6 +18,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { codexApp } from "./lib/app-layout.mjs";
 import { openAsar } from "./lib/asar.mjs";
+import { decisionConfig, decisionFetch } from "./lib/jev-provider.mjs";
 import { SCHEMA_VERSION, loadCache, publishScan, renderPage, saveCache, scanTree, sortKeys } from "../../../tools/package-scan/core.mjs";
 
 // Binaries that get hashes, signing and linking but no strings: Electron/Chromium, Sparkle,
@@ -113,7 +114,11 @@ async function main() {
     sourceLine: `Source: ChatGPT desktop ${version} (build ${build}), \`ChatGPT.app\`; paths are relative to the app. \`app.asar\`: ${asar.entries} entries (${asar.paths.length} outside \`webview/assets\` and \`node_modules\`, listed in the JSON).`,
     coveredNote: coveredCount ? ` (${coveredCount} names the config.toml and environment-variable pages already document are left out)` : ""
   });
-  const summary = await publishScan({ product: "Codex/ChatGPT", repo, inventory, texts, page, extraDiff: asarDiff, started });
+  const provider = decisionConfig();
+  const limit = process.env.PACKAGE_JEV_LIMIT === "all" ? Number.MAX_SAFE_INTEGER : Number(process.env.PACKAGE_JEV_LIMIT ?? 60);
+  if (!Number.isSafeInteger(limit) || limit < 0) throw new Error("PACKAGE_JEV_LIMIT must be all or a nonnegative integer");
+  const summary = await publishScan({ product: "Codex/ChatGPT", repo, inventory, texts, page, extraDiff: asarDiff, started, cap: limit,
+    triageOptions: { key: provider.key, fetchImpl: decisionFetch(provider) } });
   console.log(JSON.stringify({ ...summary, version, build }));
 }
 

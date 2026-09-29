@@ -237,7 +237,10 @@ const textOf = (source, literal) => (literal.substitutions ? null : decodeLitera
 // translator note (`description`) are read from the same object when present; `spec.messageId`
 // (a string or a list) asserts the id.
 export function extractFormatjsMessage(asar, spec) {
-  return settle(spec, occurrences(asar, spec).map(({ entry, source, index }) => {
+  const matches = occurrences(asar, spec).filter(({ entry, source, index }) =>
+    !spec.exactText || decodeLiteral(source, anchoredLiteral(spec, entry, source, index)) === spec.anchor);
+  if (!matches.length) throw new AnchorError(`[${spec.id}] no exact defaultMessage text matched its anchor`);
+  return settle(spec, matches.map(({ entry, source, index }) => {
     const literal = anchoredLiteral(spec, entry, source, index);
     if (keyBefore(source, literal) !== "defaultMessage") throw new AnchorError(`[${spec.id}] anchor literal in ${entry.path} is not a defaultMessage`);
     if (literal.substitutions) throw new AnchorError(`[${spec.id}] defaultMessage in ${entry.path} has substitutions`);

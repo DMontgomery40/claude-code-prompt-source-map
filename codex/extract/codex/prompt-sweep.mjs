@@ -5,18 +5,18 @@
 //
 // Candidates come from lib/prompt-candidates.mjs (English prose literals in the app's own
 // scripts, translator notes and locale tables excluded); Jev (TypeSafe) judges whether each is
-// model-facing, cached by text hash. Writes:
-//   outputs/desktop-model-facing-text.md   items Jev rates >= PUBLISH, exact text + provenance
+// model-facing, cached by text hash. Explicit local source reviews in prompt-reviews.mjs
+// use independent boolean decisions and never populate the Jev probability cache. Writes:
+//   outputs/desktop-model-facing-text.md   local positives or Jev >= PUBLISH, text + provenance
 //   work/desktop-model-facing-diff.md      semantic changes against the committed page (absent when none)
 //   work/prompt-sweep.md                   every likely item, for review (local)
-// and prints one JSON summary line. If Jev is unavailable, new candidates stay unpublished and
+// and prints one JSON summary line. If Jev is unavailable, unreviewed new candidates stay unpublished and
 // are counted as unclassified; the sweep never fails a refresh for that.
 //
 // Usage: node extract/codex/prompt-sweep.mjs
 
 import crypto from "node:crypto";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { codexApp } from "./lib/app-layout.mjs";
 import { extractAppPrompts } from "./lib/app-prompts.mjs";
@@ -26,6 +26,8 @@ import { promptCandidates } from "./lib/prompt-candidates.mjs";
 import { renderChangedDocuments, semanticDiff } from "./lib/semantic-diff.mjs";
 import { execFileSync } from "node:child_process";
 import { functionHelperPrompts, staticHelperPrompts, voicePrompts } from "./prompts.mjs";
+import { decisionConfig, decisionFetch } from "./lib/jev-provider.mjs";
+import { candidateDecision, localReviewFor, publishDecision } from "./prompt-reviews.mjs";
 
 const repo = path.resolve(import.meta.dirname, "..", "..");
 const work = path.join(repo, "work");
@@ -50,9 +52,9 @@ const known = [...extracted.staticHelpers, ...extracted.functionHelpers, ...extr
 const anchors = [...staticHelperPrompts, ...functionHelperPrompts, ...voicePrompts].map(spec => spec.anchor);
 const candidates = promptCandidates(asar, { known, anchors });
 
-const key = process.env.TYPESAFE_API_KEY ?? (() => {
-  try { return fs.readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
-})();
+const provider = decisionConfig();
+const key = process.env.JEV_OFFLINE === "1" ? null : provider.key;
+const fetchDecision = decisionFetch(provider);
 const cacheFile = path.join(work, "prompt-candidate-verdicts.json");
 const cache = readJson(cacheFile, {});
 const question = {
@@ -65,15 +67,17 @@ const question = {
     }
   }
 };
-let unavailable = null;
+let unavailable = process.env.JEV_OFFLINE === "1" ? "offline review; candidates without cached Jev or explicit local decisions remain unclassified" : null;
 async function verdict(candidate) {
   const cacheKey = `${QUESTION_VERSION}:${candidate.hash}`;
   if (cacheKey in cache) return cache[cacheKey];
   if (!key || unavailable) return null;
   const state = { file: candidate.file, text: candidate.text.slice(0, 6000) };
+  try { privacyScan(new Map([["classification state", JSON.stringify(state)]])); }
+  catch { return null; }
   for (let attempt = 0; attempt < 4; attempt += 1) {
     try {
-      const response = await fetch("https://api.typesafe.ai/v1/systemone", {
+      const response = await fetchDecision("https://api.typesafe.ai/v1/systemone", {
         method: "POST",
         headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
         body: JSON.stringify({ model: "jev-latest", state, questions: question })
@@ -93,12 +97,18 @@ async function verdict(candidate) {
 }
 const queue = [...candidates];
 await Promise.all(Array.from({ length: 8 }, async () => {
-  while (queue.length) { const candidate = queue.shift(); candidate.p = await verdict(candidate); }
+  while (queue.length) {
+    const candidate = queue.shift();
+    const local = localReviewFor(candidate);
+    // Local boolean judgments never enter the Jev probability cache or trigger a request.
+    const p = local ? cache[`${QUESTION_VERSION}:${candidate.hash}`] ?? null : await verdict(candidate);
+    Object.assign(candidate, candidateDecision(candidate, p));
+  }
 }));
 fs.writeFileSync(cacheFile, JSON.stringify(cache));
 
 const snippet = text => text.replace(/\s+/g, " ").trim().slice(0, 160);
-fs.writeFileSync(path.join(work, "prompt-candidates.json"), `${JSON.stringify({ asar_sha256: asar.sha256, candidates: candidates.map(c => ({ hash: c.hash, file: c.file, role: c.role, p: c.p, snippet: snippet(c.text) })) }, null, 1)}\n`);
+fs.writeFileSync(path.join(work, "prompt-candidates.json"), `${JSON.stringify({ asar_sha256: asar.sha256, candidates: candidates.map(c => ({ hash: c.hash, file: c.file, role: c.role, p: c.p, origin: c.origin, model_facing: c.model_facing, local_review: c.review, snippet: snippet(c.text) })) }, null, 1)}\n`);
 
 // The published page: grouped by how the text is used, ordered by file and offset. File names
 // carry build hashes, so they sit in the Source line, which the semantic diff treats as provenance.
@@ -108,13 +118,13 @@ const GROUPS = [
   ["Prompts, rules and context", () => true]
 ];
 const withheld = [];
-const published = candidates.filter(c => c.p != null && c.p >= PUBLISH).filter(c => {
+const published = candidates.filter(c => publishDecision(c, PUBLISH)).filter(c => {
   try { privacyScan(new Map([["item", c.text]])); return true; } catch (error) { withheld.push({ hash: c.hash, reason: error.message }); return false; }
 }).sort((a, b) => a.file.localeCompare(b.file) || a.offset - b.offset);
 const fence = text => "`".repeat(Math.max(3, 1 + Math.max(0, ...[...text.matchAll(/`+/g)].map(m => m[0].length))));
 const titleOf = c => c.role.tool ? `\`${c.role.tool}\`` : `${c.text.replace(/<…>/g, "").replace(/[#*`_>\[\]]/g, "").replace(/\s+/g, " ").trim().split(" ").slice(0, 7).join(" ")}…`;
 const lines = ["# Other model-facing text in the desktop app", "",
-  "Text in the ChatGPT desktop app's own scripts that is written for a model (tool and parameter descriptions, prompts, context wrappers, and messages the app sends on the user's behalf) and is not in the hand-verified prompt pages. It is found by scanning every string in the app for prose and keeping what a classifier judges model-facing, so treat each entry as exact text from the app whose role was judged, not traced. `<…>` marks a value filled in at run time.", ""];
+  "Text in the ChatGPT desktop app's own scripts that is written for a model (tool and parameter descriptions, prompts, context wrappers, and messages the app sends on the user's behalf) and is not in the hand-verified prompt pages. It is found by scanning every string in the app for prose and keeping explicit local source reviews or Jev classifier results. Each entry identifies its decision origin. Treat the text as shipped app evidence whose model-facing role was reviewed or classified; UI activation, account availability and live model delivery are unverified. `<…>` marks a value filled in at run time.", ""];
 const taken = new Set();
 for (const [group, test] of GROUPS) {
   const members = published.filter(c => !taken.has(c.hash) && test(c));
@@ -129,6 +139,7 @@ for (const [group, test] of GROUPS) {
     const f = fence(c.text);
     lines.push(`### ${n > 1 ? `${title} (${n})` : title}`, "",
       `Source: \`${c.file}\`, offset ${c.offset}, SHA-256 \`${crypto.createHash("sha256").update(c.text).digest("hex")}\`.`, "",
+      c.origin === "local-source-review" ? `Role: local source review (boolean decision, not a confidence score). ${c.review.reason}` : `Role: Jev classification (${c.p.toFixed(2)} confidence); execution path unverified.`, "",
       `${f}text`, c.text.trim(), f, "");
   }
 }
@@ -140,12 +151,15 @@ if (changes) fs.writeFileSync(diffFile, `# Desktop app: other model-facing text\
 else fs.rmSync(diffFile, { force: true });
 fs.writeFileSync(path.join(repo, "outputs", PAGE), page);
 
-const likely = candidates.filter(c => c.p != null && c.p >= LIKELY).sort((a, b) => b.p - a.p);
-const unclassified = candidates.filter(c => c.p == null);
+const likely = candidates.filter(c => c.origin === "local-source-review" ? c.model_facing === true : c.p != null && c.p >= LIKELY).sort((a, b) => b.p - a.p);
+const unclassified = candidates.filter(c => c.origin === "unknown");
+const localReviewed = candidates.filter(c => c.origin === "local-source-review");
+const localPositive = localReviewed.filter(c => c.model_facing);
+const localNegative = localReviewed.filter(c => !c.model_facing);
 const report = ["# Prompt sweep (local review)", "",
-  `Candidates: ${candidates.length}; likely model-facing (Jev >= ${LIKELY}): ${likely.length}; published (>= ${PUBLISH}): ${published.length}; withheld by the privacy scan: ${withheld.length}; unclassified: ${unclassified.length}${unavailable ? ` (${unavailable})` : ""}.`, ""];
-for (const c of [...likely, ...unclassified]) {
-  report.push(`## ${c.p == null ? "unclassified" : c.p.toFixed(2)} · ${c.role.kind} · ${c.file} @ ${c.offset} · ${c.hash}`, "", "```text", c.text.slice(0, 4000), "```", "");
+  `Candidates: ${candidates.length}; likely model-facing (local positive or Jev >= ${LIKELY}): ${likely.length}; published (local positive or Jev >= ${PUBLISH}): ${published.length}; local reviewed: ${localReviewed.length} (${localPositive.length} positive, ${localNegative.length} negative); withheld by the privacy scan: ${withheld.length}; unclassified: ${unclassified.length}${unavailable ? ` (${unavailable})` : ""}.`, ""];
+for (const c of [...likely, ...localNegative, ...unclassified]) {
+  report.push(`## ${c.origin === "local-source-review" ? `local ${c.model_facing ? "positive" : "negative"}` : c.p == null ? "unclassified" : `Jev ${c.p.toFixed(2)}`} · ${c.role.kind} · ${c.file} @ ${c.offset} · ${c.hash}`, "", ...(c.review ? [c.review.reason, ""] : []), "```text", c.text.slice(0, 4000), "```", "");
 }
 fs.writeFileSync(path.join(work, "prompt-sweep.md"), `${report.join("\n")}\n`);
-console.log(JSON.stringify({ candidates: candidates.length, likely: likely.length, published: published.length, withheld: withheld.length, unclassified: unclassified.length, jev_unavailable: unavailable, changed: Boolean(changes) }));
+console.log(JSON.stringify({ candidates: candidates.length, likely: likely.length, published: published.length, withheld: withheld.length, unclassified: unclassified.length, local_reviewed: localReviewed.length, local_positive: localPositive.length, local_negative: localNegative.length, jev_unavailable: unavailable, changed: Boolean(changes) }));

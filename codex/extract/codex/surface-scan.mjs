@@ -14,6 +14,7 @@
 // JEV_LIMIT flagged changes: is this a capability a reference of what the harness sends the model,
 // and what triggers model-visible behavior, should document? Writes
 //   outputs/app-surfaces.json   this build's inventory (the next baseline)
+//   work/surface-triage.json current source identity and complete flagged/removed delta, even when empty
 //   work/surfaces-diff.md       the flagged changes, Jev's labels and evidence (absent when none)
 // and prints one JSON summary line. Jev being unavailable never fails the scan: the structural
 // diff is written unlabelled. Exit 2 when the app or its asar cannot be read.
@@ -31,6 +32,7 @@ import { pathToFileURL } from "node:url";
 import { codexApp } from "./lib/app-layout.mjs";
 import { openAsar } from "./lib/asar.mjs";
 import { privacyScan } from "./lib/privacy.mjs";
+import { decisionConfig, decisionFetch } from "./lib/jev-provider.mjs";
 
 export const THRESHOLDS = { newMin: 5, growAbs: 20, growRatio: 1.25, removedMin: 5 };
 export const JEV_LIMIT = 40;
@@ -230,7 +232,7 @@ export function readTypesafeKey(env = process.env) {
 
 // A labeller asks Jev about one flagged change; it returns a probability, or null with the reason
 // recorded when Jev cannot answer.
-export function jevLabeller(key, { cache = {} } = {}) {
+export function jevLabeller(key, { cache = {}, fetchImpl = globalThis.fetch } = {}) {
   const state = { unavailable: null };
   async function label(item) {
     const cacheKey = createHash("sha256").update(JSON.stringify(item)).digest("hex");
@@ -239,7 +241,7 @@ export function jevLabeller(key, { cache = {} } = {}) {
     if (state.unavailable) return null;
     for (let attempt = 0; attempt < 4; attempt += 1) {
       try {
-        const response = await fetch("https://api.typesafe.ai/v1/systemone", {
+        const response = await fetchImpl("https://api.typesafe.ai/v1/systemone", {
           method: "POST",
           headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
           body: JSON.stringify({ model: "jev-latest", state: item, questions: QUESTION })
@@ -327,6 +329,25 @@ function readBaseline(repo) {
   }
 }
 
+export function triageRecord({ result, source, previousSource = null, unavailable = null }) {
+  const labelled = result.flagged.filter(item => typeof item.jev === "number");
+  return {
+    source,
+    flagged: result.flagged,
+    notes: result.notes,
+    baseline: result.baseline,
+    baseline_source: previousSource,
+    summary: {
+      flagged: result.flagged.length,
+      removed: result.notes.length,
+      labelled: labelled.length,
+      documentable: labelled.filter(item => item.jev >= 0.5).length,
+      unlabelled: result.flagged.length - labelled.length,
+      unavailable
+    }
+  };
+}
+
 async function main() {
   const repo = process.env.SURFACE_SCAN_ROOT || path.resolve(import.meta.dirname, "..", "..");
   let asar;
@@ -341,27 +362,35 @@ async function main() {
     process.exit(2);
   }
   const { surfaces, evidence } = inventory(asar);
-  const current = { source: { app_version: app.version, app_build: app.build }, ...surfaces };
+  const current = { source: { app_version: app.version, app_build: app.build, asar_sha256: asar.sha256 }, ...surfaces };
   const baseline = readBaseline(repo);
 
   const cacheFile = path.join(repo, "work", "surface-verdicts.json");
   let cache = {};
   try { cache = JSON.parse(fs.readFileSync(cacheFile, "utf8")); } catch { cache = {}; }
-  const labeller = process.env.SURFACE_JEV === "off" ? null : jevLabeller(readTypesafeKey(), { cache });
-  const result = await scan({ current, evidence, previous: baseline.data, labeller });
+  const provider = decisionConfig();
+  const labeller = process.env.SURFACE_JEV === "off" ? null : jevLabeller(provider.key, { cache, fetchImpl: decisionFetch(provider) });
+  const requestedLimit = process.env.SURFACE_JEV_LIMIT;
+  const limit = requestedLimit === "all" ? Number.MAX_SAFE_INTEGER : requestedLimit == null ? JEV_LIMIT : Number(requestedLimit);
+  if (!Number.isSafeInteger(limit) || limit < 0) throw new Error("SURFACE_JEV_LIMIT must be all or a nonnegative integer");
+  const result = await scan({ current, evidence, previous: baseline.data, labeller, limit });
   const unavailable = process.env.SURFACE_JEV === "off" ? "disabled (SURFACE_JEV=off)" : labeller.state.unavailable;
 
+  const triage = triageRecord({ result, source: current.source, previousSource: baseline.data?.source, unavailable });
+  const labelled = result.flagged.filter(item => typeof item.jev === "number");
+  const triageText = `${JSON.stringify(triage, null, 1)}\n`;
+  privacyScan(new Map([["surface-triage.json", triageText]]));
   const baselineText = `${JSON.stringify(current, null, 1)}\n`;
   privacyScan(new Map([[BASELINE, baselineText]]));
   fs.mkdirSync(path.join(repo, "outputs"), { recursive: true });
   fs.writeFileSync(path.join(repo, "outputs", BASELINE), baselineText);
   const diffFile = path.join(repo, "work", DIFF);
   fs.mkdirSync(path.dirname(diffFile), { recursive: true });
-  if (result.flagged.length) fs.writeFileSync(diffFile, renderDiff({ app, previousSource: baseline.data?.source, flagged: result.flagged, notes: result.notes, unavailable }));
+  fs.writeFileSync(path.join(repo, "work", "surface-triage.json"), triageText);
+  if (result.flagged.length) fs.writeFileSync(diffFile, renderDiff({ app, previousSource: baseline.data?.source, flagged: result.flagged, notes: result.notes, unavailable, limit: Math.min(limit, result.flagged.length) }));
   else fs.rmSync(diffFile, { force: true });
   if (labeller) fs.writeFileSync(cacheFile, JSON.stringify(labeller.cache));
 
-  const labelled = result.flagged.filter(f => f.jev !== null);
   console.log(JSON.stringify({
     baseline: baseline.from,
     flagged: result.flagged.length,

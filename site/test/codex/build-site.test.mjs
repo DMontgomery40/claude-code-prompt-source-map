@@ -692,7 +692,7 @@ test("prompt text shows markdown links and images literally while editorial link
   });
 });
 
-test("start here panel leads with persistent mode and links only to highlighted passages", async () => {
+test("harness guide keeps persistent passages in a secondary subsection", async () => {
   await withFixture(async (root, outFile) => {
     await writeFile(path.join(root, "outputs/persistent.md"), `## Overview\n\n${"word ".repeat(96)}\n`);
     await writeFile(path.join(root, "outputs/base.md"), "# Personality\n\nText.\n\n# Autonomy and persistence\n\nKeep going.\n");
@@ -705,12 +705,54 @@ test("start here panel leads with persistent mode and links only to highlighted 
     const html = await readFile(outFile, "utf8");
     const guide = html.slice(html.indexOf('<section class="start-here"'), html.indexOf("</section>", html.indexOf('<section class="start-here"')));
 
-    assert.match(guide, /<ul class="start-here-list"><li class="is-primary"><a href="#persistent-md--persistent-mode"><span class="start-here-doc">Persistent prompt<\/span><span class="start-here-meta">From the GPT-6 model records · about 100 words<\/span><\/a><\/li><li><a href="#base-md--autonomy-and-persistence"><span class="start-here-doc">Base prompt<\/span><span class="start-here-meta">Persistence<\/span><\/a><\/li><\/ul>/);
+    assert.match(guide, /id="start-here-title">Explore the harness<\/h2>/);
+    assert.match(guide, /<h3 class="start-here-group-title">Persistent mode and continuity<\/h3>/);
+    assert.match(guide, /href="#persistent-md--persistent-mode"/);
+    assert.match(guide, /href="#base-md--autonomy-and-persistence"/);
+    assert.doesNotMatch(guide, /class="is-primary"/);
     assert.doesNotMatch(guide, /Plain notes/);
     assert.doesNotMatch(await readFile(path.join(root, "dist/persistent-prompt/index.html"), "utf8"), /class="start-here"/);
-    // Persistent mode is spread across the harness; the panel must not call it one prompt.
-    assert.match(guide, /Persistent mode is not one prompt\./);
+    assert.match(guide, /where it comes from, and the settings or actions that activate it/);
+    assert.match(html, /class="review-focus/);
     assert.doesNotMatch(guide, /single block of instructions/);
+  });
+});
+
+test("harness guide leads with current evidence and covers every part of the harness", async () => {
+  await withFixture(async (root, outFile) => {
+    const pages = [
+      ["key-findings", "Current findings"], ["devday-update", "Dev Day changes"],
+      ["gpt-6-1-sol-base-instructions", "GPT-6.1 Sol base instructions"],
+      ["conditional-instruction-modules", "Conditional modules"],
+      ["chatgpt-work-prompts", "Work prompts"],
+      ["chatgpt-bundled-plugins", "Plugins"],
+      ["codex-config", "Configuration"], ["package-scan", "Package scan"],
+      ["earlier-assembled-prompt", "Earlier assembled prompt"],
+      ["persistent-mode-instructions", "Persistent instructions"]
+    ];
+    const files = [];
+    for (const [slug, title] of pages) {
+      const file = `outputs/${slug}.md`;
+      await writeFile(path.join(root, file), `# ${title}\n\nSource text.\n`);
+      files.push({ path: file, slug, title, format: "markdown" });
+    }
+    await buildSite({ sourceRoot: root, outFile, categories: [{ label: "Reference", files }] });
+    const html = await readFile(outFile, "utf8");
+    const start = html.indexOf('<section class="start-here"');
+    const guide = html.slice(start, html.indexOf("</section>", start));
+    const leadingLinks = [...guide.matchAll(/<a href="([^"]+)"/g)].slice(0, 3).map(match => match[1]);
+    assert.deepEqual(leadingLinks, ["key-findings/", "devday-update/", "gpt-6-1-sol-base-instructions/"]);
+    for (const heading of ["Instructions and conditional modules", "App actions and Page prompts", "Tools, plugins and computer use", "Configuration and the CLI", "Build evidence and the archive"]) {
+      assert.ok(guide.includes(heading), heading);
+    }
+    assert.ok(guide.indexOf("Persistent mode and continuity") > guide.indexOf("Build evidence and the archive"));
+    for (const [slug] of pages) {
+      assert.ok(guide.includes(`href="${slug}/"`), slug);
+      await readFile(path.join(root, "dist", slug, "index.html"), "utf8");
+    }
+    assert.doesNotMatch(guide, /astra-base-instructions\//, "absent routes are not invented");
+    assert.match(guide, /The complete reference follows below/);
+    assert.doesNotMatch(guide, /From the GPT-6 model records|about \d+ words/);
   });
 });
 

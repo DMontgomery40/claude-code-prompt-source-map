@@ -43,7 +43,7 @@
    "label": "Built-in tools",
    "kind": "topic",
    "definition": "Settings for tools that ship with Codex and that the model calls directly: shell / unified exec and background terminals, apply_patch, plan updates, web search, browser use, computer use, image generation and viewing, JS REPL and code mode, clock/sleep and async user-message tools, and tool discovery or suggestion. It applies in any group, including features.* flags and requirements: variants. It does not cover external MCP servers or approval policy in general.",
-   "count": 169
+   "count": 168
   },
   {
    "id": "mcp-plugins",
@@ -85,7 +85,7 @@
    "label": "Telemetry, logs and storage",
    "kind": "topic",
    "definition": "Settings and environment variables for observability and local state: OpenTelemetry exporters and trace context, analytics and feedback, log levels and formats, transcript/history persistence, rollout and session files, and Codex home or database paths. It applies in any group, including features.* flags and requirements: variants. It does not cover the model's memory of past sessions or lifecycle hooks.",
-   "count": 109
+   "count": 108
   },
   {
    "id": "ui",
@@ -1284,8 +1284,7 @@
   "config:features.guardian_reuse_parent_compaction": [
    "undocumented",
    "stage-stable",
-   "memory-context",
-   "telemetry-storage"
+   "memory-context"
   ],
   "config:features.guardianv2": [
    "undocumented",
@@ -1429,8 +1428,7 @@
   ],
   "config:features.instant_interrupt": [
    "undocumented",
-   "stage-under-development",
-   "built-in-tools"
+   "stage-under-development"
   ],
   "config:features.item_ids": [
    "undocumented",

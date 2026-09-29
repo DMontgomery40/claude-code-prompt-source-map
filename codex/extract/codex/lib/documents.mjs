@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import path from "node:path";
-import { GPT6_DOCUMENTED, pythonJson, scalarLeaves, stringLeaves } from "./catalog.mjs";
+import { GPT6_DOCUMENTED, GPT6_LEGACY, SourceError, pythonJson, scalarLeaves, stringLeaves } from "./catalog.mjs";
 
 const sha256 = value => crypto.createHash("sha256").update(value).digest("hex");
 const stats = value => ({
@@ -93,7 +93,7 @@ function otherModelsMarkdown(others) {
   const seen = new Map();
   const blocks = [
     "# Other models in the Codex/ChatGPT catalog\n\n" +
-      "Base instructions and model messages for every model in the live authenticated Codex/ChatGPT catalog other than GPT-6 Astra, Sol and Luna, in catalog order. " +
+      "Base instructions and model messages for every model in the live authenticated Codex/ChatGPT catalog without dedicated model documents, in catalog order. " +
       "Each text is exact and fenced, so its own headings stay inside it. A text identical to one shown earlier points back to it instead of repeating it."
   ];
   for (const model of others) {
@@ -224,9 +224,14 @@ function inventory(app, prompts, gpt6) {
 }
 
 // Builds every live document in memory. Nothing is written here.
-export function buildDocuments({ app, cli, catalog, prompts }) {
+export function buildDocuments({ app, cli, catalog, prompts, allowHistoricalCatalog = false }) {
+  // Refuse a partial current capture before any documents can be written. Otherwise
+  // missing models leave their previously published dedicated records on disk.
+  for (const slug of allowHistoricalCatalog ? GPT6_LEGACY : GPT6_DOCUMENTED) {
+    if (!catalog.live.some(model => model.slug === slug)) throw new SourceError(`${slug} is missing from the live catalog; its documents cannot be regenerated`);
+  }
   const gpt6All = catalog.live.filter(model => model.slug.startsWith("gpt-6"));
-  const gpt6 = GPT6_DOCUMENTED.map(slug => catalog.live.find(model => model.slug === slug));
+  const gpt6 = GPT6_DOCUMENTED.map(slug => catalog.live.find(model => model.slug === slug)).filter(Boolean);
   const others = catalog.live.filter(model => !GPT6_DOCUMENTED.includes(model.slug));
   const astra = gpt6[0];
   const bundledAstra = catalog.bundled.find(model => model.slug === astra.slug);

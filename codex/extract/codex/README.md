@@ -130,3 +130,13 @@ Built-in postconditions:
 ## Adding a prompt
 
 Add an entry to `prompts.mjs` with a distinctive phrase from its text, placeholder arguments if it is built by a function, and a title. Run `refresh.mjs`, then confirm the new section in `work/codex-diff.md`, and run the unit tests.
+
+## Dev Day coverage and Jev providers
+
+`devday-coverage.mjs` regenerates the reviewed surface ledger from its public JSON. The scanner emits `work/surface-triage.json` on every successful scan, including zero-change runs. Its source hash binds the flagged/removed set to the scanned archive. Pass this file as the positional argument to regenerate coverage for a changed build; a changed source without matching triage fails. Zero-delta scans can retain a reviewed universe only for the exact same archive. `devday-overview.mjs` reads current output counts and capture identity. Both run after the build scans in the watcher pipeline, with fresh triage supplied to coverage. `key-findings.mjs` runs after all captures, the prompt sweep and build scans, deriving the current findings from those outputs; a failure stops publication rather than leaving a stale summary. The dated September 24 findings remain archived. Current catalog capture and document generation require all four documented models; historical fixtures use an explicit historical option.
+
+The surface scan, package scan and prompt sweep share `lib/jev-provider.mjs`. It prefers `OPENROUTER_API_KEY` when available; `JEV_PROVIDER=typesafe` selects the direct provider. Keys are read from the process or the home environment file as data and never sourced. OpenRouter uses the typed System One endpoint with `typesafe/jev-1.13`.
+
+`SURFACE_JEV_LIMIT=all` and `PACKAGE_JEV_LIMIT=all` remove the historical review caps (otherwise 40 and 60). Nonnegative integer limits are also accepted. These options send candidate text to the selected external provider. `JEV_OFFLINE=1` reruns the prompt sweep with cached verdicts and bound local source reviews; other uncached candidates remain explicitly unclassified. Candidate state passes the privacy scan before a new prompt verdict request.
+
+The September 29 capture classified all 355 surface candidates through OpenRouter. Automatic approval review rejected an additional external payload for broader package/prompt classification. The package inventory was refreshed locally, and all 87 uncached prompt candidates received explicit local source review instead. Local decisions are bound to exact text hashes and their review origin is published separately from Jev scores.

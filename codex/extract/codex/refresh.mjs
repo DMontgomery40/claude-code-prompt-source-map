@@ -21,7 +21,7 @@ import path from "node:path";
 import { codexApp } from "./lib/app-layout.mjs";
 import { AnchorError, extractAppPrompts } from "./lib/app-prompts.mjs";
 import { openAsar } from "./lib/asar.mjs";
-import { CatalogError, loadCatalog, SourceError } from "./lib/catalog.mjs";
+import { CatalogError, GPT6_DOCUMENTED, loadCatalog, SourceError } from "./lib/catalog.mjs";
 import { metadataDiff } from "./lib/catalog-metadata.mjs";
 import { buildDocuments, OUTPUT_NAMES, OUTPUT_WHITELIST } from "./lib/documents.mjs";
 import { PrivacyError, privacyScan } from "./lib/privacy.mjs";
@@ -114,7 +114,7 @@ function main() {
   const gpt6 = catalog.live.filter(model => model.slug.startsWith("gpt-6"));
   const persistentVariants = new Set(gpt6.map(model => model.model_messages?.persistent_instructions));
   if (persistentVariants.size > 1) notes.push(`persistent_instructions differ between GPT-6 models; ${OUTPUT_NAMES.persistent} shows gpt-6-astra's (see ${OUTPUT_NAMES.comparison})`);
-  const undocumented = gpt6.filter(model => !["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"].includes(model.slug));
+  const undocumented = gpt6.filter(model => !GPT6_DOCUMENTED.includes(model.slug));
   if (undocumented.length) notes.push(`GPT-6 models without dedicated documents (included in ${OUTPUT_NAMES.otherModels}): ${undocumented.map(model => `\`${model.slug}\``).join(", ")}`);
 
   const slugsChanged = previousSources != null &&

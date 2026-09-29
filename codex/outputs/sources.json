@@ -10,7 +10,7 @@
     "binary_sha256": "ccd1b9441d35ce30102059c78514a125d676e6765ea1d001033e8cbe88718314"
   },
   "catalog": {
-    "fetched_at": "2026-09-29T19:09:10.729476Z",
+    "fetched_at": "2026-09-29T18:45:55.875186Z",
     "client_version": "0.159.0",
     "models": [
       "gpt-6.1-sol",
@@ -63,6 +63,10 @@
       "sha256": "b707476816bfe5e571a1bd2179f130fff2b132da5ab8e61063acdb7fd24daf12",
       "bytes": 18043
     },
+    "gpt-6.1-sol-base-instructions.md": {
+      "sha256": "e1bdd4f8f0df4b20f4a0ffc8a861ce819df45325d8cecdfb92e80379cf8d142e",
+      "bytes": 21779
+    },
     "gpt-6-instruction-modules.md": {
       "sha256": "5761752d9b038f36ab662e44d3caf3ef1daf31c3540c36a2bf827a67c78e8661",
       "bytes": 33961
@@ -78,6 +82,10 @@
     "gpt-6-luna-model-record.json": {
       "sha256": "5517bc140116a08a0afb0bcb8e73c44ceac3bdf23d3424d4ab712e84a0c56c0d",
       "bytes": 77466
+    },
+    "gpt-6.1-sol-model-record.json": {
+      "sha256": "497557b151a3b0a629f04d91cdbc41df15e8102dd9b7f5e554f5c1b1fe583c68",
+      "bytes": 84991
     },
     "model-comparison.json": {
       "sha256": "5dffa1d0563f98e06049f6ba49acc96d8bf7f4b9411811124113b28c37c29845",
@@ -96,12 +104,12 @@
       "bytes": 13848
     },
     "prompt-provenance-inventory.json": {
-      "sha256": "5e36796d3ac069b07733a51e1ea94ec297b3d76b6fdc59fddaa7cd77abe511c9",
-      "bytes": 45859
+      "sha256": "2f68a76718282031db34dc7d66639f5441b10a1aa743c3a302ec3a506bbb2b3e",
+      "bytes": 45937
     },
     "other-catalog-models.md": {
-      "sha256": "d1b8561ef078f169315a2df231088c8a6c278c7eb91bde749680dd1bc44012eb",
-      "bytes": 122626
+      "sha256": "ccb0cce03120595863e297471acf95e132600a83cc1b8f445072a694a9b2e1b1",
+      "bytes": 73308
     }
   }
 }

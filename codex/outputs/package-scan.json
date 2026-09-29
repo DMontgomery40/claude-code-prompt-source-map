@@ -3173,22 +3173,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3280,23 +3266,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3350,23 +3322,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3413,23 +3371,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3477,23 +3421,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3541,23 +3471,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3605,23 +3521,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3676,23 +3578,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3747,24 +3635,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.cs.disable-library-validation": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3819,22 +3692,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3871,22 +3730,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3921,22 +3766,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -3958,23 +3789,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4033,22 +3850,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4078,22 +3881,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4117,22 +3906,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4163,22 +3938,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4212,22 +3973,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4256,22 +4003,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4297,22 +4030,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4341,30 +4060,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.application-identifier": "2DC432GLL2.com.openai.codex",
-    "com.apple.developer.aps-environment": "production",
-    "com.apple.developer.team-identifier": "2DC432GLL2",
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true,
-    "keychain-access-groups": [
-     "2DC432GLL2.*",
-     "2DC432GLL2.com.openai.shared"
-    ]
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4418,23 +4116,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4488,22 +4172,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4526,22 +4196,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4567,22 +4223,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4606,22 +4248,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4643,22 +4271,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4698,22 +4312,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4735,22 +4335,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -4772,22 +4358,14 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [
     {
      "hash": "a0d879464e65",
      "pattern": "openai-key"
     }
    ],
-   "entitlements": {
-    "com.apple.application-identifier": "2DC432GLL2.com.openai.codex.cli",
-    "com.apple.developer.team-identifier": "2DC432GLL2",
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "keychain-access-groups": [
-     "2DC432GLL2.com.openai.codex.cli"
-    ]
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -10962,12 +10540,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -12638,7 +12213,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12661,11 +12236,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.device.audio-input": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -12924,7 +12497,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12949,7 +12522,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12983,7 +12556,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13011,7 +12584,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13035,7 +12608,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13060,7 +12633,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13087,7 +12660,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13115,7 +12688,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13141,7 +12714,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13168,7 +12741,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13198,7 +12771,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13227,7 +12800,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13254,7 +12827,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13282,7 +12855,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13309,7 +12882,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13332,7 +12905,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13357,7 +12930,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13382,7 +12955,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13407,7 +12980,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13432,7 +13005,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13460,7 +13033,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13488,7 +13061,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13515,7 +13088,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13545,7 +13118,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13577,7 +13150,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13608,7 +13181,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13632,22 +13205,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -13671,23 +13230,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -14290,22 +13835,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -14335,22 +13866,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -14383,22 +13900,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -14420,20 +13923,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.application-identifier": "2DC432GLL2.com.openai.sky.CUAService",
-    "com.apple.developer.team-identifier": "2DC432GLL2",
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.personal-information.addressbook": true,
-    "keychain-access-groups": [
-     "2DC432GLL2.*"
-    ]
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -15117,7 +14609,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
    "entitlements": null,
    "flags": [
@@ -15788,7 +15280,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
    "entitlements": null,
    "flags": [
@@ -15862,7 +15354,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
    "entitlements": null,
    "flags": [
@@ -15927,11 +15419,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.application-identifier": "2DC432GLL2.com.openai.sky.app.CodexComputerUseAuthorizationPluginInstallerTool"
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16007,18 +15497,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.application-identifier": "2DC432GLL2.com.openai.sky.CUAService.cli",
-    "com.apple.developer.team-identifier": "2DC432GLL2",
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "keychain-access-groups": [
-     "2DC432GLL2.*"
-    ]
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16488,22 +15969,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16526,22 +15993,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16565,23 +16018,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16635,23 +16074,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16740,23 +16165,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16811,23 +16222,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16882,23 +16279,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -16952,23 +16335,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17019,23 +16388,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17127,23 +16482,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17198,23 +16539,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17339,23 +16666,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17419,23 +16732,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17517,23 +16816,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17668,22 +16953,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17705,23 +16976,9 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "authority": "(unavailable)",
    "credentials": [],
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17831,22 +17088,8 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17868,22 +17111,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
@@ -17905,22 +17134,8 @@
    "archs": [
     "arm64"
    ],
-   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
-   "entitlements": {
-    "com.apple.security.app-sandbox": false,
-    "com.apple.security.application-groups": [
-     "2DC432GLL2.com.openai.codex.notifications",
-     "2DC432GLL2.com.openai.sky.CUAService"
-    ],
-    "com.apple.security.automation.apple-events": true,
-    "com.apple.security.cs.allow-jit": true,
-    "com.apple.security.cs.allow-unsigned-executable-memory": true,
-    "com.apple.security.device.audio-input": true,
-    "com.apple.security.device.camera": true,
-    "com.apple.security.files.user-selected.read-write": true,
-    "com.apple.security.network.client": true,
-    "com.apple.security.personal-information.calendars": true
-   },
+   "authority": "(unavailable)",
+   "entitlements": null,
    "flags": [
     "runtime"
    ],
