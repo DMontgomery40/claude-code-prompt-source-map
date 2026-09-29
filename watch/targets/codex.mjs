@@ -39,6 +39,14 @@ export const codex = {
   intervalMs: now => (now < Date.parse("2026-10-07T00:00:00-06:00") ? 3600e3 : 86400e3),
   checkedLabel: now => (now < Date.parse("2026-10-07T00:00:00-06:00") ? "hourly" : "daily"),
 
+  // A change of the live model catalog alone (same app and CLI) must hold for two checks before
+  // it is published: the catalog has alternated between two versions (watch/lib/confirm.mjs).
+  needsConfirmation(fingerprint, previous) {
+    if (!previous) return false;
+    return fingerprint.catalog_sha256 !== previous.catalog_sha256
+      && ["app_build", "cli_sha256", "asar_size", "asar_mtime"].every(k => fingerprint[k] === previous[k]);
+  },
+
   fingerprint() {
     const r = run(node, ["extract/codex/fingerprint.mjs"], { cwd: repo, timeoutMs: 60 * 1000 });
     if (r.status !== 0) throw new Error(`fingerprint failed: ${r.stderr.slice(-500)}`);

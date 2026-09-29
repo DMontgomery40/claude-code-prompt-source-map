@@ -8,6 +8,7 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { commitPaths, deploy, dirtyPaths, foreignChanges, gate, producedSince, pushWithinBudget, restore, ROOT } from "./lib/publish.mjs";
+import { confirmChange } from "./lib/confirm.mjs";
 import { log, notify, run } from "./lib/run.mjs";
 import { cc } from "./targets/cc.mjs";
 import { codex } from "./targets/codex.mjs";
@@ -80,7 +81,23 @@ try {
     }
     s.lastCheck = now;
     const key = JSON.stringify(fingerprint);
-    if (forced !== target.name && key === s.fingerprint) { log(`${target.name}: unchanged`); continue; }
+    if (forced !== target.name) {
+      const needsConfirm = Boolean(target.needsConfirmation?.(fingerprint, s.fingerprint ? JSON.parse(s.fingerprint) : null));
+      const c = confirmChange({ key, published: s.fingerprint, pending: s.pending ?? null, needsConfirm });
+      if (!dryRun) { if (c.pending) s.pending = c.pending; else delete s.pending; }
+      if (c.flippedBack) {
+        log(`${target.name}: upstream went back to the published version; two versions are being served`);
+        if (!dryRun && (!s.flipNotified || now - s.flipNotified > 24 * 3600e3)) {
+          notify(`${target.name} watcher`, "Upstream is alternating between two versions; only a version seen on two checks in a row is published");
+          s.flipNotified = now;
+        }
+      }
+      if (!c.run) {
+        log(`${target.name}: ${key === s.fingerprint ? "unchanged" : "changed, seen once; publishing if the next check sees it again"}`);
+        save();
+        continue;
+      }
+    }
     if (forced !== target.name && key === s.failedFingerprint) { log(`${target.name}: changed, but this version already failed; waiting for a newer one`); continue; }
     log(`${target.name}: changed ${s.fingerprint ?? "(first run)"} -> ${key}`);
     const claimed = new Set([...before, ...cycle.flatMap(c => c.produced)]);
