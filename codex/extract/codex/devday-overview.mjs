@@ -28,7 +28,7 @@ This capture reads ChatGPT desktop ${sources.app.version} (build ${sources.app.b
 
 - ${link('GPT-6.1 Sol base instructions', 'gpt-6-1-sol-base-instructions')} and ${link('full model record', 'raw-captured-gpt-6-1-sol-record')} expose the newly catalogued model's instruction stack.
 - ${link('Model prompt comparison', 'three-model-prompt-comparison')} compares the dedicated GPT-6 model records in this authenticated capture; ${link('conditional modules', 'conditional-instruction-modules')} includes model-specific differences.
-- ${link('ChatGPT Work prompts', 'chatgpt-work-prompts')} includes the grounded writing-style demo, private review/repair prompts and GIF-editing instructions. ${absentStyle} older writing-style anchors are explicitly absent in this build.
+- ${link('ChatGPT Work prompts', 'chatgpt-work-prompts')} includes the grounded writing-style demo and private review/repair prompts. ${link('Sites and artifacts prompts', 'chatgpt-sites-artifacts-prompts')} includes the GIF-editing instructions. ${absentStyle} older writing-style anchors are explicitly absent in this build.
 - ${link('Desktop tool manifest', 'tool-manifest')}, ${link('bundled plugins', 'chatgpt-bundled-plugins')}, ${link('computer-use prompts', 'computer-use-prompts')} and ${link('other model-facing text', 'desktop-model-facing-text')} show the tools and additional instructions the app can put before a model.
 
 ## Announcements and their source-map boundaries

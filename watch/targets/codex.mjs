@@ -6,7 +6,7 @@ import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, writeStatus } from "../lib/publish.mjs";
-import { log, notify, run } from "../lib/run.mjs";
+import { log as defaultLog, notify as defaultNotify, run as defaultRun } from "../lib/run.mjs";
 
 const repo = path.resolve(import.meta.dirname, "../../codex");
 const GENERATED = [
@@ -48,25 +48,31 @@ export const codex = {
   },
 
   fingerprint() {
-    const r = run(node, ["extract/codex/fingerprint.mjs"], { cwd: repo, timeoutMs: 60 * 1000 });
+    const r = defaultRun(node, ["extract/codex/fingerprint.mjs"], { cwd: repo, timeoutMs: 60 * 1000 });
     if (r.status !== 0) throw new Error(`fingerprint failed: ${r.stderr.slice(-500)}`);
     return JSON.parse(r.stdout.trim().split("\n").at(-1));
   },
 
-  async refresh({ now, dryRun, fingerprint, previous }) {
+  async refresh({ now, dryRun, fingerprint, previous }, runtime = {}) {
+    // The injected command runner lets regression tests prove that no publication follows
+    // a failed required extractor, without running the desktop extraction or Git commands.
+    const repo = runtime.repo ?? this.repo;
+    const run = runtime.run ?? defaultRun;
+    const notify = runtime.notify ?? defaultNotify;
+    const log = runtime.log ?? defaultLog;
     // The config.toml and env-var reference follows the bundled CLI and app build. It needs
-    // the matching openai/codex source tag; if that isn't published yet, say so and keep going.
-    let configNote = "";
+    // the matching openai/codex source tag. A failed refresh stops this publication cycle.
     let cliPromptDiff = "";
     const cliPromptDiffFile = path.join(repo, "work/codex-cli-prompts-diff.md");
     if (!previous || previous.cli_sha256 !== fingerprint.cli_sha256 || previous.app_build !== fingerprint.app_build) {
       rmSync(cliPromptDiffFile, { force: true });
       const c = run("bash", ["extract/codex-config/run_all.sh"], { cwd: repo, timeoutMs: 30 * 60 * 1000 });
       if (c.status !== 0) {
-        configNote = `config/env reference not regenerated: ${(c.stderr || c.stdout).slice(-300)}`;
-        notify("Codex/ChatGPT config reference", configNote);
+        const configNote = `config/env reference not regenerated: ${(c.stderr || c.stdout).slice(-300)}`;
+        if (!dryRun) notify("Codex/ChatGPT config reference", `${configNote}; publication stopped`);
         run("git", ["checkout", "--", "outputs/codex-config.json", "outputs/codex-config.md", "outputs/codex-env-vars.json", "outputs/codex-env-vars.md",
           "outputs/codex-cli-prompts.md", "outputs/codex-cli-bundled-skills.md", "outputs/codex-cli-prompts.json"], { cwd: repo });
+        throw new Error(`required config/env extraction failed (${c.status}); publication stopped: ${(c.stderr || c.stdout).slice(-800)}`);
       } else if (existsSync(cliPromptDiffFile)) {
         // Written by this cycle's 07_cli_prompts.mjs against the committed pages; consumed once.
         cliPromptDiff = readFileSync(cliPromptDiffFile, "utf8").trim();
@@ -83,25 +89,25 @@ export const codex = {
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
     // Generated pages beyond the refresh documents: ChatGPT prompts, bundled plugins and
-    // Computer Use prompts, and the live tool manifest. Each is non-fatal: a failure is logged
-    // and its pages are restored; a script not yet on main is skipped. They run before the
+    // Computer Use prompts, and the live tool manifest. These are required summary inputs:
+    // restore failed outputs, then stop publication rather than combine builds. They run before the
     // sweep, which excludes the texts they publish.
     const generatedDiffs = [];
     for (const g of GENERATED) {
-      if (!existsSync(path.join(repo, g.script))) continue;
+      if (!existsSync(path.join(repo, g.script))) throw new Error(`required extractor ${g.script} is missing; publication stopped`);
       const diffFile = path.join(repo, g.diff);
       rmSync(diffFile, { force: true });
       const out = run(node, [g.script], { cwd: repo, timeoutMs: 10 * 60 * 1000 });
       if (out.status !== 0) {
         log(`codex ${g.script} failed (${out.status}): ${(out.stderr || out.stdout).slice(-300)}`);
-        if (!dryRun) notify("Codex/ChatGPT generated pages", `${g.script} failed; its pages were left unchanged`);
+        if (!dryRun) notify("Codex/ChatGPT generated pages", `${g.script} failed; its pages were restored and publication stopped`);
         run("git", ["checkout", "--", ...g.outputs.filter(file => existsSync(path.join(repo, file)))], { cwd: repo });
-        continue;
+        throw new Error(`required extractor ${g.script} failed (${out.status}); publication stopped: ${(out.stderr || out.stdout).slice(-800)}`);
       }
       if (existsSync(diffFile)) { generatedDiffs.push(readFileSync(diffFile, "utf8").trim()); rmSync(diffFile, { force: true }); }
     }
 
-    // Model-facing text the inventory doesn't cover; never fails the refresh.
+    // Model-facing text the inventory does not cover; required by current Key findings.
     let sweepDiff = "";
     const sweepDiffFile = path.join(repo, "work/desktop-model-facing-diff.md");
     rmSync(sweepDiffFile, { force: true });
@@ -109,6 +115,7 @@ export const codex = {
     if (sweep.status !== 0) {
       log(`codex prompt sweep failed: ${(sweep.stderr || sweep.stdout).slice(-300)}`);
       run("git", ["checkout", "--", "outputs/desktop-model-facing-text.md"], { cwd: repo });
+      throw new Error(`required prompt sweep failed (${sweep.status}); publication stopped: ${(sweep.stderr || sweep.stdout).slice(-800)}`);
     } else {
       const swept = JSON.parse(sweep.stdout.trim().split("\n").at(-1));
       if (swept.jev_unavailable && !dryRun) notify("Codex/ChatGPT prompt sweep", `${swept.unclassified} candidates unclassified: ${swept.jev_unavailable}`);
@@ -116,7 +123,8 @@ export const codex = {
     }
     // Early-warning scans of the build: new feature surfaces, embedded payloads, the whole
     // package. Each writes its baseline under outputs/ and a diff file only when something
-    // changed; findings are notified and go into the changelog. Never fails the refresh.
+    // changed; findings are notified and go into the changelog. Package/binwalk failures are
+    // non-fatal; the surface triage file is required by summaries below.
     const scanDiffs = [];
     for (const s of SCANS) {
       if (!existsSync(path.join(repo, s.script))) continue;
