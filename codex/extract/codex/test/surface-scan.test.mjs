@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { openAsar } from "../lib/asar.mjs";
-import { compare, familyOf, inventory, jevLabeller, renderDiff, scan } from "../surface-scan.mjs";
+import { compare, familyOf, inventory, jevLabeller, renderDiff, scan, triageRecord } from "../surface-scan.mjs";
 
 // A minimal asar: pickled JSON header, then the file bytes.
 function writeAsar(files) {
@@ -138,4 +138,19 @@ test("thresholds: small new families and small growth are not flagged; removals 
   const { flagged, notes } = compare(previous, current);
   assert.deepEqual(flagged, []); // a grew by 15 (< 20); b grew by 10%; small has 4 members
   assert.deepEqual(notes.map(n => `${n.kind}:${n.name}`), ["asset_families:gone", "endpoints:/x/y"]);
+});
+
+test("machine triage always binds the delta to source bytes and distinguishes unlabelled candidates", () => {
+ const source={app_version:'2',app_build:'2',asar_sha256:'source-bytes'};
+ const result={flagged:[{name:'positive',jev:0.8},{name:'negative',jev:0.1},{name:'unknown',jev:null}],notes:[{name:'removed',change:'removed'}],baseline:true};
+ const record=triageRecord({result,source,unavailable:'disabled'});
+ assert.deepEqual(record.source,source);
+ assert.deepEqual(record.flagged,result.flagged);
+ assert.deepEqual(record.notes,result.notes);
+ assert.deepEqual(record.summary,{flagged:3,removed:1,labelled:2,documentable:1,unlabelled:1,unavailable:'disabled'});
+ const empty=triageRecord({result:{flagged:[],notes:[],baseline:false},source});
+ assert.deepEqual(empty.flagged,[]);
+ assert.deepEqual(empty.notes,[]);
+ assert.equal(empty.baseline,false);
+ assert.equal(empty.source.asar_sha256,'source-bytes');
 });

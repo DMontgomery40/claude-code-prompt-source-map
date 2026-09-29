@@ -14,6 +14,7 @@
 // JEV_LIMIT flagged changes: is this a capability a reference of what the harness sends the model,
 // and what triggers model-visible behavior, should document? Writes
 //   outputs/app-surfaces.json   this build's inventory (the next baseline)
+//   work/surface-triage.json current source identity and complete flagged/removed delta, even when empty
 //   work/surfaces-diff.md       the flagged changes, Jev's labels and evidence (absent when none)
 // and prints one JSON summary line. Jev being unavailable never fails the scan: the structural
 // diff is written unlabelled. Exit 2 when the app or its asar cannot be read.
@@ -328,6 +329,25 @@ function readBaseline(repo) {
   }
 }
 
+export function triageRecord({ result, source, previousSource = null, unavailable = null }) {
+  const labelled = result.flagged.filter(item => typeof item.jev === "number");
+  return {
+    source,
+    flagged: result.flagged,
+    notes: result.notes,
+    baseline: result.baseline,
+    baseline_source: previousSource,
+    summary: {
+      flagged: result.flagged.length,
+      removed: result.notes.length,
+      labelled: labelled.length,
+      documentable: labelled.filter(item => item.jev >= 0.5).length,
+      unlabelled: result.flagged.length - labelled.length,
+      unavailable
+    }
+  };
+}
+
 async function main() {
   const repo = process.env.SURFACE_SCAN_ROOT || path.resolve(import.meta.dirname, "..", "..");
   let asar;
@@ -342,7 +362,7 @@ async function main() {
     process.exit(2);
   }
   const { surfaces, evidence } = inventory(asar);
-  const current = { source: { app_version: app.version, app_build: app.build }, ...surfaces };
+  const current = { source: { app_version: app.version, app_build: app.build, asar_sha256: asar.sha256 }, ...surfaces };
   const baseline = readBaseline(repo);
 
   const cacheFile = path.join(repo, "work", "surface-verdicts.json");
@@ -356,17 +376,21 @@ async function main() {
   const result = await scan({ current, evidence, previous: baseline.data, labeller, limit });
   const unavailable = process.env.SURFACE_JEV === "off" ? "disabled (SURFACE_JEV=off)" : labeller.state.unavailable;
 
+  const triage = triageRecord({ result, source: current.source, previousSource: baseline.data?.source, unavailable });
+  const labelled = result.flagged.filter(item => typeof item.jev === "number");
+  const triageText = `${JSON.stringify(triage, null, 1)}\n`;
+  privacyScan(new Map([["surface-triage.json", triageText]]));
   const baselineText = `${JSON.stringify(current, null, 1)}\n`;
   privacyScan(new Map([[BASELINE, baselineText]]));
   fs.mkdirSync(path.join(repo, "outputs"), { recursive: true });
   fs.writeFileSync(path.join(repo, "outputs", BASELINE), baselineText);
   const diffFile = path.join(repo, "work", DIFF);
   fs.mkdirSync(path.dirname(diffFile), { recursive: true });
+  fs.writeFileSync(path.join(repo, "work", "surface-triage.json"), triageText);
   if (result.flagged.length) fs.writeFileSync(diffFile, renderDiff({ app, previousSource: baseline.data?.source, flagged: result.flagged, notes: result.notes, unavailable, limit: Math.min(limit, result.flagged.length) }));
   else fs.rmSync(diffFile, { force: true });
   if (labeller) fs.writeFileSync(cacheFile, JSON.stringify(labeller.cache));
 
-  const labelled = result.flagged.filter(f => f.jev !== null);
   console.log(JSON.stringify({
     baseline: baseline.from,
     flagged: result.flagged.length,

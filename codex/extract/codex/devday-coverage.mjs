@@ -21,18 +21,47 @@ export function disposition(candidate, sources, captures, prompts) {
   // UI strings alone do not establish an injected instruction, a tool or a rollout.
   return 'unresolved';
 }
-export function generate(root = path.resolve(import.meta.dirname, '../..'), triageFile = null) {
-  let triage;
-  if(triageFile) triage=JSON.parse(fs.readFileSync(triageFile));
-  else {
-    const previous=JSON.parse(fs.readFileSync(path.join(root,'outputs/devday-surface-coverage.json')));
-    triage={flagged:previous.candidates.map(c=>({...c,jev:c.triage_score})),summary:{documentable:previous.scope.classifier_positive}};
+// A review universe belongs to exact bytes. New scans may carry no changes; only an
+// unchanged build with no removals can retain the previously reviewed universe.
+export function selectTriage({ scan = null, previous = null, asarSha256 }) {
+  const previousMatches = previous?.source?.asar_sha256 === asarSha256;
+  const reviewed = () => ({
+    source: previous.source,
+    flagged: previous.candidates.map(candidate => ({ ...candidate, jev: candidate.triage_score })),
+    notes: previous.removed ?? [],
+    baseline: previous.scan_baseline ?? true,
+    baseline_source: previous.baseline_source ?? null,
+    summary: {
+      documentable: previous.scope.classifier_positive,
+      labelled: previous.scope.classifier_labelled ?? previous.scope.classifier_positive + previous.scope.classifier_negative,
+      unavailable: previous.scope.classifier_unavailable ?? null
+    },
+    universe: 'retained same-build review'
+  });
+  if (!scan) {
+    if (!previousMatches) throw new Error('Coverage source changed or is unavailable; run the current surface scan and supply its triage file.');
+    return reviewed();
   }
+  if (!scan.source?.asar_sha256 || scan.source.asar_sha256 !== asarSha256) {
+    throw new Error('Surface triage source hash does not match the installed app.asar; run the current surface scan.');
+  }
+  if (!Array.isArray(scan.flagged) || !Array.isArray(scan.notes)) throw new Error('Surface triage requires flagged and notes arrays.');
+  if (previousMatches && !scan.flagged.length && !scan.notes.length) {
+    return { ...reviewed(), source: scan.source, baseline: scan.baseline, baseline_source: scan.baseline_source ?? null, notes: scan.notes };
+  }
+  return { ...scan, universe: 'current scan' };
+}
+
+export function generate(root = path.resolve(import.meta.dirname, '../..'), triageFile = null) {
+  const asar = openAsar(codexApp().asar);
+  const previousFile = path.join(root,'outputs/devday-surface-coverage.json');
+  const previous = fs.existsSync(previousFile) ? JSON.parse(fs.readFileSync(previousFile)) : null;
+  const scan = triageFile ? JSON.parse(fs.readFileSync(triageFile)) : null;
+  const triage = selectTriage({ scan, previous, asarSha256: asar.sha256 });
   const docLink = filename => {
     const entry=categories.flatMap(c=>c.files).find(f=>typeof f.records==='string' ? f.records==='outputs/'+filename : f.records?.file==='outputs/'+filename);
     return entry ? `${productOrigin('codex')}/${entry.slug}/` : `${productOrigin('codex')}/devday-surface-coverage-records/`;
   };
-  const asar = openAsar(codexApp().asar);
   const docs = fs.readdirSync(path.join(root, 'outputs')).filter(n => n.endsWith('.json') && /prompts|learning-blocks|tool-manifest|bundled-plugins/.test(n)).map(name => ({name, text:JSON.stringify((({items,tools,blocks,how_blocks_arrive,type_enum_without_manifest})=>({items,tools,blocks,how_blocks_arrive,type_enum_without_manifest}))(JSON.parse(fs.readFileSync(path.join(root,'outputs',name),'utf8'))))}));
   const hashes = new Map();
   const hash = entry => { if (!hashes.has(entry.path)) hashes.set(entry.path, asar.fileSha256(entry)); return hashes.get(entry.path); };
@@ -76,20 +105,27 @@ export function generate(root = path.resolve(import.meta.dirname, '../..'), tria
     {name:'Writing style', namespaces:['workOnboarding.writingStyle'], pattern:/writing style|Library|Connect apps/i, behavior:'Onboarding says style can use chats and Library files, with optional connected apps. The refreshed Work prompt record documents the separate skill-creation requests, representative authored sampling and privacy instructions.', limit:'The onboarding description does not prove a generated skill exists or that memory/style has been learned for an account.'}
   ];
   const features=featureDefinitions.map(f=>({...f,evidence:messages.filter(m=>f.namespaces.some(ns=>m.id.startsWith(ns+'.')) && f.pattern.test(m.id+' '+m.text)).slice(0,8).map(m=>({message_id:m.id,text:m.text,...m.source})),candidate_ids:candidates.filter(c=>f.namespaces.includes(c.name)).map(c=>c.id)})).map(({pattern,...f})=>f);
-  const report={schema_version:1,title:'Codex/ChatGPT Dev Day surface coverage',source:{asar_sha256:asar.sha256},scope:{candidates:candidates.length,classifier_positive:triage.summary.documentable,classifier_negative:triage.flagged.length-triage.summary.documentable},dispositions:counts,features,candidates};
+  const labelled = triage.summary?.labelled ?? triage.flagged.filter(candidate=>typeof candidate.jev==='number').length;
+  const positive = triage.summary?.documentable ?? triage.flagged.filter(candidate=>typeof candidate.jev==='number' && candidate.jev>=0.5).length;
+  const report={schema_version:1,title:'Codex/ChatGPT Dev Day surface coverage',source:{...triage.source,asar_sha256:asar.sha256},scan_baseline:triage.baseline,baseline_source:triage.baseline_source??null,review_universe:triage.universe,scope:{candidates:candidates.length,classifier_positive:positive,classifier_negative:labelled-positive,classifier_labelled:labelled,classifier_unlabelled:candidates.length-labelled,classifier_unavailable:triage.summary?.unavailable??null},dispositions:counts,features:features.filter(feature=>feature.evidence.length),removed:triage.notes??[],removal_qualification:'Absent from the current structural inventory relative to the scan baseline. This does not establish feature disablement or server-side removal.',candidates};
   privacyScan(new Map([['devday-surface-coverage.json',JSON.stringify(report)]]));
   fs.writeFileSync(path.join(root,'outputs/devday-surface-coverage.json'),JSON.stringify(report,null,2)+'\n');
   const escape=s=>String(s).replaceAll('|','\\|').replaceAll('\n',' ');
-  let md=`# Codex/ChatGPT Dev Day surface coverage\n\nA complete disposition ledger of ${candidates.length} structural candidates against the refreshed prompt, tool, plugin and learning-block records. “Dev Day” names the review, not an independently established launch date. Source: shipped app.asar, SHA-256 \`${asar.sha256}\`.\n\nThe classifier labelled ${triage.summary.documentable} candidates positive and ${triage.flagged.length-triage.summary.documentable} negative. Neither its score nor a new inventory entry establishes a newly launched or enabled feature. Endpoint paths are client-side evidence, not a public API contract. “Already captured” means a namespace has at least one exact message ID or instruction text in a published record (absence/exclusion lists are ignored); it does not certify that every message in that namespace is model-facing or fully extracted.\n\n`;
+  let md=`# Codex/ChatGPT Dev Day surface coverage\n\nA complete disposition ledger of ${candidates.length} structural candidates against the refreshed prompt, tool, plugin and learning-block records. “Dev Day” names the review, not an independently established launch date. Source: shipped app.asar, SHA-256 \`${asar.sha256}\`.\n\nThe classifier labelled ${positive} candidates positive and ${labelled-positive} negative; ${candidates.length-labelled} are unlabelled. The reviewed universe comes from the ${triage.universe}. Neither its score nor a new inventory entry establishes a newly launched or enabled feature. Endpoint paths are client-side evidence, not a public API contract. “Already captured” means a namespace has at least one exact message ID or instruction text in a published record (absence/exclusion lists are ignored); it does not certify that every message in that namespace is model-facing or fully extracted.\n\n`;
   md+='| Disposition | Candidates |\n|---|---:|\n'+Object.entries(counts).map(([s,n])=>`| ${s} | ${n} |`).join('\n')+'\n\n';
   md+='## Feature-level map\n\nThe following triggers are described by exact shipped text. They establish client intent and instruction contents, with runtime and account activation qualifications.\n\n';
-  for(const feature of features){md+=`### ${feature.name}\n\n${feature.behavior} ${feature.limit}\n\n`;for(const e of feature.evidence)md+=`- \`${e.message_id}\`: ${escape(e.text)} Source: \`${e.file}\`, byte ${e.byte_offset}, SHA-256 \`${e.sha256}\`.\n`;md+='\n';}
+  for(const feature of report.features){md+=`### ${feature.name}\n\n${feature.behavior} ${feature.limit}\n\n`;for(const e of feature.evidence)md+=`- \`${e.message_id}\`: ${escape(e.text)} Source: \`${e.file}\`, byte ${e.byte_offset}, SHA-256 \`${e.sha256}\`.\n`;md+='\n';}
   md+='## Endpoint families\n\nEach endpoint candidate below has its own source locator and method where visible. Calls cover team/space/page collaboration, browser credentials, connectors, messaging, automations, persistent runtime controls, Sites hosting, shopping/business profiles, GitHub/GitLab review operations, model configuration and rules. These client calls do not by themselves expose model-visible tools. Server-side dispatch and authorization remain outside this evidence.\n\n';
   const endpointFamilies=new Map();
   for(const candidate of candidates.filter(c=>c.kind==='endpoints')){const segments=candidate.name.split('/').filter(Boolean);const family=segments[0]==='wham' && ['github','gitlab'].includes(segments[1])?'/'+segments.slice(0,2).join('/'):'/'+segments[0];endpointFamilies.set(family,(endpointFamilies.get(family)??0)+1);}
   md+='| Endpoint family | Candidates |\n|---|---:|\n'+[...endpointFamilies].sort(([a],[b])=>a.localeCompare(b)).map(([family,count])=>`| \`${family}\` | ${count} |`).join('\n')+'\n\n';
   md+='## Instruction-bearing gaps\n\n';
   for(const c of candidates.filter(c=>c.prompt_candidates.length && c.disposition!=='already captured')) {md+=`### ${c.name}\n\n${c.trigger}\n\n`;for(const p of c.prompt_candidates) md+=`- \`${p.id}\`: ${escape(p.text)} Source: \`${p.source.file}\`, byte ${p.source.byte_offset}, SHA-256 \`${p.source.sha256}\`.\n`;md+='\n';}
+if (report.removed.length) {
+    md+='## Removed inventory entries\n\n'+report.removal_qualification+'\n\n';
+    for(const entry of report.removed) md+=`- ${escape(entry.kind)} \`${escape(entry.name)}\` (${entry.previous??'?'} prior members).\n`;
+    md+='\n';
+  }
   md+=`## Complete ledger\n\nSource offsets are UTF-8 bytes within the named asar entry. Full evidence, exact message text and activation qualifications are in [the structured ledger](${productOrigin('codex')}/devday-surface-coverage-records/).\n\n| # | Kind | Candidate | Disposition | Evidence and existing records |\n|---:|---|---|---|---|\n`;
   md+=candidates.map(c=>`| ${c.id} | ${c.kind} | \`${escape(c.name)}\` | ${c.disposition} | ${c.evidence.map(e=>`\`${e.file}\`${e.byte_offset!=null?` @ ${e.byte_offset}`:''} SHA-256 \`${e.sha256}\``).join('; ')||'No exact shipped match recovered'}${c.captured_in.length?'; '+c.captured_in.map(n=>`[${path.basename(n)}](${docLink(path.basename(n))})`).join(', '):''} |`).join('\n')+'\n';
   fs.writeFileSync(path.join(root,'outputs/devday-surface-coverage.md'),md);

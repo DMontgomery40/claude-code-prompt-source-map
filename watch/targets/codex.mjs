@@ -17,11 +17,7 @@ const GENERATED = [
   { script: "extract/codex/tool-manifest.mjs", diff: "work/tool-manifest-diff.md",
     outputs: ["outputs/desktop-tool-manifest.md", "outputs/desktop-tool-manifest.json"] },
   { script: "extract/codex/learning-blocks.mjs", diff: "work/learning-blocks-diff.md",
-    outputs: ["outputs/chatgpt-learning-blocks.md", "outputs/chatgpt-learning-blocks.json"] },
-  { script: "extract/codex/devday-coverage.mjs", diff: "work/devday-coverage-diff.md",
-    outputs: ["outputs/devday-surface-coverage.md", "outputs/devday-surface-coverage.json"] },
-  { script: "extract/codex/devday-overview.mjs", diff: "work/devday-overview-diff.md",
-    outputs: ["outputs/devday-update.md"] }
+    outputs: ["outputs/chatgpt-learning-blocks.md", "outputs/chatgpt-learning-blocks.json"] }
 ];
 // Early-warning scans (run after the generators and the sweep). A script not yet on main is skipped.
 const SCANS = [
@@ -124,6 +120,7 @@ export const codex = {
     const scanDiffs = [];
     for (const s of SCANS) {
       if (!existsSync(path.join(repo, s.script))) continue;
+      if (s.script === "extract/codex/surface-scan.mjs") rmSync(path.join(repo, "work/surface-triage.json"), { force: true });
       const diffFile = path.join(repo, s.diff);
       rmSync(diffFile, { force: true });
       const out = run(node, [s.script], { cwd: repo, timeoutMs: s.timeoutMs ?? 15 * 60 * 1000 });
@@ -141,10 +138,16 @@ export const codex = {
       try { line = out.stdout.trim().split("\n").at(-1); } catch {}
       if (!dryRun) notify(`Codex/ChatGPT ${s.label}`, `New in ChatGPT desktop ${summary.sources.app_version}: ${line.slice(0, 250)}`);
     }
-    // Key findings is a current summary, so refresh it only after all underlying
-    // captures and scans. Do not publish a stale summary if generation fails.
-    const findings = run(node, ["extract/codex/key-findings.mjs"], { cwd: repo, timeoutMs: 60 * 1000 });
-    if (findings.status !== 0) throw new Error(`key findings refresh failed: ${(findings.stderr || findings.stdout).slice(-800)}`);
+    // Summaries consume the fresh scan, not the previous ledger's candidate set.
+    // A failed surface scan leaves no triage file, so stale summaries cannot publish.
+    for (const args of [
+      ["extract/codex/devday-coverage.mjs", "work/surface-triage.json"],
+      ["extract/codex/devday-overview.mjs"],
+      ["extract/codex/key-findings.mjs"]
+    ]) {
+      const out = run(node, args, { cwd: repo, timeoutMs: 10 * 60 * 1000 });
+      if (out.status !== 0) throw new Error(`current summary ${args[0]} failed: ${(out.stderr || out.stdout).slice(-800)}`);
+    }
     // Catalog settings baseline: advanced after a publish, or when nothing needs publishing;
     // never in a dry run, so a failed gate or a dry run can't swallow a change.
     const promoteSnapshot = () => {

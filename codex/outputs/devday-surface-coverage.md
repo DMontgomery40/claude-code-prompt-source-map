@@ -2,7 +2,7 @@
 
 A complete disposition ledger of 355 structural candidates against the refreshed prompt, tool, plugin and learning-block records. “Dev Day” names the review, not an independently established launch date. Source: shipped app.asar, SHA-256 `2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee`.
 
-The classifier labelled 287 candidates positive and 68 negative. Neither its score nor a new inventory entry establishes a newly launched or enabled feature. Endpoint paths are client-side evidence, not a public API contract. “Already captured” means a namespace has at least one exact message ID or instruction text in a published record (absence/exclusion lists are ignored); it does not certify that every message in that namespace is model-facing or fully extracted.
+The classifier labelled 287 candidates positive and 68 negative; 0 are unlabelled. The reviewed universe comes from the retained same-build review. Neither its score nor a new inventory entry establishes a newly launched or enabled feature. Endpoint paths are client-side evidence, not a public API contract. “Already captured” means a namespace has at least one exact message ID or instruction text in a published record (absence/exclusion lists are ignored); it does not certify that every message in that namespace is model-facing or fully extracted.
 
 | Disposition | Candidates |
 |---|---:|

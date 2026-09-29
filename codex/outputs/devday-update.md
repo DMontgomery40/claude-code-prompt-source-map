@@ -1,11 +1,11 @@
 # Dev Day: what changed in the harness
 
-This capture reads ChatGPT desktop 26.928.20755 (build 12246) and its bundled codex-cli 0.159.0. It replaces the preceding build 11645 / CLI 0.158 capture for live extraction pages. Dated browser observations and historical binary reports retain their original evidence dates.
+This capture reads ChatGPT desktop 26.928.20755 (build 12246) and its bundled codex-cli 0.159.0. The Dev Day refresh began with build 11645 / CLI 0.158 as its baseline; current extraction pages use the capture above. Dated browser observations and historical binary reports retain their original evidence dates.
 
 ## Start with the changed instructions
 
 - [GPT-6.1 Sol base instructions](https://harness.dtmont.com/codex/gpt-6-1-sol-base-instructions/) and [full model record](https://harness.dtmont.com/codex/raw-captured-gpt-6-1-sol-record/) expose the newly catalogued model's instruction stack.
-- [Model prompt comparison](https://harness.dtmont.com/codex/three-model-prompt-comparison/) compares every GPT-6 model in this authenticated capture; [conditional modules](https://harness.dtmont.com/codex/conditional-instruction-modules/) includes model-specific differences.
+- [Model prompt comparison](https://harness.dtmont.com/codex/three-model-prompt-comparison/) compares the dedicated GPT-6 model records in this authenticated capture; [conditional modules](https://harness.dtmont.com/codex/conditional-instruction-modules/) includes model-specific differences.
 - [ChatGPT Work prompts](https://harness.dtmont.com/codex/chatgpt-work-prompts/) includes the grounded writing-style demo, private review/repair prompts and GIF-editing instructions. 4 older writing-style anchors are explicitly absent in this build.
 - [Desktop tool manifest](https://harness.dtmont.com/codex/tool-manifest/), [bundled plugins](https://harness.dtmont.com/codex/chatgpt-bundled-plugins/), [computer-use prompts](https://harness.dtmont.com/codex/computer-use-prompts/) and [other model-facing text](https://harness.dtmont.com/codex/desktop-model-facing-text/) show the tools and additional instructions the app can put before a model.
 

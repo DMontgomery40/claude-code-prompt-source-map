@@ -2,12 +2,23 @@
   "schema_version": 1,
   "title": "Codex/ChatGPT Dev Day surface coverage",
   "source": {
+    "app_version": "26.928.20755",
+    "app_build": "12246",
     "asar_sha256": "2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee"
   },
+  "scan_baseline": true,
+  "baseline_source": {
+    "app_version": "26.928.20755",
+    "app_build": "12246"
+  },
+  "review_universe": "retained same-build review",
   "scope": {
     "candidates": 355,
     "classifier_positive": 287,
-    "classifier_negative": 68
+    "classifier_negative": 68,
+    "classifier_labelled": 355,
+    "classifier_unlabelled": 0,
+    "classifier_unavailable": null
   },
   "dispositions": {
     "already captured": 11,
@@ -597,6 +608,8 @@
       ]
     }
   ],
+  "removed": [],
+  "removal_qualification": "Absent from the current structural inventory relative to the scan baseline. This does not establish feature disablement or server-side removal.",
   "candidates": [
     {
       "id": 1,

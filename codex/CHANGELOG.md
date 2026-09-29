@@ -6,7 +6,7 @@ Refreshed the Codex/ChatGPT source map for Dev Day. Added dedicated GPT-6.1 Sol 
 
 Jev classified the 355 surfaces through OpenRouter. Scores and compiled evidence retain their activation qualifications. The broad prompt sweep now publishes 133 entries, using cached Jev verdicts and 87 explicit local source reviews (66 model-facing, 21 excluded). It leaves zero candidates unclassified and records each review origin separately. Four historical writing-style strings are explicitly absent; the new grounded-demo flow is captured.
 
-The landing navigator now covers the whole harness. Key findings regenerates after every refresh from current model, prompt, tool, configuration and coverage records; the September 24 findings remain in the archive. Shared navigation and search expose the new pages. Current captures require GPT-6.1 Sol to prevent stale optional-model artifacts, and overview totals derive from the coverage ledger. Historical observations retain their evidence dates.
+The landing navigator now covers the whole harness. Key findings regenerates after every refresh from current model, prompt, tool, configuration and coverage records; the September 24 findings remain in the archive. Shared navigation and search expose the new pages. Current captures require GPT-6.1 Sol to prevent stale optional-model artifacts, and overview totals derive from the coverage ledger. The watcher regenerates coverage after its fresh surface scan, with source-hash checks and explicit removal/unlabelled boundaries. Historical observations retain their evidence dates.
 
 ## 2026-09-29 · ChatGPT desktop 26.924.22138 (11645), Codex CLI codex-cli 0.158.0-alpha.2.1
 
