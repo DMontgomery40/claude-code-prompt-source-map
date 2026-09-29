@@ -954,7 +954,7 @@ test("Help checks the resolver only when asked from the web, reads out this sess
     const called = [];
     const S = { trace: { product: "codex" }, network: null, sources: { sources: [{ status: "found" }, { status: "absent" }] } };
     const help = createHelp({ state: () => S, A: { openKeys: () => called.push("keys"), openSources: () => called.push("sources"), pickHar: () => called.push("har") } });
-    const layer = document.body.children.at(-1);
+    const layer = document.body.children.find(n => n.className === "help-layer");
     help.open();
     assert.equal(layer.hidden, false);
     const text = () => layer.textContent;

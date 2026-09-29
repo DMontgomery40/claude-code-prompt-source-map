@@ -39,7 +39,9 @@ It is not about token cost, and nothing here frames it that way.
   - The capture must belong to the session. Claude Code: the `x-claude-code-session-id` header, the
     `metadata.user_id` JSON, the flag attributes, and the event-log and Datadog records. Codex/ChatGPT:
     the `session-id` / `thread-id` headers and the analytics events (every thread of the family counts).
-    Entries that name no session go with the nearest entry in time that does. A capture that spans
+    Codex/ChatGPT request-local IDs override reused WebSocket handshake IDs; response IDs join streamed replies.
+    Entries without an exact association remain explicitly unattributed. Claude Code's legacy telemetry association
+    remains supported. A capture that spans
     several sessions is filtered, and the lens says how many entries belonged elsewhere. A capture of
     another product, or of other sessions only, is refused with the reason.
 - **Trace still opens in the 3D landscape.** A capture adds lens 5, "What went over the wire", beside

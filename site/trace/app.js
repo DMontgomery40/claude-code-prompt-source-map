@@ -344,13 +344,15 @@ function netHelp(open = $("#net-help").hidden) {
   open5?.addEventListener("click", () => { netHelp(false); selectLens(NETWORK_LENS.key); });
   const close = el("button", { class: "text-control", type: "button", text: "Close" });
   close.addEventListener("click", () => netHelp(false));
-  const more = el("button", { class: "text-control", type: "button", text: "More help" });
+  const more = el("button", { class: "text-control", type: "button", text: S.trace?.product === "codex" ? "Desktop recorder and help" : "Recording help" });
   more.addEventListener("click", () => { netHelp(false); openHelp("capture"); });
   box.replaceChildren(
     el("p", { class: "net-help-head", text: n
       ? `Attached: ${fmtInt(n.kept)} requests, ${fmtInt(n.calls.length)} model call${n.calls.length === 1 ? "" : "s"} (${fmtInt(n.join.matched)} in your log).`
       : "No network capture for this session." }),
-    el("p", { text: "A capture is the session's traffic, recorded while it runs: every request the harness sent, with the system prompt, tools, betas and flags the log leaves out. It can't be made afterwards. Record one by starting the session from the harness-source-map repo with:" }),
+    el("p", { text: "A capture keeps future traffic while the session runs: prompts, tools and flags the log can omit. Earlier traffic cannot be recovered." }),
+    S.trace?.product === "codex" ? el("p", { text: "For the desktop app, open Desktop recorder and help below. It records a future app run through the local helper. The recorder never quits an already-running app." }) : null,
+    el("p", { text: "For a CLI session, run this from the harness-source-map repo:" }),
     el("div", { class: "path" }, el("code", { text: cmd }), copy),
     el("p", { text: "When the command exits, the capture is saved beside that session's log, and Trace attaches it on its own every time the session opens (pasted id, folder or drop)." }),
     el("p", { class: "net-help-note" }, "A .har you already have: ", el("code", { text: "node tools/capture/file-capture.mjs capture.har" }), " files it beside its session, or choose it here for this visit."),

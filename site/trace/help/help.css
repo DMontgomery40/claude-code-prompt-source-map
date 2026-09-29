@@ -90,3 +90,16 @@
   .help-tabs [role=tab][aria-selected=true] { border-bottom-color: var(--accent, var(--link)); }
   .help-body { padding: 14px 16px 18px; }
 }
+
+/* Opt-in recorder controls and the status that remains visible after Help closes. */
+.help-recorder { padding: 12px 14px; margin: 12px 0 18px; border: 1px solid var(--line-2); border-radius: 9px; background: #0d1822; }
+.help-recorder .help-h4 { margin-top: 0; }
+.recording-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.help-recorder .help-btn { white-space: normal; }
+.help-recorder .help-btn:disabled { color: var(--ink-3); cursor: default; }
+.recording-traffic { color: var(--ink); font-variant-numeric: tabular-nums; }
+.recording-badge { position: fixed; right: 16px; bottom: 16px; z-index: 69; display: flex; align-items: center; gap: 8px; max-width: calc(100vw - 32px); padding: 9px 13px; border: 1px solid var(--line-2); border-radius: 999px; background: #13202c; color: var(--ink); font: 600 13px var(--sans); cursor: pointer; box-shadow: 0 3px 16px #0006; }
+.recording-badge[hidden] { display: none; }
+.recording-badge:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.recording-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; }
+.recording-badge[data-phase="recording"] .recording-dot { background: var(--you); }

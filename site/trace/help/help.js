@@ -3,6 +3,7 @@
 // the palette, and the places a feature is missing a piece (the Sources lens without a resolver, the capture
 // card). Nothing here is saved.
 import { el, fmtInt } from "../panels.js";
+import { createRecordingPanel } from "./recording.js";
 import { resolverHealth } from "../local-session.js";
 
 const PRODUCT = { "claude-code": "Claude Code", codex: "Codex/ChatGPT" };
@@ -37,6 +38,7 @@ export function createHelp(ctx) {
 
   const S = () => ctx.state?.() || null;
   const onPageOrigin = () => location.origin === LOCAL;
+  const recording = createRecordingPanel({trace:()=>S()?.trace,openHelp:()=>open("capture")});
 
   function open(key = null) {
     opener = document.activeElement;
@@ -158,7 +160,9 @@ export function createHelp(ctx) {
       ],
       capture: () => [
         h("Network captures"),
-        p("A capture is the session's traffic, recorded while it runs: every request the harness sent, with the system prompt, tools, betas and flags the log leaves out. It can't be made afterwards."),
+        p("A capture records traffic while a session runs, including request data the log can omit, such as prompts, tool definitions and flags. It cannot recover earlier traffic."),
+        recording.element,
+        el("h4", { class: "help-h4", text: "CLI capture route" }),
         steps([["Start the session through the capture tool", "From the harness-source-map repo, instead of plain claude or codex:"]]),
         cmd(null, `tools/capture/capture.sh -- ${s?.trace?.product === "codex" ? "codex" : "claude"}`),
         steps([["That's all", "When the command exits, the capture is saved beside the session's log. Trace attaches it every time you open that session, and “What went over the wire” (key 5) appears."]], 2),
@@ -178,6 +182,7 @@ export function createHelp(ctx) {
         p("Claude Code's own prompt dump is compiled out of the public build, so a capture (see “Network captures”) is the way to keep its requests."),
       ],
     };
+    recording.refresh();
     body.replaceChildren(...(parts[topic] || parts.open)().filter(Boolean));
   }
 
@@ -201,5 +206,5 @@ export function createHelp(ctx) {
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
-  return { open, close, refresh: () => { if (!layer.hidden) render(); }, get isOpen() { return !layer.hidden; } };
+  return { open, close, dispose: () => { recording.dispose(); layer.remove(); }, refresh: () => { if (!layer.hidden) render(); }, get isOpen() { return !layer.hidden; } };
 }

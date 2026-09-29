@@ -13,6 +13,7 @@
 # stripped before the HAR is written (trace_capture.py) and the file is checked again afterwards
 # (check-har.mjs). The HAR still holds your prompts, files and account details: keep it private.
 set -euo pipefail
+umask 077
 
 here="$(cd "$(dirname "$0")" && pwd)"
 out=""
@@ -37,7 +38,7 @@ har="$(cd "$rec" && pwd)/capture-$(date +%Y%m%d-%H%M%S).har"
 port="$(python3 -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')"
 
 PYTHONDONTWRITEBYTECODE=1 mitmdump -q --set confdir="$conf" --listen-host 127.0.0.1 --listen-port "$port" \
-  -s "$here/trace_capture.py" --set hardump="$har" &
+  -s "$here/trace_capture.py" --set trace_capture_output="$har" &
 proxy=$!
 stop_proxy() { kill -INT "$proxy" 2>/dev/null || true; wait "$proxy" 2>/dev/null || true; rm -rf "$conf"; }
 trap stop_proxy EXIT

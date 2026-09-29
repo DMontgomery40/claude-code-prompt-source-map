@@ -206,7 +206,7 @@ export function claudeDatadog(req, R) {
 // the create they follow (codex.rate_limits and codex.response.metadata arrive before response.created).
 export function codexSocket(entry, info, R) {
   const h = lowerHeaders(entry.request.headers), rh = lowerHeaders(entry.response.headers);
-  const frames = wsFrames(entry);
+  const frames = wsFrames(entry).filter((frame,index) => entry._webSocketMessages[index]._traceAssociation !== "unattributed");
   const turnMeta = jsonOr(h["x-codex-turn-metadata"], null);
   const handshake = {
     entry: info.i, t: info.t, openaiBeta: h["openai-beta"] || null, betaFeatures: String(h["x-codex-beta-features"] || "").split(",").map((s) => s.trim()).filter(Boolean),
@@ -219,24 +219,52 @@ export function codexSocket(entry, info, R) {
   const calls = [];
   const frameCall = new Array(frames.length).fill(-1); // frame index -> index in calls (-1: none)
   let cur = null, pre = [];
+  const pending = new Set(), responses = new Map();
   const start = (f) => {
     cur = codexCall(f, R, info);
     for (const [p, k] of pre) { absorb(cur, p, R); frameCall[k] = calls.length; }
     pre = [];
     calls.push(cur);
+    pending.add(cur);
   };
   frames.forEach((f, k) => {
     const type = f.json?.type || null;
     if (f.dir === "send" && type === "response.create") { start(f); frameCall[k] = calls.length - 1; return; }
-    if (f.dir !== "receive" || !type) { if (cur) frameCall[k] = calls.length - 1; return; }
-    // Frames before the next response.created belong to the create just sent; a rate-limit or metadata
-    // frame after a completed response belongs to the next one.
-    if (!cur || (cur.done && (type === "codex.rate_limits" || type === "codex.response.metadata"))) { pre.push([f, k]); return; }
-    absorb(cur, f, R);
-    frameCall[k] = calls.length - 1;
+    if (f.dir !== "receive" || !type) { if (pending.size === 1) frameCall[k] = calls.indexOf([...pending][0]); return; }
+    const rid = f.json.response_id || f.json.response?.id;
+    const call = (rid && responses.get(rid)) || (pending.size === 1 ? [...pending][0] : null);
+    if (!call) {
+      if (!pending.size && (type === "codex.rate_limits" || type === "codex.response.metadata")) pre.push([f,k]);
+      return;
+    }
+    if (rid) responses.set(rid,call);
+    absorb(call,f,R);
+    frameCall[k] = calls.indexOf(call);
+    if (call.done) pending.delete(call);
   });
   for (const c of calls) delete c.done;
   return { handshake, calls, frames, frameCall };
+}
+
+// HTTPS Responses fallback: share the exact request/response decoder with WS calls.
+export function codexHttp(entry, info, R) {
+  const request = jsonOr(bodyText(entry,"request"),{}) || {};
+  const call = codexCall({json:request,t:info.t,bytes:info.reqBytes},R,info);
+  call.transport = "http";
+  call.httpRequestId = header(entry.response.headers,"x-request-id") || null;
+  const text = bodyText(entry,"response") || "";
+  const events = parseSSE(text).filter(event=>event.json?.type);
+  if (events.length) {
+    for (const event of events) absorb(call,{json:event.json},R);
+  } else {
+    const response = jsonOr(text,null);
+    if (response && typeof response === "object") {
+      absorb(call,{json:{type:response.status === "failed" ? "response.failed" : response.status === "incomplete" ? "response.incomplete" : "response.completed",response}},R);
+    }
+  }
+  call.complete = Boolean(call.done);
+  delete call.done;
+  return call;
 }
 
 function codexCall(f, R, info) {

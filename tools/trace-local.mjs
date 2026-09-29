@@ -9,6 +9,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {narrowByHint} from '../site/trace/loader.js';
 import {SITE, siteOrigin} from '../site/src/shared/site.mjs';
 import {sourcesReport, readSource} from './sources/index.mjs';
+import {createDesktopRecorder} from './capture/desktop-capture.mjs';
 
 export const PORT = 8766;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -59,7 +60,7 @@ async function capturesOf(root,logs){
  return entries;
 }
 
-export function createTraceServer({roots=defaultRoots,siteRoot=null,home}={}){
+export function createTraceServer({roots=defaultRoots,siteRoot=null,home,recorder=createDesktopRecorder({roots})}={}){
  const tickets=new Map();
  // The family of a session id, found the same way for the manifest and for its local sources (kept briefly,
  // so the Sources lens doesn't walk every project folder on each read).
@@ -97,6 +98,19 @@ export function createTraceServer({roots=defaultRoots,siteRoot=null,home}={}){
   if(url.pathname.startsWith('/v1/')){
    if(!trusted || req.headers['x-trace-request']!=='1')return reply(403,{error:'Forbidden request'});
    try{
+    if(url.pathname.startsWith('/v1/recording/')){
+     if(url.pathname==='/v1/recording/status'&&req.method==='GET')return reply(200,await recorder.status());
+     if(['/v1/recording/start','/v1/recording/stop'].includes(url.pathname)&&req.method==='POST'){
+      const body=await readBody(req);if(body===null)return reply(413,{error:'Request too large'});if(!body||Array.isArray(body))return reply(400,{error:'Invalid request'});
+      const start=url.pathname.endsWith('/start');
+      if(Object.keys(body).some(key=>start||key!=='attachment'))return reply(400,{error:'Unknown recording option'});
+      const attachment=body.attachment;
+      if(attachment&&(attachment.product!=='codex'||!Array.isArray(attachment.sessionIds)||attachment.sessionIds.length!==1||!attachment.sessionIds.every(id=>typeof id==='string'&&UUID.test(id))))return reply(400,{error:'Invalid attachment session'});
+      try{return reply(200,start?await recorder.start():await recorder.stop({attachment}));}
+      catch(error){return reply(409,{error:{code:error.code||'RECORDER',message:error.message||'Recording failed'}});}
+     }
+     return reply(404,{error:'Not found'});
+    }
     // Every local source of a session (tools/sources): the report, then one source's content on request.
     if((url.pathname==='/v1/sources'||url.pathname==='/v1/source') && req.method==='POST'){
      const body=await readBody(req);if(body===null)return reply(413,{error:'Request too large'});if(!body)return reply(400,{error:'Invalid request'});

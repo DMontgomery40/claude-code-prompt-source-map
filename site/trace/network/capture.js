@@ -7,7 +7,7 @@ import { createRedactor, REDACTED, BY_CAPTURE } from "./redact.js";
 import { classify, productOf, ROLES, DECISIONS } from "./catalog.js";
 import {
   claudeModelCall, growthbookFlags, growthbookAttributes, claudeBootstrap, claudeEventLog, claudeDatadog,
-  codexSocket, codexModels, codexMetrics, codexAnalytics,
+  codexSocket, codexHttp, codexModels, codexMetrics, codexAnalytics,
 } from "./findings.js";
 import { collectTransit, reportTransit } from "./transit.js";
 
@@ -47,11 +47,90 @@ function sessionsOf(product, entry, info, reqJson) {
       if (Array.isArray(b)) for (const r of b) add(r && r.session_id);
     }
   } else {
-    add(h["session-id"]); add(h["thread-id"]);
+    const ids = codexRequestIds(reqJson());
+    const creates = wsFrames(entry).filter(f => f.dir === "send" && f.json?.type === "response.create");
+    for (const frame of creates) for (const id of codexRequestIds(frame.json)) ids.add(id);
+    if (ids.size) for (const id of ids) add(id);
+    else { add(h["thread-id"] || h["session-id"]); }
     const b = reqJson();
-    if (b && Array.isArray(b.events)) for (const e of b.events) { add(e?.event_params?.thread_id); add(e?.event_params?.session_id); }
+    if (b && Array.isArray(b.events)) for (const e of b.events) { add(e?.event_params?.thread_id || e?.event_params?.session_id); }
   }
   return out;
+}
+
+// Rust 0.159 Responses client metadata names the actual thread per request; a reused
+// websocket handshake can name an earlier thread, and session_id may name the root.
+export function codexRequestIds(body) {
+  const out = new Set();
+  const metadata = body?.client_metadata;
+  const id = metadata?.thread_id || metadata?.["thread-id"] || body?.thread_id || body?.threadId || metadata?.session_id || metadata?.["session-id"] || body?.session_id;
+  if (typeof id === "string" && id) out.add(id.toLowerCase());
+  return out;
+}
+
+// Scope frames by create metadata and response IDs. Unidentified connection frames
+// stay unattributed. Never give an overlapping response's frames to the latest create.
+function frameOwners(entry) {
+  const frames = wsFrames(entry), owners = new Array(frames.length).fill(null);
+  const h = lowerHeaders(entry.request.headers);
+  const handshake = h["thread-id"] || h["session-id"];
+  const perRequestIds = frames.some(frame => frame.dir === "send" && frame.json?.type === "response.create" && codexRequestIds(frame.json).size);
+  const pending = new Set(), responses = new Map();
+  frames.forEach((frame,index) => {
+    // Filing may remove a competing create. Its unresolved frames must not gain
+    // ownership merely because only one create remains in the partition.
+    if (entry._webSocketMessages[index]._traceAssociation === "unattributed") return;
+    const j = frame.json;
+    if (frame.dir === "send" && j?.type === "response.create") {
+      const ids = codexRequestIds(j);
+      const call = { ids: ids.size ? ids : new Set(!perRequestIds && handshake ? [handshake.toLowerCase()] : []) };
+      pending.add(call); owners[index] = call.ids; return;
+    }
+    if (frame.dir !== "receive" || !j) return;
+    const rid = j.response_id || j.response?.id;
+    let call = rid ? responses.get(rid) : null;
+    if (!call && pending.size === 1) call = [...pending][0];
+    if (!call) return;
+    if (rid) responses.set(rid,call);
+    owners[index] = call.ids;
+    if (["response.completed","response.failed","response.incomplete"].includes(j.type)) pending.delete(call);
+  });
+  return owners;
+}
+
+// Public pure helper used by the filer and worker: exact owner subsets for Codex/ChatGPT.
+// Unscoped side traffic remains visible but explicitly has no thread owner.
+export function scopeCapture(text, sessionIds, { explicit = false } = {}) {
+  const har = parseHar(text), mine = new Set(sessionIds.map(id => String(id).toLowerCase()));
+  if (explicit && captureSessions(text).sessions.length) throw new Error("Explicit attachment cannot override exact session identifiers in the capture.");
+  const entries = [];
+  for (const entry of har.log.entries) {
+    const info = entryInfo(entry,0);
+    const req = () => jsonOr(bodyText(entry,"request"),null);
+    let ids = sessionsOf("codex",entry,info,req);
+    let selected = entry;
+    if (info.ws) {
+      const owners = frameOwners(entry);
+      const frames = entry._webSocketMessages.map((frame,index) => ({...frame,_traceAssociation:owners[index]?.size ? "request-id" : explicit ? "explicit" : "unattributed"})).filter((frame,index) => owners[index]?.size ? [...owners[index]].some(id=>mine.has(id)) : true);
+      const scoped = owners.some(owner => owner?.size && [...owner].some(id=>mine.has(id)));
+      const anyScoped = owners.some(owner => owner?.size);
+      if (!scoped && anyScoped) continue;
+      selected = {...entry,_webSocketMessages:frames};
+      ids = scoped ? mine : new Set();
+    }
+    if (ids.size && ![...ids].some(id=>mine.has(id))) continue;
+    const body = req();
+    if (Array.isArray(body?.events)) {
+      const events = body.events.filter(event => {
+        const id = event?.event_params?.thread_id || event?.event_params?.session_id;
+        return !id || mine.has(String(id).toLowerCase());
+      });
+      selected = {...selected,request:{...selected.request,postData:{...selected.request.postData,text:JSON.stringify({...body,events})}}};
+    }
+    const association = ids.size ? "request-id" : explicit ? "explicit" : "unattributed";
+    entries.push({...selected,_traceAssociation:association});
+  }
+  return {...har,log:{...har.log,entries,_traceCaptureAttachment:{product:"codex",sessionIds:[...mine],association:explicit ? "explicit" : "request-id"}}};
 }
 
 // The product a capture is traffic of, and every session id its entries name with how many entries name
@@ -80,7 +159,10 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   for (const f of files) {
     const har = parseHar(f.text);
     names.push(f.name);
-    for (const e of har.log.entries) raw.push(e);
+    const attachment = har.log._traceCaptureAttachment;
+    const explicit = attachment?.association === "explicit" && attachment.product === trace.product && Array.isArray(attachment.sessionIds);
+    if (explicit && !attachment.sessionIds.some(id => sessionIdsOf(trace).includes(String(id).toLowerCase()))) throw new Error("This explicitly attached capture doesn't hold the loaded session.");
+    for (const e of har.log.entries) raw.push(e._traceAssociation === "explicit" && !explicit ? {...e,_traceAssociation:"unattributed"} : e);
   }
   if (!raw.length) throw new Error("That capture has no requests in it.");
   const infos = raw.map((e, i) => entryInfo(e, i));
@@ -96,7 +178,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   const reqJson = (i) => { if (!parsedReq.has(i)) { const t = bodyText(raw[i], "request"); parsedReq.set(i, t && t.length < 5_000_000 ? jsonOr(t, null) : null); } return parsedReq.get(i); };
   const owner = infos.map((x) => {
     const ids = sessionsOf(product, raw[x.i], x, () => reqJson(x.i));
-    if (!ids.size) return null;
+    if (!ids.size) return raw[x.i]._traceAssociation === "explicit" ? "mine" : null;
     if ([...ids].some((id) => mine.has(id))) return "mine";
     return [...ids][0];
   });
@@ -105,15 +187,28 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   if (!markedMine && others.size) {
     throw new Error(`This capture doesn't hold the loaded session. It holds ${others.size} other session${others.size === 1 ? "" : "s"} (${[...others].slice(0, 3).map((s) => `${short(s)}…`).join(", ")}). Load that session, or capture this one.`);
   }
-  // Entries that name no session go with the nearest entry in time that does.
+  // Codex/ChatGPT unscoped traffic is visible but never assigned by timestamp.
+  // Preserve the established Claude Code attachment behavior.
   const marked = infos.filter((x) => owner[x.i]);
   const keep = infos.map((x) => {
     if (owner[x.i]) return owner[x.i] === "mine";
-    if (!others.size || x.t == null) return true;
+    if (product === "codex" || !others.size || x.t == null) return true;
     let best = null, gap = Infinity;
     for (const y of marked) { if (y.t == null) continue; const d = Math.abs(y.t - x.t); if (d < gap) { gap = d; best = y; } }
     return !best || owner[best.i] === "mine";
   });
+  if (product === "codex") {
+    for (const x of infos) if (keep[x.i]) {
+      const e = raw[x.i];
+      const owners = x.ws ? frameOwners(e) : [];
+      if (x.ws) {
+        const selected = e._webSocketMessages.map((frame,index)=>({...frame,_traceAssociation:owners[index]?.size ? "request-id" : e._traceAssociation === "explicit" ? "explicit" : "unattributed"})).filter((frame,index) => owners[index]?.size ? [...owners[index]].some(id=>mine.has(id)) : true);
+        raw[x.i] = {...e,_webSocketMessages:selected};
+        x.ws = selected.length;
+      }
+      x.association = e._traceAssociation === "explicit" ? "explicit" : owner[x.i] === "mine" ? "request-id" : "unattributed";
+    }
+  }
   const kept = infos.filter((x) => keep[x.i]);
   const elsewhere = infos.length - kept.length;
 
@@ -151,6 +246,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   for (const x of kept) {
     const e = raw[x.i];
     try {
+      if (product === "codex" && x.association === "unattributed" && x.role === "model") continue;
       if (product === "claude-code") {
         if (x.role === "model" || (x.role === "side" && x.method === "POST" && /\/v1\/messages/.test(x.path))) {
           const c = claudeModelCall(e, x, R);
@@ -189,6 +285,11 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
             if (rl) { put(windowName("primary", rl.primary), rl.primary); put(windowName("secondary", rl.secondary), rl.secondary); }
             for (const [name, v] of Object.entries((c.rateLimits && c.rateLimits.additional_rate_limits) || {})) put(windowName(name, v && v.primary), v && v.primary);
           }
+        } else if (x.role === "model" && !x.ws) {
+          x.label = "Responses (HTTPS/SSE)";
+          const c = codexHttp(e,x,R);
+          if (c.kind === "prewarm") c.kind = "side";
+          calls.push(c);
         } else if (x.role === "catalog") catalog.push(...codexModels(resJson.get(x.i), R));
         else if (x.role === "bootstrap") {
           const j = resJson.get(x.i);
@@ -225,7 +326,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
 
   // ---- sensitive data in transit: kinds, places and counts, never values
   const callOfEntry = new Map();
-  for (const c of calls) if (c.product === "claude-code") callOfEntry.set(c.entry, c.index);
+  for (const c of calls) if (c.product === "claude-code" || c.transport === "http") callOfEntry.set(c.entry, c.index);
   const transit = await reportTransit({
     product, R, personal,
     entries: kept.map((x) => {
@@ -272,7 +373,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   }
   const entries = kept.map((x) => ({
     i: x.i, t: x.t, method: x.method, host: x.host, path: R.path(x.path), query: x.query, status: x.status, role: x.role, label: x.label,
-    reqBytes: x.reqBytes, resBytes: x.resBytes, ws: x.ws, timings: x.timings, mime: x.mime, eager: eager.includes(x),
+    association: x.association || "request-id", reqBytes: x.reqBytes, resBytes: x.resBytes, ws: x.ws, timings: x.timings, mime: x.mime, eager: eager.includes(x),
   }));
   const roles = ROLES.map((r) => {
     const list = entries.filter((x) => x.role === r.key);
@@ -287,6 +388,8 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   const telemetryCounts = {};
   for (const e of telemetry) telemetryCounts[e.name] = (telemetryCounts[e.name] || 0) + 1;
 
+  const unattributed = kept.filter(x => x.association === "unattributed").length;
+  if (unattributed) notes.push(`${unattributed} entries have no exact thread correlation and are shown as unattributed capture traffic; timestamps do not establish ownership.`);
   if (elsewhere) notes.push(`${elsewhere} of ${infos.length} entries belonged to ${others.size ? `${others.size} other session${others.size === 1 ? "" : "s"}` : "other sessions"} and were left out.`);
   if (droppedEvents) notes.push(`${droppedEvents} telemetry events named another session and were left out.`);
   const partial = calls.filter((c) => c.response && c.product === "claude-code" && !c.response.complete).length;
@@ -305,7 +408,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
       const e = raw[i];
       if (!e || !keep[i]) throw new Error("no such entry in the attached capture");
       if (part === "frames") {
-        const lines = wsFrames(e).map((f) => `${f.dir === "send" ? "→ sent" : "← received"} ${f.t != null ? new Date(f.t).toISOString().slice(11, 23) : ""}\n${f.json ? JSON.stringify(R.json(harvested(R, f.json)), null, 2) : R.str(String(f.bytes)) + " bytes (not JSON)"}`);
+        const lines = wsFrames(e).map((f,k) => `${f.dir === "send" ? "→ sent" : "← received"}${e._webSocketMessages[k]?._traceAssociation === "unattributed" ? " [unattributed]" : ""} ${f.t != null ? new Date(f.t).toISOString().slice(11, 23) : ""}\n${f.json ? JSON.stringify(R.json(harvested(R, f.json)), null, 2) : R.str(String(f.bytes)) + " bytes (not JSON)"}`);
         return cut(lines.join("\n\n"), "websocket frames, redacted");
       }
       const text = bodyText(e, part);

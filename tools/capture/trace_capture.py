@@ -1,28 +1,23 @@
 # mitmproxy addon for tools/capture/capture.sh: records a CLI agent's HTTPS traffic for Trace.
 #
-# Credentials never reach the saved HAR, but the fact that one was sent does. Each flow is scrubbed only
-# after it has gone upstream (so the real request still authenticates) and before mitmproxy's HAR writer
-# runs at shutdown. A credential is replaced, where it was, by a description:
-#
-#   Bearer <redacted by trace-capture: JWT | 1180 chars | fp 3fa2c1d0 | alg RS256 | claims aud,exp,iat,iss,scp
-#          | issuer https://auth.example.com | lifetime 10d>
-#
-# kind (from the value's shape), length, a fingerprint that is the same for the same value within one
-# capture only (an HMAC under a key made for this run and never saved), and for a JWT its algorithm, claim
-# names, issuer, audience, scopes and lifetime, never claim values that could identify you. Parts are
-# separated by " | ", which a Cookie or Set-Cookie parser leaves alone (";" would split them). Cookies keep
-# their names and Set-Cookie attributes. Covered: auth, cookie and API-key headers; bearer tokens, JWTs,
-# API keys and token fields in bodies and websocket frames; token-like URL query parameters. Redaction is
-# idempotent: a description is never described again.
-#
-# Server-sent event streams are passed through as they arrive (an interactive session still streams)
-# and teed into the flow, so the HAR keeps the whole stream.
+# Only detached copies are scrubbed. The custom HAR checkpoint writer never serializes
+# live request/authentication data, and records open HTTP, SSE and WebSocket flows.
+# Credentials retain a run-local HMAC fingerprint and bounded shape descriptions.
+# HTTPS bodies and SSE bytes are retained in memory; passthrough stream callbacks
+# return the original bytes. Snapshots are atomic private files (0600).
+import asyncio
 import base64
 import hashlib
 import hmac
 import json
+import math
+import os
+import tempfile
 import re
 import secrets
+import time
+import zlib
+from urllib.parse import parse_qsl, urlencode, quote, unquote
 
 from mitmproxy import http
 
@@ -45,10 +40,10 @@ HEADER_KIND = {
 }
 TOKEN_FIELD = re.compile(
     r'("(?:access_token|refresh_token|id_token|api_key|apiKey|session_token|sentinel_token|proof_token'
-    r'|turnstile_token|accessToken|refreshToken|idToken)"\s*:\s*")(?!<redacted)([^"]+)"'
+    r'|turnstile_token|accessToken|refreshToken|idToken|client_secret|password|code_verifier|api-key|token|authorization)"\s*:\s*")(?!<redacted)([^"]+)("|$)'
 )
-BEARER = re.compile(r"\b(Bearer\s+)(?!<redacted)([A-Za-z0-9._~+/=-]{12,})")
-API_KEY = re.compile(r"\b(?:sk-(?:ant-|proj-)?[A-Za-z0-9_-]{16,}|npm_[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{20,})")
+BEARER = re.compile(r"\b(Bearer\s+)(?!<redacted)([A-Za-z0-9._~+/=-]+)")
+API_KEY = re.compile(r"\b(?:sk-(?:ant-|proj-)?[A-Za-z0-9_-]+|npm_[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{20,})")
 JWT = re.compile(r"\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}")
 SECRET_QUERY = re.compile(
     r"^(access_token|token|id_token|refresh_token|api_key|apikey|auth|authorization|client_secret|password"
@@ -97,6 +92,8 @@ def _plain(value):
 def jwt_facts(token):
     head, body, _ = token.split(".", 2)
     header, claims = _b64json(head) or {}, _b64json(body)
+    if not isinstance(header, dict):
+        header = {}
     if not isinstance(claims, dict):
         return ["undecodable claims"]
     facts = []
@@ -137,7 +134,10 @@ def describe(value, kind=None):
 
 
 def scrub_text(text):
-    text = TOKEN_FIELD.sub(lambda m: m.group(1) + describe(m.group(2)) + '"', text)
+    # URLs embedded in bodies or redirect headers also carry credentials.
+    text = re.sub(r"([?&](?:access_token|token|id_token|refresh_token|api_key|apikey|auth|authorization|client_secret|password|code|code_verifier|session_token|sig|signature)=)([^&#\s\"<>]+)",
+                  lambda m: m.group(0) if unquote(m.group(2)).startswith(PREFIX) else m.group(1) + quote(describe(unquote(m.group(2))), safe=""), text, flags=re.I)
+    text = TOKEN_FIELD.sub(lambda m: m.group(1) + describe(m.group(2)) + m.group(3), text)
     text = BEARER.sub(lambda m: m.group(1) + describe(m.group(2)), text)
     text = JWT.sub(lambda m: describe(m.group(0)), text)
     return API_KEY.sub(lambda m: describe(m.group(0)), text)
@@ -163,12 +163,12 @@ def _set_cookie(value):
 
 def scrub_header(name, value):
     lower = name.lower()
-    if PREFIX in value:
-        return value
     if lower == "cookie":
         return _cookie_pairs(value)
     if lower == "set-cookie":
         return _set_cookie(value)
+    if value.startswith(PREFIX) or re.match(r"^(?:Bearer|Basic|Token)\s+<redacted by trace-capture", value, re.I):
+        return value
     scheme, _, rest = value.partition(" ")
     if lower in ("authorization", "proxy-authorization") and rest and scheme.lower() in ("bearer", "basic", "token"):
         return f"{scheme} {describe(rest)}"
@@ -177,11 +177,10 @@ def scrub_header(name, value):
 
 def scrub_headers(headers):
     for name in list(headers.keys()):
-        if SECRET_HEADER.match(name):
-            values = headers.get_all(name)
-            clean = [scrub_header(name, v) for v in values]
-            if clean != values:
-                headers.set_all(name, clean)
+        values = headers.get_all(name)
+        clean = [scrub_header(name, v) if SECRET_HEADER.match(name) else scrub_text(v) for v in values]
+        if clean != values:
+            headers.set_all(name, clean)
 
 
 def scrub_query(request):
@@ -195,6 +194,14 @@ def scrub_query(request):
             request.query.set_all(name, clean)
 
 
+def scrub_bytes(data):
+    # A binary message may contain a textual credential. Latin-1 is reversible,
+    # unlike lossy UTF-8 decoding; unchanged binary payloads remain exact.
+    text = data.decode("latin-1")
+    clean = scrub_text(text)
+    return data if clean == text else clean.encode("latin-1", "replace")
+
+
 def scrub_message(message):
     if message is None:
         return
@@ -202,51 +209,260 @@ def scrub_message(message):
     if not message.raw_content:
         return
     try:
-        text = message.get_text(strict=False)
-    except Exception:
+        content = message.content
+    except ValueError:
+        # An unfinished compressed stream cannot be decoded safely. Withhold it
+        # from this snapshot; retain the live bytes for a later complete snapshot.
+        message.raw_content = b""
+        message.headers.pop("content-encoding", None)
+        return "undecodable content-encoding"
+    if content is None:
         return
-    if text:
-        clean = scrub_text(text)
-        if clean != text:
-            message.text = clean
+    if "application/x-www-form-urlencoded" in message.headers.get("content-type", ""):
+        try:
+            pairs = parse_qsl(content.decode("utf-8"), keep_blank_values=True)
+            clean = [(k, describe(v) if SECRET_QUERY.match(k) and v and not v.startswith(PREFIX) else scrub_text(v)) for k, v in pairs]
+            if clean != pairs:
+                message.content = urlencode(clean).encode()
+            return
+        except UnicodeDecodeError:
+            pass
+    clean = scrub_bytes(content)
+    if clean != content:
+        message.content = clean
 
 
 def scrub_flow(flow):
     scrub_query(flow.request)
-    scrub_message(flow.request)
-    scrub_message(flow.response)
+    withheld = []
+    for direction, message in (("request", flow.request), ("response", flow.response)):
+        reason = scrub_message(message)
+        if reason:
+            withheld.append({"direction": direction, "reason": reason})
+    flow.metadata["trace_capture_withheld_bodies"] = withheld
+    if flow.websocket:
+        for message in flow.websocket.messages:
+            message.content = scrub_bytes(message.content)
+        if flow.websocket.close_reason:
+            flow.websocket.close_reason = scrub_text(flow.websocket.close_reason)
+    if flow.error:
+        flow.error.msg = scrub_text(flow.error.msg)
 
 
-def responseheaders(flow: http.HTTPFlow):
-    if "text/event-stream" in flow.response.headers.get("content-type", ""):
+def sanitized_copy(flow):
+    snapshot = flow.copy()
+    chunks = flow.metadata.get(TEE)
+    if chunks is not None and snapshot.response:
+        raw = b"".join(chunks)
+        snapshot.response.raw_content = raw
+        encoding = snapshot.response.headers.get("content-encoding", "").lower()
+        if encoding in ("gzip", "deflate", "br", "zstd") and snapshot.response.timestamp_end is None:
+            try:
+                if encoding == "br":
+                    import brotli
+                    decoded = brotli.Decompressor().process(raw)
+                elif encoding == "zstd":
+                    import zstandard
+                    decoded = zstandard.ZstdDecompressor().decompressobj().decompress(raw)
+                else:
+                    decoder = zlib.decompressobj(31 if encoding == "gzip" else zlib.MAX_WBITS)
+                    try:
+                        decoded = decoder.decompress(raw)
+                    except zlib.error:
+                        if encoding != "deflate":
+                            raise
+                        decoded = zlib.decompressobj(-zlib.MAX_WBITS).decompress(raw)
+                snapshot.response.headers.pop("content-encoding", None)
+                snapshot.response.content = decoded
+            except Exception:
+                pass  # scrub_message withholds an undecodable snapshot, not the live body
+    snapshot.metadata.pop(TEE, None)
+    scrub_flow(snapshot)
+    return snapshot
+
+
+class TraceCapture:
+    name = "trace_capture"
+
+    def __init__(self):
+        self.flows = {}
+        self.output = ""
+        self.writer = None
+        self.task = None
+        self.dirty = False
+        self.last_checkpoint = 0.0
+        self.interval = 1.0
+        self.recording = True
+        self.control = ""
+        self.status = ""
+        self.counts = {"flows": 0, "wsFrames": 0, "checkpointTime": None, "checkpoints": 0}
+
+    def load(self, loader):
+        loader.add_option("trace_capture_output", str, "", "Private HAR checkpoint destination.")
+        loader.add_option("trace_capture_interval", str, "1", "Seconds between live sanitized HAR checkpoints.")
+        loader.add_option("trace_capture_control", str, "", "Local JSON control file: recording false freezes capture while forwarding continues.")
+        loader.add_option("trace_capture_status", str, "", "Private sanitized recorder status JSON destination.")
+
+    def configure(self, updated):
+        from mitmproxy import ctx, exceptions
+        try:
+            interval = float(ctx.options.trace_capture_interval)
+            if not math.isfinite(interval) or interval <= 0:
+                raise ValueError()
+        except ValueError:
+            raise exceptions.OptionsError("trace_capture_interval must be positive")
+        self.interval = interval
+
+    def running(self):
+        from mitmproxy import ctx
+        from mitmproxy.addons.savehar import SaveHar
+        self.output = ctx.options.trace_capture_output or ctx.options.hardump
+        self.control = ctx.options.trace_capture_control
+        self.status = ctx.options.trace_capture_status
+        if self.output == "-" or (self.output and not self.output.endswith(".har")):
+            raise ValueError("trace-capture requires a local .har destination")
+        # hardump is supported for the CLI's existing invocation. Remove the
+        # built-in before traffic starts: its shutdown writer keeps raw flows.
+        builtin = ctx.master.addons.get("savehar")
+        if builtin:
+            ctx.options.update(hardump="")
+            ctx.master.addons.remove(builtin)
+        self.writer = SaveHar()  # serializer only, never registered as an addon
+        if self.output:
+            if self._enabled():
+                self.checkpoint(force=True)
+                self.task = asyncio.create_task(self._periodic())
+
+    async def _periodic(self):
+        while True:
+            await asyncio.sleep(self.interval)
+            if not self._enabled():
+                return
+            self.checkpoint()
+
+    def _enabled(self):
+        if self.recording and self.control:
+            try:
+                with open(self.control, encoding="utf-8") as control:
+                    stop = json.load(control).get("recording") is False
+                    cutoff = os.fstat(control.fileno()).st_mtime
+            except (OSError, ValueError, AttributeError):
+                stop = False
+            if stop:
+                self.checkpoint(force=True, cutoff=cutoff)
+                self.recording = False
+                for flow in self.flows.values():
+                    chunks = flow.metadata.pop(TEE, None)
+                    if chunks is not None:
+                        chunks.clear()
+                self.flows.clear()
+                self._status()
+        return self.recording
+
+    def _status(self):
+        if self.status:
+            self._write_private(self.status, json.dumps({"recording": self.recording, **self.counts}).encode())
+
+    def _record(self, flow):
+        if not self._enabled():
+            return
+        self.flows[flow.id] = flow
+        self.dirty = True
+        self.checkpoint()
+
+    def requestheaders(self, flow):
+        self._record(flow)
+
+    def request(self, flow):
+        self._record(flow)
+
+    def responseheaders(self, flow):
+        if not self._enabled():
+            return
+        # Stream all response bodies through unchanged and retain partial bytes.
+        # This avoids buffering SSE and also captures streamed HTTPS downloads.
         chunks = []
+        previous = flow.response.stream
 
-        def tee(data: bytes) -> bytes:
-            chunks.append(data)
-            return data
+        def tee(data):
+            outgoing = previous(data) if callable(previous) else data
+            pieces = [outgoing] if isinstance(outgoing, bytes) else list(outgoing)
+            if self._enabled():
+                chunks.extend(pieces)
+                self.dirty = True
+            else:
+                chunks.clear()
+            return outgoing if isinstance(outgoing, bytes) else pieces
 
         flow.response.stream = tee
         flow.metadata[TEE] = chunks
+        self._record(flow)
+
+    def response(self, flow):
+        self._record(flow)
+
+    def error(self, flow):
+        self._record(flow)
+
+    def websocket_start(self, flow):
+        self._record(flow)
+
+    def websocket_message(self, flow):
+        # This hook precedes forwarding. Persist only the detached scrubbed copy.
+        self._record(flow)
+
+    def websocket_end(self, flow):
+        self._record(flow)
+
+    def checkpoint(self, force=False, cutoff=None):
+        if not self.recording or not self.output or self.writer is None:
+            return
+        now = time.monotonic()
+        if not force and (not self.dirty or now - self.last_checkpoint < self.interval):
+            return
+        snapshots = [sanitized_copy(flow) for flow in self.flows.values()]
+        if cutoff is not None:
+            for snapshot in snapshots:
+                if snapshot.websocket:
+                    snapshot.websocket.messages = [message for message in snapshot.websocket.messages if message.timestamp <= cutoff]
+        har = self.writer.make_har(snapshots)
+        for entry, original, snapshot in zip(har["log"]["entries"], self.flows.values(), snapshots):
+            entry["_traceCapture"] = {
+                "flowId": original.id,
+                "partial": original.websocket.timestamp_end is None if original.websocket else
+                    original.response is None or original.response.timestamp_end is None,
+                "snapshotTime": time.time(),
+                "credentials": "redacted on detached copy",
+                "withheldBodies": snapshot.metadata.get("trace_capture_withheld_bodies", []),
+            }
+        data = json.dumps(har, ensure_ascii=True, indent=2).encode()
+        self._write_private(self.output, data)
+        self.dirty = False
+        self.last_checkpoint = now
+        self.counts = {"flows": len(snapshots), "wsFrames": sum(len(f.websocket.messages) if f.websocket else 0 for f in snapshots), "checkpointTime": time.time(), "checkpoints": self.counts["checkpoints"] + 1}
+        self._status()
+
+    @staticmethod
+    def _write_private(path, data):
+        destination = os.path.abspath(path)
+        # No raw file ever exists, including the temporary atomic-write file.
+        fd, temporary = tempfile.mkstemp(prefix=".trace-capture-", dir=os.path.dirname(destination))
+        try:
+            os.fchmod(fd, 0o600)
+            with os.fdopen(fd, "wb") as out:
+                out.write(data)
+                out.flush()
+                os.fsync(out.fileno())
+            os.replace(temporary, destination)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+
+    def done(self):
+        self._enabled()
+        if self.task:
+            self.task.cancel()
+        self.checkpoint(force=True)
 
 
-def response(flow: http.HTTPFlow):
-    chunks = flow.metadata.pop(TEE, None)
-    if chunks is not None:
-        # The stream went through as raw (still content-encoded) bytes; keep them that way.
-        flow.response.raw_content = b"".join(chunks)
-    scrub_flow(flow)
-
-
-def error(flow: http.HTTPFlow):
-    flow.metadata.pop(TEE, None)
-    scrub_flow(flow)
-
-
-def websocket_end(flow: http.HTTPFlow):
-    # Frames are scrubbed only after the socket closes: changing one earlier would change what is sent.
-    for message in flow.websocket.messages:
-        if message.is_text:
-            clean = scrub_text(message.text)
-            if clean != message.text:
-                message.text = clean
-    scrub_flow(flow)
+addons = [TraceCapture()]
