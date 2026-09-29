@@ -900,3 +900,40 @@ test("network lens and On-the-wire card render for both products with nothing pl
     else assert.ok(card.textContent.includes("System blocks as sent") && card.textContent.includes("billing header"));
   }
 });
+
+test("the Sources lens lists every source by where it stands, opens content on request, and says how to start the resolver", async () => {
+  const { renderPanel } = await import("../panels.js");
+  const { sourcesLens } = await import("../sources/panel.js");
+  const trace = { product: "codex", agents: [{ id: "t1", kind: "root", requests: [], blocks: [] }] };
+  const report = { context: { product: "codex", id: "t1", ids: ["t1"], version: "0.158.0", originator: "Codex Desktop", start: 1767690000000, end: 1767693600000, catalog: { version: "0.158.0-alpha.2.1", cli: "0.144.0", sources: 3 } },
+    sources: [
+      { id: "dynamic-tools", name: "Dynamic tools", join: "exact", path: "~/.codex/state_5.sqlite", read: true, status: "found", count: 12, unit: "row" },
+      { id: "models-cache", name: "Model catalog, cached", join: "snapshot", path: "~/.codex/models_cache.json", read: true, status: "found", count: 1, unit: "file", bytes: 380000 },
+      { id: "codex.goals", name: "Goals", join: "exact", path: "~/.codex/goals_1.sqlite", read: false, status: "not-read", catalog: { id: "codex.goals", what: "Goals set for a thread", writer: "codex-rs goals", evidence: [{ file: "codex-rs/goals/src/lib.rs", line: 10 }] } },
+      { id: "codex.ipc-socket", name: "Ipc socket", join: "none", path: "~/.codex/ipc/ipc.sock", read: false, status: "untied", reason: "live only", catalog: { id: "codex.ipc-socket", what: "The app-server socket" } },
+      { id: "visualizations", name: "Visualizations", join: "exact", path: "~/.codex/visualizations", read: true, status: "absent" },
+      { id: "auth", name: "Sign-in tokens", join: "credential", path: "~/.codex/auth.json", read: true, status: "credential" },
+    ] };
+  const opened = [];
+  const A = { openSource: (id, o) => opened.push([id, o]), closeSource() {} };
+  let open = new Map();
+  A.sourcesLens = view => sourcesLens({ ...view, sources: report, sourceOpen: open }, A);
+  const lens = new Element("aside");
+  renderPanel(lens, { trace, level: 0, lens: "sources", mode: "3d" }, A);
+  const text = lens.textContent;
+  for (const s of ["Everything on this machine", "Found for this session", "Current values, not this session's", "In the shipped code, readable, not read by Trace yet", "In the shipped code, can't be tied to one session", "How it joins: live only", "Nothing here for this session", "Credentials", "codex-rs/goals/src/lib.rs:10", "CLI on this machine 0.144.0"]) assert.ok(text.includes(s), s);
+  // Opening a found source asks for its content; a source Trace doesn't read, or a credential, never does.
+  const rows = lens.all(n => n.tagName === "DETAILS" && /src-row/.test(n.className));
+  for (const r of rows) { r.open = true; r.dispatch("toggle"); }
+  assert.deepEqual(opened.map(([id]) => id), ["dynamic-tools", "models-cache"]);
+  // Content renders as rows with paging.
+  open = new Map([["dynamic-tools", { data: { kind: "rows", path: "~/.codex/state_5.sqlite · thread_dynamic_tools", total: 900, offset: 0, rows: [{ name: "fork_thread", description: "Fork" }] } }]]);
+  const lens2 = new Element("aside");
+  renderPanel(lens2, { trace, level: 0, lens: "sources", mode: "3d" }, A);
+  assert.ok(lens2.textContent.includes("1. fork_thread") && lens2.textContent.includes("Later →"));
+  // Without the resolver the lens says how to start it.
+  A.sourcesLens = view => sourcesLens({ ...view, sources: { unavailable: true, reason: "The local resolver isn't running." }, sourceOpen: new Map() }, A);
+  const lens3 = new Element("aside");
+  renderPanel(lens3, { trace, level: 0, lens: "sources", mode: "3d" }, A);
+  assert.ok(lens3.textContent.includes("npm --prefix site run trace:local"));
+});

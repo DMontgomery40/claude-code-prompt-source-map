@@ -54,6 +54,23 @@ function sessionsOf(product, entry, info, reqJson) {
   return out;
 }
 
+// The product a capture is traffic of, and every session id its entries name with how many entries name
+// it (most first). No redaction and no findings: tools/capture/file-capture.mjs uses it to file a capture
+// beside its session's log, where Trace finds it when the session opens.
+export function captureSessions(text) {
+  const raw = parseHar(text).log.entries;
+  const infos = raw.map((e, i) => entryInfo(e, i));
+  const product = productOf(infos, (i) => lowerHeaders(raw[i].request.headers));
+  const counts = new Map();
+  if (product === "claude-code" || product === "codex") {
+    for (const x of infos) {
+      const reqJson = () => { const t = bodyText(raw[x.i], "request"); return t && t.length < 5_000_000 ? jsonOr(t, null) : null; };
+      for (const id of sessionsOf(product, raw[x.i], x, reqJson)) counts.set(id, (counts.get(id) || 0) + 1);
+    }
+  }
+  return { product, sessions: [...counts].sort((a, b) => b[1] - a[1]).map(([id, entries]) => ({ id, entries })) };
+}
+
 // files: [{ name, text }]. trace: the loaded session (normalized). Returns { capture, store }.
 export async function analyzeCapture(files, trace, { now = () => Date.now() } = {}) {
   const t0 = now();

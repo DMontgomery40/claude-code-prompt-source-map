@@ -1,0 +1,2539 @@
+{
+  "product": "claude-code",
+  "extractedVersion": "2.1.284",
+  "generated": "2026-09-28",
+  "sources": [
+    {
+      "id": "claude-code.transcript",
+      "path": "~/.claude/projects/<project>/<session id>.jsonl",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "cleanupPeriodDays"
+      ],
+      "kind": "jsonl",
+      "what": "The main session transcript: every user, assistant, tool-use/tool-result, system, attachment, summary and title record the harness keeps for the session, which is what it replays on resume.",
+      "fields": [
+        "type",
+        "uuid",
+        "parentUuid",
+        "sessionId",
+        "timestamp",
+        "cwd",
+        "gitBranch",
+        "version",
+        "isSidechain",
+        "message",
+        "toolUseResult",
+        "attachment",
+        "subtype"
+      ],
+      "join": "exact",
+      "joinKey": "file name is the session id; <project> is the cwd with non-alphanumerics replaced by \"-\"",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "session storage (transcript namespace); read by --resume/--continue, /export, forks",
+      "evidence": [
+        {
+          "file": "chunk-w4t9a3px.js",
+          "offset": 1694,
+          "literal": "namespace:\"transcript\",projectKey:e,sessionId:n"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25519,
+          "literal": "project transcripts (.jsonl) and memory/"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 24242,
+          "literal": ".map((c)=>`${c}.jsonl`)"
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 12242,
+          "literal": "!P.name.endsWith(\".cast\")&&!P.name.endsWith(\".ccr-tip.json\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Primary record of what was sent and received. Format changes between builds (record types, attachment kinds). The cleanup pass also recognizes a \".desktop-released…\" sibling name that was not traced."
+    },
+    {
+      "id": "claude-code.subagent-transcript",
+      "path": "~/.claude/projects/<project>/<session id>/subagents/agent-<agent id>.jsonl",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "jsonl",
+      "what": "One transcript per subagent (Task/Agent tool, teammates) spawned in the session, with the subagent prompt, its tool calls and results.",
+      "fields": [
+        "agentId",
+        "sessionId",
+        "isSidechain",
+        "message",
+        "uuid",
+        "parentUuid"
+      ],
+      "join": "exact",
+      "joinKey": "parent folder is the session id; agent id matches the agentId in the parent transcript tool result",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "transcript namespace with agentId/agentRelPath",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 15794,
+          "literal": "[\"agentId\",e.agentId,\"optional\"],[\"agentRelPath\",e.agentRelPath,\"optional\"]"
+        },
+        {
+          "file": "chunk-6ggjj4mg.js",
+          "offset": 1123,
+          "literal": "\"subagents\",\"workflows\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Older builds wrote subagent turns into the main transcript as sidechain records instead of a separate folder."
+    },
+    {
+      "id": "claude-code.subagent-meta",
+      "path": "~/.claude/projects/<project>/<session id>/subagents/agent-<agent id>.meta.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Launch metadata for each subagent: its type, description, model, permission mode and team.",
+      "fields": [
+        "agentType",
+        "description",
+        "name",
+        "spawnDepth",
+        "model",
+        "taskKind",
+        "teamName",
+        "color",
+        "planModeRequired",
+        "permissionMode"
+      ],
+      "join": "exact",
+      "joinKey": "same folder and agent id as the subagent transcript",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "subagent launcher",
+      "evidence": [
+        {
+          "file": "chunk-6ggjj4mg.js",
+          "offset": 1123,
+          "literal": "\"subagents\",\"workflows\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "The .meta.json file name and fields were confirmed on disk; the evidence item is the subagents folder, the exact writer literal was not isolated."
+    },
+    {
+      "id": "claude-code.workflow-run",
+      "path": "~/.claude/projects/<project>/<session id>/subagents/workflows/<run id>/{agent-<agent id>.jsonl,agent-<agent id>.meta.json,journal.jsonl}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Per-run folder for a Workflow script: each workflow agent transcript and the run journal the workflow engine replays on resume.",
+      "fields": [
+        "journal lines",
+        "agent transcripts"
+      ],
+      "join": "exact",
+      "joinKey": "under the session folder; run id wf_<id>",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "Workflow tool runtime",
+      "evidence": [
+        {
+          "file": "chunk-6ggjj4mg.js",
+          "offset": 1115,
+          "literal": "p(a,q(),\"subagents\",\"workflows\",r)"
+        },
+        {
+          "file": "chunk-dnv148zc.js",
+          "offset": 21246,
+          "literal": "this.path=Sr(I0(e),\"journal.jsonl\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.workflow-state",
+      "path": "~/.claude/projects/<project>/<session id>/workflows/{<run id>.json,scripts/<name>}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Workflow run status records and the workflow scripts the session ran.",
+      "fields": [
+        "runId",
+        "timestamp",
+        "status"
+      ],
+      "join": "exact",
+      "joinKey": "session folder",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "Workflow tool (sidecar namespace)",
+      "evidence": [
+        {
+          "file": "chunk-6ggjj4mg.js",
+          "offset": 1232,
+          "literal": "xe.sidecar(r,a,[\"workflows\",`${n}.json`])"
+        },
+        {
+          "file": "chunk-6ggjj4mg.js",
+          "offset": 1311,
+          "literal": "runId:r,timestamp:new Date().toI"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.world-journal",
+      "path": "~/.claude/projects/<project>/<session id>/world.jsonl",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "jsonl",
+      "what": "The session journal named \"world\": settled and retracted rows of the session evaluation state that the rule/eval engine appends and replays.",
+      "fields": [
+        "k (settled|retracted)",
+        "addr",
+        "status",
+        "value",
+        "error"
+      ],
+      "join": "exact",
+      "joinKey": "session folder",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "session journal (xe.sessionJournal(..., \"world\"))",
+      "evidence": [
+        {
+          "file": "chunk-01gsm8fb.js",
+          "offset": 51170,
+          "literal": "Xr=\"world.jsonl\""
+        },
+        {
+          "file": "chunk-01gsm8fb.js",
+          "offset": 51321,
+          "literal": "xe.sessionJournal(n,Yr(r),\"world\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "New store; the feature that drives it was not traced further. Size cap 4194304 bytes appears next to it."
+    },
+    {
+      "id": "claude-code.tool-results",
+      "path": "~/.claude/projects/<project>/<session id>/tool-results/<id>.{txt,json} and pdf-<uuid>/page-<nn>.jpg",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Tool outputs too large to keep inline, saved to disk and referenced from the transcript; also PDF pages rendered to images for the model.",
+      "fields": [
+        "raw tool output"
+      ],
+      "join": "exact",
+      "joinKey": "session folder; file id appears in the transcript tool_result",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "tool result persistence",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 25014,
+          "literal": "yue=\"tool-results\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.mcp-tasks",
+      "path": "~/.claude/projects/<project>/<session id>/mcp-tasks/mcp-task-<task id>.meta.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Metadata for long-running MCP tasks started by the session.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "session folder; task id",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "MCP task support (sidecar namespace)",
+      "evidence": [
+        {
+          "file": "chunk-3m1jf8km.js",
+          "offset": 2287,
+          "literal": "[\"mcp-tasks\",`mcp-task-${a}.meta.json`]"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.precompact",
+      "path": "~/.claude/projects/<project>/<session id>.precompact.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "A project-level sibling file of the session, named for its pre-compaction state.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "file name is the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "compaction (name reserved in the storage-key schema)",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 11837,
+          "literal": "ft=[\".ccr-tip.json\",\".precompact.json\",ue]"
+        },
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 11920,
+          "literal": "those name a session's project-level sibling files"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Contents not traced; only the reserved name is certain. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.ccr-tip",
+      "path": "~/.claude/projects/<project>/<session id>.ccr-tip.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "A project-level sibling file for a cloud (CCR) session, apparently its latest synced position.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "file name is the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "cloud session sync",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 11837,
+          "literal": "ft=[\".ccr-tip.json\",\".precompact.json\",ue]"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Contents not traced. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.terminal-recording",
+      "path": "~/.claude/projects/<project>/<session id>/<epoch ms>.cast",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_PTY_RECORD"
+      ],
+      "kind": "text",
+      "what": "The session's terminal recording stream (asciicast), one file per recording, named by its start time in epoch milliseconds.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "session folder; stamp = start time",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "recording namespace",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 11456,
+          "literal": "inside a session's folder is that session's terminal recording stream"
+        },
+        {
+          "file": "chunk-apqxkhrm.js",
+          "offset": 5670,
+          "literal": "\"CLAUDE_PTY_RECORD\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "terminal recording (likely CLAUDE_PTY_RECORD; the link between the variable and this file is inferred)",
+      "notes": "Would show exactly what the terminal displayed. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.dir-sync-record",
+      "path": "~/.claude/projects/<project>/<session id>.dir-sync.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "A cloud session's directory-sync record at the project level.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "projectKey + sessionId",
+      "retention": "Not stated separately; likely removed with the session folder by the project cleanup (cleanupPeriodDays, default 30)",
+      "writer": "cloud folder sync (dirSyncRecord namespace)",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 12043,
+          "literal": "NXn=\".dir-sync.json\""
+        },
+        {
+          "file": "chunk-w4t9a3px.js",
+          "offset": 4403,
+          "literal": "dirSyncRecord:(e,n)=>({namespace:\"dirSyncRecord\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Exact file placement inferred from the reserved suffix. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.project-reserved",
+      "path": "~/.claude/projects/<project>/{bridge-pointer.json,.session-aliases,cloud-snapshots/,side.git,archive-sync,folder-sync,tiny_memory,bagel}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Project-level entries reserved beside session transcripts: the remote-control bridge pointer, session aliases, cloud snapshots and sync state, a side git store, and two unnamed memory stores.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "project folder; .session-aliases and bridge-pointer.json map to session ids",
+      "retention": "not stated in code",
+      "writer": "bridgePointer / sessionAliases namespaces; cloud sync",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 11241,
+          "literal": "ct=new Set([\"memory\",\"tiny_memory\",\"bagel\",hue,\"bridge-pointer.json\",\".session-aliases\"])"
+        },
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 11163,
+          "literal": "var hue=\"cloud-snapshots\",TXe=\"side.git\",nWo=\"archive-sync\",oSn=\"folder-sync\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Names come from the storage-key schema; purposes of tiny_memory and bagel were not traced. None seen on this machine."
+    },
+    {
+      "id": "claude-code.session-log",
+      "path": "~/.claude/projects/<project>/<YYYY>/<MM>/<DD>/<session id first 8>[-<title slug>]",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "log",
+      "what": "A dated per-session log keyed by project, year, month, day and a log name made from the first 8 characters of the session id and a title slug.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "logName starts with the first 8 characters of the session id",
+      "retention": "not stated in code",
+      "writer": "sessionLog namespace",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 9000,
+          "literal": "must be the session-log stem <sessionId8>[-<title-slug>]"
+        },
+        {
+          "file": "chunk-w4t9a3px.js",
+          "offset": 4028,
+          "literal": "sessionLog:(e,n,a)=>({namespace:\"sessionLog\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Only the key schema was found; the on-disk path is an inference. Not seen on this machine; likely new or gated."
+    },
+    {
+      "id": "claude-code.auto-memory",
+      "path": "~/.claude/projects/<project>/memory/{MEMORY.md,<topic>.md,.consolidate-lock}",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "autoMemoryEnabled",
+        "autoMemoryDirectory"
+      ],
+      "kind": "dir",
+      "what": "Auto-memory files the harness loads into the prompt at session start and the model edits during sessions; the lock guards background consolidation (\"auto dream\").",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "project folder; the transcript shows which memory files were attached",
+      "retention": "kept; deleted with the project",
+      "writer": "auto memory; memory consolidation",
+      "evidence": [
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 249713,
+          "literal": "auto memory files are allowed for reading"
+        },
+        {
+          "file": "chunk-jyws720p.js",
+          "offset": 1216,
+          "literal": "\".consolidate-lock\""
+        },
+        {
+          "file": "chunk-w4t9a3px.js",
+          "offset": 5401,
+          "literal": "case\"memory\":return[e.namespace,e.projectKey,e.relPath]"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Current files, not the version the session saw; compare with memory attachments in the transcript."
+    },
+    {
+      "id": "claude-code.session-memory",
+      "path": "~/.claude/projects/<project>/<session id>/session-memory/<name>.md",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "text",
+      "what": "Per-session memory notes found inside session folders.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "session folder",
+      "retention": "",
+      "writer": "",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "found on disk, origin not traced. In 2.1.284 the only related literal is the \"session-memory-viewer\" UI name; likely written by an earlier build or a gated feature. None of the surviving top-level transcripts on this machine has one; the 3 folders belong to sessions whose top-level transcript is gone. Version-dependent."
+    },
+    {
+      "id": "claude-code.sessions-index",
+      "path": "~/.claude/projects/<project>/sessions-index.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Per-project index of sessions with first prompt, summary, message count, branch and times.",
+      "fields": [
+        "version",
+        "originalPath",
+        "entries[].sessionId",
+        "fullPath",
+        "fileMtime",
+        "firstPrompt",
+        "summary",
+        "messageCount",
+        "created",
+        "modified",
+        "gitBranch",
+        "projectPath",
+        "isSidechain"
+      ],
+      "join": "exact",
+      "joinKey": "entries[].sessionId",
+      "retention": "",
+      "writer": "",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "found on disk, origin not traced. No \"sessions-index\" literal in 2.1.284, so an older build wrote it and it may be stale. On this machine it exists only in projects with 2.1.258 or 2.1.280 sessions, never 2.1.284, and every copy was last modified between January and February 2026. Version-dependent."
+    },
+    {
+      "id": "claude-code.session-registry",
+      "path": "~/.claude/sessions/<pid>.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Live registry entry for each running Claude Code process: its session id, cwd, version, entrypoint, name, status and messaging socket.",
+      "fields": [
+        "pid",
+        "sessionId",
+        "cwd",
+        "startedAt",
+        "procStart",
+        "version",
+        "peerProtocol",
+        "peerFeatures",
+        "kind",
+        "entrypoint",
+        "hostSessionId",
+        "pidDomain",
+        "messagingSocketPath",
+        "name",
+        "nameSource",
+        "status",
+        "updatedAt",
+        "bridgeSessionId",
+        "logPath",
+        "agent",
+        "jobId"
+      ],
+      "join": "exact",
+      "joinKey": "sessionId field",
+      "retention": "while the process runs; stale files are swept",
+      "writer": "session registry; read by claude agents / peers / daemon",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 395636,
+          "literal": "messagingSocketPath:aE.CLAUDE_CODE_MESSAGING_SOCKET"
+        },
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 395777,
+          "literal": "logPath:a.CLAUDE_CODE_SESSION_LOG"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.session-messaging-key",
+      "path": "~/.claude/sessions/<pid>.<hash>.key",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "binary",
+      "what": "Peer-messaging key for a running session (peer token), used to authenticate local session-to-session messages.",
+      "fields": [],
+      "join": "credential",
+      "joinKey": "pid matches sessions/<pid>.json",
+      "retention": "",
+      "writer": "uds-auth",
+      "evidence": [
+        {
+          "file": "chunk-erx7m2ye.js",
+          "offset": 5638,
+          "literal": "messaging key folder could not be made through storage"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "always",
+      "notes": "Never read or print."
+    },
+    {
+      "id": "claude-code.shell-snapshot",
+      "path": "~/.claude/shell-snapshots/snapshot-<shell>-<epoch ms>-<random6>[-<tag>].sh",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "text",
+      "what": "Snapshot of the user's shell functions, aliases, options and PATH that the Bash tool sources before every command in the session.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "epoch ms in the name is close to session start",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "Bash tool shell snapshot",
+      "evidence": [
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 781563,
+          "literal": "`snapshot-${r}-${b}-${w}${F!==void 0?`-${F}`:\"\"}.sh`"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25999,
+          "literal": "shell-snapshots/ are not project-scoped and will not be touched"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "2.1.284 can add a session-derived suffix; files on disk from earlier builds lack it, so the join stays by time."
+    },
+    {
+      "id": "claude-code.session-env",
+      "path": "~/.claude/session-env/<session id>/",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_ENV_FILE"
+      ],
+      "kind": "dir",
+      "what": "Per-session environment files that hooks write and the Bash tool sources, so hook-set variables reach commands.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "folder name is the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "hooks (SessionStart etc.) via the env file; Bash tool reads",
+      "evidence": [
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 128094,
+          "literal": "XS=[\"shell-snapshots\",\"session-env\",\"projects\",\"file-history\",\"backups\"]"
+        },
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 7208,
+          "literal": "\"rules\",\"session-env\",\"uploads\""
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 20867,
+          "literal": "M(\"session-env\")"
+        },
+        {
+          "file": "chunk-k5bbc3f7.js",
+          "offset": 169548,
+          "literal": "CLAUDE_ENV_FILE"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.file-history",
+      "path": "~/.claude/file-history/<session id>/<sha256(path) first 16 hex>@v<n>",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Backups of every file the session edited, one version per edit, used by rewind/checkpoints.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "folder name is the session id; the transcript file-history-snapshot records map paths to backup names",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "file checkpointing",
+      "evidence": [
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 4109460,
+          "literal": ".digest(\"hex\").slice(0,16)}@v${n}`"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25432,
+          "literal": "file edit history for session"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.todos",
+      "path": "~/.claude/todos/<session id>-agent-<agent id>.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "TodoWrite list for the session (main agent id equals the session id) or a subagent.",
+      "fields": [
+        "content",
+        "status",
+        "activeForm"
+      ],
+      "join": "exact",
+      "joinKey": "file name starts with the session id",
+      "retention": "Swept as a legacy folder (with statsig, logs, access-audit)",
+      "writer": "TodoWrite (older task tracking)",
+      "evidence": [
+        {
+          "file": "chunk-zzv0mx12.js",
+          "offset": 14507,
+          "literal": "\"projects\",\"sessions\",\"todos\",\"shell-snapshots\""
+        },
+        {
+          "file": "chunk-yafdqrx7.js",
+          "offset": 781850,
+          "literal": "_6n=[\"todos\",\"statsig\",\"logs\",\"access-audit\"]"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Version-dependent: 2.1.284 tracks tasks in tasks/ and treats todos/ as legacy to sweep; the file name pattern comes from disk. On this machine only 2.1.41 sessions have todos files."
+    },
+    {
+      "id": "claude-code.tasks",
+      "path": "~/.claude/tasks/<list id>/<task id>.json (+ list meta and high-water mark)",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_CODE_TASK_LIST_ID"
+      ],
+      "kind": "dir",
+      "what": "The task list the model manages with the Task tools during the session, one JSON file per task.",
+      "fields": [
+        "id",
+        "subject",
+        "description",
+        "status",
+        "owner",
+        "blocks",
+        "blockedBy"
+      ],
+      "join": "exact",
+      "joinKey": "list id derives from the session (on disk: session-<first 8 of session id>) or a team name",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "Task tools; read by teammates",
+      "evidence": [
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25140,
+          "literal": "tasks for session"
+        },
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 249840,
+          "literal": "Task files are allowed for reading"
+        },
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 13535,
+          "literal": "a task key names an item, the list metadata or the list high-water mark"
+        },
+        {
+          "file": "chunk-6bdxb0yq.js",
+          "offset": 87838,
+          "literal": "CLAUDE_CODE_TASK_LIST_ID"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.teams",
+      "path": "~/.claude/teams/<team>/{config.json,inboxes/<teammate>.json}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Agent-team config and each teammate mailbox of messages exchanged during the session.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "team name (on disk often session-<first 8 of session id>); lead session id in config",
+      "retention": "not stated in code",
+      "writer": "agent teams / TeammateMailbox",
+      "evidence": [
+        {
+          "file": "chunk-acfy6mvh.js",
+          "offset": 1800,
+          "literal": "return F(v(e),\"config.json\")"
+        },
+        {
+          "file": "chunk-sv69c8sw.js",
+          "offset": 20465,
+          "literal": "[TeammateMailbox] getInboxPath"
+        },
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 249960,
+          "literal": "Team files are allowed for reading"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.plans",
+      "path": "~/.claude/plans/<slug>.md",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "plansDirectory"
+      ],
+      "kind": "text",
+      "what": "Plan-mode plans the model writes; the plan slug is recorded in the transcript.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "slug referenced by the transcript; file mtime",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "plan mode",
+      "evidence": [
+        {
+          "file": "chunk-kf8pdq4s.js",
+          "offset": 12080,
+          "literal": "return p(be(),\"plans\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "A project-local plans/ folder also appeared under one project folder on disk."
+    },
+    {
+      "id": "claude-code.debug-log",
+      "path": "~/.claude/debug/<session id>.txt",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_CODE_DEBUG_LOGS_DIR"
+      ],
+      "kind": "log",
+      "what": "Debug log for the session: API calls, hooks, MCP, permission decisions and errors, as the debug channel writes them.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "file name is the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "debug channel (xe.log(id,\"debug\"))",
+      "evidence": [
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25276,
+          "literal": "debug log for session"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25172,
+          "literal": "k(o,\"debug\",`${h}.txt`)"
+        },
+        {
+          "file": "chunk-apqxkhrm.js",
+          "offset": 5690,
+          "literal": "\"CLAUDE_CODE_DEBUG_LOGS_DIR\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "debug logging (--debug, /debug) or CLAUDE_CODE_DEBUG_LOGS_DIR",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.prompt-dump",
+      "path": "~/.claude/dump-prompts/<session id or agent id>.jsonl",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "jsonl",
+      "what": "The apiDump channel: API request bodies (and responses) as sent, one file per session and one per subagent.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "file name is the session id (or the subagent agent id)",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "prompt dump (apiDump channel)",
+      "evidence": [
+        {
+          "file": "chunk-jkvndy4p.js",
+          "offset": 3111,
+          "literal": "\"dump-prompts\",`${e??q()}.jsonl`"
+        },
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 13331,
+          "literal": "else the session's (today's dump-prompts/<id>.jsonl)"
+        },
+        {
+          "file": "chunk-jkvndy4p.js",
+          "offset": 3347,
+          "literal": "function V(e,r,i,n,o){try{return}catch{}finally{i.dumpInFlight=!1}}"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "nothing in the public build: the writer is compiled to an immediate return",
+      "notes": "The most direct record of what was put in front of the model, but in the public 2.1.284 build the function that writes each dump (V) is compiled to an immediate return, so no dump is written whatever is set; the path, the fetch hook and the apiDump storage channel remain. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.api-dumps",
+      "path": "~/.claude/api-dumps/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "A reserved config-dir folder named for API dumps.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "",
+      "writer": "not traced",
+      "evidence": [
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 2903697,
+          "literal": "\"agent-memory-project\",\"api-dumps\",\"backups\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "not traced",
+      "notes": "Only appears in the sync and host-snapshot exclusion sets. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.telemetry-failed-events",
+      "path": "~/.claude/telemetry/1p_failed_events.<session id>.<batch uuid>.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "DISABLE_TELEMETRY",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"
+      ],
+      "kind": "json",
+      "what": "First-party analytics events that failed to send, queued on disk for retry, including session, model and prompt ids.",
+      "fields": [
+        "event_name",
+        "session_id",
+        "model",
+        "cc_prompt_id",
+        "parent_agent_id",
+        "subscription_type"
+      ],
+      "join": "exact",
+      "joinKey": "session id in the file name",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "1P event logger (telemetry channel)",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 423904,
+          "literal": "Ad=\"1p_failed_events.\""
+        },
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 425611,
+          "literal": "`${Ad}${q()}.${Ao}.json`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.statsig",
+      "path": "~/.claude/statsig/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Legacy feature-gate cache from the Statsig client.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none; values current when written",
+      "retention": "swept as a legacy folder",
+      "writer": "older builds",
+      "evidence": [
+        {
+          "file": "chunk-yafdqrx7.js",
+          "offset": 781850,
+          "literal": "_6n=[\"todos\",\"statsig\",\"logs\",\"access-audit\"]"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Version-dependent: replaced by cachedGrowthBookFeatures in ~/.claude.json."
+    },
+    {
+      "id": "claude-code.traces",
+      "path": "~/.claude/traces/",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_CODE_PERFETTO_TRACE"
+      ],
+      "kind": "dir",
+      "what": "Local trace files, cleaned by the cleanup pass.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "file time",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "not traced (possibly Perfetto tracing)",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 30331,
+          "literal": "m(be(),\"traces\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "not traced",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.startup-perf",
+      "path": "~/.claude/startup-perf/<session id>.{txt,json}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Startup profiling report for the session: timing marks through the first turn.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "file name is the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "startup profiler",
+      "evidence": [
+        {
+          "file": "chunk-pz5v8y6d.js",
+          "offset": 7676,
+          "literal": "G(be(),\"startup-perf\",`${q()}.json`)"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "startup profiling (switch not traced)",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.usage-data",
+      "path": "~/.claude/usage-data/{session-meta,facets}/<session id>.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Per-session metadata and model-extracted facets (goals, outcome, helpfulness) that /insights builds from transcripts.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "file name is the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "/insights",
+      "evidence": [
+        {
+          "file": "chunk-50qtypn7.js",
+          "offset": 17319,
+          "literal": "xe.userConfigDir(\"usage-data\",[\"session-meta\",`${e}.json`])"
+        },
+        {
+          "file": "chunk-50qtypn7.js",
+          "offset": 17243,
+          "literal": "xe.userConfigDir(\"usage-data\",[\"facets\",`${e}.json`])"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "running /insights",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.prompt-history",
+      "path": "~/.claude/history.jsonl",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "jsonl",
+      "what": "Every prompt typed at the input box across projects, with pasted content references, used for up-arrow history.",
+      "fields": [
+        "display",
+        "pastedContents",
+        "timestamp",
+        "project",
+        "sessionId"
+      ],
+      "join": "exact",
+      "joinKey": "sessionId field (older lines may lack it: then project + timestamp)",
+      "retention": "Pruned line by line by history retention (cleanupPeriodDays, default 30)",
+      "writer": "prompt input history",
+      "evidence": [
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 408500,
+          "literal": "MA(be(),\"history.jsonl\")"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 26683,
+          "literal": "prompt history across all projects"
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 17854,
+          "literal": "History retention prune skipped"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.paste-cache",
+      "path": "~/.claude/paste-cache/<sha256 first 16 hex>.txt",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "text",
+      "what": "Full text of large pastes, stored by content hash and referenced from history.jsonl.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "contentHash in this session's history.jsonl pastedContents",
+      "retention": "not stated in code",
+      "writer": "prompt input paste store",
+      "evidence": [
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 393400,
+          "literal": "var SW=\"paste-cache\""
+        },
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 394543,
+          "literal": "invalid paste-content hash"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.image-cache",
+      "path": "~/.claude/image-cache/<session id>/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Images pasted or attached in the session, cached on disk.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "folder name is the session id",
+      "retention": "other sessions' folders swept by cleanup",
+      "writer": "image paste handling",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 3377,
+          "literal": "De=\"image-cache\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.file-transfers",
+      "path": "~/.claude/file-transfers/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Attachments received from peer sessions.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "file time; sanitized original name",
+      "retention": "deleted after a fixed number of days",
+      "writer": "peer file transfer",
+      "evidence": [
+        {
+          "file": "chunk-e915stm6.js",
+          "offset": 1538,
+          "literal": "H=\"file-transfers\""
+        },
+        {
+          "file": "chunk-e915stm6.js",
+          "offset": 1574,
+          "literal": "[peer-file-transfer]"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.uploads",
+      "path": "~/.claude/uploads/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Uploaded files kept in the config dir.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "file time",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "not traced",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 7208,
+          "literal": "\"rules\",\"session-env\",\"uploads\""
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 20937,
+          "literal": "M(\"uploads\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.shares",
+      "path": "~/.claude/shares/<name>.zip",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "binary",
+      "what": "Zip bundles made to share a session or report.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "file time",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "share / export",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 25704,
+          "literal": "m(be(),\"shares\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.feedback-drafts",
+      "path": "~/.claude/feedback/drafts/<draft id>.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Unsent /bug feedback drafts.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "file time",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "/bug",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 29879,
+          "literal": "m(be(),\"feedback\",\"drafts\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.feedback-bundles",
+      "path": "~/.claude/feedback-bundles/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "binary",
+      "what": "Local /bug bundles holding transcript.json, subagent transcripts, the last API request and the raw transcript JSONL.",
+      "fields": [
+        "transcript",
+        "subagentTranscripts",
+        "lastApiRequest",
+        "rawTranscriptJsonl"
+      ],
+      "join": "approximate",
+      "joinKey": "bundle time; transcript inside carries the session id",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "/bug",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 29815,
+          "literal": "m(be(),\"feedback-bundles\")"
+        },
+        {
+          "file": "chunk-6bdxb0yq.js",
+          "offset": 867209,
+          "literal": "subagentTranscripts:pt,lastApiRequest:ht,rawTranscriptJsonl:ft"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "running /bug",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.claude-json-backups",
+      "path": "~/.claude/backups/.claude.json.backup.<epoch ms>",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Rotating copies of ~/.claude.json, including per-project last-session keys as they were then.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "epoch ms in the name",
+      "retention": "at most 5 kept; rotate out automatically",
+      "writer": "global config save",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 493833,
+          "literal": "`${g}.backup.${Date.now()}`"
+        },
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 26192,
+          "literal": "at most 5 are kept and they rotate out automatically"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.claude-json-last-session",
+      "path": "~/.claude.json#projects.<project path>.{lastSessionId,lastCost,lastModelUsage,...}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json-key",
+      "what": "Per-project stats of the last session that ended in that folder: id, cost, durations, token totals, model usage, lines changed.",
+      "fields": [
+        "lastSessionId",
+        "lastCost",
+        "lastAPIDuration",
+        "lastDuration",
+        "lastTotalInputTokens",
+        "lastTotalOutputTokens",
+        "lastTotalCacheCreationInputTokens",
+        "lastTotalCacheReadInputTokens",
+        "lastTotalWebSearchRequests",
+        "lastModelUsage",
+        "lastSessionMetrics",
+        "lastLinesAdded",
+        "lastLinesRemoved",
+        "lastGracefulShutdown",
+        "lastVersionBase",
+        "lastFpsAverage"
+      ],
+      "join": "exact",
+      "joinKey": "lastSessionId equals the session id (only for the most recent session per project)",
+      "retention": "overwritten by the next session in that project",
+      "writer": "session exit",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 479335,
+          "literal": "\"lastFpsLow1Pct\",\"lastSessionId\",\"lastGracefulShutdown\""
+        },
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 670022,
+          "literal": "costUSD:r.costUSD})),lastSessionId:q()}"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.claude-json-project",
+      "path": "~/.claude.json#projects.<project path>.{allowedTools,mcpServers,hasTrustDialogAccepted,exampleFiles,...}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json-key",
+      "what": "Per-project config the session started with: trust, allowed tools, project MCP servers and approvals, example files.",
+      "fields": [
+        "allowedTools",
+        "mcpServers",
+        "enabledMcpjsonServers",
+        "disabledMcpjsonServers",
+        "hasTrustDialogAccepted",
+        "hasClaudeMdExternalIncludesApproved",
+        "exampleFiles"
+      ],
+      "join": "snapshot",
+      "joinKey": "project path",
+      "retention": "kept until the project entry is removed",
+      "writer": "global config",
+      "evidence": [
+        {
+          "file": "chunk-e4fkgvnr.js",
+          "offset": 25742,
+          "literal": "project entry in ~/.claude.json (trust, history, MCP servers)"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.claude-json-caches",
+      "path": "~/.claude.json#{cachedGrowthBookFeatures,cachedExperimentData,clientDataCacheSlots,additionalModelOptionsCache,modelAccessCache,orgModelDefaultCache,autoCompactWindowsCache,...}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json-key",
+      "what": "Cached server responses that shape a session: feature flags and experiments, client data, model options and access, org defaults, auto-compact windows.",
+      "fields": [
+        "cachedGrowthBookFeatures",
+        "cachedGrowthBookFeaturesAt",
+        "cachedExperimentFeatures",
+        "cachedExperimentData",
+        "cachedDynamicConfigs",
+        "cachedStatsigGates",
+        "clientDataCacheSlots",
+        "additionalModelOptionsCache",
+        "modelAccessCache",
+        "orgModelDefaultCache",
+        "autoCompactWindowsCache",
+        "metricsStatusCache",
+        "passesEligibilityCache",
+        "groveConfigCache"
+      ],
+      "join": "snapshot",
+      "joinKey": "none; cachedGrowthBookFeaturesAt gives the fetch time",
+      "retention": "overwritten on each refresh",
+      "writer": "feature-flag client; account/model fetches",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 114296,
+          "literal": "cachedGrowthBookFeatures:n,cachedExperimentFeatures"
+        },
+        {
+          "file": "chunk-9rz2hpfp.js",
+          "offset": 12769,
+          "literal": "i.clientDataCacheSlots=void 0"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Flag values the session ran with are not kept; only the latest cache."
+    },
+    {
+      "id": "claude-code.claude-json-identity",
+      "path": "~/.claude.json#{userID,anonymousId,machineID,oauthAccount,skillUsage,pluginUsage,tipsHistory}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json-key",
+      "what": "Ids attached to telemetry for every session, the account the session used, and usage counters bumped by sessions.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "",
+      "writer": "global config",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 479335,
+          "literal": "\"lastFpsLow1Pct\",\"lastSessionId\",\"lastGracefulShutdown\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Evidence is the global-config key list; values not read."
+    },
+    {
+      "id": "claude-code.model-catalog",
+      "path": "~/.claude/cache/model-catalog/<id>.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Cached model catalog that decides which models and options the session can pick.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "refreshed",
+      "writer": "model catalog fetch",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 337643,
+          "literal": "\"model-catalog\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.cache-dir",
+      "path": "~/.claude/cache/{changelog.md,my-closed-issues.json,team-discovery.json,org-memory-discovery.json}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Other cached server responses, including org memory-store discovery that can add memory to the session.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "refreshed; some swept by cleanup",
+      "writer": "various fetchers",
+      "evidence": [
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 49373,
+          "literal": "as=\"org-memory-discovery.json\""
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 15409,
+          "literal": "m(be(),\"cache\",\"team-discovery.json\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.mcp-auth-cache",
+      "path": "~/.claude/mcp-needs-auth-cache.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Which MCP servers need authentication, which decides whether their tools reach the session.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "MCP client",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 16014,
+          "literal": "m(be(),\"mcp-needs-auth-cache.json\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.mcp-discovery",
+      "path": "~/.claude/{mcp-discovery-cache/,state/mcp-discover-verdicts.json}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "MCP discovery results and verdicts that affect which servers are offered.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "Deleted by startup cleanup after cleanupPeriodDays (default 30 days)",
+      "writer": "MCP discovery",
+      "evidence": [
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 19669,
+          "literal": "m(be(),\"mcp-discovery-cache\")"
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 16552,
+          "literal": "m(be(),\"state\",\"mcp-discover-verdicts.json\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.mcp-logs",
+      "path": "<user cache dir>/claude-cli-nodejs/<sanitized cwd>/{mcp-logs-<server>,errors}/<timestamp>.jsonl",
+      "env": [],
+      "kind": "jsonl",
+      "what": "Per-server MCP logs and error logs for runs started in that folder (macOS: ~/Library/Caches/claude-cli-nodejs).",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "cwd folder + file timestamp",
+      "retention": "not stated in code",
+      "writer": "MCP client logging",
+      "evidence": [
+        {
+          "file": "chunk-c44rdggd.js",
+          "offset": 11925,
+          "literal": "mcpLogs:(e)=>T(f(),`mcp-logs-${_(e)}`)"
+        },
+        {
+          "file": "chunk-1xs7prve.js",
+          "offset": 1165,
+          "literal": "g(WXe.mcpLogs(e),a()+\".jsonl\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Outside the config dir; CLAUDE_CONFIG_DIR does not move it."
+    },
+    {
+      "id": "claude-code.state-dir",
+      "path": "~/.claude/state/ and ~/.claude/{.last-cleanup,.last-update-result.json,active-time.json,gh-pr-status-cache.json,loop.md}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Small state records: active-time windows, PR status cache, loop task file, scheduled-task status, keybindings, cleanup and update markers.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "active-time windows by time; others none",
+      "retention": "active-time keeps a year of windows",
+      "writer": "various (state namespace)",
+      "evidence": [
+        {
+          "file": "chunk-4y8fw9xy.js",
+          "offset": 1118,
+          "literal": "var w=\"active-time.json\""
+        },
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 655626,
+          "literal": "Qq(be(),\"gh-pr-status-cache.json\")"
+        },
+        {
+          "file": "chunk-s3c3fm9y.js",
+          "offset": 9320,
+          "literal": "return b(be(),\"loop.md\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "loop.md (also <project>/.claude/loop.md) is read into /loop prompts. With the storage-v5 backend these become state keys such as active-time-ledger and loop-file."
+    },
+    {
+      "id": "claude-code.stats-cache",
+      "path": "~/.claude/stats-cache.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Aggregated daily usage stats computed from transcripts for /stats.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "per-day buckets",
+      "retention": "recomputed",
+      "writer": "/stats",
+      "evidence": [
+        {
+          "file": "chunk-79xjf52g.js",
+          "offset": 77367,
+          "literal": "Mm=\"stats-cache.json\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.managed-policy",
+      "path": "~/.claude/{policy-limits.json,remote-settings.json,remote-settings-consent.json,remote-settings-helper-consent}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Server-delivered policy limits and managed settings (and consent records) that constrain the session.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "refreshed",
+      "writer": "policy and remote-settings fetchers",
+      "evidence": [
+        {
+          "file": "chunk-tweqa2pw.js",
+          "offset": 17996,
+          "literal": "bqn=\"policy-limits.json\""
+        },
+        {
+          "file": "chunk-dq5fzxjx.js",
+          "offset": 319745,
+          "literal": "ggt=\"remote-settings.json\""
+        },
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 156250,
+          "literal": "Tsn=\"remote-settings-consent.json\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.computer-use-lock",
+      "path": "~/.claude/computer-use.lock",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Lock naming the session that holds computer use.",
+      "fields": [
+        "sessionId",
+        "pid"
+      ],
+      "join": "exact",
+      "joinKey": "sessionId field",
+      "retention": "removed on release",
+      "writer": "computer use",
+      "evidence": [
+        {
+          "file": "chunk-enj3b7xa.js",
+          "offset": 1202,
+          "literal": "I=\"computer-use.lock\""
+        },
+        {
+          "file": "chunk-enj3b7xa.js",
+          "offset": 1344,
+          "literal": "\"sessionId\"in e&&typeof e.sessionId===\"string\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.jobs",
+      "path": "~/.claude/jobs/<job id>/{state.json,timeline.jsonl,recap.trigger,tmp/} and ~/.claude/jobs/pins.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_JOB_DIR"
+      ],
+      "kind": "dir",
+      "what": "Background jobs: state, a timeline stream of what the job did, a recap trigger and scratch files; pins list.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "job id; sessions/<pid>.json jobId links a job to its session",
+      "retention": "not stated in code",
+      "writer": "background jobs / daemon",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 14650,
+          "literal": "is the job's timeline stream"
+        },
+        {
+          "file": "chunk-5yt83nd2.js",
+          "offset": 29104,
+          "literal": "cSt=\"recap.trigger\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.daemon",
+      "path": "~/.claude/daemon/{roster.json,attach-journal/,dispatch/} and ~/.claude/daemon.log",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "The background daemon roster of managed sessions and jobs, its attach journal, dispatch queue and log.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "roster entries carry session/job ids; log by time",
+      "retention": "not stated in code",
+      "writer": "claude daemon",
+      "evidence": [
+        {
+          "file": "chunk-vevdyzq4.js",
+          "offset": 6390,
+          "literal": "\"attach-journal\""
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 28046,
+          "literal": "\"roster.json\""
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 29012,
+          "literal": "\"daemon.log\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.daemon-control-key",
+      "path": "~/.claude/daemon/control.key",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "binary",
+      "what": "Key that authenticates control of the daemon.",
+      "fields": [],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "",
+      "writer": "claude daemon",
+      "evidence": [
+        {
+          "file": "chunk-vevdyzq4.js",
+          "offset": 3759,
+          "literal": "\"control.key\""
+        }
+      ],
+      "credential": true,
+      "enabledBy": "always",
+      "notes": "Never read or print."
+    },
+    {
+      "id": "claude-code.ide-lock",
+      "path": "~/.claude/ide/<port>.lock",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Lockfiles that IDE extensions write so the CLI can find and connect to the IDE MCP server.",
+      "fields": [
+        "pid",
+        "workspaceFolders",
+        "ideName",
+        "transport",
+        "authToken"
+      ],
+      "join": "snapshot",
+      "joinKey": "workspaceFolders vs session cwd",
+      "retention": "removed when the IDE exits; stale ones cleaned",
+      "writer": "IDE extension writes; CLI reads",
+      "evidence": [
+        {
+          "file": "chunk-07xvx33k.js",
+          "offset": 87925,
+          "literal": "ideName:k.name,authToken:k.authToken"
+        },
+        {
+          "file": "chunk-1a7xf92b.js",
+          "offset": 17314,
+          "literal": "le(tn.workspaceFolders)"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "always",
+      "notes": "Holds an auth token; never print values."
+    },
+    {
+      "id": "claude-code.agent-memory",
+      "path": "~/.claude/agent-memory/<agent type>/, <project>/.claude/agent-memory/<agent type>/, <project>/.claude/agent-memory-local/<agent type>/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Memory folders for custom subagents, loaded into that subagent prompt.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "agent type",
+      "retention": "kept",
+      "writer": "subagent memory",
+      "evidence": [
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 151648,
+          "literal": "Ue(oe(),\".claude\",\"agent-memory\",r)"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.memory-files",
+      "path": "~/.claude/CLAUDE.md, ~/.claude/rules/, <project>/CLAUDE.md, <project>/CLAUDE.local.md, <project>/.claude/rules/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "text",
+      "what": "Instruction files read into the prompt at session start.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "the transcript and system prompt show what was loaded",
+      "retention": "user-owned",
+      "writer": "read by the memory loader",
+      "evidence": [
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 250075,
+          "literal": "The user memory file is allowed for"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Current files, not the version the session saw."
+    },
+    {
+      "id": "claude-code.settings-files",
+      "path": "~/.claude/settings.json, ~/.claude/settings.local.json, <project>/.claude/settings.json, <project>/.claude/settings.local.json, <project>/.mcp.json, managed settings",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "Settings, permissions, hooks and MCP config read at session start; permission approvals are written back to settings.local.json.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "user-owned",
+      "writer": "settings loader; permission prompts write",
+      "evidence": [
+        {
+          "file": "chunk-zzv0mx12.js",
+          "offset": 15429,
+          "literal": "pu=new Set([\"settings.json\",\"settings.local.json\",\"claude.md\"])"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "See settings.json and hooks.json in outputs."
+    },
+    {
+      "id": "claude-code.user-config-dirs",
+      "path": "~/.claude/{commands,agents,output-styles,skills,workflows,routines,themes,rules}/ and ~/.claude/plugins/{installed_plugins.json,known_marketplaces.json,cache/,data/}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "User and plugin definitions whose text (skills, agents, commands, output styles, hooks) the harness loads into a session.",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "none",
+      "retention": "user-owned",
+      "writer": "plugin manager; read by loaders",
+      "evidence": [
+        {
+          "file": "chunk-68gmwmt6.js",
+          "offset": 7127,
+          "literal": "Je=[\"commands\",\"agents\",\"output-styles\",\"skills\",\"workflows\",\"routines\",\"themes\",\"rules\""
+        },
+        {
+          "file": "chunk-qptxy51r.js",
+          "offset": 2541,
+          "literal": "\"installed_plugins.json\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.bridge-and-server",
+      "path": "~/.claude/{bridge-spawn/,remote-control/fork-seeds/,server-sessions.json,server.lock}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Remote-control and claude server bookkeeping: spawned session dirs, fork seeds and the server session list.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "entries carry session ids (not traced in detail)",
+      "retention": "fork seeds swept by cleanup",
+      "writer": "remote control / claude server",
+      "evidence": [
+        {
+          "file": "chunk-yafdqrx7.js",
+          "offset": 781615,
+          "literal": "h6n=\"bridge-spawn\""
+        },
+        {
+          "file": "chunk-zfxvkdxa.js",
+          "offset": 29991,
+          "literal": "m(be(),\"remote-control\",\"fork-seeds\")"
+        },
+        {
+          "file": "chunk-zzv0mx12.js",
+          "offset": 15158,
+          "literal": "\"server-sessions.json\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.storage-v2",
+      "path": "~/.claude/storage-v2/",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Folder reserved for the newer storage backend that can hold the namespaced stores (transcripts, tasks, state) instead of the classic paths.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "storage keys (namespace, projectKey, sessionId)",
+      "retention": "not traced",
+      "writer": "storage-v5 backend (gated)",
+      "evidence": [
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 2904153,
+          "literal": "\"statsig\",\"storage-v2\",\"systemd\""
+        },
+        {
+          "file": "chunk-9gy1t01w.js",
+          "offset": 406241,
+          "literal": "throw Error(\"history readRecords failed\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "an internal gate (checked as N() before every storageV5 write); not traced",
+      "notes": "Version-dependent: when on, every namespace-keyed store in this list may live here, not at the classic paths. Not seen on this machine."
+    },
+    {
+      "id": "claude-code.reserved-untraced",
+      "path": "~/.claude/{local,local-settings,project-settings,remote,scratch,seed-admin,systemd,logs,access-audit,cowork_plugins,mcp-skill-archives,chrome,downloads,antproto.json,hfi-auth.json,.cc-writes}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "dir",
+      "what": "Other config-dir entries the harness treats as its own state (excluded from sync and host snapshots); their session relevance was not traced.",
+      "fields": [],
+      "join": "none",
+      "joinKey": "not traced",
+      "retention": "",
+      "writer": "various",
+      "evidence": [
+        {
+          "file": "chunk-zzv0mx12.js",
+          "offset": 15070,
+          "literal": "\"local\",\"antproto.json\",\"ccr\",\"session-env\",\"bridge-spawn\""
+        },
+        {
+          "file": "chunk-7q0xh79w.js",
+          "offset": 3011,
+          "literal": "aM=\".cc-writes\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "hfi-auth.json is an auth file (credential; never read)."
+    },
+    {
+      "id": "claude-code.credentials-file",
+      "path": "~/.claude/.credentials.json",
+      "env": [
+        "CLAUDE_CONFIG_DIR",
+        "CLAUDE_SECURESTORAGE_CONFIG_DIR"
+      ],
+      "kind": "json",
+      "what": "OAuth credentials on platforms without a keychain.",
+      "fields": [],
+      "join": "credential",
+      "joinKey": "",
+      "retention": "",
+      "writer": "login",
+      "evidence": [
+        {
+          "file": "chunk-1pjbcr84.js",
+          "offset": 19469,
+          "literal": "\".credentials.json\""
+        }
+      ],
+      "credential": true,
+      "enabledBy": "always",
+      "notes": "Never read or print."
+    },
+    {
+      "id": "claude-code.keychain",
+      "path": "macOS keychain generic password, service \"Claude Code-credentials\" (suffix may vary with config dir)",
+      "env": [
+        "CLAUDE_SECURESTORAGE_CONFIG_DIR"
+      ],
+      "kind": "keychain",
+      "what": "OAuth credentials used by every session on macOS.",
+      "fields": [],
+      "join": "credential",
+      "joinKey": "",
+      "retention": "",
+      "writer": "login",
+      "evidence": [
+        {
+          "file": "chunk-1pjbcr84.js",
+          "offset": 16472,
+          "literal": "security find-generic-password -a"
+        },
+        {
+          "file": "chunk-xfdxjhkk.js",
+          "offset": 868,
+          "literal": "mue=\"-credentials\""
+        }
+      ],
+      "credential": true,
+      "enabledBy": "always",
+      "notes": "Never read or print."
+    },
+    {
+      "id": "claude-code.token-files",
+      "path": "~/.claude/{.oauth_token,.api_key,.session_ingress_token}",
+      "env": [
+        "CLAUDE_CONFIG_DIR"
+      ],
+      "kind": "text",
+      "what": "File-based tokens, including the session-ingress token remote sessions use.",
+      "fields": [],
+      "join": "credential",
+      "joinKey": "",
+      "retention": "",
+      "writer": "remote / CCR setup",
+      "evidence": [
+        {
+          "file": "chunk-7z7dpds1.js",
+          "offset": 1642,
+          "literal": "[\".oauth_token\",\".api_key\",\".session_ingress_token\"]"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "always",
+      "notes": "Never read or print."
+    },
+    {
+      "id": "claude-code.tmp-session-dir",
+      "path": "<tmpdir>/claude-<uid>/<project>/<session id>/{scratchpad/,tasks/<task id>.output}",
+      "env": [
+        "CLAUDE_CODE_TMPDIR",
+        "CLAUDE_TMPDIR"
+      ],
+      "kind": "dir",
+      "what": "Per-session temp folder: the scratchpad the model is told to use and output files of background Bash commands and agents.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "folder name is the session id",
+      "retention": "temp; removed by the OS or cleanup",
+      "writer": "scratchpad; background tasks",
+      "evidence": [
+        {
+          "file": "chunk-02rxxxnf.js",
+          "offset": 214358,
+          "literal": "_e(hA(),e,\"scratchpad\")"
+        },
+        {
+          "file": "chunk-5z3sh1vh.js",
+          "offset": 888,
+          "literal": "n=\".output\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Sandboxed commands get TMPDIR=/tmp/claude unless CLAUDE_CODE_TMPDIR is set. On disk these folders also hold images/ and git-style objects/refs/info folders whose writer was not traced."
+    },
+    {
+      "id": "claude-code.env-selected-logs",
+      "path": "<path from CLAUDE_CODE_SESSION_LOG | CLAUDE_CODE_DIAGNOSTICS_FILE | CLAUDE_CODE_FRAME_TIMING_LOG | CLAUDE_CODE_PERFETTO_TRACE | AUTOMODE_DECISION_LOG>",
+      "env": [
+        "CLAUDE_CODE_SESSION_LOG",
+        "CLAUDE_CODE_DIAGNOSTICS_FILE",
+        "CLAUDE_CODE_FRAME_TIMING_LOG",
+        "CLAUDE_CODE_PERFETTO_TRACE",
+        "AUTOMODE_DECISION_LOG"
+      ],
+      "kind": "log",
+      "what": "Optional logs written to a path named by an environment variable: a session log (recorded as logPath in sessions/<pid>.json), diagnostics, frame timing, a Perfetto trace and auto-mode permission decisions.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "path from the variable; logPath in sessions/<pid>.json",
+      "retention": "user-managed",
+      "writer": "various",
+      "evidence": [
+        {
+          "file": "chunk-apqxkhrm.js",
+          "offset": 5719,
+          "literal": "\"CLAUDE_CODE_DIAGNOSTICS_FILE\",\"CLAUDE_CODE_PERFETTO_TRACE\",\"CLAUDE_CODE_FRAME_TIMING_LOG\""
+        },
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 395777,
+          "literal": "logPath:a.CLAUDE_CODE_SESSION_LOG"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "setting the variable",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.worktrees",
+      "path": "<repo>/.claude/worktrees/<name>/",
+      "env": [],
+      "kind": "dir",
+      "what": "Git worktrees the harness creates for a session or subagent (worktree isolation).",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "worktree name; cwd in the transcript",
+      "retention": "removed when unchanged",
+      "writer": "worktree isolation",
+      "evidence": [
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 1123234,
+          "literal": "function Zg(e){return Lmt(e,\".claude\",\"worktrees\")}"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.remote-otel",
+      "path": "remote: OTLP collector (OTEL_EXPORTER_OTLP_ENDPOINT) or console",
+      "env": [
+        "CLAUDE_CODE_ENABLE_TELEMETRY",
+        "OTEL_METRICS_EXPORTER",
+        "OTEL_LOGS_EXPORTER",
+        "OTEL_TRACES_EXPORTER",
+        "OTEL_LOG_USER_PROMPTS",
+        "OTEL_LOG_ASSISTANT_RESPONSES",
+        "OTEL_LOG_TOOL_CONTENT",
+        "OTEL_LOG_TOOL_DETAILS",
+        "OTEL_LOG_RAW_API_BODIES"
+      ],
+      "kind": "remote",
+      "what": "OpenTelemetry metrics, events and traces for the session; with the content switches on, prompts, responses, tool content and raw API bodies.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "session.id attribute",
+      "retention": "collector-defined",
+      "writer": "OTel exporters",
+      "evidence": [
+        {
+          "file": "chunk-dq5fzxjx.js",
+          "offset": 42407,
+          "literal": "[\"OTEL_LOG_RAW_API_BODIES\",\"OTEL_LOG_USER_PROMPTS\",\"OTEL_LOG_ASSISTANT_RESPONSES\""
+        },
+        {
+          "file": "chunk-nxw00mr3.js",
+          "offset": 39300,
+          "literal": "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "CLAUDE_CODE_ENABLE_TELEMETRY and exporter variables",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.remote-beta-tracing",
+      "path": "remote: BETA_TRACING_ENDPOINT",
+      "env": [
+        "ENABLE_BETA_TRACING_DETAILED",
+        "BETA_TRACING_ENDPOINT"
+      ],
+      "kind": "remote",
+      "what": "Detailed beta tracing of the session sent to a tracing endpoint.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "",
+      "writer": "beta tracing",
+      "evidence": [
+        {
+          "file": "chunk-apqxkhrm.js",
+          "offset": 5582,
+          "literal": "\"ENABLE_BETA_TRACING_DETAILED\",\"BETA_TRACING_ENDPOINT\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "ENABLE_BETA_TRACING_DETAILED + BETA_TRACING_ENDPOINT",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.remote-1p-events",
+      "path": "remote: Anthropic first-party event logging",
+      "env": [
+        "DISABLE_TELEMETRY",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"
+      ],
+      "kind": "remote",
+      "what": "Analytics events for the session (the failed ones are the local telemetry/ files).",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "session id",
+      "retention": "",
+      "writer": "1P event logger",
+      "evidence": [
+        {
+          "file": "chunk-f5tnbmwk.js",
+          "offset": 423904,
+          "literal": "Ad=\"1p_failed_events.\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "on unless telemetry is disabled",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.remote-sessions",
+      "path": "remote: /v1/sessions API (cloud sessions, teleport, remote control)",
+      "env": [],
+      "kind": "remote",
+      "what": "Cloud copies of a session: teleport to and from claude.ai sessions and the session events stream.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "remote session id; bridgeSessionId in sessions/<pid>.json",
+      "retention": "",
+      "writer": "teleport / remote control",
+      "evidence": [
+        {
+          "file": "chunk-1pjbcr84.js",
+          "offset": 123630,
+          "literal": "/v1/sessions/${e}/events?beta=true"
+        },
+        {
+          "file": "chunk-0axah9dy.js",
+          "offset": 12424,
+          "literal": "teleportFromSessionsAPI"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "teleport, --remote, remote control",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.remote-folder-sync",
+      "path": "remote: cloud session folder sync",
+      "env": [],
+      "kind": "remote",
+      "what": "Sync of working-folder files to cloud sessions; config-dir state is excluded.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "cloud session id",
+      "retention": "",
+      "writer": "cloud sync",
+      "evidence": [
+        {
+          "file": "chunk-ra61p37g.js",
+          "offset": 2904791,
+          "literal": "this folder is your Claude Code configuration home"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.remote-feedback",
+      "path": "remote: /bug feedback upload",
+      "env": [],
+      "kind": "remote",
+      "what": "A /bug report upload with the transcript, subagent transcripts and last API request.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "report id",
+      "retention": "",
+      "writer": "/bug",
+      "evidence": [
+        {
+          "file": "chunk-6bdxb0yq.js",
+          "offset": 867089,
+          "literal": "_(\"feedback_transcript_share\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "running /bug and agreeing to share the transcript",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.desktop-code-session",
+      "path": "~/Library/Application Support/Claude/claude-code-sessions/<account id>/<org id>/local_<desktop session id>.json",
+      "env": [],
+      "kind": "json",
+      "what": "Claude desktop app record of a Claude Code session it launched: the CLI session id, folder, model, title, permission mode, plan path and enabled MCP tools.",
+      "fields": [
+        "sessionId",
+        "cliSessionId",
+        "cwd",
+        "originCwd",
+        "createdAt",
+        "lastActivityAt",
+        "model",
+        "isArchived",
+        "title",
+        "permissionMode",
+        "planPath",
+        "enabledMcpTools",
+        "remoteMcpServersConfig"
+      ],
+      "join": "exact",
+      "joinKey": "cliSessionId equals the CLI session id. Unverified: for none of the 10 records on this machine was a matching transcript found under ~/.claude/projects (cleaned up, or kept elsewhere)",
+      "retention": "desktopSessionCleanupPeriodDays (setting in the CLI schema); desktop policy not traced",
+      "writer": "Claude desktop app",
+      "evidence": [
+        {
+          "file": "Claude.app/Contents/Resources/app.asar",
+          "offset": 7632019,
+          "literal": "mwt=\"claude-code-sessions\",gwt=\"local_\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Desktop app store (evidence from app.asar, not the CLI bundle)."
+    },
+    {
+      "id": "claude-code.desktop-agent-session",
+      "path": "~/Library/Application Support/Claude/local-agent-mode-sessions/<account id>/<org id>/local_<id>.json",
+      "env": [],
+      "kind": "json",
+      "what": "Desktop local agent-mode session record, including the system prompt, first message, slash commands, approved tools, egress and Chrome permissions it ran with.",
+      "fields": [
+        "sessionId",
+        "processName",
+        "cliSessionId",
+        "cwd",
+        "userSelectedFolders",
+        "createdAt",
+        "lastActivityAt",
+        "model",
+        "title",
+        "vmProcessName",
+        "initialMessage",
+        "slashCommands",
+        "enabledMcpTools",
+        "remoteMcpServersConfig",
+        "chromePermissionMode",
+        "chromeAllowedDomains",
+        "approvedToolNames",
+        "egressAllowedDomains",
+        "systemPrompt",
+        "accountName",
+        "emailAddress"
+      ],
+      "join": "exact",
+      "joinKey": "cliSessionId; verified: all 16 records on this machine have that transcript in their own .claude/projects",
+      "retention": "not traced",
+      "writer": "Claude desktop app",
+      "evidence": [
+        {
+          "file": "Claude.app/Contents/Resources/app.asar",
+          "offset": 7142503,
+          "literal": "ZS=\"local-agent-mode-sessions\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Holds the systemPrompt the desktop passed in; account fields are personal data."
+    },
+    {
+      "id": "claude-code.desktop-agent-audit",
+      "path": "~/Library/Application Support/Claude/local-agent-mode-sessions/<account id>/<org id>/local_<id>/audit.jsonl",
+      "env": [],
+      "kind": "jsonl",
+      "what": "Signed audit log of every SDK message in a desktop agent-mode session.",
+      "fields": [
+        "type",
+        "uuid",
+        "session_id",
+        "parent_tool_use_id",
+        "message",
+        "_audit_timestamp"
+      ],
+      "join": "exact",
+      "joinKey": "session_id field",
+      "retention": "not traced",
+      "writer": "Claude desktop app (optionally signs each line)",
+      "evidence": [
+        {
+          "file": "Claude.app/Contents/Resources/app.asar",
+          "offset": 3181874,
+          "literal": "const t=S.join(r,\"audit.jsonl\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "claude-code.desktop-agent-config-dir",
+      "path": "~/Library/Application Support/Claude/local-agent-mode-sessions/<account id>/<org id>/local_<id>/{.claude/,uploads/,outputs/}",
+      "env": [],
+      "kind": "dir",
+      "what": "Per-session config dir for desktop agent-mode sessions, holding the session's own projects/<project>/<session id>.jsonl transcript, memory, session-env, shell-snapshots, plans and backups, plus uploaded and output files.",
+      "fields": [],
+      "join": "exact",
+      "joinKey": "transcript file name is the CLI session id",
+      "retention": "not traced",
+      "writer": "Claude Code run by the desktop app",
+      "evidence": [
+        {
+          "file": "Claude.app/Contents/Resources/app.asar",
+          "offset": 7142503,
+          "literal": "ZS=\"local-agent-mode-sessions\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Found on disk: these sessions do not write to ~/.claude, so a ~/.claude-only scan misses them. How the app points CLAUDE_CONFIG_DIR here was not traced."
+    },
+    {
+      "id": "claude-code.desktop-bundled-cli",
+      "path": "~/Library/Application Support/Claude/{claude-code/<version>/claude.app,claude-code-vm/<version>/claude}",
+      "env": [],
+      "kind": "binary",
+      "what": "Claude Code builds the desktop app ships and runs its sessions with (host and VM).",
+      "fields": [],
+      "join": "snapshot",
+      "joinKey": "version folder; the transcript version field",
+      "retention": "replaced on update",
+      "writer": "Claude desktop app",
+      "evidence": [
+        {
+          "file": "Claude.app/Contents/Resources/app.asar",
+          "offset": 7652255,
+          "literal": "\"claude-code-vm\");const t=khe()"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Version-dependent: desktop sessions may run a different Claude Code version than the terminal CLI."
+    }
+  ]
+}

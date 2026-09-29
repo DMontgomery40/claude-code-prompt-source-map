@@ -15,7 +15,7 @@ export const KEYS = [
   { app: true, group: "Move", keys: ["Enter"], label: "Go into the session or the selected agent" },
   { app: true, group: "Move", keys: ["Esc"], label: "Back out one step" },
   { id: "overview", group: "Move", keys: ["o"], label: "Session overview", command: "Session overview", bind: { o: 0 } },
-  { app: true, group: "Explore", keys: ["1", "2", "3", "4", "5"], label: "Switch between the questions (5: what went over the wire, while a network capture is attached)" },
+  { app: true, group: "Explore", keys: ["1", "2", "3", "4", "5", "6"], label: "Switch between the questions, then what went over the wire (while a network capture is attached) and everything on this machine" },
   { id: "zoom", group: "View", keys: ["+", "−"], label: "Zoom the map in / out", bind: { "+": 1, "=": 1, "-": -1, "_": -1 } },
   { id: "reset", group: "View", keys: ["r"], label: "Reset the camera", command: "Reset the camera", bind: { r: 0 } },
   { id: "mode", group: "View", keys: ["v"], label: "Switch between the 3D and 2D view", command: "Switch 3D / 2D view", bind: { v: 0 } },

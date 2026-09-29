@@ -3,11 +3,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkHar, findSecrets } from "../capture/check-har.mjs";
+import { fileCapture, planFiling } from "../capture/file-capture.mjs";
+import { CCX, CXX, browserHar, claudeHar, codexHar, codexSession } from "../../site/trace/test/fixtures/network.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const addon = path.join(here, "..", "capture", "trace_capture.py");
@@ -136,4 +138,64 @@ print(json.dumps({
   assert.match(r.query.access_token, /^<redacted by trace-capture: opaque token \| 22 chars/);
   assert.match(r.query.x, /^<redacted by trace-capture: Anthropic API key \|/);
   assert.equal(r.stable, true);
+});
+
+// file-capture.mjs: a capture goes beside the session log it belongs to, where Trace picks it up.
+function sessionRoots() {
+  const dir = mkdtempSync(path.join(os.tmpdir(), "capture-file-"));
+  const roots = { "claude-code": path.join(dir, "claude"), codex: path.join(dir, "codex") };
+  for (const id of [CCX.session, CCX.other]) {
+    mkdirSync(path.join(roots["claude-code"], "-proj"), { recursive: true });
+    writeFileSync(path.join(roots["claude-code"], "-proj", `${id}.jsonl`), JSON.stringify({ type: "user", sessionId: id, message: { role: "user", content: "hi" } }) + "\n");
+  }
+  const day = path.join(roots.codex, "2026", "01", "06");
+  mkdirSync(day, { recursive: true });
+  const [[, text]] = Object.entries(codexSession());
+  writeFileSync(path.join(day, `rollout-2026-01-06T09-00-00-${CXX.thread}.jsonl`), text);
+  // A subagent thread the capture also names: it opens with its root, so the capture is filed once.
+  writeFileSync(path.join(day, `rollout-2026-01-06T09-00-05-${CXX.other}.jsonl`), JSON.stringify({ type: "session_meta", payload: { id: CXX.other, source: { subagent: { thread_spawn: { parent_thread_id: CXX.thread } } } } }) + "\n");
+  const har = (name, body) => { const f = path.join(dir, name); writeFileSync(f, body); return f; };
+  return { dir, roots, har };
+}
+
+test("a Claude Code capture is filed in each of its sessions' folders; the original stays unless moved", () => {
+  const { roots, har } = sessionRoots();
+  const src = har("capture-20260105-100000.har", claudeHar({ withOther: true }));
+  const plan = fileCapture(src, { roots });
+  assert.equal(plan.product, "claude-code");
+  assert.deepEqual(plan.places.map((p) => path.relative(roots["claude-code"], p.dest)), [
+    path.join("-proj", CCX.session, "network", "capture-20260105-100000.har"),
+    path.join("-proj", CCX.other, "network", "capture-20260105-100000.har"),
+  ]);
+  for (const p of plan.places) {
+    assert.equal(readFileSync(p.dest, "utf8"), readFileSync(src, "utf8"));
+    assert.equal(statSync(p.dest).mode & 0o777, 0o600);
+  }
+  assert.equal(statSync(plan.places[0].dest).ino, statSync(plan.places[1].dest).ino); // one file, linked
+  assert.equal(existsSync(src), true);
+  // Filing it again never overwrites; moving takes the original away.
+  const again = fileCapture(src, { roots, move: true });
+  assert.match(again.places[0].dest, /capture-20260105-100000-2\.har$/);
+  assert.equal(existsSync(src), false);
+});
+
+test("a Codex/ChatGPT capture goes beside its root thread's rollout, not a subagent's", () => {
+  const { roots, har } = sessionRoots();
+  const plan = fileCapture(har("capture-20260106-090000.har", codexHar()), { roots });
+  assert.equal(plan.product, "codex");
+  assert.deepEqual(plan.places.map((p) => path.basename(p.dest)), [`rollout-2026-01-06T09-00-00-${CXX.thread}.capture-20260106-090000.har`]);
+  assert.equal(path.dirname(plan.places[0].dest), path.join(roots.codex, "2026", "01", "06"));
+});
+
+test("a capture with no session log here, or of a web chat, is not filed and says why", () => {
+  const { dir, roots, har } = sessionRoots();
+  const empty = { "claude-code": path.join(dir, "none"), codex: path.join(dir, "none") };
+  const cc = har("capture-a.har", claudeHar());
+  assert.deepEqual(planFiling(cc, empty).places, []);
+  assert.throws(() => fileCapture(cc, { roots: empty }), /No log on this machine for the Claude Code sessions? in this capture \(44444444…/);
+  assert.equal(existsSync(cc), true);
+  assert.throws(() => fileCapture(har("capture-b.har", browserHar()), { roots }), /browser capture of a web chat/);
+  const cli = spawnSync(process.execPath, [path.join(here, "..", "capture", "file-capture.mjs"), "--claude-root", empty["claude-code"], cc], { encoding: "utf8" });
+  assert.equal(cli.status, 1);
+  assert.match(cli.stderr, /couldn't file .*No log on this machine/);
 });

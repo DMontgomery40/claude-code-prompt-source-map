@@ -30,7 +30,7 @@ const IDENTITY_FIELDS = new Set([
   "accountuuid", "organizationuuid", "orguuid", "organizationid", "orgid", "workspaceid", "anthropicorganizationid", "anthropicworkspaceid",
   "accountid", "accountuserid", "userid", "creatoraccountuserid", "defaultaccountid", "accountordering", "chatgptaccountid",
   "deviceid", "installationid", "xcodexinstallationid", "safetyidentifier", "hashvalue", "ipaddress", "phone", "phonenumber",
-  "profilepictureurl", "username", "login",
+  "profilepictureurl", "username", "login", "machineid", "anonymousid",
 ]);
 // Secret field names: tokens and keys.
 const SECRET_FIELD_RE = /(accesstoken|refreshtoken|idtoken|apikey|clientsecret|secret|password|sessiontoken|bearertoken|authtoken)$/;

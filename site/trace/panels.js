@@ -357,7 +357,9 @@ function lensPanel(S, A) {
     if (others.length) out.push(agentTable(trace, others, S, A));
   } else if (lens === "network" && A.networkLens) {
     // What went over the wire: a network capture attached to the session (network/panel.js).
-    out.push(...A.networkLens(S));
+    out.push(...A.networkLens(S));  } else if (lens === "sources" && A.sourcesLens) {
+    // Everything on this machine: every local source the harness keeps about the session (sources/panel.js).
+    out.push(...A.sourcesLens(S));
   }
   return out;
 }

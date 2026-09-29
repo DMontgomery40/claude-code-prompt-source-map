@@ -1,0 +1,3129 @@
+{
+  "product": "codex",
+  "sourceVersion": "0.158.0-alpha.2.1",
+  "cliOnPath": "0.144.0",
+  "generated": "2026-09-28",
+  "sources": [
+    {
+      "id": "codex.rollout",
+      "path": "~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-<timestamp>-<thread_id>.jsonl[.zst]",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "jsonl",
+      "what": "The thread's own record: session_meta (base instructions, dynamic tools, originator, cli version), turn contexts, every response item, event and compaction.",
+      "fields": [
+        "session_meta",
+        "turn_context",
+        "response_item",
+        "event_msg",
+        "compacted",
+        "session_meta.dynamic_tools",
+        "session_meta.base_instructions"
+      ],
+      "join": "exact",
+      "joinKey": "thread id in the file name; threads.rollout_path",
+      "retention": "Kept indefinitely; files older than 7 days are compressed to .jsonl.zst by a background job (level 3, max 2 concurrent jobs).",
+      "writer": "codex-rollout RolloutRecorder (core); read by thread-store, TUI resume, app-server, memories, feedback",
+      "versions": "both; 0.158 file names may carry an extra _<rollout_id> suffix; both builds contain the .jsonl.zst compression path",
+      "evidence": [
+        {
+          "file": "codex-rs/rollout/src/lib.rs",
+          "line": 86,
+          "literal": "SESSIONS_SUBDIR: &str = \"sessions\""
+        },
+        {
+          "file": "codex-rs/rollout/src/recorder.rs",
+          "line": 1732,
+          "literal": "dir.push(timestamp.year().to_string());"
+        },
+        {
+          "file": "codex-rs/rollout/src/rollout_file_name.rs",
+          "line": 67,
+          "literal": "format!(\"rollout-{timestamp}-{}.jsonl\", self.thread_id)"
+        },
+        {
+          "file": "codex-rs/rollout/src/compression.rs",
+          "line": 327,
+          "literal": "MIN_ROLLOUT_AGE: Duration = Duration::from_secs(7 * 24 * 60 * 60)"
+        },
+        {
+          "file": "codex-rs/protocol/src/protocol.rs",
+          "line": 3169,
+          "literal": "pub dynamic_tools: Option<Vec<DynamicToolSpec>>,"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": ".jsonl.zst"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always for persisted threads",
+      "notes": "Dynamic tool specs for 0.144/0.158 threads live here (session_meta.dynamic_tools), not in state_5.thread_dynamic_tools."
+    },
+    {
+      "id": "codex.archived-rollout",
+      "path": "~/.codex/archived_sessions/rollout-<timestamp>-<thread_id>.jsonl[.zst]",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "jsonl",
+      "what": "Rollouts of archived threads, moved out of sessions/.",
+      "fields": [
+        "same as rollout"
+      ],
+      "join": "exact",
+      "joinKey": "thread id in the file name; threads.archived / rollout_path",
+      "retention": "Kept until the thread is deleted; compressed like live rollouts.",
+      "writer": "codex-rollout (archive/unarchive in thread-store)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/rollout/src/lib.rs",
+          "line": 87,
+          "literal": "ARCHIVED_SESSIONS_SUBDIR: &str = \"archived_sessions\""
+        },
+        {
+          "file": "codex-rs/rollout/src/recorder.rs",
+          "line": 1544,
+          "literal": "codex_home.join(ARCHIVED_SESSIONS_SUBDIR)"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.session-index",
+      "path": "~/.codex/session_index.jsonl",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "jsonl",
+      "what": "Append-only log of thread names (renames) keyed by thread id.",
+      "fields": [
+        "id",
+        "thread_name",
+        "updated_at"
+      ],
+      "join": "exact",
+      "joinKey": "id field = thread id; last line for an id wins",
+      "retention": "Append-only, no pruning found.",
+      "writer": "codex-rollout session_index::append_thread_name",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/rollout/src/session_index.rs",
+          "line": 21,
+          "literal": "SESSION_INDEX_FILE: &str = \"session_index.jsonl\""
+        },
+        {
+          "file": "codex-rs/rollout/src/session_index.rs",
+          "line": 33,
+          "literal": "pub async fn append_thread_name("
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "session_index.jsonl"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.message-history",
+      "path": "~/.codex/history.jsonl",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "jsonl",
+      "what": "Cross-session prompt history: the text of each message the user typed in the TUI, with its thread id.",
+      "fields": [
+        "session_id",
+        "ts",
+        "text"
+      ],
+      "join": "exact",
+      "joinKey": "session_id field = thread id",
+      "retention": "Trimmed to 80% of history.max_bytes when that cap is set and exceeded.",
+      "writer": "codex-message-history append_entry, called from the TUI only in 0.158",
+      "versions": "both; in 0.158 only the TUI appends (no append call found in app-server, exec or the desktop bundle)",
+      "evidence": [
+        {
+          "file": "codex-rs/message-history/src/lib.rs",
+          "line": 52,
+          "literal": "HISTORY_FILENAME: &str = \"history.jsonl\""
+        },
+        {
+          "file": "codex-rs/message-history/src/lib.rs",
+          "line": 56,
+          "literal": "HISTORY_SOFT_CAP_RATIO: f64 = 0.8"
+        },
+        {
+          "file": "codex-rs/tui/src/app/thread_routing.rs",
+          "line": 565,
+          "literal": "codex_message_history::append_entry(&text, thread_id, &history_config)"
+        },
+        {
+          "file": "codex-rs/config/src/types.rs",
+          "line": 214,
+          "literal": "SaveAll,"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "history.jsonl"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "config history.persistence (SaveAll is the default variant; none disables)",
+      "notes": ""
+    },
+    {
+      "id": "codex.shell-snapshots",
+      "path": "~/.codex/shell_snapshots/<thread_id>.<nonce>.sh",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "text",
+      "what": "Snapshot of the user's login shell (functions, aliases, env) that shell tool calls in the thread are run against.",
+      "fields": [
+        "shell script body"
+      ],
+      "join": "exact",
+      "joinKey": "file name prefix = session/thread id",
+      "retention": "Deleted after 3 days; exec-server caps a snapshot at 512 KiB.",
+      "writer": "codex-core shell_snapshot (and exec-server shell_snapshot)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/core/src/shell_snapshot.rs",
+          "line": 106,
+          "literal": "SNAPSHOT_DIR: &str = \"shell_snapshots\""
+        },
+        {
+          "file": "codex-rs/core/src/shell_snapshot.rs",
+          "line": 105,
+          "literal": "SNAPSHOT_RETENTION: Duration = Duration::from_secs(60 * 60 * 24 * 3)"
+        },
+        {
+          "file": "codex-rs/core/src/shell_snapshot.rs",
+          "line": 265,
+          "literal": ".join(format!(\"{session_id}.{nonce}.{extension}\"))"
+        },
+        {
+          "file": "codex-rs/exec-server/src/shell_snapshot.rs",
+          "line": 35,
+          "literal": "MAX_SNAPSHOT_BYTES: usize = 512 * 1024"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "shell_snapshots"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "shell snapshot feature (on in current builds)",
+      "notes": ""
+    },
+    {
+      "id": "codex.thread-writer-locks",
+      "path": "~/.codex/thread-writer-locks/<thread_id>.lock",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "binary",
+      "what": "Advisory lock held by the process currently writing a thread's rollout.",
+      "fields": [
+        "lock file",
+        ".coordination.lock"
+      ],
+      "join": "exact",
+      "joinKey": "file name = thread id",
+      "retention": "Created per writer; stale files remain.",
+      "writer": "codex-rollout writer_lock",
+      "versions": "0.158 only (absent from 0.144 strings)",
+      "evidence": [
+        {
+          "file": "codex-rs/rollout/src/writer_lock.rs",
+          "line": 17,
+          "literal": "WRITER_LOCK_DIR: &str = \"thread-writer-locks\""
+        },
+        {
+          "file": "codex-rs/rollout/src/writer_lock.rs",
+          "line": 51,
+          "literal": "self.directory.join(format!(\"{thread_id}.lock\"))"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.rollout-maintenance",
+      "path": "~/.codex/.tmp/{rollout-maintenance.lock,rollout-compression.lock}",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "binary",
+      "what": "Run markers for rollout maintenance and compression; temp files named rollout-compress-* hold rollouts mid-compression.",
+      "fields": [
+        "lock files",
+        "rollout-compress-* temp"
+      ],
+      "join": "none",
+      "joinKey": "none (process-level)",
+      "retention": "Markers stale after 6 hours; worker max runtime 5 hours.",
+      "writer": "codex-rollout maintenance/compression",
+      "versions": "both have rollout-compression.lock; rollout-maintenance.lock is 0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/rollout/src/maintenance.rs",
+          "line": 16,
+          "literal": "ROLLOUT_MAINTENANCE_LOCK: &str = \"rollout-maintenance.lock\""
+        },
+        {
+          "file": "codex-rs/rollout/src/compression.rs",
+          "line": 331,
+          "literal": "RUN_MARKER_FILE_NAME: &str = \"rollout-compression.lock\""
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "rollout-compression.lock"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "The same .tmp folder also holds plugin sync staging (plugins, bundled-marketplaces), which is not session data."
+    },
+    {
+      "id": "codex.rollout-migrations",
+      "path": "~/.codex/rollout-migrations/<thread_id>.pending",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Journal of rollouts being migrated between storage formats.",
+      "fields": [
+        "pending marker per thread"
+      ],
+      "join": "exact",
+      "joinKey": "file name = thread id",
+      "retention": "Removed when the migration publishes.",
+      "writer": "codex-thread-store rollout_migration",
+      "versions": "0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/thread-store/src/local/rollout_migration/publish.rs",
+          "line": 35,
+          "literal": "MIGRATION_JOURNAL_DIRECTORY: &str = \"rollout-migrations\""
+        },
+        {
+          "file": "codex-rs/thread-store/src/local/rollout_migration/publish.rs",
+          "line": 40,
+          "literal": ".join(format!(\"{thread_id}.pending\"))"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-threads",
+      "path": "<sqlite_home>/state_5.sqlite#threads",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "One row per thread: rollout path, cwd, model, reasoning effort, sandbox/approval policy, tokens used, git info, title, first user message, agent nickname/role/path, source and originator.",
+      "fields": [
+        "id",
+        "rollout_path",
+        "cwd",
+        "model",
+        "reasoning_effort",
+        "sandbox_policy",
+        "approval_mode",
+        "tokens_used",
+        "first_user_message",
+        "preview",
+        "cli_version",
+        "originator",
+        "thread_source",
+        "agent_path",
+        "memory_mode",
+        "history_mode",
+        "project_id",
+        "daybreak_enabled",
+        "creator_user_id"
+      ],
+      "join": "exact",
+      "joinKey": "threads.id",
+      "retention": "Row deleted with the thread.",
+      "writer": "codex-state StateRuntime (threads.rs), fed by rollout metadata sync",
+      "versions": "both; 0.158 schema is at migration 0057 (adds originator, daybreak_enabled, creator ids, projects, sections)",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 33,
+          "literal": "STATE_DB_FILENAME: &str = \"state_5.sqlite\""
+        },
+        {
+          "file": "codex-rs/state/src/runtime/threads.rs",
+          "line": 620,
+          "literal": "INSERT INTO threads ("
+        },
+        {
+          "file": "codex-rs/state/src/lib.rs",
+          "line": 127,
+          "literal": "SQLITE_HOME_ENV: &str = \"CODEX_SQLITE_HOME\""
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "state_5.sqlite"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "<sqlite_home> is config sqlite_home, else $CODEX_SQLITE_HOME, else $CODEX_HOME."
+    },
+    {
+      "id": "codex.state-thread-dynamic-tools",
+      "path": "<sqlite_home>/state_5.sqlite#thread_dynamic_tools",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Legacy per-thread copy of client-supplied dynamic tool specs (name, description, input JSON schema) that were offered to the model.",
+      "fields": [
+        "thread_id",
+        "position",
+        "name",
+        "description",
+        "input_schema",
+        "defer_loading",
+        "namespace"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Deleted with the thread; no new rows from current builds.",
+      "writer": "codex-state (older builds); 0.158 only deletes and reads",
+      "versions": "legacy: newest rows on disk come from 0.140-era threads; 0.144 strings have CREATE/ALTER/DELETE but no INSERT; 0.158's only INSERT is in a test",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0004_thread_dynamic_tools.sql",
+          "line": 1,
+          "literal": "CREATE TABLE thread_dynamic_tools"
+        },
+        {
+          "file": "codex-rs/state/src/runtime/threads.rs",
+          "line": 1181,
+          "literal": "DELETE FROM thread_dynamic_tools WHERE thread_id = ?"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "DELETE FROM thread_dynamic_tools WHERE thread_id = ?"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "none in 0.144/0.158 (older builds wrote it at thread start)",
+      "notes": "For 0.144/0.158 threads use rollout session_meta.dynamic_tools instead; this table only helps with older threads."
+    },
+    {
+      "id": "codex.state-thread-spawn-edges",
+      "path": "<sqlite_home>/state_5.sqlite#thread_spawn_edges",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Parent/child links between a thread and the sub-agent threads it spawned, with child status.",
+      "fields": [
+        "parent_thread_id",
+        "child_thread_id",
+        "status"
+      ],
+      "join": "exact",
+      "joinKey": "parent_thread_id or child_thread_id",
+      "retention": "Deleted with either thread.",
+      "writer": "codex-state (multi-agent spawn)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/runtime/threads.rs",
+          "line": 141,
+          "literal": "INSERT INTO thread_spawn_edges ("
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "INSERT INTO thread_spawn_edges"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "multi-agent / sub-agent use",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-thread-attachments",
+      "path": "<sqlite_home>/state_5.sqlite#thread_attachments",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Client-defined attachments owned by a thread (type, identity key, JSON payload).",
+      "fields": [
+        "id",
+        "thread_id",
+        "attachment_type",
+        "identity_key",
+        "payload",
+        "created_at"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Deleted with the thread.",
+      "writer": "codex-state thread_attachments (via thread-store)",
+      "versions": "0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/runtime/thread_attachments.rs",
+          "line": 49,
+          "literal": "INSERT INTO thread_attachments (id, thread_id, attachment_type"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-projects",
+      "path": "<sqlite_home>/state_5.sqlite#{projects,project_roots,project_idempotency_keys}",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Projects (named groups of workspace roots) that threads are filed under.",
+      "fields": [
+        "projects.id",
+        "projects.name",
+        "projects.metadata",
+        "project_roots.path"
+      ],
+      "join": "exact",
+      "joinKey": "threads.project_id = projects.id",
+      "retention": "Kept until the project is deleted.",
+      "writer": "codex-state projects (thread-store)",
+      "versions": "0.158 (migration 0049)",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0049_projects.sql",
+          "line": 1,
+          "literal": "CREATE TABLE"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-thread-sections",
+      "path": "<sqlite_home>/state_5.sqlite#thread_sections",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Sidebar sections a thread is placed in.",
+      "fields": [
+        "id",
+        "name",
+        "appearance"
+      ],
+      "join": "exact",
+      "joinKey": "threads.thread_section_id",
+      "retention": "Kept until removed.",
+      "writer": "codex-state thread_sections",
+      "versions": "0.158 (migrations 0045-0048)",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0045_threads_section.sql",
+          "line": 1,
+          "literal": "thread_section"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-rollout-migration",
+      "path": "<sqlite_home>/state_5.sqlite#{rollout_migration_state,rollout_migration_skipped_rollouts}",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Progress of the rollout-format migration and rollouts it skipped (with path, size, reason).",
+      "fields": [
+        "migration_id",
+        "last_checked_thread_id",
+        "rollout_path",
+        "skip_reason"
+      ],
+      "join": "exact",
+      "joinKey": "rollout_path contains the thread id",
+      "retention": "Kept.",
+      "writer": "codex-thread-store rollout_migration",
+      "versions": "0.158 (migration 0047)",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0047_rollout_migration_state.sql",
+          "line": 1,
+          "literal": "CREATE TABLE"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-backfill",
+      "path": "<sqlite_home>/state_5.sqlite#backfill_state",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Watermark of the job that backfills the threads table from rollout files.",
+      "fields": [
+        "status",
+        "last_watermark",
+        "last_success_at"
+      ],
+      "join": "none",
+      "joinKey": "none (single row)",
+      "retention": "Single row, overwritten.",
+      "writer": "codex-state backfill",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0008_backfill_state.sql",
+          "line": 1,
+          "literal": "backfill_state"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-remote-control",
+      "path": "<sqlite_home>/state_5.sqlite#remote_control_enrollments",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Enrollments that let a remote client (mobile/web) drive this machine's app-server sessions.",
+      "fields": [
+        "websocket_url",
+        "account_id",
+        "server_id",
+        "environment_id",
+        "remote_control_enabled"
+      ],
+      "join": "none",
+      "joinKey": "none (per server, not per thread)",
+      "retention": "Overwritten per enrollment.",
+      "writer": "codex-state remote_control (app-server)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0024_remote_control_enrollments.sql",
+          "line": 1,
+          "literal": "remote_control_enrollments"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "remote_control_enrollments"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-agent-jobs",
+      "path": "<sqlite_home>/state_5.sqlite#{agent_jobs,agent_job_items}",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Batch agent jobs (spawn_agents_on_csv): job definition and per-row items handed to spawned agents.",
+      "fields": [
+        "agent_jobs",
+        "agent_job_items"
+      ],
+      "join": "approximate",
+      "joinKey": "job items reference the spawned work; not verified against 0.144 schema",
+      "retention": "Dropped by 0.158 migration 0042.",
+      "writer": "codex-state agent_jobs (0.144 core spawn_agents_on_csv tool)",
+      "versions": "0.144 only; 0.158 drops the tables, so they are absent from the shared state_5.sqlite on this machine",
+      "evidence": [
+        {
+          "file": "codex-rs/state/migrations/0042_drop_agent_jobs.sql",
+          "line": 1,
+          "literal": "DROP TABLE"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "INSERT INTO agent_jobs ("
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "core/src/tools/handlers/agent_jobs/spawn_agents_on_csv.rs"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "agent jobs tool (0.144)",
+      "notes": ""
+    },
+    {
+      "id": "codex.state-external-imports",
+      "path": "<sqlite_home>/state_5.sqlite#external_agent_config_imports + ~/.codex/external_agent_session_imports.json",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "json",
+      "what": "Record of config and sessions imported from other coding agents; imported sessions become Codex/ChatGPT threads.",
+      "fields": [
+        "import_id",
+        "provider_id",
+        "successes",
+        "failures",
+        "ledger entries"
+      ],
+      "join": "approximate",
+      "joinKey": "ledger maps source session to created thread (not verified field-by-field)",
+      "retention": "Kept.",
+      "writer": "codex-external-agent-migration",
+      "versions": "0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/external-agent-migration/src/sessions/ledger.rs",
+          "line": 16,
+          "literal": "SESSION_IMPORT_LEDGER_FILE: &str = \"external_agent_session_imports.json\""
+        },
+        {
+          "file": "codex-rs/state/migrations/0038_external_agent_config_imports.sql",
+          "line": 1,
+          "literal": "external_agent_config_imports"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "user runs an external-agent import",
+      "notes": ""
+    },
+    {
+      "id": "codex.thread-history-items",
+      "path": "<sqlite_home>/thread_history_1.sqlite#thread_items",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Per-item projection of the rollout (user/agent messages, tool calls, reasoning) as JSON, with lifecycle timestamps.",
+      "fields": [
+        "thread_id",
+        "turn_id",
+        "item_id",
+        "rollout_ordinal",
+        "item_type",
+        "item_json",
+        "started_at_ms",
+        "completed_at_ms"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Rebuilt from the rollout; deleted with the thread.",
+      "writer": "codex-thread-store local thread_history (projection of rollout)",
+      "versions": "0.158 only (no thread_history strings in 0.144); populated by projecting rollouts, including 0.144-written ones, when 0.158 reads them",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 34,
+          "literal": "THREAD_HISTORY_DB_FILENAME: &str = \"thread_history_1.sqlite\""
+        },
+        {
+          "file": "codex-rs/thread-store/src/local/thread_history.rs",
+          "line": 103,
+          "literal": "pub(super) async fn apply_projection("
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Derived from the rollout, so it adds timing and item typing, not new prompt text."
+    },
+    {
+      "id": "codex.thread-history-turns",
+      "path": "<sqlite_home>/thread_history_1.sqlite#thread_turns",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "One row per turn: status, error JSON, start/end, duration, first user item and final agent item, rollout byte offsets.",
+      "fields": [
+        "thread_id",
+        "turn_id",
+        "status",
+        "error_json",
+        "started_at",
+        "completed_at",
+        "duration_ms",
+        "first_user_item_id",
+        "final_agent_item_id",
+        "rollout_byte_offset"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Deleted with the thread.",
+      "writer": "codex-thread-store thread_history",
+      "versions": "0.158 only (no thread_history strings in 0.144); populated by projecting rollouts, including 0.144-written ones, when 0.158 reads them",
+      "evidence": [
+        {
+          "file": "codex-rs/state/thread_history_migrations/0006_thread_turn_ends.sql",
+          "line": 1,
+          "literal": "thread_turns"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.thread-history-realtime",
+      "path": "<sqlite_home>/thread_history_1.sqlite#thread_realtime_items",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Items from realtime (voice) sessions attached to a thread.",
+      "fields": [
+        "thread_id",
+        "item_id",
+        "item_type",
+        "item_json"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Deleted with the thread.",
+      "writer": "codex-thread-store thread_history",
+      "versions": "0.158 only (no thread_history strings in 0.144); populated by projecting rollouts, including 0.144-written ones, when 0.158 reads them",
+      "evidence": [
+        {
+          "file": "codex-rs/state/thread_history_migrations/0005_thread_realtime_items.sql",
+          "line": 1,
+          "literal": "thread_realtime_items"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "realtime voice use",
+      "notes": ""
+    },
+    {
+      "id": "codex.thread-history-projection-state",
+      "path": "<sqlite_home>/thread_history_1.sqlite#thread_history_projection_state",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "How far into each rollout the projection has read.",
+      "fields": [
+        "thread_id",
+        "next_rollout_byte_offset",
+        "next_rollout_ordinal"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Overwritten as projection advances.",
+      "writer": "codex-thread-store thread_history",
+      "versions": "0.158 only (no thread_history strings in 0.144); populated by projecting rollouts, including 0.144-written ones, when 0.158 reads them",
+      "evidence": [
+        {
+          "file": "codex-rs/thread-store/src/local/thread_history.rs",
+          "line": 73,
+          "literal": "FROM thread_history_projection_state"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.logs",
+      "path": "<sqlite_home>/logs_2.sqlite#logs",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Tracing log of the harness at TRACE by default, tagged with thread id: full Debug dumps of each submitted op (user turns with their input and overrides), tool-call payload previews, turn/world-state traces, model-cache and endpoint events, feedback tags.",
+      "fields": [
+        "id",
+        "ts",
+        "ts_nanos",
+        "level",
+        "target",
+        "feedback_log_body",
+        "module_path",
+        "file",
+        "line",
+        "thread_id",
+        "process_uuid",
+        "estimated_bytes"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id (threadless rows by process_uuid and time)",
+      "retention": "Rows older than 10 days deleted; per thread (or per process for threadless rows) capped at 1,000 rows or 10 MiB, oldest pruned on insert; deleted with the thread.",
+      "writer": "codex-state log_db tracing layer (all processes that open the state runtime); read by feedback upload",
+      "versions": "both (0.144 strings contain logs_2.sqlite and feedback_log_body)",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 29,
+          "literal": "LOGS_DB_FILENAME: &str = \"logs_2.sqlite\""
+        },
+        {
+          "file": "codex-rs/state/src/runtime/logs.rs",
+          "line": 3,
+          "literal": "LOG_RETENTION_DAYS: i64 = 10"
+        },
+        {
+          "file": "codex-rs/state/src/runtime.rs",
+          "line": 86,
+          "literal": "LOG_PARTITION_SIZE_LIMIT_BYTES: i64 = 10 * 1024 * 1024"
+        },
+        {
+          "file": "codex-rs/state/src/runtime.rs",
+          "line": 87,
+          "literal": "LOG_PARTITION_ROW_LIMIT: i64 = 1_000"
+        },
+        {
+          "file": "codex-rs/state/src/log_db.rs",
+          "line": 59,
+          "literal": ".with_default(LevelFilter::TRACE)"
+        },
+        {
+          "file": "codex-rs/core/src/session/handlers.rs",
+          "line": 422,
+          "literal": "debug!(?sub, \"Submission\");"
+        },
+        {
+          "file": "codex-rs/core/src/stream_events_utils.rs",
+          "line": 328,
+          "literal": "\"ToolCall: {} {}\","
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "feedback_log_body"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always when the state DB opens (default level TRACE; h2/hyper_util at WARN; sqlx excluded)",
+      "notes": "Can hold op fields the rollout does not record verbatim (the whole Submission struct). The 1,000-row cap means long threads keep only their tail."
+    },
+    {
+      "id": "codex.queue",
+      "path": "<sqlite_home>/queue_1.sqlite#{queued_items,queued_thread_revisions}",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Follow-up user inputs queued while a turn was running, before they are sent to the model.",
+      "fields": [
+        "id",
+        "thread_id",
+        "payload_json",
+        "queue_order",
+        "created_at_ms",
+        "revision"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Rows removed when dequeued and when the thread is deleted.",
+      "writer": "codex-state queued_items (app-server thread queue)",
+      "versions": "0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 32,
+          "literal": "QUEUE_DB_FILENAME: &str = \"queue_1.sqlite\""
+        },
+        {
+          "file": "codex-rs/state/src/runtime/queued_items.rs",
+          "line": 84,
+          "literal": "INSERT INTO queued_items ("
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.goals",
+      "path": "<sqlite_home>/goals_1.sqlite#{thread_goals,thread_goal_continuation_deferrals}",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "A thread's goal: objective text, status, token and time budget/usage, used to drive goal-continuation turns.",
+      "fields": [
+        "thread_id",
+        "goal_id",
+        "objective",
+        "status",
+        "token_budget",
+        "tokens_used",
+        "time_used_seconds"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Deleted with the thread.",
+      "writer": "codex-state goals (core goal mode)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 30,
+          "literal": "GOALS_DB_FILENAME: &str = \"goals_1.sqlite\""
+        },
+        {
+          "file": "codex-rs/state/src/runtime/goals.rs",
+          "line": 75,
+          "literal": "INSERT INTO thread_goals ("
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "CREATE TABLE thread_goals"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "goals feature",
+      "notes": ""
+    },
+    {
+      "id": "codex.memories-db",
+      "path": "<sqlite_home>/memories_1.sqlite#{stage1_outputs,jobs,consolidation_progress}",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Per-thread memory extraction: the raw memory and rollout summary generated from a thread, usage counts, and the extraction/consolidation job queue.",
+      "fields": [
+        "thread_id",
+        "raw_memory",
+        "rollout_summary",
+        "rollout_slug",
+        "usage_count",
+        "selected_for_phase2",
+        "jobs.kind",
+        "jobs.status"
+      ],
+      "join": "exact",
+      "joinKey": "stage1_outputs.thread_id",
+      "retention": "stage1 outputs pruned when unused for memories.max_unused_days; deleted with the thread.",
+      "writer": "codex-memories-write (phase 1/2) via codex-state",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 31,
+          "literal": "MEMORIES_DB_FILENAME: &str = \"memories_1.sqlite\""
+        },
+        {
+          "file": "codex-rs/state/src/runtime/memories.rs",
+          "line": 910,
+          "literal": "INSERT INTO stage1_outputs ("
+        },
+        {
+          "file": "codex-rs/memories/write/src/phase1.rs",
+          "line": 101,
+          "literal": "prune_stage1_outputs_for_retention(max_unused_days"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "memories_1.sqlite"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "memories feature",
+      "notes": ""
+    },
+    {
+      "id": "codex.memories-v2-db",
+      "path": "<sqlite_home>/memories_v2_1.sqlite",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Second-generation memories database with the same schema as memories_1.",
+      "fields": [
+        "stage1_outputs",
+        "jobs"
+      ],
+      "join": "exact",
+      "joinKey": "stage1_outputs.thread_id",
+      "retention": "As memories_1.",
+      "writer": "codex-state (memories v2)",
+      "versions": "0.158 only; not present on this machine",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/sqlite.rs",
+          "line": 85,
+          "literal": "filename: \"memories_v2_1.sqlite\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "memories v2",
+      "notes": ""
+    },
+    {
+      "id": "codex.memories-files",
+      "path": "~/.codex/{memories,memories_v2}/{raw_memories.md,rollout_summaries/<slug>.md,MEMORY.md,...}",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Memory files built from past threads and read back into later threads' context.",
+      "fields": [
+        "raw_memories.md",
+        "rollout_summaries/",
+        "MEMORY.md"
+      ],
+      "join": "exact",
+      "joinKey": "rollout_summaries file name = stage1_outputs.rollout_slug of the source thread; which files a thread read shows in its rollout",
+      "retention": "Rewritten on each consolidation; stale summaries removed.",
+      "writer": "codex-memories-write (writer), codex-memories-read (reader)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/memories/write/src/lib.rs",
+          "line": 39,
+          "literal": "ROLLOUT_SUMMARIES_SUBDIR: &str = \"rollout_summaries\""
+        },
+        {
+          "file": "codex-rs/memories/write/src/lib.rs",
+          "line": 40,
+          "literal": "RAW_MEMORIES_FILENAME: &str = \"raw_memories.md\""
+        },
+        {
+          "file": "codex-rs/memories/read/src/lib.rs",
+          "line": 14,
+          "literal": "codex_home.join(\"memories\")"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "raw_memories.md"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "memories feature",
+      "notes": ""
+    },
+    {
+      "id": "codex.memories-extensions",
+      "path": "~/.codex/memories_extensions/<extension>/instructions.md",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Instructions from memory extensions that shape memory writing.",
+      "fields": [
+        "instructions.md"
+      ],
+      "join": "snapshot",
+      "joinKey": "current files; not versioned per thread",
+      "retention": "Overwritten.",
+      "writer": "codex-memories-write",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/memories/write/src/control.rs",
+          "line": 7,
+          "literal": "codex_home.join(\"memories_extensions\")"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "memories_extensions"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "memories feature",
+      "notes": ""
+    },
+    {
+      "id": "codex.models-cache",
+      "path": "~/.codex/models_cache.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Cached model catalog, including each model's base instructions and model messages used to build the system prompt.",
+      "fields": [
+        "models[].slug",
+        "base_instructions",
+        "model_messages",
+        "fetched_at",
+        "etag"
+      ],
+      "join": "snapshot",
+      "joinKey": "current catalog; compare to rollout session_meta for what the thread ran with",
+      "retention": "Refreshed after a 300 s TTL.",
+      "writer": "codex-models-manager",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/models-manager/src/manager.rs",
+          "line": 31,
+          "literal": "MODEL_CACHE_FILE: &str = \"models_cache.json\""
+        },
+        {
+          "file": "codex-rs/models-manager/src/manager.rs",
+          "line": 32,
+          "literal": "DEFAULT_MODEL_CACHE_TTL: Duration = Duration::from_secs(300)"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "models_cache.json"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.apps-tools-cache",
+      "path": "~/.codex/cache/codex_apps_tools/<identity_hash>.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Cached ChatGPT apps/connectors tool list (names, descriptions, input schemas) offered to the model.",
+      "fields": [
+        "tools[]",
+        "schema"
+      ],
+      "join": "snapshot",
+      "joinKey": "current cache per account identity; not per thread",
+      "retention": "Replaced on refresh (connectors cache TTL).",
+      "writer": "codex-connectors connector_runtime persistence",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/connectors/src/connector_runtime/persistence.rs",
+          "line": 30,
+          "literal": "CODEX_APPS_TOOLS_CACHE_DIR: &str = \"cache/codex_apps_tools\""
+        },
+        {
+          "file": "codex-rs/connectors/src/connector_runtime/persistence.rs",
+          "line": 52,
+          "literal": ".join(format!(\"{identity_hash}.json\"))"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "cache/codex_apps_tools"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "apps/connectors enabled",
+      "notes": ""
+    },
+    {
+      "id": "codex.plugins-cache",
+      "path": "~/.codex/plugins/cache/<marketplace>/<plugin>/...",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Installed plugin payloads (plugin.json, skills, MCP config) whose skills and tools reach the model.",
+      "fields": [
+        "plugin.json",
+        "skills/",
+        ".mcp.json"
+      ],
+      "join": "snapshot",
+      "joinKey": "current install; the rollout records which skills/tools were offered",
+      "retention": "Replaced on plugin sync.",
+      "writer": "codex-core-plugins store",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/core-plugins/src/store.rs",
+          "line": 26,
+          "literal": "PLUGINS_CACHE_DIR: &str = \"plugins/cache\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "plugins",
+      "notes": ""
+    },
+    {
+      "id": "codex.skills",
+      "path": "~/.codex/skills/<name>/SKILL.md (and repo .agents/skills, plugin skills)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Skill definitions whose names/descriptions are listed to the model and whose bodies are loaded on use.",
+      "fields": [
+        "SKILL.md front matter",
+        "body"
+      ],
+      "join": "snapshot",
+      "joinKey": "current files",
+      "retention": "User-managed.",
+      "writer": "codex skills extension host_roots",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/ext/skills/src/host_roots.rs",
+          "line": 25,
+          "literal": "SKILLS_DIR_NAME: &str = \"skills\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "skills",
+      "notes": ""
+    },
+    {
+      "id": "codex.agents-md",
+      "path": "~/.codex/AGENTS.md, ~/.codex/AGENTS.override.md (plus AGENTS.md files up the cwd)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "text",
+      "what": "User and project instructions injected into the model context.",
+      "fields": [
+        "file text"
+      ],
+      "join": "snapshot",
+      "joinKey": "current files; the rollout's user-instructions item has what the thread saw",
+      "retention": "User-managed.",
+      "writer": "codex-core agents_md",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/core/src/agents_md.rs",
+          "line": 43,
+          "literal": "DEFAULT_AGENTS_MD_FILENAME: &str = \"AGENTS.md\""
+        },
+        {
+          "file": "codex-rs/core/src/agents_md.rs",
+          "line": 45,
+          "literal": "LOCAL_AGENTS_MD_FILENAME: &str = \"AGENTS.override.md\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.config",
+      "path": "~/.codex/config.toml (+ managed_config.toml, profiles, project .codex/config.toml)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "text",
+      "what": "Settings that decide model, instructions overrides, tools, sandbox and features for each thread.",
+      "fields": [
+        "model",
+        "profiles",
+        "features",
+        "mcp_servers",
+        "otel",
+        "history",
+        "sqlite_home"
+      ],
+      "join": "snapshot",
+      "joinKey": "current values; turn_context in the rollout has what the thread ran with",
+      "retention": "User-managed.",
+      "writer": "codex-config loader",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/config/src/loader/local.rs",
+          "line": 122,
+          "literal": "codex_home.join(CONFIG_TOML_FILE)"
+        },
+        {
+          "file": "codex-rs/config/src/loader/layer_io.rs",
+          "line": 231,
+          "literal": "codex_home.join(\"managed_config.toml\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.rules",
+      "path": "~/.codex/rules/default.rules",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "text",
+      "what": "Exec-policy rules that approve or forbid commands; amended when the user approves a command pattern.",
+      "fields": [
+        "prefix rules"
+      ],
+      "join": "snapshot",
+      "joinKey": "current file",
+      "retention": "Appended by approvals.",
+      "writer": "codex-core exec_policy / codex-execpolicy amend",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/core/src/exec_policy.rs",
+          "line": 56,
+          "literal": "DEFAULT_POLICY_FILE: &str = \"default.rules\""
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.hooks-json",
+      "path": "~/.codex/hooks.json (and <repo>/.codex/hooks.json)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Lifecycle hooks run during a thread; their output can be injected into context.",
+      "fields": [
+        "hooks by event"
+      ],
+      "join": "snapshot",
+      "joinKey": "current file",
+      "retention": "User-managed.",
+      "writer": "codex-hooks discovery",
+      "versions": "0.158 (hooks engine)",
+      "evidence": [
+        {
+          "file": "codex-rs/hooks/src/engine/discovery.rs",
+          "line": 343,
+          "literal": "join(\"hooks.json\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "hooks configured",
+      "notes": ""
+    },
+    {
+      "id": "codex.agent-roles",
+      "path": "~/.codex/agents/*.toml (and [agents] in config)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Sub-agent role definitions (instructions, model) used when spawning agents.",
+      "fields": [
+        "role toml"
+      ],
+      "join": "snapshot",
+      "joinKey": "current files; thread row has agent_role/agent_path",
+      "retention": "User-managed.",
+      "writer": "codex-agent-roles loader",
+      "versions": "0.158",
+      "evidence": [
+        {
+          "file": "codex-rs/agent-roles/src/loader.rs",
+          "line": 78,
+          "literal": "&config_folder.join(\"agents\"),"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "multi-agent",
+      "notes": ""
+    },
+    {
+      "id": "codex.generated-images",
+      "path": "~/.codex/generated_images/<thread_id>/<call_id>.png",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "binary",
+      "what": "Images produced by the image-generation tool in a thread.",
+      "fields": [
+        "png per tool call"
+      ],
+      "join": "exact",
+      "joinKey": "directory = thread id, file = call id",
+      "retention": "Kept.",
+      "writer": "codex image-generation extension (desktop also reads/writes this folder)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/ext/image-generation/src/artifact.rs",
+          "line": 5,
+          "literal": "GENERATED_IMAGE_ARTIFACTS_DIR: &str = \"generated_images\""
+        },
+        {
+          "file": "codex-rs/ext/image-generation/src/artifact.rs",
+          "line": 33,
+          "literal": ".join(sanitize(session_id))"
+        },
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 1064,
+          "literal": "`generated_images`"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "generated_images"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "image generation tool",
+      "notes": ""
+    },
+    {
+      "id": "codex.visualizations",
+      "path": "~/.codex/visualizations/<YYYY>/<MM>/<DD>/<thread_id>/... (desktop may use the workspace root instead)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Inline visualizations (HTML/images) produced during a thread, plus viewer pages.",
+      "fields": [
+        "files per visualization"
+      ],
+      "join": "exact",
+      "joinKey": "directory = thread id",
+      "retention": "Kept.",
+      "writer": "TUI inline_visualization; desktop visualization writer",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/tui/src/inline_visualization.rs",
+          "line": 92,
+          "literal": "codex_home.join(\"visualizations\")"
+        },
+        {
+          "file": "codex-rs/tui/src/inline_visualization.rs",
+          "line": 100,
+          "literal": ".join(created_at.format(\"%Y/%m/%d\").to_string())"
+        },
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 568,
+          "literal": "`visualizations`"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "visualizations"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "visualization tool",
+      "notes": ""
+    },
+    {
+      "id": "codex.goal-attachments",
+      "path": "~/.codex/attachments/<id>/{goal file, pasted-text-<n>.txt, image-<n>.<ext>}",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Files attached to a thread goal (pasted text, images, goal document).",
+      "fields": [
+        "pasted text",
+        "images",
+        "goal file"
+      ],
+      "join": "approximate",
+      "joinKey": "attachment directory is referenced from the goal/thread; no thread id in the path",
+      "retention": "Kept.",
+      "writer": "TUI goal_files; desktop thread-goal attachment writer",
+      "versions": "both TUI and desktop in 0.158",
+      "evidence": [
+        {
+          "file": "codex-rs/tui/src/goal_files.rs",
+          "line": 17,
+          "literal": "GOAL_ATTACHMENT_DIR: &str = \"attachments\""
+        },
+        {
+          "file": "codex-rs/tui/src/goal_files.rs",
+          "line": 71,
+          "literal": ".join(format!(\"pasted-text-{}.txt\", replacements.len() + 1))"
+        },
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 417,
+          "literal": "getAttachmentsRoot"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "goals",
+      "notes": ""
+    },
+    {
+      "id": "codex.pasted-text-attachments",
+      "path": "~/.codex/attachments/pasted-text-attachments.json and ~/.codex/attachments/<uuid>/pasted-text.txt",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Long pasted text the desktop turned into attachments, and their index.",
+      "fields": [
+        "id",
+        "path"
+      ],
+      "join": "approximate",
+      "joinKey": "uuid directory referenced from the composer message",
+      "retention": "Kept.",
+      "writer": "desktop main process",
+      "versions": "0.158 desktop",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 417,
+          "literal": "pasted-text-attachments.json`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "desktop app",
+      "notes": ""
+    },
+    {
+      "id": "codex.tui-thread-reference-capabilities",
+      "path": "~/.codex/tui-thread-reference-capabilities",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "TUI record of rollout reference capabilities used when rendering thread history.",
+      "fields": [
+        "capability files"
+      ],
+      "join": "approximate",
+      "joinKey": "not traced to a key",
+      "retention": "Unknown.",
+      "writer": "TUI app_server_session rollout_history",
+      "versions": "0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/tui/src/app_server_session/rollout_history.rs",
+          "line": 113,
+          "literal": "codex_home.join(\"tui-thread-reference-capabilities\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "TUI",
+      "notes": ""
+    },
+    {
+      "id": "codex.tui-log",
+      "path": "~/.codex/log/codex-tui.log (log_dir)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "log",
+      "what": "TUI tracing log (0.144 appends; 0.158 deletes the legacy file at startup).",
+      "fields": [
+        "tracing lines"
+      ],
+      "join": "approximate",
+      "joinKey": "timestamp and thread id when logged",
+      "retention": "0.158 removes it; no rotation in 0.144.",
+      "writer": "TUI",
+      "versions": "0.144 writes; 0.158 removes (TODO to drop after 2026-11-22)",
+      "evidence": [
+        {
+          "file": "codex-rs/tui/src/lib.rs",
+          "line": 272,
+          "literal": "TUI_LOG_FILE_NAME: &str = \"codex-tui.log\""
+        },
+        {
+          "file": "codex-rs/tui/src/lib.rs",
+          "line": 400,
+          "literal": "codex_home.join(\"log\").join(TUI_LOG_FILE_NAME)"
+        },
+        {
+          "file": "codex-rs/core/src/config/mod.rs",
+          "line": 4042,
+          "literal": "codex_home.join(\"log\")"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "codex-tui.log"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "TUI runs",
+      "notes": "Other files in ~/.codex/log on this machine come from user hooks, not the harness."
+    },
+    {
+      "id": "codex.rollout-trace",
+      "path": "$CODEX_ROLLOUT_TRACE_ROOT/trace-<trace_id>-<thread_id>/{manifest.json,trace.jsonl,payloads/<n>.json,state.json}",
+      "env": [
+        "CODEX_ROLLOUT_TRACE_ROOT"
+      ],
+      "kind": "dir",
+      "what": "Diagnostic trace bundle with the full raw payloads: every inference request and response, compaction request/checkpoint/response, tool invocations and results, runtime and protocol events.",
+      "fields": [
+        "manifest.json",
+        "trace.jsonl",
+        "payloads/<ordinal>.json",
+        "state.json",
+        "RawPayloadKind"
+      ],
+      "join": "exact",
+      "joinKey": "thread id in the bundle directory name",
+      "retention": "Never pruned by the harness.",
+      "writer": "codex-rollout-trace (core, best effort)",
+      "versions": "both (0.144 strings contain CODEX_ROLLOUT_TRACE_ROOT)",
+      "evidence": [
+        {
+          "file": "codex-rs/rollout-trace/src/thread.rs",
+          "line": 44,
+          "literal": "CODEX_ROLLOUT_TRACE_ROOT_ENV: &str = \"CODEX_ROLLOUT_TRACE_ROOT\""
+        },
+        {
+          "file": "codex-rs/rollout-trace/src/thread.rs",
+          "line": 426,
+          "literal": "root.join(format!(\"trace-{trace_id}-{thread_id}\"))"
+        },
+        {
+          "file": "codex-rs/rollout-trace/src/writer.rs",
+          "line": 95,
+          "literal": "format!(\"{PAYLOADS_DIR_NAME}/{ordinal}.json\")"
+        },
+        {
+          "file": "codex-rs/rollout-trace/src/payload.rs",
+          "line": 31,
+          "literal": "InferenceRequest,"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "CODEX_ROLLOUT_TRACE_ROOT"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "env CODEX_ROLLOUT_TRACE_ROOT set",
+      "notes": "The only local source that holds the exact request body sent to the model."
+    },
+    {
+      "id": "codex.plugin-metrics",
+      "path": "$CODEX_PLUGIN_METRICS_OUTPUT/<dir>/measurements.json",
+      "env": [
+        "CODEX_PLUGIN_METRICS_OUTPUT"
+      ],
+      "kind": "json",
+      "what": "Plugin metrics sidecar measurements.",
+      "fields": [
+        "measurements"
+      ],
+      "join": "approximate",
+      "joinKey": "time window",
+      "retention": "Not pruned.",
+      "writer": "codex-core-plugins plugin_metrics_sidecar",
+      "versions": "0.158 only",
+      "evidence": [
+        {
+          "file": "codex-rs/core-plugins/src/plugin_metrics_sidecar.rs",
+          "line": 26,
+          "literal": "PLUGIN_METRICS_OUTPUT_ENV_VAR: &str = \"CODEX_PLUGIN_METRICS_OUTPUT\""
+        },
+        {
+          "file": "codex-rs/core-plugins/src/plugin_metrics_sidecar.rs",
+          "line": 162,
+          "literal": "join(\"measurements.json\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "env CODEX_PLUGIN_METRICS_OUTPUT",
+      "notes": ""
+    },
+    {
+      "id": "codex.exec-last-message",
+      "path": "<path given to codex exec --output-last-message>",
+      "env": [],
+      "kind": "text",
+      "what": "Final agent message of a codex exec run, written to a user-chosen file.",
+      "fields": [
+        "message text"
+      ],
+      "join": "approximate",
+      "joinKey": "the path the caller chose; run time",
+      "retention": "Overwritten per run.",
+      "writer": "codex-exec",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/exec/src/lib.rs",
+          "line": 225,
+          "literal": "last_message_file: Option<PathBuf>,"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "codex exec -o/--output-last-message",
+      "notes": ""
+    },
+    {
+      "id": "codex.ipc-socket",
+      "path": "~/.codex/ipc/ipc.sock",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "binary",
+      "what": "Socket the TUI uses to receive IDE context (open files, selection) for the current thread.",
+      "fields": [
+        "socket"
+      ],
+      "join": "none",
+      "joinKey": "none (live only)",
+      "retention": "Removed on exit.",
+      "writer": "TUI ide_context ipc",
+      "versions": "0.158",
+      "evidence": [
+        {
+          "file": "codex-rs/tui/src/ide_context/ipc.rs",
+          "line": 180,
+          "literal": "codex_home.join(\"ipc\").join(\"ipc.sock\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "IDE context",
+      "notes": ""
+    },
+    {
+      "id": "codex.app-server-control",
+      "path": "~/.codex/app-server-control/ (control socket) and ~/.codex/app-server-daemon/settings.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Control socket and daemon settings of the app-server that hosts desktop/remote sessions.",
+      "fields": [
+        "app-server-control.sock",
+        "settings.json"
+      ],
+      "join": "none",
+      "joinKey": "none",
+      "retention": "Overwritten.",
+      "writer": "codex-app-server-transport, codex-app-server-daemon",
+      "versions": "both (0.144 strings contain app-server-control)",
+      "evidence": [
+        {
+          "file": "codex-rs/app-server-transport/src/transport/mod.rs",
+          "line": 53,
+          "literal": "APP_SERVER_CONTROL_SOCKET_DIR_NAME: &str = \"app-server-control\""
+        },
+        {
+          "file": "codex-rs/app-server-daemon/src/managed_install.rs",
+          "line": 27,
+          "literal": "codex_home.join(\"app-server-daemon\")"
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "app-server-control"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "An app-server.log file in app-server-control/ exists on disk; its writer was not traced."
+    },
+    {
+      "id": "codex.auth-json",
+      "path": "~/.codex/auth.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "ChatGPT/API login tokens used for every model request of a session.",
+      "fields": [
+        "(not read)"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "Refreshed on token refresh.",
+      "writer": "codex-login auth storage",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/login/src/auth/storage.rs",
+          "line": 39,
+          "literal": "/// Expected structure for $CODEX_HOME/auth.json."
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "auth.json"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "file credential store",
+      "notes": ""
+    },
+    {
+      "id": "codex.keychain-auth",
+      "path": "macOS Keychain service \"Codex Auth\"",
+      "env": [],
+      "kind": "keychain",
+      "what": "Login tokens when keyring storage is used instead of auth.json.",
+      "fields": [
+        "(not read)"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "Managed by the OS keychain.",
+      "writer": "codex-login auth storage",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/login/src/auth/storage.rs",
+          "line": 235,
+          "literal": "KEYRING_SERVICE: &str = \"Codex Auth\""
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "Codex Auth"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "keyring credential store",
+      "notes": ""
+    },
+    {
+      "id": "codex.keychain-mcp",
+      "path": "macOS Keychain service \"Codex MCP Credentials\"; fallback ~/.codex/.credentials.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "keychain",
+      "what": "OAuth tokens for MCP servers a session calls.",
+      "fields": [
+        "(not read)"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "Managed by keychain / file.",
+      "writer": "codex-rmcp-client oauth",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/rmcp-client/src/oauth.rs",
+          "line": 92,
+          "literal": "KEYRING_SERVICE: &str = \"Codex MCP Credentials\""
+        },
+        {
+          "file": "codex-rs/rmcp-client/src/oauth.rs",
+          "line": 17,
+          "literal": "CODEX_HOME/.credentials.json"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "MCP OAuth",
+      "notes": ""
+    },
+    {
+      "id": "codex.mcp-oauth-locks",
+      "path": "~/.codex/mcp-oauth-locks/",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Lock files serializing MCP OAuth token refresh.",
+      "fields": [
+        "lock files"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "Stale files remain.",
+      "writer": "codex-rmcp-client oauth store_lock/refresh_lock",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/rmcp-client/src/oauth/store_lock.rs",
+          "line": 19,
+          "literal": "OAUTH_LOCK_DIR: &str = \"mcp-oauth-locks\""
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "mcp-oauth-locks"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "MCP OAuth",
+      "notes": ""
+    },
+    {
+      "id": "codex.secrets",
+      "path": "~/.codex/secrets/*.age and macOS Keychain service \"codex\"",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "binary",
+      "what": "Encrypted local secrets store (for example MCP OAuth) and its keychain key.",
+      "fields": [
+        "(not read)"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "Managed by the store.",
+      "writer": "codex-secrets",
+      "versions": "both (0.144 strings contain local.age)",
+      "evidence": [
+        {
+          "file": "codex-rs/secrets/src/local.rs",
+          "line": 166,
+          "literal": "self.codex_home.join(\"secrets\")"
+        },
+        {
+          "file": "codex-rs/secrets/src/lib.rs",
+          "line": 23,
+          "literal": "KEYRING_SERVICE: &str = \"codex\""
+        },
+        {
+          "file": "codex-cli-0.144.0 (strings)",
+          "line": 0,
+          "literal": "local.age"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "secrets store",
+      "notes": ""
+    },
+    {
+      "id": "codex.dotenv",
+      "path": "~/.codex/.env",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "text",
+      "what": "Environment variables loaded into every Codex CLI process (often API keys).",
+      "fields": [
+        "(not read)"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "User-managed.",
+      "writer": "codex-arg0",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/arg0/src/lib.rs",
+          "line": 308,
+          "literal": "codex_home.join(\".env\")"
+        }
+      ],
+      "credential": true,
+      "enabledBy": "file present",
+      "notes": ""
+    },
+    {
+      "id": "codex.otel-export",
+      "path": "remote: OTLP (HTTP/gRPC) or Statsig endpoint from [otel] config",
+      "env": [],
+      "kind": "remote",
+      "what": "OpenTelemetry logs/traces/metrics for session events (API requests, tool calls, user prompts only when log_user_prompt is true).",
+      "fields": [
+        "event names",
+        "conversation/thread id attributes",
+        "prompt text if log_user_prompt"
+      ],
+      "join": "exact",
+      "joinKey": "thread id attribute on events (remote; not verifiable locally)",
+      "retention": "Remote retention.",
+      "writer": "codex-otel",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/otel/src/config.rs",
+          "line": 89,
+          "literal": "pub enum OtelExporter {"
+        },
+        {
+          "file": "codex-rs/config/src/types.rs",
+          "line": 603,
+          "literal": "pub log_user_prompt: Option<bool>,"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "config otel.exporter / otel.trace_exporter (none by default)",
+      "notes": ""
+    },
+    {
+      "id": "codex.otel-trace-websocket",
+      "path": "local loopback WebSocket listener fed from OTLP trace batches",
+      "env": [],
+      "kind": "remote",
+      "what": "Best-effort live forwarding of OTLP trace batches to a local WebSocket client; nothing is stored.",
+      "fields": [
+        "trace batches"
+      ],
+      "join": "none",
+      "joinKey": "live only",
+      "retention": "None (dropped if the client lags).",
+      "writer": "codex-otel-trace-websocket",
+      "versions": "0.158",
+      "evidence": [
+        {
+          "file": "codex-rs/otel-trace-websocket/src/lib.rs",
+          "line": 1,
+          "literal": "Forwards loopback OTLP trace batches"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "when the bridge is configured",
+      "notes": ""
+    },
+    {
+      "id": "codex.analytics",
+      "path": "remote: <chatgpt base url>/codex/analytics-events/events",
+      "env": [],
+      "kind": "remote",
+      "what": "Product analytics events about threads and turns.",
+      "fields": [
+        "event facts",
+        "thread hints"
+      ],
+      "join": "exact",
+      "joinKey": "thread id in event facts (remote)",
+      "retention": "Remote retention.",
+      "writer": "codex-analytics client",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/analytics/src/client.rs",
+          "line": 142,
+          "literal": "format!(\"{base_url}/codex/analytics-events/events\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "analytics enabled (default and config key not traced)",
+      "notes": ""
+    },
+    {
+      "id": "codex.feedback-upload",
+      "path": "remote: Sentry envelope with attachments",
+      "env": [],
+      "kind": "remote",
+      "what": "User-sent feedback: uploads the thread's rollout, its logs_2 rows, auto-review failures and extra logs (desktop adds realtime-sessions/latest.jsonl).",
+      "fields": [
+        "rollout attachment",
+        "log rows",
+        "auto-review-failures.jsonl",
+        "windows-sandbox.log"
+      ],
+      "join": "exact",
+      "joinKey": "feedback report tagged with thread id",
+      "retention": "Remote retention.",
+      "writer": "codex-feedback (TUI /feedback, app-server feedback processor, desktop)",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/feedback/src/upload.rs",
+          "line": 16,
+          "literal": "use sentry::ClientOptions;"
+        },
+        {
+          "file": "codex-rs/feedback/src/lib.rs",
+          "line": 401,
+          "literal": "codex_rollout::plain_rollout_path(&self.path)"
+        },
+        {
+          "file": "codex-rs/feedback/src/guardian.rs",
+          "line": 73,
+          "literal": "filename: \"auto-review-failures.jsonl\".to_string(),"
+        },
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 524,
+          "literal": "realtime-sessions/latest.jsonl"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "user sends feedback",
+      "notes": ""
+    },
+    {
+      "id": "codex.cloud-tasks",
+      "path": "remote: <chatgpt base url>/wham/tasks/<id>",
+      "env": [],
+      "kind": "remote",
+      "what": "Codex/ChatGPT cloud tasks: threads run and stored in the cloud, listed and applied locally.",
+      "fields": [
+        "task id",
+        "turns",
+        "diffs"
+      ],
+      "join": "exact",
+      "joinKey": "task id",
+      "retention": "Remote retention.",
+      "writer": "codex-cloud-tasks-client",
+      "versions": "both",
+      "evidence": [
+        {
+          "file": "codex-rs/cloud-tasks-client/src/http.rs",
+          "line": 579,
+          "literal": "format!(\"{base_url}/wham/tasks/{id}\")"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "cloud tasks use",
+      "notes": ""
+    },
+    {
+      "id": "codex.remote-thread-store",
+      "path": "remote: experimental_thread_store (gRPC thread store)",
+      "env": [],
+      "kind": "remote",
+      "what": "Non-local persistence of thread history when the thread store is configured as remote; such threads have no local rollout.",
+      "fields": [
+        "thread records"
+      ],
+      "join": "exact",
+      "joinKey": "thread id",
+      "retention": "Remote retention.",
+      "writer": "codex-thread-store",
+      "versions": "0.158",
+      "evidence": [
+        {
+          "file": "codex-rs/core/src/config/mod.rs",
+          "line": 1045,
+          "literal": "pub experimental_thread_store: ThreadStoreConfig,"
+        },
+        {
+          "file": "codex-rs/thread-store/src/live_thread.rs",
+          "line": 408,
+          "literal": "Remote stores do not expose rollout files"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "config experimental_thread_store",
+      "notes": ""
+    },
+    {
+      "id": "codex.old-sqlite-home",
+      "path": "~/.codex/sqlite/{state_5,logs_2,goals_1,memories_1}.sqlite",
+      "env": [
+        "CODEX_HOME",
+        "CODEX_SQLITE_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Earlier location of the Rust state/log/goal/memory databases (the desktop app pointed sqlite_home here); same schemas at an older migration.",
+      "fields": [
+        "as state_5 / logs_2 / goals_1 / memories_1"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id / threads.id",
+      "retention": "No longer written; the desktop reconciled it into ~/.codex once (marker .app-server-state-reconciled-v1).",
+      "writer": "codex-state under CODEX_SQLITE_HOME; desktop reconcile",
+      "versions": "older builds; not written by 0.144 or 0.158 on this machine (files stop in July)",
+      "evidence": [
+        {
+          "file": "codex-rs/state/src/lib.rs",
+          "line": 127,
+          "literal": "SQLITE_HOME_ENV: &str = \"CODEX_SQLITE_HOME\""
+        },
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 111,
+          "literal": ".app-server-state-reconciled-v1"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "CODEX_SQLITE_HOME / sqlite_home pointed at ~/.codex/sqlite",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-db-automations",
+      "path": "~/.codex/sqlite/codex.db (prod) or codex-dev.db (dev flavor)#{automations,automation_runs}",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Scheduled automations (prompt, model, cwd, schedule) and each run's thread, with archived user/assistant messages and inbox summary.",
+      "fields": [
+        "automations.prompt",
+        "automations.model",
+        "automations.target_thread_id",
+        "automation_runs.thread_id",
+        "automation_runs.archived_user_message",
+        "automation_runs.archived_assistant_message",
+        "inbox_summary"
+      ],
+      "join": "exact",
+      "joinKey": "automation_runs.thread_id",
+      "retention": "Kept until deleted.",
+      "writer": "desktop main process (SQLite)",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 551,
+          "literal": "`codex-dev.db`"
+        },
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 302,
+          "literal": "automation_runs"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "automations",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-db-thread-catalog",
+      "path": "~/.codex/sqlite/codex.db (prod) or codex-dev.db (dev flavor)#local_thread_catalog*",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Desktop's catalog of local threads per host: display title, cwd, source, model provider, branch, project.",
+      "fields": [
+        "host_id",
+        "thread_id",
+        "display_title",
+        "cwd",
+        "source_kind",
+        "model_provider",
+        "git_branch",
+        "project_id",
+        "conversation_origin"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Rebuilt by scans.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 276,
+          "literal": "local_thread_catalog"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-db-timeline-ledger",
+      "path": "~/.codex/sqlite/codex.db (prod) or codex-dev.db (dev flavor)#thread_timeline_ledger",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Per-thread ledger of voice timeline records not kept in the rollout.",
+      "fields": [
+        "host_id",
+        "thread_id",
+        "sequence",
+        "record_id",
+        "payload_json"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Kept.",
+      "writer": "desktop main process (voice)",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 528,
+          "literal": "INSERT INTO thread_timeline_ledger ("
+        }
+      ],
+      "credential": false,
+      "enabledBy": "voice use",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-db-inbox",
+      "path": "~/.codex/sqlite/codex.db (prod) or codex-dev.db (dev flavor)#inbox_items",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Inbox notifications pointing at threads.",
+      "fields": [
+        "id",
+        "title",
+        "description",
+        "thread_id",
+        "read_at"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Kept.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 286,
+          "literal": "inbox_items"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-db-live-visualizations",
+      "path": "~/.codex/sqlite/codex.db (prod) or codex-dev.db (dev flavor)#live_visualization_suggestions",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Suggested live visualizations for a thread.",
+      "fields": [
+        "thread_id",
+        "title",
+        "description",
+        "status",
+        "submission"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Kept.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 265,
+          "literal": "live_visualization_suggestions"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-thread-summaries-db",
+      "path": "~/.codex/sqlite/codex-thread-summaries[-<flavor>].db#thread_turn_summaries",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Generated per-thread turn summaries shown by the desktop.",
+      "fields": [
+        "principal_key",
+        "host_key",
+        "thread_id",
+        "summary",
+        "compact_summary",
+        "revision"
+      ],
+      "join": "exact",
+      "joinKey": "thread_id",
+      "retention": "Overwritten per revision.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 562,
+          "literal": "codex-thread-summaries-${e}.db`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-history-snapshots-db",
+      "path": "~/.codex/sqlite/codex-history-snapshots[-<flavor>].db",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "sqlite",
+      "what": "Desktop history snapshot database opened at bootstrap.",
+      "fields": [
+        "(tables not inspected; file absent here)"
+      ],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "desktop bootstrap",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/bootstrap-CzzsHphT.js",
+          "line": 7,
+          "literal": "codex-history-snapshots"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "always",
+      "notes": "Found in code only; not present on this machine."
+    },
+    {
+      "id": "codex.desktop-global-state",
+      "path": "~/.codex/.codex-global-state.json (+ .bak and ..tmp-* copies)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json-key",
+      "what": "Desktop app state with per-thread keys: titles, queued follow-up messages, writable roots, project assignments, read state, pins, output directories.",
+      "fields": [
+        "thread-titles",
+        "queued-follow-ups",
+        "thread-writable-roots",
+        "thread-project-assignments",
+        "thread-workspace-root-hints",
+        "thread-projectless-output-directories",
+        "electron-thread-read-state-v1",
+        "pinned-thread-ids",
+        "electron-persisted-atom-state",
+        "electron-managed-worktree-archives"
+      ],
+      "join": "exact",
+      "joinKey": "thread id as key inside each map",
+      "retention": "Overwritten on change; .bak kept; stray ..tmp-* files remain after failed writes.",
+      "writer": "desktop bootstrap/main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/bootstrap-CzzsHphT.js",
+          "line": 7,
+          "literal": ".codex-global-state.json`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "desktop app",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-dictation-history",
+      "path": "~/.codex/dictation-history/<hash>/{metadata.json,<chunk>}",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Recorded dictation chunks and metadata.",
+      "fields": [
+        "id",
+        "text",
+        "metadata.json"
+      ],
+      "join": "approximate",
+      "joinKey": "time window",
+      "retention": "Not traced.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 1059,
+          "literal": "`dictation-history`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "dictation",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-transcription-history",
+      "path": "~/.codex/transcription-history.jsonl",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "jsonl",
+      "what": "Recent transcription results.",
+      "fields": [
+        "id",
+        "createdAtMs",
+        "text"
+      ],
+      "join": "approximate",
+      "joinKey": "createdAtMs",
+      "retention": "Bounded list (constant 20 next to the file name).",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 1057,
+          "literal": "transcription-history.jsonl`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "dictation/voice",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-realtime-voice-continuity",
+      "path": "~/.codex/realtime-voice-continuity.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json-key",
+      "what": "Per-thread recent voice exchange (role, text) carried into the next realtime session.",
+      "fields": [
+        "version",
+        "threads.<thread_id>[].role",
+        "threads.<thread_id>[].text"
+      ],
+      "join": "exact",
+      "joinKey": "threads map key = thread id",
+      "retention": "Overwritten.",
+      "writer": "desktop main process (voice)",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 1086,
+          "literal": "realtime-voice-continuity.json`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "voice use",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-realtime-sessions",
+      "path": "~/.codex/realtime-sessions/<day>/realtime-<timestamp>-<thread_id>-<realtime_session_id>.jsonl",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "jsonl",
+      "what": "Recording of realtime (voice) sessions and handoffs.",
+      "fields": [
+        "events",
+        "handoff ids"
+      ],
+      "join": "exact",
+      "joinKey": "thread id in file name",
+      "retention": "Not traced; latest file attached to feedback.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 524,
+          "literal": "realtime-sessions`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "voice use",
+      "notes": "Not present on this machine."
+    },
+    {
+      "id": "codex.desktop-ambient-suggestions",
+      "path": "~/.codex/ambient-suggestions/<sha1 of host+project>/ambient-suggestions.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Background-generated suggestions for a project.",
+      "fields": [
+        "suggestions (max 3)"
+      ],
+      "join": "approximate",
+      "joinKey": "project root (cwd)",
+      "retention": "Overwritten on refresh.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 7,
+          "literal": "`ambient-suggestions`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "ambient suggestions feature",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-automations-dir",
+      "path": "~/.codex/automations/<automation_id>/{memory.md,...} and ~/.codex/automations/.run-jitter-salt",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Per-automation working folder and memory carried between runs.",
+      "fields": [
+        "memory.md"
+      ],
+      "join": "exact",
+      "joinKey": "automation id -> automation_runs.thread_id",
+      "retention": "Kept.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 90,
+          "literal": "`automations`,o"
+        },
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 566,
+          "literal": "memory.md`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "automations",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-plans",
+      "path": "~/.codex/plans/<id>/<id>/PLAN.md",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "text",
+      "what": "Plan documents produced for a thread; removed with the thread's artifacts.",
+      "fields": [
+        "PLAN.md"
+      ],
+      "join": "exact",
+      "joinKey": "plans/<thread id> directory",
+      "retention": "Deleted when the thread is deleted.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 568,
+          "literal": "`plans`,t"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "plan mode",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-node-repl-active-execs",
+      "path": "~/.codex/node_repl/active_execs/<execId>.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "json",
+      "what": "Running node_repl (computer-use / code mode) executions with their session and turn.",
+      "fields": [
+        "version",
+        "execId",
+        "sessionId",
+        "turnId",
+        "nodeReplPid"
+      ],
+      "join": "exact",
+      "joinKey": "sessionId",
+      "retention": "Removed when the exec ends.",
+      "writer": "desktop main process / worker (computer-use plugin)",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-BSSLXJxP.js",
+          "line": 929,
+          "literal": "`node_repl`,`active_execs`"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "computer use",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-computer-use",
+      "path": "~/.codex/computer-use/",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Computer Use plugin install and config.",
+      "fields": [
+        "config.json",
+        "Codex Computer Use.app"
+      ],
+      "join": "none",
+      "joinKey": "not traced to threads",
+      "retention": "Replaced on update.",
+      "writer": "desktop main process",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 21,
+          "literal": "`computer-use`,Li"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "computer use",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-worktrees",
+      "path": "~/.codex/worktrees/<...>",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Managed git worktrees created for threads; archived list kept in global state.",
+      "fields": [
+        "worktree checkouts"
+      ],
+      "join": "exact",
+      "joinKey": "threads.cwd equals the worktree path",
+      "retention": "Cleaned per worktree cleanup buffer.",
+      "writer": "desktop main process / renderer",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/src-B5IOaahd.js",
+          "line": 57,
+          "literal": "`worktrees`)"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "worktree threads",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-logs",
+      "path": "~/Library/Logs/com.openai.codex/<YYYY>/<MM>/<DD>/codex-desktop-<session>-<pid>-t<n>-i<n>-<hhmmss>-<n>.log",
+      "env": [],
+      "kind": "log",
+      "what": "Desktop main-process logs (safe/sensitive split), including app-server connection and thread events.",
+      "fields": [
+        "log lines"
+      ],
+      "join": "approximate",
+      "joinKey": "time window; thread ids appear in some lines",
+      "retention": "Daily folders; feedback collects today/last 7 days/session.",
+      "writer": "desktop main process logger",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/bootstrap-CzzsHphT.js",
+          "line": 7,
+          "literal": "`Library`,`Logs`"
+        },
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 724,
+          "literal": "codex-desktop-${"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "desktop app",
+      "notes": ""
+    },
+    {
+      "id": "codex.desktop-electron-profile",
+      "path": "~/Library/Application Support/Codex/{Local Storage,IndexedDB,Session Storage,Partitions,Preferences}",
+      "env": [],
+      "kind": "dir",
+      "what": "Renderer storage of the desktop app (persisted UI state, drafts, browser-use profile).",
+      "fields": [
+        "leveldb stores"
+      ],
+      "join": "approximate",
+      "joinKey": "not traced to thread keys",
+      "retention": "Browser-managed.",
+      "writer": "Electron (userData)",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [
+        {
+          "file": "codex/work/asar-build/main-C5425b_s.js",
+          "line": 1057,
+          "literal": "browserPersistenceDirectory:p.app.getPath(`userData`)"
+        }
+      ],
+      "credential": false,
+      "enabledBy": "desktop app",
+      "notes": "Contents not traced; ~/Library/Application Support/com.openai.codex holds only the update appcast."
+    },
+    {
+      "id": "codex.desktop-cookies",
+      "path": "~/Library/Application Support/Codex/Cookies",
+      "env": [],
+      "kind": "binary",
+      "what": "Desktop session cookies.",
+      "fields": [
+        "(not read)"
+      ],
+      "join": "credential",
+      "joinKey": "none",
+      "retention": "Browser-managed.",
+      "writer": "Electron",
+      "versions": "desktop app (bundled 0.158); not the CLI",
+      "evidence": [],
+      "credential": true,
+      "enabledBy": "desktop app",
+      "notes": "found on disk, origin not traced (Electron default cookie store)"
+    },
+    {
+      "id": "codex.chatgpt-app-conversations",
+      "path": "~/Library/Application Support/com.openai.chat/{conversations-v3-<account>,drafts-v2-<account>}",
+      "env": [],
+      "kind": "dir",
+      "what": "ChatGPT macOS app's local conversation cache and drafts (covers its Codex surfaces).",
+      "fields": [
+        "(not inspected)"
+      ],
+      "join": "approximate",
+      "joinKey": "conversation id; not linked to Codex thread ids here",
+      "retention": "App-managed.",
+      "writer": "ChatGPT macOS app",
+      "versions": "ChatGPT app (not codex-rs)",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "ChatGPT app",
+      "notes": "found on disk, origin not traced"
+    },
+    {
+      "id": "codex.chatgpt-app-caches",
+      "path": "~/Library/Application Support/com.openai.chat/{models-<account>,system-hints-<account>,gizmos-<account>,io.sentry,...}",
+      "env": [],
+      "kind": "dir",
+      "what": "ChatGPT app caches of models, system hints, GPTs and crash reports.",
+      "fields": [
+        "(not inspected)"
+      ],
+      "join": "snapshot",
+      "joinKey": "current values",
+      "retention": "App-managed.",
+      "writer": "ChatGPT macOS app",
+      "versions": "ChatGPT app (not codex-rs)",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "ChatGPT app",
+      "notes": "found on disk, origin not traced"
+    },
+    {
+      "id": "codex.exec-worktrees",
+      "path": "~/.codex/exec-worktrees/<repo>/...",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Worktree-like checkouts used by exec runs.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced."
+    },
+    {
+      "id": "codex.review-worktrees",
+      "path": "~/.codex/review-worktrees/",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Empty on this machine; name suggests review-mode worktrees.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced."
+    },
+    {
+      "id": "codex.teams",
+      "path": "~/.codex/teams/runtime_<timestamp>_<pid>/config.json (and ~/.codex/bin/codex-team)",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Multi-agent team runtime folders.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced. Probably a separate codex-team tool, not codex-rs."
+    },
+    {
+      "id": "codex.hook-state",
+      "path": "~/.codex/hook-state/<hook>/",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "State kept by user hooks.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced. Likely written by the user's hook scripts."
+    },
+    {
+      "id": "codex.browser-sessions",
+      "path": "~/.codex/browser/{config.toml,sessions/<uuid>.toml}",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Browser session records.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced."
+    },
+    {
+      "id": "codex.process-manager",
+      "path": "~/.codex/process_manager/chat_processes.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "List of chat processes.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced. 0.144 strings contain 'process_manager' once."
+    },
+    {
+      "id": "codex.projects-memory",
+      "path": "~/.codex/projects/<cwd-slug>/MEMORY.md",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Per-working-directory memory notes.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced."
+    },
+    {
+      "id": "codex.skysight",
+      "path": "~/.codex/skysight/migration/...",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Migration markers for the skysight feature.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced. The desktop bundle has a skysight feature flag, but no path writer was found."
+    },
+    {
+      "id": "codex.vendor-imports",
+      "path": "~/.codex/vendor_imports/skills-curated-cache.json",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Curated skills catalog cache.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced."
+    },
+    {
+      "id": "codex.project-metadata-locks",
+      "path": "~/.codex/project-metadata-locks/",
+      "env": [
+        "CODEX_HOME"
+      ],
+      "kind": "dir",
+      "what": "Empty lock folder for project metadata.",
+      "fields": [],
+      "join": "approximate",
+      "joinKey": "not traced",
+      "retention": "Unknown.",
+      "writer": "unknown",
+      "versions": "unknown",
+      "evidence": [],
+      "credential": false,
+      "enabledBy": "unknown",
+      "notes": "found on disk, origin not traced."
+    }
+  ]
+}

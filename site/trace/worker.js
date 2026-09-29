@@ -46,7 +46,7 @@ import { localFileSource } from "./local-session.js";
 //     -> { type: "harness-progress", done, total }   non-model blocks read
 //     -> { type: "harness", model, ms }               ms: time to compute (0 when cached)
 //     -> { type: "harness-error", message }
-//   postMessage({ type: "network", files: [File | { file, path }], trace? })   a network capture (HAR) to
+//   postMessage({ type: "network", files: [File | { file, path } | { path, local }], trace? })   a network capture (HAR) to
 //     attach to the loaded session (or to `trace`, for a session not parsed here). Parsed, filtered to the
 //     session, redacted and joined here (network/capture.js); the capture replaces any attached before.
 //     -> { type: "network-progress", phase: "read"|"analyze", done, total }
@@ -158,12 +158,14 @@ self.onmessage = async (e) => {
       const list = m.files || [];
       const files = [];
       let done = 0;
-      const total = list.reduce((s, f) => s + ((f instanceof Blob ? f : f.file).size || 0), 0);
+      // A picked or dropped File, or a capture the local resolver serves by byte range ({ path, local }).
+      const sizeOf = (f) => (f instanceof Blob ? f.size : f.local ? f.local.size : f.file.size) || 0;
+      const textOf = async (f) => (f instanceof Blob ? f.text() : f.local ? new TextDecoder().decode(await localFileSource(f.local).slice(0, f.local.size)) : f.file.text());
+      const total = list.reduce((s, f) => s + sizeOf(f), 0);
       for (const f of list) {
-        const file = f instanceof Blob ? f : f.file;
         self.postMessage({ type: "network-progress", phase: "read", done, total });
-        files.push({ name: (f.path || file.name || "capture.har").split("/").pop(), text: await file.text() });
-        done += file.size || 0;
+        files.push({ name: (f.path || f.name || "capture.har").split("/").pop(), text: await textOf(f) });
+        done += sizeOf(f);
       }
       self.postMessage({ type: "network-progress", phase: "analyze", done: total, total });
       const { capture, store } = await analyzeCapture(files, trace);

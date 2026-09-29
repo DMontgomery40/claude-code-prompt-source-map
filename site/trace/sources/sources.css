@@ -1,0 +1,29 @@
+/* Everything on this machine (sources/panel.js): a session's local sources. Same tokens as trace.css. */
+.src-counts { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.src-chip { border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; font-size: 12px; color: var(--ink-2); }
+.src-chip b { color: var(--ink); font-weight: 650; }
+.src-chip.found { border-color: #3d6b4a; }
+.src-chip.not-read { border-color: #6b5a3a; }
+.src-chip.credential { border-color: #6b3a4f; }
+.src-h { font-size: 13px; color: var(--ink-3); margin: 16px 0 4px; font-weight: 650; letter-spacing: .01em; }
+.src-row > summary { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.src-name { color: var(--ink); }
+.src-amount { color: var(--ink-3); font-size: 12px; }
+.src-join { font-size: 11px; border: 1px solid var(--line-2); border-radius: 6px; padding: 0 6px; color: var(--ink-3); }
+.src-join.snapshot { border-color: #6b5a3a; color: #e2c48a; }
+.src-join.approximate { border-color: #3a4f6b; color: #a9c8ef; }
+.src-join.credential { border-color: #6b3a4f; color: #f0a9c4; }
+.src-row.absent .src-name, .src-row.none-for-session .src-name { color: var(--ink-3); }
+.src-path code, .src-what code { overflow-wrap: anywhere; }
+.src-what { color: var(--ink-3); }
+.src-body { margin: 6px 0 4px; }
+.src-pre {
+  margin: 4px 0; padding: 8px 10px; max-height: 420px; overflow: auto; background: #0b0f15; border: 1px solid var(--line);
+  border-radius: 6px; font: 12px/1.45 var(--mono); color: var(--ink-2); white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.src-rows { display: grid; gap: 2px; }
+.src-rowd > summary { cursor: pointer; font-size: 12.5px; color: var(--ink-2); overflow-wrap: anywhere; }
+.src-nav { display: flex; gap: 8px; margin: 6px 0; }
+.src-need { border: 1px solid #3a4f6b; border-radius: 10px; padding: 10px 12px; background: var(--panel); }
+.src-need p { margin: 0 0 6px; }
+.src-cmd { margin: 0; padding: 8px 10px; background: #0b0f15; border: 1px solid var(--line); border-radius: 6px; font: 12.5px/1.5 var(--mono); color: var(--ink); white-space: pre-wrap; }

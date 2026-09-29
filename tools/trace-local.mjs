@@ -2,19 +2,32 @@
 // Loopback-only Trace resolver. No uploads, arbitrary paths, or directory-listing API.
 import {createServer} from 'node:http';
 import {readdir, lstat, realpath, readFile, open} from 'node:fs/promises';
-import {join, resolve, relative, extname} from 'node:path';
+import {join, resolve, relative, extname, dirname, basename} from 'node:path';
 import {homedir} from 'node:os';
 import {randomBytes} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {narrowByHint} from '../site/trace/loader.js';
 import {SITE, siteOrigin} from '../site/src/shared/site.mjs';
+import {sourcesReport, readSource} from './sources/index.mjs';
 
 export const PORT = 8766;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // The one site, plus the retired hosts (they redirect to it, but a tab opened before the move may still call).
 const ORIGINS = new Set([siteOrigin(), ...Object.values(SITE.products).map(p => `https://${p.legacyHost}`)]);
 const within = (root, file) => {const rel=relative(root,file);return rel!== '..' && !rel.startsWith('../') && !rel.startsWith('/');};
-const defaultRoots = {codex:join(homedir(),'.codex','sessions'),'claude-code':join(homedir(),'.claude','projects')};
+// Claude desktop agent-mode sessions keep their transcripts in their own config folders under the app's data.
+const defaultRoots = {codex:join(homedir(),'.codex','sessions'),'claude-code':join(homedir(),'.claude','projects'),
+ 'claude-desktop':join(homedir(),'Library','Application Support','Claude','local-agent-mode-sessions')};
+
+async function fileEntry(root,path){
+ const size=(await lstat(path)).size;
+ return {path,source:{name:path,size,async slice(a,b){
+  if(!within(root,await realpath(path)))throw new Error('Outside session root');
+  const fh=await open(path,'r');try{const bytes=new Uint8Array(Math.max(0,Math.min(b,size)-a));let n=0;
+   while(n<bytes.length){const {bytesRead}=await fh.read(bytes,n,bytes.length-n,a+n);if(!bytesRead)break;n+=bytesRead;}return bytes.subarray(0,n);
+  }finally{await fh.close();}
+ }}};
+}
 
 async function list(root) {
  const entries=[];
@@ -24,22 +37,46 @@ async function list(root) {
    const path=join(dir,item.name);
    if(item.isSymbolicLink())continue;
    if(item.isDirectory())await walk(path);
-   else if(item.isFile() && /\.(jsonl|json|txt)$/.test(item.name)){
-    const size=(await lstat(path)).size;
-    entries.push({path,source:{name:path,size,async slice(a,b){
-     if(!within(root,await realpath(path)))throw new Error('Outside session root');
-     const fh=await open(path,'r');try{const bytes=new Uint8Array(Math.max(0,Math.min(b,size)-a));let n=0;
-      while(n<bytes.length){const {bytesRead}=await fh.read(bytes,n,bytes.length-n,a+n);if(!bytesRead)break;n+=bytesRead;}return bytes.subarray(0,n);
-     }finally{await fh.close();}
-    }}});
-   }
+   else if(item.isFile() && /\.(jsonl|json|txt)$/.test(item.name))entries.push(await fileEntry(root,path));
   }
  }
  await walk(root);return entries;
 }
 
-export function createTraceServer({roots=defaultRoots,siteRoot=null}={}){
+// Network captures filed beside the family's logs (tools/capture/file-capture.mjs): <log name>.<…>.har next
+// to a log (Codex/ChatGPT), or a .har in the log's same-named folder's network/ (Claude Code).
+async function capturesOf(root,logs){
+ const out=new Map();
+ const names=async dir=>{try{return await readdir(dir,{withFileTypes:true});}catch(e){if(e.code==='ENOENT'||e.code==='ENOTDIR')return [];throw e;}};
+ for(const log of logs){
+  if(!/\.jsonl$/.test(log.path))continue;
+  const dir=dirname(log.path),stem=basename(log.path,'.jsonl');
+  for(const item of await names(dir))if(item.isFile() && item.name.startsWith(stem+'.') && /\.har$/i.test(item.name))out.set(join(dir,item.name),null);
+  for(const item of await names(join(dir,stem,'network')))if(item.isFile() && /\.har$/i.test(item.name))out.set(join(dir,stem,'network',item.name),null);
+ }
+ const entries=[];
+ for(const path of out.keys())if(within(root,await realpath(path)))entries.push(await fileEntry(root,path));
+ return entries;
+}
+
+export function createTraceServer({roots=defaultRoots,siteRoot=null,home}={}){
  const tickets=new Map();
+ // The family of a session id, found the same way for the manifest and for its local sources (kept briefly,
+ // so the Sources lens doesn't walk every project folder on each read).
+ const found=new Map();
+ async function findSession(id){
+  const hit0=found.get(id);if(hit0 && hit0.at>Date.now()-10*60*1000)return hit0;
+  let hit,root;
+  for(const dir of Object.values(roots)){
+   root=await realpath(dir).catch(()=>resolve(dir));const entries=await list(root);
+   hit=await narrowByHint(entries,id);if(hit)break;
+  }
+  if(!hit)return null;
+  const out={session:hit.session,root,at:Date.now()};found.set(id,out);
+  while(found.size>50)found.delete(found.keys().next().value);
+  return out;
+ }
+ const readBody=async req=>{let body='';for await(const chunk of req){body+=chunk;if(body.length>4096)return null;}try{return JSON.parse(body);}catch{return undefined;}};
  const server=createServer(async(req,res)=>{
   const reply=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(data));};
   res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -60,18 +97,27 @@ export function createTraceServer({roots=defaultRoots,siteRoot=null}={}){
   if(url.pathname.startsWith('/v1/')){
    if(!trusted || req.headers['x-trace-request']!=='1')return reply(403,{error:'Forbidden request'});
    try{
+    // Every local source of a session (tools/sources): the report, then one source's content on request.
+    if((url.pathname==='/v1/sources'||url.pathname==='/v1/source') && req.method==='POST'){
+     const body=await readBody(req);if(body===null)return reply(413,{error:'Request too large'});if(!body)return reply(400,{error:'Invalid request'});
+     const id=typeof body.id==='string'&&UUID.test(body.id)?body.id.toLowerCase():null;if(!id)return reply(400,{error:'Invalid session ID'});
+     const hit=await findSession(id);if(!hit)return reply(404,{error:'Session not found on this machine'});
+     if(url.pathname==='/v1/sources')return reply(200,await sourcesReport(hit.session,{home}));
+     if(typeof body.source!=='string'||!/^[a-z0-9.-]{1,80}$/.test(body.source))return reply(400,{error:'Invalid source'});
+     const offset=Number.isSafeInteger(body.offset)&&body.offset>=0?body.offset:0;const part=typeof body.part==='string'?body.part:null;
+     return reply(200,await readSource(hit.session,body.source,{home,offset,part}));
+    }
     if(url.pathname==='/v1/session' && req.method==='POST'){
-     let body='';for await(const chunk of req){body+=chunk;if(body.length>1024)return reply(413,{error:'Request too large'});}
-     let id;try{id=JSON.parse(body).id;}catch{return reply(400,{error:'Invalid request'});}
+     const body=await readBody(req);if(body===null)return reply(413,{error:'Request too large'});if(!body)return reply(400,{error:'Invalid request'});
+     let {id,captures}=body;
      if(typeof id!=='string'||!UUID.test(id))return reply(400,{error:'Invalid session ID'});
-     id=id.toLowerCase();let hit,root;
-     for(const dir of Object.values(roots)){
-      root=await realpath(dir).catch(()=>resolve(dir));const entries=await list(root);
-      hit=await narrowByHint(entries,id);if(hit)break;
-     }
+     id=id.toLowerCase();found.delete(id);
+     const hit=await findSession(id);
      if(!hit)return reply(404,{error:'Session not found on this machine'});
-     const session=hit.session;
-     const entries=[...session.entries,...session.metas||[],...session.toolResults||[]];
+     const {session,root}=hit;
+     const entries=[...session.entries,...session.metas||[],...session.toolResults||[],
+      // Only a page that reads them asks for captures: an older page would hand a .har it can't read to its worker.
+      ...(captures===true?await capturesOf(root,session.entries):[])];
      // Tickets contain only this requested family. No absolute paths are sent to the page.
      const now=Date.now();for(const [key,value] of tickets)if(value.expires<now)tickets.delete(key);
      while(tickets.size>20000)tickets.delete(tickets.keys().next().value);

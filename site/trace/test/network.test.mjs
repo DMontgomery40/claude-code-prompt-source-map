@@ -9,8 +9,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadTrace } from "../loader.js";
 import { entriesFor } from "../dump.mjs";
-import { analyzeCapture, sessionIdsOf } from "../network/capture.js";
-import { looksLikeHar, parseHar, parseSSE } from "../network/har.js";
+import { analyzeCapture, captureSessions, sessionIdsOf } from "../network/capture.js";
+import { capturesFor, looksLikeHar, parseHar, parseSSE } from "../network/har.js";
 import { createRedactor, REDACTED } from "../network/redact.js";
 import { classify, PROVENANCE, ROLES } from "../network/catalog.js";
 import { PLANTED, CCX, CXX, networkFiles } from "./fixtures/network.mjs";
@@ -204,6 +204,33 @@ test("captures that can't attach say why: a browser capture, another product, an
   await assert.rejects(analyzeCapture([har("claude.har")], other), /doesn't hold the loaded session/);
   await assert.rejects(analyzeCapture([har("claude.har")], null), /Load a session first/);
   assert.deepEqual(sessionIdsOf(cx), [CXX.thread]);
+});
+
+test("captureSessions names each capture's product and sessions, most entries first", () => {
+  const cc = captureSessions(readFileSync(join(NET, "claude-two-sessions.har"), "utf8"));
+  assert.equal(cc.product, "claude-code");
+  assert.deepEqual(cc.sessions.map((s) => s.id), [CCX.session, CCX.other]);
+  assert.ok(cc.sessions[0].entries > cc.sessions[1].entries);
+  const cx = captureSessions(readFileSync(join(NET, "codex.har"), "utf8"));
+  assert.equal(cx.product, "codex");
+  assert.equal(cx.sessions[0].id, CXX.thread);
+  assert.ok(cx.sessions.some((s) => s.id === CXX.other)); // an analytics event names another thread
+  assert.deepEqual(captureSessions(readFileSync(join(NET, "browser.har"), "utf8")), { product: "browser", sessions: [] });
+});
+
+test("capturesFor: a capture filed beside the open session comes along, one filed beside another stays out", async () => {
+  const cc = await claudeTrace(), cx = await codexTrace();
+  const ccIds = cc.agents.map((a) => a.id), cxIds = cx.agents.map((a) => a.id);
+  const files = [
+    { path: `projects/-proj/${CCX.session}/network/capture-20260105-100000.har` },
+    { path: `projects/-proj/${CCX.other}/network/capture-20260105-110000.har` },
+    { path: `2026/01/06/rollout-2026-01-06T09-00-00-${CXX.thread}.capture-20260106-090000.har` },
+    { path: "cc-run1.redacted.har" }, // picked or dropped by hand: names no session
+  ];
+  assert.deepEqual(capturesFor(files, ccIds).map((f) => f.path), [files[0].path, files[3].path]);
+  assert.deepEqual(capturesFor(files, cxIds).map((f) => f.path), [files[2].path, files[3].path]);
+  assert.deepEqual(capturesFor(files, [CCX.session.toUpperCase()]).map((f) => f.path), [files[0].path, files[3].path]);
+  assert.deepEqual(capturesFor([], ccIds), []);
 });
 
 // ---------------------------------------------------------------- sensitive data in transit

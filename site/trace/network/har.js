@@ -8,6 +8,20 @@ export function looksLikeHar(head) {
   return /^﻿?\s*\{\s*"log"\s*:/.test(String(head || ""));
 }
 
+// Which of the captures loaded with a session belong to it. A capture filed beside a session log
+// (tools/capture/file-capture.mjs) has that session's id in its path; one picked or dropped by hand usually
+// names no session at all. Keep the ones that name the open session, and the ones that name none; a capture
+// filed beside another session (a whole projects folder was dropped) stays out.
+// files: [{ path }]. sessionIds: the open session's ids (Claude Code's session, every Codex/ChatGPT thread).
+const UUIDS = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+export function capturesFor(files, sessionIds) {
+  const mine = new Set([...sessionIds].map((id) => String(id).toLowerCase()));
+  return files.filter((f) => {
+    const named = String(f.path || "").toLowerCase().match(UUIDS) || [];
+    return !named.length || named.some((id) => mine.has(id));
+  });
+}
+
 // Parses HAR text. Throws a plain-language error when it is JSON but no HAR.
 export function parseHar(text) {
   let har;

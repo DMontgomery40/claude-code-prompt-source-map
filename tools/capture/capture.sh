@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Runs one command (a Claude Code or Codex/ChatGPT CLI session) with its HTTPS traffic recorded to a HAR
-# that Trace can attach to the session's log. Needs mitmproxy (`brew install mitmproxy` or `pipx install
-# mitmproxy`).
+# Runs one command (a Claude Code or Codex/ChatGPT CLI session) with its HTTPS traffic recorded to a HAR,
+# then files the HAR beside the session's log, where Trace attaches it whenever that session opens. Needs
+# mitmproxy (`brew install mitmproxy` or `pipx install mitmproxy`).
 #
-#   tools/capture/capture.sh [-o DIR] -- claude
-#   tools/capture/capture.sh -o ~/captures -- codex
+#   tools/capture/capture.sh -- claude
+#   tools/capture/capture.sh -- codex
+#   tools/capture/capture.sh -o ~/captures -- claude    # keep the HAR in DIR instead of filing it
 #
 # A throwaway certificate authority is made for this run only. Only the command's own process tree
 # trusts it, through NODE_EXTRA_CA_CERTS (Claude Code) and CODEX_CA_CERTIFICATE (Codex/ChatGPT); nothing
@@ -14,8 +15,8 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "$0")" && pwd)"
-out="."
-usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; }
+out=""
+usage() { sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'; }
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -o|--out) out="$2"; shift 2 ;;
@@ -28,9 +29,11 @@ if [[ $# -eq 0 ]]; then usage >&2; exit 2; fi
 command -v mitmdump >/dev/null || { echo "capture: needs mitmproxy (brew install mitmproxy)" >&2; exit 1; }
 command -v node >/dev/null || { echo "capture: needs node for the credentials check" >&2; exit 1; }
 
-mkdir -p "$out"
-har="$(cd "$out" && pwd)/capture-$(date +%Y%m%d-%H%M%S).har"
 conf="$(mktemp -d "${TMPDIR:-/tmp}/trace-capture.XXXXXX")"
+# Without -o the HAR is recorded in a private scratch folder and filed beside the session when it ends.
+rec="${out:-$(mktemp -d "${TMPDIR:-/tmp}/trace-capture-rec.XXXXXX")}"
+mkdir -p "$rec"
+har="$(cd "$rec" && pwd)/capture-$(date +%Y%m%d-%H%M%S).har"
 port="$(python3 -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')"
 
 PYTHONDONTWRITEBYTECODE=1 mitmdump -q --set confdir="$conf" --listen-host 127.0.0.1 --listen-port "$port" \
@@ -59,5 +62,12 @@ set -e
 stop_proxy
 trap - EXIT
 node "$here/check-har.mjs" "$har" || exit 1
-echo "capture: done. In Trace, drop the session's log together with $har" >&2
+if [[ -n "$out" ]]; then
+  echo "capture: done: $har. In Trace, open the session and choose + Network capture, or drop the HAR on it." >&2
+elif ! node "$here/file-capture.mjs" --move "$har"; then
+  # No session log to file it beside (the command made none, or it is elsewhere): keep it here instead.
+  mv "$har" . && har="$(pwd)/$(basename "$har")"
+  echo "capture: kept $har. In Trace, open the session and choose + Network capture, or drop the HAR on it." >&2
+fi
+[[ -z "$out" ]] && { rmdir "$rec" 2>/dev/null || true; }
 exit "$status"

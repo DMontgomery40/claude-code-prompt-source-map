@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="harness/harness.css">
 <link rel="stylesheet" href="search.css">
 <link rel="stylesheet" href="network/network.css">
+<link rel="stylesheet" href="sources/sources.css">
 <script type="module" src="app.js"></script>
 </head>
 <body>
@@ -38,7 +39,7 @@
       <p class="or">Or drop the files yourself</p>
       <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-help">
         <p class="drop-big">Drop a session file or folder here</p>
-        <p id="drop-help" class="drop-help">A Codex/ChatGPT rollout <code>.jsonl</code>, or a Claude Code session <code>.jsonl</code> with its same-named folder, so subagents come too. Add a network capture (<code>.har</code>) of the same session to see what went over the wire.</p>
+        <p id="drop-help" class="drop-help">A Codex/ChatGPT rollout <code>.jsonl</code>, or a Claude Code session <code>.jsonl</code> with its same-named folder, so subagents come too. A network capture (<code>.har</code>) saved beside the session by <code>tools/capture</code> comes along on its own; one dropped with the session attaches too.</p>
         <div class="drop-buttons">
           <label class="btn">Choose files<input id="pick-files" type="file" multiple accept=".jsonl,.json,.har,application/json"></label>
           <label class="btn">Choose a folder<input id="pick-folder" type="file" webkitdirectory multiple></label>
@@ -79,9 +80,10 @@
   </header>
   <div class="side">
     <div id="resizer" class="resizer" role="separator" aria-orientation="vertical" aria-label="Resize the panel" tabindex="0"></div>
-    <div class="side-heading"><span class="eyebrow">Explore session</span><span class="side-actions"><button id="add-capture" class="text-control" type="button" title="Attach a network capture (.har) of this session: what went over the wire">+ Network capture</button><button id="overview" class="text-control" type="button">↖ Overview</button></span></div>
+    <div class="side-heading"><span class="eyebrow">Explore session</span><span class="side-actions"><button id="add-capture" class="net-button" type="button" data-state="none" aria-expanded="false" aria-controls="net-help" title="Network capture: what went over the wire in this session">+ Network capture</button><button id="overview" class="text-control" type="button">↖ Overview</button></span></div>
     <input id="pick-har" type="file" multiple accept=".har,.json,application/json" hidden>
     <p id="net-status" class="net-status" role="status" aria-live="polite" hidden></p>
+    <div id="net-help" class="net-help" hidden></div>
     <div id="search-bar" class="search-bar"></div>
     <nav id="lenses" class="lenses" aria-label="Explore session"></nav>
     <div id="request-nav" class="request-nav" hidden></div>

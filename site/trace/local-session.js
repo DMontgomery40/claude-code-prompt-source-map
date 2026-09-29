@@ -9,7 +9,7 @@ export async function openLocalSession(id, {fetcher=fetch,base=BASE}={}) {
   catch {return null;}
   if(!health.ok)return null;
   try {if((await health.json()).service!=='trace-local')return null;}catch{return null;}
-  const result=await fetcher(base+'/v1/session',{method:'POST',credentials:'omit',redirect:'error',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({id})});
+  const result=await fetcher(base+'/v1/session',{method:'POST',credentials:'omit',redirect:'error',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({id,captures:true})});
   if(!result.ok){const error=await result.json().catch(()=>({}));throw new Error(error.error||'Could not open the local session');}
   const manifest=await result.json();
   return manifest.files.map(file=>{
@@ -17,6 +17,24 @@ export async function openLocalSession(id, {fetcher=fetch,base=BASE}={}) {
     if(url.origin!==new URL(base).origin || !url.pathname.startsWith('/v1/file/'))throw new Error('Invalid local session file');
     return {path:file.path,local:{path:file.path,size:file.size,url:url.href}};
   });
+}
+
+// Every local source of a session (tools/sources on the resolver): the report, and one source's content.
+// null when no resolver answers, so the page can say how to start it.
+export async function localSources(id,{fetcher=fetch,base=BASE}={}){
+  let health;
+  try {health=await fetcher(base+'/health',{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(800)});}
+  catch {return null;}
+  if(!health.ok)return null;
+  try {if((await health.json()).service!=='trace-local')return null;}catch{return null;}
+  const result=await fetcher(base+'/v1/sources',{method:'POST',credentials:'omit',redirect:'error',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({id})});
+  if(!result.ok){const error=await result.json().catch(()=>({}));throw new Error(error.error||'Could not read the local sources');}
+  return result.json();
+}
+export async function localSource(id,source,{offset=0,part=null}={},{fetcher=fetch,base=BASE}={}){
+  const result=await fetcher(base+'/v1/source',{method:'POST',credentials:'omit',redirect:'error',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({id,source,offset,part})});
+  if(!result.ok){const error=await result.json().catch(()=>({}));throw new Error(error.error||'Could not read that source');}
+  return result.json();
 }
 
 export function localFileSource(file,fetcher=fetch){

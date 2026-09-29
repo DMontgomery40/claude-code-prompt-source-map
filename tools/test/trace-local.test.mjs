@@ -67,3 +67,42 @@ test('resolver manifest goes through the actual worker without File objects or a
  await self.onmessage({data:{type:'text',id:'read',ref}});
  assert.ok(messages.find(m=>m.id==='read'&&m.type==='text')?.text);
 });
+
+test('a capture filed beside a session comes with it from the resolver and attaches in the worker', async t=>{
+ const {openLocalSession}=await import('../../site/trace/local-session.js');
+ const {claudeSession,claudeHar,codexSession,codexHar,CCX,CXX}=await import('../../site/trace/test/fixtures/network.mjs');
+ const dir=await mkdtemp(join(tmpdir(),'trace-capture-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+ const roots={'claude-code':join(dir,'claude'),codex:join(dir,'codex')};
+ const put=async(path,body)=>{await mkdir(join(path,'..'),{recursive:true});await writeFile(path,body);};
+ const proj=join(roots['claude-code'],'-proj');
+ for(const [path,body] of Object.entries(claudeSession()))await put(join(proj,path.replace('network/claude/','')),body);
+ await put(join(proj,CCX.session,'network','capture-1.har'),claudeHar());
+ // Another session in the same project, with its own capture: it stays with that session.
+ await put(join(proj,CCX.other+'.jsonl'),JSON.stringify({type:'user',sessionId:CCX.other,message:{role:'user',content:'other'}})+'\n');
+ await put(join(proj,CCX.other,'network','capture-2.har'),claudeHar({withOther:true}));
+ const day=join(roots.codex,'2026','01','06');
+ for(const [path,body] of Object.entries(codexSession()))await put(join(day,path.split('/').pop()),body);
+ const rollout=Object.keys(codexSession())[0].split('/').pop().replace(/\.jsonl$/,'');
+ await put(join(day,rollout+'.capture-1.har'),codexHar());
+ const server=createTraceServer({roots});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));
+ const base='http://127.0.0.1:'+server.address().port;
+ const originalFetch=globalThis.fetch;
+ globalThis.fetch=(url,options={})=>originalFetch(url,{...options,headers:{...options.headers,Origin:origin}});
+ t.after(()=>{globalThis.fetch=originalFetch;delete globalThis.self;});
+ const cc=await openLocalSession(CCX.session,{base});
+ assert.deepEqual(cc.filter(f=>/\.har$/.test(f.path)).map(f=>f.path),[`-proj/${CCX.session}/network/capture-1.har`]);
+ // A page that doesn't ask for captures (one deployed before them) gets the logs only.
+ const plain=await(await fetch(base+'/v1/session',{method:'POST',headers:{'X-Trace-Request':'1','Content-Type':'application/json'},body:JSON.stringify({id:CCX.session})})).json();
+ assert.equal(plain.files.some(f=>/\.har$/.test(f.path)),false);assert.equal(plain.files.length,cc.length-1);
+ const cx=await openLocalSession(CXX.thread,{base});
+ assert.deepEqual(cx.filter(f=>/\.har$/.test(f.path)).map(f=>f.path),[`2026/01/06/${rollout}.capture-1.har`]);
+ // The worker reads the resolver's byte ranges for the capture as it does for the logs.
+ const messages=[];globalThis.self={postMessage:m=>messages.push(m)};
+ await import('../../site/trace/worker.js?capture');
+ await self.onmessage({data:{type:'load',files:cc.filter(f=>!/\.har$/.test(f.path)),root:CCX.session}});
+ assert.ok(messages.find(m=>m.type==='trace'));
+ await self.onmessage({data:{type:'network',files:cc.filter(f=>/\.har$/.test(f.path))}});
+ assert.deepEqual(messages.filter(m=>m.type==='network-error'),[]);
+ const capture=messages.find(m=>m.type==='network')?.capture;
+ assert.ok(capture.calls.length>0);assert.ok(capture.join.matched>0);
+});

@@ -5,15 +5,16 @@ import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minim
 import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
 import { capturePickedFiles } from "./file-source.js";
 import { parsePaste } from "./paste.js";
-import { openLocalSession } from "./local-session.js";
+import { openLocalSession, localSources, localSource } from "./local-session.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
 import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
 import { createTransport, playheadForRequest } from "./transport.js";
 import { nextShot, agentPAt, createFollowZoom } from "./director.js";
 import { createHarnessMode } from "./harness/mode.js";
-import { looksLikeHar } from "./network/har.js";
+import { looksLikeHar, capturesFor } from "./network/har.js";
 import { networkLens, wireCard, NETWORK_LENS, closeWireReader } from "./network/panel.js";
+import { sourcesLens, SOURCES_LENS } from "./sources/panel.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -30,6 +31,7 @@ let mapReturn = null; // the landscape camera and selection saved before focused
 let text = null;     // (agentId, ref) => Promise<{text, mode}>
 let worker = null;
 let lastFiles = null; // the dropped files, kept so another session among them can be opened
+let lastCaptures = []; // the captures (.har) that came with them: each session attaches its own
 let pasteRoot = null; // the thread or session id from the paste box, sent as the worker's `root`
 // The playback transport (transport.js). Its clock lives outside S: playing never calls set(), and
 // each history entry carries the playhead's P beside the view.
@@ -59,7 +61,7 @@ function setupLoader() {
     // A capture dropped on an open session attaches to it.
     else if (S.trace) collectDrop(e.dataTransfer).then(async files => { const { hars } = await splitCaptures(files); if (hars.length) attachCapture(hars); else netStatus("Drop a .har network capture here to attach it; to open another session, go back to the loader.", "error"); });
   });
-  $("#add-capture").addEventListener("click", () => $("#pick-har").click());
+  $("#add-capture").addEventListener("click", () => netHelp());
   $("#pick-har").addEventListener("change", e => {
     const files = [...e.target.files].map(f => ({ path: f.name, file: f }));
     e.target.value = "";
@@ -315,7 +317,39 @@ async function attachCapture(files) {
     render(false);
   } catch (e) {
     netStatus(e.message || String(e), "error");
-  } finally { btn.disabled = false; }
+  } finally { btn.disabled = false; netButton(); if (!$("#net-help").hidden) netHelp(true); }
+}
+// The capture button says whether this session has one; the card it opens says what a capture is, how
+// to record one and where Trace finds it, and offers the file picker for a .har already made.
+function netButton() {
+  const btn = $("#add-capture");
+  btn.dataset.state = S.network ? "on" : "none";
+  btn.textContent = S.network ? "Network capture ✓" : "+ Network capture";
+}
+function netHelp(open = $("#net-help").hidden) {
+  const box = $("#net-help");
+  $("#add-capture").setAttribute("aria-expanded", String(open));
+  box.hidden = !open;
+  if (!open) return;
+  const n = S.network;
+  const cmd = `tools/capture/capture.sh -- ${S.trace?.product === "codex" ? "codex" : "claude"}`;
+  const copy = el("button", { class: "btn small", type: "button", text: "Copy" });
+  copy.addEventListener("click", () => navigator.clipboard?.writeText(cmd).then(() => { copy.textContent = "Copied"; }, () => { copy.textContent = "Select and copy"; }));
+  const choose = el("button", { class: "btn small", type: "button", text: n ? "Choose another .har…" : "Choose a .har file…" });
+  choose.addEventListener("click", () => $("#pick-har").click());
+  const open5 = n && el("button", { class: "btn small primary", type: "button", text: "Open “What went over the wire” (5)" });
+  open5?.addEventListener("click", () => { netHelp(false); selectLens(NETWORK_LENS.key); });
+  const close = el("button", { class: "text-control", type: "button", text: "Close" });
+  close.addEventListener("click", () => netHelp(false));
+  box.replaceChildren(
+    el("p", { class: "net-help-head", text: n
+      ? `Attached: ${fmtInt(n.kept)} requests, ${fmtInt(n.calls.length)} model call${n.calls.length === 1 ? "" : "s"} (${fmtInt(n.join.matched)} in your log).`
+      : "No network capture for this session." }),
+    el("p", { text: "A capture is the session's traffic, recorded while it runs: every request the harness sent, with the system prompt, tools, betas and flags the log leaves out. It can't be made afterwards. Record one by starting the session from the harness-source-map repo with:" }),
+    el("div", { class: "path" }, el("code", { text: cmd }), copy),
+    el("p", { text: "When the command exits, the capture is saved beside that session's log, and Trace attaches it on its own every time the session opens (pasted id, folder or drop)." }),
+    el("p", { class: "net-help-note" }, "A .har you already have: ", el("code", { text: "node tools/capture/file-capture.mjs capture.har" }), " files it beside its session, or choose it here for this visit."),
+    el("div", { class: "net-help-actions" }, open5, choose, close));
 }
 function clearCapture() {
   S.network = null;
@@ -326,6 +360,9 @@ function clearCapture() {
   worker?.postMessage({ type: "network-clear" });
   palette?.setNetwork?.(null);
   netStatus("");
+  netButton();
+  $("#net-help").hidden = true;
+  $("#add-capture").setAttribute("aria-expanded", "false");
 }
 function networkBody(entry, part) {
   const id = ++bodySeq;
@@ -350,6 +387,7 @@ async function loadFiles(files, root) {
   }
   setProgress(0, `Reading ${fmtInt(files.length)} files…`);
   lastFiles = files;
+  lastCaptures = hars;
   try {
     const trace = await parseInWorker(files, root);
     text = workerText;
@@ -357,7 +395,32 @@ async function loadFiles(files, root) {
   } catch (e) {
     return showError(e.message || String(e));
   }
-  if (hars.length) attachCapture(hars);
+  attachFound();
+}
+
+// The session's local sources (tools/sources on the loopback resolver), asked for once per load. Asked for at
+// load only when the resolver is already in play (it opened the session, or it serves this page); otherwise
+// when the lens opens, so a page from elsewhere never reaches for 127.0.0.1 unasked (a console error, and in
+// Chrome a local-network permission prompt). Without a resolver the lens says how to start one.
+let sourcesSeq = 0, sourcesAsked = -1;
+function sessionRootId() { return String((S.trace?.agents.find(a => a.kind === "root") || S.trace?.agents[0])?.id || "").toLowerCase(); }
+const resolverInPlay = () => location.origin === "http://127.0.0.1:8766" || !!lastFiles?.some(f => f.local);
+function loadSources() {
+  if (sourcesAsked === sourcesSeq) return;
+  sourcesAsked = sourcesSeq;
+  const seq = sourcesSeq, id = sessionRootId();
+  const done = v => { if (seq !== sourcesSeq) return; S.sources = v; if (S.lens === SOURCES_LENS.key) render(false); };
+  if (!/^[0-9a-f-]{36}$/.test(id)) return done({ unavailable: true, reason: "This session has no session id to look up." });
+  localSources(id).then(r => done(r || { unavailable: true, reason: "The local resolver didn't answer this page: it isn't running, or this page isn't one it serves." }),
+    e => done({ unavailable: true, reason: e.message || String(e) }));
+}
+
+// A capture that came with the session's files attaches on its own: one filed beside the session's log
+// (tools/capture), which the resolver, the folder picker and a dropped session folder all bring along,
+// or one dropped together with the log.
+function attachFound() {
+  const mine = S.trace ? capturesFor(lastCaptures, S.trace.agents.map(a => a.id)) : [];
+  if (mine.length) attachCapture(mine);
 }
 
 // A pasted id is in the files when some path names it (the session's .jsonl, a rollout file name).
@@ -402,7 +465,8 @@ async function switchSession(root) {
     scene?.dispose();
     scene = null;
     Object.assign(S, { level: 0, agentId: null, agent: null, reqIdx: null, stratum: null, block: null });
-    start(trace);
+    await start(trace);
+    attachFound();
   } catch (e) {
     pick.disabled = false;
     alert(`Couldn't open that session: ${e.message || e}`);
@@ -546,7 +610,8 @@ function narrowPicked(files, info) {
   else {
     const d = new Date(info.ms), day = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
     keep = files.filter(f => {
-      if (!/\.jsonl$/.test(f.path)) return false;
+      // A capture filed beside the thread's rollout names the thread (tools/capture/file-capture.mjs).
+      if (!/\.jsonl$/.test(f.path)) return /\.har$/i.test(f.path) && f.path.toLowerCase().includes(info.id);
       const m = f.path.match(/(?:^|\/)(\d{4})\/(\d{2})\/(\d{2})\//);
       return !m || Number(m[1] + m[2] + m[3]) >= day;
     });
@@ -582,20 +647,22 @@ async function filesFromHandle(root, info) {
     }
     return out;
   }
+  // A capture filed beside the thread's rollout (tools/capture/file-capture.mjs) comes along.
+  const isThreadCapture = name => /\.har$/i.test(name) && name.toLowerCase().includes(info.id);
   let base = root;
   const sessions = await child(root, "sessions", "dir");
   if (sessions) base = sessions;
   const d = new Date(info.ms), day = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
   const num = s => (/^\d+$/.test(s) ? Number(s) : null);
   for await (const [y, yh] of base.entries()) {
-    if (yh.kind === "file" && /^rollout-.*\.jsonl$/.test(y)) { out.push({ path: y, file: await yh.getFile(), handle: yh }); continue; }
+    if (yh.kind === "file" && (/^rollout-.*\.jsonl$/.test(y) || isThreadCapture(y))) { out.push({ path: y, file: await yh.getFile(), handle: yh }); continue; }
     if (yh.kind !== "directory" || num(y) == null || num(y) < d.getFullYear()) continue;
     for await (const [m, mh] of yh.entries()) {
       if (mh.kind !== "directory" || num(m) == null || num(y) * 100 + num(m) < Math.floor(day / 100)) continue;
       for await (const [dd, dh] of mh.entries()) {
         if (dh.kind !== "directory" || num(dd) == null || num(y) * 10000 + num(m) * 100 + num(dd) < day) continue;
         for await (const [name, fh] of dh.entries()) {
-          if (fh.kind === "file" && /\.jsonl$/.test(name)) out.push({ path: `${y}/${m}/${dd}/${name}`, file: await fh.getFile(), handle: fh });
+          if (fh.kind === "file" && (/\.jsonl$/.test(name) || isThreadCapture(name))) out.push({ path: `${y}/${m}/${dd}/${name}`, file: await fh.getFile(), handle: fh });
         }
       }
     }
@@ -691,6 +758,7 @@ function normalize(trace) {
 async function start(trace) {
   viewHistory?.dispose(); viewHistory = null;
   clearCapture(); // a capture belongs to the session it was attached to
+  S.sources = null; S.sourceOpen = new Map(); sourcesSeq++;
   Object.assign(S, { level: 0, agentId: null, reqIdx: null, stratum: null, block: null, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args' });
   S.tools = (await loadIndex())?.tools || null; // tool name -> site page, for the custody ladder's "Guided by"
   mapReturn = null;
@@ -769,6 +837,7 @@ async function start(trace) {
     });
   }
   viewHistory = createViewHistory(window, captureView, restoreView);
+  if (resolverInPlay()) loadSources();
 }
 let started = false;
 
@@ -913,9 +982,13 @@ function buildHud() {
   symbolLegend();
   buildLenses();
 }
-// The four questions, plus "What went over the wire" while a network capture is attached (key 5).
+// The four questions, "What went over the wire" while a network capture is attached, and "Everything on this
+// machine" (the session's local sources). Keys 1–6 follow this order.
+function lensList() {
+  return [...LENSES.map((l, i) => ({ ...l, icon: ["▱", "↗", "↙", "⋈"][i] })), ...(S.network ? [NETWORK_LENS] : []), ...(S.trace ? [SOURCES_LENS] : [])];
+}
 function buildLenses() {
-  const list = [...LENSES.map((l, i) => ({ ...l, icon: ["▱", "↗", "↙", "⋈"][i] })), ...(S.network ? [NETWORK_LENS] : [])];
+  const list = lensList();
   $("#lenses").classList.toggle("with-network", !!S.network);
   $("#lenses").replaceChildren(...list.map((l, i) => el("button", {
     type: "button", "aria-pressed": String(S.lens === l.key), "data-lens": l.key, title: `${l.q} · ${i + 1}`,
@@ -1159,7 +1232,20 @@ const A = {
   wireCard: (agent, req) => (S.network ? wireCard(S.network, agent, req, A) : null),
   networkBody,
   rerender: () => render(false, true),
-  addCapture: () => $("#pick-har").click(),
+  addCapture: () => netHelp(true),
+  // Everything on this machine (sources/panel.js): the report comes with the session; content on request.
+  sourcesLens: view => sourcesLens({ ...view, sources: S.sources, sourceOpen: S.sourceOpen }, A),
+  openSource(sourceId, opts = {}) {
+    const id = sessionRootId(), seq = sourcesSeq;
+    S.sourceOpen.set(sourceId, { loading: true, part: opts.part || null });
+    if (S.lens === SOURCES_LENS.key) render(false);
+    localSource(id, sourceId, opts).then(data => ({ data }), e => ({ error: e.message || String(e) })).then(v => {
+      if (seq !== sourcesSeq || !S.sourceOpen.has(sourceId)) return;
+      S.sourceOpen.set(sourceId, { ...v, part: opts.part || null });
+      if (S.lens === SOURCES_LENS.key) render(false);
+    });
+  },
+  closeSource(sourceId) { S.sourceOpen.delete(sourceId); },
   // Opens the lens at one of its items (a palette result): { section, key }.
   openNetwork(target) {
     if (!S.network) return;
@@ -1204,6 +1290,7 @@ function selectLens(key) {
   // Each tab opens its session-wide exploration. Retaining a deep layer would
   // otherwise change the scene but leave an unrelated source reader on screen.
   if (key !== NETWORK_LENS.key) S.netFocus = null;
+  if (key === SOURCES_LENS.key) loadSources();
   set({ lens: key, level: 0, agentId: null, reqIdx: null, stratum: null, block: null });
   scene?.refit();
   userCamera("refit");
@@ -1233,14 +1320,15 @@ function onKey(e) {
   // Enter at the session opens the main thread, so the keyboard can get into the landscape.
   if (e.key === "Enter" && S.level === 0 && document.activeElement === document.body) { A.focusAgent(S.layout.root.id, 0); return; }
   const n = Number(e.key);
-  if (n >= 1 && n <= 4) selectLens(LENSES[n - 1].key);
-  else if (n === 5 && S.network) selectLens(NETWORK_LENS.key);
+  const list = lensList();
+  if (n >= 1 && n <= list.length) selectLens(list[n - 1].key);
 }
 
 // ---------- render ----------
 function render(levelChanged, readerOpened, restoring = false) {
   // The network lens exists only while a capture is attached (Back can name it after the capture is gone).
   if (S.lens === NETWORK_LENS.key && !S.network) S.lens = "context";
+  if (S.lens === SOURCES_LENS.key && S.trace) loadSources(); // Back or Forward into the lens asks too (once per load)
   $("#app").dataset.level = String(S.level);
   $("#app").classList.toggle("reading", S.reading);
   $("#app").classList.toggle("map-following", !!S.mapFocus && S.level === 0);
@@ -1262,7 +1350,7 @@ function render(levelChanged, readerOpened, restoring = false) {
 }
 
 // The landscape draws the four questions; under the network lens it shows the context lens's colours.
-function mapLens() { return S.lens === NETWORK_LENS.key ? "context" : S.lens; }
+function mapLens() { return S.lens === NETWORK_LENS.key || S.lens === SOURCES_LENS.key ? "context" : S.lens; }
 
 // The reader opens above the block list: bring its top into the panel's view. (Set scrollTop rather
 // than scrollIntoView, which would also scroll the fixed app shell.)

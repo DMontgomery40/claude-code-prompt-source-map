@@ -1,7 +1,8 @@
 # Trace: the network layer (a capture attached to a session)
 
 Date: 2026-09-28. Status: MVP built in `site/trace/network/` (attach-only). The capture tool that makes
-the HARs lives in `tools/capture/` and has its own owner.
+the HARs lives in `tools/capture/` and has its own owner. Update (same day): a capture filed beside its
+session's log attaches on its own when the session opens (section 2, intake).
 
 ## 1. Why
 
@@ -18,11 +19,20 @@ It is not about token cost, and nothing here frames it that way.
 ## 2. What the user sees
 
 - **Intake (attach-only).** A HAR is always attached to a session log, never opened alone.
+  - **Automatic.** `tools/capture/capture.sh` files each capture beside its session's log
+    (`file-capture.mjs`): Claude Code `<project>/<session id>/network/*.har`, Codex/ChatGPT
+    `<rollout name>.<capture>.har` beside the root thread's rollout. Every way of opening a session brings it
+    along and attaches it after the landscape is up: the local resolver adds the family's captures to its
+    manifest, the folder picker walks the session's folder (Claude Code) or keeps `.har` files that name the
+    thread (Codex/ChatGPT), and a dropped session folder carries it. Of the captures among the loaded
+    files, those whose path names the open session, or names no session, attach (`capturesFor`); one filed
+    beside another session stays out. Switching to another session among the dropped files attaches its own.
   - A `.har` (or a `.json` whose first bytes are a HAR's, `{"log":`) dropped or picked together with the
     session's `.jsonl` loads the session and attaches the capture.
-  - "+ Network capture" in the sidebar, and the palette command "Add a network capture", attach one to
-    the open session. This is the route for sessions opened by paste or by the local resolver. A HAR
-    dropped on an open session attaches too.
+  - The sidebar's capture button shows whether one is attached ("Network capture ✓"). It opens a card that
+    says what a capture is, the command that records one, where it is saved and that it attaches on its
+    own, with a file picker for a `.har` already made and, when attached, a way into lens 5. The palette
+    command "Add a network capture" opens the same card. A HAR dropped on an open session attaches too.
   - A HAR on its own gets: "A network capture needs its session log…". The message says that browser
     DevTools captures of chatgpt.com or claude.ai web chats have no session log and are out of scope. A
     browser capture attached to a session is refused with the same reason.
@@ -204,6 +214,8 @@ network and is not shown.
   - `panels.js`: the hooks;
   - `search.js` and `palette.js`: the Network scope;
   - the adapters: `messageId`, `itemId`/`part`.
+  - `tools/capture/file-capture.mjs` (files a capture beside its session; `captureSessions` in `capture.js`)
+    and `tools/trace-local.mjs` (the resolver serves a session's filed captures).
 - Tests:
   - `site/trace/test/network.test.mjs`: parsing, redaction, catalog, join, belonging, truncated
     streams, refusals, transit rules and fingerprints, provenance, private captures;
