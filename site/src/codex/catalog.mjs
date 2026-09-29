@@ -13,10 +13,9 @@ export const categories = [
         defaultOpen: true
       },
       {
-        path: "outputs/security-review-map-2026-09-24.md",
-        anchor: "security-review-map-2026-09-24-md",
+        path: "outputs/key-findings.md",
+        anchor: "key-findings-md",
         slug: "key-findings",
-        snapshot: "September 24, 2026",
         format: "markdown",
         title: "Key findings",
         defaultOpen: true
@@ -311,6 +310,7 @@ export const categories = [
   {
     label: "Evidence and archive",
     files: [
+      { path: "outputs/security-review-map-2026-09-24.md", anchor: "security-review-map-2026-09-24-md", slug: "key-findings-2026-09-24", snapshot: "September 24, 2026", format: "markdown", title: "Key findings, September 24", defaultOpen: false },
       { path: "outputs/devday-surface-coverage.json", anchor: "devday-surface-coverage-json", slug: "devday-surface-coverage-records", format: "source", title: "Dev Day surface records", defaultOpen: false },
       {
         path: "outputs/prompt-provenance-inventory.json",

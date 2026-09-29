@@ -141,6 +141,10 @@ export const codex = {
       try { line = out.stdout.trim().split("\n").at(-1); } catch {}
       if (!dryRun) notify(`Codex/ChatGPT ${s.label}`, `New in ChatGPT desktop ${summary.sources.app_version}: ${line.slice(0, 250)}`);
     }
+    // Key findings is a current summary, so refresh it only after all underlying
+    // captures and scans. Do not publish a stale summary if generation fails.
+    const findings = run(node, ["extract/codex/key-findings.mjs"], { cwd: repo, timeoutMs: 60 * 1000 });
+    if (findings.status !== 0) throw new Error(`key findings refresh failed: ${(findings.stderr || findings.stdout).slice(-800)}`);
     // Catalog settings baseline: advanced after a publish, or when nothing needs publishing;
     // never in a dry run, so a failed gate or a dry run can't swallow a change.
     const promoteSnapshot = () => {

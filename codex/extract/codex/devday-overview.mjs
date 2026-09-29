@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { productOrigin } from '../../../site/src/shared/site.mjs';
 import { privacyScan } from './lib/privacy.mjs';
+import { coverageTotals } from './lib/coverage-summary.mjs';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const read = name => JSON.parse(fs.readFileSync(path.join(repo, 'outputs', name), 'utf8'));
@@ -14,6 +15,7 @@ const tools = read('desktop-tool-manifest.json');
 const config = read('codex-config.json');
 const env = read('codex-env-vars.json');
 const cli = read('codex-cli-prompts.json');
+const coverage = coverageTotals(read('devday-surface-coverage.json'));
 const promptFiles = ['conversation', 'gpt-builder', 'work', 'finance-health', 'sites-artifacts'].map(p => read(`chatgpt-${p}-prompts.json`));
 const absentStyle = promptFiles.flatMap(p => p.not_found ?? []).filter(p => p.id.startsWith('write-like-me-')).length;
 const prompts = promptFiles.reduce((n, p) => n + p.items.length, 0);
@@ -51,7 +53,7 @@ The [official Dev Day recap](https://openai.com/index/devday-2026-recap/) provid
 
 The configuration reference now contains ${config.items.length.toLocaleString('en-US')} entries; the environment-variable reference contains ${env.items.length.toLocaleString('en-US')}. The desktop manifest contains ${tools.tools.length} tools. The five ChatGPT prompt pages publish ${prompts} items. CLI prompt/skill verification is in ${link('the compiled CLI inventory', 'codex-cli-prompts')}. Exact spans, assembled templates, path-only evidence and unavailable anchors retain separate labels.
 
-The ${link('Dev Day surface coverage ledger', 'devday-surface-coverage')} accounts for all 355 structural candidates and maps them to existing coverage, added evidence, incidental changes or unresolved implementation details. Jev's 287 positive classifications are review signals; 242 are endpoints, not 242 newly active features. The ${link('package scan', 'package-scan')} and ${link('binary scan', 'binwalk-scan')} preserve their own build provenance and experimental-method boundaries.
+The ${link('Dev Day surface coverage ledger', 'devday-surface-coverage')} accounts for all ${coverage.candidates} structural candidates and maps them to existing coverage, added evidence, incidental changes or unresolved implementation details. Jev's ${coverage.positive} positive classifications are review signals; ${coverage.positiveEndpoints} are endpoints. These counts do not establish newly active features. The ${link('package scan', 'package-scan')} and ${link('binary scan', 'binwalk-scan')} preserve their own build provenance and experimental-method boundaries.
 
 ## Limits of this capture
 

@@ -174,7 +174,8 @@ test("production: every Codex/ChatGPT page with a records file gets its records"
     const withRecords = codexCategories.flatMap(c => c.files).filter(f => specOf(f)).map(f => f.slug);
     assert(withRecords.length >= 10);
     // Every suggested page exists (render.mjs SEARCH_FEATURED).
-    assert.equal(index.pages.filter(p => p.f).length, 7);
+    assert.equal(index.pages.filter(p => p.f).length, 8);
+    assert(index.pages.find(p => p.s === 'key-findings')?.f);
     assert(index.pages.find(p => p.s === 'devday-update')?.f);
     assert(index.pages.find(p => p.s === 'gpt-6-1-sol-base-instructions')?.f);
     for (const slug of withRecords) assert(index.pages.find(p => p.s === slug)?.n > 0, slug);

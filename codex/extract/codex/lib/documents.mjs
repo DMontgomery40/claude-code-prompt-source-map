@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import path from "node:path";
-import { GPT6_DOCUMENTED, pythonJson, scalarLeaves, stringLeaves } from "./catalog.mjs";
+import { GPT6_DOCUMENTED, GPT6_LEGACY, SourceError, pythonJson, scalarLeaves, stringLeaves } from "./catalog.mjs";
 
 const sha256 = value => crypto.createHash("sha256").update(value).digest("hex");
 const stats = value => ({
@@ -224,7 +224,12 @@ function inventory(app, prompts, gpt6) {
 }
 
 // Builds every live document in memory. Nothing is written here.
-export function buildDocuments({ app, cli, catalog, prompts }) {
+export function buildDocuments({ app, cli, catalog, prompts, allowHistoricalCatalog = false }) {
+  // Refuse a partial current capture before any documents can be written. Otherwise
+  // missing models leave their previously published dedicated records on disk.
+  for (const slug of allowHistoricalCatalog ? GPT6_LEGACY : GPT6_DOCUMENTED) {
+    if (!catalog.live.some(model => model.slug === slug)) throw new SourceError(`${slug} is missing from the live catalog; its documents cannot be regenerated`);
+  }
   const gpt6All = catalog.live.filter(model => model.slug.startsWith("gpt-6"));
   const gpt6 = GPT6_DOCUMENTED.map(slug => catalog.live.find(model => model.slug === slug)).filter(Boolean);
   const others = catalog.live.filter(model => !GPT6_DOCUMENTED.includes(model.slug));

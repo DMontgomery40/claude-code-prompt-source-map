@@ -3,7 +3,7 @@ import test from "node:test";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { GPT6_DOCUMENTED, GPT6_REQUIRED, loadCatalog, SourceError } from "../lib/catalog.mjs";
+import { GPT6_DOCUMENTED, GPT6_LEGACY, loadCatalog, SourceError } from "../lib/catalog.mjs";
 import { buildDocuments, OUTPUT_NAMES, OUTPUT_WHITELIST } from "../lib/documents.mjs";
 
 const model = (slug, extra = {}) => ({
@@ -23,15 +23,15 @@ const fixture = models => ({
   prompts: { staticHelpers: [], functionHelpers: [], voice: [] }
 });
 
-test("historical GPT-6 catalogs build without the optional GPT-6.1 Sol record", () => {
-  const docs = buildDocuments(fixture(GPT6_REQUIRED.map(slug => model(slug))));
+test("explicit historical mode builds legacy catalogs without GPT-6.1 Sol", () => {
+  const docs = buildDocuments({...fixture(GPT6_LEGACY.map(slug => model(slug))),allowHistoricalCatalog:true});
   assert.equal(docs.has(OUTPUT_NAMES.base("gpt-6.1-sol")), false);
   assert.equal(docs.has(OUTPUT_NAMES.record("gpt-6.1-sol")), false);
-  for (const slug of GPT6_REQUIRED) assert.ok(docs.has(OUTPUT_NAMES.record(slug)));
+  for (const slug of GPT6_LEGACY) assert.ok(docs.has(OUTPUT_NAMES.record(slug)));
 });
 
 test("GPT-6.1 Sol receives dedicated records, module variants, comparison and provenance", () => {
-  const models = GPT6_REQUIRED.map(slug => model(slug));
+  const models = GPT6_LEGACY.map(slug => model(slug));
   models.push(model("gpt-6.1-sol", { approvals: { prompt: "new approvals" }, new_mode: "new mode" }));
   const docs = buildDocuments(fixture(models));
   assert.ok(GPT6_DOCUMENTED.includes("gpt-6.1-sol"));
@@ -63,13 +63,22 @@ function withCatalog(models, run) {
   }
 }
 
-test("catalog validates GPT-6.1 Sol when present while allowing historical catalogs", () => {
-  const oldModels = GPT6_REQUIRED.map(slug => model(slug));
-  withCatalog(oldModels, (binary, codexHome) => assert.equal(loadCatalog(binary, { codexHome }).live.length, 3));
+test("catalog requires GPT-6.1 Sol for current refresh and permits explicit historical reads", () => {
+  const oldModels = GPT6_LEGACY.map(slug => model(slug));
+  withCatalog(oldModels, (binary, codexHome) => assert.equal(loadCatalog(binary, { codexHome,allowHistoricalCatalog:true }).live.length, 3));
   withCatalog([...oldModels, model("gpt-6.1-sol")], (binary, codexHome) => assert.equal(loadCatalog(binary, { codexHome }).live.length, 4));
   const invalid = model("gpt-6.1-sol");
   invalid.base_instructions = "";
   withCatalog([...oldModels, invalid], (binary, codexHome) => {
     assert.throws(() => loadCatalog(binary, { codexHome }), error => error instanceof SourceError && /gpt-6\.1-sol: base_instructions/.test(error.message));
   });
+});
+
+
+test("missing GPT-6.1 Sol aborts current capture before publishing a partial sources inventory", () => {
+  const legacy = GPT6_LEGACY.map(slug => model(slug));
+  withCatalog(legacy, (binary,codexHome) => {
+    assert.throws(() => loadCatalog(binary,{codexHome}), /gpt-6\.1-sol is missing from the live catalog/);
+  });
+  assert.throws(() => buildDocuments(fixture(legacy)), /gpt-6\.1-sol is missing from the live catalog/);
 });
