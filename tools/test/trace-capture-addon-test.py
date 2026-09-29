@@ -4,6 +4,7 @@ import gzip
 import json
 import os
 import stat
+import time
 import brotli
 import zstandard
 from mitmproxy import ctx, http, websocket, connection
@@ -111,6 +112,40 @@ async def running():
         assert stat.S_IMODE(os.stat(destination).st_mode) == 0o600
         assert not any(name.startswith(".trace-capture-") for name in os.listdir(os.path.dirname(destination)))
         assert len(json.loads(saved_bytes)["log"]["entries"]) == 4
+        # Delayed stop detection must exclude late buffered HTTP completions.
+        cutoff = time.time()
+        late = flow("https://example.test/late-buffer", b"request after cutoff")
+        late.request.timestamp_start = cutoff - 1
+        late.request.timestamp_end = cutoff + 1
+        late.request.headers["Authorization"] = bearer
+        late.response = http.Response.make(200, b"response after cutoff")
+        late.response.timestamp_start = cutoff - .5
+        late.response.timestamp_end = cutoff + 1
+        after = flow("https://example.test/after-cutoff")
+        after.request.timestamp_start = cutoff + 1
+        headers_late = flow("https://example.test/late-response")
+        headers_late.request.timestamp_start = cutoff - 1
+        headers_late.request.timestamp_end = cutoff - .5
+        headers_late.response = http.Response.make(200, b"late response headers")
+        headers_late.response.timestamp_start = cutoff + 1
+        capture.flows.update({item.id:item for item in (late, after, headers_late)})
+        # A delayed snapshot also filters tee chunks observed after the stop.
+        tee_key = next(key for key in f.metadata if key.endswith("tee"))
+        f.metadata[tee_key].append((cutoff + 1, b"post cutoff streamed bytes"))
+        capture.checkpoint(force=True, cutoff=cutoff)
+        bounded = json.load(open(destination))["log"]["entries"]
+        assert len(bounded) == 6
+        bounded_late = next(e for e in bounded if e["request"]["url"].endswith("late-buffer"))
+        assert bounded_late["_traceCapture"]["partial"]
+        assert len(bounded_late["_traceCapture"]["withheldBodies"]) == 2
+        assert b"after cutoff" not in open(destination,"rb").read()
+        assert b"late response headers" not in open(destination,"rb").read()
+        assert b"post cutoff streamed bytes" not in open(destination,"rb").read()
+        f.metadata[tee_key].pop()
+        assert late.request.content == b"request after cutoff"
+        assert late.response.content == b"response after cutoff"
+        assert late.request.headers["Authorization"] == bearer
+        for item in (late, after, headers_late): capture.flows.pop(item.id)
         if capture.control:
             with open(capture.control, "w") as control:
                 json.dump({"recording": False}, control)

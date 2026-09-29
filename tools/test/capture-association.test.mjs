@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync } from 'node:fs';
+import { mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync,readdirSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { captureSessions,scopeCapture,analyzeCapture } from '../../site/trace/network/capture.js';
@@ -113,5 +113,20 @@ test('local ancestors group captures across an uncaptured intermediate thread',(
   assert.equal(childPlan.places[0].id,A);
   assert.deepEqual(childPlan.places[0].sessionIds,[C]);
   assert.ok(path.basename(childPlan.places[0].dest).includes(A));
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+test('move refuses a partially resolvable capture before writing subsets or removing the original',()=>{
+ const dir=mkdtempSync(path.join(os.tmpdir(),'capture-partial-move-'));
+ try{
+  const root=path.join(dir,'sessions');mkdirSync(root);
+  writeFileSync(path.join(root,`rollout-test-${A}.jsonl`),JSON.stringify({type:'session_meta',payload:{id:A}})+'\n');
+  const source=path.join(dir,'partial.har'),complete=shared();writeFileSync(source,complete);
+  assert.throws(()=>fileCapture(source,{roots:{codex:root},move:true}),/Cannot move.*missing local session logs/);
+  assert.equal(readFileSync(source,'utf8'),complete);
+  assert.deepEqual(readdirSync(root),[`rollout-test-${A}.jsonl`]);
+  const copied=fileCapture(source,{roots:{codex:root}});
+  assert.deepEqual(copied.missing,[B]);
+  assert.equal(copied.places.length,1);
+  assert.equal(readFileSync(source,'utf8'),complete);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });

@@ -141,6 +141,9 @@ export function fileCapture(harFile, { move = false, roots = defaultRoots(), att
     const ids = plan.missing.slice(0, 3).map((id) => `${id.slice(0, 8)}…`).join(", ");
     throw new Error(`No log on this machine for the ${PRODUCT_NAME[plan.product]} session${plan.missing.length === 1 ? "" : "s"} in this capture (${ids}).`);
   }
+  // A scoped move must account for every named thread before any writes. Copy
+  // mode may file known subsets because the complete original remains available.
+  if (move && plan.missing.length) throw new Error("Cannot move a capture with missing local session logs; the complete original was kept and no subsets were written. Use copy mode to file known sessions.");
   if (plan.explicit && plan.missing.length) throw new Error("Explicit attachment thread has no known local session log.");
   if (plan.product === "codex") {
     const text = readFileSync(harFile,"utf8");

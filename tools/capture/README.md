@@ -59,6 +59,9 @@ A HAR you already have is filed the same way (a copy; the original stays):
 node tools/capture/file-capture.mjs capture-20260928-153000.har
 ```
 
+Copy mode can file known sessions while retaining the complete original. `--move` refuses captures with missing local
+session logs and writes no subsets, so unfiled thread traffic cannot be discarded.
+
 `capture.sh -o DIR -- …` keeps the HAR in `DIR` instead of filing it; attach it in Trace with "+ Network capture" or by
 dropping it on the open session. If no session log is found (the command made none), the HAR is kept in the current
 folder. To remove a filed capture, delete the `.har` (or the session's `network/` folder).
@@ -98,6 +101,8 @@ Trace hides identity fields when it shows a capture, and it never uploads or sto
 
 ## Limits
 
+- Stop retains streamed bytes observed before its cutoff. A buffered body that spans Stop is withheld and marked
+  partial, because its earlier bytes cannot be separated reliably.
 - Proxy-honouring HTTPS requests from the wrapped runtime and its children can be recorded: model API, feature flags,
   telemetry, MCP servers and tools. Localhost traffic bypasses the proxy. An already-running shared daemon does not
   inherit a CLI wrapper's environment; desktop recording forces its own scoped app-server instead.

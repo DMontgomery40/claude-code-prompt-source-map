@@ -249,11 +249,36 @@ def scrub_flow(flow):
         flow.error.msg = scrub_text(flow.error.msg)
 
 
-def sanitized_copy(flow):
+def sanitized_copy(flow, cutoff=None):
     snapshot = flow.copy()
     chunks = flow.metadata.get(TEE)
+    withheld = []
+    partial = False
+    if cutoff is not None:
+        for direction in ("request", "response"):
+            message = getattr(snapshot, direction)
+            if message is None:
+                continue
+            if direction == "response" and message.timestamp_start > cutoff:
+                snapshot.response = None
+                withheld.append({"direction": direction, "reason": "response starts after recording stop cutoff"})
+                partial = True
+                continue
+            if message.timestamp_end is None or message.timestamp_end > cutoff:
+                partial = True
+                message.timestamp_end = None
+                if direction == "request" or chunks is None:
+                    message.raw_content = b""
+                    withheld.append({"direction": direction, "reason": "body crosses recording stop cutoff"})
+        if snapshot.websocket:
+            snapshot.websocket.messages = [message for message in snapshot.websocket.messages if message.timestamp <= cutoff]
+            if snapshot.websocket.timestamp_end is None or snapshot.websocket.timestamp_end > cutoff:
+                snapshot.websocket.timestamp_end = None
+                partial = True
     if chunks is not None and snapshot.response:
-        raw = b"".join(chunks)
+        # Timestamp each observed stream chunk; delayed stop detection must not
+        # serialize bytes observed after the control file's stop timestamp.
+        raw = b"".join(data for observed, data in chunks if cutoff is None or observed <= cutoff)
         snapshot.response.raw_content = raw
         encoding = snapshot.response.headers.get("content-encoding", "").lower()
         if encoding in ("gzip", "deflate", "br", "zstd") and snapshot.response.timestamp_end is None:
@@ -278,6 +303,8 @@ def sanitized_copy(flow):
                 pass  # scrub_message withholds an undecodable snapshot, not the live body
     snapshot.metadata.pop(TEE, None)
     scrub_flow(snapshot)
+    snapshot.metadata["trace_capture_withheld_bodies"].extend(withheld)
+    snapshot.metadata["trace_capture_cutoff_partial"] = partial
     return snapshot
 
 
@@ -388,7 +415,8 @@ class TraceCapture:
             outgoing = previous(data) if callable(previous) else data
             pieces = [outgoing] if isinstance(outgoing, bytes) else list(outgoing)
             if self._enabled():
-                chunks.extend(pieces)
+                observed = time.time()
+                chunks.extend((observed, piece) for piece in pieces)
                 self.dirty = True
             else:
                 chunks.clear()
@@ -420,17 +448,16 @@ class TraceCapture:
         now = time.monotonic()
         if not force and (not self.dirty or now - self.last_checkpoint < self.interval):
             return
-        snapshots = [sanitized_copy(flow) for flow in self.flows.values()]
-        if cutoff is not None:
-            for snapshot in snapshots:
-                if snapshot.websocket:
-                    snapshot.websocket.messages = [message for message in snapshot.websocket.messages if message.timestamp <= cutoff]
+        originals = [flow for flow in self.flows.values()
+                     if cutoff is None or flow.request.timestamp_start <= cutoff]
+        snapshots = [sanitized_copy(flow, cutoff) for flow in originals]
         har = self.writer.make_har(snapshots)
-        for entry, original, snapshot in zip(har["log"]["entries"], self.flows.values(), snapshots):
+        for entry, original, snapshot in zip(har["log"]["entries"], originals, snapshots):
             entry["_traceCapture"] = {
                 "flowId": original.id,
-                "partial": original.websocket.timestamp_end is None if original.websocket else
-                    original.response is None or original.response.timestamp_end is None,
+                "partial": snapshot.metadata.get("trace_capture_cutoff_partial", False) or
+                    (snapshot.websocket.timestamp_end is None if snapshot.websocket else
+                     snapshot.response is None or snapshot.response.timestamp_end is None),
                 "snapshotTime": time.time(),
                 "credentials": "redacted on detached copy",
                 "withheldBodies": snapshot.metadata.get("trace_capture_withheld_bodies", []),
