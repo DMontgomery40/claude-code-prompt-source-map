@@ -1,19 +1,19 @@
 # Codex/ChatGPT environment variables
 
-This page lists every environment variable that the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.924.22138; `codex-cli 0.158.0-alpha.2.1`) or the desktop app's own main-process code reads, sets, or compiles in. CLI entries come from `std::env` read sites, clap `env` attributes and indirect name tables in openai/codex at tag `rust-v0.158.0-alpha.2.1`, and each name was checked against the shipped binary's strings. Desktop entries come from `process.env` reads in `app.asar` (`.vite/build/*.js`). There are 337 entries. 105 are runtime variables read by the CLI. 166 names are read in the desktop main-process bundles; 60 of those are Codex/ChatGPT's own, and the rest are platform or bundled-library names. 32 are set or cleared only for commands Codex/ChatGPT spawns. These categories overlap: for example, `CODEX_HOME` is read by both the CLI and the desktop app. The rest are build-time names, and names present only in source for other platforms or tests. 25 appear in the official Codex docs (the environment-variables table or a code span on another docs page), and 312 are undocumented. "Read as" describes what the code does with the value: `presence` means only set versus unset matters. A `(name)` basis means the kind is inferred from the variable's name, not from the code. Descriptions quote the docs or the nearest source comment, and are left out when neither exists.
+This page lists every environment variable that the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.928.20755; `codex-cli 0.159.0`) or the desktop app's own main-process code reads, sets, or compiles in. CLI entries come from `std::env` read sites, clap `env` attributes and indirect name tables in openai/codex at tag `rust-v0.159.0`, and each name was checked against the shipped binary's strings. Desktop entries come from `process.env` reads in `app.asar` (`.vite/build/*.js`). There are 340 entries. 105 are runtime variables read by the CLI. 169 names are read in the desktop main-process bundles; 64 of those are Codex/ChatGPT's own, and the rest are platform or bundled-library names. 33 are set or cleared only for commands Codex/ChatGPT spawns. These categories overlap: for example, `CODEX_HOME` is read by both the CLI and the desktop app. The rest are build-time names, and names present only in source for other platforms or tests. 25 appear in the official Codex docs (the environment-variables table or a code span on another docs page), and 315 are undocumented. "Read as" describes what the code does with the value: `presence` means only set versus unset matters. A `(name)` basis means the kind is inferred from the variable's name, not from the code. Descriptions quote the docs or the nearest source comment, and are left out when neither exists.
 
 ## Contents
 
-- [Authentication, providers and network](#authentication-providers-and-network) (34)
+- [Authentication, providers and network](#authentication-providers-and-network) (35)
 - [Sandbox, shell and execution](#sandbox-shell-and-execution) (12)
 - [MCP](#mcp) (1)
 - [Paths and state](#paths-and-state) (8)
 - [Logging, telemetry and diagnostics](#logging-telemetry-and-diagnostics) (5)
-- [Other CLI variables](#other-cli-variables) (45)
-- [Desktop app: Codex/ChatGPT-specific](#desktop-app-codexchatgpt-specific) (32)
-- [Set or cleared by Codex/ChatGPT for child processes](#set-or-cleared-by-codexchatgpt-for-child-processes) (32)
+- [Other CLI variables](#other-cli-variables) (44)
+- [Desktop app: Codex/ChatGPT-specific](#desktop-app-codexchatgpt-specific) (35)
+- [Set or cleared by Codex/ChatGPT for child processes](#set-or-cleared-by-codexchatgpt-for-child-processes) (33)
 - [Build-time variables (compiled in)](#build-time-variables-compiled-in) (7)
-- [Desktop app: platform and bundled-library variables](#desktop-app-platform-and-bundled-library-variables) (106)
+- [Desktop app: platform and bundled-library variables](#desktop-app-platform-and-bundled-library-variables) (105)
 - [In source only (not in this macOS binary: other-platform, test or dev builds)](#in-source-only-not-in-this-macos-binary-other-platform-test-or-dev-builds) (55)
 
 ## Authentication, providers and network
@@ -68,7 +68,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset), string · 
 
 Used in: `cli::provider_auth_reachability_mode_from_auth`, `login::read_codex_access_token_from_env`, `tui::should_delay_startup_composer_for_first_login`
 
-Source: `codex-rs/cli/src/doctor.rs:2602`, `codex-rs/login/src/auth/manager.rs:969`, `codex-rs/tui/src/startup_preflight.rs:28` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables), [auth](https://developers.openai.com/codex/auth)
+Source: `codex-rs/cli/src/doctor.rs:2603`, `codex-rs/login/src/auth/manager.rs:969`, `codex-rs/tui/src/startup_preflight.rs:28` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables), [auth](https://developers.openai.com/codex/auth)
 
 ### `CODEX_API_KEY`
 
@@ -80,7 +80,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset), string · 
 
 Used in: `cli::stored_auth_issues`, `cli::provider_auth_reachability_mode_from_auth`, `login::read_codex_api_key_from_env`, `login::collect_auth_env_telemetry`
 
-Source: `codex-rs/cli/src/doctor.rs:1403`, `codex-rs/cli/src/doctor.rs:2598`, `codex-rs/login/src/auth/manager.rs:965` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables), [non-interactive-mode](https://developers.openai.com/codex/non-interactive-mode)
+Source: `codex-rs/cli/src/doctor.rs:1403`, `codex-rs/cli/src/doctor.rs:2599`, `codex-rs/login/src/auth/manager.rs:965` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables), [non-interactive-mode](https://developers.openai.com/codex/non-interactive-mode)
 
 ### `CODEX_APP_SERVER_CHATGPT_BASE_URL`
 
@@ -144,7 +144,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Undocumented
 
 Used in: `codex-mcp::codex_apps_mcp_bearer_token_env_var`
 
-Source: `codex-rs/codex-mcp/src/mcp/mod.rs:581`
+Source: `codex-rs/codex-mcp/src/mcp/mod.rs:594`
 
 ### `CODEX_EXEC_SERVER_NOISE_AUTH_TOKEN`
 
@@ -153,6 +153,14 @@ Read by: CLI (bundled codex binary) · Read as: string · Undocumented
 Used in: `exec-server::noise_environment_config_from_env`
 
 Source: `codex-rs/exec-server/src/environment.rs:620`
+
+### `CODEX_EXEC_SERVER_PROXY_PRIVATE_IPS_VIA_UPSTREAM`
+
+Read by: CLI (bundled codex binary) · Read as: string (clap argument fallback) · Undocumented
+
+CLI flag fallback for: `codex exec-server`, `codex exec-server forward`
+
+Source: `codex-rs/cli/src/exec_server_command.rs:56`
 
 ### `CODEX_EXEC_SERVER_URL`
 
@@ -168,7 +176,7 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `core::effective_originator`, `login::get_originator_value`, `login::originator`
 
-Source: `codex-rs/core/src/thread_manager.rs:1840`, `codex-rs/login/src/auth/default_client.rs:65`, `codex-rs/login/src/auth/default_client.rs:107`
+Source: `codex-rs/core/src/thread_manager.rs:1883`, `codex-rs/login/src/auth/default_client.rs:65`, `codex-rs/login/src/auth/default_client.rs:107`
 
 ### `CODEX_NETWORK_PROXY_BROKERED_CREDENTIALS`
 
@@ -200,7 +208,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Undocumented
 
 Used in: `model-provider-info::create_oss_provider`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:733`
+Source: `codex-rs/model-provider-info/src/lib.rs:738`
 
 ### `CODEX_REFRESH_TOKEN_URL_OVERRIDE`
 
@@ -234,7 +242,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Documented
 
 Used in: `network-proxy::from_env`
 
-Source: `codex-rs/network-proxy/src/upstream.rs:47` · Docs: [permissions](https://developers.openai.com/codex/permissions)
+Source: `codex-rs/network-proxy/src/upstream.rs:50` · Docs: [permissions](https://developers.openai.com/codex/permissions)
 
 ### `HTTP_PROXY`
 
@@ -242,7 +250,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Documented
 
 Used in: `network-proxy::from_env`, `windows-sandbox-rs::apply_no_network_to_env`
 
-Source: `codex-rs/network-proxy/src/upstream.rs:46`, `codex-rs/windows-sandbox-rs/src/env.rs:129` · Also set for child processes · Docs: [permissions](https://developers.openai.com/codex/permissions)
+Source: `codex-rs/network-proxy/src/upstream.rs:49`, `codex-rs/windows-sandbox-rs/src/env.rs:129` · Also set for child processes · Docs: [permissions](https://developers.openai.com/codex/permissions)
 
 ### `NO_PROXY`
 
@@ -278,7 +286,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset), string · 
 
 Used in: `login::read`, `tui::should_delay_startup_composer_for_first_login`, `windows-sandbox-rs::provision_windows_sandbox_via_service`
 
-Source: `codex-rs/login/src/auth/workload_identity.rs:256`, `codex-rs/tui/src/startup_preflight.rs:32`, `codex-rs/windows-sandbox-rs/src/provisioning_client.rs:143` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
+Source: `codex-rs/login/src/auth/workload_identity.rs:256`, `codex-rs/tui/src/startup_preflight.rs:32`, `codex-rs/windows-sandbox-rs/src/provisioning_client.rs:146` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
 
 ### `OPENAI_IDENTITY_TOKEN_FILE`
 
@@ -290,7 +298,7 @@ Read by: CLI (bundled codex binary) · Read as: path, presence (set/unset) · Do
 
 Used in: `login::read`, `tui::should_delay_startup_composer_for_first_login`, `windows-sandbox-rs::provision_windows_sandbox_via_service`
 
-Source: `codex-rs/login/src/auth/workload_identity.rs:257`, `codex-rs/tui/src/startup_preflight.rs:33`, `codex-rs/windows-sandbox-rs/src/provisioning_client.rs:144` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
+Source: `codex-rs/login/src/auth/workload_identity.rs:257`, `codex-rs/tui/src/startup_preflight.rs:33`, `codex-rs/windows-sandbox-rs/src/provisioning_client.rs:147` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
 
 ### `OPENAI_WORKLOAD_IDENTITY_CONTEXT`
 
@@ -360,7 +368,7 @@ Value Codex/ChatGPT sets: `seatbelt`
 
 Used in: `cli::probe_status`, `login::is_sandboxed`, `cli::run_command_under_sandbox`, `core::from_sandbox_exec_request`
 
-Source: `codex-rs/cli/src/doctor/network.rs:124`, `codex-rs/login/src/auth/default_client.rs:449`, `codex-rs/cli/src/debug_sandbox.rs:428` · Also set for child processes
+Source: `codex-rs/cli/src/doctor/network.rs:124`, `codex-rs/login/src/auth/default_client.rs:472`, `codex-rs/cli/src/debug_sandbox.rs:428` · Also set for child processes
 
 ### `EXEC_WRAPPER`
 
@@ -492,7 +500,7 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `core::resolve_sqlite_home_env`
 
-Source: `codex-rs/core/src/config/mod.rs:270`, `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
+Source: `codex-rs/core/src/config/mod.rs:271`, `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
 
 ### `CODEX_TUI_SESSION_LOG_PATH`
 
@@ -540,7 +548,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Undocumented
 
 Used in: `app-server::log_format_from_env`
 
-Source: `codex-rs/app-server/src/lib.rs:426`
+Source: `codex-rs/app-server/src/lib.rs:427`
 
 ### `RUST_LOG`
 
@@ -552,7 +560,7 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `app-server::run_main_with_transport_options`, `cli::stderr_env_filter`, `cli::init_login_file_logging`, `cloud-tasks::run_main`, `exec::exec_stderr_env_filter`
 
-Source: `codex-rs/app-server/src/lib.rs:704`, `codex-rs/app-server/src/lib.rs:709`, `codex-rs/cli/src/exec_server_telemetry.rs:182` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
+Source: `codex-rs/app-server/src/lib.rs:711`, `codex-rs/app-server/src/lib.rs:716`, `codex-rs/cli/src/exec_server_telemetry.rs:182` · Docs: [config-file/environment-variables](https://developers.openai.com/codex/config-file/environment-variables)
 
 ### `TRACEPARENT`
 
@@ -634,7 +642,7 @@ Read by: CLI (bundled codex binary) · Read as: number · Undocumented
 
 Used in: `model-provider-info::create_oss_provider`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:726`
+Source: `codex-rs/model-provider-info/src/lib.rs:731`
 
 ### `CODEX_STARTING_DIFF`
 
@@ -682,7 +690,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Undocumented
 
 Used in: `tui::current`
 
-Source: `codex-rs/tui/src/tooltips.rs:132`
+Source: `codex-rs/tui/src/tooltips.rs:136`
 
 ### `EDITOR`
 
@@ -750,7 +758,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset) · Undocume
 
 Used in: `cli::color_output_summary`, `cli::human_output_options`
 
-Source: `codex-rs/cli/src/doctor.rs:1953`, `codex-rs/cli/src/doctor.rs:1963`, `codex-rs/cli/src/doctor.rs:3045`
+Source: `codex-rs/cli/src/doctor.rs:1953`, `codex-rs/cli/src/doctor.rs:1963`, `codex-rs/cli/src/doctor.rs:3046`
 
 ### `PATH`
 
@@ -758,15 +766,7 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `arg0::arg0_dispatch`, `cli::stdio_command_resolves`, `cli::run_update_action`, `sandboxing::find_system_bwrap_in_path`, `utils::search_path`
 
-Source: `codex-rs/arg0/src/lib.rs:166`, `codex-rs/cli/src/doctor.rs:2938`, `codex-rs/cli/src/main.rs:806` · Also set for child processes · Docs: [config-file/config-advanced](https://developers.openai.com/codex/config-file/config-advanced), [config-file/config-basic](https://developers.openai.com/codex/config-file/config-basic), [sandboxing](https://developers.openai.com/codex/sandboxing)
-
-### `PUBLIC`
-
-Read by: CLI (bundled codex binary) · Read as: path · Undocumented
-
-Used in: `windows-sandbox-rs::gather_candidates`
-
-Source: `codex-rs/windows-sandbox-rs/src/audit.rs:62`
+Source: `codex-rs/arg0/src/lib.rs:168`, `codex-rs/cli/src/doctor.rs:2939`, `codex-rs/cli/src/main.rs:806` · Also set for child processes · Docs: [config-file/config-advanced](https://developers.openai.com/codex/config-file/config-advanced), [config-file/config-basic](https://developers.openai.com/codex/config-file/config-basic), [sandboxing](https://developers.openai.com/codex/sandboxing)
 
 ### `SSH_CONNECTION`
 
@@ -774,7 +774,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset) · Undocume
 
 Used in: `tui::is_ssh_session`, `tui::startup`
 
-Source: `codex-rs/tui/src/clipboard_copy.rs:208`, `codex-rs/tui/src/terminal_probe.rs:286`
+Source: `codex-rs/tui/src/clipboard_copy.rs:226`, `codex-rs/tui/src/terminal_probe.rs:286`
 
 ### `SSH_TTY`
 
@@ -782,7 +782,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset) · Undocume
 
 Used in: `tui::is_ssh_session`, `tui::startup`
 
-Source: `codex-rs/tui/src/clipboard_copy.rs:208`, `codex-rs/tui/src/terminal_probe.rs:285`
+Source: `codex-rs/tui/src/clipboard_copy.rs:226`, `codex-rs/tui/src/terminal_probe.rs:285`
 
 ### `STY`
 
@@ -814,15 +814,19 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `cli::check`, `protocol::local_temporary_directories`, `protocol::resolve_file_system_special_path`, `protocol::get_writable_roots_with_cwd`, `sandboxing::compatibility_workspace_write_policy`
 
-Source: `codex-rs/cli/src/doctor/filesystem_paths.rs:57`, `codex-rs/core/src/config/mod.rs:4173`, `codex-rs/protocol/src/permissions.rs:2002` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference), [config-file/config-advanced](https://developers.openai.com/codex/config-file/config-advanced), [config-file/config-sample](https://developers.openai.com/codex/config-file/config-sample)
+Source: `codex-rs/cli/src/doctor/filesystem_paths.rs:57`, `codex-rs/core/src/config/mod.rs:4194`, `codex-rs/protocol/src/permissions.rs:2138` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference), [config-file/config-advanced](https://developers.openai.com/codex/config-file/config-advanced), [config-file/config-sample](https://developers.openai.com/codex/config-file/config-sample)
 
 ### `TMUX`
 
 Read by: CLI (bundled codex binary) · Read as: presence (set/unset), string · Undocumented
 
-Used in: `tui::is_tmux_session`, `tui::osc52_copy`, `tui::detect_pet_image_support`, `tui::wrap_for_tmux_if_needed`, `tui::running_in_tmux_session`
+> Validate the limit before accepting a deferred terminal send.
+>
+> — `codex-rs/tui/src/clipboard_copy/worker.rs:159`
 
-Source: `codex-rs/tui/src/clipboard_copy.rs:213`, `codex-rs/tui/src/clipboard_copy.rs:380`, `codex-rs/tui/src/pets/image_protocol.rs:113`
+Used in: `tui::ensure_started`, `tui::is_tmux_session`, `tui::osc52_copy`, `tui::detect_pet_image_support`, `tui::wrap_for_tmux_if_needed`
+
+Source: `codex-rs/tui/src/clipboard_copy/worker.rs:159`, `codex-rs/tui/src/clipboard_copy.rs:231`, `codex-rs/tui/src/clipboard_copy.rs:328`
 
 ### `TMUX_PANE`
 
@@ -830,7 +834,7 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset), string · 
 
 Used in: `tui::copy`, `tui::is_tmux_session`, `tui::detect_pet_image_support`, `tui::running_in_tmux_session`, `tui::options`
 
-Source: `codex-rs/tui/src/clipboard_copy/tmux.rs:20`, `codex-rs/tui/src/clipboard_copy.rs:213`, `codex-rs/tui/src/pets/image_protocol.rs:113`
+Source: `codex-rs/tui/src/clipboard_copy/tmux.rs:20`, `codex-rs/tui/src/clipboard_copy.rs:231`, `codex-rs/tui/src/pets/image_protocol.rs:113`
 
 ### `USER`
 
@@ -843,10 +847,6 @@ Source: `codex-rs/cli/src/sandbox_setup.rs:137`, `codex-rs/windows-sandbox-rs/sr
 ### `USERPROFILE`
 
 Read by: CLI (bundled codex binary) · Read as: path, string · Documented
-
-> 3) User roots
->
-> — `codex-rs/windows-sandbox-rs/src/audit.rs:59`
 
 Used in: `cli::desktop_log_root`, `core-plugins::expand_tilde_path`, `core-plugins::primary_runtime_cache_dir`, `external-agent-migration::default_external_agent_home`, `lmstudio::find_lms_with_home_dir`
 
@@ -874,7 +874,7 @@ Read by: CLI (bundled codex binary) · Read as: string · Undocumented
 
 Used in: `tui::current`
 
-Source: `codex-rs/tui/src/tooltips.rs:133`
+Source: `codex-rs/tui/src/tooltips.rs:137`
 
 ### `WSL_DISTRO_NAME`
 
@@ -882,11 +882,11 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 > Fallback: Check WSL environment variables. This handles edge cases like custom Linux kernels installed in WSL where /proc/version may not contain "microsoft" or "WSL".
 >
-> — `codex-rs/tui/src/clipboard_paste.rs:302`
+> — `codex-rs/tui/src/clipboard_paste.rs:306`
 
 Used in: `tui::is_probably_wsl`, `utils::is_wsl`
 
-Source: `codex-rs/tui/src/clipboard_paste.rs:302`, `codex-rs/utils/path-utils/src/env.rs:7`, `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `codex-rs/tui/src/clipboard_paste.rs:306`, `codex-rs/utils/path-utils/src/env.rs:7`, `app.asar:.vite/build/main-BefHSPFJ.js`
 
 ### `WSL_INTEROP`
 
@@ -894,11 +894,11 @@ Read by: CLI (bundled codex binary) · Read as: presence (set/unset) · Undocume
 
 > Fallback: Check WSL environment variables. This handles edge cases like custom Linux kernels installed in WSL where /proc/version may not contain "microsoft" or "WSL".
 >
-> — `codex-rs/tui/src/clipboard_paste.rs:302`
+> — `codex-rs/tui/src/clipboard_paste.rs:306`
 
 Used in: `tui::is_probably_wsl`
 
-Source: `codex-rs/tui/src/clipboard_paste.rs:302`
+Source: `codex-rs/tui/src/clipboard_paste.rs:306`
 
 ### `WT_SESSION`
 
@@ -938,7 +938,7 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `network-proxy::from_env`
 
-Source: `codex-rs/network-proxy/src/upstream.rs:46`, `app.asar:.vite/build/worker.js`
+Source: `codex-rs/network-proxy/src/upstream.rs:49`, `app.asar:.vite/build/worker.js`
 
 ### `https_proxy`
 
@@ -946,7 +946,7 @@ Read by: CLI (bundled codex binary); desktop app (Electron main process) · Read
 
 Used in: `network-proxy::from_env`
 
-Source: `codex-rs/network-proxy/src/upstream.rs:47`, `app.asar:.vite/build/worker.js`
+Source: `codex-rs/network-proxy/src/upstream.rs:50`, `app.asar:.vite/build/worker.js`
 
 ## Desktop app: Codex/ChatGPT-specific
 
@@ -954,37 +954,37 @@ Source: `codex-rs/network-proxy/src/upstream.rs:47`, `app.asar:.vite/build/worke
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `CODEX_API_BASE_URL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`, `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
 
 ### `CODEX_API_ENDPOINT`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`, `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
 
 ### `CODEX_APP_SERVER_FORCE_CLI`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/main-BefHSPFJ.js`
 
 ### `CODEX_APP_SERVER_USE_LOCAL_DAEMON`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `CODEX_APP_SERVER_WS_URL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `CODEX_APP_TOOLS_PIPE_PATH`
 
@@ -996,31 +996,31 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `CODEX_BUILD_NUMBER`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `CODEX_CLI_PATH`
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/bootstrap-Be_CLfOb.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/main-DPn4U9E8.js`
 
 ### `CODEX_DESKTOP_NETWORK_POLICY`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `CODEX_DESKTOP_RELAUNCH_OPEN_EVENTS`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/desktop-open-path-queue-BTYn4hio.js`
+Source: `app.asar:.vite/build/desktop-open-path-queue-BHXvnlW9.js`, `app.asar:.vite/build/desktop-open-path-queue-BTYn4hio.js`, `app.asar:.vite/build/main-DPn4U9E8.js`
 
 ### `CODEX_ELECTRON_AGENT_RUN_ID`
 
@@ -1062,13 +1062,13 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `CODEX_MAX_LOG_LEVEL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `CODEX_MCP_APP_SANDBOX_URL`
 
@@ -1080,7 +1080,13 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
+
+### `CODEX_PAGES_CHECKPOINT_TRACE`
+
+Read by: desktop app (Electron main process) · Read as: string · Undocumented
+
+Source: `app.asar:.vite/build/main-DPn4U9E8.js`
 
 ### `CODEX_PREFERRED_GIT_EXECUTABLE`
 
@@ -1098,7 +1104,19 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C5425b_s.js`
+Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C5425b_s.js`, `app.asar:.vite/build/main-DPn4U9E8.js`
+
+### `CODEX_TPP_LOCAL_EXECUTOR_ENABLED`
+
+Read by: desktop app (Electron main process) · Read as: string · Undocumented
+
+Source: `app.asar:.vite/build/main-DPn4U9E8.js`
+
+### `CODEX_TPP_LOCAL_EXECUTOR_REMOTE_URL`
+
+Read by: desktop app (Electron main process) · Read as: string · Undocumented
+
+Source: `app.asar:.vite/build/main-DPn4U9E8.js`
 
 ### `CODEX_TRACE_SHORTCUT`
 
@@ -1110,7 +1128,7 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/app-protocol-IjFomtpu.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/main-BefHSPFJ.js`
+Source: `app.asar:.vite/build/app-protocol-DaeIspKt.js`, `app.asar:.vite/build/app-protocol-IjFomtpu.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`
 
 ### `NODE_REPL_ENABLE_AUDIO`
 
@@ -1134,7 +1152,7 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: number · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `VITE_CODEX_DESKTOP_AUTH_ORIGIN`
 
@@ -1152,7 +1170,7 @@ Read by: CLI (bundled codex binary) · Undocumented
 
 Value Codex/ChatGPT sets: `1`
 
-Source: `codex-rs/core/src/unified_exec/process_manager.rs:102`
+Source: `codex-rs/core/src/unified_exec/process_manager.rs:103`
 
 ### `CODEX_INSTALL_DAEMON_ONLY`
 
@@ -1256,7 +1274,7 @@ Read by: CLI (bundled codex binary) · Undocumented
 
 Used in: `core::inject_permission_profile_env`, `core::exec_env_policy_from_shell_policy`
 
-Source: `codex-rs/core/src/exec_env.rs:67`, `codex-rs/core/src/unified_exec/process_manager.rs:144`
+Source: `codex-rs/core/src/exec_env.rs:67`, `codex-rs/core/src/unified_exec/process_manager.rs:145`
 
 ### `CODEX_PLUGIN_METRICS_OUTPUT`
 
@@ -1300,7 +1318,7 @@ Read by: CLI (bundled codex binary) · Undocumented
 
 Used in: `core::open_session_with_sandbox`, `core::prewarm_shell_snapshots`, `protocol::populate_env`
 
-Source: `codex-rs/core/src/unified_exec/process_manager.rs:1446`, `codex-rs/core/src/unified_exec/shell_snapshot.rs:112`, `codex-rs/protocol/src/shell_environment.rs:152`
+Source: `codex-rs/core/src/unified_exec/process_manager.rs:1448`, `codex-rs/core/src/unified_exec/shell_snapshot.rs:112`, `codex-rs/protocol/src/shell_environment.rs:152`
 
 ### `CODEX_UPDATE_FROM_RELEASE`
 
@@ -1316,7 +1334,7 @@ Read by: CLI (bundled codex binary) · Undocumented
 
 Used in: `core::inject_session_env`, `core::exec_env_policy_from_shell_policy`
 
-Source: `codex-rs/core/src/exec_env.rs:44`, `codex-rs/core/src/exec_env.rs:47`, `codex-rs/core/src/unified_exec/process_manager.rs:145`
+Source: `codex-rs/core/src/exec_env.rs:44`, `codex-rs/core/src/exec_env.rs:47`, `codex-rs/core/src/unified_exec/process_manager.rs:146`
 
 ### `DEVELOPER_DIR`
 
@@ -1426,6 +1444,14 @@ Used in: `core-plugins::git_command`
 
 Source: `codex-rs/core-plugins/src/startup_sync.rs:679`
 
+### `SHELL`
+
+Read by: CLI (bundled codex binary); desktop app (Electron main process) · Undocumented
+
+Used in: `utils::spawn_process_preserving_fds`
+
+Source: `codex-rs/utils/pty/src/pty.rs:353`, `codex-rs/utils/pty/src/pty.rs:396`, `app.asar:.vite/build/main-BefHSPFJ.js`
+
 ## Build-time variables (compiled in)
 
 These are read by `env!` or `option_env!` when the binary is built. Setting them at runtime has no effect.
@@ -1434,7 +1460,7 @@ These are read by `env!` or `option_env!` when the binary is built. Setting them
 
 Read by: CLI (bundled codex binary) · Undocumented
 
-Source: `codex-rs/exec-server/src/fs_sandbox.rs:367`, `codex-rs/linux-sandbox/src/bazel_bwrap.rs:12`
+Source: `codex-rs/exec-server/src/fs_sandbox.rs:383`, `codex-rs/linux-sandbox/src/bazel_bwrap.rs:12`
 
 ### `CODEX_BUILD_COMMIT`
 
@@ -1458,7 +1484,7 @@ Source: `codex-rs/linux-sandbox/src/bundled_bwrap.rs:121`
 
 Read by: CLI (bundled codex binary) · Undocumented
 
-Source: `codex-rs/utils/cargo-bin/src/lib.rs:177`
+Source: `codex-rs/utils/cargo-bin/src/lib.rs:182`
 
 ### `GIT_COMMIT`
 
@@ -1480,7 +1506,7 @@ These are generic platform variables, or variables read by third-party libraries
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `APPVEYOR_PULL_REQUEST_HEAD_COMMIT`
 
@@ -1498,7 +1524,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `AWS_COMMIT_ID`
 
@@ -1510,7 +1536,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `BITBUCKET_COMMIT`
 
@@ -1636,13 +1662,13 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `ELECTRON_RUN_AS_NODE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `EVENTARC_CLOUD_EVENT_SOURCE`
 
@@ -1660,7 +1686,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `FUNCTION_TARGET`
 
@@ -1678,7 +1704,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `GITHUB_SHA`
 
@@ -1720,7 +1746,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `K_SERVICE`
 
@@ -1732,13 +1758,13 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `NETLIFY`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `NODE_ENV`
 
@@ -1750,13 +1776,13 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/policy-BiKjVXeL.js`, `app.asar:.vite/build/policy-DLF9H4Kq.js`
+Source: `app.asar:.vite/build/policy-BiKjVXeL.js`, `app.asar:.vite/build/policy-DLF9H4Kq.js`, `app.asar:.vite/build/startup-requirements-Da3KfG8r.js`
 
 ### `OSTYPE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `OTEL_FASTIFY_IGNORE_PATHS`
 
@@ -1780,7 +1806,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `PRISMA_SHOW_ALL_TRACES`
 
@@ -1816,7 +1842,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `RENDER_GIT_COMMIT`
 
@@ -1858,7 +1884,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `SENTRY_RELEASE`
 
@@ -1890,12 +1916,6 @@ Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
 Source: `app.asar:.vite/build/worker.js`
 
-### `SHELL`
-
-Read by: desktop app (Electron main process) · Read as: string · Undocumented
-
-Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mhak1n.js`, `app.asar:.vite/build/main-C5425b_s.js`
-
 ### `SOURCE_COMMIT`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
@@ -1912,19 +1932,19 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `TENCENTCLOUD_REGION`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `TENCENTCLOUD_ZONE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `TESTING_TAR_FAKE_PLATFORM`
 
@@ -1942,7 +1962,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `VERCEL_BITBUCKET_COMMIT_SHA`
 
@@ -1972,37 +1992,37 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `VITEST`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `WEBSITE_SITE_NAME`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-CzzsHphT.js`
+Source: `app.asar:.vite/build/bootstrap-Be_CLfOb.js`, `app.asar:.vite/build/bootstrap-C4dRql4x.js`, `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`
 
 ### `WSLENV`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `WS_NO_BUFFER_UTIL`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `WS_NO_UTF_8_VALIDATE`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `XDG_CONFIG_HOME`
 
@@ -2044,7 +2064,7 @@ Source: `app.asar:.vite/build/main-BefHSPFJ.js`, `app.asar:.vite/build/main-C-Mh
 
 Read by: desktop app (Electron main process) · Read as: path (name) · Undocumented
 
-Source: `app.asar:.vite/build/src-BSSLXJxP.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/src-Z8EKS_tU.js`
+Source: `app.asar:.vite/build/bootstrap-ClH9X4Aa.js`, `app.asar:.vite/build/src-BSSLXJxP.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `ZEIT_BITBUCKET_COMMIT_SHA`
 
@@ -2068,7 +2088,7 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `__FAKE_FS_O_FILENAME__`
 
@@ -2092,19 +2112,19 @@ Source: `app.asar:.vite/build/worker.js`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `npm_config_arch`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `npm_config_platform`
 
 Read by: desktop app (Electron main process) · Read as: string · Undocumented
 
-Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/src-DldfpmrL.js`, `app.asar:.vite/build/worker.js`
+Source: `app.asar:.vite/build/application-network-startup-CY4ZWOz-.js`, `app.asar:.vite/build/application-network-startup-D74LEWDz.js`, `app.asar:.vite/build/src-DldfpmrL.js`
 
 ### `windir`
 
@@ -2194,7 +2214,7 @@ Read by: Rust source only (not compiled into this macOS binary) · Read as: path
 
 Used in: `app-server::test_user_config_file_from_env`
 
-Source: `codex-rs/app-server/src/lib.rs:1476`
+Source: `codex-rs/app-server/src/lib.rs:1484`
 
 ### `CODEX_BWRAP_SOURCE_DIR`
 
@@ -2250,37 +2270,37 @@ Read by: Rust source only (not compiled into this macOS binary) · Read as: pres
 
 > Only managed app-server launches accept the local socket shutdown request.
 >
-> — `codex-rs/app-server/src/lib.rs:786`
+> — `codex-rs/app-server/src/lib.rs:800`
 
 Value Codex/ChatGPT sets: `1`
 
 Used in: `app-server::run_main_with_transport_options`, `app-server-daemon::start_inner`
 
-Source: `codex-rs/app-server/src/lib.rs:786`, `codex-rs/app-server-daemon/src/backend/pid_start.rs:219` · Also set for child processes
+Source: `codex-rs/app-server/src/lib.rs:800`, `codex-rs/app-server-daemon/src/backend/pid_start.rs:219` · Also set for child processes
 
-### `CODEX_MXC_LAUNCH_`
-
-Read by: Rust source only (not compiled into this macOS binary) · Read as: string · Undocumented
-
-Used in: `mxc-sandbox::is_transport_key`, `mxc-sandbox::decode`, `mxc-sandbox::encode`
-
-Source: `codex-rs/mxc-sandbox/src/transport.rs:22`, `codex-rs/mxc-sandbox/src/transport.rs:23`, `codex-rs/mxc-sandbox/src/transport.rs:97` · Also set for child processes
-
-### `CODEX_MXC_LAUNCH_BYTES`
+### `CODEX_SANDBOX_LAUNCH_`
 
 Read by: Rust source only (not compiled into this macOS binary) · Read as: string · Undocumented
 
-Used in: `mxc-sandbox::decode`, `mxc-sandbox::encode`
+Used in: `windows-sandbox-rs::decode`, `windows-sandbox-rs::encode`
 
-Source: `codex-rs/mxc-sandbox/src/transport.rs:83`, `codex-rs/mxc-sandbox/src/transport.rs:48` · Also set for child processes
+Source: `codex-rs/windows-sandbox-rs/src/environment_transport.rs:104`, `codex-rs/windows-sandbox-rs/src/environment_transport.rs:54` · Also set for child processes
 
-### `CODEX_MXC_LAUNCH_COUNT`
+### `CODEX_SANDBOX_LAUNCH_BYTES`
 
 Read by: Rust source only (not compiled into this macOS binary) · Read as: string · Undocumented
 
-Used in: `mxc-sandbox::decode`, `mxc-sandbox::encode`
+Used in: `windows-sandbox-rs::decode`, `windows-sandbox-rs::encode`
 
-Source: `codex-rs/mxc-sandbox/src/transport.rs:79`, `codex-rs/mxc-sandbox/src/transport.rs:47` · Also set for child processes
+Source: `codex-rs/windows-sandbox-rs/src/environment_transport.rs:90`, `codex-rs/windows-sandbox-rs/src/environment_transport.rs:52` · Also set for child processes
+
+### `CODEX_SANDBOX_LAUNCH_COUNT`
+
+Read by: Rust source only (not compiled into this macOS binary) · Read as: string · Undocumented
+
+Used in: `windows-sandbox-rs::decode`, `windows-sandbox-rs::encode`
+
+Source: `codex-rs/windows-sandbox-rs/src/environment_transport.rs:86`, `codex-rs/windows-sandbox-rs/src/environment_transport.rs:51` · Also set for child processes
 
 ### `CODEX_SKIP_BWRAP_BUILD`
 
@@ -2296,7 +2316,7 @@ Read by: Rust source only (not compiled into this macOS binary) · Read as: path
 
 Used in: `app-server::main`, `exec-server::main`
 
-Source: `codex-rs/app-server/src/bin/exec_server.rs:29`, `codex-rs/exec-server/testing/exec_server.rs:28`
+Source: `codex-rs/app-server/src/bin/exec_server.rs:31`, `codex-rs/exec-server/testing/exec_server.rs:30`
 
 ### `CODEX_WINDOWS_REGISTERED_CORE`
 
@@ -2306,7 +2326,7 @@ Value Codex/ChatGPT sets: `1`
 
 Used in: `windows-sandbox-rs::registered_core_requested`, `sandboxing::add_windows_sandbox_wrapper_setup_env_from_vars`
 
-Source: `codex-rs/windows-sandbox-rs/src/app_package.rs:36`, `codex-rs/sandboxing/src/manager.rs:710`, `app.asar:.vite/build/bootstrap-Be_CLfOb.js` · Also set for child processes
+Source: `codex-rs/windows-sandbox-rs/src/app_package.rs:36`, `codex-rs/sandboxing/src/manager.rs:724`, `app.asar:.vite/build/bootstrap-Be_CLfOb.js` · Also set for child processes
 
 ### `CODEX_WINDOWS_SANDBOX_PACKAGE_FAMILY`
 
@@ -2524,7 +2544,7 @@ Read by: Rust source only (not compiled into this macOS binary); desktop app (El
 
 Used in: `cli::stdio_command_resolves`, `utils::search_path`, `windows-sandbox-rs::inherit_path_env`, `windows-sandbox-rs::reorder_pathext_for_stubs`
 
-Source: `codex-rs/cli/src/doctor.rs:2950`, `codex-rs/utils/pty/src/win/psuedocon.rs:308`, `codex-rs/windows-sandbox-rs/src/env.rs:42`
+Source: `codex-rs/cli/src/doctor.rs:2951`, `codex-rs/utils/pty/src/win/psuedocon.rs:308`, `codex-rs/windows-sandbox-rs/src/env.rs:42`
 
 ### `RUNFILES_DIR`
 
@@ -2548,11 +2568,11 @@ Read by: Rust source only (not compiled into this macOS binary) · Read as: path
 
 > Bazel sets this when runfiles directories are disabled, which we do on all platforms for consistency.
 >
-> — `codex-rs/utils/cargo-bin/src/lib.rs:85`
+> — `codex-rs/utils/cargo-bin/src/lib.rs:90`
 
 Used in: `utils::runfiles_available`
 
-Source: `codex-rs/utils/cargo-bin/src/lib.rs:85`
+Source: `codex-rs/utils/cargo-bin/src/lib.rs:90`
 
 ### `SBX_DEBUG`
 

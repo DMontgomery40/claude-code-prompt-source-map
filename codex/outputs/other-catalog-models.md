@@ -1,6 +1,6 @@
 # Other models in the Codex/ChatGPT catalog
 
-Base instructions and model messages for every model in the live authenticated Codex/ChatGPT catalog other than GPT-6 Astra, Sol and Luna, in catalog order. Each text is exact and fenced, so its own headings stay inside it. A text identical to one shown earlier points back to it instead of repeating it.
+Base instructions and model messages for every model in the live authenticated Codex/ChatGPT catalog without dedicated model documents, in catalog order. Each text is exact and fenced, so its own headings stay inside it. A text identical to one shown earlier points back to it instead of repeating it.
 
 ---
 

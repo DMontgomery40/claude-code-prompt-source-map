@@ -110,7 +110,7 @@ function renderPage(page, items, missing, context) {
   }
   if (missing.length) {
     lines.push(`## ${NOT_FOUND}`, "", "These entries' anchors did not resolve in this build.", "");
-    for (const entry of missing) lines.push(`- \`${entry.id}\` (${entry.title}), anchor ${code(entry.anchor)}: ${pageReason(entry.reason)}`);
+    for (const entry of missing) lines.push(`- \`${entry.id}\` (${entry.title}), anchor ${code(entry.anchor)}: ${pageReason(entry.reason)}${entry.absence ? ` ${entry.absence}` : ""}`);
     lines.push("");
   }
   return `${lines.join("\n").trimEnd()}\n`;
@@ -125,7 +125,13 @@ export function buildPages(asar, context, pages = chatgptPages, distinct = chatg
       try {
         const extract = EXTRACTORS[spec.mode];
         if (!extract) throw new Error(`unknown mode ${spec.mode}`);
-        extracted.set(spec.id, extract(asar, spec));
+        // Short localized strings can also occur in translated dictionaries. Limit
+        // these specs to their feature bundle, preserving its exact provenance.
+        const source = spec.filePrefix ? {
+          ...asar,
+          findPhrase: phrase => asar.findPhrase(phrase).filter(({ entry }) => entry.path.startsWith(spec.filePrefix))
+        } : asar;
+        extracted.set(spec.id, extract(source, spec));
       } catch (error) {
         missing.set(spec.id, { ...spec, reason: error.message });
       }
@@ -163,7 +169,7 @@ export function buildPages(asar, context, pages = chatgptPages, distinct = chatg
       app_build: context.build,
       source: { asar_sha256: context.asarSha256 },
       items: items.map(item => ({ id: item.id, title: item.title, label: item.label, message_id: item.messageId ?? null, source_file: item.file, byte_offset: item.offset, sha256: item.sha256, text: item.text })),
-      not_found: pageMissing.map(entry => ({ id: entry.id, anchor: entry.anchor, reason: entry.reason }))
+      not_found: pageMissing.map(entry => ({ id: entry.id, anchor: entry.anchor, reason: entry.reason, ...(entry.absence ? { absence: entry.absence } : {}) }))
     }, null, 1)}\n`);
   }
   const published = [...extracted.values()];

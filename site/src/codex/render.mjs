@@ -7,7 +7,7 @@ import { buildSearchIndex } from "../shared/search-index.mjs";
 import { searchScript, searchTrigger, searchTriggerStyles } from "../shared/search-ui.mjs";
 
 // The search palette's suggested pages (slugs), shown before anything is typed.
-const SEARCH_FEATURED = ["key-findings", "persistent-mode-instructions", "codex-config", "codex-env-vars", "codex-cli-prompts", "tool-manifest"];
+const SEARCH_FEATURED = ["devday-update", "gpt-6-1-sol-base-instructions", "persistent-mode-instructions", "codex-config", "codex-env-vars", "codex-cli-prompts", "tool-manifest"];
 
 const ORIGIN = productOrigin("codex");
 import { anchorOutline, renderToc, tocNoscriptStyles, tocScript, tocStyles } from "./toc.mjs";

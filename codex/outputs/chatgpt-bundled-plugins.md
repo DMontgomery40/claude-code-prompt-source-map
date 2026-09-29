@@ -1,6 +1,6 @@
 # ChatGPT bundled plugins and skills
 
-Source: `ChatGPT.app` 26.924.22138 (build 11645). Paths are relative to `ChatGPT.app/Contents/Resources`.
+Source: `ChatGPT.app` 26.928.20755 (build 12246). Paths are relative to `ChatGPT.app/Contents/Resources`.
 
 Plugin guidance, skills, reference files, MCP launch settings and Computer Use docs that the ChatGPT desktop app ships as text files outside `app.asar`. Each file is shown with its exact bytes. For `plugin.json` only the top-level `description` value is shown, since the rest is interface copy, author details and hooks. A file that is byte-identical at several paths appears once, with the other paths on its source line.
 
@@ -8,7 +8,7 @@ Plugin guidance, skills, reference files, MCP launch settings and Computer Use d
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json` (file SHA-256 `3e2e58acd141d791031dfa8f0a6b63608630a50f458b8d66070c0fec44038a74`), `description` value SHA-256 `5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24`.
+Source: `plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json` (file SHA-256 `65cc4543f988a39cf471b80bcc0a3dd4daea6b4260990712ae46d8dc1f61b825`), `description` value SHA-256 `5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24`.
 
 Exact: the decoded JSON `description` value.
 
@@ -135,7 +135,7 @@ Exact file contents.
 
 ### docs/api.json
 
-Source: `plugins/openai-bundled/plugins/browser/docs/api.json` (also at `plugins/openai-bundled/plugins/chrome/docs/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/training/api.json`, `cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/references/api.json`), SHA-256 `4ed76a13a94e7249fefca7e4af382f8f7cb9207bb3663df5722be96e6a918e44`.
+Source: `plugins/openai-bundled/plugins/browser/docs/api.json` (also at `plugins/openai-bundled/plugins/chrome/docs/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/api.json`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/training/api.json`, `cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/references/api.json`), SHA-256 `928fe167327781a5f6ebfa0b342b8e0788d9cf6a13fc06c78661d54230f27278`.
 
 Exact file contents.
 
@@ -161,6 +161,9 @@ Exact file contents.
               "Documentation"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -184,6 +187,9 @@ Exact file contents.
             ]
           }
         ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
+        ],
         "documented": false
       },
       "getForUrl": {
@@ -195,12 +201,15 @@ Exact file contents.
             ]
           }
         ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
+        ],
         "documented": false
       },
       "list": {
         "declarations": [
           {
-            "text": "list(): Promise<Array<{ family?: string; id: string; metadata?: { codexSessionId?: string; extensionInstanceId?: string }; name: string; profileName?: string; type: \"iab\" | \"extension\" | \"cdp\" }>>; // List available browsers.",
+            "text": "list(): Promise<Array<{ family?: string; id: string; metadata?: { codexSessionId?: string; extensionInstanceId?: string }; name: string; profileName?: string; type: \"iab\" | \"extension\" | \"cdp\" | \"mcpapps\" }>>; // List available browsers.",
             "references": []
           }
         ]
@@ -213,6 +222,9 @@ Exact file contents.
             "text": "browserId: string; // Browser id selected by `agent.browsers.get()`.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "capabilities": {
@@ -223,6 +235,9 @@ Exact file contents.
               "BrowserCapabilityCollection"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "tabs": {
@@ -246,7 +261,8 @@ Exact file contents.
         ],
         "unsupportedByDefaultIn": [
           "iab",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "documentation": {
@@ -269,7 +285,8 @@ Exact file contents.
         ],
         "unsupportedByDefaultIn": [
           "iab",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "nameSession": {
@@ -278,6 +295,9 @@ Exact file contents.
             "text": "nameSession(name: string): Promise<void>; // Name the current browser automation session.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -291,6 +311,9 @@ Exact file contents.
               "Tab"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "getTabContext": {
@@ -306,7 +329,8 @@ Exact file contents.
         "unsupportedByDefaultIn": [
           "extension",
           "iab",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ],
         "documented": false
       },
@@ -318,6 +342,9 @@ Exact file contents.
               "BrowserUserTabInfo"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -335,7 +362,8 @@ Exact file contents.
         "unsupportedByDefaultIn": [
           "iab",
           "extension",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "get": {
@@ -366,6 +394,9 @@ Exact file contents.
               "Tab"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "selected": {
@@ -376,6 +407,9 @@ Exact file contents.
               "Tab"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -392,7 +426,8 @@ Exact file contents.
         "unsupportedByDefaultIn": [
           "iab",
           "extension",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "capabilities": {
@@ -403,6 +438,9 @@ Exact file contents.
               "TabCapabilityCollection"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "clipboard": {
@@ -413,6 +451,9 @@ Exact file contents.
               "TabClipboardAPI"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "content": {
@@ -423,6 +464,9 @@ Exact file contents.
               "ContentAPI"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "cua": {
@@ -433,6 +477,9 @@ Exact file contents.
               "CUAAPI"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "dev": {
@@ -443,6 +490,9 @@ Exact file contents.
               "TabDevAPI"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "dom_cua": {
@@ -453,6 +503,9 @@ Exact file contents.
               "DomCUAAPI"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "id": {
@@ -479,6 +532,9 @@ Exact file contents.
             "text": "back(): Promise<void>; // Navigate this tab back in history.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "close": {
@@ -487,6 +543,9 @@ Exact file contents.
             "text": "close(): Promise<void>; // Close this tab.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "forward": {
@@ -495,6 +554,9 @@ Exact file contents.
             "text": "forward(): Promise<void>; // Navigate this tab forward in history.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "getJsDialog": {
@@ -505,6 +567,9 @@ Exact file contents.
               "Dialog"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "goto": {
@@ -513,6 +578,9 @@ Exact file contents.
             "text": "goto(url: string): Promise<void>; // Open a URL in this tab.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "markDeliverable": {
@@ -523,7 +591,8 @@ Exact file contents.
           }
         ],
         "unsupportedByDefaultIn": [
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "markHandoff": {
@@ -534,7 +603,8 @@ Exact file contents.
           }
         ],
         "unsupportedByDefaultIn": [
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "reload": {
@@ -543,6 +613,9 @@ Exact file contents.
             "text": "reload(): Promise<void>; // Reload this tab.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "requestManualHandoff": {
@@ -555,7 +628,8 @@ Exact file contents.
         "unsupportedByDefaultIn": [
           "extension",
           "iab",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "screenshot": {
@@ -595,6 +669,9 @@ Exact file contents.
               "AXClickOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "drag": {
@@ -605,6 +682,9 @@ Exact file contents.
               "AXPoint"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "get": {
@@ -625,6 +705,9 @@ Exact file contents.
               "AXStateOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "paste": {
@@ -635,6 +718,9 @@ Exact file contents.
               "AXPasteOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "performSecondaryAction": {
@@ -643,6 +729,9 @@ Exact file contents.
             "text": "performSecondaryAction(elementIndex: number, action: string): Promise<void>; // Invoke an additional action exposed by an accessibility element.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "pressKey": {
@@ -651,6 +740,9 @@ Exact file contents.
             "text": "pressKey(elementIndex: null | number, key: string): Promise<void>; // If elementIndex is specified, attempt to focus the element prior to key entry.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "scroll": {
@@ -662,6 +754,9 @@ Exact file contents.
               "AXDirection"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "selectText": {
@@ -672,6 +767,9 @@ Exact file contents.
               "AXSelectTextOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "setValue": {
@@ -680,6 +778,9 @@ Exact file contents.
             "text": "setValue(elementIndex: number, value: string): Promise<void>; // Set the value of an accessibility element.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "typeText": {
@@ -688,6 +789,9 @@ Exact file contents.
             "text": "typeText(elementIndex: null | number, text: string): Promise<void>; // If elementIndex is specified, attempt to focus the element prior to text entry.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "write": {
@@ -708,6 +812,9 @@ Exact file contents.
               "AXStateOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -722,7 +829,8 @@ Exact file contents.
         "unsupportedByDefaultIn": [
           "iab",
           "extension",
-          "cdp"
+          "cdp",
+          "mcpapps"
         ]
       },
       "exportGsuite": {
@@ -731,6 +839,9 @@ Exact file contents.
             "text": "exportGsuite(type: \"pdf\" | \"md\" | \"xlsx\" | \"csv\" | \"docx\" | \"pptx\"): Promise<string>; // Export a Google Workspace tab using an explicit GSuite export type.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "exportYouTubeTranscript": {
@@ -739,6 +850,9 @@ Exact file contents.
             "text": "exportYouTubeTranscript(): Promise<string>; // Export an HTTPS youtube.com or www.youtube.com /watch transcript to a UTF-8 .txt file.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -751,6 +865,9 @@ Exact file contents.
               "ClickOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "double_click": {
@@ -761,6 +878,9 @@ Exact file contents.
               "DoubleClickOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "downloadMedia": {
@@ -773,7 +893,8 @@ Exact file contents.
           }
         ],
         "unsupportedByDefaultIn": [
-          "iab"
+          "iab",
+          "mcpapps"
         ],
         "documented": false
       },
@@ -785,6 +906,9 @@ Exact file contents.
               "DragOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "keypress": {
@@ -795,6 +919,9 @@ Exact file contents.
               "KeypressOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "move": {
@@ -805,6 +932,9 @@ Exact file contents.
               "MoveOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "scroll": {
@@ -815,6 +945,9 @@ Exact file contents.
               "ScrollOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "type": {
@@ -825,6 +958,9 @@ Exact file contents.
               "TypeOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -837,6 +973,9 @@ Exact file contents.
               "DomClickOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "double_click": {
@@ -847,6 +986,9 @@ Exact file contents.
               "DomClickOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "downloadMedia": {
@@ -859,7 +1001,8 @@ Exact file contents.
           }
         ],
         "unsupportedByDefaultIn": [
-          "iab"
+          "iab",
+          "mcpapps"
         ],
         "documented": false
       },
@@ -869,6 +1012,9 @@ Exact file contents.
             "text": "get_visible_dom(): Promise<unknown>; // Return a filtered DOM with node ids for interactable elements.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "keypress": {
@@ -879,6 +1025,9 @@ Exact file contents.
               "DomKeypressOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "scroll": {
@@ -889,6 +1038,9 @@ Exact file contents.
               "DomScrollOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "type": {
@@ -899,6 +1051,9 @@ Exact file contents.
               "DomTypeOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -921,6 +1076,9 @@ Exact file contents.
             ]
           }
         ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
+        ],
         "documented": false
       },
       "elementScreenshot": {
@@ -931,6 +1089,9 @@ Exact file contents.
               "ElementScreenshotOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ],
         "documented": false
       },
@@ -953,6 +1114,9 @@ Exact file contents.
               "LoadState"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "frameLocator": {
@@ -1045,6 +1209,9 @@ Exact file contents.
               "PlaywrightFileChooser"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "waitForLoadState": {
@@ -1055,6 +1222,9 @@ Exact file contents.
               "PageWaitForLoadStateOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "waitForTimeout": {
@@ -1063,6 +1233,9 @@ Exact file contents.
             "text": "waitForTimeout(timeoutMs: number): Promise<void>; // Wait for a fixed duration.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "waitForURL": {
@@ -1073,6 +1246,9 @@ Exact file contents.
               "PageWaitForURLOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1217,6 +1393,9 @@ Exact file contents.
               "LocatorClickOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "downloadMedia": {
@@ -1227,6 +1406,9 @@ Exact file contents.
               "LocatorDownloadMediaOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "evaluate": {
@@ -1413,6 +1595,9 @@ Exact file contents.
             "text": "press(value: string, options: { timeoutMs?: number }): Promise<void>; // Press a keyboard key while this locator is focused.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "pressSequentially": {
@@ -1423,6 +1608,9 @@ Exact file contents.
               "LocatorPressSequentiallyOptions"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "selectOption": {
@@ -1489,6 +1677,9 @@ Exact file contents.
             "text": "path(options: { timeoutMs?: number }): Promise<null | string>; // Return the local path to the downloaded file, if available.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1499,6 +1690,9 @@ Exact file contents.
             "text": "isMultiple(): boolean; // Whether the input allows selecting multiple files.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "setFiles": {
@@ -1509,6 +1703,9 @@ Exact file contents.
               "FileChooserFiles"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1521,6 +1718,9 @@ Exact file contents.
               "TabClipboardItem"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "readText": {
@@ -1529,6 +1729,9 @@ Exact file contents.
             "text": "readText(): Promise<string>; // Read plain text from the browser clipboard.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "write": {
@@ -1539,6 +1742,9 @@ Exact file contents.
               "TabClipboardItem"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "writeText": {
@@ -1547,6 +1753,9 @@ Exact file contents.
             "text": "writeText(text: string): Promise<void>; // Write plain text to the browser clipboard.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1560,6 +1769,9 @@ Exact file contents.
               "TabDevLogEntry"
             ]
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1570,6 +1782,9 @@ Exact file contents.
             "text": "type: \"alert\";",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "dismiss": {
@@ -1578,6 +1793,9 @@ Exact file contents.
             "text": "dismiss(): Promise<void>;",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1588,6 +1806,9 @@ Exact file contents.
             "text": "type: \"beforeunload\";",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "dismiss": {
@@ -1596,6 +1817,9 @@ Exact file contents.
             "text": "dismiss(): Promise<void>;",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1606,6 +1830,9 @@ Exact file contents.
             "text": "type: \"confirm\";",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "accept": {
@@ -1614,6 +1841,9 @@ Exact file contents.
             "text": "accept(): Promise<void>;",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "dismiss": {
@@ -1622,6 +1852,9 @@ Exact file contents.
             "text": "dismiss(): Promise<void>;",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1632,6 +1865,9 @@ Exact file contents.
             "text": "get(name: string): Promise<string>; // Read packaged documentation by its extensionless relative path.",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     },
@@ -1642,6 +1878,9 @@ Exact file contents.
             "text": "type: \"prompt\";",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "accept": {
@@ -1650,6 +1889,9 @@ Exact file contents.
             "text": "accept(text: string): Promise<void>;",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       },
       "dismiss": {
@@ -1658,6 +1900,9 @@ Exact file contents.
             "text": "dismiss(): Promise<void>;",
             "references": []
           }
+        ],
+        "unsupportedByDefaultIn": [
+          "mcpapps"
         ]
       }
     }
@@ -2256,13 +2501,13 @@ interface BotDetectionTabCapability {
 
 ### docs/capabilities/tab/browserAuth.md
 
-Source: `plugins/openai-bundled/plugins/browser/docs/capabilities/tab/browserAuth.md` (also at `plugins/openai-bundled/plugins/chrome/docs/capabilities/tab/browserAuth.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/capabilities/tab/browserAuth.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/capabilities/tab/browserAuth.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/training/capabilities/tab/browserAuth.md`, `cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/references/capabilities/tab/browserAuth.md`), SHA-256 `c72a4e0fbee48c6219b93391b6bb0a375f22b4197d3f0a4a196f8efe648ad1ca`.
+Source: `plugins/openai-bundled/plugins/browser/docs/capabilities/tab/browserAuth.md` (also at `plugins/openai-bundled/plugins/chrome/docs/capabilities/tab/browserAuth.md`), SHA-256 `00348eb0a343b0fee89f767681f8c0fe823c248b4614cdf99259e09ec2721624`.
 
 Exact file contents.
 
 ````text
 # Tab Capability: browserAuth
-Collects user-provided credentials for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
+Collects credentials for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
 
 ## Secure Browser Authentication
 Read this guidance before beginning sign-in. `browserAuth.request(...)` is the
@@ -2271,13 +2516,15 @@ provide credentials. It can offer the available sign-in methods and collect
 user-provided credentials directly in a secure ChatGPT form. Browser-client
 validates, fills, and submits those values without returning them to you.
 
+This guidance covers sign-in credentials only. Payment credentials do not apply.
+
 ### Non-Negotiable Rules
 - Do not use `browserAuth` to create accounts. If the flow requires new account
   creation, offer manual handoff so the user can complete signup.
 - Never ask the user to paste passwords, one-time codes, auth codes, security
   answers, or other secret sign-in values into chat.
-- Never enter, read, inspect, log, print, or reconstruct credential values with
-  Playwright, vision, tool output, or any other model-visible surface.
+- Never enter, read, inspect, log, print, or reconstruct sign-in credential values
+  with Playwright, vision, tool output, or any other model-visible surface.
 - Never emit a legacy `<browser_auth_request>` block or use a legacy form-fill
   path.
 - CAPTCHAs are outside `browserAuth`. Never use this capability for one; follow
@@ -2615,7 +2862,7 @@ type BrowserAuthOption = z.infer<typeof BrowserAuthOptionSchema>;
 type BrowserAuthSubmit = z.infer<typeof BrowserAuthSubmitSchema>;
 
 interface BrowserAuthTabCapability {
-  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "submitted" | "declined" | "cancelled" | "unavailable" | "expired" | "origin_changed" | "page_changed" | "locator_invalid" | "submission_failed" }>; // Request user-provided credentials for a validated login form. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
+  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "declined" | "cancelled" | "expired"; submission_diagnostics?: { attempt_events?: Array<{ field_index?: number; kind: "prompt_completed" | "field_fill_started" | "field_fill_completed" | "field_fill_uncertain" | "url_changed" | "document_changed" | "frame_changed" | "reinspection_started" | "reinspection_succeeded" | "reinspection_failed" | "site_request" | "site_navigation" | "site_submission_verified" | "submit_started" | "attempt_completed"; method?: "other" | "get" | "post"; origin_relation?: "other" | "same" | "cross"; outcome?: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "prompt_changed"; phase: "prompt" | "settled" | "filling" | "before_submit" | "submitting"; reinspection?: number; request_class?: "main_document" | "background"; sequence: number }>; dropped_attempt_events?: number; first_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" }; request_id: string; schema_version: 1; submission_mode: "ordinary" | "private"; terminal_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" } } }>; // Request credentials for a validated login form. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
 }
 ```
 ````
@@ -2659,7 +2906,7 @@ interface CdpTabCapability {
 
 ### docs/capabilities/tab/pageAssets.md
 
-Source: `plugins/openai-bundled/plugins/browser/docs/capabilities/tab/pageAssets.md` (also at `plugins/openai-bundled/plugins/chrome/docs/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/training/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/references/capabilities/tab/pageAssets.md`), SHA-256 `aab1c766aa79202adcb79bb5539820b13f2f5ef5487a304fcf11ad74bbed06bc`.
+Source: `plugins/openai-bundled/plugins/browser/docs/capabilities/tab/pageAssets.md` (also at `plugins/openai-bundled/plugins/chrome/docs/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/training/capabilities/tab/pageAssets.md`, `cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/references/capabilities/tab/pageAssets.md`), SHA-256 `ad83feacb9f30e12d779ff45b235026379290226878b99a01222e0d2d98bdde4`.
 
 Exact file contents.
 
@@ -2672,7 +2919,7 @@ const capability = await tab.capabilities.get("pageAssets");
 
 interface PageAssetsTabCapability {
   bundle(options: { assetIds?: Array<string>; inventoryId: string; kinds?: Array<"font" | "image" | "stylesheet" | "video"> }): Promise<{ assets: Array<{ contentType: null | string; id: string; kind: "font" | "image" | "stylesheet" | "video"; name: string; path: string; url: string }>; directoryPath: string; failures: Array<{ contentType: null | string; id: string; name: string; reason: string; url: string }>; manifestPath: string; summary: { downloadedCount: number; elapsedMs: number; failedCount: number; requestedCount: number } }>; // Export file assets from a prior inventory into a local artifact directory.
-  list(): Promise<{ assets: Array<{ id: string; kind: "script" | "font" | "image" | "stylesheet" | "video" | "other"; name: string; sources: Array<{ kind: "attribute" | "computedStyle" | "resource"; nodeId?: number; property?: string }>; url: string }>; id: string; inlineSvgs: Array<{ id: string; markup: string; name: string }>; pageUrl: null | string; summary: { byKind: Partial<Record<"script" | "font" | "image" | "stylesheet" | "video" | "other", number>>; inlineSvgCount: number; totalCount: number } }>; // Inventory file assets and inline SVGs observed in the current page state.
+  list(): Promise<{ assets: Array<{ id: string; kind: "script" | "other" | "font" | "image" | "stylesheet" | "video"; name: string; sources: Array<{ kind: "attribute" | "computedStyle" | "resource"; nodeId?: number; property?: string }>; url: string }>; id: string; inlineSvgs: Array<{ id: string; markup: string; name: string }>; pageUrl: null | string; summary: { byKind: Partial<Record<"script" | "other" | "font" | "image" | "stylesheet" | "video", number>>; inlineSvgCount: number; totalCount: number } }>; // Inventory file assets and inline SVGs observed in the current page state.
 }
 ```
 ````
@@ -2942,9 +3189,35 @@ Exact file contents.
 When testing a user's local app on `localhost`, `127.0.0.1`, `::1`, or another local development URL, reload the page after code or build changes if the framework does not support hot reloading or hot reloading is disabled. Call `tab.reload()`, then take a fresh DOM snapshot or screenshot before continuing verification.
 ```
 
+### docs/mcp-apps.md
+
+Source: `plugins/openai-bundled/plugins/browser/docs/mcp-apps.md` (also at `plugins/openai-bundled/plugins/chrome/docs/mcp-apps.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/mcp-apps.md`), SHA-256 `b7d4fd0fb0a93f95bf9323fdfabf98bd76a68815d850b978391a9c282c057ae5`.
+
+Exact file contents.
+
+```text
+# MCP Apps
+The `mcpapps` backend controls existing MCP Apps opened in a side-panel tab in the current task.
+Apps shown only inline in the conversation do not appear in its tab list. If needed, ask the user to expand the app.
+
+Use `browser.tabs.list()` to find the app, then `browser.tabs.get(id)` to select it.
+This backend cannot create or navigate tabs. Closing the app invalidates its tab handle.
+If a handle becomes unavailable, list the tabs again before selecting the app.
+
+Use the documented Playwright locators to inspect the app, click controls, and fill fields.
+Clicks use synthetic events. Native pointer and keyboard operations are unavailable.
+Locator actions use the shared browser action checks and wait for elements to become ready.
+Locator timeouts are supported. Forced clicks, modifiers, and non-left clicks are unsupported.
+
+Use `tab.playwright.frameLocator()` to locate controls inside an embedded website.
+Chain `frameLocator()` calls for nested frames. Website access may require approval before entering each frame.
+Navigation or replacement of an approved document invalidates access to it.
+Screenshots of apps containing embedded frames and clicks inside transformed frames are unsupported.
+```
+
 ### docs/screenshots.md
 
-Source: `plugins/openai-bundled/plugins/browser/docs/screenshots.md` (also at `plugins/openai-bundled/plugins/chrome/docs/screenshots.md`), SHA-256 `e157ebeed24968438fa8ae6150e2c5c82b11e51bac6a3cfb214220dba4929bb7`.
+Source: `plugins/openai-bundled/plugins/browser/docs/screenshots.md` (also at `plugins/openai-bundled/plugins/chrome/docs/screenshots.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/screenshots.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/screenshots.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/screenshots.md`), SHA-256 `e157ebeed24968438fa8ae6150e2c5c82b11e51bac6a3cfb214220dba4929bb7`.
 
 Exact file contents.
 
@@ -3247,7 +3520,7 @@ interface:
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json` (file SHA-256 `053108129d29ecf9aa0b31cfc852f198a8279d0d826f434f29478248d6faa925`), `description` value SHA-256 `0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7`.
+Source: `plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json` (file SHA-256 `e570139ae2f07f4b2ca89f56dbe488b528a310f423619f749c269b3635425ea6`), `description` value SHA-256 `0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3414,6 +3687,65 @@ Only the Node REPL `js` tool (`mcp__node_repl__js`) can be used to control the s
 <!-- BROWSER_SKILL_EOF: This is the complete Browser skill. Do not request additional lines. -->
 ````
 
+## Plugin: code-review
+
+### .codex-plugin/plugin.json description
+
+Source: `plugins/openai-bundled/plugins/code-review/.codex-plugin/plugin.json` (file SHA-256 `baf4c75af53b14820185d3feab0a9eea5fb911417adf8ce02147b7fb99e7dd13`), `description` value SHA-256 `690549bb4ed4a33bf50b754c18bf933c31d99f402d2ea9bcb66f66342e9ee6a8`.
+
+Exact: the decoded JSON `description` value.
+
+```text
+Review and manage GitHub pull requests from Codex.
+```
+
+### .mcp.json
+
+Source: `plugins/openai-bundled/plugins/code-review/.mcp.json`, SHA-256 `909be54304850b27dedf840adf3ee670ea3dacad6516cb4398705c9d5075ad8e`.
+
+Exact file contents.
+
+```text
+{
+  "mcpServers": {
+    "code-review": {
+      "command": "/bin/sh",
+      "enabled": false,
+      "args": [
+        "-c",
+        "exec \"$CODEX_MCP_NODE_PATH\" ./server.mjs \"$@\"",
+        "--"
+      ],
+      "cwd": ".",
+      "env_vars": [
+        "PATH",
+        "GH_CONFIG_DIR",
+        "GH_ENTERPRISE_TOKEN",
+        "GH_HOST",
+        "GH_TOKEN",
+        "GITHUB_TOKEN",
+        "CODEX_API_KEY",
+        "CODEX_API_BASE_URL",
+        "CODEX_API_ENDPOINT",
+        "CODEX_HOME",
+        "CODEX_CLI_PATH",
+        "CODEX_MCP_NODE_PATH",
+        "CODEX_MANAGED_PACKAGE_ROOT",
+        "GITHUB_PROVIDER_URL",
+        "GITHUB_READ_INDEX",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "SSL_CERT_FILE",
+        "NODE_EXTRA_CA_CERTS"
+      ],
+      "tool_timeout_sec": 120
+    }
+  }
+}
+```
+
 ## Plugin: codex-app-tools
 
 ### .codex-plugin/plugin.json description
@@ -3486,7 +3818,7 @@ Exact file contents.
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/computer-history/.codex-plugin/plugin.json` (file SHA-256 `c35a149c6a9efa66198c89c05615b12c4aa1a25cb3377b952d1e042d95e4f81f`), `description` value SHA-256 `a94cf012f3cfba666fe59f9cb45b314938e035222ca1dbd27928d5c551924d04`.
+Source: `plugins/openai-bundled/plugins/computer-history/.codex-plugin/plugin.json` (file SHA-256 `d98696b31ede737c776fcaa3aa226852687c68e894fc17d5815115e72ec67513`), `description` value SHA-256 `a94cf012f3cfba666fe59f9cb45b314938e035222ca1dbd27928d5c551924d04`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3585,7 +3917,7 @@ Computer History has two primary outputs: rolling event stream segments and memo
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/computer-use/.codex-plugin/plugin.json` (file SHA-256 `4aa8278b895797a6cddfef60354a8e8caa88098a6d80c52be60d999640f92b06`), `description` value SHA-256 `f03335b75ba7ad80f3fd0939f44cccf804196c9438e7403c43bc397bd2a27eeb`.
+Source: `plugins/openai-bundled/plugins/computer-use/.codex-plugin/plugin.json` (file SHA-256 `d8611146dfe50737a239387b400372319ae8ae4296c41902aaeea9d0a316a5f7`), `description` value SHA-256 `f03335b75ba7ad80f3fd0939f44cccf804196c9438e7403c43bc397bd2a27eeb`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4235,7 +4567,7 @@ Running `--install-managed-full` downloads and runs the upstream TeX Live instal
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/messages/.codex-plugin/plugin.json` (file SHA-256 `6d0f48f0d084625609856204963150c24e77910cf0a62367e8730c6ba3668cef`), `description` value SHA-256 `4e13c254b01f98db065ccd5b6088e7c1d0e0c9b182e292abfe6ba92caaad3573`.
+Source: `plugins/openai-bundled/plugins/messages/.codex-plugin/plugin.json` (file SHA-256 `d936a59ca58dfba397723e125200e7325ac22f7a526e60b660e1a710466c3864`), `description` value SHA-256 `4e13c254b01f98db065ccd5b6088e7c1d0e0c9b182e292abfe6ba92caaad3573`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4266,7 +4598,7 @@ Exact file contents.
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/record-and-replay/.codex-plugin/plugin.json` (file SHA-256 `e6cd18f77dfd6fc1b82d428325990f61b00fb71d2ad58abf7cd2a26a1dec8f0b`), `description` value SHA-256 `01aa1e50368759bf3bad6f628fd5e58d6a51c11ba186af2489d59169e4064310`.
+Source: `plugins/openai-bundled/plugins/record-and-replay/.codex-plugin/plugin.json` (file SHA-256 `87d5e26a488c898ac820306a5a073dd8f4652d060773beacb8bf0cd508ad5fa9`), `description` value SHA-256 `01aa1e50368759bf3bad6f628fd5e58d6a51c11ba186af2489d59169e4064310`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4349,7 +4681,7 @@ After creating or refining the skill, give the user a concise plain-language sum
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json`, `cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json` (file SHA-256 `b881d69ac5c34911b3fb7f9016ffe26ad7d9c91afdc159071837e8d86cb333a1`), `description` value SHA-256 `d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea`.
+Source: `plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json`, `cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json` (file SHA-256 `d9d317e08afdf80f8e4eab27f08d5a856debdea9ddc3e5da25ff86a8853ffc94`), `description` value SHA-256 `d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4387,7 +4719,7 @@ Exact file contents.
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/visualize/.codex-plugin/plugin.json` (file SHA-256 `5665ef5d23712a18ff88725a5771f8e2f16646597cf609b2221e498b0d125b18`), `description` value SHA-256 `4403d6d96913a2d3a6d8d87dd749d4536a423862838154a3802ab8cfee9739b9`.
+Source: `plugins/openai-bundled/plugins/visualize/.codex-plugin/plugin.json` (file SHA-256 `c136a08743a0c61282a44fc375d05296284db47563b64b2434cb9519b31577b8`), `description` value SHA-256 `4403d6d96913a2d3a6d8d87dd749d4536a423862838154a3802ab8cfee9739b9`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4397,7 +4729,7 @@ Create interactive charts, maps, diagrams, simulations, 3D models, data explorer
 
 ### skills/visualize/SKILL.md
 
-Source: `plugins/openai-bundled/plugins/visualize/skills/visualize/SKILL.md`, SHA-256 `41bc284a821fd5338087d12cf4941f547b87095bb65bfcf9d16ab9966849969d`.
+Source: `plugins/openai-bundled/plugins/visualize/skills/visualize/SKILL.md`, SHA-256 `9bd8ba716832380c4967e9857b9c84f32010e72b0a5c8876daec6596d377e910`.
 
 Exact file contents.
 
@@ -4513,7 +4845,7 @@ Choose the smallest composition that fits.
 
 ### UI mockups
 
-- For alternative designs of the same component or screen, read [Variant carousel](tweak.md#variant-carousel), even when design controls are not requested.
+- For alternative designs of the same component or screen, read [Variant carousel](tweak.md#variant-carousel), even when design controls are not requested. Use descriptive variant names without numeric or ordinal prefixes (for example, `Compact`, never `01 · Compact`); the carousel already displays the count.
 - Include a few thoughtfully chosen design alternatives whenever they would help the user explore a mockup, without waiting for the user to ask. Read [tweak.md](tweak.md) and bind useful options with the host-provided `Tweak` helper. Keep ordinary mockup interactions local; do not add design controls to charts, explainers, or simulations unless requested. Do not render a second controls panel or open annotation mode automatically.
 - "In the widget" means the in-conversation visualization, not a widget inside the depicted product.
 - Use product and platform context already available in the conversation; don't search the project to render a mockup. Match the product's chrome, navigation, typography, colors, and content. If its design is unavailable, infer one from the platform and request.
@@ -4689,7 +5021,7 @@ interface:
 
 ### skills/visualize/tweak.md
 
-Source: `plugins/openai-bundled/plugins/visualize/skills/visualize/tweak.md`, SHA-256 `0ee56ea7ee3fe66b62fc1da67a3e1f83ef580ef822636cb7bc4a985dab06ec2d`.
+Source: `plugins/openai-bundled/plugins/visualize/skills/visualize/tweak.md`, SHA-256 `7d914a63d761f0f7663cc74d2b91e53fcdce57c5f5a840b87e2f162917f22237`.
 
 Exact file contents.
 
@@ -4702,7 +5034,7 @@ Exact file contents.
 - Use one `.viz-carousel` root with an `aria-label` and one direct child per design, each labeled with a unique, short `data-variant` name. Start with only the first design visible and mark the others `hidden`.
 - The runtime supplies previous/next buttons, a count, and a named picker at the bottom center. It switches designs without replacing their DOM, so local interactions and state survive. Do not generate carousel JavaScript, navigation markup, or CSS.
 - Keep the carousel outside product-scoped mockup styles. The carousel is an exception to the mockup utility rule; use product-specific styles inside each variant. The carousel reserves bottom space for its controls. Give every variant the same responsive stage height, sized for the tallest design, so navigation stays in place when switching. At narrow widths, increase the shared stage height or reflow the product content so nothing clips.
-- Use stable, descriptive names that can be referenced in feedback. Do not submit feedback on navigation or start animation or audio when a variant becomes visible.
+- Use stable, descriptive names without numeric or ordinal prefixes (for example, `Compact`, never `01 · Compact`); the runtime already displays the count. Names should be easy to reference in feedback. Do not submit feedback on navigation or start animation or audio when a variant becomes visible.
 - For another language, set `data-previous-label` and `data-next-label` on the root. The count and names update automatically. Navigation stays local; it does not persist a selection or submit it to the model.
 
 ```html
@@ -4746,7 +5078,7 @@ if (globalThis.Tweak) {
 
 Give each component a descriptive `aria-label` for its group heading. Use a separate `Tweak` instance for each independently editable element; the host combines the groups in one panel. Keep the registered element alive and update its styles or descendants in `onChange` rather than replacing it.
 
-For a variant carousel, bind `Tweak` to the independently editable components inside each variant, with matching descriptive `aria-label` values. Do not also add a Tweak select for the active variant.
+For a variant carousel, bind `Tweak` to the independently editable components inside each variant, with matching descriptive `aria-label` values. The host shows controls for the visible variant and keeps edits when switching designs. Controls bound outside variants stay visible; use them for shared settings and apply those changes to every affected design. Do not also add a Tweak select for the active variant.
 
 - `addSlider(object, property, { min, max, step = 1, unit?, label?, reference? })` binds a number. `unit` is display context in the label, not part of the numeric value.
 - `addColorPicker(object, property, { label?, reference? })` binds a hex color string.
@@ -7047,7 +7379,7 @@ try {
 
 ### docs/skills/oai_sky_lib/macos/SKILL.md
 
-Source: `cua_node/lib/node_modules/@oai/sky/docs/skills/oai_sky_lib/macos/SKILL.md`, SHA-256 `368ca736ced2658e735da1dd955f99504a7ec617c9abac986c42da0d3b57f3d6`.
+Source: `cua_node/lib/node_modules/@oai/sky/docs/skills/oai_sky_lib/macos/SKILL.md`, SHA-256 `3d755c8541af4c6b07995a9e82e29a17cd11ff5189517fbc3e4b78532e032410`.
 
 Exact file contents.
 
@@ -7181,11 +7513,23 @@ if (state.screenshot) {
   });
 }
 ```
+
+## Paste
+
+Prefer `sky.paste({ app, text, format })` for formatted or multiline content.
+`format` must be `"text"`, `"md"`, or `"html"`. Paste uses the system
+pasteboard and restores the previous clipboard contents.
+
+For polished documents and slides, focus the intended document position,
+placeholder, or text box, compose rich content as HTML, and paste one logical
+section or slide-sized block at a time with `format: "html"`. Do not type HTML
+markup as plain text. Refresh app state and visually verify the result after
+each paste because HTML import support varies by app.
 ````
 
 ### docs/skills/oai_sky_lib/windows/SKILL.md
 
-Source: `cua_node/lib/node_modules/@oai/sky/docs/skills/oai_sky_lib/windows/SKILL.md`, SHA-256 `2283bfedb26c15548689360538a1baa0e839bc3fe7c83ec58d8fb82cecfb841b`.
+Source: `cua_node/lib/node_modules/@oai/sky/docs/skills/oai_sky_lib/windows/SKILL.md`, SHA-256 `a1e99df21d9b1eb5f273e0d46d7609f054b9af533b8bb5bfd89b54d44a216fb4`.
 
 Exact file contents.
 
@@ -7421,6 +7765,22 @@ type Screenshot = {
 
 type MouseButton = "left" | "right" | "middle" | "l" | "r" | "m";
 ```
+
+## Paste
+
+Use `sky.paste({ window, text, format })` for formatted or multiline content.
+`format` must be `"text"`, `"md"`, or
+`"html"`; compose rich document and slide content as HTML instead of typing
+HTML markup as plain text. Focus the intended editor first, paste one logical
+block at a time, then refresh state and visually verify the result.
+
+## App state timing
+
+It's usually not necessary to pause/delay in between performing an action and
+getting the updated app state. The runtime will automatically wait an appropriate
+amount of time before capturing the new state if an action was recently performed.
+(It waits about 1 second, with additional delays of up to 5 seconds if the app has a
+loading indicator or other signs of state changes.)
 ````
 
 ### docs/sky-full-desktop-api.md
@@ -8042,7 +8402,7 @@ Always prefer this tool over the `control-browser` skill unless the user explici
 
 ### instructions/linux/browser.md
 
-Source: `cua_node/lib/node_modules/@oai/cua-repl/instructions/linux/browser.md` (also at `cua_node/lib/node_modules/@oai/cua-repl/instructions/macos/browser.md`, `cua_node/lib/node_modules/@oai/cua-repl/instructions/windows/browser.md`), SHA-256 `59f010a2de5d86073278688faf3f5f18a6ed14f818671f6b4ed4aa4d64c98ccb`.
+Source: `cua_node/lib/node_modules/@oai/cua-repl/instructions/linux/browser.md` (also at `cua_node/lib/node_modules/@oai/cua-repl/instructions/macos/browser.md`, `cua_node/lib/node_modules/@oai/cua-repl/instructions/windows/browser.md`), SHA-256 `063027bad00dd242148c8f798a55f420ce5c893547b4d5b352747c8d04e79ed5`.
 
 Exact file contents.
 
@@ -8088,6 +8448,7 @@ let browser = await cua.getBrowser({ url });
 
 Browser IDs and options:
 
+- `"mcpapps"`: use `cua.getBrowser({ id: "mcpapps" })` for existing full-screen MCP Apps in the task’s side panel.
 - `"iab"` (in-app browser): in `createBrowserTab`, use `visible: true` to show the browser; `false` to keep it hidden.
 - `"chrome"` (@Chrome), `"edge"` (@Edge): pass a short, emoji-prefixed `sessionName` (e.g. `"🔎 Task"`) to `createBrowserTab` when starting a task.
 ````
@@ -8160,20 +8521,370 @@ UI automation through cua_repl using the initialized cua API.
 
 ## Browser environment docs: codex-app
 
-### screenshots.md
+### capabilities/tab/browserAuth.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/screenshots.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/screenshots.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/screenshots.md`), SHA-256 `94cb633f79c309fdd84f14dac790d4ffa1b4bf20a2b6643e4e6111ba1c676cc4`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/codex-app/capabilities/tab/browserAuth.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/capabilities/tab/browserAuth.md`, `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/training/capabilities/tab/browserAuth.md`, `cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/references/capabilities/tab/browserAuth.md`), SHA-256 `2975ba31229a42d6165f6283f169552cca460c51196939829998add49714263d`.
 
 Exact file contents.
 
 ````text
-# Screenshots
-* If you take a screenshot that the user should see, include the image inline in your Markdown response using Markdown image syntax so the image renders, rather than as a bare link:
-  ```md
-  ![screenshot](IMAGE_LINK)
-  ```
-* IMPORTANT: If the user has asked you to take screenshots, you MUST include them as part of your final markdown response.
-* If the user has asked you to test a website as part of development, you should take screenshots at key moments and include them in your final response.
+# Tab Capability: browserAuth
+Collects credentials or an Orbit email OTP for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
+
+## Secure Browser Authentication
+Read this guidance before beginning sign-in. `browserAuth.request(...)` is the
+secure sign-in handoff: use it when the user must choose a sign-in method or
+provide credentials. It can offer the available sign-in methods and collect
+user-provided credentials directly in a secure ChatGPT form. Browser-client
+validates, fills, and submits those values without returning them to you.
+
+### Non-Negotiable Rules
+- Do not use `browserAuth` to create accounts. If the flow requires new account
+  creation, offer manual handoff so the user can complete signup.
+- Never ask the user to paste passwords, one-time codes, auth codes, security
+  answers, or other secret sign-in values into chat.
+- Never enter, read, inspect, log, print, or reconstruct credential values with
+  Playwright, vision, tool output, or any other model-visible surface.
+- Never emit a legacy `<browser_auth_request>` block or use a legacy form-fill
+  path.
+- CAPTCHAs are outside `browserAuth`. Never use this capability for one; follow
+  the CAPTCHA guidance in the main Browser skill.
+- Never include secrets, cookies, full URLs, query strings, JavaScript,
+  DOM snippets, or other page content in a browser-auth request. Browser-client
+  supplies the request message; do not provide one. Credential-field and
+  sign-in option labels must describe only controls actually visible on the
+  current page.
+- If `browserAuth` returns `unavailable`, stop automated credential entry. If
+  this browser's guidance permits manual takeover, offer its documented
+  handoff. Otherwise, politely say that this browser cannot help the user log
+  in to the site; do not explain why. For this refusal, do not add login steps
+  unless the user explicitly asks how to sign in themselves. Never tell the
+  user to sign in and come back; signing in in their browser does not sign in
+  this browser. Do not fall back to chat or direct credential entry.
+- If login blocks only part of a broader task, keep and return any useful public
+  work already completed.
+
+### Authentication Lifecycle
+If observation is blocked by native credential protection, this recovery path
+replaces the inspection and fresh-tab steps below. Use the existing tab handle
+to navigate explicitly to the target origin or canonical signed-in URL retained
+before authentication, for example `await tab.goto(targetOrigin)`. Inspect the
+new document only if navigation succeeds and the runtime permits observation.
+An automatic redirect or popup does not permit inspection. Do not create or
+enumerate tabs, reload, or go back to try to clear the protection. If the explicit
+navigation or subsequent observation fails, stop automated credential entry and
+follow the refusal guidance above. Never infer sign-in success from a submitted
+request or infer that no input occurred from a failed or interrupted request.
+
+1. Before the first authentication interaction, retain the target site's origin
+   or a canonical signed-in URL for later verification, for example with
+   `const targetOrigin = new URL(await tab.url()).origin`.
+2. Inspect the visible page. List only methods the
+   page actually offers, such as phone or SMS OTP, email or Gmail OTP, Google
+   sign-in, username and password, passkey, or device approval. If exactly one
+   method is available, tell the user which method the website offers and
+   proceed without asking them to choose. If multiple methods are available,
+   call `browserAuth.request(...)` with a separate, clearly labeled option for
+   each visible method and wait for the user to choose. Include `options` only
+   when the user must choose between two or more visible sign-in methods. Set
+   each option's `label` to just the short visible method, such as "Google",
+   "mobile number", or "email and password". Labels complete the phrase
+   "Continue with {label}," so choose a label that makes sense in that context.
+   Use the same secure request to collect any already-visible credential fields
+   required by the selected method. Never ask for credentials through chat or
+   another tool.
+   Describe a saved-account method with the visible account name, email, or
+   provider when the page identifies it; never describe it only as "Password for
+   saved account." Do not infer account details that are not visible or rank or
+   choose a method for the user.
+3. Follow the selected method through the visible page. Use
+   `browserAuth.request(...)` for sign-in method choices and whenever the
+   chosen method requires user-provided credentials.
+   If the website displays a QR code for approval on another device, call
+   `browserAuth.request({ origin: new URL(await tab.url()).origin, fields: [], qr_code: true })`.
+   Browser-client securely captures and decodes the visible QR code. Never
+   inspect, print, copy, or reconstruct its destination URL yourself. The only
+   exception is a trusted native-mobile handoff error that explicitly provides
+   a validated HTTPS sign-in URL: show the user that exact supplied URL, ask
+   them to open it and report back when finished, and wait for their reply.
+   Never expose another QR payload or derive a URL the error did not supply.
+   If two-step verification or device approval displays a number-matching
+   challenge, tell the user the exact non-secret number or matching detail to
+   select on their device, for example, "Tap 37 on your phone."
+   If the matching detail is an emoji, icon, or image, describe that exact
+   visual cue, for example, "Tap the 🥶 emoji on your phone." Never invent a
+   number or translate an image into a numeric code. Do not request
+   manual browser takeover when approval on another device is sufficient. After
+   the user confirms, inspect the current page and continue authentication.
+   Repeat the choice step at each new authentication or recovery decision
+   point. If the selected method fails, inspect the website-surfaced error
+   before requesting credentials again. For an incorrect username, password,
+   or verification code, report the error and, if this browser's guidance
+   permits manual takeover, offer its documented handoff. Otherwise, let the
+   user choose whether to retry or use a visible alternative. Never switch
+   methods without the user's choice. If the site explicitly blocks sign-in or
+   reports a generic failure such as "An error occurred" or "Something went
+   wrong," stop after the first occurrence and explain that the website might
+   be blocking sign-in. When using Cloud Browser, share the Help Center article
+   in its guidance.
+4. After every authentication transition, call
+   `nodeRepl.write(await tab.dom_cua.get_visible_dom())` to inspect the rendered
+   interactive structure across nested and cross-origin frames. Check for a
+   CAPTCHA, error, next authentication step, or success. If the inspection
+   appears incomplete, use a frame-aware inspection and interaction path; do not
+   continue, assume success, or dismiss an overlay.
+5. When authentication appears complete, verify the target site with fresh
+   visible evidence. Treat a closed auth popup, blank page, spinner, missing tab,
+   stale tab, or timeout as an unknown result, not a failed login and not proof
+   of success.
+6. If the target page fails to load after authentication, immediately create a
+   new agent tab and navigate it to the retained target origin or canonical
+   signed-in URL:
+
+   ```js
+   const verificationTab = await browser.tabs.new();
+   await verificationTab.goto(targetOrigin);
+   nodeRepl.write(await verificationTab.dom_cua.get_visible_dom());
+   ```
+
+   Inspect that fresh page. Authentication may already have succeeded and its
+   cookies may be available even when the original tab or popup is stuck. Make
+   this fresh-tab check the first recovery action; do not poll the stale tab,
+   enumerate tabs, or reconnect first.
+7. Report success only when the fresh target-domain page shows a positive
+   signed-in signal. If the fresh page shows a login or verification screen,
+   continue the authentication workflow from that page. If browser access still
+   fails, report the state as unknown; never ask the user to check or operate
+   this browser.
+
+### Prepare A Credential Request
+1. Inspect the live sign-in form with the cheapest targeted browser-side check
+   that identifies the currently visible credential fields and submit behavior,
+   such as visible-DOM inspection or narrowly scoped locator checks. Inspect
+   what has already rendered; do not wait for page-load completion or repeatedly
+   request full DOM snapshots.
+2. Include only credential inputs that are visible and enabled on the current
+   page. A visible OTP widget may instead have a focused, zero-size input with
+   `autocomplete="one-time-code"`; target that backing input, not its decorative
+   digit boxes. Browser-client validates this narrow exception.
+   Issue exactly one request at a time for the current sign-in page. For
+   multi-step sign-in, inspect the new page and make a separate request after
+   each navigation.
+3. Start with `tab.playwright.domSnapshot()` to identify iframe hierarchy and
+   owner attributes. `tab.dom_cua.get_visible_dom()` omits frame ownership.
+   If a field, option, or submit is inside an iframe, use its `frameLocator(...)`;
+   use `frameLocator("iframe")` only when it resolves uniquely. Choose stable
+   selectors that each resolve to exactly one field. Prefer semantic attributes
+   such as `name`, `type`, and `autocomplete`. Avoid random-looking generated
+   IDs when a stable semantic selector is available. Do not infer attributes
+   that were not inspected.
+4. Set each field's `type` to its actual non-empty HTML input type. For
+   example, a phone input may be `tel`, and a one-time code input is commonly
+   `text` with `autocomplete: "one-time-code"`.
+   When a one-time code is split across multiple visible inputs, include each
+   input as a separate field with a unique `id` and selector.
+   Pass the inspected `autocomplete` value when the page exposes one.
+   Set `label` to a short noun phrase describing only what the user should
+   enter. Prefer concise wording visible on the page; otherwise use a natural
+   label such as `Username`, `Password`, `Email`, `Phone number`,
+   `Verification code`, `Email or username`, `Email or phone number`, or
+   `Username or phone number`. Do not include instructions, explanations,
+   required markers, account-specific values, or complete sentences.
+5. Use only the current canonical origin, with scheme, host, and port but no
+   path, query, or fragment.
+6. Omit `submit` when filling the credential fields causes the form to
+   auto-submit. Otherwise, use `click` only for a stable selector that resolves
+   to exactly one visible enabled submit control distinct from the credential
+   fields. If Enter on the final credential field submits the form, including
+   when the submit button is disabled until input is present, use `press_enter`
+   with that exact field selector instead of a broad or generic button selector.
+
+If a visible textbox may be inside a component or shadow root, inspect its
+`id`, `name`, and `type` attributes through a browser-side role locator, then
+verify the resulting exact CSS selector with browser-side Playwright locator
+count, visibility, and enabled checks. An accessible name reported by a role
+locator is not proof that an `aria-label` attribute exists. Never infer an
+`aria-label` selector; use one only when the inspected attribute is actually
+present. Do not treat `document.querySelectorAll(...)` returning zero as
+authoritative for a shadow-root textbox.
+
+Use only the existing browser-side surface for sign-in inspection. Do not run
+shell commands, standalone or local Playwright, package installs, browser
+runtime installs, or reconnect attempts to inspect the site. Reuse existing
+browser and tab handles for browser-side checks.
+
+Browser-client is the source of truth for whether the request is safe to show
+to the user. After a targeted inspection, call `browserAuth.request(...)` with
+the best candidate selectors without repeatedly re-verifying them or stopping
+merely because model-side proof is incomplete. If it returns `locator_invalid`,
+re-inspect and correct the request instead of guessing or treating model-side
+checks as authoritative.
+
+If the targeted inspection itself fails, make at most one additional
+browser-side tool call: a lighter targeted check against already rendered
+state. If it still cannot identify candidate selectors for every required
+visible enabled field, stop inspection and, if this browser's guidance permits
+manual takeover, offer its documented handoff; otherwise, report the blockage.
+Do not issue further browser-side navigation, DOM, locator, reconnect, shell,
+or runtime-install calls for that sign-in attempt.
+
+### Request Credentials
+Get the advertised capability and issue a request containing only non-secret
+metadata and selectors:
+
+```js
+const browserAuth = await tab.capabilities.get("browserAuth");
+const browserAuthUrl = await tab.url();
+if (!browserAuthUrl) {
+  throw new Error("Cannot determine the current tab URL for browser auth.");
+}
+
+const usernameField = tab.playwright.locator('input[name="email"]');
+const passwordField = tab.playwright.locator('input[type="password"]');
+const submitButton = tab.playwright.locator('button[type="submit"]');
+
+const browserAuthResult = await browserAuth.request({
+  origin: new URL(browserAuthUrl).origin,
+  fields: [
+    {
+      id: "username",
+      label: "Email",
+      type: "email",
+      autocomplete: "username",
+      required: true,
+      selector: usernameField,
+    },
+    {
+      id: "password",
+      label: "Password",
+      type: "password",
+      autocomplete: "current-password",
+      required: true,
+      selector: passwordField,
+    },
+  ],
+  submit: {
+    selector: submitButton,
+    action: "click",
+  },
+});
+nodeRepl.write(browserAuthResult);
+```
+
+The example selectors are illustrative. Always inspect the current page and use
+selectors that match its actual fields. If these controls are inside an iframe:
+
+```js
+const frame = tab.playwright.frameLocator("iframe#auth");
+const field = frame.locator('input[name="email"]');
+const option = frame.locator('button[data-provider="google"]');
+const submit = frame.locator('button[type="submit"]');
+```
+
+Omit `submit` when the form auto-submits during credential entry.
+
+### Request A Sign-In Method
+When a sign-in page exposes multiple methods and a credential field is already
+visible, offer the methods and securely collect the selected method's credentials
+in one request:
+
+```js
+const browserAuth = await tab.capabilities.get("browserAuth");
+const browserAuthUrl = await tab.url();
+const emailField = tab.playwright.locator('input[name="email"]');
+const googleButton = tab.playwright.locator('button[data-provider="google"]');
+const emailSubmit = tab.playwright.locator('button[type="submit"]');
+
+const browserAuthResult = await browserAuth.request({
+  origin: new URL(browserAuthUrl).origin,
+  fields: [
+    {
+      id: "email",
+      label: "Email",
+      type: "email",
+      autocomplete: "username",
+      required: true,
+      selector: emailField,
+    },
+  ],
+  options: [
+    {
+      id: "google",
+      label: "Google",
+      selector: googleButton,
+    },
+    {
+      id: "email",
+      label: "email",
+      field_ids: ["email"],
+    },
+  ],
+  submit: { selector: emailSubmit, action: "click" },
+});
+nodeRepl.write(browserAuthResult);
+```
+
+If the page exposes two or more sign-in method buttons and no credential
+fields, use `fields: []` and give each option the locator for its visible
+button. Browser-client clicks the selected button and returns its non-secret
+`selected_option` identifier. If the choice reveals a new credential form,
+inspect it and make a separate secure request. Option selectors must resolve to
+exactly one visible, enabled element.
+
+### Handle The Credential Request Result
+- `submitted` means the selected sign-in button was clicked or credential entry
+  completed and any configured submit action ran; it does not prove that
+  sign-in succeeded. When options were offered, `selected_option` identifies
+  the user's non-secret choice. Resume the Authentication Lifecycle at its
+  transition-inspection step.
+- `locator_invalid`, `page_changed`, or `origin_changed` means the saved request
+  is stale or unsafe. If authentication still blocks the task, re-inspect the
+  current page and issue a corrected fresh request.
+- `expired` means the request's authority window elapsed. Re-inspect before
+  issuing a fresh request, using the native credential recovery path above if
+  observation is blocked. Input may already have occurred.
+- `declined` with `reason: "user_took_over"` means the user took manual control
+  of the cloud browser; their actions and final authentication state are
+  unknown. Inspect the final page state with fresh visible DOM, then continue the
+  Authentication Lifecycle from its transition-inspection step. Do not inspect
+  or act on any intermediate state from the manual sign-in.
+- `declined` without that reason or `cancelled` means the user chose not to
+  continue. Respect that choice and do not retry unless the user asks.
+- `unavailable` must never trigger a fallback to chat or direct credential
+  entry. Follow the refusal guidance above.
+- `submission_failed` must never trigger a fallback to chat or direct credential
+  entry. Inspect the current page for a non-secret website error and report it
+  only if the website visibly shows it. Otherwise, follow the refusal guidance
+  above.
+- The result never contains credential values. Never try to print or
+  reconstruct them.
+
+## API Reference
+```ts
+const capability = await tab.capabilities.get("browserAuth");
+
+type BrowserAuthRequestOptions = Omit<BrowserAuthHandoffOptions, "fields" | "options" | "submit"> & { fields: Array<BrowserAuthRequestField>; options?: Array<BrowserAuthRequestOption>; submit?: BrowserAuthRequestSubmit };
+
+type BrowserAuthHandoffOptions = z.infer<typeof BrowserAuthHandoffOptionsSchema>;
+
+type BrowserAuthRequestField = Omit<BrowserAuthField, "selector"> & { selector: BrowserAuthSelector };
+
+type BrowserAuthRequestOption = Omit<BrowserAuthOption, "selector"> & { selector?: BrowserAuthSelector };
+
+type BrowserAuthRequestSubmit = Omit<BrowserAuthSubmit, "selector"> & { selector: BrowserAuthSelector };
+
+type BrowserAuthField = z.infer<typeof BrowserAuthFieldSchema>;
+
+type BrowserAuthSelector = string | PlaywrightLocator;
+
+type BrowserAuthOption = z.infer<typeof BrowserAuthOptionSchema>;
+
+type BrowserAuthSubmit = z.infer<typeof BrowserAuthSubmitSchema>;
+
+interface BrowserAuthTabCapability {
+  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "declined" | "cancelled" | "expired"; submission_diagnostics?: { attempt_events?: Array<{ field_index?: number; kind: "prompt_completed" | "field_fill_started" | "field_fill_completed" | "field_fill_uncertain" | "url_changed" | "document_changed" | "frame_changed" | "reinspection_started" | "reinspection_succeeded" | "reinspection_failed" | "site_request" | "site_navigation" | "site_submission_verified" | "submit_started" | "attempt_completed"; method?: "other" | "get" | "post"; origin_relation?: "other" | "same" | "cross"; outcome?: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "prompt_changed"; phase: "prompt" | "settled" | "filling" | "before_submit" | "submitting"; reinspection?: number; request_class?: "main_document" | "background"; sequence: number }>; dropped_attempt_events?: number; first_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" }; request_id: string; schema_version: 1; submission_mode: "ordinary" | "private"; terminal_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" } } }>; // Request credentials for a validated login form. Orbit's `otpHandle` can supply a short reference from a redacted email for private autofill after one-time user approval. Declining autofill offers manual credential entry. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
+}
+```
 ````
 
 ## Browser environment docs: cloud
@@ -8227,20 +8938,21 @@ Deny deceptive, malicious, or uncertain flows.
 
 ### capabilities/tab/orbitBrowserAuth.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/capabilities/tab/orbitBrowserAuth.md`, SHA-256 `c484914883002d1ffe204e263e311325237ff3bb6a13fc03833108cb8adec4fd`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/capabilities/tab/orbitBrowserAuth.md`, SHA-256 `6adb5a6b838edeb5e1bcac0626ea49ba491a4ca9d979322d87e9b59927ed4a29`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
 ````text
 # Tab Capability: browserAuth
-Collects user-provided credentials for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
+Collects credentials or an Orbit email OTP for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
 
 ## Browser Authentication
-Read this guidance before beginning sign-in. Handle account and method
-choices, identifier-only steps, and one-time codes through chat or ordinary browser
-interactions. `browserAuth.request(...)` is the secure handoff for passwords and
-other reusable secrets. Browser-client validates, fills, and submits those values
-without returning them to you.
+Read this guidance before beginning sign-in. Handle account choices,
+identifier-only steps, and user-provided one-time codes through chat or ordinary
+browser interactions. `browserAuth.request(...)` presents sign-in method choices
+and securely collects passwords, other reusable secrets, and email OTPs.
+Browser-client validates, fills, and submits those values without returning
+them to you.
 
 Before acting on each new sign-in step, inspect a fresh
 `nodeRepl.emitImage(await tab.screenshot())` to confirm which controls are
@@ -8251,6 +8963,14 @@ and Continue are visible, handle that step first; do not request a password.
 Request credentials only for inputs visibly present in the screenshot, even
 if AX or DOM lists other inputs.
 
+### Passkeys
+Passkeys are unavailable for browser tasks run by the user's dot. Do not offer, recommend,
+select, create, register, or attempt to sign in with passkeys, security keys, or
+WebAuthn, even when a website offers them. Use another supported sign-in method,
+such as a password, single sign-on, or an email verification code. If no supported
+alternative exists, explain that passkeys are unavailable instead of starting
+the flow.
+
 ### Non-Negotiable Rules
 - Never ask the user to paste passwords, security answers, recovery codes, or
   other reusable secrets into chat.
@@ -8258,8 +8978,10 @@ if AX or DOM lists other inputs.
   Playwright, vision, tool output, or any other model-visible surface.
 - Use secure credential requests for reusable secrets. Include an unknown
   username, email address, or phone number when the same form also requires a
-  password. Never include one-time codes or sign-in `options`; handle them
-  through chat or ordinary browser interactions instead.
+  password. When requesting reusable secrets and multiple supported sign-in
+  methods are visible, include `options` for those methods unless the user
+  already chose a method. Also use `options` when the method-selection rules
+  below leave a choice for the user.
 - Never emit a legacy `<browser_auth_request>` block or use a legacy form-fill
   path.
 - CAPTCHAs are outside `browserAuth`. Never use this capability for one; follow
@@ -8285,7 +9007,7 @@ if AX or DOM lists other inputs.
    `const targetOrigin = new URL(await tab.url()).origin`.
 2. Inspect the visible page. Use only methods the page actually offers, such as
    phone or SMS OTP, email or Gmail OTP, Google sign-in, username and password,
-   passkey, or device approval. Honor the user's stated identity and method
+   or device approval. Honor the user's stated identity and method
    preference. Reuse relevant memory and available account context for their
    username, email, or phone number; do not ask them to repeat known information.
    Autofill known identifiers through ordinary browser interactions. On an
@@ -8302,22 +9024,27 @@ if AX or DOM lists other inputs.
    choice remains ambiguous.
    Without a stated method preference, choose the offered path that needs the
    least user intervention: prefer Google sign-in with an already signed-in
-   account, then email or phone OTP. Make these selections directly. Ask in chat
-   only when the intended method remains ambiguous; do not use secure elicitation
-   for method choices.
+   account, then email or phone OTP. Make these selections directly. When the
+   intended method remains ambiguous, present the visible methods using the
+   sign-in option request below.
    You may open Google sign-in to check for an already signed-in account; if it
    instead requires a fresh Google login, return to the service's other sign-in
    options rather than defaulting to Google.
 3. Follow the selected method through the visible page. Handle identifiers as
-   described above and enter one-time sign-in codes through ordinary browser
-   interactions. One-time codes must come directly from the user. Ask for the code
-   in chat; never search for or retrieve it from email, messages, or other sources.
-   Use a code only for the current sign-in attempt; do not echo or save it.
+   described above. Retrieve email OTP handles only from the connected mailbox
+   matching the chosen identity and current sign-in attempt. For
+   `[otp-handle:VALUE]`, pass the short reference `VALUE` as `otpHandle` to
+   `browserAuth.request(...)`. It is scoped to this thread; never decode it or
+   type it into the page. Each autofill asks for user approval; declining offers
+   manual entry. Do not retry autofill after a denial. If no handle is available,
+   ask for the code in chat. Enter user-provided codes through ordinary browser
+   interactions. Use a code only for the current attempt; do not echo or save it.
    For Google verification, select an existing phone OTP method first, then
    device approval. Do not ask the user to choose when that selection is clear.
-   Use `browserAuth.request(...)` only when reusable secrets are needed, or for
-   the QR approval flow below. Include an unknown identifier with the password
-   when both are requested on the same form; omit identifiers already filled.
+   Use `browserAuth.request(...)` for method choices, reusable secrets, email
+   OTPs, or the QR approval flow below. Include an unknown identifier with the
+   password when both are requested on the same form; omit identifiers already
+   filled.
    Do not use `browserAuth` to create accounts. If the flow requires new account
    creation, offer manual handoff so the user can complete signup.
    If the website displays a QR code for approval on another device, call
@@ -8384,9 +9111,9 @@ if AX or DOM lists other inputs.
    Inspect what has already rendered; do not wait for page-load completion or
    repeatedly request full DOM snapshots.
 2. Include only inputs that are visible and enabled on the current page: reusable
-   secrets and any unknown identifier requested alongside a password. Omit
-   identifiers already filled. One-time codes belong in ordinary browser
-   interactions, never in this secure request.
+   secrets, email OTPs, and any unknown identifier requested alongside a password.
+   Omit identifiers already filled. An email OTP request contains only the code
+   input (or its digit inputs).
    Issue exactly one request at a time for the current sign-in page. For
    multi-step sign-in, inspect the new page and make a separate request after
    each navigation.
@@ -8499,10 +9226,35 @@ const submit = frame.locator('button[type="submit"]');
 
 Omit `submit` when the form auto-submits during credential entry.
 
+### Request A Sign-In Method
+When a request for reusable secrets is needed and the user has not chosen a
+method, include every supported method visibly offered on the current sign-in
+page in `options`.
+Also use `options` when the method-selection rules leave the choice ambiguous.
+Include `options` only for two or more methods. A visible method button or link
+counts even when its credential fields appear only after clicking it. For example,
+offer visible Google, phone number, and email sign-in link controls alongside a
+username and password form. Do not include hidden or unavailable methods.
+
+For the current credential form, set the option's `field_ids` to the IDs of its
+included fields and omit `selector`. For a visible method button or link, set
+`selector` to its locator and omit `field_ids`. Each locator must resolve to one
+visible, enabled control. Set each `label` to a short method name such as
+"Google", "phone number", "email sign-in link", or "username and password".
+Use `fields: []` when all options are buttons or links.
+
+For an option with `selector`, Browser-client clicks the selected control and
+returns its non-secret `selected_option` identifier. If that click reveals new
+credential fields, inspect the new page and make a separate request for those
+visible fields.
+Do not combine `otpHandle` with `options`; make the email OTP request separately
+after the method is chosen.
+
 ### Handle The Credential Request Result
-- `submitted` means credential entry completed and any configured submit action
-  ran; it does not prove that sign-in succeeded. Resume the Authentication
-  Lifecycle at its transition-inspection step.
+- `submitted` means the selected sign-in control was clicked or credential entry
+  completed and any configured submit action ran; it does not prove that sign-in
+  succeeded. When options were offered, `selected_option` identifies the user's
+  choice. Resume the Authentication Lifecycle at its transition-inspection step.
 - `locator_invalid`, `page_changed`, or `origin_changed` means the saved request
   is stale or unsafe. If authentication still blocks the task, re-inspect the
   current page and issue a corrected fresh request.
@@ -8547,14 +9299,14 @@ type BrowserAuthOption = z.infer<typeof BrowserAuthOptionSchema>;
 type BrowserAuthSubmit = z.infer<typeof BrowserAuthSubmitSchema>;
 
 interface BrowserAuthTabCapability {
-  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "submitted" | "declined" | "cancelled" | "unavailable" | "expired" | "origin_changed" | "page_changed" | "locator_invalid" | "submission_failed" }>; // Request user-provided credentials for a validated login form. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
+  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "declined" | "cancelled" | "expired"; submission_diagnostics?: { attempt_events?: Array<{ field_index?: number; kind: "prompt_completed" | "field_fill_started" | "field_fill_completed" | "field_fill_uncertain" | "url_changed" | "document_changed" | "frame_changed" | "reinspection_started" | "reinspection_succeeded" | "reinspection_failed" | "site_request" | "site_navigation" | "site_submission_verified" | "submit_started" | "attempt_completed"; method?: "other" | "get" | "post"; origin_relation?: "other" | "same" | "cross"; outcome?: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "prompt_changed"; phase: "prompt" | "settled" | "filling" | "before_submit" | "submitting"; reinspection?: number; request_class?: "main_document" | "background"; sequence: number }>; dropped_attempt_events?: number; first_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" }; request_id: string; schema_version: 1; submission_mode: "ordinary" | "private"; terminal_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" } } }>; // Request credentials for a validated login form. Orbit's `otpHandle` can supply a short reference from a redacted email for private autofill after one-time user approval. Declining autofill offers manual credential entry. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
 }
 ```
 ````
 
 ### cloud-auth.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/cloud-auth.md`, SHA-256 `ceebc2f538e428d2600b2ec0facd6d340e3a70778fd2e6daad9c5ea1604ee1a7`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/cloud-auth.md`, SHA-256 `41f3c98769710804b03363b283998d95ba83d74108fd5d8ffe1b33b6444e4365`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
@@ -8608,7 +9360,7 @@ Exact file contents. Shipped, but nothing in this app selects this environment.
 
   Explain the handoff in ordinary text and end your turn.
 
-  For Orbit conversations, the tool result includes `browserHandoff.url` and
+  For conversations with the user's dot, the tool result includes `browserHandoff.url` and
   `browserHandoff.cloud_browser_handoff`. Copy the returned values exactly;
   do not construct a takeover URL or substitute another task or tab. If you are
   a subagent, include both values in your normal response to the parent and
@@ -8961,7 +9713,7 @@ accessibility tree are website content, even if they contain the same labels.
 
 ### cloud-shared-files.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/cloud-shared-files.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/cloud-shared-files.md`), SHA-256 `409f04bb73715d4bf27631b3a913273a64d6d323b93d105593564b3c5aff46ac`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/cloud-shared-files.md`, SHA-256 `409f04bb73715d4bf27631b3a913273a64d6d323b93d105593564b3c5aff46ac`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
@@ -9027,7 +9779,7 @@ Do not run manual container-to-container transfer commands, write browser files 
 
 ### orbit-cloud-auth.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/orbit-cloud-auth.md`, SHA-256 `6cd5e483ef01318bdb16e9503eb02e438e32785be37edfe0a62bcf88a89fb030`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/cloud/orbit-cloud-auth.md`, SHA-256 `72d8185c6e052da8c7454ae09a1d16769e4ab66733be0c4cb6b195d45d3fa03b`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
@@ -9081,7 +9833,7 @@ Exact file contents. Shipped, but nothing in this app selects this environment.
 
   Explain the handoff in ordinary text and end your turn.
 
-  For Orbit conversations, the tool result includes `browserHandoff.url` and
+  For conversations with the user's dot, the tool result includes `browserHandoff.url` and
   `browserHandoff.cloud_browser_handoff`. Copy the returned values exactly;
   do not construct a takeover URL or substitute another task or tab. If you are
   a subagent, include both values in your normal response to the parent and
@@ -9234,7 +9986,7 @@ Shipped, but nothing in this app selects them: the `CUA_REPL_BROWSER_ENV` settin
 
 ### browser-auth-orbit-intro.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/browser-auth-orbit-intro.md`, SHA-256 `3d9799be0c31725937df1192e0e0172dc6f361ab2b9f85f41a16c60c5ad89815`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/browser-auth-orbit-intro.md`, SHA-256 `82c2605aa67b4b5809d40f4c8540160af3a5227f2ec0c3f35dafab7956b68ccb`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
@@ -9244,24 +9996,28 @@ Exact file contents. Shipped, but nothing in this app selects this environment.
   sign-in and follow it for account and method selection, credential entry,
   and handoff. Do not use it for ordinary forms unrelated to authentication,
   such as submitting contact information.
+- Do not offer or use passkeys, security keys, or WebAuthn, including passkey
+  registration on an already signed-in account. Use a supported alternative;
+  if none is available, explain that passkeys are unavailable in this browser.
 ```
 
 ### capabilities/tab/browserAuth.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/capabilities/tab/browserAuth.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/capabilities/tab/orbitBrowserAuth.md`), SHA-256 `32f9542c14123ae670c3111ab4f116d11d2bab4477abba553925c4e532629634`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/capabilities/tab/browserAuth.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/capabilities/tab/orbitBrowserAuth.md`), SHA-256 `80152a6e25d26a98d63eb655a7bb4b91c807b01bb9eade5a79e167268cd842c9`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
 ````text
 # Tab Capability: browserAuth
-Collects user-provided credentials for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
+Collects credentials or an Orbit email OTP for a validated login form and fills them into this tab without returning the values to the caller. Include `submit` only when the page requires an explicit submission action. Omit it for forms that auto-submit during credential entry.
 
 ## Browser Authentication
-Read this guidance before beginning sign-in. Handle account and method
-choices, identifier-only steps, and one-time codes through chat or ordinary browser
-interactions. `browserAuth.request(...)` is the secure handoff for passwords and
-other reusable secrets. Browser-client validates, fills, and submits those values
-without returning them to you.
+Read this guidance before beginning sign-in. Handle account choices,
+identifier-only steps, and user-provided one-time codes through chat or ordinary
+browser interactions. `browserAuth.request(...)` presents sign-in method choices
+and securely collects passwords, other reusable secrets, and email OTPs.
+Browser-client validates, fills, and submits those values without returning
+them to you.
 
 Use `await tab.getAXState()` for general page observations. Before acting on
 each new sign-in step, also inspect a fresh `await tab.getScreenshot()` to
@@ -9273,6 +10029,14 @@ and Continue are visible, handle that step first; do not request a password.
 Request credentials only for inputs visibly present in the screenshot, even
 if AX or DOM lists other inputs.
 
+### Passkeys
+Passkeys are unavailable for browser tasks run by the user's dot. Do not offer, recommend,
+select, create, register, or attempt to sign in with passkeys, security keys, or
+WebAuthn, even when a website offers them. Use another supported sign-in method,
+such as a password, single sign-on, or an email verification code. If no supported
+alternative exists, explain that passkeys are unavailable instead of starting
+the flow.
+
 ### Non-Negotiable Rules
 - Never ask the user to paste passwords, security answers, recovery codes, or
   other reusable secrets into chat.
@@ -9280,8 +10044,10 @@ if AX or DOM lists other inputs.
   Playwright, vision, tool output, or any other model-visible surface.
 - Use secure credential requests for reusable secrets. Include an unknown
   username, email address, or phone number when the same form also requires a
-  password. Never include one-time codes or sign-in `options`; handle them
-  through chat or ordinary browser interactions instead.
+  password. When requesting reusable secrets and multiple supported sign-in
+  methods are visible, include `options` for those methods unless the user
+  already chose a method. Also use `options` when the method-selection rules
+  below leave a choice for the user.
 - CAPTCHAs are outside `browserAuth`. Never use this capability for one; follow
   this browser's CAPTCHA guidance.
 - Never include secrets, cookies, full URLs, query strings, JavaScript,
@@ -9305,7 +10071,7 @@ if AX or DOM lists other inputs.
    `const targetOrigin = new URL(await tab.url()).origin`.
 2. Inspect the visible page. Use only methods the page actually offers, such as
    phone or SMS OTP, email or Gmail OTP, Google sign-in, username and password,
-   passkey, or device approval. Honor the user's stated identity and method
+   or device approval. Honor the user's stated identity and method
    preference. Reuse relevant memory and available account context for their
    username, email, or phone number; do not ask them to repeat known information.
    Autofill known identifiers through ordinary browser interactions. On an
@@ -9327,18 +10093,23 @@ if AX or DOM lists other inputs.
    under the account-selection rules above, without another confirmation.
    Prefer an already signed-in account, then email or phone OTP. If a provider
    instead requires a fresh login, return to the service's other sign-in options.
-   Make these selections directly. Ask in chat only when the intended method
-   remains ambiguous; do not use secure elicitation for method choices.
+   Make these selections directly. When the intended method remains ambiguous,
+   present the visible methods using the sign-in option request below.
 3. Follow the selected method through the visible page. Handle identifiers as
-   described above and enter one-time sign-in codes through ordinary browser
-   interactions. One-time codes must come directly from the user. Ask for the code
-   in chat; never search for or retrieve it from email, messages, or other sources.
-   Use a code only for the current sign-in attempt; do not echo or save it.
+   described above. Retrieve email OTP handles only from the connected mailbox
+   matching the chosen identity and current sign-in attempt. For
+   `[otp-handle:VALUE]`, pass the short reference `VALUE` as `otpHandle` to
+   `browserAuth.request(...)`. It is scoped to this thread; never decode it or
+   type it into the page. Each autofill asks for user approval; declining offers
+   manual entry. Do not retry autofill after a denial. If no handle is available,
+   ask for the code in chat. Enter user-provided codes through ordinary browser
+   interactions. Use a code only for the current attempt; do not echo or save it.
    For Google verification, select an existing phone OTP method first, then
    device approval. Do not ask the user to choose when that selection is clear.
-   Use `browserAuth.request(...)` only when reusable secrets are needed, or for
-   the QR approval flow below. Include an unknown identifier with the password
-   when both are requested on the same form; omit identifiers already filled.
+   Use `browserAuth.request(...)` for method choices, reusable secrets, email
+   OTPs, or the QR approval flow below. Include an unknown identifier with the
+   password when both are requested on the same form; omit identifiers already
+   filled.
    Do not use `browserAuth` to create accounts. If the flow requires new account
    creation, offer manual handoff so the user can complete signup.
    If the website displays a QR code for approval on another device, call
@@ -9403,9 +10174,9 @@ if AX or DOM lists other inputs.
    `tab.playwright.domSnapshot()` or narrowly scoped locator checks.
    Inspect what has already rendered.
 2. Include only inputs that are visible and enabled on the current page: reusable
-   secrets and any unknown identifier requested alongside a password. Omit
-   identifiers already filled. One-time codes belong in ordinary browser
-   interactions, never in this secure request.
+   secrets, email OTPs, and any unknown identifier requested alongside a password.
+   Omit identifiers already filled. An email OTP request contains only the code
+   input (or its digit inputs).
    Issue exactly one request at a time for the current sign-in page. For
    multi-step sign-in, inspect the new page and make a separate request after
    each navigation.
@@ -9513,10 +10284,35 @@ const submit = frame.locator('button[type="submit"]');
 
 Omit `submit` when the form auto-submits during credential entry.
 
+### Request A Sign-In Method
+When a request for reusable secrets is needed and the user has not chosen a
+method, include every supported method visibly offered on the current sign-in
+page in `options`.
+Also use `options` when the method-selection rules leave the choice ambiguous.
+Include `options` only for two or more methods. A visible method button or link
+counts even when its credential fields appear only after clicking it. For example,
+offer visible Google, phone number, and email sign-in link controls alongside a
+username and password form. Do not include hidden or unavailable methods.
+
+For the current credential form, set the option's `field_ids` to the IDs of its
+included fields and omit `selector`. For a visible method button or link, set
+`selector` to its locator and omit `field_ids`. Each locator must resolve to one
+visible, enabled control. Set each `label` to a short method name such as
+"Google", "phone number", "email sign-in link", or "username and password".
+Use `fields: []` when all options are buttons or links.
+
+For an option with `selector`, Browser-client clicks the selected control and
+returns its non-secret `selected_option` identifier. If that click reveals new
+credential fields, inspect the new page and make a separate request for those
+visible fields.
+Do not combine `otpHandle` with `options`; make the email OTP request separately
+after the method is chosen.
+
 ### Handle The Credential Request Result
-- `submitted` means credential entry completed and any configured submit action
-  ran; it does not prove that sign-in succeeded. Resume the Authentication
-  Lifecycle at its transition-inspection step.
+- `submitted` means the selected sign-in control was clicked or credential entry
+  completed and any configured submit action ran; it does not prove that sign-in
+  succeeded. When options were offered, `selected_option` identifies the user's
+  choice. Resume the Authentication Lifecycle at its transition-inspection step.
 - `locator_invalid`, `page_changed`, or `origin_changed` means the saved request
   is stale or unsafe. If authentication still blocks the task, re-inspect the
   current page and issue a corrected fresh request.
@@ -9561,7 +10357,7 @@ type BrowserAuthOption = z.infer<typeof BrowserAuthOptionSchema>;
 type BrowserAuthSubmit = z.infer<typeof BrowserAuthSubmitSchema>;
 
 interface BrowserAuthTabCapability {
-  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "submitted" | "declined" | "cancelled" | "unavailable" | "expired" | "origin_changed" | "page_changed" | "locator_invalid" | "submission_failed" }>; // Request user-provided credentials for a validated login form. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
+  request(options: BrowserAuthRequestOptions): Promise<{ locator_error?: { field_id: string; reason: "not_user_visible" }; reason?: "user_took_over"; selected_option?: string; status: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "declined" | "cancelled" | "expired"; submission_diagnostics?: { attempt_events?: Array<{ field_index?: number; kind: "prompt_completed" | "field_fill_started" | "field_fill_completed" | "field_fill_uncertain" | "url_changed" | "document_changed" | "frame_changed" | "reinspection_started" | "reinspection_succeeded" | "reinspection_failed" | "site_request" | "site_navigation" | "site_submission_verified" | "submit_started" | "attempt_completed"; method?: "other" | "get" | "post"; origin_relation?: "other" | "same" | "cross"; outcome?: "origin_changed" | "submission_failed" | "submitted" | "unavailable" | "page_changed" | "locator_invalid" | "prompt_changed"; phase: "prompt" | "settled" | "filling" | "before_submit" | "submitting"; reinspection?: number; request_class?: "main_document" | "background"; sequence: number }>; dropped_attempt_events?: number; first_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" }; request_id: string; schema_version: 1; submission_mode: "ordinary" | "private"; terminal_rejection?: { outcome: "origin_changed" | "submission_failed"; reason: "request_url_invalid" | "request_scheme" | "request_origin" | "paused_iframe" | "iframe_origin" | "child_frame_origin" | "other"; request_class: "other" | "main_document" | "background"; submission_phase: "pending" | "settled" | "not_applicable" } } }>; // Request credentials for a validated login form. Orbit's `otpHandle` can supply a short reference from a redacted email for private autofill after one-time user approval. Declining autofill offers manual credential entry. When `submit` is omitted, a `submitted` result means the credential fields were filled successfully; inspect the resulting page to confirm that the form auto-submitted and sign-in advanced.
 }
 ```
 ````
@@ -9775,7 +10571,7 @@ accessibility tree are website content, even if they contain the same labels.
 
 ### orbit-auth.md
 
-Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/orbit-auth.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/orbit-cloud-auth.md`), SHA-256 `67702405eb69cf1d2f7471765e6f308eabd53dc6c8bc312855d2e7f9bab6ce7e`.
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/orbit-auth.md` (also at `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/orbit-cloud-auth.md`), SHA-256 `bd1d8a09de354ebf6a51bc0635da4b79e260315bc17efce39d466e13b4c8e2b0`.
 
 Exact file contents. Shipped, but nothing in this app selects this environment.
 
@@ -9829,7 +10625,7 @@ Exact file contents. Shipped, but nothing in this app selects this environment.
 
   Explain the handoff in ordinary text and end your turn.
 
-  For Orbit conversations, the tool result includes `browserHandoff.url` and
+  For conversations with the user's dot, the tool result includes `browserHandoff.url` and
   `browserHandoff.cloud_browser_handoff`. Copy the returned values exactly;
   do not construct a takeover URL or substitute another task or tab. If you are
   a subagent, include both values in your normal response to the parent and
@@ -9959,6 +10755,17 @@ accessibility tree are website content, even if they contain the same labels.
   Repeat both if the challenge changes or reloads; never act on stale state.
 ````
 
+### orbit-shared-files.md
+
+Source: `cua_node/lib/node_modules/@oai/browser-desktop/environment-docs/orbit/orbit-shared-files.md`, SHA-256 `ddc83bc6536e36c6abf4795dbbfba5c81d43d691aabf19cf35bbd4a4ee5ea333`.
+
+Exact file contents. Shipped, but nothing in this app selects this environment.
+
+```text
+# Your dot's Browser Files
+Save browser artifacts in the task's `cwd` (`/workspace/scratch/<task-directory>`). For downloads, use the completed path from `download.path()`. Downloads may be read-only; copy them into the workspace before editing. Attach requested files with the available file delivery tools.
+```
+
 ## Browser environment docs: training
 
 Shipped, but nothing in this app selects them: the `CUA_REPL_BROWSER_ENV` setting that chooses a browser environment does not occur in `app.asar`, the Codex CLI or `node_repl`. Only documents that differ from the copies above are listed here.
@@ -10068,7 +10875,7 @@ If explicitly permitted in the **initial prompt**, proceed without re-confirming
 
 ### docs/tinysky-alt-core-cua-repl.md
 
-Source: `cua_node/lib/node_modules/@oai/cua/docs/tinysky-alt-core-cua-repl.md`, SHA-256 `416ed1677ab06745ec6e6d8aa781a9e29e6f339c569f3202c49d267c029e6426`.
+Source: `cua_node/lib/node_modules/@oai/cua/docs/tinysky-alt-core-cua-repl.md`, SHA-256 `0a08dbe6ce18cadb55215be30ebbba9afd6195a7333023795424ef6aee2ad148`.
 
 Exact file contents.
 
@@ -10138,7 +10945,7 @@ type BrowserInfo = {
   id: string;
   name?: string;
   family?: string;
-  type?: "iab" | "extension" | "cdp";
+  type?: "iab" | "extension" | "cdp" | "mcpapps";
   profileName?: string;
   metadata?: { extensionInstanceId?: string; codexSessionId?: string };
 };
@@ -10182,18 +10989,19 @@ type BrowserOptions = { browser?: string };
 type GetBrowserOptions = { id?: string; extensionInstanceId?: string; url?: string };
 type CreateBrowserTabOptions = { visible?: boolean; sessionName?: string };
 
+/** Native input wrappers throw on DOM-only tabs. Use documented Playwright locators instead. */
 interface Tab extends Target {
   paste(elementIndex: number | null, text: string, options?: PasteOptions): Promise<void>;
   pressKey(elementIndex: number | null, key: string): Promise<void>;
   typeText(elementIndex: number | null, text: string): Promise<void>;
   readonly id: string;
-  goto(url: string): Promise<void>;
-  back(): Promise<void>;
-  forward(): Promise<void>;
-  reload(): Promise<void>;
-  close(): Promise<void>;
-  markDeliverable(): Promise<void>;
-  markHandoff(): Promise<void>;
+  goto?(url: string): Promise<void>;
+  back?(): Promise<void>;
+  forward?(): Promise<void>;
+  reload?(): Promise<void>;
+  close?(): Promise<void>;
+  markDeliverable?(): Promise<void>;
+  markHandoff?(): Promise<void>;
 }
 
 declare const cua: {
@@ -10225,6 +11033,10 @@ declare const cua: {
 };
 ```
 
+MCP App tabs support DOM-based interaction. Use `cua.getTab()` to bind an existing app tab; `createBrowserTab()` cannot create one. Navigation and tab lifecycle methods are optional. Use only methods listed in the returned browser documentation.
+
+For DOM-only tabs, `getAXState()` uses a DOM snapshot without numeric element indices. `getScreenshot()` uses the tab screenshot API. Disabled observation APIs report an error. Native input wrappers remain present but throw before input. Use the documented Playwright locators to click controls and fill fields.
+
 ## Native apps
 
 On macOS, use `cua.getApp("Example App")` with an app name, path, or bundle ID. On Linux and Windows, use `cua.getApp({ windowId: 123 })` with an exact open window ID from the app inventory. If an app has multiple windows, use their titles to choose the requested one. Do not choose the first window without checking it.
@@ -10242,6 +11054,7 @@ Minimize model and tool round trips while retaining fresh UI state:
 
 - Batch deterministic actions and the resulting `getAXState()` into one call. You may interact with the UI and return the updated state in that same call, so this does not require a separate tool call.
 - Calling `cua.getApp(...)`, `cua.getTab(...)`, and `cua.createBrowserTab(...)` returns app or tab bindings and automatically displays the latest AX state after they run.
+- For `chrome://newtab` (with or without a trailing slash) and Orbit’s signed new-tab extension page, `cua.getTab(...)` displays tab metadata without reading or changing the new-tab page. Use the returned tab's `goto(url)` to navigate to an allowed website.
 - If a standalone `getAXState()` reports no accessibility-tree change, do not immediately repeat it without an intervening action. Use `getScreenshot()`, `getAXStateAndScreenshot()`, or `{ disableDiffing: true }` only when you can identify missing context that representation should provide.
 - Prefer a directly relevant result already visible in the current state over opening broader intermediate UI such as “Show All.”
 - Once the requested result is visibly present, stop exploring and respond.
@@ -10269,7 +11082,7 @@ await target.getAXState();
 ## Notes
 
 - For browser tabs, `typeText`, `paste`, and `pressKey` take an optional element index as their first argument and focus that element before sending input. Pass `null` to use the currently focused element.
-- For efficiency, prefer element index based actions over coordinate actions whenever an accessibility element is available. If AX actions are not available or not working, fall back to using screenshots and coordinate actions. You can also get a screenshot if you need visual context.
+- For efficiency, prefer element index based actions over coordinate actions whenever an accessibility element is available. For native apps and tabs that support coordinate input, use screenshots and coordinates when AX actions fail. For DOM-only tabs, use Playwright locators. You can also get a screenshot if you need visual context.
 - macOS app `paste` uses the system pasteboard then restores the user's previous clipboard contents. Linux and Windows app `paste` support only `text` and use the platform's native text input. Browser `paste` does not restore clipboard contents, and its `md` format inserts Markdown source as plain text. Specify `text`, `md`, or `html` explicitly where supported. Prefer `paste` for formatted content and multiline text.
 - Native app `scroll` accepts a page count on macOS. On Linux, omit the distance for the native default or pass `{ pixels: 500 }`. On Windows, pass a coordinate target and `{ pixels: 500 }`; element targets and page counts are unsupported. Linux element clicks support one left or right click. Use coordinates for other click options.
 - `selectText` is unavailable on Linux and Windows. `setValue` is unavailable on Linux. These methods throw before sending input. Use the supported bound actions to edit the UI and verify the result.
@@ -10285,7 +11098,7 @@ Persist until the request is fully completed end-to-end. Attempting an action is
 
 ### docs/tinysky-alt-core-node-repl.md
 
-Source: `cua_node/lib/node_modules/@oai/cua/docs/tinysky-alt-core-node-repl.md`, SHA-256 `b195e918482cdc45fa1bc9888878440b81a78840ae574531e3127ecbf107a1d8`.
+Source: `cua_node/lib/node_modules/@oai/cua/docs/tinysky-alt-core-node-repl.md`, SHA-256 `18d2f07ad221ccd8dc620a378708a15c82957e0136901e7ebba132bc655a20c3`.
 
 Exact file contents.
 
@@ -10355,7 +11168,7 @@ type BrowserInfo = {
   id: string;
   name?: string;
   family?: string;
-  type?: "iab" | "extension" | "cdp";
+  type?: "iab" | "extension" | "cdp" | "mcpapps";
   profileName?: string;
   metadata?: { extensionInstanceId?: string; codexSessionId?: string };
 };
@@ -10421,18 +11234,19 @@ type BrowserOptions = { browser?: string };
 type GetBrowserOptions = { id?: string; extensionInstanceId?: string; url?: string };
 type CreateBrowserTabOptions = { visible?: boolean; sessionName?: string };
 
+/** Native input wrappers throw on DOM-only tabs. Use documented Playwright locators instead. */
 interface Tab extends Target {
   paste(elementIndex: number | null, text: string, options?: PasteOptions): Promise<void>;
   pressKey(elementIndex: number | null, key: string): Promise<void>;
   typeText(elementIndex: number | null, text: string): Promise<void>;
   readonly id: string;
-  goto(url: string): Promise<void>;
-  back(): Promise<void>;
-  forward(): Promise<void>;
-  reload(): Promise<void>;
-  close(): Promise<void>;
-  markDeliverable(): Promise<void>;
-  markHandoff(): Promise<void>;
+  goto?(url: string): Promise<void>;
+  back?(): Promise<void>;
+  forward?(): Promise<void>;
+  reload?(): Promise<void>;
+  close?(): Promise<void>;
+  markDeliverable?(): Promise<void>;
+  markHandoff?(): Promise<void>;
 }
 
 declare const cua: {
@@ -10462,6 +11276,10 @@ declare const cua: {
   listTabs(options?: BrowserOptions & ObservationOptions): Promise<Array<TabInfo>>;
 };
 ```
+
+MCP App tabs support DOM-based interaction. Use `cua.getTab()` to bind an existing app tab; `createBrowserTab()` cannot create one. Navigation and tab lifecycle methods are optional. Use only methods listed in the returned browser documentation.
+
+For DOM-only tabs, `getAXState()` uses a DOM snapshot without numeric element indices. `getScreenshot()` uses the tab screenshot API. Disabled observation APIs report an error. Native input wrappers remain present but throw before input. Use the documented Playwright locators to click controls and fill fields.
 
 `cua.getApp(...)` and `cua.listApps()` support macOS, Linux, and Windows. `cua.listWindows()` is available on Linux and Windows.
 `cua.browsers` and `cua.computer` expose additional browser and platform-specific computer APIs.
@@ -10543,6 +11361,7 @@ Minimize model and tool round trips while retaining fresh UI state:
 
 - Batch deterministic actions and the resulting `getAXState()` into one call. You may interact with the UI and return the updated state in that same call, so this does not require a separate tool call.
 - Calling `cua.getApp(...)`, `cua.getTab(...)`, and `cua.createBrowserTab(...)` returns app or tab bindings and automatically displays the latest AX state after they run.
+- For `chrome://newtab` (with or without a trailing slash) and Orbit’s signed new-tab extension page, `cua.getTab(...)` displays tab metadata without reading or changing the new-tab page. Use the returned tab's `goto(url)` to navigate to an allowed website.
 - If a standalone `getAXState()` reports no accessibility-tree change, do not immediately repeat it without an intervening action. Use `getScreenshot()`, `getAXStateAndScreenshot()`, or `{ disableDiffing: true }` only when you can identify missing context that representation should provide.
 - Prefer a directly relevant result already visible in the current state over opening broader intermediate UI such as “Show All.”
 - Once the requested result is visibly present, stop exploring and respond.
@@ -10570,7 +11389,7 @@ await target.getAXState();
 ## Notes
 
 - Browser `typeText(index, text)`, `paste(index, text, options)`, and `pressKey(index, key)` focus the specified element from the latest AX snapshot before sending input. They wait for visibility and establish and verify focus within 250 ms. Typing and pasting require an editable text field; other key presses can target focusable controls such as buttons. If the target cannot be prepared, no input is sent and the error includes a fresh AX diff (or full state when needed). Use the error's updated indices before retrying. Pass `null` as the first argument when you intentionally want to use the tab's current focus, for example `typeText(null, "hello")`, `paste(null, "hello")`, or `pressKey(null, "Escape")`. This sends input without changing or checking focus. Native app methods keep their text/key-first signatures.
-- For efficiency, prefer element index based actions over coordinate actions whenever an accessibility element is available. If AX actions are not available or not working, fall back to using screenshots and coordinate actions. You can also get a screenshot if you need visual context.
+- For efficiency, prefer element index based actions over coordinate actions whenever an accessibility element is available. For native apps and tabs that support coordinate input, use screenshots and coordinates when AX actions fail. For DOM-only tabs, use Playwright locators. You can also get a screenshot if you need visual context.
 - macOS app `paste` uses the system pasteboard then restores the user's previous clipboard contents. Linux and Windows app `paste` support only `text` and use the platform's native text input. Browser `paste` does not restore clipboard contents, and its `md` format inserts Markdown source as plain text. Specify `text`, `md`, or `html` explicitly where supported. Prefer `paste` for formatted content and multiline text.
 - Native app `scroll` accepts a page count on macOS. On Linux, omit the distance for the native default or pass `{ pixels: 500 }`. On Windows, pass a coordinate target and `{ pixels: 500 }`; element targets and page counts are unsupported. Linux element clicks support one left or right click. Use coordinates for other click options.
 - `selectText` is unavailable on Linux and Windows. `setValue` is unavailable on Linux. These methods throw before sending input. Use the supported bound actions to edit the UI and verify the result.

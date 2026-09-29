@@ -3,6 +3,52 @@
   "surface": "Authenticated Codex/ChatGPT model catalog; this is not the ChatGPT Work model catalog.",
   "hash_rule": "SHA-256 over the UTF-8 bytes of Python json.dumps(value, sort_keys=True, ensure_ascii=False) for each model_messages field.",
   "models": {
+    "gpt-6.1-sol": {
+      "persistent_instructions": {
+        "utf8_bytes": 5779,
+        "sha256": "bc87e2f1d9e808f69c3e7aa3883b54310cd3cda6e56949e3c7481b7e608318fb"
+      },
+      "instructions_template": {
+        "utf8_bytes": 22011,
+        "sha256": "3bb8b825931acf4e1e248aee7329094bc0cced5f33f9d8234d6ad32125ce0e4e"
+      },
+      "instructions_variables": {
+        "utf8_bytes": 4,
+        "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      "approvals": {
+        "utf8_bytes": 570,
+        "sha256": "a23c4f2955ffe095e9e9f9dec54036e6b98a82a72a5b2aeed9749f06b21a78db"
+      },
+      "collaboration_modes": {
+        "utf8_bytes": 923,
+        "sha256": "392d2f42b62800e445c47ce7b9ef5d3534a1de03e27d8ed4e1bf52f77840a817"
+      },
+      "auto_review": {
+        "utf8_bytes": 489,
+        "sha256": "7c609246772abdb684830b6061e319f90725c6ac345437e28cd5052dc0fd8b8d"
+      },
+      "permissions": {
+        "utf8_bytes": 4,
+        "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      "multi_agent": {
+        "utf8_bytes": 2347,
+        "sha256": "0b590f02e07943bc5bc35f5cbfa76ea9b4893b80c6b37ff2ca9ad2ad0882151b"
+      },
+      "token_budget": {
+        "utf8_bytes": 3549,
+        "sha256": "d538650a3f64eb37724e76e741905cb5371bd3eaba46477908ffa14da2eada72"
+      },
+      "guardian_v2": {
+        "utf8_bytes": 3738,
+        "sha256": "db0eb178767ed4ab4cbb8138447c6d2d395be0d7bf0f6839e0af7f7cbdecc0aa"
+      },
+      "confirmation_policies": {
+        "utf8_bytes": 22749,
+        "sha256": "945746178531943a1779c827f388b64815a30f05b4fc307a937e3d444fbb7904"
+      }
+    },
     "gpt-6-astra": {
       "persistent_instructions": {
         "utf8_bytes": 5779,
@@ -55,8 +101,8 @@
         "sha256": "bc87e2f1d9e808f69c3e7aa3883b54310cd3cda6e56949e3c7481b7e608318fb"
       },
       "instructions_template": {
-        "utf8_bytes": 22009,
-        "sha256": "f6b17ebbe581b8ed9cb1385063a22b15d1d925440cbad8f7ac79a00a75de5b32"
+        "utf8_bytes": 19207,
+        "sha256": "e6c49d2c8f46fb07e88fafbdd66af96cc994541bb0bf5b652b30f887a50ebd0d"
       },
       "instructions_variables": {
         "utf8_bytes": 4,

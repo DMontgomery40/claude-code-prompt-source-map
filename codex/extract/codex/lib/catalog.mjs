@@ -5,7 +5,8 @@ import os from "node:os";
 import path from "node:path";
 import { catalogSnapshot } from "./catalog-metadata.mjs";
 
-export const GPT6_DOCUMENTED = ["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"];
+export const GPT6_REQUIRED = ["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"];
+export const GPT6_DOCUMENTED = [...GPT6_REQUIRED, "gpt-6.1-sol"];
 
 // Only these catalog fields are ever copied into outputs. Everything else in a
 // catalog record (access programs, upgrade and availability notices, …) may be
@@ -93,7 +94,10 @@ export function loadCatalog(binary, { codexHome = process.env.CODEX_HOME || path
 
   for (const slug of GPT6_DOCUMENTED) {
     const model = live.find(candidate => candidate.slug === slug);
-    if (!model) throw new SourceError(`${slug} is missing from the live catalog; its documents cannot be regenerated`);
+    if (!model) {
+      if (GPT6_REQUIRED.includes(slug)) throw new SourceError(`${slug} is missing from the live catalog; its documents cannot be regenerated`);
+      continue;
+    }
     for (const [field, value] of Object.entries({
       base_instructions: model.base_instructions,
       "model_messages.persistent_instructions": model.model_messages?.persistent_instructions,

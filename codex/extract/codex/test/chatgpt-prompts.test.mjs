@@ -240,3 +240,30 @@ test("installed app: every page renders with a Source line under each entry", { 
     for (const entry of entries) assert.match(entry, /^[^\n]+\n\nSource: `[^`]+`, (?:function `[^`]+`, )?offset \d+, SHA-256 `[0-9a-f]{64}`\.\n/, `${name}: ${entry.slice(0, 60)}`);
   }
 });
+
+
+test("feature-scoped formatjs avoids identical translated dictionary literals and retains legacy absence evidence", () => {
+  const asar = fakeAsar({
+    "webview/assets/am-test.js": "x={frame:`Frame #{frameNumber}:`}",
+    "webview/assets/image-side-panel-test.js": "x={id:`gifEditor.comments.frameHeading`,defaultMessage:`Frame #{frameNumber}:`};"
+  });
+  const pages = [{ page: "scoped.md", title: "Scoped", summary: "Scope", entries: [
+    { group: "GIF", id: "frame", mode: "formatjs", anchor: "Frame #{frameNumber}:", title: "Frame", messageId: "gifEditor.comments.frameHeading", filePrefix: "webview/assets/image-side-panel-" },
+    { group: "Legacy", id: "legacy", mode: "static", anchor: "Former prompt", title: "Legacy", absence: "Replaced by the grounded demonstration; not the same text." }
+  ] }];
+  const result = buildPages(asar, { version: "1", build: "1", asarSha256: "0".repeat(64), youAreChatgpt: 0 }, pages, []);
+  const coverage = JSON.parse(result.coverage.get("scoped.json"));
+  assert.equal(coverage.items[0].source_file, "webview/assets/image-side-panel-test.js");
+  assert.deepEqual(result.summary.not_found, ["legacy"]);
+  assert.match(coverage.not_found[0].absence, /not the same text/);
+  assert.match(result.docs.get("scoped.md"), /Replaced by the grounded demonstration/);
+});
+
+
+test("exact formatjs anchors distinguish short actions from template variants", () => {
+  const asar = one("a={id:`slide`,defaultMessage:`Make slides above`};b={id:`slide.template`,defaultMessage:`Make slides above using {template}`}");
+  const item = extractFormatjsMessage(asar, { id: "slides", anchor: "Make slides above", messageId: "slide", exactText: true });
+  assert.equal(item.text, "Make slides above");
+  assert.equal(item.messageId, "slide");
+  assert.throws(() => extractFormatjsMessage(asar, { id: "gone", anchor: "Make slides", exactText: true }), /no exact defaultMessage/);
+});

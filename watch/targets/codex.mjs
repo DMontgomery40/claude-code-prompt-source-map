@@ -17,7 +17,11 @@ const GENERATED = [
   { script: "extract/codex/tool-manifest.mjs", diff: "work/tool-manifest-diff.md",
     outputs: ["outputs/desktop-tool-manifest.md", "outputs/desktop-tool-manifest.json"] },
   { script: "extract/codex/learning-blocks.mjs", diff: "work/learning-blocks-diff.md",
-    outputs: ["outputs/chatgpt-learning-blocks.md", "outputs/chatgpt-learning-blocks.json"] }
+    outputs: ["outputs/chatgpt-learning-blocks.md", "outputs/chatgpt-learning-blocks.json"] },
+  { script: "extract/codex/devday-coverage.mjs", diff: "work/devday-coverage-diff.md",
+    outputs: ["outputs/devday-surface-coverage.md", "outputs/devday-surface-coverage.json"] },
+  { script: "extract/codex/devday-overview.mjs", diff: "work/devday-overview-diff.md",
+    outputs: ["outputs/devday-update.md"] }
 ];
 // Early-warning scans (run after the generators and the sweep). A script not yet on main is skipped.
 const SCANS = [

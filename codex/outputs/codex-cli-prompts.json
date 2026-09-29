@@ -1,9 +1,9 @@
 {
   "source": {
     "repository": "openai/codex",
-    "tag": "rust-v0.158.0-alpha.2.1",
-    "commit": "0d9c7cbfa6cf1489f55a8a9542b75ddd2c061807",
-    "cli_version": "codex-cli 0.158.0-alpha.2.1"
+    "tag": "rust-v0.159.0",
+    "commit": "687a119f0fcaace47e1f1abcc77cec6c813fd6da",
+    "cli_version": "codex-cli 0.159.0"
   },
   "items": [
     {
@@ -258,8 +258,8 @@
       "kind": "file",
       "source": "prompts/templates/guardian/classifier_instructions.md",
       "executable": "codex",
-      "bytes": 10304,
-      "sha256": "c19697c572daf359912f27961474b9804ddfccc978edc69cb3b13f1360961fcf",
+      "bytes": 10351,
+      "sha256": "52485dcc1856e6d33697b0bee0d57b7af5bcc0cd2f64be0dc6b3505d56549aef",
       "also_at": []
     },
     {
@@ -270,8 +270,8 @@
       "kind": "file",
       "source": "prompts/templates/guardian/node_repl_policy.md",
       "executable": "codex",
-      "bytes": 2813,
-      "sha256": "cbeac65723cf1476dce0680b5b27484640472ef413436074ca8d8cefbf94c787",
+      "bytes": 2860,
+      "sha256": "e5d12bc2404640513aba2df9dcc5689d2f0280191fe3508c55570ea0764d13a0",
       "also_at": []
     },
     {
@@ -647,42 +647,6 @@
       "also_at": []
     },
     {
-      "id": "skills-src-assets-samples-plugin-creator-skill-md",
-      "document": "codex-cli-bundled-skills.md",
-      "area": "plugin-creator",
-      "title": "SKILL.md",
-      "kind": "file",
-      "source": "skills/src/assets/samples/plugin-creator/SKILL.md",
-      "executable": "codex",
-      "bytes": 11467,
-      "sha256": "71b95b8219644f95d633721e7f7cd3c469edfc8fe50f8415d400dfb2d74bc7b9",
-      "also_at": []
-    },
-    {
-      "id": "skills-src-assets-samples-plugin-creator-references-installing-and-updating-md",
-      "document": "codex-cli-bundled-skills.md",
-      "area": "plugin-creator",
-      "title": "references/installing-and-updating.md",
-      "kind": "file",
-      "source": "skills/src/assets/samples/plugin-creator/references/installing-and-updating.md",
-      "executable": "codex",
-      "bytes": 6000,
-      "sha256": "91c4781d48568fcc708b45566b08fb610ad1c88672720ae512f9525a1cf9cb20",
-      "also_at": []
-    },
-    {
-      "id": "skills-src-assets-samples-plugin-creator-references-plugin-json-spec-md",
-      "document": "codex-cli-bundled-skills.md",
-      "area": "plugin-creator",
-      "title": "references/plugin-json-spec.md",
-      "kind": "file",
-      "source": "skills/src/assets/samples/plugin-creator/references/plugin-json-spec.md",
-      "executable": "codex",
-      "bytes": 9179,
-      "sha256": "eeb640130f69636affaa299d4170d5a7ae6a0ff978296ddf75c409ce6dd87b91",
-      "also_at": []
-    },
-    {
       "id": "skills-src-assets-samples-review-agent-skill-md",
       "document": "codex-cli-bundled-skills.md",
       "area": "review-agent",
@@ -860,6 +824,18 @@
       "executable": "codex",
       "bytes": 292,
       "sha256": "80a4cc431920a164a3301a8c759331d4e828f82706be17812a106267d8389afd",
+      "also_at": []
+    },
+    {
+      "id": "prompts-src-permissions-instructions-rs-omitted-permission-paths",
+      "document": "codex-cli-prompts.md",
+      "area": "Permissions and sandbox",
+      "title": "Omitted permission paths",
+      "kind": "constant",
+      "source": "prompts/src/permissions_instructions.rs::OMITTED_PERMISSION_PATHS",
+      "executable": "codex",
+      "bytes": 156,
+      "sha256": "cbcde96936b087b277c8486f0b762bf133b8429e02428cf97bc37c1042bcc234",
       "also_at": []
     },
     {

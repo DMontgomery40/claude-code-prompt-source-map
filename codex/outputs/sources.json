@@ -1,18 +1,19 @@
 {
   "app": {
     "bundle_id": "com.openai.codex",
-    "version": "26.924.22138",
-    "build": "11645",
-    "asar_sha256": "d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80"
+    "version": "26.928.20755",
+    "build": "12246",
+    "asar_sha256": "2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee"
   },
   "cli": {
-    "version": "codex-cli 0.158.0-alpha.2.1",
-    "binary_sha256": "3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a"
+    "version": "codex-cli 0.159.0",
+    "binary_sha256": "ccd1b9441d35ce30102059c78514a125d676e6765ea1d001033e8cbe88718314"
   },
   "catalog": {
-    "fetched_at": "2026-09-29T04:06:13.708932Z",
-    "client_version": "0.158.0",
+    "fetched_at": "2026-09-29T18:45:55.875186Z",
+    "client_version": "0.159.0",
     "models": [
+      "gpt-6.1-sol",
       "gpt-6-astra",
       "gpt-6-sol",
       "gpt-6-luna",
@@ -34,17 +35,16 @@
       "gpt-daybreak-blue-latest",
       "gpt-daybreak-red-latest",
       "gpt-5.5",
-      "gpt-5.4",
       "codex-auto-review"
     ]
   },
   "asar_prompt_files": {
-    ".vite/build/main-C5425b_s.js": "91a68c5f690e60033152a34cf0bf5c4234caeb9ddb47586fd3ef5b017bb29d64",
-    ".vite/build/src-BSSLXJxP.js": "50c7cf9c144594cfa6f33298e977f0b144976cc70c579f59fdc7242615c4af98",
-    "webview/assets/app-initial-d817715f10a0.js": "0c24aeb875e80ae2d41532534b227dd976c9a8f5644a4e10a3d2cb4ffa4047ff",
-    "webview/assets/app-shared-36eae88777f2.js": "bc90bb198f29b62bd745aa99dbfae6a81719d9739c22811a12a810f9813d6c43",
-    "webview/assets/local-conversation-side-chat-93f45d4f7312.js": "f55c451c373cd9d69ab28e2e416dc6fe550ee20ac47ca13590dc97647e1e37ab",
-    "webview/assets/review-slash-command-submenu-registration-e98b2fd516c9.js": "12502cc76c6bc904c8f017f8e7ff9975b6a9a991d6dda1d81e0048a1a7d31aa8"
+    ".vite/build/bootstrap-ClH9X4Aa.js": "d152df26e2ec31fb745335b9684c577d1c592a65611fb45c2be4a37682284944",
+    ".vite/build/main-DPn4U9E8.js": "a4f5c2a3370c1b50f1a1c371fe2ebe6d196152e6c245be0dcdf04b02e7cac172",
+    "webview/assets/app-initial-74096abaa6b3.js": "c7ce23320a36c6a52cc0357a1b76571475445bd8966b31d179dc25f3b05e78f8",
+    "webview/assets/app-shared-5d8e744d1fa1.js": "f7edf3bfe729e74f0e375732a956f4d428ce4baea920908ae0ab5e325e4196f6",
+    "webview/assets/code-review-a627b3efcf9c.js": "de6dbd1db8ecc10c1c2a348cdc7bdac294cfb5815df7ed3e3b3dfed42ffea705",
+    "webview/assets/local-conversation-side-chat-2f0d64fc6b8e.js": "b9041d2cecd024585c4c4e31cc131588ca65facc9bac5ff7e8ef93c2b12b46b7"
   },
   "documents": {
     "persistent-instructions.md": {
@@ -56,12 +56,16 @@
       "bytes": 21428
     },
     "gpt-6-sol-base-instructions.md": {
-      "sha256": "fb0c2f8caf7ed05166f176a9f86c51d7443405f0ea722eb86c3d9356acd6652f",
-      "bytes": 21778
+      "sha256": "b1dd8718c037906c53a305c5cbccb4a4be35ccbb7837461ec349bfc495412f0d",
+      "bytes": 18998
     },
     "gpt-6-luna-base-instructions.md": {
       "sha256": "b707476816bfe5e571a1bd2179f130fff2b132da5ab8e61063acdb7fd24daf12",
       "bytes": 18043
+    },
+    "gpt-6.1-sol-base-instructions.md": {
+      "sha256": "e1bdd4f8f0df4b20f4a0ffc8a861ce819df45325d8cecdfb92e80379cf8d142e",
+      "bytes": 21779
     },
     "gpt-6-instruction-modules.md": {
       "sha256": "5761752d9b038f36ab662e44d3caf3ef1daf31c3540c36a2bf827a67c78e8661",
@@ -72,36 +76,40 @@
       "bytes": 84283
     },
     "gpt-6-sol-model-record.json": {
-      "sha256": "45608685a9c0e55b9e5b037ef8c4e01ecf07e540cd159e08f74f5142b1c55b89",
-      "bytes": 84985
+      "sha256": "de3866149652f1fbfe8217d39d1a59dc8c2e56c112a357b97c612e7c95a580fa",
+      "bytes": 79381
     },
     "gpt-6-luna-model-record.json": {
       "sha256": "5517bc140116a08a0afb0bcb8e73c44ceac3bdf23d3424d4ab712e84a0c56c0d",
       "bytes": 77466
     },
+    "gpt-6.1-sol-model-record.json": {
+      "sha256": "497557b151a3b0a629f04d91cdbc41df15e8102dd9b7f5e554f5c1b1fe583c68",
+      "bytes": 84991
+    },
     "model-comparison.json": {
-      "sha256": "24788f67a0cae93cff2043425710a311203d3b11652495003093efb9dc3aee62",
-      "bytes": 5658
+      "sha256": "5dffa1d0563f98e06049f6ba49acc96d8bf7f4b9411811124113b28c37c29845",
+      "bytes": 7323
     },
     "capture-metadata.json": {
-      "sha256": "d057b93136575060bc974cfda7761df798fe58bf0a230fc7b7fbe78820d4a78e",
-      "bytes": 1813
+      "sha256": "60d0f6a7e73c1bbe69585483c7d086983722a4e5f4fda5880766402153b322a8",
+      "bytes": 1803
     },
     "desktop-helper-prompts.md": {
-      "sha256": "3380011f7aac72d1d0a4b4c1905df0d1ef3010b1f4c7d2ed8666e90559e43a06",
-      "bytes": 59948
+      "sha256": "b80647a59971d5233df2c59eee2912f0ccafec1225dd48454588bac82fe61a4c",
+      "bytes": 59980
     },
     "voice-prompts.md": {
-      "sha256": "c9d693542838b23ae8acc67b03d303afd8e1999f28e0ce633a6aad34eadf5ea2",
+      "sha256": "c671b211e5a48a359ed03ea54cd1961b3549c36720e6a9b06f1df2000c094901",
       "bytes": 13848
     },
     "prompt-provenance-inventory.json": {
-      "sha256": "38da01ce6273cee64096f1a80200626a8d54333dd31a83d070ef6057d3b61c86",
-      "bytes": 38285
+      "sha256": "2f68a76718282031db34dc7d66639f5441b10a1aa743c3a302ec3a506bbb2b3e",
+      "bytes": 45937
     },
     "other-catalog-models.md": {
-      "sha256": "adf13df172becaafb62afdd190b31a25f087e57116069e4f47f4738a632dfe1e",
-      "bytes": 73311
+      "sha256": "ccb0cce03120595863e297471acf95e132600a83cc1b8f445072a694a9b2e1b1",
+      "bytes": 73308
     }
   }
 }

@@ -31,6 +31,7 @@ import { pathToFileURL } from "node:url";
 import { codexApp } from "./lib/app-layout.mjs";
 import { openAsar } from "./lib/asar.mjs";
 import { privacyScan } from "./lib/privacy.mjs";
+import { decisionConfig, decisionFetch } from "./lib/jev-provider.mjs";
 
 export const THRESHOLDS = { newMin: 5, growAbs: 20, growRatio: 1.25, removedMin: 5 };
 export const JEV_LIMIT = 40;
@@ -230,7 +231,7 @@ export function readTypesafeKey(env = process.env) {
 
 // A labeller asks Jev about one flagged change; it returns a probability, or null with the reason
 // recorded when Jev cannot answer.
-export function jevLabeller(key, { cache = {} } = {}) {
+export function jevLabeller(key, { cache = {}, fetchImpl = globalThis.fetch } = {}) {
   const state = { unavailable: null };
   async function label(item) {
     const cacheKey = createHash("sha256").update(JSON.stringify(item)).digest("hex");
@@ -239,7 +240,7 @@ export function jevLabeller(key, { cache = {} } = {}) {
     if (state.unavailable) return null;
     for (let attempt = 0; attempt < 4; attempt += 1) {
       try {
-        const response = await fetch("https://api.typesafe.ai/v1/systemone", {
+        const response = await fetchImpl("https://api.typesafe.ai/v1/systemone", {
           method: "POST",
           headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
           body: JSON.stringify({ model: "jev-latest", state: item, questions: QUESTION })
@@ -347,8 +348,12 @@ async function main() {
   const cacheFile = path.join(repo, "work", "surface-verdicts.json");
   let cache = {};
   try { cache = JSON.parse(fs.readFileSync(cacheFile, "utf8")); } catch { cache = {}; }
-  const labeller = process.env.SURFACE_JEV === "off" ? null : jevLabeller(readTypesafeKey(), { cache });
-  const result = await scan({ current, evidence, previous: baseline.data, labeller });
+  const provider = decisionConfig();
+  const labeller = process.env.SURFACE_JEV === "off" ? null : jevLabeller(provider.key, { cache, fetchImpl: decisionFetch(provider) });
+  const requestedLimit = process.env.SURFACE_JEV_LIMIT;
+  const limit = requestedLimit === "all" ? Number.MAX_SAFE_INTEGER : requestedLimit == null ? JEV_LIMIT : Number(requestedLimit);
+  if (!Number.isSafeInteger(limit) || limit < 0) throw new Error("SURFACE_JEV_LIMIT must be all or a nonnegative integer");
+  const result = await scan({ current, evidence, previous: baseline.data, labeller, limit });
   const unavailable = process.env.SURFACE_JEV === "off" ? "disabled (SURFACE_JEV=off)" : labeller.state.unavailable;
 
   const baselineText = `${JSON.stringify(current, null, 1)}\n`;
@@ -357,7 +362,7 @@ async function main() {
   fs.writeFileSync(path.join(repo, "outputs", BASELINE), baselineText);
   const diffFile = path.join(repo, "work", DIFF);
   fs.mkdirSync(path.dirname(diffFile), { recursive: true });
-  if (result.flagged.length) fs.writeFileSync(diffFile, renderDiff({ app, previousSource: baseline.data?.source, flagged: result.flagged, notes: result.notes, unavailable }));
+  if (result.flagged.length) fs.writeFileSync(diffFile, renderDiff({ app, previousSource: baseline.data?.source, flagged: result.flagged, notes: result.notes, unavailable, limit: Math.min(limit, result.flagged.length) }));
   else fs.rmSync(diffFile, { force: true });
   if (labeller) fs.writeFileSync(cacheFile, JSON.stringify(labeller.cache));
 

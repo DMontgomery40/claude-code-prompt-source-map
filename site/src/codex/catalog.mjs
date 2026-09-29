@@ -5,6 +5,14 @@ export const categories = [
     label: "Overview",
     files: [
       {
+        path: "outputs/devday-update.md",
+        anchor: "devday-update-md",
+        slug: "devday-update",
+        format: "markdown",
+        title: "Dev Day: harness changes",
+        defaultOpen: true
+      },
+      {
         path: "outputs/security-review-map-2026-09-24.md",
         anchor: "security-review-map-2026-09-24-md",
         slug: "key-findings",
@@ -55,6 +63,15 @@ export const categories = [
         defaultOpen: false
       },
       {
+        path: "outputs/gpt-6.1-sol-base-instructions.md",
+        anchor: "gpt-6-1-sol-base-instructions-md",
+        slug: "gpt-6-1-sol-base-instructions",
+        format: "markdown",
+        title: "GPT-6.1 Sol base instructions",
+        instructionProfile: "base",
+        defaultOpen: false
+      },
+      {
         path: "outputs/gpt-6-luna-base-instructions.md",
         anchor: "gpt-6-luna-base-instructions-2026-09-24-md",
         slug: "luna-base-instructions",
@@ -86,7 +103,7 @@ export const categories = [
         anchor: "codex-gpt6-model-prompt-comparison-2026-09-24-json",
         slug: "three-model-prompt-comparison",
         format: "source",
-        title: "Three-model prompt comparison",
+        title: "Model prompt comparison",
         defaultOpen: false
       }
     ]
@@ -286,6 +303,7 @@ export const categories = [
   {
     label: "Build intel",
     files: [
+      { path: "outputs/devday-surface-coverage.md", anchor: "devday-surface-coverage-md", slug: "devday-surface-coverage", format: "markdown", title: "Dev Day surface coverage", defaultOpen: false },
       { path: "outputs/binwalk-scan.md", anchor: "binwalk-scan-md", slug: "binwalk-scan", format: "markdown", title: "Binwalk scan (this build)", defaultOpen: false },
       { path: "outputs/package-scan.md", anchor: "package-scan-md", slug: "package-scan", format: "markdown", title: "Package scan (this build)", defaultOpen: false }
     ]
@@ -293,6 +311,7 @@ export const categories = [
   {
     label: "Evidence and archive",
     files: [
+      { path: "outputs/devday-surface-coverage.json", anchor: "devday-surface-coverage-json", slug: "devday-surface-coverage-records", format: "source", title: "Dev Day surface records", defaultOpen: false },
       {
         path: "outputs/prompt-provenance-inventory.json",
         anchor: "codex-prompt-provenance-inventory-2026-09-24-json",
@@ -331,6 +350,14 @@ export const categories = [
         slug: "raw-captured-sol-record",
         format: "source",
         title: "Raw captured Sol record",
+        defaultOpen: false
+      },
+      {
+        path: "outputs/gpt-6.1-sol-model-record.json",
+        anchor: "gpt-6-1-sol-model-record-json",
+        slug: "raw-captured-gpt-6-1-sol-record",
+        format: "source",
+        title: "Raw captured GPT-6.1 Sol record",
         defaultOpen: false
       },
       {
