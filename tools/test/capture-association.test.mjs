@@ -130,3 +130,50 @@ test('move refuses a partially resolvable capture before writing subsets or remo
   assert.equal(readFileSync(source,'utf8'),complete);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+test('custom-host Responses metadata associates automatically and cannot be overridden explicitly',async()=>{
+ const dir=mkdtempSync(path.join(os.tmpdir(),'capture-custom-host-'));
+ try{
+  const root=path.join(dir,'sessions');mkdirSync(root);
+  for(const id of [A,B])writeFileSync(path.join(root,`rollout-test-${id}.jsonl`),JSON.stringify({type:'session_meta',payload:{id}})+'\n');
+  const custom={...entry(),_webSocketMessages:undefined,request:{url:'https://model-gateway.example.test/v1/responses',method:'POST',headers:[],postData:{text:JSON.stringify({model:'synthetic',input:[],client_metadata:{thread_id:A}})}},response:{status:200,headers:[],content:{mimeType:'application/json',text:JSON.stringify({id:'custom-response',status:'completed',model:'synthetic'})}}};
+  const text=har([custom]),file=path.join(dir,'custom.har');writeFileSync(file,text);
+  assert.equal(captureSessions(text).product,'codex');
+  assert.deepEqual(captureSessions(text).sessions.map(session=>session.id),[A]);
+  assert.throws(()=>fileCapture(file,{roots:{codex:root},attachment:{product:'codex',sessionIds:[B]}}),/cannot override exact/);
+  const plan=fileCapture(file,{roots:{codex:root}});
+  assert.equal(plan.places[0].id,A);
+  const filed=readFileSync(plan.places[0].dest,'utf8');
+  const {capture}=await analyzeCapture([{name:'custom.har',text:filed}],trace(A));
+  assert.equal(capture.calls.length,1);
+  assert.equal(capture.calls[0].requestId,'custom-response');
+  const unrelated=har([{...custom,request:{...custom.request,url:'https://other.example.test/settings',postData:{text:JSON.stringify({session_id:A,thread_id:A})}}}]);
+  assert.equal(captureSessions(unrelated).product,null);
+  const browser=har([{...custom,request:{...custom.request,url:'https://chatgpt.com/conversation'}}]);
+  assert.equal(captureSessions(browser).product,'browser');
+  const claude=har([{...custom,request:{...custom.request,url:'https://api.anthropic.com/v1/messages'}}]);
+  assert.equal(captureSessions(claude).product,'claude-code');
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+test('custom-host websocket response.create supplies exact thread identity without an originator',async()=>{
+ const custom={...entry([],[create(B),receive('response.created','custom-ws-response'),receive('response.completed','custom-ws-response')]),request:{...entry().request,url:'https://model-gateway.example.test/v1/responses'}};
+ const text=har([custom]);
+ assert.deepEqual(captureSessions(text),{product:'codex',sessions:[{id:B,entries:1}]});
+ assert.throws(()=>scopeCapture(text,[A],{explicit:true}),/cannot override exact/);
+ const {capture}=await analyzeCapture([{name:'custom-ws.har',text}],trace(B));
+ assert.equal(capture.calls[0].requestId,'custom-ws-response');
+});
+test('exact gateway metadata blocks explicit overrides independently of Responses classification',()=>{
+ const dir=mkdtempSync(path.join(os.tmpdir(),'capture-minimal-metadata-'));
+ try{
+  const root=path.join(dir,'sessions');mkdirSync(root);
+  writeFileSync(path.join(root,`rollout-test-${B}.jsonl`),JSON.stringify({type:'session_meta',payload:{id:B}})+'\n');
+  for(const [index,body] of [{client_metadata:{thread_id:A}},{model:'synthetic',input:'string input',client_metadata:{'thread-id':A}},{client_metadata:{'session-id':A}}].entries()){
+   const custom={...entry(),_webSocketMessages:undefined,request:{url:'https://model-gateway.example.test/v1/responses',method:'POST',headers:[],postData:{text:JSON.stringify(body)}}};
+   const text=har([custom]),file=path.join(dir,`minimal-${index}.har`);writeFileSync(file,text);
+   assert.equal(captureSessions(text).product,null,'minimal fields must not invent a model-call classification');
+   assert.throws(()=>fileCapture(file,{roots:{codex:root},attachment:{product:'codex',sessionIds:[B]}}),/cannot override exact/);
+   assert.throws(()=>scopeCapture(text,[B],{explicit:true}),/cannot override exact/);
+   assert.deepEqual(readdirSync(root),[`rollout-test-${B}.jsonl`]);
+  }
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});

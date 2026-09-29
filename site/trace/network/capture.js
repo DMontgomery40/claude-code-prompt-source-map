@@ -68,6 +68,37 @@ export function codexRequestIds(body) {
   return out;
 }
 
+// Exact harness metadata is independent of model-call classification. Gateways
+// can omit model/input or use a string input while retaining authoritative IDs.
+function codexMetadataIds(body) {
+  const ids = codexRequestIds({client_metadata:body?.client_metadata});
+  return new Set([...ids].filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)));
+}
+function exactCodexProtocolIds(entry, info) {
+  const out = new Set();
+  for (const frame of info.ws ? wsFrames(entry) : []) {
+    if (frame.dir === "send" && frame.json?.type === "response.create") for (const id of codexMetadataIds(frame.json)) out.add(id);
+  }
+  if (info.method === "POST" && /\/responses\/?$/.test(info.path)) {
+    const text = bodyText(entry,"request");
+    const body = text && text.length < 5_000_000 ? jsonOr(text,null) : null;
+    for (const id of codexMetadataIds(body)) out.add(id);
+  }
+  return out;
+}
+// Classification deliberately requires more than a bare thread/session field.
+function codexResponsesEntry(entry, info) {
+  if (info.ws && wsFrames(entry).some(frame => frame.dir === "send" && frame.json?.type === "response.create" && codexMetadataIds(frame.json).size)) return true;
+  if (info.method !== "POST" || !/\/responses\/?$/.test(info.path)) return false;
+  const text = bodyText(entry,"request");
+  const body = text && text.length < 5_000_000 ? jsonOr(text,null) : null;
+  return typeof body?.model === "string" && Array.isArray(body?.input) && codexMetadataIds(body).size > 0;
+}
+function captureProduct(raw, infos) {
+  const recognized = productOf(infos,index => lowerHeaders(raw[index].request.headers));
+  return recognized || (infos.some(info => codexResponsesEntry(raw[info.i],info)) ? "codex" : null);
+}
+
 // Scope frames by create metadata and response IDs. Unidentified connection frames
 // stay unattributed. Never give an overlapping response's frames to the latest create.
 function frameOwners(entry) {
@@ -102,7 +133,7 @@ function frameOwners(entry) {
 // Unscoped side traffic remains visible but explicitly has no thread owner.
 export function scopeCapture(text, sessionIds, { explicit = false } = {}) {
   const har = parseHar(text), mine = new Set(sessionIds.map(id => String(id).toLowerCase()));
-  if (explicit && captureSessions(text).sessions.length) throw new Error("Explicit attachment cannot override exact session identifiers in the capture.");
+  if (explicit && (captureSessions(text).sessions.length || har.log.entries.some((entry,index) => exactCodexProtocolIds(entry,entryInfo(entry,index)).size))) throw new Error("Explicit attachment cannot override exact session identifiers in the capture.");
   const entries = [];
   for (const entry of har.log.entries) {
     const info = entryInfo(entry,0);
@@ -139,13 +170,15 @@ export function scopeCapture(text, sessionIds, { explicit = false } = {}) {
 export function captureSessions(text) {
   const raw = parseHar(text).log.entries;
   const infos = raw.map((e, i) => entryInfo(e, i));
-  const product = productOf(infos, (i) => lowerHeaders(raw[i].request.headers));
+  const product = captureProduct(raw,infos);
   const counts = new Map();
   if (product === "claude-code" || product === "codex") {
     for (const x of infos) {
       const reqJson = () => { const t = bodyText(raw[x.i], "request"); return t && t.length < 5_000_000 ? jsonOr(t, null) : null; };
       for (const id of sessionsOf(product, raw[x.i], x, reqJson)) counts.set(id, (counts.get(id) || 0) + 1);
     }
+  } else if (!product) {
+    for (const info of infos) for (const id of exactCodexProtocolIds(raw[info.i],info)) counts.set(id,(counts.get(id) || 0)+1);
   }
   return { product, sessions: [...counts].sort((a, b) => b[1] - a[1]).map(([id, entries]) => ({ id, entries })) };
 }
@@ -166,8 +199,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   }
   if (!raw.length) throw new Error("That capture has no requests in it.");
   const infos = raw.map((e, i) => entryInfo(e, i));
-  const hdr = infos.map((x) => lowerHeaders(raw[x.i].request.headers));
-  const product = productOf(infos, (i) => hdr[i]);
+  const product = captureProduct(raw,infos);
   if (product === "browser") throw new Error("This looks like a browser capture of chatgpt.com or claude.ai (a web chat). Those have no session log, so Trace can't attach them; this layer reads captures of Claude Code and Codex/ChatGPT CLI or app sessions.");
   if (!product) throw new Error("No Claude Code or Codex/ChatGPT traffic in this capture.");
   if (product !== trace.product) throw new Error(`This capture is ${PRODUCT_NAME[product]} traffic, but the loaded session is ${PRODUCT_NAME[trace.product]}. Load the ${PRODUCT_NAME[product]} session it belongs to.`);
@@ -215,7 +247,10 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   // ---- classify, then read the revealing bodies and collect identity values before redacting anything
   const R = createRedactor();
   R.protect([...mine, ...others]);
-  for (const x of kept) Object.assign(x, classify(product, x));
+  for (const x of kept) {
+    Object.assign(x,classify(product,x));
+    if (product === "codex" && x.role === "other" && codexResponsesEntry(raw[x.i],x)) Object.assign(x,{role:"model",label:"Responses (custom endpoint)",reveals:"Responses protocol request and returned response, identified by exact harness client metadata."});
+  }
   const eager = kept.filter((x) => EAGER_ROLES.has(x.role) || (x.reqBytes + x.resBytes) <= SMALL);
   const resJson = new Map();
   for (const x of kept) R.harvestHeaders(raw[x.i].request.headers), R.harvestHeaders(raw[x.i].response.headers);
