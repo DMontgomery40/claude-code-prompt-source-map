@@ -66,6 +66,20 @@ paths and ids out.
 - **Desktop agent-mode sessions.** They keep their own `.claude/` under the app's data, with a session
   record (system prompt, tools, egress) and an audit log.
 
+## Help
+
+A Help button, in the sidebar and on the loader (and as a palette command), opens a dialog.
+- **Live readouts at the top:**
+  - whether the local resolver answers this page, and whether the browser's local-network permission is
+    blocking it or will ask;
+  - whether this session has a network capture;
+  - what the Sources lens found.
+- **Topics below**, each with the commands to copy: opening a session, seeing everything on this machine,
+  network captures, full request bodies, and the keyboard shortcuts sheet.
+- **When it checks.** From the web, the resolver check runs only when you click it, so opening Help never
+  sends a request to 127.0.0.1 on its own. The Sources lens without a resolver, and the capture card, link
+  into it.
+
 ## Checks
 
 - `tools/test/sources.test.mjs`:

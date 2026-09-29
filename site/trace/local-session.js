@@ -19,6 +19,22 @@ export async function openLocalSession(id, {fetcher=fetch,base=BASE}={}) {
   });
 }
 
+// Whether the resolver answers this page: { ok: true, version } | { ok: false, blocked, prompt }. `blocked`
+// and `prompt` come from the browser's local-network permission when it has one (Chrome asks before a site on
+// the web reaches 127.0.0.1); without it a failure can mean not running or blocked, and says so.
+export async function resolverHealth({fetcher=fetch,base=BASE}={}){
+  let permission=null;
+  for(const name of ['local-network-access','loopback-network','local-network']){
+    try{permission=(await navigator.permissions.query({name})).state;break;}catch{/* not this browser's name */}
+  }
+  try{
+    const r=await fetcher(base+'/health',{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(1500)});
+    const j=r.ok?await r.json().catch(()=>null):null;
+    if(j&&j.service==='trace-local')return {ok:true,version:j.version,permission};
+    return {ok:false,permission,blocked:permission==='denied',prompt:permission==='prompt'};
+  }catch{return {ok:false,permission,blocked:permission==='denied',prompt:permission==='prompt'};}
+}
+
 // Every local source of a session (tools/sources on the resolver): the report, and one source's content.
 // null when no resolver answers, so the page can say how to start it.
 export async function localSources(id,{fetcher=fetch,base=BASE}={}){

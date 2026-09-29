@@ -1,0 +1,92 @@
+/* Help (help/help.js): live readouts of what is set up, then one topic at a time. Trace's tokens; the same
+   legibility floor as trace.css (body >= 14px, support >= 12px, no opacity on text). */
+.help-layer { position: fixed; inset: 0; z-index: 70; display: flex; justify-content: center; align-items: flex-start; padding: 7vh 16px 16px; }
+.help-scrim { position: absolute; inset: 0; background: rgba(3, 7, 12, 0.66); }
+.help {
+  position: relative; width: min(880px, 100%); max-height: min(86vh, 780px); display: flex; flex-direction: column;
+  background: var(--panel-solid); border: 1px solid #3a526a; border-radius: 14px; box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+  color: var(--ink); font: 14px/1.5 var(--sans); overflow: hidden; outline: none;
+  animation: help-in .16s ease-out;
+}
+@keyframes help-in { from { transform: translateY(6px) scale(.985); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .help { animation: none; } .help-readout.busy .help-lamp { animation: none; } }
+.help-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 12px; }
+.help-head h2 { margin: 0; font-size: 19px; font-weight: 650; letter-spacing: -0.005em; }
+.help-close { background: none; border: 0; color: var(--link); font: inherit; font-size: 14px; cursor: pointer; padding: 4px 2px; }
+.help-close:hover { color: var(--accent, var(--link)); }
+
+/* The readouts: one instrument row per thing that can be checked. */
+.help-readouts { display: grid; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #0a1520; }
+.help-readout {
+  display: grid; grid-template-columns: 14px 128px 1fr auto; align-items: center; gap: 12px;
+  padding: 10px 18px; border-top: 1px solid #1a2837;
+}
+.help-readout:first-child { border-top: 0; }
+.help-lamp { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--line-2); box-sizing: border-box; }
+.help-readout.ok .help-lamp { background: var(--you); border-color: var(--you); box-shadow: 0 0 0 3px rgba(200, 247, 132, .14); }
+.help-readout.warn .help-lamp { background: var(--warn); border-color: var(--warn); box-shadow: 0 0 0 3px rgba(255, 140, 66, .16); }
+.help-readout.busy .help-lamp { border-color: var(--link); animation: help-pulse 1s ease-in-out infinite alternate; }
+@keyframes help-pulse { from { background: transparent; } to { background: var(--link); } }
+.help-rname { font-weight: 600; color: var(--ink); }
+.help-rtext { color: var(--ink-2); font-size: 13.5px; }
+.help-readout.warn .help-rtext { color: #ffd2b3; }
+.help-btn {
+  border: 1px solid var(--line-2); border-radius: 8px; background: #13202c; color: var(--ink); font: inherit; font-size: 13px;
+  padding: 5px 11px; cursor: pointer; white-space: nowrap;
+}
+.help-btn:hover { border-color: var(--link); background: #172838; }
+
+/* Topics beside the content. */
+.help-main { display: grid; grid-template-columns: 212px 1fr; min-height: 0; flex: 1; }
+.help-tabs { display: flex; flex-direction: column; gap: 2px; padding: 12px 10px; border-right: 1px solid var(--line); overflow-y: auto; }
+.help-tabs [role=tab] {
+  text-align: left; background: none; border: 0; border-left: 3px solid transparent; border-radius: 0 7px 7px 0;
+  color: var(--ink-2); font: inherit; font-size: 14px; padding: 8px 10px; cursor: pointer;
+}
+.help-tabs [role=tab]:hover { color: var(--ink); background: #122030; }
+.help-tabs [role=tab][aria-selected=true] { color: var(--ink); border-left-color: var(--accent, var(--link)); background: #13263a; font-weight: 600; }
+.help-body { overflow-y: auto; padding: 16px 22px 22px; outline: none; }
+.help-body:focus-visible, .help-tabs [role=tab]:focus-visible, .help-btn:focus-visible, .help-copy:focus-visible, .help-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.help-h3 { margin: 0 0 8px; font-size: 17px; font-weight: 650; }
+.help-h4 { margin: 18px 0 4px; font-size: 14.5px; font-weight: 650; color: var(--ink); }
+.help-p { margin: 0 0 10px; color: var(--ink-2); max-width: 66ch; }
+.help-p.note { color: var(--ink-3); font-size: 13px; }
+.help-p.ok { color: var(--you); }
+.help-p.warn { color: #ffd2b3; }
+.help-link { color: var(--link); font-family: var(--mono); font-size: 13.5px; }
+
+/* Steps are a real sequence: numbered, title then detail. */
+.help-steps { list-style: none; counter-reset: step; margin: 6px 0 10px; padding: 0; max-width: 66ch; }
+.help-steps li { counter-increment: step; position: relative; padding: 2px 0 8px 34px; }
+.help-steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid var(--accent, var(--link)); color: var(--accent, var(--link)); font: 600 12px/20px var(--sans); text-align: center;
+}
+.help-steps b { display: block; color: var(--ink); font-weight: 600; }
+.help-steps span { color: var(--ink-2); }
+
+/* A command to copy. */
+.help-cmdwrap { margin: 0 0 12px; max-width: 66ch; }
+.help-cmd { display: flex; align-items: stretch; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; background: #081018; }
+.help-cmd code { flex: 1; min-width: 0; padding: 8px 12px; font: 13px/1.5 var(--mono); color: var(--ink); overflow-x: auto; white-space: nowrap; }
+.help-copy { flex: none; border: 0; border-left: 1px solid var(--line-2); background: #13202c; color: var(--ink); font: inherit; font-size: 13px; padding: 0 12px; cursor: pointer; }
+.help-copy:hover { background: #1a2d40; }
+
+/* The Help buttons that open it. */
+.help-open { border: 1px solid var(--line-2); border-radius: 999px; background: none; color: var(--link); font: inherit; font-size: 12px; padding: 3px 10px; cursor: pointer; }
+.help-open:hover { border-color: var(--link); }
+.loader .help-open { font-size: 13px; }
+.load-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.load-head h2 { margin: 0; }
+
+@media (max-width: 720px) {
+  .help-layer { padding: 8px; }
+  .help { max-height: calc(100vh - 16px); }
+  .help-readout { grid-template-columns: 14px 1fr; gap: 4px 10px; padding: 10px 14px; }
+  .help-readout .help-rtext, .help-readout .help-ract { grid-column: 2; }
+  .help-main { grid-template-columns: 1fr; }
+  .help-tabs { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px; }
+  .help-tabs [role=tab] { white-space: nowrap; border-left: 0; border-bottom: 3px solid transparent; border-radius: 7px 7px 0 0; }
+  .help-tabs [role=tab][aria-selected=true] { border-bottom-color: var(--accent, var(--link)); }
+  .help-body { padding: 14px 16px 18px; }
+}

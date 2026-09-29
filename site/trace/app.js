@@ -15,6 +15,7 @@ import { createHarnessMode } from "./harness/mode.js";
 import { looksLikeHar, capturesFor } from "./network/har.js";
 import { networkLens, wireCard, NETWORK_LENS, closeWireReader } from "./network/panel.js";
 import { sourcesLens, SOURCES_LENS } from "./sources/panel.js";
+import { createHelp } from "./help/help.js";
 
 const params = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
@@ -62,6 +63,8 @@ function setupLoader() {
     else if (S.trace) collectDrop(e.dataTransfer).then(async files => { const { hars } = await splitCaptures(files); if (hars.length) attachCapture(hars); else netStatus("Drop a .har network capture here to attach it; to open another session, go back to the loader.", "error"); });
   });
   $("#add-capture").addEventListener("click", () => netHelp());
+  $("#help-open").addEventListener("click", () => openHelp());
+  $("#help-loader").addEventListener("click", () => openHelp("open"));
   $("#pick-har").addEventListener("change", e => {
     const files = [...e.target.files].map(f => ({ path: f.name, file: f }));
     e.target.value = "";
@@ -317,7 +320,7 @@ async function attachCapture(files) {
     render(false);
   } catch (e) {
     netStatus(e.message || String(e), "error");
-  } finally { btn.disabled = false; netButton(); if (!$("#net-help").hidden) netHelp(true); }
+  } finally { btn.disabled = false; netButton(); if (!$("#net-help").hidden) netHelp(true); helpUI?.refresh(); }
 }
 // The capture button says whether this session has one; the card it opens says what a capture is, how
 // to record one and where Trace finds it, and offers the file picker for a .har already made.
@@ -341,6 +344,8 @@ function netHelp(open = $("#net-help").hidden) {
   open5?.addEventListener("click", () => { netHelp(false); selectLens(NETWORK_LENS.key); });
   const close = el("button", { class: "text-control", type: "button", text: "Close" });
   close.addEventListener("click", () => netHelp(false));
+  const more = el("button", { class: "text-control", type: "button", text: "More help" });
+  more.addEventListener("click", () => { netHelp(false); openHelp("capture"); });
   box.replaceChildren(
     el("p", { class: "net-help-head", text: n
       ? `Attached: ${fmtInt(n.kept)} requests, ${fmtInt(n.calls.length)} model call${n.calls.length === 1 ? "" : "s"} (${fmtInt(n.join.matched)} in your log).`
@@ -349,7 +354,7 @@ function netHelp(open = $("#net-help").hidden) {
     el("div", { class: "path" }, el("code", { text: cmd }), copy),
     el("p", { text: "When the command exits, the capture is saved beside that session's log, and Trace attaches it on its own every time the session opens (pasted id, folder or drop)." }),
     el("p", { class: "net-help-note" }, "A .har you already have: ", el("code", { text: "node tools/capture/file-capture.mjs capture.har" }), " files it beside its session, or choose it here for this visit."),
-    el("div", { class: "net-help-actions" }, open5, choose, close));
+    el("div", { class: "net-help-actions" }, open5, choose, more, close));
 }
 function clearCapture() {
   S.network = null;
@@ -398,6 +403,18 @@ async function loadFiles(files, root) {
   attachFound();
 }
 
+// Help (help/help.js): what is set up right now, and how to get what's missing. Built on first open.
+let helpUI = null;
+function openHelp(topic = null) {
+  helpUI ||= createHelp({ state: () => S, A: {
+    openNetwork: () => S.network && selectLens(NETWORK_LENS.key),
+    openSources: () => selectLens(SOURCES_LENS.key),
+    pickHar: () => $("#pick-har").click(),
+    openKeys: () => palette?.openHelp(),
+  } });
+  helpUI.open(topic);
+}
+
 // The session's local sources (tools/sources on the loopback resolver), asked for once per load. Asked for at
 // load only when the resolver is already in play (it opened the session, or it serves this page); otherwise
 // when the lens opens, so a page from elsewhere never reaches for 127.0.0.1 unasked (a console error, and in
@@ -409,7 +426,7 @@ function loadSources() {
   if (sourcesAsked === sourcesSeq) return;
   sourcesAsked = sourcesSeq;
   const seq = sourcesSeq, id = sessionRootId();
-  const done = v => { if (seq !== sourcesSeq) return; S.sources = v; if (S.lens === SOURCES_LENS.key) render(false); };
+  const done = v => { if (seq !== sourcesSeq) return; S.sources = v; if (S.lens === SOURCES_LENS.key) render(false); helpUI?.refresh(); };
   if (!/^[0-9a-f-]{36}$/.test(id)) return done({ unavailable: true, reason: "This session has no session id to look up." });
   localSources(id).then(r => done(r || { unavailable: true, reason: "The local resolver didn't answer this page: it isn't running, or this page isn't one it serves." }),
     e => done({ unavailable: true, reason: e.message || String(e) }));
@@ -1233,6 +1250,7 @@ const A = {
   networkBody,
   rerender: () => render(false, true),
   addCapture: () => netHelp(true),
+  help: topic => openHelp(topic),
   // Everything on this machine (sources/panel.js): the report comes with the session; content on request.
   sourcesLens: view => sourcesLens({ ...view, sources: S.sources, sourceOpen: S.sourceOpen }, A),
   openSource(sourceId, opts = {}) {

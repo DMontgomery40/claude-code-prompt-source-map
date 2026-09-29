@@ -937,3 +937,38 @@ test("the Sources lens lists every source by where it stands, opens content on r
   renderPanel(lens3, { trace, level: 0, lens: "sources", mode: "3d" }, A);
   assert.ok(lens3.textContent.includes("npm --prefix site run trace:local"));
 });
+
+test("Help checks the resolver only when asked from the web, reads out this session's state, and switches topics", async () => {
+  const { createHelp } = await import("../help/help.js");
+  // The few DOM calls the dialog makes beyond the fake DOM above.
+  const E = Object.getPrototypeOf(document.createElement("div"));
+  E.querySelector ??= function (sel) { return this.all(n => n.matches(sel))[0] || null; };
+  E.focus ??= function () { document.activeElement = this; };
+  E.scrollIntoView ??= function () {};
+  document.contains ??= () => true;
+  const savedLocation = globalThis.location, savedFetch = globalThis.fetch;
+  globalThis.location = { origin: "https://harness.dtmont.com" };
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; return { ok: true, json: async () => ({ service: "trace-local", version: 1 }) }; };
+  try {
+    const called = [];
+    const S = { trace: { product: "codex" }, network: null, sources: { sources: [{ status: "found" }, { status: "absent" }] } };
+    const help = createHelp({ state: () => S, A: { openKeys: () => called.push("keys"), openSources: () => called.push("sources"), pickHar: () => called.push("har") } });
+    const layer = document.body.children.at(-1);
+    help.open();
+    assert.equal(layer.hidden, false);
+    const text = () => layer.textContent;
+    assert.ok(text().includes("Not checked yet") && text().includes("None for this session.") && text().includes("1 of the 2 places Trace checks"));
+    assert.equal(calls, 0, "no request to 127.0.0.1 until asked");
+    const button = label => layer.all(n => n.tagName === "BUTTON" && n.textContent === label)[0];
+    button("Check now").dispatch("click");
+    await new Promise(r => setTimeout(r, 0)); await new Promise(r => setTimeout(r, 0));
+    assert.equal(calls, 1);
+    assert.ok(text().includes("Running, and answering this page."));
+    layer.all(n => n.getAttribute("id") === "help-tab-capture")[0].dispatch("click");
+    assert.ok(text().includes("tools/capture/capture.sh -- codex"), "the capture command fits the session's product");
+    layer.all(n => n.getAttribute("id") === "help-tab-keys")[0].dispatch("click");
+    assert.deepEqual(called, ["keys"]);
+    assert.equal(layer.hidden, true, "the shortcuts sheet replaces Help");
+  } finally { globalThis.location = savedLocation; globalThis.fetch = savedFetch; }
+});

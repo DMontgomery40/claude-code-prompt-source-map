@@ -117,6 +117,7 @@ export function createPalette(ctx) {
       peak >= 0 ? cmd("Jump to peak context", () => ctx.A.focusRequest(root.id, peak), null, `Request ${peak + 1} · ${fmtTok(root.requests[peak].tokens.context)} in context`) : null,
       ...KEYS.filter(k => k.command).map(k => cmd(k.command, () => ACTIONS[k.id](0), k.keys[0], k.detail)),
       cmd(ctx.network && ctx.network() ? "Replace the network capture" : "Add a network capture (.har)", () => ctx.A.addCapture?.(), null, "What went over the wire, joined to this session"),
+      cmd("Help", () => ctx.A.help?.(), null, "What's set up (local resolver, capture, sources) and how to get what's missing"),
       cmd("Everything on this machine", () => ctx.selectLens("sources"), null, "Every place the harness keeps something about this session: databases, its own logs, caches, history"),
       cmd("Load another session", () => $("#back-to-load")?.click(), null, "Back to the loader")
     ];

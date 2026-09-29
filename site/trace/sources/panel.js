@@ -27,7 +27,8 @@ export function sourcesLens(S, A) {
       el("div", { class: "src-need" },
         el("p", { text: rep.reason || "The local resolver isn't running." }),
         el("p", {}, "Start it from the harness-source-map repo, then open Trace from it:"),
-        el("pre", { class: "src-cmd", text: "npm --prefix site run trace:local\nopen http://127.0.0.1:8766/trace/" })));
+        el("pre", { class: "src-cmd", text: "npm --prefix site run trace:local\nopen http://127.0.0.1:8766/trace/" }),
+        A.help ? el("p", {}, el("button", { class: "btn small", type: "button", text: "Show me how, step by step", onclick: () => A.help("everything") })) : null));
     return out;
   }
   const c = rep.context;
