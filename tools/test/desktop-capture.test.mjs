@@ -18,6 +18,52 @@ test('an already running desktop app is refused before any launch or capture fil
  await assert.rejects(readFile(join(directory,'active.json')),e=>e.code==='ENOENT');
 });
 
+test('temporary process inspection failure preserves a live recorder and recovers on manual status check',async t=>{
+ const directory=await mkdtemp(join(tmpdir(),'desktop-monitor-status-'));t.after(()=>rm(directory,{recursive:true,force:true}));
+ const run='run-222222222222222222222222';await mkdir(join(directory,run));
+ await writeFile(join(directory,'active.json'),JSON.stringify({run}));
+ const saved={phase:'recording',worker:42,appRunning:true,forwarding:true,flows:3,frames:4};
+ await writeFile(join(directory,run,'status.json'),JSON.stringify(saved));
+ let fail=true;const recorder=createDesktopRecorder({directory,runtime:{inspect:async()=>({main:'/fixture/app'}),appRunning:async()=>{if(fail)throw new Error('/private/process-inspection-failed');return true;},isAlive:()=>true}});
+ const status=await recorder.status();assert.equal(status.supported,true);assert.equal(status.phase,'recording');assert.equal(status.forwarding,true);assert.equal(status.appRunning,true);assert.equal(status.flows,3);
+ assert.equal(status.error.code,'MONITOR_RETRY');assert.match(status.error.message,/Stop/);assert.doesNotMatch(JSON.stringify(status),/private/);
+ assert.deepEqual(JSON.parse(await readFile(join(directory,run,'status.json'))),saved,'monitor status must not mutate worker state');
+ fail=false;const recovered=await recorder.status();assert.equal(recovered.supported,true);assert.equal(recovered.error,undefined);
+});
+test('unsupported capability differs from a temporary monitor failure without an active run',async t=>{
+ const directory=await mkdtemp(join(tmpdir(),'desktop-capability-status-'));t.after(()=>rm(directory,{recursive:true,force:true}));
+ const unsupported=createDesktopRecorder({directory,runtime:{inspect:async()=>{throw Object.assign(new Error('Unsupported platform'),{code:'PLATFORM'});}}});
+ assert.equal((await unsupported.status()).supported,false);
+ const transient=createDesktopRecorder({directory,runtime:{inspect:async()=>({}),appRunning:async()=>{throw new Error('temporary');}}});
+ const status=await transient.status();assert.equal(status.supported,true);assert.equal(status.phase,'idle');assert.equal(status.error.code,'MONITOR_RETRY');assert.equal(status.forwarding,false);
+});
+
+test('a valid slow startup survives the former 25-second resolver deadline',async t=>{
+ const directory=await mkdtemp(join(tmpdir(),'desktop-slow-start-'));t.after(()=>rm(directory,{recursive:true,force:true}));
+ let elapsed=0,runDir;
+ const recorder=createDesktopRecorder({directory,now:()=>elapsed,sleep:async()=>{
+  elapsed+=1000;
+  // Proxy becomes ready at 18 seconds; the scoped app-server follows at 28.
+  if(elapsed===18000)await writeFile(join(runDir,'status.json'),JSON.stringify({phase:'starting',forwarding:true}));
+  if(elapsed===28000)await writeFile(join(runDir,'status.json'),JSON.stringify({phase:'recording',forwarding:true}));
+ },runtime:{inspect:async()=>({main:'/fixture/app'}),appRunning:async()=>false,isAlive:()=>false,launchWorker:dir=>{runDir=dir;return {pid:42};}}});
+ const state=await recorder.start();assert.equal(elapsed,28000);assert.equal(state.phase,'recording');assert.equal(state.forwarding,true);
+});
+
+test('Stop waits past a slow final checkpoint for its matching acknowledgement',async t=>{
+ const directory=await mkdtemp(join(tmpdir(),'desktop-slow-stop-'));t.after(()=>rm(directory,{recursive:true,force:true}));
+ const run='run-333333333333333333333333',runDir=join(directory,run);await mkdir(runDir);
+ await writeFile(join(directory,'active.json'),JSON.stringify({run}));
+ await writeFile(join(runDir,'status.json'),JSON.stringify({phase:'recording',worker:42,forwarding:true}));
+ let elapsed=0;
+ const recorder=createDesktopRecorder({directory,now:()=>elapsed,sleep:async()=>{
+  elapsed+=1000;
+  // A near-budget checkpoint plus filing must finish before Stop is acknowledged.
+  if(elapsed===32000){const control=JSON.parse(await readFile(join(runDir,'control.json')));await writeFile(join(runDir,'status.json'),JSON.stringify({phase:'stopped',forwarding:true,controlRequest:control.request,filed:1}));}
+ },runtime:{isAlive:()=>true}});
+ const state=await recorder.stop();assert.equal(elapsed,32000);assert.equal(state.phase,'stopped');assert.equal(state.forwarding,true);assert.equal(state.filed,1);
+});
+
 test('wrapper scopes proxy and CA to the desktop app-server and safely quotes paths',()=>{
  const wrapper=scopedWrapper({binary:"/Applications/App's CLI/codex",ca:"/private/run's/ca.pem",receipt:'/private/run/owned.json',proxy:'http://127.0.0.1:1234'});
  assert.match(wrapper,/CODEX_CA_CERTIFICATE=/);

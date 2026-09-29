@@ -259,7 +259,16 @@ export function codexHttp(entry, info, R) {
   } else {
     const response = jsonOr(text,null);
     if (response && typeof response === "object") {
-      absorb(call,{json:{type:response.status === "failed" ? "response.failed" : response.status === "incomplete" ? "response.incomplete" : "response.completed",response}},R);
+      if (response.type === "error" || (response.error && !response.id)) {
+        // An HTTP API error is not a completed Responses object. Preserve the
+        // failure without inventing a response ID or successful completion.
+        call.error = R.json(response.error || response);
+        call.status = "failed";
+      } else {
+        const terminal = ["completed","failed","incomplete"].includes(response.status);
+        absorb(call,{json:{type:terminal ? `response.${response.status}` : "response.in_progress",response}},R);
+        if (!terminal) call.status = response.status ?? null;
+      }
     }
   }
   call.complete = Boolean(call.done);

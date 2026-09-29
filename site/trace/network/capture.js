@@ -124,7 +124,7 @@ function frameOwners(entry) {
     if (!call) return;
     if (rid) responses.set(rid,call);
     owners[index] = call.ids;
-    if (["response.completed","response.failed","response.incomplete"].includes(j.type)) pending.delete(call);
+    if (["response.completed","response.failed","response.incomplete","error"].includes(j.type)) pending.delete(call);
   });
   return owners;
 }

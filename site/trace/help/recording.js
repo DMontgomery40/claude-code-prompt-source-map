@@ -36,7 +36,10 @@ export function createRecordingController({fetcher=globalThis.fetch,base=LOCAL,o
   const clear=()=>{if(timer!=null){cancel(timer);timer=null;}};
   const poll=()=>{
     clear();
-    if(enabled && !disposed && !busy && status?.phase !== 'error' && status?.supported !== false) timer=schedule(()=>request('status'),pollMs);
+    // Keep the live badge and forwarding cleanup current. Stable states need
+    // no app inspections; a failed connection requires an explicit recheck.
+    const live=['starting','recording'].includes(status?.phase) || !!status?.forwarding;
+    if(enabled && !disposed && !busy && live && status?.error?.code !== 'RESOLVER_UNREACHABLE' && status?.supported !== false) timer=schedule(()=>request('status'),pollMs);
   };
   async function request(action,attachment=null) {
     if(disposed || busy) return;
@@ -44,7 +47,7 @@ export function createRecordingController({fetcher=globalThis.fetch,base=LOCAL,o
     if(action==='start') status={...status,phase:'starting'};
     const seq=++operation; emit();
     try {
-      const response=await fetcher(`${base}/v1/recording/${action}`,{method:action==='status'?'GET':'POST',credentials:'omit',redirect:'error',headers:{'X-Trace-Request':'1',...(action==='status'?{}:{'Content-Type':'application/json'})},...(action==='status'?{}:{body:JSON.stringify(attachment?{attachment}:{})}),signal:AbortSignal.timeout(action==='status'?3000:30000)});
+      const response=await fetcher(`${base}/v1/recording/${action}`,{method:action==='status'?'GET':'POST',credentials:'omit',redirect:'error',headers:{'X-Trace-Request':'1',...(action==='status'?{}:{'Content-Type':'application/json'})},...(action==='status'?{}:{body:JSON.stringify(attachment?{attachment}:{})}),signal:AbortSignal.timeout(action==='status'?3000:60000)});
       const data=await response.json();
       if(disposed || seq!==operation)return;
       if(response.status===404) status={...status,phase:'error',supported:false,error:{code:'HELPER_UPDATE',message:'Update and restart the local helper to use desktop recording.'}};

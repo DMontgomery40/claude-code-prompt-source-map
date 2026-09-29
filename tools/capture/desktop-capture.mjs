@@ -57,18 +57,28 @@ export function recordingStatus(value={}){
  return out;
 }
 
-export function createDesktopRecorder({directory=DIRECTORY,roots=defaultRoots(),runtime=realRuntime,waitMs=25000}={}){
+// Allow both 20-second startup stages and the 30-second final checkpoint
+// plus local setup/filing time; browser writes have a larger request deadline.
+export function createDesktopRecorder({directory=DIRECTORY,roots=defaultRoots(),runtime=realRuntime,waitMs=45000,now=Date.now,sleep=delay}={}){
  const current=async()=>{const active=await json(join(directory,'active.json'));return active&&runName.test(active.run)?join(directory,active.run):null;};
  async function status(){
   const dir=await current(),state=dir?await json(join(dir,'status.json'),{}):{};
   if(dir&&!state.worker)state.worker=(await json(join(dir,'worker.json'),{})).pid;
-  try{
-   const layout=await runtime.inspect();state.appRunning=await runtime.appRunning(layout);
-   if(state.worker && !(runtime.isAlive||alive)(state.worker) && ['starting','recording'].includes(state.phase)){state.phase='error';state.error={code:'WORKER_EXITED',message:'The recorder stopped unexpectedly. No new traffic is being recorded.'};}
-  }catch(error){state.supported=false;state.error={code:error.code,message:error.message};}
+  let layout;
+  try{layout=await runtime.inspect();}
+  catch(error){state.supported=false;state.error={code:error.code,message:error.message};}
+  if(layout){
+   try{state.appRunning=await runtime.appRunning(layout);}
+   catch{
+    // Process-list failures do not change recorder capability or worker custody.
+    // Keep the worker's last known runtime state so Stop remains available.
+    state.error={code:'MONITOR_RETRY',message:'Could not check whether the desktop app is running. Check status again; an active recorder can still be stopped with Stop recording.'};
+   }
+  }
+  if(state.worker && !(runtime.isAlive||alive)(state.worker) && ['starting','recording'].includes(state.phase)){state.phase='error';state.error={code:'WORKER_EXITED',message:'The recorder stopped unexpectedly. No new traffic is being recorded.'};}
   return recordingStatus(state);
  }
- async function waitFor(dir,predicate){const end=Date.now()+waitMs;while(Date.now()<end){const state=await json(join(dir,'status.json'),{});if(predicate(state))return recordingStatus({...state,appRunning:state.forwarding});await delay(100);}throw problem('RECORDER_TIMEOUT','The recorder did not answer in time. Check recording status before trying again.');}
+ async function waitFor(dir,predicate){const end=now()+waitMs;while(now()<end){const state=await json(join(dir,'status.json'),{});if(predicate(state))return recordingStatus({...state,appRunning:state.forwarding});await sleep(100);}throw problem('RECORDER_TIMEOUT','The recorder did not answer in time. Check recording status before trying again.');}
  async function start(){
   const layout=await runtime.inspect();
   if(await runtime.appRunning(layout))throw problem('APP_RUNNING','Codex/ChatGPT is already running. When you are ready, quit the desktop app yourself, then choose Start recording to reopen it. Active chats are never stopped by this recorder.');

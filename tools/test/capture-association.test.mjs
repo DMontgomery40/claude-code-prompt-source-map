@@ -162,6 +162,29 @@ test('custom-host websocket response.create supplies exact thread identity witho
  const {capture}=await analyzeCapture([{name:'custom-ws.har',text}],trace(B));
  assert.equal(capture.calls[0].requestId,'custom-ws-response');
 });
+test('terminal websocket error releases ownership before the next call on a reused connection',async()=>{
+ const dir=mkdtempSync(path.join(os.tmpdir(),'capture-terminal-error-'));
+ try{
+  const root=path.join(dir,'sessions');mkdirSync(root);
+  for(const id of [A,B])writeFileSync(path.join(root,`rollout-test-${id}.jsonl`),JSON.stringify({type:'session_meta',payload:{id}})+'\n');
+  const text=har([entry([],[create(A),frame('receive',{type:'error',error:{message:'fixture failure'}}),create(B),receive('response.created','second-response'),frame('receive',{type:'response.completed',response:{id:'second-response',status:'completed',usage:{input_tokens:5,output_tokens:2,total_tokens:7}}})])]);
+  const scoped=scopeCapture(text,[B]);
+  assert.deepEqual(scoped.log.entries[0]._webSocketMessages.map(f=>f._traceAssociation),['request-id','request-id','request-id']);
+  const source=path.join(dir,'error.har');writeFileSync(source,text);
+  const plan=fileCapture(source,{roots:{codex:root}}),filed=readFileSync(plan.places.find(place=>place.id===B).dest,'utf8');
+  const session=trace(B);session.agents[0].requests=[{responseId:'second-response'}];
+  const {capture}=await analyzeCapture([{name:'error.har',text:filed}],session);
+  assert.equal(capture.calls.length,1);
+  assert.equal(capture.calls[0].requestId,'second-response');
+  assert.equal(capture.calls[0].usage.input_tokens,5);
+  assert.equal(capture.join.matched,1);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+test('ambiguous top-level websocket errors do not release an arbitrary overlapping call',()=>{
+ const text=har([entry([],[create(A),create(B),frame('receive',{type:'error',error:{message:'unknown call'}}),receive('response.created','unknown-response'),receive('response.completed','unknown-response')])]);
+ const scoped=scopeCapture(text,[B]);
+ assert.deepEqual(scoped.log.entries[0]._webSocketMessages.map(f=>f._traceAssociation),['request-id','unattributed','unattributed','unattributed']);
+});
 test('exact gateway metadata blocks explicit overrides independently of Responses classification',()=>{
  const dir=mkdtempSync(path.join(os.tmpdir(),'capture-minimal-metadata-'));
  try{

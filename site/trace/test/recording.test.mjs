@@ -8,8 +8,8 @@ function fixture(fetcher){
  const controller=createRecordingController({fetcher,schedule:fn=>{scheduled.push(fn);return scheduled.length;},cancel:id=>cancelled.push(id),onChange:state=>changes.push(state)});
  return {controller,scheduled,cancelled,changes};
 }
-test('recorder construction never accesses the local network; only an explicit check starts polling',async()=>{
- const calls=[];const f=fixture(async(...args)=>{calls.push(args);return response({supported:true,phase:'idle'});});
+test('recorder construction never accesses the local network; an explicit active check starts polling',async()=>{
+ const calls=[];const f=fixture(async(...args)=>{calls.push(args);return response({supported:true,phase:'recording'});});
  assert.equal(calls.length,0);assert.equal(f.scheduled.length,0);
  await f.controller.check();
  assert.equal(calls[0][0],'http://127.0.0.1:8766/v1/recording/status');
@@ -69,9 +69,10 @@ test('NO_APP_SERVER startup failure keeps Stop available while its proxy still f
  assert.match(recordingNotice(f.controller.snapshot).text,/Stop recording/);f.controller.dispose();
 });
 test('a network failure after an active recording retains Stop, but busy requests do not enable it',async()=>{
- let count=0;const f=fixture(async()=>{if(!count++)return response({supported:true,phase:'recording',forwarding:false});throw new Error('offline');});
+ let count=0;const f=fixture(async()=>{if(!count++)return response({supported:true,phase:'recording',forwarding:true});throw new Error('offline');});
  await f.controller.start();await f.controller.check();
  assert.equal(f.controller.snapshot.status.phase,'error');assert.equal(f.controller.snapshot.active,true);
+ assert.equal(f.scheduled.length,1,'resolver failure does not keep retrying despite retained forwarding state');
  assert.equal(canStopRecording(f.controller.snapshot),true);assert.equal(canStopRecording({...f.controller.snapshot,busy:true}),false);
  f.controller.dispose();
 });
@@ -88,4 +89,21 @@ test('old helper 404 maps to an unsupported update state with a local helper res
  assert.match(recordingNotice(f.controller.snapshot).text,/npm --prefix site run trace:local/);
  assert.match(recordingNotice(f.controller.snapshot).text,/does not restart the desktop app/);
  assert.equal(canStopRecording(f.controller.snapshot),false);assert.equal(f.scheduled.length,0);assert.equal(calls.length,1);f.controller.dispose();
+});
+
+test('idle and fully stopped recorder checks leave no timer and allow another manual check',async()=>{
+ for(const phase of ['idle','stopped']){
+  let calls=0;const f=fixture(async()=>{calls++;return response({supported:true,phase,forwarding:false,appRunning:true,pendingAttachment:true});});
+  await f.controller.check();assert.equal(f.scheduled.length,0,phase+' must not poll');
+  await f.controller.check();assert.equal(calls,2,'manual status checks remain available');
+  f.controller.dispose();
+ }
+});
+test('transitional and forwarding states keep polling until forwarding disconnects',async()=>{
+ for(const state of [{phase:'starting'},{phase:'recording'},{phase:'stopped',forwarding:true},{phase:'error',forwarding:true,error:{code:'NO_APP_SERVER'}}]){
+  let calls=0;const f=fixture(async()=>response(++calls===1?{supported:true,...state}:{supported:true,phase:'stopped',forwarding:false}));
+  await f.controller.check();assert.equal(f.scheduled.length,1,JSON.stringify(state)+' must poll');
+  await f.scheduled[0]();assert.equal(calls,2);assert.equal(f.scheduled.length,1,'disconnected stop schedules no next poll');
+  f.controller.dispose();
+ }
 });
