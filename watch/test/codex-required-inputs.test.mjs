@@ -66,3 +66,11 @@ test('missing required generated extractor aborts rather than skipping a summary
  assert.equal(commands.calls.some(call=>call.args[0]==='extract/codex/prompt-sweep.mjs'),false);
  assert.equal(commands.calls.some(call=>/^extract\/codex\/(?:devday-coverage|devday-overview|key-findings)\.mjs$/.test(call.args[0])),false);
 },{scripts:false}));
+
+test('missing required surface scan cannot reuse cached triage',async()=>fixture(async repo=>{
+ fs.writeFileSync(path.join(repo,'work/surface-triage.json'),'cached old triage');
+ const commands=runner(null);
+ await assert.rejects(codex.refresh({now:Date.now(),dryRun:false,fingerprint,previous:fingerprint},runtime(repo,commands)),/required surface scan is missing; publication stopped/);
+ assert.equal(commands.calls.some(call=>/^extract\/codex\/(?:devday-coverage|devday-overview|key-findings)\.mjs$/.test(call.args[0])),false);
+ assert.equal(fs.existsSync(path.join(repo,'outputs/status.json')),false);
+}));

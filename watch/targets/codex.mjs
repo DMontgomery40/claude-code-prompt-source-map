@@ -127,7 +127,10 @@ export const codex = {
     // non-fatal; the surface triage file is required by summaries below.
     const scanDiffs = [];
     for (const s of SCANS) {
-      if (!existsSync(path.join(repo, s.script))) continue;
+      if (!existsSync(path.join(repo, s.script))) {
+        if (s.script === "extract/codex/surface-scan.mjs") throw new Error("required surface scan is missing; publication stopped");
+        continue;
+      }
       if (s.script === "extract/codex/surface-scan.mjs") rmSync(path.join(repo, "work/surface-triage.json"), { force: true });
       const diffFile = path.join(repo, s.diff);
       rmSync(diffFile, { force: true });
