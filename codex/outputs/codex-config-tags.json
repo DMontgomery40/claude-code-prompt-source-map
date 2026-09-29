@@ -36,28 +36,28 @@
    "label": "Sandbox and approvals",
    "kind": "topic",
    "definition": "Settings that limit or approve what the agent may execute or touch: sandbox mode and permission profiles, filesystem and network access for commands, approval policy and approvals reviewer (including guardian auto-review), exec-policy / prefix rules, shell environment policy, and variables Codex sets to mark or escalate sandboxed processes. It applies in any group, including features.* flags and requirements: variants. It does not cover keybindings in approval dialogs or generic terminal-detection variables.",
-   "count": 173
+   "count": 172
   },
   {
    "id": "built-in-tools",
    "label": "Built-in tools",
    "kind": "topic",
    "definition": "Settings for tools that ship with Codex and that the model calls directly: shell / unified exec and background terminals, apply_patch, plan updates, web search, browser use, computer use, image generation and viewing, JS REPL and code mode, clock/sleep and async user-message tools, and tool discovery or suggestion. It applies in any group, including features.* flags and requirements: variants. It does not cover external MCP servers or approval policy in general.",
-   "count": 167
+   "count": 169
   },
   {
    "id": "mcp-plugins",
    "label": "MCP, plugins and skills",
    "kind": "topic",
    "definition": "Settings for extending Codex with external or packaged capabilities: MCP server definitions (command, URL, auth, timeouts, per-tool limits), plugins and marketplaces, skills, and connected apps. It applies in any group, including features.* flags and requirements: variants. It does not cover tools built into Codex such as web search or shell, or sub-agent coordination.",
-   "count": 171
+   "count": 175
   },
   {
    "id": "multi-agent",
    "label": "Multi-agent",
    "kind": "topic",
    "definition": "Settings for spawning and coordinating sub-agents: multi-agent features, agent roles and nicknames, thread and depth limits, default sub-agent model or effort, and orchestrator behavior. It applies in any group, including features.* flags and requirements: variants. It does not cover skills or plugins by themselves, or IDs Codex exports to child processes.",
-   "count": 33
+   "count": 34
   },
   {
    "id": "memory-context",
@@ -85,14 +85,14 @@
    "label": "Telemetry, logs and storage",
    "kind": "topic",
    "definition": "Settings and environment variables for observability and local state: OpenTelemetry exporters and trace context, analytics and feedback, log levels and formats, transcript/history persistence, rollout and session files, and Codex home or database paths. It applies in any group, including features.* flags and requirements: variants. It does not cover the model's memory of past sessions or lifecycle hooks.",
-   "count": 105
+   "count": 109
   },
   {
    "id": "ui",
    "label": "Terminal and desktop UI",
    "kind": "topic",
    "definition": "Settings and environment variables that change how the terminal UI or desktop app looks and behaves for the user: TUI options, keymaps and vim mode, themes and rendering, notices and prompts, desktop-app window or runtime behavior, and terminal detection. It applies in any group. It does not cover what the model can do, or third-party library variables that only happen to be read by the desktop bundle.",
-   "count": 240
+   "count": 242
   },
   {
    "id": "documented",
@@ -104,7 +104,7 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 463
+   "count": 475
   },
   {
    "id": "hidden",
@@ -122,7 +122,7 @@
    "id": "removed",
    "label": "Removed (no effect)",
    "kind": "status",
-   "count": 39
+   "count": 40
   },
   {
    "id": "rejected",
@@ -140,7 +140,7 @@
    "id": "stage-under-development",
    "label": "Feature: under development",
    "kind": "status",
-   "count": 57
+   "count": 58
   },
   {
    "id": "stage-experimental",
@@ -525,6 +525,10 @@
    "prompt-instructions",
    "sandbox-approvals"
   ],
+  "config:auto_review.circuit_break_action": [
+   "undocumented",
+   "sandbox-approvals"
+  ],
   "config:auto_review.experimental_policy_template": [
    "undocumented",
    "prompt-instructions",
@@ -864,6 +868,10 @@
    "documented",
    "mcp-plugins"
   ],
+  "config:mcp_servers.<id>.oauth.client_secret": [
+   "undocumented",
+   "mcp-plugins"
+  ],
   "config:mcp_servers.<id>.oauth_resource": [
    "documented",
    "mcp-plugins"
@@ -880,6 +888,10 @@
    "documented",
    "mcp-plugins"
   ],
+  "config:mcp_servers.<id>.startup_readiness": [
+   "undocumented",
+   "mcp-plugins"
+  ],
   "config:mcp_servers.<id>.startup_timeout_ms": [
    "documented",
    "mcp-plugins"
@@ -889,6 +901,10 @@
    "mcp-plugins"
   ],
   "config:mcp_servers.<id>.supports_parallel_tool_calls": [
+   "undocumented",
+   "mcp-plugins"
+  ],
+  "config:mcp_servers.<id>.tool_input_schema_max_bytes": [
    "undocumented",
    "mcp-plugins"
   ],
@@ -1030,6 +1046,11 @@
    "undocumented",
    "built-in-tools"
   ],
+  "config:features.code_mode.tool_input_schema_max_bytes": [
+   "undocumented",
+   "built-in-tools",
+   "mcp-plugins"
+  ],
   "config:features.code_mode_buffered_exec": [
    "undocumented",
    "removed",
@@ -1160,6 +1181,10 @@
    "undocumented",
    "stage-under-development"
   ],
+  "config:features.defer_mailbox_preemption": [
+   "undocumented",
+   "stage-under-development"
+  ],
   "config:features.deferred_executor": [
    "undocumented",
    "stage-under-development",
@@ -1259,8 +1284,8 @@
   "config:features.guardian_reuse_parent_compaction": [
    "undocumented",
    "stage-stable",
-   "sandbox-approvals",
-   "memory-context"
+   "memory-context",
+   "telemetry-storage"
   ],
   "config:features.guardianv2": [
    "undocumented",
@@ -1325,8 +1350,7 @@
   ],
   "config:features.guardianv2.thread_context": [
    "undocumented",
-   "stage-stable",
-   "sandbox-approvals"
+   "removed"
   ],
   "config:features.guardianv2.transcript": [
    "undocumented"
@@ -1402,6 +1426,11 @@
   "config:features.in_app_updates": [
    "undocumented",
    "stage-stable"
+  ],
+  "config:features.instant_interrupt": [
+   "undocumented",
+   "stage-under-development",
+   "built-in-tools"
   ],
   "config:features.item_ids": [
    "undocumented",
@@ -1495,6 +1524,11 @@
   "config:features.multi_agent_v2.max_wait_timeout_ms": [
    "undocumented",
    "multi-agent"
+  ],
+  "config:features.multi_agent_v2.message_board_in_memory": [
+   "undocumented",
+   "multi-agent",
+   "telemetry-storage"
   ],
   "config:features.multi_agent_v2.min_wait_timeout_ms": [
    "undocumented",
@@ -2097,7 +2131,7 @@
   ],
   "config:features.write_stdin_approval": [
    "undocumented",
-   "stage-under-development",
+   "stage-stable",
    "sandbox-approvals",
    "built-in-tools"
   ],
@@ -3005,6 +3039,14 @@
    "documented",
    "telemetry-storage"
   ],
+  "config:otel.log_agent_responses": [
+   "undocumented",
+   "telemetry-storage"
+  ],
+  "config:otel.log_guardian_assessments": [
+   "undocumented",
+   "telemetry-storage"
+  ],
   "config:otel.log_user_prompt": [
    "documented",
    "telemetry-storage"
@@ -3345,6 +3387,10 @@
    "undocumented",
    "ui"
   ],
+  "config:tui.copy_on_select": [
+   "undocumented",
+   "ui"
+  ],
   "config:tui.disable_paste_burst": [
    "undocumented",
    "ui"
@@ -3442,6 +3488,10 @@
   ],
   "config:tui.resume_cwd": [
    "documented",
+   "ui"
+  ],
+  "config:tui.right_click_paste": [
+   "undocumented",
    "ui"
   ],
   "config:tui.screen_reader_detection_done": [

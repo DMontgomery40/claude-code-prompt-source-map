@@ -1,6 +1,6 @@
 # ChatGPT Work prompts
 
-Source: `app.asar` of the Codex/ChatGPT desktop app 26.924.22138 (build 11645), SHA-256 `d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80`.
+Source: `app.asar` of the Codex/ChatGPT desktop app 26.928.20755 (build 12246), SHA-256 `2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee`.
 
 Messages ChatGPT Work sends or prefills during onboarding: starter tasks, the daily-briefing next step, the writing-style skill setup, write-like-me requests and the browser-extension Side Chat samples.
 
@@ -12,7 +12,7 @@ Each entry says whether its text is exact (one literal in the bundle) or assembl
 
 ### Starter: personal website
 
-Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 8207, SHA-256 `99a1ec242ca96dc22fd75f70ba95c3f4cdbddc07efd98e83feab5d998c263b47`.
+Source: `webview/assets/fallback-cards-f713c46a173e.js`, offset 1083, SHA-256 `99a1ec242ca96dc22fd75f70ba95c3f4cdbddc07efd98e83feab5d998c263b47`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.starter.personal_website.prompt`.
 
@@ -24,7 +24,7 @@ Based on everything you know about me and what we’ve discussed in past convers
 
 ### Starter: manage inbox
 
-Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 9936, SHA-256 `c6996d589e9368ca25ca3b6a5807521ce92f75c663ed419ea0b502632818fa78`.
+Source: `webview/assets/fallback-cards-f713c46a173e.js`, offset 2812, SHA-256 `c6996d589e9368ca25ca3b6a5807521ce92f75c663ed419ea0b502632818fa78`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.starter.manage_inbox.prompt`.
 
@@ -36,7 +36,7 @@ Use my connected email app. If I haven’t connected one, ask which email provid
 
 ### Starter: personalized presentation
 
-Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 13415, SHA-256 `3aee7ed7c77e6936ab095df4862457c3088b46716121eb3436edbe6e0f9a2f80`.
+Source: `webview/assets/fallback-cards-f713c46a173e.js`, offset 6291, SHA-256 `3aee7ed7c77e6936ab095df4862457c3088b46716121eb3436edbe6e0f9a2f80`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.starter.personalized_presentation.prompt`.
 
@@ -48,7 +48,7 @@ Review our past conversations and choose the topic that would be most useful to 
 
 ### Starter: repeatable-work skill
 
-Source: `webview/assets/fallback-cards-813d1df097fa.js`, offset 14988, SHA-256 `70c95b76c0daf513a45e3e80b3415b9df59146bb6791b797cde5784537f1cf14`.
+Source: `webview/assets/fallback-cards-f713c46a173e.js`, offset 7906, SHA-256 `70c95b76c0daf513a45e3e80b3415b9df59146bb6791b797cde5784537f1cf14`.
 
 Exact text from the bundle.
 
@@ -60,7 +60,7 @@ Only after I explicitly confirm, create it as a reusable skill. Give it a descri
 
 ### Starter selection context
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 18725, SHA-256 `2fca00df9c58d896f7410a511bbdbd087c417d368a57ea14d46dd7835bf04424`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 18726, SHA-256 `2fca00df9c58d896f7410a511bbdbd087c417d368a57ea14d46dd7835bf04424`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time.
 
@@ -74,7 +74,7 @@ This instruction applies only to the initial request. Later user messages may re
 
 ### Next step: daily briefing
 
-Source: `webview/assets/home-9859b126064a.js`, offset 83695, SHA-256 `1da19cc520de9aa4f0533e6f5808078f8893f9d356d0881069abee7b6e715c96`.
+Source: `webview/assets/home-136896cd7545.js`, offset 47340, SHA-256 `1da19cc520de9aa4f0533e6f5808078f8893f9d356d0881069abee7b6e715c96`.
 
 Exact text from the bundle. Message id `chatgpt.tpp.onboarding.personalize.next_steps.daily_briefing.prompt.user_request`. The same text ships at 2 places in the bundle; the first is shown.
 
@@ -88,7 +88,7 @@ Create a daily automation that prepares a concise briefing focused on my connect
 
 ### Writing-style skill: connected apps to check
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 5449, SHA-256 `5081b54dffd7ba85ef9e8d49c1bc45417e5af50973d76932fa7eb5625896d922`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 5450, SHA-256 `5081b54dffd7ba85ef9e8d49c1bc45417e5af50973d76932fa7eb5625896d922`.
 
 Exact text from the bundle. Message id `home.ambientSuggestions.learnWritingStyle.prompt.connectionUnknown.v15`.
 
@@ -100,7 +100,7 @@ Use $skill-creator to create a personal writing-style skill for each selected wr
 
 ### Writing-style skill: no app connected
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 10567, SHA-256 `ae1ad24dbfdbc9d903f709eeb4da72e032dc1c2f60d052d741b2511c7a5d2728`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 10568, SHA-256 `ae1ad24dbfdbc9d903f709eeb4da72e032dc1c2f60d052d741b2511c7a5d2728`.
 
 Exact text from the bundle. Message id `home.ambientSuggestions.learnWritingStyle.prompt.noConnections.v15`.
 
@@ -112,7 +112,7 @@ Use $skill-creator to create a personal writing-style skill for each selected wr
 
 ### Writing-style skill: connected apps
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 15499, SHA-256 `1804cf5c6acbe3474003d4a081af3ef7d16239c79467decb6e1e41990ee988cd`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 15500, SHA-256 `1804cf5c6acbe3474003d4a081af3ef7d16239c79467decb6e1e41990ee988cd`.
 
 Exact text from the bundle. Message id `home.ambientSuggestions.learnWritingStyle.prompt.connectedApps.v14`.
 
@@ -122,57 +122,11 @@ Translator note: Hidden initial request prepared by the Learn my writing style c
 Use $skill-creator to create a personal writing-style skill for each writing context represented by {connectedApps}. Keep progress updates sparse and substantive. Before sampling, limit them to the next user-relevant milestone. Once sampling begins, use them to share one or two non-sensitive style traits identified so far and how the sample is becoming more representative. Do not narrate filesystem operations, helper scripts, dependency checks, or validation mechanics. Do not ask where to install the skills; use the default personal skills directory. Analyze a representative sample of communications authored by me in each connected app. Exclude received text, quoted replies, forwarded content, signatures, automated notifications, and boilerplate. Consider variation across recipients, situations, and time. Capture stable stylistic traits—tone, sentence structure, vocabulary, formatting, level of detail, and recurring patterns—without treating topics, names, or confidential facts as style. If there is not enough evidence, explain what is missing rather than inventing conclusions. Keep email and messaging apps separate, while combining equivalent email connectors into one email skill. For each writing context, create a concise SKILL.md and a detailed `references/writing-style.md`. Configure the skill to trigger automatically for requests to draft, rewrite, or reply in that context, while avoiding overlap with the other writing-style skills. Do not reproduce or lightly rewrite source communications in generated files or responses. Remove names, sensitive details, and recognizable scenarios. Validate without adding dependencies: confirm the required files exist and that each SKILL.md has valid frontmatter with a hyphen-case name and a non-empty description. Run a bundled validator only if it works unmodified with already-available dependencies. Never install, vendor, or mock validation dependencies, and never claim validator success unless it actually ran. Fix structural or validation failures before reporting completion. In the final response, mention only skills that were successfully created and installed. Include one brief sentence explaining that a skill is a reusable set of instructions that can be automatically applied to matching tasks. Briefly explain that each writing-style skill activates automatically for ordinary requests to draft, rewrite, or reply in its context. Do not suggest that I must name the skill, invoke it explicitly, or say "write in my voice". For each writing context, preview `Overall voice`, `Common patterns`, and `Do and avoid`, followed by 2–3 entirely new example messages formatted as individual Markdown block quotes. End each section with a link to its full writing-style reference.
 ```
 
-### Write-like-me skill usage
-
-Source: `webview/assets/home-9859b126064a.js`, offset 123470, SHA-256 `a2c0eb8bf7416ac9470101d649035405a469efe11033acf6108e34dd34379e92`.
-
-Exact text from the bundle.
-
-```text
-Use the write-like-me skill to find relevant examples of the user's own writing in their connected apps. Ground the draft in the selected email thread, messaging conversation, or documents. Show the draft in chat; do not send, post, or modify anything. Don't invent facts, decisions, or commitments. If there isn't enough usable context, ask one focused question.
-```
-
-### Write-like-me sample: email
-
-Source: `webview/assets/home-9859b126064a.js`, offset 97284, SHA-256 `0bb195ba64ab21d48c232345a7f9f94efd4e21ac4c18699a2760077ddcd038c1`.
-
-Exact text from the bundle. Message id `tpp.write_like_me.sample_prompt.email`.
-
-Translator note: Sample request displayed in the Email tab of ChatGPT Work's Writing style settings modal. Continue in chat submits this exact request using normal installed-plugin delivery. Ask for a draft based on a recent connected email conversation, not for an email to be sent. Plain text, no placeholders.
-
-```text
-Find a recent email or thread and draft a response using my writing style.
-```
-
-### Write-like-me sample: messaging
-
-Source: `webview/assets/home-9859b126064a.js`, offset 97745, SHA-256 `fa25d9061ea7b659bc69e6b91135fb2b0eea3f3600a02ee07651ecf14151c444`.
-
-Exact text from the bundle. Message id `tpp.write_like_me.sample_prompt.messaging`.
-
-Translator note: Sample request displayed in the Messaging tab of ChatGPT Work's Writing style settings modal. Continue in chat submits this exact request using normal installed-plugin delivery. Message and thread mean a workplace chat conversation in a connected app. Ask for a draft, not for a message to be posted. Plain text, no placeholders.
-
-```text
-Find a recent message or thread and draft a response using my writing style.
-```
-
-### Write-like-me sample: documents
-
-Source: `webview/assets/home-9859b126064a.js`, offset 98242, SHA-256 `74809f4cd2983cd171e5218b714c4ba8d81bea8992654c7c9cf71684efd721d9`.
-
-Exact text from the bundle. Message id `tpp.write_like_me.sample_prompt.documents`.
-
-Translator note: Sample request displayed in the Documents tab of ChatGPT Work's Writing style settings modal. Continue in chat submits this exact request using normal installed-plugin delivery. The source is a recent document the user wrote in a connected app; the result is a new project note based on that document. Ask for a draft, not publication. Plain text, no placeholders.
-
-```text
-Find a recent document I wrote and draft a new project note based on it, using my writing style.
-```
-
 ## Browser extension samples
 
 ### Side Chat sample: email reply
 
-Source: `webview/assets/onboarding-bd0f6da4a283.js`, offset 3084, SHA-256 `fc6808d0a1ede37f8c4eea117854deaa47730e2128089c43593a6c42d75516f4`.
+Source: `webview/assets/onboarding-fd44b047978f.js`, offset 3084, SHA-256 `fc6808d0a1ede37f8c4eea117854deaa47730e2128089c43593a6c42d75516f4`.
 
 Exact text from the bundle. Message id `chatgpt.work.chrome.installed.sample_work.email.prompt.sender_name`.
 
@@ -184,7 +138,7 @@ Reply to {senderName}'s message on this page
 
 ### Side Chat sample: report
 
-Source: `webview/assets/onboarding-bd0f6da4a283.js`, offset 4352, SHA-256 `beec832532f316788ec57b4a9f925c6820c214aa8d1c2de5e006a472f1b09b09`.
+Source: `webview/assets/onboarding-fd44b047978f.js`, offset 4352, SHA-256 `beec832532f316788ec57b4a9f925c6820c214aa8d1c2de5e006a472f1b09b09`.
 
 Exact text from the bundle. Message id `chatgpt.work.extension.installed.sample_work.report.prompt`.
 
@@ -196,7 +150,7 @@ Summarize this report
 
 ### Side Chat sample: inventory
 
-Source: `webview/assets/onboarding-bd0f6da4a283.js`, offset 5561, SHA-256 `ceeb81cd1c48b64bf99f3b60a7082057cefd0285fbab89f9c6111ec94aa598a6`.
+Source: `webview/assets/onboarding-fd44b047978f.js`, offset 5561, SHA-256 `ceeb81cd1c48b64bf99f3b60a7082057cefd0285fbab89f9c6111ec94aa598a6`.
 
 Exact text from the bundle. Message id `chatgpt.work.extension.installed.sample_work.inventory.prompt`.
 
@@ -205,3 +159,12 @@ Translator note: Prompt prefilled in Side Chat after choosing the inventory samp
 ```text
 I sold out of these 3 products today but ordered 5 new desk mousepads. Update the stock and save the inventory.
 ```
+
+## Not found in this build
+
+These entries' anchors did not resolve in this build.
+
+- `write-like-me-usage` (Write-like-me skill usage), anchor `Use the write-like-me skill to find relevant examples`: anchor not found in any app script: "Use the write-like-me skill to find relevant examples"
+- `write-like-me-sample-email` (Write-like-me sample: email), anchor `Find a recent email or thread and draft a response using my writing style.`: anchor not found in any app script: "Find a recent email or thread and draft a response using my writing style."
+- `write-like-me-sample-messaging` (Write-like-me sample: messaging), anchor `Find a recent message or thread and draft a response using my writing style.`: anchor not found in any app script: "Find a recent message or thread and draft a response using my writing style."
+- `write-like-me-sample-documents` (Write-like-me sample: documents), anchor `draft a new project note based on it, using my writing style.`: anchor not found in any app script: "draft a new project note based on it, using my writing style."

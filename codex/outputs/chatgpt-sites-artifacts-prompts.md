@@ -1,6 +1,6 @@
 # ChatGPT Sites and artifacts prompts
 
-Source: `app.asar` of the Codex/ChatGPT desktop app 26.924.22138 (build 11645), SHA-256 `d0ba973179d2f717affd39e012b64a095464a54a51c6bccb7bc6b3d2a1cfba80`.
+Source: `app.asar` of the Codex/ChatGPT desktop app 26.928.20755 (build 12246), SHA-256 `2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee`.
 
 Messages for ChatGPT Sites (publishing, automations, custom domains) and the context the app adds when a task starts from the Library or a writing block.
 
@@ -12,7 +12,7 @@ Each entry says whether its text is exact (one literal in the bundle) or assembl
 
 ### Sites handoff
 
-Source: `webview/assets/sites-handoff-d9f3468bebb3.js`, offset 1710, SHA-256 `ed257996ff58851e27fda3e054b8d506df4c08768f58ece31d7a4c621b609341`.
+Source: `webview/assets/sites-handoff-31178f62c500.js`, offset 1704, SHA-256 `ed257996ff58851e27fda3e054b8d506df4c08768f58ece31d7a4c621b609341`.
 
 Exact text from the bundle. Message id `sitesPreview.handoff.prompt`.
 
@@ -24,7 +24,7 @@ Translator note: First message sent after confirming the Sites checkout-return d
 
 ### Site automation
 
-Source: `webview/assets/site-automation-create-panel-21df48d90257.js`, offset 3998, SHA-256 `edd8ff616b74c924f5ffe71a2c264ee50bfbefebf8f6e9de622c856dc83067cb`.
+Source: `webview/assets/site-automation-create-panel-a135bd1a99ff.js`, offset 4872, SHA-256 `edd8ff616b74c924f5ffe71a2c264ee50bfbefebf8f6e9de622c856dc83067cb`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time.
 
@@ -36,7 +36,7 @@ Work on the existing Site with project_id <…>. Use the Sites tools to inspect 
 
 ### Site custom domain
 
-Source: `webview/assets/appgen-settings-page-ca1da3a967d1.js`, offset 9430, SHA-256 `f8101b99aa1f993b2feabe7435b9dbae7d6c83054b794d588105a761605087fc`.
+Source: `webview/assets/appgen-settings-page-2bd00229c39d.js`, offset 19682, SHA-256 `f8101b99aa1f993b2feabe7435b9dbae7d6c83054b794d588105a761605087fc`.
 
 Exact text from the bundle. Message id `appgenSettings.customDomains.setupDialog.askChatGptPrompt`.
 
@@ -51,7 +51,7 @@ Help me register {hostname} as the custom domain for my site by adding these DNS
 
 ### Library file task context
 
-Source: `webview/assets/app-primary-cca0c1a58f0f.js`, offset 831685, SHA-256 `547c8b02467fcade54e6d31d6b42f9ff3d2df1bbbc82d8f6bdf0c8721146e644`.
+Source: `webview/assets/app-initial-74096abaa6b3.js`, offset 4907238, SHA-256 `547c8b02467fcade54e6d31d6b42f9ff3d2df1bbbc82d8f6bdf0c8721146e644`.
 
 Exact text from the bundle. The same text ships at 2 places in the bundle; the first is shown.
 
@@ -61,7 +61,7 @@ The user started this task from ChatGPT Library to create a file. Use the availa
 
 ### Open writing block context
 
-Source: `webview/assets/app-primary-cca0c1a58f0f.js`, offset 1188393, SHA-256 `b5ffc18bcb8263bf946b0d12790d933f5389a7b1b905ad8a2bf15c82e77213dd`.
+Source: `webview/assets/app-primary-92c16ff2fe4e.js`, offset 1617626, SHA-256 `b5ffc18bcb8263bf946b0d12790d933f5389a7b1b905ad8a2bf15c82e77213dd`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time.
 
@@ -71,7 +71,7 @@ The user currently has the writing block backed by library_file_id <…> open in
 
 ### Writing block selected text
 
-Source: `webview/assets/app-primary-cca0c1a58f0f.js`, offset 790568, SHA-256 `180c8c4922fc7f72e1eb4960bac516b4158029ee9833cf8b2b92eb0773c16fce`.
+Source: `webview/assets/app-primary-92c16ff2fe4e.js`, offset 1397997, SHA-256 `180c8c4922fc7f72e1eb4960bac516b4158029ee9833cf8b2b92eb0773c16fce`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time.
 
@@ -81,7 +81,7 @@ The user's instruction is referring to the following selected text from writing 
 
 ### Revise presentation outline
 
-Source: `webview/assets/writing-block-app-capabilities-8c6d1841254d.js`, offset 80397, SHA-256 `1b96fe0ff0263e54d73637874ad340f53546f195256a8a0e095c6b88d16a03ea`.
+Source: `webview/assets/writing-block-app-capabilities-c5327f1b7b08.js`, offset 81581, SHA-256 `1b96fe0ff0263e54d73637874ad340f53546f195256a8a0e095c6b88d16a03ea`.
 
 Assembled from literal pieces in the bundle, joined as the app joins them; `<…>` marks a value filled in at run time.
 
@@ -95,7 +95,7 @@ Composer prefills from the new-chat page. Neither the text nor the message id sa
 
 ### Create document
 
-Source: `webview/assets/app-initial-d817715f10a0.js`, offset 2698594, SHA-256 `36d08f702ce4f26179f8d4b6f6b07233336f6b7ace03bc48f5edf67c499b6adb`.
+Source: `webview/assets/app-initial-74096abaa6b3.js`, offset 4048562, SHA-256 `36d08f702ce4f26179f8d4b6f6b07233336f6b7ace03bc48f5edf67c499b6adb`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createDocument.prompt.v5`.
 
@@ -107,7 +107,7 @@ Create a new document with {artifact}. Start by asking me what it should be abou
 
 ### Create presentation
 
-Source: `webview/assets/app-initial-d817715f10a0.js`, offset 2698826, SHA-256 `c354f8edcd9c45d0e5eb4cd5d17f670fdc12c9609830ee6719f15869bd3c71e6`.
+Source: `webview/assets/app-initial-74096abaa6b3.js`, offset 4048794, SHA-256 `c354f8edcd9c45d0e5eb4cd5d17f670fdc12c9609830ee6719f15869bd3c71e6`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createPresentation.prompt.v5`.
 
@@ -119,7 +119,7 @@ Create a new presentation with {artifact}. Start by asking me what it should be 
 
 ### Create spreadsheet
 
-Source: `webview/assets/app-initial-d817715f10a0.js`, offset 2699272, SHA-256 `4a39abc79643e962f44c0e4df50a272def7f1bb3bf084368c2fd0c2c948c807f`.
+Source: `webview/assets/app-initial-74096abaa6b3.js`, offset 4049240, SHA-256 `4a39abc79643e962f44c0e4df50a272def7f1bb3bf084368c2fd0c2c948c807f`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createSpreadsheet.prompt.v5`.
 
@@ -131,7 +131,7 @@ Create a new spreadsheet with {artifact}. Start by asking me what it should be a
 
 ### Create site
 
-Source: `webview/assets/app-initial-d817715f10a0.js`, offset 2699050, SHA-256 `e1424780919ff14c5910ff90e6245f9e74a7a82d6077ffc688279f8e4c87e46d`.
+Source: `webview/assets/app-initial-74096abaa6b3.js`, offset 4049018, SHA-256 `e1424780919ff14c5910ff90e6245f9e74a7a82d6077ffc688279f8e4c87e46d`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createSite.prompt.v5`.
 
@@ -143,7 +143,7 @@ Create a new site with {artifact}. Start by asking me what it should be about.
 
 ### Create website: product
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 27663, SHA-256 `cdfd6a036d7e84992f1ad44b674e63214179fc543af913d4acaf10d6cad9fd92`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 27663, SHA-256 `cdfd6a036d7e84992f1ad44b674e63214179fc543af913d4acaf10d6cad9fd92`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createSiteProduct.prompt`.
 
@@ -155,7 +155,7 @@ Create a new website to launch a product with {artifact}. Start by asking me abo
 
 ### Create website: portfolio
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 28237, SHA-256 `bde0b7be93891a5510476ff39e33e80bdd2edb7331763334a63ba6758210f651`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 28237, SHA-256 `bde0b7be93891a5510476ff39e33e80bdd2edb7331763334a63ba6758210f651`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createSitePortfolio.prompt`.
 
@@ -167,7 +167,7 @@ Create a new website for a portfolio with {artifact}. Start by asking me whose w
 
 ### Create website: business
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 28792, SHA-256 `639bbab4904bb194d6b2c6e2c4f33c20b46634e9a8c7195731d271a2439b3c64`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 28792, SHA-256 `639bbab4904bb194d6b2c6e2c4f33c20b46634e9a8c7195731d271a2439b3c64`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createSiteBusiness.prompt`.
 
@@ -179,7 +179,7 @@ Create a new website for a business with {artifact}. Start by asking me about th
 
 ### Create website: event
 
-Source: `webview/assets/home-ambient-suggestions-content-2014aee9e3b2.js`, offset 29353, SHA-256 `3d55bc572ebabd0272a5b6665a6e8c04c0c75ff6486ee1883bba1430861559b1`.
+Source: `webview/assets/home-ambient-suggestions-content-ff25fb62f23d.js`, offset 29353, SHA-256 `3d55bc572ebabd0272a5b6665a6e8c04c0c75ff6486ee1883bba1430861559b1`.
 
 Exact text from the bundle. Message id `home.newChatPageSuggestions.createSiteEvent.prompt`.
 

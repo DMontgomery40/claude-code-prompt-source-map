@@ -1,15 +1,15 @@
 {
   "source": {
-    "app_version": "26.924.22138",
-    "app_build": "11645",
-    "cli_version": "codex-cli 0.158.0-alpha.2.1",
+    "app_version": "26.928.20755",
+    "app_build": "12246",
+    "cli_version": "codex-cli 0.159.0",
     "binary_path": "ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
-    "binary_sha256": "3e11ccc743e8198a5ef84fb57c89941d845b0ea0302485ed1fbac2f0821aca5a",
+    "binary_sha256": "ccd1b9441d35ce30102059c78514a125d676e6765ea1d001033e8cbe88718314",
     "model_slug": "gpt-6-astra"
   },
   "verification": {
-    "authenticated_model_count": 10,
-    "bundled_model_count": 11,
+    "authenticated_model_count": 11,
+    "bundled_model_count": 10,
     "authenticated_base_equals_template": true,
     "persistent_matches_bundled": true,
     "authenticated_base": {
