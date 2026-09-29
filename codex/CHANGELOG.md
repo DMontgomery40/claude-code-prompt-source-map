@@ -2,13 +2,14 @@
 
 ## 2026-09-29 · ChatGPT desktop 26.928.20755 (12246), Codex CLI codex-cli 0.159.0
 
-<<<<<<< HEAD
 Refreshed the Codex/ChatGPT source map for Dev Day. Added dedicated GPT-6.1 Sol records and comparison coverage, 44 action/context prompts (96 published across the five ChatGPT pages), and a source-backed ledger for all 355 flagged surfaces. Refreshed configuration (1,148 entries), environment variables (340), desktop tools (70), bundled plugins, computer-use prompts, learning blocks, CLI prompts and package/binary inventories.
 
 Jev classified the 355 surfaces through OpenRouter. Scores and compiled evidence retain their activation qualifications. The broad prompt sweep now publishes 133 entries, using cached Jev verdicts and 87 explicit local source reviews (66 model-facing, 21 excluded). It leaves zero candidates unclassified and records each review origin separately. Four historical writing-style strings are explicitly absent; the new grounded-demo flow is captured.
 
 The landing navigator now covers the whole harness. Key findings regenerates after every refresh from current model, prompt, tool, configuration and coverage records; the September 24 findings remain in the archive. Shared navigation and search expose the new pages. Current captures require GPT-6.1 Sol to prevent stale optional-model artifacts, and overview totals derive from the coverage ledger. The watcher regenerates coverage after its fresh surface scan, with source-hash checks and explicit removal/unlabelled boundaries. Historical observations retain their evidence dates.
-=======
+
+### Hourly watcher capture, 2026-09-29 19:09 UTC
+
 # Codex refresh diff
 
 - App version: `26.924.22138` → `26.928.20755`
@@ -20535,7 +20536,6 @@ Compared with the committed baseline (ChatGPT desktop 26.924.22138, build 11645)
 - `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/upload-BwRyxo_B.js
 - `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/windows-file-copy-PFGBVFq8.js
 - `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/zod-DSi50YMj.js
->>>>>>> origin/main
 
 ## 2026-09-29 · ChatGPT desktop 26.924.22138 (11645), Codex CLI codex-cli 0.158.0-alpha.2.1
 
