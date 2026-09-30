@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { buildLiteralIndex, codeLiterals, rustLiterals } from "../../src/shared/trace-build.mjs";
@@ -336,6 +336,28 @@ test("literal index: code literals key by fragment and template prefix, and hold
   for (const v of Object.values(lit.keys)) assert.ok(v.length === 3 && v.every(Number.isInteger));
   assert.ok(!/Other agents|teammates|model reads/.test(json), "no literal text is stored");
   assert.equal(await buildLiteralIndex({ productId: "claude-code", sourceRoot: join(root, "missing") }), null);
+});
+
+// The indexes the site ships (dist/trace/literal-index.<product>.json, when it has been built): every value is a
+// hash, a number, or a shelf, file or version name, so no literal text can ride along.
+test("the built literal indexes hold only hashes, numbers and names", (t) => {
+  let checked = 0;
+  for (const product of ["claude-code", "codex"]) {
+    const file = fileURLToPath(new URL(`../../dist/trace/literal-index.${product}.json`, import.meta.url));
+    if (!existsSync(file)) continue;
+    const lit = JSON.parse(readFileSync(file, "utf8"));
+    assert.deepEqual(Object.keys(lit).sort(), ["files", "keys", "lineShelves", "shelves", "version"], product);
+    for (const [k, v] of Object.entries(lit.keys)) {
+      assert.match(k, /^[0-9a-f]{16}$/, product);
+      assert.ok(Array.isArray(v) && v.length === 3 && v.every((n) => Number.isInteger(n) && n >= 0) && v[0] < lit.shelves.length && v[1] < lit.files.length, `${product}: ${k}`);
+    }
+    for (const f of lit.files) assert.match(f, /^[\w@+.-]+(\/[\w@+.-]+)*$/, `${product}: file ${f}`);
+    for (const s of lit.shelves) assert.ok(typeof s === "string" && s.length <= 80 && !/\n/.test(s), `${product}: shelf ${s}`);
+    for (const i of lit.lineShelves) assert.ok(Number.isInteger(i) && i >= 0 && i < lit.shelves.length, product);
+    assert.ok(typeof lit.version === "string" && lit.version.length <= 40 && !/\n/.test(lit.version), product);
+    checked++;
+  }
+  if (!checked) t.skip("site not built");
 });
 
 // A literal index built from files written under a temporary product root.
