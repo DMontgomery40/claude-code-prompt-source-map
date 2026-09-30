@@ -14,7 +14,7 @@ test('UUID aliases preserve UUID7 birth time and joins while removing secrets an
  assert.equal(s.walk({content:'patient diagnosis fixture'}).content,'[withheld sensitive source text]');
  assert.equal(s.walk({image_url:'data:image/png;base64,PRIVATE'}).image_url,'[withheld opaque payload]');
  assert.doesNotMatch(s.text('api_key="opaque-not-in-environment"'),/opaque-not/);
- assert.deepEqual(localSecretValues({},'API_KEY="fixture-secret"'),['fixture-secret']);
+ assert.ok(localSecretValues({},'API_KEY="fixture-secret"',{envFiles:[]}).includes('fixture-secret'));
 });
 test('short signatures, inline Fernet and compact base64 payloads are withheld',()=>{
  const s=createSessionSanitizer({salt:'fixture'});
@@ -49,4 +49,23 @@ test('semantic review deduplicates, rejects raw secrets before sending, and vali
  await assert.rejects(reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],boundary:{privateValues:['request routing']},config,fetcher}));assert.equal(calls,0);
  const review=await reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],config,fetcher});assert.equal(calls,1);assert.equal(review.publicationApproved,false);assert.equal(review.results[0].privateContentProbability,.01);
  assert.throws(()=>validateSemanticAnswers({answers:{['privacy_'+candidates[0].hash]:{noul:2}}},[candidates[0].hash]));assert.throws(()=>validateSemanticAnswers({answers:{}},[candidates[0].hash]));
+});
+
+test('all long env values are scrubbed regardless of DATABASE_URL, SENTRY_DSN or NPM_TOKEN names',()=>{
+ const planted={DATABASE_URL:'fixtureDatabaseCanary:/+_'+ 'D'.repeat(20),SENTRY_DSN:'fixtureDsnCanary_'+ 'S'.repeat(20),NPM_TOKEN:'fixtureNpmCanary_'+ 'N'.repeat(20)};
+ const values=localSecretValues({},Object.entries(planted).map(([k,v])=>`${k}="${v}"`).join('\n'),{envFiles:[]});
+ for(const value of Object.values(planted))for(const variant of [value,encodeURIComponent(value),Buffer.from(value).toString('base64'),Buffer.from(value).toString('base64url')]){assert.ok(values.includes(variant));assert.ok(!createSessionSanitizer({secretValues:values}).text(`neutral output ${variant}`).includes(variant));}
+ const files={'/fixture/root/.env':`DATABASE_URL=${planted.DATABASE_URL}`,'/fixture/home/.env':`SENTRY_DSN=${planted.SENTRY_DSN}`};
+ const discovered=localSecretValues({NPM_TOKEN:planted.NPM_TOKEN},'',{envFiles:Object.keys(files),read:file=>files[file]});
+ for(const value of Object.values(planted))assert.ok(discovered.includes(value));
+ assert.ok(localSecretValues({NPM_TOKEN:'short6'},'',{envFiles:[]}).includes('short6'));
+});
+
+test('provider is never invoked for canaries in repo .env or arbitrary process env names',async t=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'privacy-env-boundary-'));const previous=process.cwd(),old=process.env.NPM_TOKEN;
+ t.after(()=>{process.chdir(previous);if(old===undefined)delete process.env.NPM_TOKEN;else process.env.NPM_TOKEN=old;fs.rmSync(dir,{recursive:true,force:true});});
+ const planted={DATABASE_URL:'fixtureDatabaseCanary:/+_'+ 'D'.repeat(20),SENTRY_DSN:'fixtureDsnCanary_'+ 'S'.repeat(20),NPM_TOKEN:'fixtureNpmCanary_'+ 'N'.repeat(20)};
+ fs.writeFileSync(path.join(dir,'.env'),Object.entries(planted).map(([k,v])=>`${k}=${v}`).join('\n'),{mode:0o600});process.chdir(dir);process.env.NPM_TOKEN=planted.NPM_TOKEN;
+ let calls=0;for(const raw of Object.values(planted))for(const value of [raw,encodeURIComponent(raw),Buffer.from(raw).toString('base64'),Buffer.from(raw).toString('base64url')]){const candidates=semanticCandidates([{text:`Neutral engineering text with opaque value ${value} for review.`}]);await assert.rejects(reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],config:{key:'synthetic',endpoint:'https://fixture.example/',model:'fixture'},fetcher:async()=>{calls++;throw new Error('provider must not be invoked');}}),/boundary rejected/);}
+ assert.equal(calls,0);
 });
