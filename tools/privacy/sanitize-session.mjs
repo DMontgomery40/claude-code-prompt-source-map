@@ -19,11 +19,29 @@ export function localSecretValues(env=process.env,envText='',{envFiles=[path.res
  for(const [key,value] of Object.entries(env))collect(key,value);
  const texts=[envText];
  for(const file of new Set(envFiles)){try{texts.push(read(file));}catch(error){if(error.code!=='ENOENT')throw new Error('Cannot read local environment privacy boundary.');}}
- for(const text of texts)for(const line of text.split('\n')) {
-  const m=/^\s*(?:export\s+)?([\w]+)\s*=\s*(.*?)\s*$/.exec(line);
-  if(!m)continue;
-  const raw=m[2],quoted=/^(['"])(.*?)\1(?:\s+#.*)?$/.exec(raw);
-  collect(m[1],quoted?quoted[2]:raw.replace(/\s+#.*$/,''));
+ for(const text of texts){
+  const lines=text.split('\n');
+  for(let index=0;index<lines.length;index++){
+   const m=/^\s*(?:export\s+)?([\w.-]+)\s*=\s*(.*?)\s*$/.exec(lines[index]);
+   if(!m)continue;
+   let raw=m[2];
+   if(raw.startsWith('"')||raw.startsWith("'")||raw.startsWith('`')){
+    const quote=raw[0];let end=-1;
+    // Quoted dotenv values may span physical lines. An unsupported or unclosed
+    // quote fails closed rather than silently collecting an incomplete secret.
+    while(end<0){
+     for(let at=1;at<raw.length;at++){
+      if(quote==='"'&&raw[at]==='\\'){at++;continue;}
+      if(raw[at]===quote){end=at;break;}
+     }
+     if(end<0){if(++index>=lines.length)throw new Error('Cannot parse local environment privacy boundary.');raw+='\n'+lines[index];}
+    }
+    if(!/^\s*(?:#.*)?$/.test(raw.slice(end+1)))throw new Error('Cannot parse local environment privacy boundary.');
+    const value=raw.slice(1,end);collect(m[1],raw.slice(0,end+1));collect(m[1],value);
+    // dotenv expands newline/carriage-return escapes only in double quotes.
+    if(quote==='"')collect(m[1],value.replace(/\\n/g,'\n').replace(/\\r/g,'\r'));
+   }else {collect(m[1],raw);collect(m[1],raw.split('#',1)[0].trimEnd());}
+  }
  }
  // Encoded credentials in tool output are still credentials, even when too short
  // for the generic opaque-payload patterns.
