@@ -16,6 +16,7 @@ const TOPICS = [
 ];
 
 // ctx: { state() -> the app's S (or null on the loader), A (actions: addCapture, openSources, pickHar, openKeys) }
+export function autoHealthAllowed(origin,ctx={}) { return origin===LOCAL && ctx.autoHealth?.()!==false; }
 export function createHelp(ctx) {
   let topic = "open", opener = null, health = null, checking = false;
   const readouts = el("div", { class: "help-readouts", "aria-live": "polite" });
@@ -45,7 +46,7 @@ export function createHelp(ctx) {
     render();
     // Only a page the resolver serves checks it unasked; from the web, a check is the user's click (Chrome
     // may ask for local-network access when a site reaches 127.0.0.1).
-    if (onPageOrigin() && !health) check();
+    if (autoHealthAllowed(location.origin,ctx) && !health) check();
     dialog.focus();
   }
   function close() {
@@ -132,7 +133,7 @@ export function createHelp(ctx) {
         h("Open a session"),
         p("Trace reads the session logs Claude Code and Codex/ChatGPT keep on your computer. Nothing is uploaded; the files are read in this tab."),
         steps([
-          ["Paste an id or a link", "A Claude Code session id (from the log's file name, or /status), or a Codex link or thread id. Trace works out which folder the log is in."],
+          ["Paste an id or a link", "A Claude Code session id (from the log's file name, or /status), or a Codex/ChatGPT link or thread id. Trace works out which folder the log is in."],
           ["Pick the folder once", "The first time, choose ~/.claude/projects (Claude Code) or ~/.codex/sessions (Codex/ChatGPT). Chrome remembers it, so the next paste opens straight away."],
           ["Or drop the files", "A Codex/ChatGPT rollout, or a Claude Code session's .jsonl with its same-named folder so its subagents come too."],
         ]),

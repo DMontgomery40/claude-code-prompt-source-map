@@ -8,6 +8,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {publishedText,forbiddenMatcher} from './privacy/published-scan.mjs';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = file => { try { return readFileSync(file, "utf8"); } catch { return ""; } };
@@ -16,9 +17,9 @@ function forbiddenValues() {
   const home = os.homedir();
   const values = new Map([[home, "home path"], [os.userInfo().username, "user name"]]);
   try { const email = execFileSync("git", ["config", "--global", "user.email"], { encoding: "utf8" }).trim(); if (email) values.set(email, "git email"); } catch {}
-  for (const line of read(path.join(home, ".env")).split("\n")) {
+  for (const line of [path.join(home,'.env'),path.join(repo,'.env')].flatMap(file=>read(file).split('\n'))) {
     const value = line.replace(/^\s*(?:export\s+)?[A-Z0-9_]+\s*=\s*/, "").replace(/^["']|["']$/g, "").trim();
-    if (value.length >= 12 && value !== line.trim()) values.set(value, "~/.env value");
+    if (value.length >= 12 && value !== line.trim()) values.set(value, "local .env value");
   }
   const strings = text => [...text.matchAll(/"([^"\\]{20,})"/g)].map(m => m[1]);
   for (const file of [path.join(home, ".codex/auth.json"), path.join(home, "Library/Preferences/.wrangler/config/default.toml")]) for (const v of strings(read(file))) values.set(v, "credential");
@@ -44,14 +45,17 @@ const published = execFileSync("git", ["ls-files", "-co", "--exclude-standard"],
 const dist = path.join(repo, "site", "dist");
 const files = [...published, ...(existsSync(dist) ? walk(dist) : [])];
 const forbidden = forbiddenValues();
+const matchForbidden = forbiddenMatcher(forbidden);
 const found = [];
 for (const file of files) {
   // Only files: an untracked symlink to a folder (a worktree's linked work folder) is not text to scan.
-  if (!existsSync(file) || !statSync(file).isFile() || statSync(file).size > 50_000_000) continue;
+  if (!existsSync(file) || !statSync(file).isFile()) continue;
+  if (statSync(file).size > 50_000_000 && !/\.gz(?:\.part-\d+)?$/.test(file)) continue;
   const buf = readFileSync(file);
-  if (buf.includes(0)) continue; // binary
-  const text = buf.toString("utf8");
-  for (const [value, kind] of forbidden) if (text.includes(value)) found.push(`${path.relative(repo, file)}: contains a ${kind} (${value.length} chars, starts "${value.slice(0, 4)}")`);
+  let text;
+  try { text=publishedText(buf,file); } catch { found.push(`${path.relative(repo,file)}: compressed source could not be safely inspected`); continue; }
+  if(text===null)continue;
+  for (const {kind,length} of matchForbidden(text)) found.push(`${path.relative(repo, file)}: contains a ${kind} (${length} chars)`);
 }
 if (found.length) { console.error(`leak check failed (${found.length}):\n${found.slice(0, 40).join("\n")}`); process.exit(1); }
 console.log(`leak check clean: ${files.length} files, ${forbidden.length} forbidden values`);
