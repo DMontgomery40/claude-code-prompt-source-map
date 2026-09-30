@@ -2,6 +2,7 @@
 // All trace strings are untrusted: they reach the DOM through textContent only, never innerHTML.
 import { peakRequestIndex, requestCalls, selectedCall } from "./navigation.js";
 import { stratumRows, blockPart, windowBlocks as modelWindowBlocks, egressGroups } from "./model.js";
+import { readableIn } from "./readable.js";
 
 export const STRATA = [
   { key: "harness", name: "Harness", long: "The harness: system prompt, tools, base instructions", color: "#8b97a8" },
@@ -508,6 +509,7 @@ function actionPanel(agent, req, S, A) {
   if (!call) return [el("p", { text: "No call recorded for this request." })];
   const tool = call.tool || "Text reply";
   const pre = el("pre", { class: "text call-text", tabindex: "0", text: "Reading…" });
+  const holder = el("div", { class: "call-body" }, pre);
   const label = el("span", { class: "kicker", text: "CALL INPUT" });
   const input = btn("Call", () => read('args'), "btn small");
   const result = btn("Result", () => read('result'), "btn small");
@@ -519,23 +521,27 @@ function actionPanel(agent, req, S, A) {
     input.setAttribute('aria-pressed', String(part === 'args'));
     result.setAttribute('aria-pressed', String(part === 'result'));
     label.textContent = part === 'args' ? 'CALL INPUT' : 'RETURNED RESULT';
+    holder.replaceChildren(pre);
     pre.textContent = 'Reading…';
     try {
       if (!call[part]) { pre.textContent = part === 'result' ? 'No result recorded.' : call.target || 'No input recorded.'; return; }
       const data = await A.getText(agent.id, call[part]);
       if (version !== readVersion) return;
-      let body = data?.text || '(empty)';
+      let body = data?.text || '(empty)', isCommand = false;
       // Bash commands read as shell, preserving the complete input below when it has options.
       if (part === 'args') {
         try {
           const value = JSON.parse(body);
           if (typeof value?.command === 'string') {
+            isCommand = true;
             const { command, ...options } = value;
             body = command + (Object.keys(options).length ? `\n\n—— Call options ——\n${JSON.stringify(options, null, 2)}` : '');
           } else if (value && typeof value === 'object') body = JSON.stringify(value, null, 2);
         } catch { /* already literal text */ }
       }
       pre.textContent = body;
+      // A shell command reads best as written; JSON, logs and tags get the readable layout.
+      if (!isCommand) readableIn(holder, pre, body, { key: `call|${agent.id}|${req.i}|${S.callIndex ?? 0}|${part}` });
     } catch (e) { if (version === readVersion) pre.textContent = `Text unavailable: ${e?.message || e}`; }
   }
   read(S.callPart || 'args');
@@ -546,7 +552,7 @@ function actionPanel(agent, req, S, A) {
     el('p', { class: 'meta', text: `${fmtWhen(req.t)} · ${STATUS[call.class]?.label || 'Tool call'}` }),
     calls.length > 1 ? el('div', { class: 'call-picker', 'aria-label': 'Calls in this response' }, calls.map((c, i) => btn(`${i + 1}. ${c.tool || 'Reply'}`, () => A.focusCall(i), `btn small${c === call ? ' on' : ''}`))) : null,
     el('div', { class: 'call-tabs' }, input, result, !call.result ? el('span', { class: 'meta', text: 'No result recorded' }) : null),
-    el('div', { class: 'call-reader' }, label, pre),
+    el('div', { class: 'call-reader' }, label, holder),
     btn(`Explore context · ${fmtInt(req.tokens.context)} tokens →`, () => A.focusRequest(agent.id, req.i), 'btn context-link')
   ];
 }
@@ -689,10 +695,12 @@ function refToggle(agent, ref, what, A) {
     box.hidden = false; b.textContent = `Hide ${what}`;
     if (box.childElementCount) return;
     const pre = el("pre", { class: "text", text: "Reading…" });
-    box.append(pre);
+    const holder = el("div", {}, pre);
+    box.append(holder);
     A.getText(agent.id, ref).then(r => {
       const t = r?.text ?? "";
       pre.textContent = t.length > 200000 ? `${t.slice(0, 200000)}\n\n[… ${fmtInt(t.length - 200000)} more characters]` : (t || "(empty)");
+      readableIn(holder, pre, pre.textContent, { key: `ref|${agent.id}|${ref.file}|${ref.offset}` });
     }).catch(e => { pre.textContent = `Text unavailable: ${e?.message || e}`; });
   });
   return el("div", { class: "refitem" }, b, box);
@@ -896,6 +904,7 @@ export function breakable(label) {
 
 function blockReader(agent, b, A) {
   const pre = el("pre", { class: "text", text: "Reading…" });
+  const holder = el("div", { class: "rtext" }, pre);
   const mode = el("span", { class: "mode" });
   const href = siteHref(b.site);
   const full = A.reading ? btn(A.reading() ? "Exit full screen" : "Read full screen", () => A.toggleReading(), "linkbtn fullread") : null;
@@ -909,7 +918,7 @@ function blockReader(agent, b, A) {
     b.resendOf != null ? el("p", { class: "note" }, b.resendSame ? "Sent again while an identical copy was still in context. " : "Sent again with changes while the earlier copy was still in context. ",
       btn("Open the earlier copy", () => A.openBlockAt(agent.id, b.resendOf))) : null,
     b.full ? el("p", { class: "note", text: `The model saw a preview; the full output was saved to tool-results/${b.persisted || ""}.` }) : null,
-    pre,
+    holder,
     b.full ? refToggle(agent, b.full, "the full file", A) : null);
   A.getText(agent.id, b.ref).then(r => {
     const text = r?.text ?? "";
@@ -919,7 +928,8 @@ function blockReader(agent, b, A) {
     } else {
       const shown = text.length > 400000 ? `${text.slice(0, 400000)}\n\n[… ${fmtInt(text.length - 400000)} more characters]` : (text || "(empty)");
       pre.textContent = shown;
-      if (!b.own || !(b.ownEst < b.est)) return;
+      // The user's own text is marked line by line on the text as stored; anything else may get a readable layout.
+      if (!b.own || !(b.ownEst < b.est)) { readableIn(holder, pre, shown, { key: `block|${agent.id}|${b.ref?.file ?? ""}|${b.ref?.offset ?? b.label ?? ""}` }); return; }
       // The user's own blocks: the exact spans the parser found when this is the text it measured,
       // else the lines the site doesn't publish.
       if (b.userSpans && text.length === b.chars) {

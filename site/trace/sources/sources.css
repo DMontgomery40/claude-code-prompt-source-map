@@ -27,3 +27,4 @@
 .src-need { border: 1px solid #3a4f6b; border-radius: 10px; padding: 10px 12px; background: var(--panel); }
 .src-need p { margin: 0 0 6px; }
 .src-cmd { margin: 0; padding: 8px 10px; background: #0b0f15; border: 1px solid var(--line); border-radius: 6px; font: 12.5px/1.5 var(--mono); color: var(--ink); white-space: pre-wrap; }
+

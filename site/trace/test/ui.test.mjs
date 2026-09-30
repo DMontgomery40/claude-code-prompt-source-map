@@ -424,6 +424,61 @@ test('tool inspector handles missing text, reader errors and competing async rea
   assert.ok(host.all(n => n.tagName === 'PRE')[0].textContent.includes('source missing'));
 });
 
+test("the readers lay out JSON and one-line tags, keep shell commands and prose as written, and keep the stored text a click away", async () => {
+  const tick = () => new Promise(resolve => setImmediate(resolve));
+  const pressed = (host, label) => host.all(n => n.tagName === "BUTTON" && n.textContent === label)[0];
+  const ref = { file: 0, offset: 50, length: 20 }, result = { file: 0, offset: 80, length: 20 };
+  const req = { i: 0, t: 1000, tokens: { context: 900 }, action: { kind: "tool", tool: "mcp__docs__search", callId: "c1", args: ref, result, class: "read" } };
+  const agent = { id: "root", kind: "root", requests: [req], blocks: [], asks: [], compactions: [] };
+  const host = new Element("aside");
+  renderPanel(host, { trace: { agents: [agent] }, level: 2, agent, reqIdx: 0, inspector: "action", callIndex: null }, {
+    getText: async (_id, r) => ({ text: r === ref ? '{"query":"trace","options":{"limit":5}}' : '{"stdout":"line one\\nline two","exit_code":0}' }),
+    focusCall() {}, focusRequest() {}, up() {} });
+  await tick();
+  assert.equal(host.all(n => n.tagName === "PRE").length, 0, "a JSON input reads as keys and values");
+  assert.ok(host.textContent.includes("querytrace") && host.textContent.includes("limit5"));
+  pressed(host, "Result").dispatch("click");
+  await tick();
+  assert.ok(host.textContent.includes("line one\nline two"), "the result's string shows its real line breaks");
+  pressed(host, "As stored").dispatch("click");
+  assert.equal(host.all(n => n.tagName === "PRE")[0].textContent, '{"stdout":"line one\\nline two","exit_code":0}');
+  pressed(host, "Readable").dispatch("click");
+
+  // A context block written as tags on one line: one element per line.
+  const text = "<environment_context>\n  <cwd>/work/repo</cwd>\n  <fs><a><b>1</b></a><a><b>2</b></a><a><b>3</b></a><a><b>4</b></a><a><b>5</b></a><a><b>6</b></a><a><b>7</b></a><a><b>8</b></a></fs>\n</environment_context>";
+  const block = { i: 0, t: 900, kind: "outside", label: "environment_context", chars: text.length, est: 30, ref: { file: 0, offset: 1 }, site: null };
+  const deep = { ...agent, blocks: [block], requests: [{ ...req, window: [0, 0], strata: { outside: 30 } }] };
+  const three = new Element("div");
+  renderPanel(three, { trace: { agents: [deep] }, level: 3, agent: deep, reqIdx: 0, stratum: "outside", block: 0 }, { focusRequest() {}, openBlock() {}, openBlockAt() {}, getText: async () => ({ text }) });
+  await tick();
+  const lines = three.all(n => /rd-lines/.test(n.className))[0].children.map(n => [n.getAttribute("style"), n.textContent]);
+  assert.deepEqual(lines.slice(0, 5), [[null, "<environment_context>"], ["padding-left:2ch", "<cwd>/work/repo</cwd>"], ["padding-left:2ch", "<fs>"], ["padding-left:4ch", "<a><b>1</b></a>"], ["padding-left:4ch", "<a><b>2</b></a>"]],
+    "each element on its own line, indented by padding so a long line wraps under itself");
+  pressed(three, "As stored").dispatch("click");
+  assert.equal(three.all(n => n.tagName === "PRE")[0].textContent, text);
+  pressed(three, "Readable").dispatch("click");
+
+  // Prose stays the plain text box, with no switch.
+  const prose = new Element("div");
+  renderPanel(prose, { trace: { agents: [deep] }, level: 3, agent: deep, reqIdx: 0, stratum: "outside", block: 0 }, { focusRequest() {}, openBlock() {}, openBlockAt() {}, getText: async () => ({ text: "Plain words, a=b, and <b>bold</b>." }) });
+  await tick();
+  assert.ok(!pressed(prose, "Readable") && prose.all(n => n.tagName === "PRE")[0].textContent === "Plain words, a=b, and <b>bold</b>.");
+});
+
+test("a readable tree keeps every value it was given", async () => {
+  const { readableValue } = await import("../readable.js");
+  const value = { id: "t1", n: 42, f: 1.5, ok: false, none: null, empty: "", list: [1, "two", { deep: ["x", "y"] }], roots: ["/a", "/b"], text: "first line\nsecond line", nested: { a: { b: { c: "leaf" } } }, created_at_ms: 1767690000000, timestamp: "2026-01-02T03:04:05.678Z" };
+  const tree = readableValue(value);
+  const shown = tree.textContent;
+  assert.ok(!shown.includes("[object"), "every value is text, never an object's name");
+  assert.ok(shown.includes("roots/a, /b"), "a short list reads on one line");
+  assert.ok(tree.all(n => n.className === "rd-e").some(n => n.textContent === "timestamp2026-01-02T03:04:05.678Z"), "a bare timestamp sits beside its key, not as a log entry");
+  const leaves = [];
+  const walk = (v) => { if (v && typeof v === "object") Object.entries(v).forEach(([k, x]) => { if (!Array.isArray(v)) leaves.push(k); walk(x); }); else leaves.push(v === "" ? '""' : String(v)); };
+  walk(value);
+  for (const leaf of leaves) assert.ok(shown.includes(leaf), `shows ${leaf}`);
+});
+
 // ---------- the playback transport ----------
 const { createPlayback } = await import("../playback.js");
 const { createTransport, playheadLabel, playheadForRequest, nextSpeed, focusStep, FOCUS } = await import("../transport.js");
@@ -931,6 +986,31 @@ test("the Sources lens lists every source by where it stands, opens content on r
   const lens2 = new Element("aside");
   renderPanel(lens2, { trace, level: 0, lens: "sources", mode: "3d" }, A);
   assert.ok(lens2.textContent.includes("1. fork_thread") && lens2.textContent.includes("Later →"));
+  // Opened, a row reads as keys and values; "As stored" shows it as the resolver sent it, still open.
+  const rec = lens2.all(n => n.tagName === "DETAILS" && n.className === "rd-rec")[0];
+  rec.open = true; rec.dispatch("toggle");
+  assert.ok(rec.textContent.includes("namefork_thread") && !rec.textContent.includes('"name"'), "a row reads as keys and values");
+  const pressed = (host, label) => host.all(n => n.tagName === "BUTTON" && n.textContent === label)[0];
+  pressed(lens2, "As stored").dispatch("click");
+  assert.ok(lens2.textContent.includes('"name": "fork_thread"'), "As stored shows the row's JSON");
+  assert.equal(pressed(lens2, "As stored").getAttribute("aria-pressed"), "true");
+  pressed(lens2, "Readable").dispatch("click");
+  // A JSONL file reads as records, the line cut short is shown as stored, and the cut is said.
+  const jsonl = '{"type":"session_meta","payload":{"base_instructions":{"text":"line one\\nline two"}}}\n{"type":"event_msg","payload":{"type":"task_started"}}\n{"type":"cu\n… (5 more characters)';
+  open = new Map([["models-cache", { data: { kind: "text", path: "~/.codex/sessions/rollout-t1.jsonl", text: jsonl } }]]);
+  const lens4 = new Element("aside");
+  renderPanel(lens4, { trace, level: 0, lens: "sources", mode: "3d" }, A);
+  const titles = lens4.all(n => n.tagName === "SUMMARY" && /^\d+\. /.test(n.textContent)).map(n => n.textContent);
+  assert.deepEqual(titles, ["1. session_meta · line one line two", "2. event_msg · task_started", '3. {"type":"cu (not JSON: shown as stored)']);
+  assert.ok(lens4.textContent.includes("Cut here: 5 more characters aren't shown."));
+  const first = lens4.all(n => n.tagName === "DETAILS" && n.className === "rd-rec")[0];
+  first.open = true; first.dispatch("toggle");
+  assert.ok(first.textContent.includes("line one\nline two"), "a string shows its real line breaks");
+  // Code and config read as written: no switch, the stored text.
+  open = new Map([["models-cache", { data: { kind: "text", path: "~/.codex/config.toml", text: 'model = "m"\nkey=value' } }]]);
+  const lens5 = new Element("aside");
+  renderPanel(lens5, { trace, level: 0, lens: "sources", mode: "3d" }, A);
+  assert.ok(!pressed(lens5, "Readable") && lens5.all(n => n.tagName === "PRE" && n.textContent === 'model = "m"\nkey=value').length === 1);
   // Without the resolver the lens says how to start it.
   A.sourcesLens = view => sourcesLens({ ...view, sources: { unavailable: true, reason: "The local resolver isn't running." }, sourceOpen: new Map() }, A);
   const lens3 = new Element("aside");

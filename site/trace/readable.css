@@ -1,0 +1,54 @@
+/* Readable views (readable.js): key/value trees, log entries, records, laid-out tags. Same tokens as trace.css.
+   "As stored" is always one click away (.rd-mode). */
+.rd-mode { display: flex; gap: 6px; margin: 4px 0 6px; }
+.rd-mode .btn { padding: 2px 9px; font-size: 12px; }
+.rd-mode .btn[aria-pressed=true] { color: #d7ffe9; border-color: #68b39a; background: #234638; }
+/* A scroll box of its own, where the text sits in a list (the Sources lens). */
+.rd-box {
+  margin: 4px 0; padding: 8px 10px; max-height: min(70vh, 720px); overflow: auto; background: #0b0f15; border: 1px solid var(--line);
+  border-radius: 6px; font: 12.5px/1.5 var(--mono); color: var(--ink-2); overflow-wrap: anywhere;
+}
+/* In a reader, the reader's own type. */
+.rd-text { font: 13.5px/1.5 var(--mono); color: var(--ink-2); overflow-wrap: anywhere; }
+.rd-box .rd-text { font: inherit; }
+.rd-rows { display: grid; gap: 1px; }
+.rd-rec > summary { cursor: pointer; font: 12.5px/1.5 var(--mono); color: var(--ink-2); overflow-wrap: anywhere; }
+.rd-rec[open] { margin: 2px 0 6px; }
+.rd-rec[open] > .rd, .rd-rec[open] > .rd-str, .rd-rec[open] > .rd-box, .rd-rec[open] > .src-pre { margin: 4px 0 0 14px; }
+.rd-e { display: flex; flex-wrap: wrap; gap: 0 10px; align-items: baseline; }
+.rd-k { color: var(--ink-3); flex: none; max-width: 100%; }
+.rd-e > span:not(.rd-k) { min-width: 0; flex: 1 1 12ch; }
+.rd-block > .rd-v { flex-basis: 100%; margin: 1px 0 3px 3px; padding-left: 10px; border-left: 1px solid var(--line-2); min-width: 0; }
+.rd-s, .rd-str { color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.rd-lines > div { min-height: 1.5em; }
+.rd-str.clamp { max-height: 30em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
+.rd-more { font-size: 12px; }
+.rd-num { color: #9fdcb0; }
+.rd-bool { color: #d6b4ff; }
+.rd-null, .rd-hint { color: var(--ink-3); }
+.rd-tag { display: inline-block; font: 11.5px var(--sans); color: var(--ink-3); border: 1px solid var(--line-2); border-radius: 5px; padding: 0 6px; margin: 1px 0 3px; }
+.rd-log { display: grid; gap: 1px; }
+.rd-lhead { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; }
+.rd-time { color: var(--ink-3); }
+.rd-lvl { font: 600 11.5px var(--sans); text-transform: uppercase; letter-spacing: .03em; border: 1px solid var(--line-2); border-radius: 4px; padding: 0 5px; color: var(--ink-3); }
+.rd-lvl.info { color: #a9d1ff; border-color: #3a4f6b; }
+.rd-lvl.warn { color: #ffd08a; border-color: #6b5a3a; }
+.rd-lvl.error { color: #ffb0b0; border-color: #6b3a3a; }
+.rd-where { color: #e2c48a; }
+.rd-msg { color: var(--ink); white-space: pre-wrap; }
+.rd-fields { display: flex; flex-wrap: wrap; gap: 1px 16px; }
+.rd-f { display: inline-flex; gap: 6px; align-items: baseline; min-width: 0; }
+.rd-f.rd-wide { flex-basis: 100%; flex-direction: column; gap: 0; }
+.rd-f.rd-wide > .rd-str { padding-left: 10px; border-left: 1px solid var(--line-2); }
+.rd-spans > summary { cursor: pointer; color: var(--ink-3); }
+.rd-span { margin-left: 14px; }
+.rd-logfile > div { padding: 3px 0; border-bottom: 1px solid #1a212c; }
+.rd-logfile > div:last-child { border-bottom: 0; }
+.rd-cont { color: var(--ink-2); }
+.rd-cut { margin: 6px 0 0; }
+/* In the readers (context block, call, wire body): the size and scroll of the text box they replace. */
+.reader .rd-text, .refbox .rd-text { margin: 6px 0 0; max-height: 52vh; overflow-y: auto; overflow-x: hidden; max-width: 118ch; font: 13px/1.6 var(--mono); color: var(--ink-2); }
+.app.wide .reader .rd-text { max-height: 64vh; }
+.call-reader .rd-mode { padding: 8px 14px 0; margin: 0; }
+.call-reader .rd-text { margin: 0; padding: 12px 16px 16px; max-height: 52vh; overflow: auto; font: 12px/1.7 var(--mono); color: #d4e8df; }
+@media (max-width: 980px) { .reader .rd-text, .call-reader .rd-text { max-height: none; } }

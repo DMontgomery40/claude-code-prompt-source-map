@@ -3,6 +3,7 @@
 // demand (A.networkBody) and shown in a reader like the block reader. All text goes in through textContent.
 import { el, fmtTok, fmtInt, fmtClock, fmtWhen, clip } from "../panels.js";
 import { RULES } from "./transit.js";
+import { readableIn, readableOrStored, readableValue } from "../readable.js";
 
 export const NETWORK_LENS = { key: "network", q: "What went over the wire", icon: "⇄" };
 const PRODUCT = { "claude-code": "Claude Code", codex: "Codex/ChatGPT" };
@@ -41,14 +42,16 @@ function wireReader(A) {
   if (!openBody) return null;
   const { entry, part, title } = openBody;
   const pre = el("pre", { class: "text", text: "Reading…" });
+  const holder = el("div", {}, pre);
   const mode = el("span", { class: "mode" });
   const full = A.reading ? el("button", { class: "linkbtn fullread", type: "button", text: A.reading() ? "Exit full screen" : "Read full screen", onclick: () => A.toggleReading() }) : null;
   const box = el("div", { class: "reader net-reader" },
     el("div", { class: "rhead" }, el("strong", { text: title }), mode, full, el("button", { class: "linkbtn close", type: "button", text: "Close", onclick: () => { openBody = null; rerender(A); } })),
-    el("p", { class: "note", text: "As it went over the wire, with credentials and identity redacted in your browser." }), pre);
+    el("p", { class: "note", text: "As it went over the wire, with credentials and identity redacted in your browser." }), holder);
   (A.networkBody ? A.networkBody(entry, part) : Promise.reject(new Error("bodies are read in the worker"))).then((r) => {
     mode.textContent = r.mode || "";
     pre.textContent = r.text ? (r.text.length > 400000 ? `${r.text.slice(0, 400000)}\n\n[… ${fmtInt(r.text.length - 400000)} more characters]` : r.text) : "(no body)";
+    if (r.text) readableIn(holder, pre, pre.textContent, { key: `wire|${entry}|${part}` });
   }).catch((e) => { pre.textContent = `Body unavailable: ${e?.message || e}`; });
   return box;
 }
@@ -172,7 +175,7 @@ export function networkLens(S, A) {
 
   // client_data / the model catalog.
   if (cap.bootstrap) out.push(section("client_data", el("p", { class: "note", text: "Opaque keys the server hands the CLI at start-up; the extraction's conditions cite some of them (\"client-data key …\")." }),
-    el("pre", { class: "text net-json", text: json(cap.bootstrap.clientData) }),
+    readableOrStored(() => el("div", { class: "rd-box" }, readableValue(cap.bootstrap.clientData)), () => el("pre", { class: "text net-json", text: json(cap.bootstrap.clientData) })),
     cap.bootstrap.modelOptions.length ? el("p", { class: "meta", text: `Extra model options: ${cap.bootstrap.modelOptions.map((m) => `${m.name || m.model}${m.disabled ? ` (${m.disabled})` : ""}`).join(", ")}` }) : null));
   if (cap.catalog.length) out.push(section(`Model catalog (${fmtInt(cap.catalog.length)}, ${fmtInt(cap.catalog.filter((m) => m.hidden).length)} hidden)`,
     el("ul", { class: "items" }, cap.catalog.map((m) => el("li", { "data-net-key": `model:${m.slug}` }, el("b", { text: m.slug }), m.hidden ? chipText("hidden", "warn") : null,

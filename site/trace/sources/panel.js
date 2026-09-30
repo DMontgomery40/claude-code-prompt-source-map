@@ -3,6 +3,7 @@
 // holds. Content is read from the resolver one source at a time, redacted there the way the network layer
 // redacts a capture. Nothing is saved.
 import { el, fmtInt, fmtWhen } from "../panels.js";
+import { readableOrStored, readableText, readableValue, recordList, splitCut, textKind } from "../readable.js";
 
 export const SOURCES_LENS = { key: "sources", q: "Everything on this machine", icon: "⌸" };
 const PRODUCT = { "claude-code": "Claude Code", codex: "Codex/ChatGPT" };
@@ -97,10 +98,14 @@ function body(s, v, A) {
   if (v.error) return el("p", { class: "note", text: v.error });
   const d = v.data;
   const wrap = el("div", { class: "src-body" });
+  const key = `${s.id}|${v.part || ""}`;
+  const stored = (text) => () => el("pre", { class: "src-pre", text });
   if (d.path && d.kind !== "files") wrap.append(el("p", { class: "meta" }, el("code", { text: d.path })));
   if (d.kind === "note") wrap.append(el("p", { class: "note", text: d.text }));
-  else if (d.kind === "text") wrap.append(el("pre", { class: "src-pre", text: d.text }));
-  else if (d.kind === "json") wrap.append(el("pre", { class: "src-pre", text: JSON.stringify(d.value, null, 2) }));
+  // Code, config and prose read best as written; JSON, JSON Lines and logs get a readable layout.
+  else if (d.kind === "text") wrap.append(textKind(splitCut(d.text).text, d.path) === "plain" ? stored(d.text)()
+    : readableOrStored(() => el("div", { class: "rd-box" }, readableText(d.text, d.path, key)), stored(d.text)));
+  else if (d.kind === "json") wrap.append(readableOrStored(() => el("div", { class: "rd-box" }, readableValue(d.value)), stored(JSON.stringify(d.value, null, 2))));
   else if (d.kind === "files") {
     if (d.total > d.files.length) wrap.append(el("p", { class: "meta", text: `${fmtInt(d.total)} files; the ${fmtInt(d.files.length)} changed most recently:` }));
     wrap.append(el("ul", { class: "net-entries" }, d.files.map((f) => el("li", {},
@@ -108,9 +113,9 @@ function body(s, v, A) {
       ` · ${size(f.bytes)}${f.modified ? ` · ${fmtWhen(f.modified)}` : ""}`))));
   } else if (d.kind === "rows") {
     wrap.append(el("p", { class: "meta", text: `${fmtInt(d.total)} ${d.total === 1 ? "row" : "rows"}${d.total > d.rows.length ? `, showing ${fmtInt(d.offset + 1)}–${fmtInt(d.offset + d.rows.length)}` : ""}` }));
-    wrap.append(el("div", { class: "src-rows" }, d.rows.map((r, i) => el("details", { class: "src-rowd" },
-      el("summary", { text: rowTitle(r, d.offset + i) }),
-      el("pre", { class: "src-pre", text: JSON.stringify(r, null, 2) })))));
+    const items = d.rows.map((value) => ({ value }));
+    wrap.append(readableOrStored(() => recordList(items, { key, offset: d.offset, content: (r) => el("div", { class: "rd-box" }, readableValue(r)) }),
+      () => recordList(items, { key, offset: d.offset, content: (r) => stored(JSON.stringify(r, null, 2))() })));
     const nav = el("p", { class: "src-nav" });
     if (d.offset > 0) nav.append(el("button", { class: "btn small", type: "button", text: "← Earlier", onclick: () => A.openSource(s.id, { offset: Math.max(0, d.offset - 400), part: v.part }) }));
     if (d.offset + d.rows.length < d.total) nav.append(el("button", { class: "btn small", type: "button", text: "Later →", onclick: () => A.openSource(s.id, { offset: d.offset + d.rows.length, part: v.part }) }));
@@ -128,15 +133,4 @@ function shortPath(p, pattern) {
   // A leading session-id folder (file-history/<id>/…) says nothing new here.
   if (parts.length > 1 && /^[0-9a-f]{8}-[0-9a-f]{4}-/.test(parts[0])) parts.shift();
   return parts.join("/");
-}
-
-// A one-line title for a row: its most telling short fields.
-function rowTitle(r, i) {
-  const keys = ["item_type", "target", "name", "type", "status", "display", "text", "title", "thread_name", "turn_id", "file", "level"];
-  const parts = [];
-  // A log row (Codex's logs_2): the message after its span prefix says what happened.
-  if (typeof r.feedback_log_body === "string") parts.push(r.feedback_log_body.replace(/^[\s\S]*\}: /, "").replace(/\s+/g, " ").slice(0, 140));
-  for (const k of keys) if (r[k] != null && typeof r[k] !== "object" && String(r[k]).length) parts.push(String(r[k]).replace(/\s+/g, " ").slice(0, 90));
-  if (!parts.length) for (const [k, x] of Object.entries(r)) { if (x != null && typeof x !== "object") parts.push(`${k} ${String(x).slice(0, 40)}`); if (parts.length > 2) break; }
-  return `${i + 1}. ${parts.slice(0, 3).join(" · ")}`;
 }

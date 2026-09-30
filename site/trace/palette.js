@@ -408,6 +408,8 @@ export function createPalette(ctx) {
   }
 
   // ---------- highlighting the words in the side panel after a jump ----------
+  // A text box: a reader's text as stored, or its readable view.
+  const TEXT_BOX = "pre, .rd-text, .rd-box";
   let hlTerms = [], hlObserver = null, hlTimer = null, hlScrolled = false;
   function highlight(terms) {
     hlTerms = (terms || []).filter(t => t && t.length >= 2);
@@ -441,16 +443,19 @@ export function createPalette(ctx) {
         r.setStart(n, a); r.setEnd(n, b);
         ranges.push(r);
         first ||= r;
-        if (!firstInText && n.parentElement?.closest("pre")) firstInText = r;
+        if (!firstInText && n.parentElement?.closest(TEXT_BOX)) firstInText = r;
       }
     }
     if (globalThis.CSS?.highlights && typeof Highlight === "function") CSS.highlights.set(HIGHLIGHT, new Highlight(...ranges));
     const target = firstInText || first;
     if (!hlScrolled && target) { hlScrolled = true; reveal(target, panel); }
   }
-  // Scrolls the text box holding the match (the reader scrolls on its own), then the panel.
+  // Scrolls the text box holding the match (the reader scrolls on its own), then the panel. A match in long text
+  // a readable view shows a screen at a time (readable.js) opens that text first.
   function reveal(range, panel) {
-    const box = range.startContainer.parentElement?.closest("pre");
+    const clamped = range.startContainer.parentElement?.closest(".clamp");
+    if (clamped?.nextElementSibling?.matches?.(".rd-more")) clamped.nextElementSibling.click();
+    const box = range.startContainer.parentElement?.closest(TEXT_BOX);
     if (box && box.scrollHeight > box.clientHeight) {
       const br = box.getBoundingClientRect(), rr = range.getBoundingClientRect();
       box.scrollTop += rr.top - br.top - box.clientHeight / 3;
