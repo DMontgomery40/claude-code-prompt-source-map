@@ -722,3 +722,10 @@ button:disabled { opacity: .4; cursor: default; }
   .map-location-bar { gap: 10px; }
   .map-location-bar .inspect-layers { padding: 7px 9px; font-size: 10px; }
 }
+
+/* A novice entry alongside local session intake, and visible provenance after loading. */
+.real-example{padding:18px 20px;margin:18px 0 24px;border:1px solid var(--line,#343b43);border-radius:10px;background:#172126}
+.real-example h3{margin:0 0 8px;font-size:17px}.real-example p{line-height:1.55;color:#bbc8ce}.example-description:empty{display:none}
+.example-banner{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 10px;border:1px solid #44545c;border-radius:8px;background:#131c22ec;font-size:12px;line-height:1.5;color:#cbd7dc}
+.example-banner details{flex:1;min-width:0}.example-banner summary{cursor:pointer}.example-banner p{margin:8px 0 0}.example-banner .text-control{flex:none;font-size:12px}
+@media(max-width:980px){.example-banner{margin:0 16px 6px;pointer-events:auto}.example-banner details[open] p{max-height:100px;overflow:auto}}

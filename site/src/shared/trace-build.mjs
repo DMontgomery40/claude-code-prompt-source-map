@@ -11,6 +11,15 @@ import { pathToFileURL } from "node:url";
 
 const SKIP = new Set(["test", "dump.mjs", "dev-synthetic.js", "fixtures"]);
 
+// Qualify references after raw-slug heading lookup and record matching are complete.
+export function qualifyTraceReferences(index,section='') {
+  if(!section)return index;
+  if(!['claude-code','codex'].includes(section))throw new Error('Unknown Trace reference section.');
+  const refs=[...(index.pages || []),...(index.records || []),...Object.values(index.reminders || {}),...Object.values(index.templates || {}),...Object.values(index.tools || {})];
+  for(const ref of refs)if(typeof ref.slug==='string' && /^[a-z0-9-]+$/.test(ref.slug))ref.slug=`${section}/${ref.slug}`;
+  return index;
+}
+
 // Heading text → id on a built page, read from the HTML the site just wrote, so anchors match exactly.
 async function headingIds(siteRoot, slug, section) {
   const file = path.join(siteRoot, "dist", section || "", slug, "index.html");
@@ -225,6 +234,7 @@ export async function buildTrace({ siteRoot, sourceRoot, categories, siteId, ori
       if (TEMPLATE_IDS.includes(item.id) && typeof item.text === "string" && !index.templates[item.id]) index.templates[item.id] = { text: item.text, slug, anchor: ids.get(item.title) ?? null, title: item.title };
     }
   }
+  qualifyTraceReferences(index,section);
   const stats = { pages: pages.length, lines: Object.keys(lines).length, records: index.records.length, reminders: Object.keys(index.reminders).length, templates: Object.keys(index.templates).length, tools: Object.keys(index.tools).length };
   // The literal index: where unpublished text sits in what ships (hashes, file names and offsets; no text).
   // One file per product (dist/trace/literal-index.<product>.json): the page fetches only the loaded

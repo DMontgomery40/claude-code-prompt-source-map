@@ -32,6 +32,12 @@ It is **not** about token cost or the fact that context is re-read every turn. D
   sessions), `private/video`, `private/research`. Never copy anything from `private/` into a tracked
   file. `npm run check` runs `tools/leak-check.mjs`, which fails on this machine's paths, user name,
   secrets and private session ids.
+  - **User-authorized exception (2026-09-29):** the reviewed, scrubbed recording in
+    `site/trace/examples/source-map-development/` may be tracked and published as the real Trace
+    example the user requested. Promote only the approved derivative after a complete local privacy
+    scan, bounded semantic review, original-versus-scrubbed structural verification, and the leak
+    gate. Original recordings, source paths, original identifiers, alias maps/salts, audit files and
+    review material remain private. This exception does not authorize any other private recording.
 
 ## Rules
 - Run the gate before calling work done: `npm run check` (build, all tests, link check, leak check).

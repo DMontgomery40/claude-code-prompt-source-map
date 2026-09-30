@@ -2,7 +2,7 @@
 // Parsing stays in the browser; sources are picked files or the optional loopback resolver.
 import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
-import { lineHash, normalizeLine, MIN_INDEXED_LINE } from "./model.js";
+import { lineHash, normalizeLine, MIN_INDEXED_LINE, indexFor } from "./model.js";
 import { capturePickedFiles } from "./file-source.js";
 import { parsePaste } from "./paste.js";
 import { openLocalSession, localSources, localSource } from "./local-session.js";
@@ -15,6 +15,7 @@ import { createHarnessMode } from "./harness/mode.js";
 import { looksLikeHar, capturesFor } from "./network/har.js";
 import { networkLens, wireCard, NETWORK_LENS, closeWireReader } from "./network/panel.js";
 import { sourcesLens, SOURCES_LENS } from "./sources/panel.js";
+import { EXAMPLE_ID, loadPublicExample, createLoadOwnership } from "./example-loader.js";
 import { createHelp } from "./help/help.js";
 
 const params = new URLSearchParams(location.search);
@@ -31,6 +32,8 @@ let viewHistory = null, viewTimer = null;
 let mapReturn = null; // the landscape camera and selection saved before focused inspection
 let text = null;     // (agentId, ref) => Promise<{text, mode}>
 let worker = null;
+const loads=createLoadOwnership();
+let publicExample = null, exampleLoading = false, exampleAbort = null;
 let lastFiles = null; // the dropped files, kept so another session among them can be opened
 let lastCaptures = []; // the captures (.har) that came with them: each session attaches its own
 let pasteRoot = null; // the thread or session id from the paste box, sent as the worker's `root`
@@ -47,10 +50,14 @@ let followZoom = null;
 // ---------- loader ----------
 setupLoader();
 drawHero();
-if (params.has("synthetic")) loadSynthetic();
+if (params.has("example")) queueMicrotask(() => openExample(params.get("example")));
+else if (params.has("synthetic")) loadSynthetic();
 if (params.has("model")) $("#dev").hidden = false;
 
 function setupLoader() {
+  $("#open-example").addEventListener("click", () => openExample());
+  $("#example-own-session").addEventListener("click", backToLoader);
+  $("#example-banner details").addEventListener("toggle", () => { if (S.trace) afterSideResize(); });
   const drop = $("#drop");
   ["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach(t => drop.addEventListener(t, () => drop.classList.remove("over")));
@@ -102,8 +109,30 @@ function setupLoader() {
   $("#back-to-load").addEventListener("click", backToLoader);
 }
 
+async function openExample(id=EXAMPLE_ID) {
+  if(exampleLoading) return;
+  exampleLoading=true;exampleAbort=new AbortController();const exampleSignal=exampleAbort.signal;$("#open-example").disabled=true;$("#open-example").textContent="Loading real example…";$("#load-error").hidden=true;
+  try {
+    const {manifest,files}=await loadPublicExample({id,signal:exampleSignal,onProgress:(fraction,message)=>setProgress(fraction,message)});
+    publicExample=manifest;pasteRoot=null;
+    $("#example-description").textContent=`${manifest.title}${manifest.description ? `. ${manifest.description}` : ""} · ${fmtInt(manifest.counts.agents)} agents · ${fmtInt(manifest.counts.subagents)} subagents · ${fmtInt(manifest.counts.requests)} requests. ${manifest.privacyStatement}`;
+    const loaded=await loadFiles(files,manifest.rootSessionId);
+    if(loaded && !exampleSignal.aborted){
+      $("#example-status").textContent="";
+      $("#example-label").textContent=`Public real session: ${manifest.title}. ${manifest.privacyStatement}`;
+      $("#example-banner").hidden=false;
+      afterSideResize();
+      const url=new URL(location.href);url.searchParams.set('example',id);history.replaceState(null,'',url);
+    }
+    else publicExample=null;
+  } catch(error) {publicExample=null;if(error.name!=="AbortError")showError(error.message || 'The example could not be opened. Try again, or open your own session.');}
+  finally {exampleLoading=false;exampleAbort=null;$("#open-example").disabled=false;$("#open-example").textContent="Open a real example";}
+}
+
 // Back to the loader without reloading, so folders picked on this page stay available.
 function backToLoader() {
+  loads.cancel();exampleAbort?.abort();publicExample=null;$("#example-banner").hidden=true;
+  const url=new URL(location.href);url.searchParams.delete("example");history.replaceState(null,"",url);
   clearCapture();
   palette?.setTrace(null);
   viewHistory?.dispose(); viewHistory = null; clearTimeout(viewTimer); mapReturn = null;
@@ -153,8 +182,10 @@ function setProgress(frac, msg) {
   $("#load-error").hidden = true;
   if (frac != null) $("#progress-fill").style.width = `${Math.round(Math.max(0, Math.min(1, frac)) * 100)}%`;
   if (msg) $("#progress-text").textContent = msg;
+  if(exampleLoading && msg) $("#example-status").textContent=msg;
 }
 function showError(msg) {
+  if(exampleLoading) $("#example-status").textContent=msg;
   $("#progress").hidden = true;
   const e = $("#load-error");
   e.textContent = msg;
@@ -167,8 +198,9 @@ let pendingLoad = null;
 function getWorker() {
   if (worker) return worker;
   worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
+  const owner=worker;
   worker.addEventListener("message", ({ data }) => {
-    if (!data) return;
+    if (worker!==owner || !data) return;
     if (data.type === "progress") {
       const frac = data.total ? data.done / data.total : null;
       const mb = n => `${(n / 1048576).toFixed(n > 1e8 ? 0 : 1)} MB`;
@@ -213,6 +245,7 @@ function getWorker() {
     }
   });
   worker.addEventListener("error", e => {
+    if(worker!==owner)return;
     const msg = `The parser couldn't start: ${e.message || "worker error"}`;
     if (pendingLoad) { pendingLoad.reject(new Error(msg)); pendingLoad = null; }
   });
@@ -260,9 +293,17 @@ function sendIndex() {
   indexSent ||= loadIndex().then(index => { if (index) getWorker().postMessage({ type: "index", index }); });
   return indexSent;
 }
-async function parseInWorker(files, root) {
+function cancelWorkerLoad(){
+  if(!pendingLoad)return;
+  const cancelled=pendingLoad;pendingLoad=null;
+  worker?.terminate();worker=null;indexSent=null;
+  cancelled.reject(new DOMException('Session load superseded.','AbortError'));
+}
+async function parseInWorker(files, root, current=()=>true) {
   files = await capturePickedFiles(files, root);
+  if(!current())throw new DOMException('Session load superseded.','AbortError');
   await sendIndex();
+  if(!current())throw new DOMException('Session load superseded.','AbortError');
   return new Promise((resolve, reject) => {
     pendingLoad = { resolve, reject };
     getWorker().postMessage({ type: "load", files, root: root || null });
@@ -383,7 +424,10 @@ function networkBody(entry, part) {
 // sends the pasted id only if some dropped path names it, so a stale paste can't block a drop.
 async function loadFiles(files, root) {
   if (!files || !files.length) return;
+  const claim=loads.begin();claim.onCancel(cancelWorkerLoad);
+  if(!files.every(file=>file.publicExample)){exampleAbort?.abort();publicExample=null;$("#example-banner").hidden=true;const url=new URL(location.href);url.searchParams.delete("example");history.replaceState(null,"",url);}
   const { hars, logs: rest } = await splitCaptures(files);
+  if(!claim.current())return;
   files = rest;
   const logs = files.filter(f => /\.(jsonl|json)$/i.test(f.path));
   if (hars.length && !logs.some(f => /\.jsonl$/i.test(f.path))) return showError(HAR_ALONE);
@@ -396,19 +440,23 @@ async function loadFiles(files, root) {
   lastFiles = files;
   lastCaptures = hars;
   try {
-    const trace = await parseInWorker(files, root);
+    const trace = await parseInWorker(files, root,claim.current);
+    if(!claim.current())return;
     text = workerText;
-    await start(trace);
+    await start(trace,claim.current);
+    if(!claim.current())return;
   } catch (e) {
+    if(!claim.current() || e.name==="AbortError")return;
     return showError(e.message || String(e));
-  }
+  } finally {claim.finish();}
   attachFound();
+  return S.trace;
 }
 
 // Help (help/help.js): what is set up right now, and how to get what's missing. Built on first open.
 let helpUI = null;
 function openHelp(topic = null) {
-  helpUI ||= createHelp({ state: () => S, A: {
+  helpUI ||= createHelp({ state: () => S, autoHealth:()=>!publicExample && !exampleLoading, A: {
     openNetwork: () => S.network && selectLens(NETWORK_LENS.key),
     openSources: () => selectLens(SOURCES_LENS.key),
     pickHar: () => $("#pick-har").click(),
@@ -423,12 +471,13 @@ function openHelp(topic = null) {
 // Chrome a local-network permission prompt). Without a resolver the lens says how to start one.
 let sourcesSeq = 0, sourcesAsked = -1;
 function sessionRootId() { return String((S.trace?.agents.find(a => a.kind === "root") || S.trace?.agents[0])?.id || "").toLowerCase(); }
-const resolverInPlay = () => location.origin === "http://127.0.0.1:8766" || !!lastFiles?.some(f => f.local);
+const resolverInPlay = () => !publicExample && (location.origin === "http://127.0.0.1:8766" || !!lastFiles?.some(f => f.local));
 function loadSources() {
   if (sourcesAsked === sourcesSeq) return;
   sourcesAsked = sourcesSeq;
   const seq = sourcesSeq, id = sessionRootId();
   const done = v => { if (seq !== sourcesSeq) return; S.sources = v; if (S.lens === SOURCES_LENS.key) render(false); helpUI?.refresh(); };
+  if(publicExample) return done({unavailable:true,reason:"This public example uses published source logs only. Local machine sources are not requested."});
   if (!/^[0-9a-f-]{36}$/.test(id)) return done({ unavailable: true, reason: "This session has no session id to look up." });
   localSources(id).then(r => done(r || { unavailable: true, reason: "The local resolver didn't answer this page: it isn't running, or this page isn't one it serves." }),
     e => done({ unavailable: true, reason: e.message || String(e) }));
@@ -774,12 +823,14 @@ function normalize(trace) {
   return trace;
 }
 
-async function start(trace) {
+async function start(trace,current=()=>true) {
   viewHistory?.dispose(); viewHistory = null;
   clearCapture(); // a capture belongs to the session it was attached to
   S.sources = null; S.sourceOpen = new Map(); sourcesSeq++;
   Object.assign(S, { level: 0, agentId: null, reqIdx: null, stratum: null, block: null, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args' });
-  S.tools = (await loadIndex())?.tools || null; // tool name -> site page, for the custody ladder's "Guided by"
+  const referenceIndex = await loadIndex();
+  if(!current())return;
+  S.tools = indexFor(referenceIndex, trace.product)?.tools || null; // custody ladder's "Guided by"
   mapReturn = null;
   S.trace = normalize(trace);
   S.layout = buildLayout(S.trace);
@@ -808,13 +859,13 @@ async function start(trace) {
   $("#app").hidden = false;
   buildHud();
   const { webglAvailable } = await import("./scene.js").catch(() => ({ webglAvailable: () => false }));
+  if (!current()) return;
   S.webgl = webglAvailable();
   S.mode = !reducedMotion && S.webgl ? "3d" : "2d";
-  if (params.get("view") === "2d") S.mode = "2d";
-  if (params.get("view") === "3d" && webglAvailable()) S.mode = "3d";
   // Trace opens in the landscape. The harness layer is reached from it (h, or the Harness button), never
   // opened first: no URL or saved view starts there (David, 2026-09-27).
-  await setMode(S.mode);
+  await setMode(S.mode, current);
+  if (!current()) return;
   if (!started) {
     started = true;
     setupResizer();
@@ -862,7 +913,8 @@ let started = false;
 
 // Under the harness layer the 3D scene runs hidden, so playback and the session map keep working.
 const webglFor3d = () => S.webgl !== false;
-async function setMode(mode) {
+async function setMode(mode, current = () => !!S.trace) {
+  if (!current()) return;
   if (mode !== "harness") S.lastMode = mode;
   S.mode = mode;
   setSessionKind();
@@ -879,6 +931,7 @@ async function setMode(mode) {
   if (mode === "3d" || (mode === "harness" && webglFor3d())) {
     try {
       const { createScene } = await import("./scene.js");
+      if (!current() || S.mode !== mode) return;
       $("#flat").hidden = true;
       $("#stage").hidden = false;
       // Under the harness layer the landscape stays laid out but invisible: display:none would size it to
@@ -892,15 +945,17 @@ async function setMode(mode) {
         scene.onUserCamera?.(() => userCamera("hands"));
       }
     } catch (e) {
+      if (!current() || S.mode !== mode) return;
       console.warn("3D view unavailable, using the 2D view", e);
       $("#mode").hidden = true;
-      if (mode !== "harness") return setMode("2d");
+      if (mode !== "harness") return setMode("2d", current);
     }
   } else {
     $("#stage").hidden = true;
     $("#stage").style.visibility = "";
     $("#flat").hidden = mode === "harness";
   }
+  if (!current() || S.mode !== mode) return;
   if (mode === "harness") harness.show();
   showPlayback();
   symbolLegend();
@@ -923,6 +978,7 @@ function applySideWidth(w, save) {
   if (save) try { localStorage.setItem(SIDE_KEY, String(sideW)); } catch { /* storage may be unavailable */ }
 }
 function afterSideResize() {
+  placeCrumbs();
   const keepMap = S.mapPinned || !!S.mapFocus;
   layoutInsets(keepMap);
   renderMinimap();
