@@ -8,14 +8,27 @@ import zlib from 'node:zlib';
 import {once} from 'node:events';
 import {pathToFileURL} from 'node:url';
 const UUID=/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
-const SECRET_KEY=/(?:password|passwd|secret|credential|access.?token|refresh.?token|api.?key|authorization|cookie|private.?key)/i;
+const SECRET_KEY=/(?:password|passwd|secret|credential|access.?token|refresh.?token|api.?key|(?:^|_)token(?:$|_)|authorization|cookie|private.?key)/i;
 const PERSONAL_KEY=/^(?:email|phone|address|patient|patient_name|full_name|first_name|last_name|account_number|ssn|serial_number|device_id|hostname|ip_address)$/i;
 const SENSITIVE=/\b(?:patient|clinical|diagnosis|medical record|social security|bank account|credit card|routing number|qEEG|Thrylen|FreeTaxUSA)\b/i;
 const PUBLIC_HOSTS=new Set(['openai.com','github.com','nodejs.org','python.org','developer.mozilla.org']);
-export function localSecretValues(env=process.env,envText='') {
- const values=Object.entries(env).filter(([key,value])=>SECRET_KEY.test(key)&&value.length>=6).map(([,value])=>value);
- for(const line of envText.split('\n')) {const m=/^\s*(?:export\s+)?([\w]+)\s*=\s*(.*?)\s*$/.exec(line);if(m&&SECRET_KEY.test(m[1])){const value=m[2].replace(/^(['"])(.*)\1$/,'$2');if(value.length>=6)values.push(value);}}
- return [...new Set(values)].sort((a,b)=>b.length-a.length);
+// Read both local env files for every caller, including the semantic pre-send boundary.
+export function localSecretValues(env=process.env,envText='',{envFiles=[path.resolve('.env'),path.join(os.homedir(),'.env')],read=file=>fs.readFileSync(file,'utf8')}={}) {
+ const values=[];
+ const collect=(key,value)=>{if(typeof value==='string'&&(value.length>=12||(SECRET_KEY.test(key)&&value.length>=6)))values.push(value);};
+ for(const [key,value] of Object.entries(env))collect(key,value);
+ const texts=[envText];
+ for(const file of new Set(envFiles)){try{texts.push(read(file));}catch(error){if(error.code!=='ENOENT')throw new Error('Cannot read local environment privacy boundary.');}}
+ for(const text of texts)for(const line of text.split('\n')) {
+  const m=/^\s*(?:export\s+)?([\w]+)\s*=\s*(.*?)\s*$/.exec(line);
+  if(!m)continue;
+  const raw=m[2],quoted=/^(['"])(.*?)\1(?:\s+#.*)?$/.exec(raw);
+  collect(m[1],quoted?quoted[2]:raw.replace(/\s+#.*$/,''));
+ }
+ // Encoded credentials in tool output are still credentials, even when too short
+ // for the generic opaque-payload patterns.
+ const variants=values.flatMap(value=>[value,encodeURIComponent(value),Buffer.from(value).toString('base64'),Buffer.from(value).toString('base64url')]);
+ return [...new Set(variants)].sort((a,b)=>b.length-a.length);
 }
 export function createSessionSanitizer({salt=crypto.randomBytes(32).toString('hex'),secretValues=[],privateValues=[],privateNames=[],sensitivePattern=SENSITIVE}={}) {
  const idMap=new Map(), counts={};
