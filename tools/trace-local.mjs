@@ -99,6 +99,7 @@ export function createTraceServer({roots=defaultRoots,siteRoot=null,home,recorde
    if(!trusted || req.headers['x-trace-request']!=='1')return reply(403,{error:'Forbidden request'});
    try{
     if(url.pathname.startsWith('/v1/recording/')){
+     if(url.pathname==='/v1/recording/capture'&&req.method==='GET'){try{return reply(200,await recorder.capture(url.searchParams.get('run')||''));}catch{return reply(404,{error:'Checked recording not available'});}}
      if(url.pathname==='/v1/recording/status'&&req.method==='GET')return reply(200,await recorder.status());
      if(['/v1/recording/start','/v1/recording/stop'].includes(url.pathname)&&req.method==='POST'){
       const body=await readBody(req);if(body===null)return reply(413,{error:'Request too large'});if(!body||Array.isArray(body))return reply(400,{error:'Invalid request'});

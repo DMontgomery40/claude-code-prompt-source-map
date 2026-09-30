@@ -6,6 +6,32 @@ harness's own telemetry about how it assembled the prompt. The desktop recorder 
 a private HAR and file it beside the relevant session logs. From then on Trace attaches it whenever you open the session:
 by pasted id, through the folder picker, by dropping the session's folder, or through the local resolver.
 
+## Agent-only desktop orchestration
+
+No browser, existing session ID, or voice call is needed to arm recording:
+
+```sh
+node tools/capture/trace-desktop.mjs arm
+node tools/capture/trace-desktop.mjs status
+node tools/capture/trace-desktop.mjs stop
+```
+
+`arm` creates a private detached worker that survives the calling agent/app closing. It waits up to 15 minutes for a coordinated app exit, then launches the existing scoped recorder automatically. By default it never quits the running app. After explicit interruption approval, `arm --restart` schedules a verified main-process SIGTERM five seconds later in the external worker and automatically relaunches under capture. It never force-kills or targets app-server/helpers/production services. `stop` cancels an armed run before launch, or freezes an active run while preserving forwarding. Repeating `arm` with the same options is idempotent; a different active recording is not replaced. An optional `--thread UUID` records the requested continuation as intent. It does not fabricate association or require that a local rollout already exists. Filing still uses exact IDs observed in traffic.
+
+Optional renderer/voice enrichment requires explicit approval **before invocation** for temporary debugger access and the app restart:
+
+```sh
+node tools/capture/trace-desktop.mjs arm --restart --renderer --open-after-call
+```
+
+`--renderer` launches Electron with an ephemeral remote-debugging port, expected to bind only to 127.0.0.1. This unauthenticated debugging endpoint gives other local processes potential inspection/control access and stays present until that app run exits, even after recording stops. Do not enable it as a workaround for denied UI control. The collector only observes the identified packaged main renderer's network traffic and instruments future WebRTC peer connections/data channels. It performs no UI input, navigation or storage reads. No certificate-error bypass, system proxy/keychain change, launchd service or persistent debugger setting is used.
+
+The optional observer captures renderer HTTPS request metadata/bodies, WebSocket frames, WebRTC string data-channel events and bounded RTP/transport statistics. Audio/video bytes, binary frames and SDP contents are withheld. It associates calls by matching the exact SDP offer in memory to the signaling request and the returned call ID. SDP is not written to disk. Existing peer connections created before instrumentation cannot be reconstructed. A run with no voice continues successfully with `voice.observed: false`; observer failure is reported separately and does not tear down normal app-server forwarding.
+
+`--open-after-call` is opt-in and requires `--renderer`. After an observed, exactly associated call closes, the worker waits 60 seconds, freezes/checks the capture, and opens the local Trace recording view. No call means no delayed action. A local resolver using this version must already be running to serve that view; its start/status/stop buttons are not needed. The capture-only view works without a local session log and labels unattributed traffic. A matching local session can still be opened in the existing landscape.
+
+Credentials are removed before renderer checkpoints and checked again before merging/filing. Combined private HARs retain optional voice evidence in `log._traceVoice`. Per-thread filing excludes another known thread's voice evidence; unknown ownership is labelled unattributed. This is application-level network evidence, not a complete OS packet capture or decoded voice media. Real installed-app debugger/target compatibility and voice capture must be verified before claiming a successful real recording.
+
 ## Codex/ChatGPT desktop
 
 Needs the macOS desktop app, Node and mitmproxy (`brew install mitmproxy`). No certificate installation or system proxy

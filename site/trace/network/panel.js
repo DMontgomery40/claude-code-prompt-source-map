@@ -91,6 +91,7 @@ export function networkLens(S, A) {
   const cap = S.network, trace = S.trace, product = cap.product;
   const focus = S.netFocus || null;
   const out = [];
+  if(cap.voice?.observed)out.push(section('WebRTC voice evidence',el('p',{text:`${fmtInt(cap.voice.messages)} data-channel messages · ${cap.voice.calls.length} observed call(s). Audio was not recorded.`})));
   out.push(el("h2", { text: NETWORK_LENS.q }),
     el("p", { class: "lede", text: `A network capture of this ${PRODUCT[product]} session, joined to its log: what the harness sent that the log doesn't show. Credentials and identity were redacted in your browser as the capture was read; nothing is saved.` }));
   const reader = wireReader(A);

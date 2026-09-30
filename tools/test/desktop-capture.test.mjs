@@ -7,6 +7,7 @@ import {spawn, spawnSync} from 'node:child_process';
 import {createServer, request} from 'node:http';
 import {createDesktopRecorder, scopedWrapper, recordingStatus, runDesktopRecording, desktopEnvironment, finalCheckpoint} from '../capture/desktop-capture.mjs';
 import {createTraceServer} from '../trace-local.mjs';
+import {createRendererCapture} from '../capture/renderer-capture.mjs';
 
 test('an already running desktop app is refused before any launch or capture files', async t=>{
  const directory=await mkdtemp(join(tmpdir(),'desktop-refuse-'));t.after(()=>rm(directory,{recursive:true,force:true}));
@@ -150,12 +151,12 @@ for(const explicitStop of [true,false])test(explicitStop?'a recorded test proces
  await writeFile(binary,`#!/bin/sh\ntouch '${marker}'\nwhile [ ! -f '${quit}' ]; do sleep 0.1; done\nrm '${marker}'\n`,{mode:0o700});
  const session='11111111-2222-4333-8444-555555555555',sessions=join(dir,'sessions');await mkdir(sessions);
  await writeFile(join(sessions,`rollout-test-${session}.jsonl`),JSON.stringify({type:'session_meta',payload:{id:session}})+'\n');
- await writeFile(join(dir,'config.json'),JSON.stringify({layout:{main,binary},roots:{codex:sessions}}));await writeFile(join(dir,'control.json'),'{"recording":true}');
+ await writeFile(join(dir,'config.json'),JSON.stringify({layout:{main,binary},roots:{codex:sessions},renderer:explicitStop}));await writeFile(join(dir,'control.json'),'{"recording":true}');
  let proxy,app,proxyURL,proxyKills=0,failMonitor=false;
  const runtime={isAlive:pid=>{try{process.kill(pid,0);return true;}catch{return false;}},appRunning:async()=>{if(failMonitor){failMonitor=false;throw new Error('transient process-list failure');}return !!app&&app.exitCode===null;},spawn:(command,args,options)=>{
   const child=spawn(command,args,options);if(command==='mitmdump'){proxy=child;proxyURL='http://127.0.0.1:'+args[args.indexOf('--listen-port')+1];const kill=child.kill.bind(child);child.kill=(signal)=>{proxyKills++;return kill(signal);};}else app=child;return child;
  }};
- const job=runDesktopRecording(dir,{runtime,tickMs:50,startupMs:10000});
+ const job=runDesktopRecording(dir,{runtime,tickMs:50,startupMs:10000,rendererFactory:options=>createRendererCapture({...options,fetcher:async()=>({ok:true,json:async()=>[]})})});
  job.catch(()=>{});
  t.after(async()=>{await writeFile(quit,'');if(app)await new Promise(r=>{if(app.exitCode!==null)return r();app.once('exit',r);setTimeout(r,1000).unref();});if(proxy&&proxy.exitCode===null)proxy.kill('SIGINT');await job;await rm(dir,{recursive:true,force:true});});
  async function stateWhen(predicate){const end=Date.now()+15000;while(Date.now()<end){try{const state=JSON.parse(await readFile(join(dir,'status.json')));if(state.phase==='error'&&state.error?.code!=='MONITOR_RETRY')throw new Error(state.error.message);if(predicate(state))return state;}catch(e){if(e.code!=='ENOENT'&&!(e instanceof SyntaxError))throw e;}await new Promise(r=>setTimeout(r,50));}throw new Error('fixture recorder timed out');}
@@ -170,6 +171,7 @@ for(const explicitStop of [true,false])test(explicitStop?'a recorded test proces
  await writeFile(join(dir,'control.json'),'{"recording":false,"request":"test-stop"}');
  const stopped=await stateWhen(s=>s.phase==='stopped');assert.equal(stopped.forwarding,true);assert.equal(proxyKills,0);
  const frozen=await readFile(join(dir,'capture.har'),'utf8');
+ const combined=JSON.parse(await readFile(join(dir,'combined.har'),'utf8'));assert.equal(combined.log._traceVoice.length,0,'optional voice absence preserves successful normal capture');assert.ok(combined.log.entries.length>0);assert.equal(stopped.renderer.voice.observed,false);assert.equal(stopped.captureReady,true);
  assert.equal(await forward(),'forwarded after stop');assert.equal(await readFile(join(dir,'capture.har'),'utf8'),frozen);assert.equal(proxyKills,0);
  await writeFile(quit,'');const ended=await job;assert.equal(ended.forwarding,false);assert.equal(proxyKills,1);
  await assert.rejects(readFile(join(dir,'authority','mitmproxy-ca-cert.pem')),e=>e.code==='ENOENT');

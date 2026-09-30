@@ -1,3 +1,4 @@
+import {openRecordingView} from './recording-view.js';
 // Trace viewer: loading, state, levels, keyboard, and wiring between the scene, minimap and panels.
 // Parsing stays in the browser; sources are picked files or the optional loopback resolver.
 import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
@@ -50,6 +51,7 @@ let followZoom = null;
 // ---------- loader ----------
 setupLoader();
 drawHero();
+if(params.has("recording"))queueMicrotask(()=>openRecordingView(params.get("recording")));
 if (params.has("example")) queueMicrotask(() => openExample(params.get("example")));
 else if (params.has("synthetic")) loadSynthetic();
 if (params.has("model")) $("#dev").hidden = false;

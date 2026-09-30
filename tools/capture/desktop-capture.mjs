@@ -4,14 +4,15 @@
 // It never kills the desktop app and never changes system proxy/trust settings.
 import {spawn, execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {mkdir, readFile, writeFile, rename, rm, chmod, access, stat} from 'node:fs/promises';
-import {join, dirname, resolve} from 'node:path';
+import {mkdir, readFile, writeFile, rename, rm, chmod, access, stat, realpath} from 'node:fs/promises';
+import {join, dirname, resolve, basename} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {randomBytes} from 'node:crypto';
 import {createServer, connect} from 'node:net';
 import {codexApp} from '../../codex/extract/codex/lib/app-layout.mjs';
-import {checkHar} from './check-har.mjs';
+import {checkHar,findSecrets,harSecrets} from './check-har.mjs';
 import {fileCapture, defaultRoots} from './file-capture.mjs';
+import {createRendererCapture} from './renderer-capture.mjs';
 import {captureSessions} from '../../site/trace/network/capture.js';
 
 const here=dirname(fileURLToPath(import.meta.url));
@@ -45,7 +46,16 @@ const realRuntime={
   catch{throw problem('APP_LAYOUT','The installed desktop app layout is not supported. Install the macOS Codex/ChatGPT app or use CLI recording.');}
  },
  async appRunning(layout){const {stdout}=await exec('/bin/ps',['-axo','pid=,comm=']);return stdout.split('\n').some(line=>line.replace(/^\s*\d+\s+/,'').trim()===layout.main);},
+ async requestExit(layout){
+  // Explicit restart invocation only: verify the executable again immediately
+  // before requesting termination. Never signal helpers, CLI workers or services.
+  const {stdout}=await exec('/bin/ps',['-axo','pid=,comm=']);
+  const pids=stdout.split('\n').map(line=>/^\s*(\d+)\s+(.+)$/.exec(line)).filter(row=>row&&row[2].trim()===layout.main).map(row=>Number(row[1]));
+  if(pids.length!==1)throw problem('RESTART_TARGET','Expected exactly one installed desktop main process; no process was signaled.');
+  process.kill(pids[0],'SIGTERM');
+ },
  launchWorker(runDir){const worker=spawn(process.execPath,[fileURLToPath(import.meta.url),'--worker',runDir],{detached:true,stdio:'ignore',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});worker.unref();return worker;},
+ async openTrace(url){await exec('/usr/bin/open',[url]);},
  spawn,
 };
 
@@ -53,6 +63,7 @@ const realRuntime={
 export function recordingStatus(value={}){
  const out={supported:value.supported!==false,phase:value.phase||'idle',appRunning:!!value.appRunning,forwarding:!!value.forwarding,
   flows:Number(value.flows)||0,frames:Number(value.frames)||0,checkpoints:Number(value.checkpoints)||0,filed:Number(value.filed)||0,pendingAttachment:!!value.pendingAttachment};
+ for(const key of ['armedAt','startedAt','cancelled','renderer','captureReady','postCall'])if(value[key]!=null)out[key]=value[key];
  if(value.error)out.error={code:value.error.code||'RECORDER',message:value.error.message||'Recording failed. Check the local recorder.'};
  return out;
 }
@@ -75,13 +86,15 @@ export function createDesktopRecorder({directory=DIRECTORY,roots=defaultRoots(),
     state.error={code:'MONITOR_RETRY',message:'Could not check whether the desktop app is running. Check status again; an active recorder can still be stopped with Stop recording.'};
    }
   }
-  if(state.worker && !(runtime.isAlive||alive)(state.worker) && ['starting','recording'].includes(state.phase)){state.phase='error';state.error={code:'WORKER_EXITED',message:'The recorder stopped unexpectedly. No new traffic is being recorded.'};}
+  if(state.worker && !(runtime.isAlive||alive)(state.worker) && ['armed','starting','recording'].includes(state.phase)){state.phase='error';state.error={code:'WORKER_EXITED',message:'The recorder stopped unexpectedly. No new traffic is being recorded.'};}
   return recordingStatus(state);
  }
  async function waitFor(dir,predicate){const end=now()+waitMs;while(now()<end){const state=await json(join(dir,'status.json'),{});if(predicate(state))return recordingStatus({...state,appRunning:state.forwarding});await sleep(100);}throw problem('RECORDER_TIMEOUT','The recorder did not answer in time. Check recording status before trying again.');}
- async function start(){
+ async function start({waitForExit=false,targetThread=null,renderer=false,openAfterCall=false,restart=false}={}){
+  if(restart&&!waitForExit)throw problem('RESTART','Use arm for an explicitly approved restart.');
+  if(targetThread!==null&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetThread))throw problem('TARGET','Target thread must be a UUID; omit it to capture before a thread exists.');
   const layout=await runtime.inspect();
-  if(await runtime.appRunning(layout))throw problem('APP_RUNNING','Codex/ChatGPT is already running. When you are ready, quit the desktop app yourself, then choose Start recording to reopen it. Active chats are never stopped by this recorder.');
+  if(!waitForExit&&await runtime.appRunning(layout))throw problem('APP_RUNNING','Codex/ChatGPT is already running. When you are ready, quit the desktop app yourself, then choose Start recording to reopen it. Active chats are never stopped by this recorder.');
   const old=await current(),state=old?await json(join(old,'status.json'),{}):{};
   if(old&&!state.worker)state.worker=(await json(join(old,'worker.json'),{})).pid;
   if(state.worker&&(runtime.isAlive||alive)(state.worker))throw problem('RECORDER_ACTIVE','The previous recorder is still cleaning up. Check its status in a moment.');
@@ -100,17 +113,18 @@ export function createDesktopRecorder({directory=DIRECTORY,roots=defaultRoots(),
   try{
    // Another request can pass the early checks before this lock becomes free.
    // Repeat both checks inside the transaction before publishing a new worker.
-   if(await runtime.appRunning(layout))throw problem('APP_RUNNING','The desktop app opened while recording was preparing. Quit it yourself when ready, then start again.');
+   if(!waitForExit&&await runtime.appRunning(layout))throw problem('APP_RUNNING','The desktop app opened while recording was preparing. Quit it yourself when ready, then start again.');
    const active=await current();
    if(active){const activeState=await json(join(active,'status.json'),{}),pid=activeState.worker||(await json(join(active,'worker.json'),{})).pid;if(pid&&(runtime.isAlive||alive)(pid))throw problem('RECORDER_ACTIVE','Another recorder has started. Check its status instead of starting again.');}
    const run='run-'+randomBytes(12).toString('hex');dir=join(directory,run);await mkdir(dir,{mode:0o700});
-   await save(join(dir,'config.json'),{layout,roots});await save(join(dir,'control.json'),{recording:true});
-   await save(join(dir,'status.json'),{phase:'starting'});await save(join(directory,'active.json'),{run});
+   const armedAt=now();
+   await save(join(dir,'config.json'),{layout,roots,waitForExit,targetThread,renderer,openAfterCall,restartAt:restart?armedAt+5000:null,armedAt,expiresAt:armedAt+15*60*1000});await save(join(dir,'control.json'),{recording:true});
+   await save(join(dir,'status.json'),{phase:waitForExit?'armed':'starting',armedAt:now()});await save(join(directory,'active.json'),{run});
    const worker=runtime.launchWorker(dir);if(worker.on)worker.on('error',()=>{});
    await save(join(dir,'worker.json'),{pid:worker.pid});
   }finally{await rm(lock,{recursive:true,force:true});}
   // The independent worker owns startup now; the resolver's lock is already gone.
-  return waitFor(dir,s=>['recording','error','stopped'].includes(s.phase));
+  return waitFor(dir,s=>[...(waitForExit?['armed']:[]),'recording','error','stopped'].includes(s.phase));
  }
  async function stop({attachment=null}={}){
   const dir=await current();if(!dir)return status();
@@ -126,26 +140,49 @@ export function createDesktopRecorder({directory=DIRECTORY,roots=defaultRoots(),
   }
   return waitFor(dir,s=>s.phase==='stopped' && s.controlRequest===request);
  }
- return {status,start,stop};
+ async function arm({thread=null,renderer=false,openAfterCall=false,restart=false}={}){
+  if(thread!==null&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(thread))throw problem('TARGET','Target thread must be a UUID.');
+  const dir=await current();if(dir){const state=await json(join(dir,'status.json'),{}),config=await json(join(dir,'config.json'),{}),pid=state.worker||(await json(join(dir,'worker.json'),{})).pid;
+   if(pid&&(runtime.isAlive||alive)(pid)){if(config.targetThread===thread&&!!config.renderer===renderer&&!!config.openAfterCall===openAfterCall&&!!config.restartAt===restart&&['armed','starting','recording'].includes(state.phase))return status();throw problem('RECORDER_ACTIVE','Another capture or forwarding worker is active. Use status or stop; it will not be replaced.');}
+  }
+  return start({waitForExit:true,targetThread:thread,renderer,openAfterCall,restart});
+ }
+ async function details(){const dir=await current();if(!dir)return {status:await status(),scope:'local app-server'};const config=await json(join(dir,'config.json'),{});return {status:await status(),runDirectory:dir,capturePath:join(dir,config.renderer?'combined.har':'capture.har'),targetThread:config.targetThread||null,restartAt:config.restartAt||null,association:'Exact traffic IDs only; target is an intent, not a guessed attachment.',scope:config.renderer?'local app-server + optional Electron signaling/data-channel events; audio not recorded':'local app-server; Electron/voice not observed'};}
+ async function capture(run){
+  if(!runName.test(run))throw problem('CAPTURE','Invalid recording identifier.');
+  const base=await realpath(directory),dir=await realpath(join(directory,run));if(!dir.startsWith(base+'/'))throw problem('CAPTURE','Recording outside private directory.');
+  const state=await json(join(dir,'status.json'),{});if(!state.captureReady)throw problem('CAPTURE','The recording has not been frozen and checked.');
+  const config=await json(join(dir,'config.json'),{}),file=join(dir,config.renderer&&await json(join(dir,'combined.har'))?'combined.har':'capture.har');
+  const checkedPath=await realpath(file);if(!checkedPath.startsWith(dir+'/'))throw problem('CAPTURE','Capture outside recording directory.');
+  const text=await readFile(checkedPath,'utf8'),har=JSON.parse(text);if(findSecrets(text).length||harSecrets(har).length)throw problem('CREDENTIALS','Capture credential checks failed.');return har;
+ }
+ return {status,start,stop,arm,details,capture};
 }
 
-export async function runDesktopRecording(runDir,{runtime=realRuntime,tickMs=250,startupMs=20000,checkpointMs=30000}={}){
- const {layout,roots}=await json(join(runDir,'config.json'),{});
+export function advancePostCall(previous,voice,now=Date.now()){
+ const closed=voice?.closedCalls||[];if(!closed.length)return previous||null;
+ const newest=closed.at(-1);const state=previous?.callId===newest?previous:{callId:newest,opensAt:now+60000};
+ return {...state,ready:now>=state.opensAt};
+}
+
+export async function runDesktopRecording(runDir,{runtime=realRuntime,tickMs=250,startupMs=20000,checkpointMs=30000,rendererFactory=createRendererCapture}={}){
+ const {layout,roots,waitForExit=false,targetThread=null,renderer:observeRenderer=false,openAfterCall=false,restartAt=null,armedAt=Date.now(),expiresAt=Date.now()+15*60*1000}=await json(join(runDir,'config.json'),{});
  if(!layout?.main||!layout?.binary)throw problem('CONFIG','Missing desktop recorder configuration.');
  const controlFile=join(runDir,'control.json'),statusFile=join(runDir,'status.json'),har=join(runDir,'capture.har');
  const conf=join(runDir,'authority'),wrapper=join(runDir,'app-server-wrapper'),receipt=join(runDir,'owned-app-server.json'),statsFile=join(runDir,'capture-status.json');
- await mkdir(conf,{mode:0o700});
- const state={phase:'starting',worker:process.pid,forwarding:false,filed:0,pendingAttachment:false};
- let proxy=null,app=null,ownedPID=null,proxyExited=false,appFailed=false,lastControl=null,lastStats=null,monitorPrevious=null;
+ const state={phase:waitForExit?'armed':'starting',armedAt,worker:process.pid,forwarding:false,filed:0,pendingAttachment:false};
+ let renderer=null,proxy=null,app=null,ownedPID=null,proxyExited=false,appFailed=false,lastControl=null,lastStats=null,monitorPrevious=null,lastRendererCheckpoint=0;
  const update=async()=>save(statusFile,state);
  const finalize=async(attachment)=>{
   if(state.filed>0&&!attachment){state.phase='stopped';return update();}
   try{
-   const checked=checkHar(har);if(!checked.ok)throw problem('CREDENTIALS','The capture failed its credential check and was deleted. Nothing was filed.');
-   state.error=null;
-   const identified=captureSessions(await readFile(har,'utf8'));
+   state.captureReady=false;let finalHar=har;
+   if(renderer){try{await renderer.stop();const observed=await json(join(runDir,'renderer.har'));const base=await json(har,{log:{version:'1.2',entries:[]}});base.log.entries.push(...observed.log.entries);base.log._traceVoice=observed.log._traceVoice;base.log._traceRenderer=observed.log._traceRenderer;finalHar=join(runDir,'combined.har');await save(finalHar,base);}catch{state.renderer={...state.renderer,error:'Renderer checkpoint failed; app-server capture retained.'};}}
+   const checked=checkHar(finalHar);if(!checked.ok)throw problem('CREDENTIALS','The capture failed its credential check and was deleted. Nothing was filed.');
+   state.error=null;state.captureReady=true;
+   const identified=captureSessions(await readFile(finalHar,'utf8'));
    state.pendingAttachment=!identified.sessions.length && state.flows>0;
-   if(attachment||identified.sessions.length){const plan=fileCapture(har,{roots,attachment});state.filed=plan.places.length;state.pendingAttachment=false;state.error=null;}
+   if(attachment||identified.sessions.length){const plan=fileCapture(finalHar,{roots,attachment});state.filed=plan.places.length;state.pendingAttachment=false;state.error=null;}
   }catch(error){state.error={code:error.code||'FILING',message:error.code==='CREDENTIALS'?error.message:'The recording is kept privately but could not be filed. Open its session log locally, or use explicit attachment if no thread ID was captured.'};}
   state.phase='stopped';await update();
  };
@@ -154,6 +191,16 @@ export async function runDesktopRecording(runDir,{runtime=realRuntime,tickMs=250
  process.on('SIGINT',signal);process.on('SIGTERM',signal);
  try{
   await update();
+  if(waitForExit){
+   for(;;){const control=await json(controlFile,{recording:true});if(!control.recording){state.phase='stopped';state.cancelled=true;state.controlRequest=control.request;await update();process.off('SIGINT',signal);process.off('SIGTERM',signal);return recordingStatus(state);}
+    if(Date.now()>=expiresAt){state.phase='stopped';state.cancelled=true;state.error={code:'ARM_EXPIRED',message:'Armed capture expired without restarting the app.'};await update();process.off('SIGINT',signal);process.off('SIGTERM',signal);return recordingStatus(state);}
+    if(restartAt&&Date.now()>=restartAt&&!state.restartRequested){await runtime.requestExit(layout);state.restartRequested=true;await update();}
+    try{if(!await runtime.appRunning(layout))break;}catch{state.error={code:'MONITOR_RETRY',message:'Waiting for a verified app exit; no launch or proxy changes made.'};await update();}
+    await delay(tickMs);
+   }
+   state.phase='starting';state.error=null;await update();
+  }
+  await mkdir(conf,{mode:0o700});
   if(await runtime.appRunning(layout))throw problem('APP_RUNNING','The desktop app opened before recording was ready. Quit it yourself when ready, then start again.');
   const port=await freePort(),ca=join(conf,'mitmproxy-ca-cert.pem');
   proxy=runtime.spawn('mitmdump',['-q','--set',`confdir=${conf}`,'--listen-host','127.0.0.1','--listen-port',String(port),'-s',join(here,'trace_capture.py'),'--set',`trace_capture_output=${har}`,'--set',`trace_capture_control=${controlFile}`,'--set',`trace_capture_status=${statsFile}`],{stdio:'ignore',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}});
@@ -163,13 +210,17 @@ export async function runDesktopRecording(runDir,{runtime=realRuntime,tickMs=250
   if(!ready)throw problem('PROXY_START','The private recorder could not start. Install mitmproxy (brew install mitmproxy), then try again.');
   await writeFile(wrapper,scopedWrapper({binary:layout.binary,ca,receipt,proxy:`http://127.0.0.1:${port}`}),{mode:0o700});
   // No proxy or certificate variables are added to Electron's environment.
-  app=runtime.spawn(layout.main,[],{stdio:'ignore',detached:true,env:desktopEnvironment(process.env,wrapper)});app.on('error',()=>{appFailed=true;});app.unref?.();state.forwarding=true;await update();
+  const rendererPort=observeRenderer?await freePort():null;
+  const control=await json(controlFile,{recording:true});if(!control.recording)throw problem('CANCELLED','Recording cancelled before app launch.');
+  app=runtime.spawn(layout.main,rendererPort?[`--remote-debugging-port=${rendererPort}`]:[],{stdio:'ignore',detached:true,env:desktopEnvironment(process.env,wrapper)});app.on('error',()=>{appFailed=true;});app.unref?.();state.forwarding=true;await update();
   const ownedEnd=Date.now()+startupMs;let owned=null;
   while(Date.now()<ownedEnd&&!proxyExited&&!appFailed){owned=await json(receipt);if(owned?.pid&&(runtime.isAlive||alive)(owned.pid))break;await delay(tickMs);}
   if(!owned?.pid||!(runtime.isAlive||alive)(owned.pid))throw problem('NO_APP_SERVER','The desktop app did not start the scoped app-server. Traffic is not proven captured. Stop recording and quit the app yourself before trying again.');
   ownedPID=owned.pid;
-  state.phase='recording';state.appServerConnected=true;await update();
- }catch(error){state.phase='error';state.error={code:error.code||'STARTUP',message:error.code?error.message:'Desktop recording could not start. Check that the app and mitmproxy are installed.'};await update();}
+  state.phase='recording';state.startedAt=Date.now();state.appServerConnected=true;
+  if(observeRenderer){renderer=await rendererFactory({port:rendererPort,directory:runDir,expectedURL:'app://-/index.html'});state.renderer={phase:'connecting',voice:{observed:false,peers:0,messages:0,calls:[],closedCalls:[]}};}
+  await update();
+ }catch(error){state.phase=error.code==='CANCELLED'?'stopped':'error';state.error={code:error.code||'STARTUP',message:error.code?error.message:'Desktop recording could not start. Check that the app and mitmproxy are installed.'};await update();}
  try{
   // Remain independent of the resolver. Even an error after launch keeps the proxy
   // alive until the app naturally exits, so another active chat is never cut off.
@@ -180,8 +231,12 @@ export async function runDesktopRecording(runDir,{runtime=realRuntime,tickMs=250
     // required before cleanup. A transient read failure is never exit evidence.
     if(!running&&!(runtime.isAlive||alive)(ownedPID)&&!(runtime.isAlive||alive)(app.pid))break;
     const stats=await json(statsFile,{}),control=await json(controlFile,{recording:true});
+    if(renderer&&control.recording){try{await renderer.poll();if(Date.now()-lastRendererCheckpoint>=2000){await renderer.checkpoint();lastRendererCheckpoint=Date.now();}const rendererStatus=renderer.status();state.renderer={phase:rendererStatus.targets?'observing':'waiting-renderer',...rendererStatus};if(openAfterCall){state.postCall=advancePostCall(state.postCall,rendererStatus.voice);if(state.postCall?.ready)await pause();}}catch{state.renderer={...state.renderer,phase:'unavailable',error:'Optional renderer observer unavailable; normal app-server capture continues.'};}await update();}
     if(stats.checkpointTime!==lastStats){lastStats=stats.checkpointTime;Object.assign(state,{flows:stats.flows||0,frames:stats.wsFrames||0,checkpoints:stats.checkpoints||0});await update();}
     if(!control.recording&&stats.recording===false&&control.request!==lastControl){lastControl=control.request;state.controlRequest=lastControl;await finalize(control.attachment);}
+    if(openAfterCall&&state.phase==='stopped'&&state.captureReady&&state.postCall?.ready&&!state.postCall.opened){
+     try{await runtime.openTrace(`http://127.0.0.1:8766/trace/?recording=${basename(runDir)}`);state.postCall.opened=true;}catch{state.postCall.error='Could not open local Trace; the checked capture remains available.';}await update();
+    }
     if(state.error?.code==='MONITOR_RETRY'&&monitorPrevious){state.phase=monitorPrevious.phase;state.error=monitorPrevious.error;monitorPrevious=null;await update();}
     if(proxyExited){state.phase='error';state.forwarding=false;state.error={code:'PROXY_EXITED',message:'The recording proxy stopped unexpectedly. This recorded app run can no longer connect through it; quit the app when ready and reopen normally.'};await update();}
    }catch{
@@ -205,8 +260,13 @@ export async function runDesktopRecording(runDir,{runtime=realRuntime,tickMs=250
    // now be terminated without affecting chats; never leave its CA/server orphaned.
    if(!proxyExited){proxy.kill('SIGKILL');await new Promise(r=>{proxy.once('exit',r);setTimeout(r,2000).unref();});}
   }
+  if(renderer)await renderer.stop().catch(()=>{});
   state.forwarding=false;await update();
   await rm(conf,{recursive:true,force:true});await rm(wrapper,{force:true});await rm(receipt,{force:true});
+ }
+ if(openAfterCall&&state.captureReady&&state.postCall&&!state.postCall.opened){
+  while(Date.now()<state.postCall.opensAt)await delay(Math.min(tickMs,state.postCall.opensAt-Date.now()));
+  state.postCall.ready=true;try{await runtime.openTrace(`http://127.0.0.1:8766/trace/?recording=${basename(runDir)}`);state.postCall.opened=true;}catch{state.postCall.error='Could not open local Trace; the checked capture remains available.';}await update();
  }
  return recordingStatus(state);
 }

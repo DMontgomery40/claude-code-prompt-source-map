@@ -1,3 +1,4 @@
+import {scopeVoice,summarizeVoice} from './voice.js';
 // A network capture attached to a loaded session: which entries belong to it, what each endpoint is,
 // what the model calls and side traffic reveal, and how they join to the session log. Runs in the worker;
 // what it returns (the capture summary) is redacted and holds no body text. Bodies are read later, one at
@@ -161,7 +162,7 @@ export function scopeCapture(text, sessionIds, { explicit = false } = {}) {
     const association = ids.size ? "request-id" : explicit ? "explicit" : "unattributed";
     entries.push({...selected,_traceAssociation:association});
   }
-  return {...har,log:{...har.log,entries,_traceCaptureAttachment:{product:"codex",sessionIds:[...mine],association:explicit ? "explicit" : "request-id"}}};
+  return {...har,log:{...har.log,entries,...har.log._traceVoice?{_traceVoice:scopeVoice(har.log._traceVoice,sessionIds)}:{},_traceCaptureAttachment:{product:"codex",sessionIds:[...mine],association:explicit ? "explicit" : "request-id"}}};
 }
 
 // The product a capture is traffic of, and every session id its entries name with how many entries name
@@ -189,9 +190,11 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   if (!trace) throw new Error("Load a session first: a network capture is attached to a session log.");
   const raw = [];
   const names = [];
+  const voiceRecords=[];
   for (const f of files) {
     const har = parseHar(f.text);
     names.push(f.name);
+    voiceRecords.push(...scopeVoice(har.log._traceVoice,sessionIdsOf(trace)));
     const attachment = har.log._traceCaptureAttachment;
     const explicit = attachment?.association === "explicit" && attachment.product === trace.product && Array.isArray(attachment.sessionIds);
     if (explicit && !attachment.sessionIds.some(id => sessionIdsOf(trace).includes(String(id).toLowerCase()))) throw new Error("This explicitly attached capture doesn't hold the loaded session.");
@@ -431,7 +434,7 @@ export async function analyzeCapture(files, trace, { now = () => Date.now() } = 
   if (partial) notes.push(`${partial} model call${partial === 1 ? "" : "s"} ended before the stream finished; what arrived is shown.`);
 
   const capture = {
-    product, files: names, total: infos.length, kept: kept.length, elsewhere, otherSessions: [...others].map((s) => `${short(s)}…`), notes,
+    voice:summarizeVoice(voiceRecords), product, files: names, total: infos.length, kept: kept.length, elsewhere, otherSessions: [...others].map((s) => `${short(s)}…`), notes,
     entries, roles, calls, byRequest, join, betas: betaList, flags: flagList, attributes, bootstrap, handshake, catalog,
     metrics: { names: metricNames, shadowSelectionMethods: shadow }, events, telemetryCounts, rateLimits: rateSeries.sort((a, b) => (a.t ?? 0) - (b.t ?? 0)),
     account: { facts, identityFields: [...identityFields] }, headerNames: [...headerNames.values()].sort((a, b) => a.name.localeCompare(b.name)), transit,
