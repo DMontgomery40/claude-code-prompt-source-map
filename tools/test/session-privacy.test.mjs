@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import {createSessionSanitizer,sanitizeSessionFiles,localSecretValues} from '../privacy/sanitize-session.mjs';
-import {semanticCandidates,reviewSanitizedCandidates,validateSemanticAnswers} from '../privacy/review-session.mjs';
+import {semanticCandidates,reviewSanitizedCandidates,validateSemanticAnswers,neutralCandidate,textHash} from '../privacy/review-session.mjs';
 const A='019b76da-a800-7000-8000-000000000001',B='019b76da-f044-7000-8000-000000000003';
 test('UUID aliases preserve UUID7 birth time and joins while removing secrets and sensitive records',()=>{
  const secret='fixtureOpaque'+ 'Q'.repeat(24);const s=createSessionSanitizer({salt:'fixture',secretValues:[secret],privateNames:['Private Person']});
@@ -59,6 +59,46 @@ test('all long env values are scrubbed regardless of DATABASE_URL, SENTRY_DSN or
  const discovered=localSecretValues({NPM_TOKEN:planted.NPM_TOKEN},'',{envFiles:Object.keys(files),read:file=>files[file]});
  for(const value of Object.values(planted))assert.ok(discovered.includes(value));
  assert.ok(localSecretValues({NPM_TOKEN:'short6'},'',{envFiles:[]}).includes('short6'));
+});
+
+test('quoted dotenv credentials retain raw and decoded escaped or physical multiline variants',()=>{
+ const fixtures=[{raw:'fixtureOpaqueCanary\\nsecondFixtureSegment',parsed:'fixtureOpaqueCanary\nsecondFixtureSegment'},{raw:'fixtureOpaqueCanary\\rsecondFixtureSegment',parsed:'fixtureOpaqueCanary\rsecondFixtureSegment'},{raw:'fixtureOpaqueCanary\nsecondFixtureSegment',parsed:'fixtureOpaqueCanary\nsecondFixtureSegment'}];
+ for(const {raw,parsed} of fixtures){
+  const values=localSecretValues({},`DATABASE_PASSWORD="${raw}" # fixture`,{envFiles:[]});
+  for(const value of [raw,parsed])for(const variant of [value,encodeURIComponent(value),Buffer.from(value).toString('base64'),Buffer.from(value).toString('base64url')]){
+   assert.ok(values.includes(variant),'quoted credential representation collected');
+   assert.equal(neutralCandidate({text:variant,hash:textHash(variant)},{secretValues:values}),false);
+  }
+ }
+ assert.throws(()=>localSecretValues({},'DATABASE_PASSWORD="unterminatedFixture',{envFiles:[]}),/privacy boundary/);
+ assert.throws(()=>localSecretValues({},'',{envFiles:['/fixture/.env'],read:()=>{throw Object.assign(new Error('fixture denied'),{code:'EACCES'});}}),/privacy boundary/);
+});
+
+test('dotenv comments, backticks and dot or hyphen keys preserve runtime credential variants',()=>{
+ const fixtures=[['DATABASE-URL=fixtureLongCanaryValue#comment','fixtureLongCanaryValue#comment','fixtureLongCanaryValue'],['DATABASE.URL=`fixtureLongCanaryValue`','`fixtureLongCanaryValue`','fixtureLongCanaryValue'],['SECRET=`fixtureLongCanaryValue\nfixtureSecondLine`','`fixtureLongCanaryValue\nfixtureSecondLine`','fixtureLongCanaryValue\nfixtureSecondLine']];
+ for(const [assignment,raw,parsed] of fixtures){
+  const values=localSecretValues({},assignment,{envFiles:[]});
+  for(const value of [raw,parsed])for(const variant of [value,encodeURIComponent(value),Buffer.from(value).toString('base64'),Buffer.from(value).toString('base64url')]){
+   assert.ok(values.includes(variant));assert.equal(neutralCandidate({text:variant,hash:textHash(variant)},{secretValues:values}),false);
+  }
+ }
+ assert.throws(()=>localSecretValues({},'SECRET=`fixtureUnclosedCanary',{envFiles:[]}),/privacy boundary/);
+});
+
+test('quoted dotenv decoded credentials never reach a provider',async()=>{
+ const savedEnv=process.env,savedRead=fs.readFileSync;process.env={};
+ let calls=0;
+ try{
+  for(const raw of ['fixtureOpaqueCanary\\nsecondFixtureSegment','fixtureOpaqueCanary\\rsecondFixtureSegment','fixtureOpaqueCanary\nsecondFixtureSegment']){
+   fs.readFileSync=()=>`DATABASE_PASSWORD="${raw}"`;
+   const decoded=raw.replace(/\\n/g,'\n').replace(/\\r/g,'\r');
+   for(const value of [raw,decoded])for(const variant of [value,encodeURIComponent(value),Buffer.from(value).toString('base64'),Buffer.from(value).toString('base64url')]){
+    const candidates=semanticCandidates([{text:`Neutral engineering output ${variant} fixture.`}]);
+    await assert.rejects(reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],config:{key:'synthetic',endpoint:'https://fixture.example/',model:'fixture'},fetcher:async()=>{calls++;throw new Error('provider must not be invoked');}}),/boundary rejected/);
+   }
+  }
+  assert.equal(calls,0);
+ }finally{process.env=savedEnv;fs.readFileSync=savedRead;}
 });
 
 test('provider is never invoked for canaries in repo .env or arbitrary process env names',async t=>{

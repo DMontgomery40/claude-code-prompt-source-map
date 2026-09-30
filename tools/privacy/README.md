@@ -18,8 +18,14 @@ node tools/privacy/review-session.mjs private/review-candidate/private-audit.jso
 The second command verifies every compressed file against the audit and prepares
 locally deduplicated, bounded text; it makes **zero network calls**. Use the exported
 `reviewSanitizedCandidates` with explicitly locally approved candidate hashes to
-request Jev/Decisions review. The complete selection is boundary-checked before
-any request; secret/private literals and original IDs can be supplied to the check.
+request Jev/Decisions review. Complete source strings are checked before splitting;
+each chunk retains private, hash-validated source context. The complete selection
+and its full source contexts are checked again before any request, including when
+only one chunk is selected. Source context is never included in provider requests.
+Older candidate files without source context must be regenerated privately.
+Additional secret/private literals and original IDs can be supplied to the check.
+Repository and home `.env` values are collected independently of variable names,
+including quoted, multiline and encoded representations.
 Credentials are read through the existing Jev provider and are never printed.
 Questions are batched, answers must match every exact text hash, and probabilities
 must be finite numbers within `[0,1]`. Review output never grants publication
