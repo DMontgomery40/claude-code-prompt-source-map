@@ -93,6 +93,10 @@ export const cc = {
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
+    // Prompt edits Jev reads as likely changing model behaviour (uncalibrated; a person confirms).
+    const behaviorFile = path.join(repo, "work/releases", fingerprint.version, "behavior-flags.json");
+    const likely = existsSync(behaviorFile) ? [...new Set(JSON.parse(readFileSync(behaviorFile, "utf8")).pairs.filter(p => p.notify).map(p => `${p.area}:${p.id}`))] : [];
+    if (likely.length && !dryRun) notify("Claude Code behaviour flags", `${fingerprint.version}: ${likely.length} prompt edit(s) likely change model behaviour (uncalibrated, for review): ${likely.slice(0, 5).join(", ")}`);
     // Findings are notified and go into the changelog; a failing scan never fails the refresh.
     const scanDiffs = [];
     for (const sc of SCANS) {
