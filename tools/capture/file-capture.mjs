@@ -141,9 +141,11 @@ export function fileCapture(harFile, { move = false, roots = defaultRoots(), att
     const ids = plan.missing.slice(0, 3).map((id) => `${id.slice(0, 8)}…`).join(", ");
     throw new Error(`No log on this machine for the ${PRODUCT_NAME[plan.product]} session${plan.missing.length === 1 ? "" : "s"} in this capture (${ids}).`);
   }
-  // A scoped move must account for every named thread before any writes. Copy
-  // mode may file known subsets because the complete original remains available.
-  if (move && plan.missing.length) throw new Error("Cannot move a capture with missing local session logs; the complete original was kept and no subsets were written. Use copy mode to file known sessions.");
+  // A scoped move (Codex/ChatGPT files a subset per thread) must account for every named thread before any
+  // writes. Copy mode may file known subsets because the complete original remains available. A Claude Code
+  // capture is filed whole, so a session with no log here loses nothing: it is reported, not refused (Claude
+  // Code's start-up quota check names a fresh session id before --resume switches to the resumed one).
+  if (move && plan.missing.length && plan.product === "codex") throw new Error("Cannot move a capture with missing local session logs; the complete original was kept and no subsets were written. Use copy mode to file known sessions.");
   if (plan.explicit && plan.missing.length) throw new Error("Explicit attachment thread has no known local session log.");
   if (plan.product === "codex") {
     const text = readFileSync(harFile,"utf8");
@@ -200,6 +202,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     try {
       const plan = fileCapture(f, { move, roots });
       for (const p of plan.places) console.error(`capture: filed beside ${PRODUCT_NAME[plan.product]} session ${p.id}: ${p.dest}`);
+      if (plan.product === "claude-code" && plan.missing.length) console.error(`capture: no log here for ${plan.missing.map((id) => `${id.slice(0, 8)}…`).join(", ")}; the whole capture is filed, so those requests are in it too.`);
       console.error("capture: Trace attaches it when you open that session.");
     } catch (e) {
       failed++;

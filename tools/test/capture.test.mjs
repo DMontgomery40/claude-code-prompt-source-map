@@ -179,6 +179,30 @@ test("a Claude Code capture is filed in each of its sessions' folders; the origi
   assert.equal(existsSync(src), false);
 });
 
+test("a Claude Code capture that also names a session with no log here is still moved, whole, beside its session", () => {
+  // Bug repro: --resume sends its start-up quota check under a fresh session id that never gets a log, and the
+  // move refused the whole capture, leaving it in the folder capture.sh ran from.
+  const { roots, har } = sessionRoots();
+  const capture = JSON.parse(claudeHar());
+  const stray = "66666666-6666-4666-8666-666666666666";
+  const probe = structuredClone(capture.log.entries[0]);
+  probe.request.headers = [...probe.request.headers.filter((h) => !/session-id/i.test(h.name)), { name: "X-Claude-Code-Session-Id", value: stray }];
+  capture.log.entries.unshift(probe);
+  const src = har("capture-20260105-110000.har", JSON.stringify(capture));
+  const text = readFileSync(src, "utf8");
+  assert.deepEqual(planFiling(src, roots).missing, [stray]);
+  const plan = fileCapture(src, { roots, move: true });
+  assert.ok(plan.places.some((p) => p.id === CCX.session) && !plan.places.some((p) => p.id === stray));
+  assert.equal(readFileSync(plan.places[0].dest, "utf8"), text, "filed whole: the stray session's requests are in it too");
+  assert.equal(existsSync(src), false);
+  // The command says what had no log, and still succeeds.
+  const again = har("capture-20260105-120000.har", text);
+  const cli = spawnSync(process.execPath, [path.join(here, "..", "capture", "file-capture.mjs"), "--move", "--claude-root", roots["claude-code"], again], { encoding: "utf8" });
+  assert.equal(cli.status, 0, cli.stderr);
+  assert.match(cli.stderr, /no log here for 66666666…; the whole capture is filed/);
+  assert.equal(existsSync(again), false);
+});
+
 test("a Codex/ChatGPT capture goes beside its root thread's rollout, not a subagent's", () => {
   const { roots, har } = sessionRoots();
   const plan = fileCapture(har("capture-20260106-090000.har", codexHar()), { roots });

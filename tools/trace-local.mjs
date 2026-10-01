@@ -3,13 +3,15 @@
 import {createServer} from 'node:http';
 import {readdir, lstat, realpath, readFile, open} from 'node:fs/promises';
 import {join, resolve, relative, extname, dirname, basename} from 'node:path';
-import {homedir} from 'node:os';
+import {homedir, tmpdir} from 'node:os';
 import {randomBytes} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {narrowByHint} from '../site/trace/loader.js';
 import {SITE, siteOrigin} from '../site/src/shared/site.mjs';
 import {sourcesReport, readSource} from './sources/index.mjs';
 import {createDesktopRecorder} from './capture/desktop-capture.mjs';
+import {fileCapture} from './capture/file-capture.mjs';
+import {sessionContext} from './sources/context.mjs';
 
 export const PORT = 8766;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -44,11 +46,31 @@ async function list(root) {
  await walk(root);return entries;
 }
 
+const names=async dir=>{try{return await readdir(dir,{withFileTypes:true});}catch(e){if(e.code==='ENOENT'||e.code==='ENOTDIR'||e.code==='EACCES')return [];throw e;}};
+
+// A capture that never got filed: capture.sh keeps one it couldn't file in the folder it ran from (the session's
+// working folder), and an interrupted run leaves its recording in a trace-capture-rec.* folder under the temp
+// folder. One whose requests name this session is filed beside it now (moved, as capture.sh would have), so it
+// comes with the session like any filed capture. Nothing else is touched; a capture that can't be filed stays.
+async function fileLooseCaptures(session,roots,home,captureDirs){
+ let ctx;try{ctx=sessionContext(session,home?{home}:{});}catch{return;}
+ const dirs=new Set(ctx.cwd?[ctx.cwd]:[]);
+ for(const tmp of captureDirs)for(const item of await names(tmp))if(item.isDirectory()&&item.name.startsWith('trace-capture-rec.'))dirs.add(join(tmp,item.name));
+ for(const dir of dirs)for(const item of await names(dir)){
+  if(!item.isFile()||!/^capture-\d{8}-\d{6}\.har$/.test(item.name))continue;
+  const file=join(dir,item.name);
+  try{
+   const text=await readFile(file,'latin1');
+   if(!ctx.ids.some(id=>text.includes(id)))continue;
+   fileCapture(file,{move:true,roots:{'claude-code':roots['claude-code'],codex:roots.codex}});
+  }catch{/* left where it is: capture.sh's message and Help still say how to file it */}
+ }
+}
+
 // Network captures filed beside the family's logs (tools/capture/file-capture.mjs): <log name>.<…>.har next
 // to a log (Codex/ChatGPT), or a .har in the log's same-named folder's network/ (Claude Code).
 async function capturesOf(root,logs){
  const out=new Map();
- const names=async dir=>{try{return await readdir(dir,{withFileTypes:true});}catch(e){if(e.code==='ENOENT'||e.code==='ENOTDIR')return [];throw e;}};
  for(const log of logs){
   if(!/\.jsonl$/.test(log.path))continue;
   const dir=dirname(log.path),stem=basename(log.path,'.jsonl');
@@ -60,7 +82,7 @@ async function capturesOf(root,logs){
  return entries;
 }
 
-export function createTraceServer({roots=defaultRoots,siteRoot=null,home,recorder=createDesktopRecorder({roots})}={}){
+export function createTraceServer({roots=defaultRoots,siteRoot=null,home,recorder=createDesktopRecorder({roots}),captureDirs=[...new Set([tmpdir(),'/tmp'])]}={}){
  const tickets=new Map();
  // The family of a session id, found the same way for the manifest and for its local sources (kept briefly,
  // so the Sources lens doesn't walk every project folder on each read).
@@ -130,6 +152,7 @@ export function createTraceServer({roots=defaultRoots,siteRoot=null,home,recorde
      const hit=await findSession(id);
      if(!hit)return reply(404,{error:'Session not found on this machine'});
      const {session,root}=hit;
+     if(captures===true)await fileLooseCaptures(session,roots,home,captureDirs);
      const entries=[...session.entries,...session.metas||[],...session.toolResults||[],
       // Only a page that reads them asks for captures: an older page would hand a .har it can't read to its worker.
       ...(captures===true?await capturesOf(root,session.entries):[])];

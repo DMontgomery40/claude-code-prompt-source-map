@@ -106,3 +106,29 @@ test('a capture filed beside a session comes with it from the resolver and attac
  const capture=messages.find(m=>m.type==='network')?.capture;
  assert.ok(capture.calls.length>0);assert.ok(capture.join.matched>0);
 });
+
+test('a capture that never got filed is filed beside its session when the session opens, and then comes with it', async t=>{
+ // Bug repro: capture.sh couldn't file a capture and left it in the folder it ran from, so the session opened
+ // with no capture though the HAR named it.
+ const {claudeHar,CCX}=await import('../../site/trace/test/fixtures/network.mjs');
+ const {existsSync}=await import('node:fs');
+ const dir=await mkdtemp(join(tmpdir(),'trace-loose-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+ const roots={'claude-code':join(dir,'claude'),codex:join(dir,'codex')};
+ const work=join(dir,'work'),tmp=join(dir,'tmp'),proj=join(roots['claude-code'],'-proj');
+ const put=async(path,body)=>{await mkdir(join(path,'..'),{recursive:true});await writeFile(path,body);};
+ await put(join(proj,CCX.session+'.jsonl'),JSON.stringify({type:'user',sessionId:CCX.session,cwd:work,timestamp:'2026-01-05T10:00:00Z',message:{role:'user',content:'hi'}})+'\n');
+ const loose=join(work,'capture-20260105-100000.har'),interrupted=join(tmp,'trace-capture-rec.abc123','capture-20260105-090000.har');
+ const unrelated=join(work,'capture-20260105-110000.har'),otherName=join(work,'notes.har');
+ const elsewhere=claudeHar().replaceAll(CCX.session,'77777777-7777-4777-8777-777777777777').replaceAll(CCX.other,'88888888-8888-4888-8888-888888888888');
+ await put(loose,claudeHar());await put(interrupted,claudeHar());await put(unrelated,elsewhere);await put(otherName,claudeHar());
+ const server=createTraceServer({roots,captureDirs:[tmp]});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));
+ const call=body=>fetch('http://127.0.0.1:'+server.address().port+'/v1/session',{method:'POST',headers:{Origin:origin,'X-Trace-Request':'1','Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json());
+ // A page that doesn't read captures moves nothing.
+ await call({id:CCX.session});assert.equal(existsSync(loose),true);
+ const manifest=await call({id:CCX.session,captures:true});
+ assert.deepEqual(manifest.files.filter(f=>/\.har$/.test(f.path)).map(f=>f.path).sort(),
+  [`-proj/${CCX.session}/network/capture-20260105-090000.har`,`-proj/${CCX.session}/network/capture-20260105-100000.har`]);
+ assert.equal(existsSync(loose),false);assert.equal(existsSync(interrupted),false);
+ // A capture of another session, and a .har that capture.sh didn't name, stay where they are.
+ assert.equal(existsSync(unrelated),true);assert.equal(existsSync(otherName),true);
+});

@@ -22,3 +22,5 @@ video/*/edit/out/
 video/*/edit/public/
 __pycache__/
 .claude/worktrees/
+# capture.sh keeps an unfiled recording in the folder it ran from; never commit one
+/capture-*.har
