@@ -67,8 +67,12 @@ test("other failures behave as before and close the target's outage: a plain Ret
   assert.deepEqual(failureDecision(new Error("refresh failed (1)"), undefined), { markFailed: true, jev: false, retryNextCycle: false, notify: true, outage: undefined });
   assert.equal(failureDecision(new JevRequestError("TypeSafe 400: bad"), undefined).markFailed, true);
   const s = { lastCheck: now, jevOutage: outage };
-  applyFailure(s, "new", failureDecision(new Error("refresh failed (1)"), s.jevOutage, now));
-  assert.deepEqual(s, { lastCheck: now, failedFingerprint: "new" });
+  const tell = applyFailure(s, "new", failureDecision(new Error("refresh failed (1)"), s.jevOutage, now), { head: "abc", now });
+  // The version is recorded for retrying (lib/failure.mjs), not given up on, and notified once that day.
+  assert.equal(tell, true);
+  assert.deepEqual(s, { lastCheck: now, failure: { key: "new", head: "abc", day: "2026-10-01", lastAt: now, attempts: 1, notifiedDay: "2026-10-01" } });
+  assert.equal(applyFailure(s, "new", failureDecision(new Error("refresh failed (1)"), undefined, now + 3600e3), { head: "abc", now: now + 3600e3 }), false);
+  assert.equal(s.failure.attempts, 2);
 });
 
 test("the narrative lint gate turns a Jev outage into a Jev Retry; findings and other errors pass through", async () => {

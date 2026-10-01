@@ -7,7 +7,10 @@
 //                                        with --dry-run the gate runs even when nothing changed
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { runAgent } from "./lib/agent.mjs";
+import { GATE_REPAIRS_PER_CYCLE, failureDue, migrateState, retryDecision } from "./lib/failure.mjs";
 import { applyFailure, commitPaths, deploy, dirtyPaths, failureDecision, foreignChanges, gate, producedSince, pushWithinBudget, restore, Retry, ROOT } from "./lib/publish.mjs";
+import { gateRepairTask, gateWithRepairs } from "./lib/repair.mjs";
 import { confirmChange } from "./lib/confirm.mjs";
 import { log, notify, run } from "./lib/run.mjs";
 import { cc } from "./targets/cc.mjs";
@@ -36,6 +39,7 @@ if (existsSync(lockFile)) {
 }
 writeFileSync(lockFile, `${process.pid} ${Date.now()}`);
 const state = existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, "utf8")) : {};
+for (const target of targets) migrateState(state[target.name]);
 const save = () => writeFileSync(stateFile, `${JSON.stringify(state, null, 2)}\n`);
 const productDir = target => path.relative(ROOT, target.repo);
 
@@ -61,12 +65,15 @@ try {
   if (!dryRun) syncWithOrigin();
   // Commits that waited for the GitHub budget go out as soon as a slot is free (never in a dry run).
   if (!dryRun) try { pushWithinBudget(ROOT); } catch (error) { log(`pending push failed: ${error.message}`); }
+  // A failed version is tied to the code it failed on: new code retries it at once.
+  const head = run("git", ["rev-parse", "HEAD"], { cwd: ROOT }).stdout.trim();
 
   const before = dirtyPaths();
   const cycle = [];
   for (const target of targets) {
     const s = (state[target.name] ??= {});
-    const due = forced === target.name || !s.lastCheck || now - s.lastCheck >= target.intervalMs(now) - 5 * 60e3;
+    // A pending failure is retried on its own schedule (lib/failure.mjs), not the target's cadence.
+    const due = forced === target.name || !s.lastCheck || now - s.lastCheck >= target.intervalMs(now) - 5 * 60e3 || failureDue(s.failure, { head, now, gapMs: target.retryGapMs });
     if (!due) continue;
     let fingerprint;
     try {
@@ -96,7 +103,12 @@ try {
         continue;
       }
     }
-    if (forced !== target.name && key === s.failedFingerprint) { log(`${target.name}: changed, but this version already failed; waiting for a newer one`); continue; }
+    // A version that failed is repaired and retried until it ships, within a daily cap.
+    if (s.failure?.key === key) {
+      const r = retryDecision(s.failure, { key, head, now });
+      if (forced !== target.name && !r.retry) { log(`${target.name}: this version failed; ${r.reason}`); continue; }
+      log(`${target.name}: retrying a version that failed (${r.reason})`);
+    }
     log(`${target.name}: changed ${s.fingerprint ?? "(first run)"} -> ${key}`);
     const claimed = new Set([...before, ...cycle.flatMap(c => c.produced)]);
     try {
@@ -109,7 +121,7 @@ try {
         // Nothing to publish: files that changed only byte-wise (sources.json fetch times) go back.
         restore(produced);
         log(`${target.name}: no content change ${JSON.stringify(result.summary?.changed ?? [])}${result.note ? ` (${result.note})` : ""}`);
-        if (!dryRun) { s.fingerprint = key; delete s.failedFingerprint; delete s.lastError; delete s.jevOutage; }
+        if (!dryRun) { s.fingerprint = key; delete s.failure; delete s.lastError; delete s.jevOutage; }
       }
     } catch (error) {
       restore(producedSince(claimed, productDir(target)));
@@ -119,8 +131,8 @@ try {
       const d = failureDecision(error, s.jevOutage, now);
       const when = d.retryNextCycle ? "next cycle" : "at the next scheduled check, since agents already ran";
       log(`${target.name}: refresh ${d.jev ? `waits for Jev, retried ${when}` : "failed"}: ${error.message}`);
-      if (!dryRun) applyFailure(s, key, d);
-      if (d.notify) notify(`${target.name} watcher`, d.jev ? `Jev unavailable since ${d.outage.since}, nothing published; retried ${when}: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
+      const tell = dryRun ? d.notify : applyFailure(s, key, d, { head, now });
+      if (tell) notify(`${target.name} watcher`, d.jev ? `Jev unavailable since ${d.outage.since}, nothing published; retried ${when}: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
     }
     save();
   }
@@ -129,14 +141,24 @@ try {
   const gated = publishing.length ? publishing.map(c => c.target) : dryRun && forced ? targets.filter(t => t.name === forced) : [];
   const allProduced = publishing.flatMap(c => c.produced);
   if (gated.length) {
+    // Files a gate repair changed outside the cycle's product files; committed with the publish.
+    let repaired = [];
+    const repairCauses = [];
     try {
-      await gate(gated.map(t => t.repo));
-      log(`gate passed (${gated.map(t => t.name).join(", ")})`);
+      repaired = await gateWithRepairs({
+        runGate: () => gate(gated.map(t => t.repo)),
+        repair: error => {
+          repairCauses.push(error.message);
+          runAgent(ROOT, gateRepairTask(error, gated.map(t => t.name)), { budgetUsd: 10, extraTools: ["Bash(npm run check:*)", "Bash(npm --prefix site:*)"] });
+        },
+        dirty: dirtyPaths, produced: allProduced, repairs: dryRun ? 0 : GATE_REPAIRS_PER_CYCLE, log
+      });
+      log(`gate passed (${gated.map(t => t.name).join(", ")})${repairCauses.length ? ` after ${repairCauses.length} repair(s), ${repaired.length} file(s) changed` : ""}`);
       if (dryRun) {
         log(publishing.length ? `dry run: would deploy and commit ${publishing.map(c => c.target.name).join(", ")}` : "dry run: nothing to publish");
       } else {
         // Someone may have changed the site's inputs while the cycle ran; don't deploy their work.
-        const late = foreignChanges(new Set(allProduced));
+        const late = foreignChanges(new Set([...allProduced, ...repaired]));
         if (late.length) throw new Retry(`uncommitted changes appeared during the run, not deploying: ${late.slice(0, 5).join(", ")}`);
         // Someone else may have pushed (and deployed) a newer site while the cycle ran; deploying
         // this checkout would roll it back. Skip and try again next hour from the new main.
@@ -144,10 +166,11 @@ try {
         if (run("git", ["merge-base", "--is-ancestor", "origin/main", "HEAD"], { cwd: ROOT }).status !== 0) throw new Retry("GitHub's main moved during the run; not deploying over it (next cycle starts from it)");
         const unverified = await deploy(publishing.map(c => c.target.section));
         if (unverified.length) notify("harness watcher", `Deployed, but not yet serving the new build: ${unverified.join(", ")}`);
+        if (repaired.length) commitPaths(repaired, `Watcher repair: the gate passes again for ${gated.map(t => t.name).join(" and ")}\n\n${repairCauses.map(cause => `- ${cause.slice(0, 300)}`).join("\n")}\n\nRepaired by the watcher's agent (watch/lib/repair.mjs).`);
         for (const c of publishing) {
           commitPaths(c.produced, `${c.result.publish.message}\n\nPublished by the watcher (watch/watch.mjs).`);
           c.result.publish.onPublished?.();
-          c.s.fingerprint = c.key; delete c.s.failedFingerprint; delete c.s.lastError; delete c.s.jevOutage;
+          c.s.fingerprint = c.key; delete c.s.failure; delete c.s.lastError; delete c.s.jevOutage;
           notify(`${c.target.origin.replace("https://", "")} updated`, c.result.publish.message.split("\n")[0]);
         }
         // Deployed and committed; a failed push waits for the next cycle's sync.
@@ -155,15 +178,15 @@ try {
       }
     } catch (error) {
       log(`publish failed: ${error.message}`);
-      restore(allProduced);
+      // Repairs that did not get the gate to pass are put back too; the next attempt starts clean.
+      restore([...allProduced, ...(error.repairedPaths ?? repaired)]);
       // A retry is not this version's failure: the same fingerprint publishes again. A Jev outage
       // in the gate is decided per target: due next cycle, unless that target's refresh ran agents.
       const decisions = publishing.map(c => {
         const d = failureDecision(error, c.s.jevOutage, now, { afterAgent: Boolean(c.result.afterAgent) });
-        if (!dryRun) applyFailure(c.s, c.key, d);
-        return d;
+        return dryRun ? d.notify : applyFailure(c.s, c.key, d, { head, now });
       });
-      if (!decisions.length || decisions.some(d => d.notify)) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
+      if (!decisions.length || decisions.some(Boolean)) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
     }
   }
   // A dry run leaves the checkout as it found it.

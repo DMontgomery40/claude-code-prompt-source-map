@@ -32,15 +32,23 @@ old file is kept as `.bak-<time>`.
    A target whose refresh changed nothing (or only byte-level provenance such as fetch times) has
    its files put back.
 4. **Gate, once:** `npm run check` at the repo root (build, all tests, link check, leak check), plus
-   the local-identity scan and the Jev narrative lint for each product being published.
+   the local-identity scan and the Jev narrative lint for each product being published. If a check
+   fails, a repair agent gets the failing output (failing tests first), fixes the cause and the gate
+   runs again, up to twice per cycle (`lib/repair.mjs`). It may edit `claude-code/`, `codex/`,
+   `tools/` and `site/`, never `watch/` or `private/`, and may not delete, skip or loosen a check to
+   pass it. Its changes are committed with the publish as a "Watcher repair" commit.
 5. **Publish, once:** one `wrangler deploy` from `site/`, then a check that
    `https://harness.dtmont.com/<section>/` serves the page that was built. Each target's commit holds
    only the files that cycle produced inside its product folder (clean before, changed after); other
    agents' dirty or staged files are never committed. Push to `main` within the shared GitHub budget
    (3 pushes per 3 hours); commits over the budget go out in a later cycle.
 
-A failed refresh or gate restores the files the cycle produced and marks that upstream version as
-failed, so the watcher waits for a newer one instead of retrying every hour. A Jev outage is not a
+A failed refresh or gate restores the files the cycle produced (and any repair that did not get the
+gate to pass) and records the failure in `watch/state.json`; the version is never given up on
+(`lib/failure.mjs`). It is retried every hour (every 4 hours for Claude Code, whose retry reruns its
+paid review agents) and at once when the code changes, until it ships. After four failed cycles in a
+UTC day it waits for the next day or for new code, which caps the repair agents' spending. Failures
+are notified once per version per day. A Jev outage is not a
 failure of that version. That covers a refresh step that exits 75 and a narrative lint that gets no
 answer. The cycle's files are restored, nothing is published, and the same version is retried next
 cycle, even for a daily target, since an outage that hits before any agent ran costs no agent work

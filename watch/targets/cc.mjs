@@ -44,6 +44,9 @@ export const cc = {
   section: "claude-code",
   origin: productOrigin("claude-code"),
   intervalMs: () => 86400e3,
+  // A failed release is retried every 4 hours (or at once on new code), not hourly: each retry
+  // reruns the refresh's paid review agents.
+  retryGapMs: 4 * 3600e3,
   checkedLabel: () => "daily",
 
   fingerprint() {

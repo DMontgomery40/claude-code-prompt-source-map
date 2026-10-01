@@ -25,7 +25,7 @@ export function retryDecision(failure, { key, head, now }) {
 export function recordFailure(failure, { key, head, now }) {
   const day = utcDay(now);
   const same = failure?.key === key && failure.day === day && failure.head === head;
-  return { key, head, day, attempts: same ? (failure.attempts ?? 0) + 1 : 1, notifiedDay: failure?.key === key ? failure.notifiedDay ?? null : null };
+  return { key, head, day, lastAt: now, attempts: same ? (failure.attempts ?? 0) + 1 : 1, notifiedDay: failure?.key === key ? failure.notifiedDay ?? null : null };
 }
 
 // Notify once per version per day, so an outage or a stubborn failure doesn't page every hour.
@@ -34,9 +34,16 @@ export function shouldNotify(failure, now) {
 }
 export const markNotified = (failure, now) => ({ ...failure, notifiedDay: utcDay(now) });
 
-// A target with a pending failure is due every cycle, whatever its normal cadence (Claude Code is
-// checked daily, but a failed version should not wait a day for its next repair).
+// A target with a pending failure is due again after `gapMs` (a target can set retryGapMs; a
+// retry that reruns paid review agents should not run hourly), or at once when the code changed,
+// whatever its normal cadence: Claude Code is checked daily, but a failed version should not wait
+// a day for its next repair.
+export const DEFAULT_RETRY_GAP_MS = 3600e3;
 export const pendingFailure = s => Boolean(s?.failure);
+export function failureDue(failure, { head, now, gapMs = DEFAULT_RETRY_GAP_MS }) {
+  if (!failure) return false;
+  return failure.head !== head || now - (failure.lastAt ?? 0) >= gapMs - 5 * 60e3;
+}
 
 // Older state kept failedFingerprint: a version skipped until a newer one shipped. Treat it as a
 // failure on unknown code, so the next cycle retries it.

@@ -11,7 +11,8 @@ const logs = new URL("../logs/", import.meta.url).pathname;
 const claude = [`${process.env.HOME}/.local/bin/claude`, run("/bin/sh", ["-lc", "command -v claude"]).stdout?.trim(), `${process.env.HOME}/.nvm/versions/node/v22.22.0/bin/claude`]
   .find(candidate => candidate && existsSync(candidate)) ?? "claude";
 
-export function runAgent(repo, task, { budgetUsd = 8, timeoutMs = 45 * 60 * 1000 } = {}) {
+// extraTools: further allowed tools, e.g. `npm run check` for a gate repair.
+export function runAgent(repo, task, { budgetUsd = 8, timeoutMs = 45 * 60 * 1000, extraTools = [] } = {}) {
   const prompt = `${task}
 
 Rules:
@@ -23,7 +24,7 @@ Rules:
   const r = run(claude, [
     "-p", prompt,
     "--permission-mode", "acceptEdits",
-    "--allowedTools", "Read,Edit,Write,Glob,Grep,Bash(node:*),Bash(npm test:*),Bash(npm run build:*),Bash(python3:*),Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(diff:*),Bash(jq:*)",
+    "--allowedTools", ["Read,Edit,Write,Glob,Grep,Bash(node:*),Bash(npm test:*),Bash(npm run build:*),Bash(python3:*),Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(diff:*),Bash(jq:*)", ...extraTools].join(","),
     "--disallowedTools", "Bash(git:*),Bash(wrangler:*),Bash(npx:*),Bash(curl:*),WebFetch,WebSearch",
     "--max-budget-usd", String(budgetUsd),
     "--no-session-persistence",

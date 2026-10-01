@@ -12,6 +12,7 @@ import os from "node:os";
 import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
 import { JevUnavailableError } from "../../codex/extract/codex/lib/jev-provider.mjs";
+import { markNotified, recordFailure, shouldNotify } from "./failure.mjs";
 import { narrativeLint } from "./narrative-lint.mjs";
 import { log, must, run } from "./run.mjs";
 
@@ -22,6 +23,26 @@ const sha = value => createHash("sha256").update(value).digest("hex");
 // one caused by a Jev outage.
 export class Retry extends Error {
   constructor(message, { jev = false } = {}) { super(message); this.name = "Retry"; this.jev = jev; }
+}
+
+// A gate check failed on the content or code: something a repair agent can fix. `output` is the
+// check's whole output, which repairExcerpt() cuts down to what a repair needs.
+export class GateFailure extends Error {
+  constructor(check, output) {
+    super(`${check} failed: ${firstFailure(output)}`);
+    this.name = "GateFailure"; this.check = check; this.output = output;
+  }
+}
+const failingTests = output => {
+  const lines = output.split("\n"), blocks = [];
+  lines.forEach((line, i) => { if (/^\s*not ok \d+/.test(line)) blocks.push(lines.slice(i, i + 40).join("\n")); });
+  return blocks;
+};
+const firstFailure = output => (failingTests(output)[0]?.split("\n")[0].trim() ?? output.trim().split("\n").at(-1) ?? "").slice(0, 300);
+// The failing tests (TAP "not ok" blocks) first, then the end of the output, at most `max` chars.
+export function repairExcerpt(output, max = 20000) {
+  const tests = failingTests(output).join("\n\n").slice(0, max * 0.7);
+  return `${tests ? `${tests}\n\n…\n\n` : ""}${output.slice(-(max - tests.length))}`;
 }
 
 // What a failed refresh or publish does to one target's watcher state. A Jev outage (a target's
@@ -46,12 +67,20 @@ export function failureDecision(error, outage, now = Date.now(), { afterAgent = 
   return { markFailed: !(error instanceof Retry), jev: false, retryNextCycle: false, notify: true, outage: undefined };
 }
 
-// Applies a failureDecision to a target's state (`s` in watch.mjs). Clearing lastCheck makes the
-// target due at the next hourly cycle whatever its interval.
-export function applyFailure(s, key, decision) {
-  if (decision.markFailed) s.failedFingerprint = key;
+// Applies a failureDecision to a target's state (`s` in watch.mjs) and returns whether to notify.
+// A failed version is recorded for retrying (lib/failure.mjs), never given up on, and is notified
+// once per version per day. Clearing lastCheck makes the target due at the next hourly cycle
+// whatever its interval.
+export function applyFailure(s, key, decision, { head = null, now = Date.now() } = {}) {
+  let tell = decision.notify;
+  if (decision.markFailed) {
+    s.failure = recordFailure(s.failure, { key, head, now });
+    tell = shouldNotify(s.failure, now);
+    if (tell) s.failure = markNotified(s.failure, now);
+  }
   if (decision.retryNextCycle) delete s.lastCheck;
   if (decision.outage) s.jevOutage = decision.outage; else delete s.jevOutage;
+  return tell;
 }
 
 // Paths whose contents go into the deployed site or its gate. Uncommitted changes here that the
@@ -122,12 +151,14 @@ export function leakCheck(repo) {
 }
 
 // The gate for one cycle: the repo's own check once, then the per-product checks.
+// A failing check throws GateFailure with its output; a Jev outage in the lint throws Retry.
 export async function gate(productRepos) {
-  must("npm", ["run", "check"], { cwd: ROOT, timeoutMs: 30 * 60 * 1000 });
+  const check = run("npm", ["run", "check"], { cwd: ROOT, timeoutMs: 30 * 60 * 1000 });
+  if (check.status !== 0) throw new GateFailure("npm run check", `${check.stdout}\n${check.stderr}`);
   for (const repo of productRepos) {
-    leakCheck(repo);
+    try { leakCheck(repo); } catch (error) { throw new GateFailure(`leak check (${path.basename(repo)})`, error.message); }
     const stale = await lintOrRetry(repo);
-    if (stale.length) throw new Error(`narrative lint (${path.basename(repo)}): ${stale.length} typed statistic(s) must be {{count:…}}/{{value:…}} tokens, or the generated page listed in narrative-lint.json:\n${stale.slice(0, 10).map(f => `${f.file}: ${f.sentence.slice(0, 160)}`).join("\n")}`);
+    if (stale.length) throw new GateFailure(`narrative lint (${path.basename(repo)})`, `narrative lint (${path.basename(repo)}): ${stale.length} typed statistic(s) must be {{count:…}}/{{value:…}} tokens, or the generated page listed in narrative-lint.json:\n${stale.slice(0, 10).map(f => `${f.file}: ${f.sentence.slice(0, 160)}`).join("\n")}`);
   }
 }
 
