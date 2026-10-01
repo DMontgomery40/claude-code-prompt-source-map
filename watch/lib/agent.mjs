@@ -21,6 +21,10 @@ Rules:
 - Do not run git, wrangler, curl, or anything that publishes. The caller verifies, deploys, and commits.
 - Finish by running the checks the task names and reporting what you changed, what passes, and anything unresolved.`;
   log(`agent start (${repo}, budget $${budgetUsd})`);
+  // The agent may not commit (git is denied, but node can run it): undo any commit it made, keeping
+  // its changes in the working tree for the caller to verify, restore or commit.
+  const head = () => run("git", ["rev-parse", "HEAD"], { cwd: repo }).stdout.trim();
+  const headBefore = head();
   const r = run(claude, [
     "-p", prompt,
     "--permission-mode", "acceptEdits",
@@ -30,6 +34,10 @@ Rules:
     "--no-session-persistence",
     "--output-format", "text"
   ], { cwd: repo, timeoutMs });
+  if (headBefore && head() !== headBefore) {
+    run("git", ["reset", "-q", "--soft", headBefore], { cwd: repo });
+    log(`agent committed on its own; its commit was undone (changes kept for the caller)`);
+  }
   // The full transcript goes to logs/; watch.log keeps only the tail.
   mkdirSync(logs, { recursive: true });
   const file = path.join(logs, `agent-${new Date().toISOString().replace(/[:.]/g, "-")}-${path.basename(repo)}.log`);

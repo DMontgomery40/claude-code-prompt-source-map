@@ -71,10 +71,12 @@ export function failureDecision(error, outage, now = Date.now(), { afterAgent = 
 // A failed version is recorded for retrying (lib/failure.mjs), never given up on, and is notified
 // once per version per day. Clearing lastCheck makes the target due at the next hourly cycle
 // whatever its interval.
-export function applyFailure(s, key, decision, { head = null, now = Date.now() } = {}) {
+// `spent`: this cycle ran paid agents (refresh repairs, reviews, gate repairs) and did not ship; it
+// counts toward the version's daily cap even when the outcome is a retry, not a failure.
+export function applyFailure(s, key, decision, { head = null, now = Date.now(), spent = false } = {}) {
   let tell = decision.notify;
+  if (decision.markFailed || spent) s.failure = recordFailure(s.failure, { key, head, now });
   if (decision.markFailed) {
-    s.failure = recordFailure(s.failure, { key, head, now });
     tell = shouldNotify(s.failure, now);
     if (tell) s.failure = markNotified(s.failure, now);
   }

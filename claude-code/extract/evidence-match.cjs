@@ -20,12 +20,14 @@ function at(s, lit, hint) {
   return best;
 }
 
-// Quoted strings and identifiers of 4+ characters must match exactly; 1-3 character identifiers match any
-// 1-4 character identifier. `anchor` (the longest exact part) cheaply rules out chunks before the regex runs.
+// Quoted strings, identifiers of 4+ characters and path segments (the v1 in /v1/sessions) must match exactly;
+// other 1-3 character identifiers (minified names such as e, I0, _6n) match any whole 1-4 character identifier.
+// `anchor` (the longest exact part) cheaply rules out chunks before the regex runs.
+const minified = (t, before, after) => /^[A-Za-z_$][\w$]{0,2}$/.test(t) && !KW.has(t) && before !== '/' && after !== '/';
 function tolerantPattern(lit) {
   const parts = lit.match(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[A-Za-z_$][\w$]*|[\s\S]/g) || [];
   const anchor = parts.filter(t => t.length >= 4).sort((a, b) => b.length - a.length)[0];
-  const re = new RegExp(parts.map(t => /^[A-Za-z_$][\w$]{0,2}$/.test(t) && !KW.has(t) ? '[A-Za-z_$][\\w$]{0,3}' : esc(t)).join(''));
+  const re = new RegExp(parts.map((t, i) => minified(t, parts[i - 1], parts[i + 1]) ? '(?<![\\w$])[A-Za-z_$][\\w$]{0,3}(?![\\w$])' : esc(t)).join(''));
   return { anchor, re };
 }
 

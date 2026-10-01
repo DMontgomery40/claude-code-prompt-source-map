@@ -298,10 +298,14 @@ addD({id:'desktop-bundled-cli',path:DS+'/{claude-code/<version>/claude.app,claud
 
 // --check: write nothing; fail when evidence is gone from the build, or when the committed list differs from what
 // the build it names gives. work/extracted can hold a newer build than the committed list (a Claude Code refresh
-// that has not published yet); then only the evidence is checked, and that refresh regenerates the list.
+// that has not published yet); then the entries are compared without their evidence locations, which that
+// refresh regenerates.
+const newer=(a,b)=>{const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<Math.max(x.length,y.length);i++)if((x[i]||0)!==(y[i]||0))return (x[i]||0)>(y[i]||0);return false;};
+const sansLocations=list=>JSON.stringify(list.map(({evidence,...entry})=>entry));
 if(process.argv.includes('--check')){
  let had=null;try{had=JSON.parse(fs.readFileSync(OUT,'utf8'));}catch{}
- if(had&&VERSION&&had.extractedVersion!==VERSION)console.log(`local-sources.json describes ${had.extractedVersion}; work/extracted holds ${VERSION}, so only its evidence was checked`);
- else if(!had||JSON.stringify(had.sources)!==JSON.stringify(S)){console.error('claude-code/outputs/local-sources.json is out of date for this build: run node claude-code/extract/local-sources.cjs');process.exitCode=1;}
+ const ahead=had&&VERSION&&had.extractedVersion!==VERSION&&newer(VERSION,had.extractedVersion);
+ if(ahead)console.log(`local-sources.json describes ${had.extractedVersion}; work/extracted holds the newer ${VERSION}, so evidence locations were not compared`);
+ if(!had||(ahead?sansLocations(had.sources)!==sansLocations(S):(had.extractedVersion!==VERSION||JSON.stringify(had.sources)!==JSON.stringify(S)))){console.error('claude-code/outputs/local-sources.json is out of date for this build: run node claude-code/extract/local-sources.cjs');process.exitCode=1;}
 }else fs.writeFileSync(OUT,JSON.stringify({product:'claude-code',extractedVersion:VERSION,generated:new Date().toISOString().slice(0,10),sources:S},null,2)+'\n');
 const c={};for(const s of S)c[s.join]=(c[s.join]||0)+1;console.log('sources',S.length,JSON.stringify(c));if(missing.length){console.error('Evidence not found in this build (update the entries):\n'+missing.join('\n'));process.exitCode=1;}

@@ -45,3 +45,14 @@ test("the tolerant pattern keeps reserved words and anchors on the longest exact
   assert.ok(re.test('if(t)return new Set(["memory","tiny_memory"])'));
   assert.ok(!re.test('do(t)return new Set(["memory","tiny_memory"])'));
 });
+
+test("wildcards match whole identifiers only; path segments stay exact; minified names with digits still move", () => {
+  const find = evidenceFinder(build({ "chunk-a.js": 'logEvent("feedback_transcript_share");fetch(`/v2/sessions/${t}/events`)' }));
+  assert.equal(find("chunk-x.js", '_("feedback_transcript_share")'), null);
+  assert.equal(find("chunk-x.js", "/v1/sessions/${e}/events"), null);
+  const find2 = evidenceFinder(build({ "chunk-b.js": 'x;Q("feedback_transcript_share")' }));
+  assert.equal(find2("chunk-x.js", '_("feedback_transcript_share")').literal, 'Q("feedback_transcript_share")');
+  const find3 = evidenceFinder(build({ "chunk-c.js": 'var k7n="bridge-spawn";this.path=Tr(J1(e),"journal.jsonl")' }));
+  assert.equal(find3("chunk-x.js", 'h6n="bridge-spawn"').literal, 'k7n="bridge-spawn"');
+  assert.equal(find3("chunk-x.js", 'this.path=Sr(I0(e),"journal.jsonl")').literal, 'this.path=Tr(J1(e),"journal.jsonl")');
+});

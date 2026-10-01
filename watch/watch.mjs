@@ -27,11 +27,11 @@ if (forced && !targets.some(t => t.name === forced)) { console.error(`unknown ta
 
 // The lock names its process. A run killed outright (it happened once, most likely an
 // iCloud-evicted file under ~/Documents) leaves the file behind; the next run takes over
-// instead of waiting out the three-hour window.
+// instead of waiting out the eight-hour window (a cycle with review agents and gate repairs can run for hours).
 const alive = pid => { try { process.kill(pid, 0); return true; } catch { return false; } };
 if (existsSync(lockFile)) {
   const [pid, started] = readFileSync(lockFile, "utf8").trim().split(" ").map(Number);
-  if (started && Date.now() - started < 3 * 3600e3 && pid && alive(pid)) {
+  if (started && Date.now() - started < 8 * 3600e3 && pid && alive(pid)) {
     log("another run holds the lock; exiting");
     process.exit(0);
   }
@@ -73,7 +73,7 @@ try {
   for (const target of targets) {
     const s = (state[target.name] ??= {});
     // A pending failure is retried on its own schedule (lib/failure.mjs), not the target's cadence.
-    const due = forced === target.name || !s.lastCheck || now - s.lastCheck >= target.intervalMs(now) - 5 * 60e3 || failureDue(s.failure, { head, now, gapMs: target.retryGapMs });
+    const due = forced === target.name || !s.lastCheck || now - s.lastCheck >= target.intervalMs(now) - 5 * 60e3 || failureDue(s.failure, { now, gapMs: target.retryGapMs });
     if (!due) continue;
     let fingerprint;
     try {
@@ -98,6 +98,8 @@ try {
         }
       }
       if (!c.run) {
+        // Upstream is back on the published version: a failure of another version is moot.
+        if (!dryRun && key === s.fingerprint) delete s.failure;
         log(`${target.name}: ${key === s.fingerprint ? "unchanged" : "changed, seen once; publishing if the next check sees it again"}`);
         save();
         continue;
@@ -105,7 +107,7 @@ try {
     }
     // A version that failed is repaired and retried until it ships, within a daily cap.
     if (s.failure?.key === key) {
-      const r = retryDecision(s.failure, { key, head, now });
+      const r = retryDecision(s.failure, { key, now });
       if (forced !== target.name && !r.retry) { log(`${target.name}: this version failed; ${r.reason}`); continue; }
       log(`${target.name}: retrying a version that failed (${r.reason})`);
     }
@@ -131,7 +133,7 @@ try {
       const d = failureDecision(error, s.jevOutage, now);
       const when = d.retryNextCycle ? "next cycle" : "at the next scheduled check, since agents already ran";
       log(`${target.name}: refresh ${d.jev ? `waits for Jev, retried ${when}` : "failed"}: ${error.message}`);
-      const tell = dryRun ? d.notify : applyFailure(s, key, d, { head, now });
+      const tell = dryRun ? d.notify : applyFailure(s, key, d, { head, now, spent: Boolean(error.afterAgent) });
       if (tell) notify(`${target.name} watcher`, d.jev ? `Jev unavailable since ${d.outage.since}, nothing published; retried ${when}: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
     }
     save();
@@ -143,17 +145,19 @@ try {
   if (gated.length) {
     // Files a gate repair changed outside the cycle's product files; committed with the publish.
     let repaired = [];
-    const repairCauses = [];
+    const repairedChecks = [];
     try {
-      repaired = await gateWithRepairs({
+      const outcome = await gateWithRepairs({
         runGate: () => gate(gated.map(t => t.repo)),
         repair: error => {
-          repairCauses.push(error.message);
-          runAgent(ROOT, gateRepairTask(error, gated.map(t => t.name)), { budgetUsd: 10, extraTools: ["Bash(npm run check:*)", "Bash(npm --prefix site:*)"] });
+          repairedChecks.push(error.check);
+          runAgent(ROOT, gateRepairTask(error, gated.map(t => t.name)), { budgetUsd: 10, extraTools: ["Bash(npm run check:*)", "Bash(npm --prefix site test:*)", "Bash(npm --prefix site run:*)"] });
         },
-        dirty: dirtyPaths, produced: allProduced, repairs: dryRun ? 0 : GATE_REPAIRS_PER_CYCLE, log
+        dirty: dirtyPaths, restore, produced: allProduced, repairs: dryRun ? 0 : GATE_REPAIRS_PER_CYCLE, log
       });
-      log(`gate passed (${gated.map(t => t.name).join(", ")})${repairCauses.length ? ` after ${repairCauses.length} repair(s), ${repaired.length} file(s) changed` : ""}`);
+      repaired = outcome.repaired;
+      if (outcome.blocked.length) notify("harness watcher", `A gate repair changed tests, lint exemptions or files outside its area; put back for you to review: ${outcome.blocked.slice(0, 5).join(", ")}`);
+      log(`gate passed (${gated.map(t => t.name).join(", ")})${repairedChecks.length ? ` after ${repairedChecks.length} repair(s), ${repaired.length} file(s) changed` : ""}`);
       if (dryRun) {
         log(publishing.length ? `dry run: would deploy and commit ${publishing.map(c => c.target.name).join(", ")}` : "dry run: nothing to publish");
       } else {
@@ -166,7 +170,12 @@ try {
         if (run("git", ["merge-base", "--is-ancestor", "origin/main", "HEAD"], { cwd: ROOT }).status !== 0) throw new Retry("GitHub's main moved during the run; not deploying over it (next cycle starts from it)");
         const unverified = await deploy(publishing.map(c => c.target.section));
         if (unverified.length) notify("harness watcher", `Deployed, but not yet serving the new build: ${unverified.join(", ")}`);
-        if (repaired.length) commitPaths(repaired, `Watcher repair: the gate passes again for ${gated.map(t => t.name).join(" and ")}\n\n${repairCauses.map(cause => `- ${cause.slice(0, 300)}`).join("\n")}\n\nRepaired by the watcher's agent (watch/lib/repair.mjs).`);
+        // The message names the checks and files only: agent output and gate text stay in the
+        // local logs (they can hold local paths or a leaked value's prefix).
+        if (repaired.length) {
+          commitPaths(repaired, `Watcher repair: the gate passes again for ${gated.map(t => t.name).join(" and ")}\n\nFailed: ${[...new Set(repairedChecks)].join(", ")}\nChanged: ${repaired.join(", ")}\n\nRepaired by the watcher's agent (watch/lib/repair.mjs); its report is in watch/logs.`);
+          notify("harness watcher", `A gate repair changed ${repaired.length} file(s) and the gate passed; committed as "Watcher repair": ${repaired.slice(0, 4).join(", ")}`);
+        }
         for (const c of publishing) {
           commitPaths(c.produced, `${c.result.publish.message}\n\nPublished by the watcher (watch/watch.mjs).`);
           c.result.publish.onPublished?.();
@@ -183,8 +192,9 @@ try {
       // A retry is not this version's failure: the same fingerprint publishes again. A Jev outage
       // in the gate is decided per target: due next cycle, unless that target's refresh ran agents.
       const decisions = publishing.map(c => {
-        const d = failureDecision(error, c.s.jevOutage, now, { afterAgent: Boolean(c.result.afterAgent) });
-        return dryRun ? d.notify : applyFailure(c.s, c.key, d, { head, now });
+        const spent = Boolean(c.result.afterAgent || error.afterAgent);
+        const d = failureDecision(error, c.s.jevOutage, now, { afterAgent: spent });
+        return dryRun ? d.notify : applyFailure(c.s, c.key, d, { head, now, spent });
       });
       if (!decisions.length || decisions.some(Boolean)) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
     }
