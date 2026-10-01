@@ -87,7 +87,6 @@
 .net-list li { overflow-wrap: anywhere; }
 .net-list li.flagged::marker { color: var(--warn); }
 .net-attr tr.net-miss td { color: #ffc49b; }
-.lenses.with-network button[data-lens=network] { grid-column: 1 / -1; }
 .lenses.with-network button[data-lens=network] .lens-icon { color: #93c7ff; }
 @media (max-width: 980px) {
   .net-gauge { grid-template-columns: 1fr 1fr auto; }

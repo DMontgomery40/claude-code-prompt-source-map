@@ -467,7 +467,9 @@ button:disabled { opacity: .4; cursor: default; }
 .text-control { border: 0; background: none; color: var(--link); font-size: 12px; cursor: pointer; padding: 2px 0; }
 .text-control:hover { color: var(--accent); }
 .lenses { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; border: 0; padding: 5px; margin: 0 12px 8px; border-radius: 12px; background: #07111c; }
-.lenses button { position: relative; flex-direction: row; justify-content: flex-start; gap: 8px; padding: 10px 8px; font-size: 12px; min-height: 58px; border-radius: 8px; color: var(--ink-3); }
+.lenses button { position: relative; flex-direction: row; justify-content: flex-start; gap: 8px; padding: 7px 9px; font-size: 12px; min-height: 40px; border-radius: 8px; color: var(--ink-3); }
+/* Two to a row; an odd last lens takes its whole row rather than leaving a hole. */
+.lenses button:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .lenses .lens-icon { flex: none; font: 21px/1 var(--sans); width: 20px; text-align: center; }
 .lenses .lens-name { font-weight: 550; line-height: 1.4; }
 .lenses kbd { display: none; }
