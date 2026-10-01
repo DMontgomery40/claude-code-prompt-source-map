@@ -1,13 +1,14 @@
 import {openRecordingView} from './recording-view.js';
 // Trace viewer: loading, state, levels, keyboard, and wiring between the scene, minimap and panels.
 // Parsing stays in the browser; sources are picked files or the optional loopback resolver.
-import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
+import { STRATA, STRATUM_INDEX, STATUS, LENSES, TOUCH, el, fmtTok, fmtInt, fmtDur, fmtClock, fmtWhen, sessionStats, renderPanel, keepInView, blockTokens, agentStats, clip, modelFamily, largestLayer } from "./panels.js";
 import { buildLayout, renderOverview, renderAgentColumns, legend } from "./minimap.js";
 import { lineHash, normalizeLine, MIN_INDEXED_LINE, indexFor } from "./model.js";
 import { capturePickedFiles } from "./file-source.js";
 import { parsePaste } from "./paste.js";
 import { openLocalSession, localSources, localSource } from "./local-session.js";
 import { requestPosition, stepRequest, mapPanelState, createViewHistory, isLandscape, requestInspection } from "./navigation.js";
+import { viewKey, enterView, remember, anchorOf, hasView, setOpener, openerOf, snapshot, load as loadPanelMemory, forgetAll as forgetPanels, findAnchor, anchorFor, anchorDelta, setFold } from "./panel-memory.js";
 import { createPalette } from "./palette.js";
 import { createPlayback } from "./playback.js";
 import { createTransport, playheadForRequest } from "./transport.js";
@@ -830,6 +831,7 @@ async function start(trace,current=()=>true) {
   clearCapture(); // a capture belongs to the session it was attached to
   S.sources = null; S.sourceOpen = new Map(); sourcesSeq++;
   Object.assign(S, { level: 0, agentId: null, reqIdx: null, stratum: null, block: null, mapFocus: null, mapPinned: false, inspector: null, callIndex: null, callPart: 'args' });
+  forgetPanels(); shownKey = null;
   const referenceIndex = await loadIndex();
   if(!current())return;
   S.tools = indexFor(referenceIndex, trace.product)?.tools || null; // custody ladder's "Guided by"
@@ -897,6 +899,7 @@ async function start(trace,current=()=>true) {
     });
     afterSideResize();
     $("#panel").addEventListener("scroll", saveViewSoon, { passive: true });
+    watchPanel($("#panel"));
     $("#inspect-back").addEventListener("click", up);
     window.addEventListener("keydown", onKey);
     window.addEventListener("resize", () => {
@@ -1212,7 +1215,9 @@ function layoutInsets(preserveView = false) {
 
 const VIEW_KEYS = ['level', 'agentId', 'reqIdx', 'stratum', 'block', 'lens', 'mode', 'reading', 'mapFocus', 'mapPinned', 'inspector', 'callIndex', 'callPart'];
 function captureSceneView() {
-  return { state: Object.fromEntries(VIEW_KEYS.map(k => [k, S[k]])), camera: scene?.getView(), scroll: $('#panel').scrollTop };
+  const panel = $('#panel');
+  return { state: Object.fromEntries(VIEW_KEYS.map(k => [k, S[k]])), camera: scene?.getView(), scroll: panel.scrollTop,
+    panel: shownKey ? snapshot(shownKey, liveAnchor(panel)) : null };
 }
 // The playhead rides on history entries but not on mapReturn: "Back to map" keeps where focusing put it.
 function captureView() { return { ...captureSceneView(), mapReturn, P: transport?.playback?.P ?? null }; }
@@ -1230,9 +1235,11 @@ function restoreView(view) {
   S.agent = S.agentId ? agentById(S.agentId) : null;
   const finish = () => {
     Object.assign(S, view.state);
+    // The entry's folds and row come back with it (panel-memory.js); an entry from before had only scrollTop.
+    if (view.panel) loadPanelMemory(view.panel);
     render(true, false, true);
     if (view.camera) scene?.restoreView(view.camera);
-    $('#panel').scrollTop = view.scroll || 0;
+    if (!view.panel) $('#panel').scrollTop = view.scroll || 0;
   };
   if (modeChanged) setMode(S.mode).then(finish);
   else finish();
@@ -1415,8 +1422,7 @@ function render(levelChanged, readerOpened, restoring = false) {
   renderCrumbs();
   renderRequestNav();
   placeCrumbs();
-  renderPanel($("#panel"), sidebarState(), A);
-  if (levelChanged) $("#panel").scrollTop = 0;
+  paintPanel(sidebarState(), { reset: levelChanged, restore: restoring });
   if (readerOpened) showReader();
   renderMinimap();
   renderMapLocation();
@@ -1429,6 +1435,54 @@ function render(levelChanged, readerOpened, restoring = false) {
 
 // The landscape draws the four questions; under the network lens it shows the context lens's colours.
 function mapLens() { return S.lens === NETWORK_LENS.key || S.lens === SOURCES_LENS.key ? "context" : S.lens; }
+
+// ---------- the panel's place (panel-memory.js) ----------
+// Every rebuild of the sidebar goes through here. Before it: the row at the panel's top edge is remembered for
+// the view being left. After it: the same view returns to that row (or, when a reader just closed, to the row
+// that opened it); another view returns to where the user last left it; a view never seen starts at its top
+// (reset: a new level, agent or map centre) or keeps the reader's place (follow: the next request in a run).
+let shownKey = null;
+function panelTop(panel) { return panel.getBoundingClientRect().top + panel.clientTop; }
+const measure = node => node.getBoundingClientRect();
+function liveAnchor(panel) { return panel.childElementCount ? findAnchor(panel, panelTop(panel), measure) : null; }
+function goTo(panel, anchor) {
+  const d = anchorDelta(panel, anchor, panelTop(panel), measure);
+  if (d != null) panel.scrollTop += d;
+  return d != null;
+}
+function paintPanel(view, { reset = false, follow = false, restore = false } = {}) {
+  const panel = $("#panel");
+  const key = viewKey({ ...view, lens: S.lens });
+  const prev = shownKey, here = prev ? liveAnchor(panel) : null;
+  // Back or Forward: the history entry's own row (loaded into the memory just before), even in the same view.
+  const saved = (restore || key !== prev) && hasView(key) ? anchorOf(key) : null;
+  const hadReader = !!panel.querySelector(".reader");
+  if (prev && here) remember(prev, here);
+  enterView(key);
+  renderPanel(panel, view, A);
+  shownKey = key;
+  const closed = hadReader && !panel.querySelector(".reader");
+  if (closed && key === prev && goTo(panel, openerOf(key))) return;
+  if (saved && (restore || !follow) && goTo(panel, saved)) return;
+  if (reset && key !== prev) { panel.scrollTop = 0; return; }
+  if (here) goTo(panel, here); // the same row, or the same place in the next request's panel
+}
+// Folds report their state as the user toggles them; a fold the user closes keeps its summary on screen.
+// A click remembers the row it came from, so a reader it opens can return there.
+function watchPanel(panel) {
+  panel.addEventListener("toggle", e => {
+    const d = e.target;
+    if (!d || d.tagName !== "DETAILS" || !d.dataset.fold) return;
+    setFold(d.dataset.fold, d.open);
+    if (!d.open) keepInView(d.querySelector("summary") || d);
+    saveViewSoon();
+  }, true);
+  panel.addEventListener("click", e => {
+    const row = e.target.closest?.("li, tr, details, .reader, section");
+    if (!row || !panel.contains(row) || row.closest(".reader")) return;
+    if (shownKey) setOpener(shownKey, anchorFor(panel, row, panelTop(panel), measure));
+  }, true);
+}
 
 // The reader opens above the block list: bring its top into the panel's view. (Set scrollTop rather
 // than scrollIntoView, which would also scroll the fixed app shell.)
@@ -1483,18 +1537,17 @@ function playCardTick(p) {
   const otherAgent = cardAgent(next) !== cardAgent(playCard);
   playCard = next; playCardAt = now;
   renderRequestNav();
-  renderPanel($("#panel"), sidebarState(), A);
-  if (otherAgent) $("#panel").scrollTop = 0;
+  paintPanel(sidebarState(), { reset: otherAgent, follow: !otherAgent });
   renderMapLocation();
 }
 function followMap(focus) {
   if (S.level !== 0 || S.mode !== "3d") return;
   S.mapFocus = focus;
   renderRequestNav();
-  renderPanel($("#panel"), sidebarState(), A);
   // While playing the card is the playhead's (playCardTick): the centre moving under the director changes
-  // nothing the user is reading, so the panel keeps its scroll. Paused, the new centre's card shows on top.
-  if (!playCard) $("#panel").scrollTop = 0;
+  // nothing the user is reading, so the panel keeps its place. Paused, a new centre's card shows from its top
+  // (or where the user last left that request's card).
+  paintPanel(sidebarState(), { reset: !playCard, follow: !!playCard });
   $("#app").classList.toggle("map-following", !!focus);
   renderMapLocation();
   layoutInsets(true);

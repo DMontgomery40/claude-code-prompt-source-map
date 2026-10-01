@@ -4,6 +4,7 @@
 import { el, fmtTok, fmtInt, fmtClock, fmtWhen, clip } from "../panels.js";
 import { RULES } from "./transit.js";
 import { readableIn, readableOrStored, readableValue } from "../readable.js";
+import { foldOpen, setFold } from "../panel-memory.js";
 
 export const NETWORK_LENS = { key: "network", q: "What went over the wire", icon: "⇄" };
 const PRODUCT = { "claude-code": "Claude Code", codex: "Codex/ChatGPT" };
@@ -20,9 +21,10 @@ const fmtBytes = (n) => (n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : n >= 
 const fmtMs = (n) => (n == null ? "–" : n >= 1000 ? `${(n / 1000).toFixed(1)} s` : `${Math.round(n)} ms`);
 const pct = (v) => (v == null ? "–" : `${Math.round(v * 100)}%`);
 function section(title, ...kids) { return el("section", { class: "psec net-sec" }, el("h3", { text: title }), ...kids); }
+// `open` is the fold's default; once the user toggles it, the panel's memory (panel-memory.js) decides. A
+// palette jump opens the folds around its target whatever they were (revealFocus).
 function fold(title, open, key, ...kids) {
-  const d = el("details", { class: "net-fold", "data-net-section": key, open: open ? true : null }, el("summary", {}, el("span", { text: title })), ...kids);
-  return d;
+  return el("details", { class: "net-fold", "data-net-section": key, "data-fold": key, open: foldOpen(key, open) || null }, el("summary", {}, el("span", { text: title })), ...kids);
 }
 function kv(rows) {
   return el("dl", { class: "kv net-kv" }, rows.filter(Boolean).flatMap(([k, v, note]) => [el("dt", { text: k }), el("dd", {}, v && typeof v === "object" ? v : String(v ?? "–"), note ? el("span", { class: "note", text: note }) : null)]));
@@ -152,8 +154,12 @@ export function networkLens(S, A) {
         el("span", { class: "tool", text: `${c.t ? fmtClock(c.t) : ""} ${callLabel(c)}` }),
         el("span", { class: "meta", text: [c.model, m ? whereIn(trace, m) : "not in your log", u.input_tokens != null ? `${fmtTok(u.input_tokens)} input` : null].filter(Boolean).join(" · ") })));
   };
-  const detail = el("div", { class: "net-call-detail" });
-  const toggleDetail = (c) => { detail.replaceChildren(...(detail.dataset.call === String(c.index) ? [] : [callCard(cap, c, trace, A, null)])); detail.dataset.call = detail.dataset.call === String(c.index) ? "" : String(c.index); };
+  // A call that isn't in the log opens its card here; which one is open is remembered (panel-memory.js).
+  const detail = el("div", { class: "net-call-detail", "data-fold": "call-detail" });
+  const showDetail = (c) => { detail.replaceChildren(...(c ? [callCard(cap, c, trace, A, null)] : [])); detail.dataset.call = c ? String(c.index) : ""; };
+  const toggleDetail = (c) => { const open = detail.dataset.call !== String(c.index); setFold("call-detail", open ? String(c.index) : false); showDetail(open ? c : null); };
+  const openCall = foldOpen("call-detail", false);
+  if (openCall !== false) showDetail(notIn.find((c) => String(c.index) === openCall) || null);
   out.push(section(`Model calls: ${fmtInt(inLog.length)} in your log, ${fmtInt(notIn.length)} not`,
     el("p", { class: "note", text: `Joined by ${cap.join.keys}.${product === "codex" && cap.join.items ? ` ${fmtInt(cap.join.itemsMatched)} of ${fmtInt(cap.join.items)} attributed input items match blocks in the log.` : ""}` }),
     notIn.length ? el("div", {}, el("h4", { text: "Requests not in your log" }), el("p", { class: "note", text: product === "codex" ? "The harness sent these, and the rollout never records them: a prewarm (generate: false) primes the cache before the turn." : "Model calls the harness made besides the conversation (other request classes). The session log has no row for them." }), el("ul", { class: "items" }, notIn.map(callItem)), detail) : null,

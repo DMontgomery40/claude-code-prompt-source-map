@@ -3,6 +3,7 @@
 import { peakRequestIndex, requestCalls, selectedCall } from "./navigation.js";
 import { stratumRows, blockPart, windowBlocks as modelWindowBlocks, egressGroups } from "./model.js";
 import { readableIn } from "./readable.js";
+import { foldOpen, setFold } from "./panel-memory.js";
 
 export const STRATA = [
   { key: "harness", name: "Harness", long: "The harness: system prompt, tools, base instructions", color: "#8b97a8" },
@@ -217,6 +218,19 @@ function kv(rows) {
   return el("dl", { class: "kv" }, rows.flatMap(([k, v, note]) => [el("dt", { text: k }), el("dd", {}, v, note ? el("span", { class: "note", text: note }) : null)]));
 }
 function btn(text, onclick, cls = "linkbtn") { return el("button", { class: cls, type: "button", text, onclick }); }
+// A <details> whose open state is the panel's memory (panel-memory.js) under `key`, so a rebuild, Back or a
+// return to this view finds it as the user left it. `open` is its default; app.js records each toggle.
+export function disclosure(key, cls, summary, open, ...kids) {
+  return el("details", { class: cls, "data-fold": key, open: foldOpen(key, open) || null },
+    typeof summary === "string" ? el("summary", { text: summary }) : summary, ...kids);
+}
+// After something above the reader's place collapses: keep `node` (its header) on screen.
+export function keepInView(node) {
+  const panel = node?.closest?.(".panel");
+  if (!panel) return;
+  const top = panel.getBoundingClientRect().top + panel.clientTop, r = node.getBoundingClientRect();
+  if (r.top < top) panel.scrollTop += r.top - top - 8;
+}
 
 export function strataBar(strata, total, onPick, selected) {
   const bar = el("div", { class: "sbar", role: "list" });
@@ -244,7 +258,7 @@ export function strataList(strata, total, onPick, selected, harnessNote, own) {
         el("span", { class: "sval", text: v > 0 ? `≈ ${fmtTok(v)}` : "0" }),
         el("span", { class: "spct", text: v > 0 ? `${Math.round(v / (total || 1) * 100)}%` : "" })));
     if (own?.[s.key] > 0 && v > 0) row.append(el("div", { class: "sown", text: `from your setup ≈ ${fmtTok(own[s.key])}` }));
-    if (s.key === "harness" && harnessNote && v > 0) row.append(el("details", { class: "layer-method" }, el("summary", { text: "How this is estimated" }), el("p", { class: "note", text: harnessNote })));
+    if (s.key === "harness" && harnessNote && v > 0) row.append(disclosure("layer-method", "layer-method", "How this is estimated", false, el("p", { class: "note", text: harnessNote })));
     ul.append(row);
   }
   return ul;
@@ -291,7 +305,7 @@ function lensPanel(S, A) {
         btn(`Open request ${peak.i + 1}`, () => A.focusRequest(root.id, peak.i))));
     }
     const setup = setupSection(trace, root, A, peak);
-    if (setup) out.push(el("details", { class: "setup-disclosure" }, el("summary", { text: "Your instructions, skills & memory" }), setup));
+    if (setup) out.push(disclosure("setup", "setup-disclosure", "Your instructions, skills & memory", false, setup));
     const shr = unloggedShrinks(root);
     const marks = [
       ...root.compactions.map(c => ({ t: c.t, text: `Compacted ${fmtTok(c.pre)} → ${fmtTok(c.post)}`, req: nearestRequest(root, c.t) })),
@@ -313,9 +327,11 @@ function lensPanel(S, A) {
     for (const cls of ["outward", "blocked", "write", "read"]) {
       const list = groups[cls];
       if (!list.length) continue;
-      const shown = cls === "outward" ? list.length : 40;
+      // "Show all" is remembered (panel-memory.js), so Back from a call finds the whole list again.
+      const allKey = `egress-all:${cls}`;
+      const shown = cls === "outward" || foldOpen(allKey, false) ? list.length : 40;
       const ul = el("ul", { class: "items" }, list.slice(0, shown).map(row));
-      const more = list.length > shown ? btn(`Show all ${fmtInt(list.length)}`, () => { ul.replaceChildren(...list.map(row)); more.remove(); }) : null;
+      const more = list.length > shown ? btn(`Show all ${fmtInt(list.length)}`, () => { setFold(allKey, true); ul.replaceChildren(...list.map(row)); more.remove(); }) : null;
       const kinds = {};
       for (const x of list) if (x.kind) kinds[x.kind] = (kinds[x.kind] || 0) + 1;
       const tally = Object.entries(kinds).map(([k, n]) => `${fmtInt(n)} ${k}`).join(" · ");
@@ -593,7 +609,7 @@ function requestPanel(trace, agent, req, S, A, callOffered = false) {
     el("div", { class: "refbtns" },
       act.args ? refToggle(agent, act.args, "the call", A) : null,
       act.result ? refToggle(agent, act.result, "the result", A) : null),
-    act.all && act.all.length > 1 ? el("details", { class: "calls" }, el("summary", { text: `${act.all.length} tool calls in this response (the ladder follows the most consequential)` }),
+    act.all && act.all.length > 1 ? disclosure("action-calls", "calls", `${act.all.length} tool calls in this response (the ladder follows the most consequential)`, false,
       el("ul", { class: "items" }, act.all.map(x => el("li", { class: "call" }, chip(STATUS[x.class]?.color || "#a9b4c2"), el("span", { class: "tool", text: x.tool || "tool" }), " ", el("code", { text: x.target || "" }))))) : null));
     if (act.kind === "tool" && act.class !== "internal") out.push(custodySection(trace, agent, req, S, A));
   }
@@ -689,9 +705,9 @@ function custodySection(trace, agent, req, S, A) {
 
 // Expands a BlockRef's literal text in place (a tool call's input or its result).
 function refToggle(agent, ref, what, A) {
+  const key = `ref:${what}`; // per view (panel-memory.js): this request's call or result
   const box = el("div", { class: "refbox", hidden: true });
-  const b = btn(`Show ${what}`, () => {
-    if (!box.hidden) { box.hidden = true; b.textContent = `Show ${what}`; return; }
+  const show = () => {
     box.hidden = false; b.textContent = `Hide ${what}`;
     if (box.childElementCount) return;
     const pre = el("pre", { class: "text", text: "Reading…" });
@@ -702,8 +718,14 @@ function refToggle(agent, ref, what, A) {
       pre.textContent = t.length > 200000 ? `${t.slice(0, 200000)}\n\n[… ${fmtInt(t.length - 200000)} more characters]` : (t || "(empty)");
       readableIn(holder, pre, pre.textContent, { key: `ref|${agent.id}|${ref.file}|${ref.offset}` });
     }).catch(e => { pre.textContent = `Text unavailable: ${e?.message || e}`; });
+  };
+  const b = btn(`Show ${what}`, () => {
+    if (box.hidden) { setFold(key, true); return show(); }
+    box.hidden = true; b.textContent = `Show ${what}`; setFold(key, false);
+    keepInView(b);
   });
-  return el("div", { class: "refitem" }, b, box);
+  if (foldOpen(key, false)) show();
+  return el("div", { class: "refitem", "data-fold": key }, b, box);
 }
 
 export function clip(s, n) {
@@ -835,7 +857,7 @@ function blockGroups(trace, agent, rows, S, A, mine) {
         const now = inner.hidden;
         inner.hidden = !now;
         head.setAttribute("aria-expanded", String(now));
-        if (now) { expandedGroups.add(key); fill(); } else expandedGroups.delete(key);
+        if (now) { expandedGroups.add(key); fill(); } else { expandedGroups.delete(key); keepInView(head); }
       }
     },
       el("span", { class: "gcount", text: `${fmtInt(g.items.length)} ×` }),
