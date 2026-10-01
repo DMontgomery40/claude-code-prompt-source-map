@@ -6,39 +6,39 @@
 // a tag when extract/tags/<prefix>-seed.json lists it for that tag or when Jev scores it at or
 // above the threshold, unless the seed excludes it. Jev verdicts are cached by record state and
 // taxonomy version in work/tag-verdicts.json, so a refresh only classifies new or changed
-// records. An area with no taxonomy file yet gets status tags only.
+// records. An area with no taxonomy file yet gets status tags only. When Jev is unavailable it
+// keeps the verdicts it has and exits 75, writing no tags, so the refresh is retried.
 // Writes outputs/<area>-tags.json.
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { ask, decisionConfig, openCache } from "../../codex/extract/codex/lib/jev-provider.mjs";
+import { keepVerdicts } from "./jev-step.mjs";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const readJson = file => JSON.parse(readFileSync(file, "utf8"));
 const sha = value => createHash("sha256").update(value).digest("hex");
 
 const PREFIX = { "environment-variables": "env", settings: "settings", cli: "cli", decisions: "decisions" };
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
 const area = process.argv[2] ?? "environment-variables";
 const prefix = PREFIX[area];
-if (!prefix) throw new Error(`tags.mjs: unknown area "${area}" (expected one of ${Object.keys(PREFIX).join(", ")})`);
+if (isMain && !prefix) throw new Error(`tags.mjs: unknown area "${area}" (expected one of ${Object.keys(PREFIX).join(", ")})`);
 
 const taxonomyFile = path.join(root, `extract/tags/${prefix}-taxonomy.json`);
 const seedFile = path.join(root, `extract/tags/${prefix}-seed.json`);
 const hasTaxonomy = existsSync(taxonomyFile);
 const taxonomy = hasTaxonomy ? readJson(taxonomyFile) : null;
 const seed = hasTaxonomy && existsSync(seedFile) ? readJson(seedFile) : [];
-const cacheFile = path.join(root, "work/tag-verdicts.json");
-const cache = existsSync(cacheFile) ? readJson(cacheFile) : {};
+const cache = openCache(path.join(root, "work/tag-verdicts.json"));
 const taxonomyVersion = hasTaxonomy ? sha(JSON.stringify(taxonomy)).slice(0, 12) : null;
 const THRESHOLD = 0.7;
 const FEATURE = hasTaxonomy ? taxonomy.tags[0].id : null;
 
-const key = hasTaxonomy
-  ? (process.env.TYPESAFE_API_KEY ?? (() => {
-      try { return readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
-    })())
-  : undefined;
-if (hasTaxonomy && !key) throw new Error("tags.mjs needs TYPESAFE_API_KEY");
+const config = decisionConfig();
+// Cache keys: "<prefix>:<taxonomy version>:<sha256 of the state sent>".
+export const tagKey = (prefix, taxonomyVersion, state) => `${prefix}:${taxonomyVersion}:${sha(JSON.stringify(state))}`;
 
 const STATUS_BY_AREA = {
   "environment-variables": [
@@ -158,8 +158,8 @@ const describe = DESCRIBE_BY_AREA[area];
 
 async function topicScores(item) {
   const state = describe(item);
-  const cacheKey = `${prefix}:${taxonomyVersion}:${sha(JSON.stringify(state))}`;
-  if (cache[cacheKey]) return cache[cacheKey];
+  const cacheKey = tagKey(prefix, taxonomyVersion, state);
+  if (cache.has(cacheKey)) return cache.get(cacheKey);
   const questions = Object.fromEntries(taxonomy.tags.map(tag => [tag.id, {
     type: "noul",
     instructions: `Does the Claude Code ${NOUN_BY_AREA[area]} described in \`state\` belong to this topic? Topic: ${tag.label}. ${tag.definition}`,
@@ -168,53 +168,43 @@ async function topicScores(item) {
       false: `It does not, like these near misses: ${tag.false_examples.join(", ")}.`
     }
   }]));
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const response = await fetch("https://api.typesafe.ai/v1/systemone", {
-      method: "POST",
-      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify({ model: "jev-latest", state, questions })
-    });
-    if (response.status === 429 || response.status >= 500) { await new Promise(r => setTimeout(r, 1000 * 2 ** attempt)); continue; }
-    if (!response.ok) throw new Error(`TypeSafe ${response.status}: ${await response.text()}`);
-    const answers = (await response.json()).answers;
-    cache[cacheKey] = Object.fromEntries(Object.entries(answers).map(([id, a]) => [id, a.noul]));
-    return cache[cacheKey];
+  const answers = (await ask(config, { state, questions })).answers;
+  return cache.set(cacheKey, Object.fromEntries(Object.entries(answers).map(([id, a]) => [id, a.noul])));
+}
+
+if (isMain) {
+  const records = readJson(path.join(root, `outputs/${area}.json`)).items;
+  const ids = new Set(records.map(r => r.id));
+  const stale = seed.filter(s => !ids.has(s.id));
+  if (stale.length) console.error(`seed entries with no record (skipped): ${stale.map(s => s.id).join(", ")}`);
+  // Seed entries add a tag, or with "exclude": true veto one after a person reviewed Jev's call.
+  const seeded = new Map(), excluded = new Map();
+  for (const s of seed) { const map = s.exclude ? excluded : seeded; (map.get(s.id) ?? map.set(s.id, []).get(s.id)).push(s.tag); }
+
+  const items = {};
+  if (hasTaxonomy) {
+    const queue = [...records];
+    await keepVerdicts(cache, () => Promise.all(Array.from({ length: 8 }, async () => {
+      while (queue.length) {
+        const item = queue.shift();
+        const tags = statusTags(item);
+        const scores = await topicScores(item);
+        const topics = taxonomy.tags.map(t => t.id).filter(id => (scores[id] >= THRESHOLD || seeded.get(item.id)?.includes(id)) && !excluded.get(item.id)?.includes(id));
+        items[item.id] = [...topics, ...tags];
+      }
+    })));
+  } else {
+    for (const item of records) items[item.id] = [...statusTags(item)];
   }
-  throw new Error("TypeSafe retries exhausted");
+
+  const vocabulary = [
+    ...(hasTaxonomy ? taxonomy.tags.map(t => ({ id: t.id, label: t.label, kind: "topic", definition: t.definition, ...(t.id === FEATURE ? { feature: true } : {}) })) : []),
+    ...STATUS_BY_AREA[area]
+  ].map(t => ({ ...t, count: Object.values(items).filter(list => list.includes(t.id)).length })).filter(t => t.count);
+  const ordered = Object.fromEntries(records.map(r => [r.id, items[r.id]]));
+  const output = hasTaxonomy
+    ? { taxonomy_version: taxonomyVersion, threshold: THRESHOLD, tags: vocabulary, items: ordered }
+    : { tags: vocabulary, items: ordered };
+  writeFileSync(path.join(root, `outputs/${area}-tags.json`), `${JSON.stringify(output, null, 1)}\n`);
+  console.log(`${area}: ${records.length} entries, tags: ${vocabulary.map(t => `${t.id} ${t.count}`).join(", ")}`);
 }
-
-const records = readJson(path.join(root, `outputs/${area}.json`)).items;
-const ids = new Set(records.map(r => r.id));
-const stale = seed.filter(s => !ids.has(s.id));
-if (stale.length) console.error(`seed entries with no record (skipped): ${stale.map(s => s.id).join(", ")}`);
-// Seed entries add a tag, or with "exclude": true veto one after a person reviewed Jev's call.
-const seeded = new Map(), excluded = new Map();
-for (const s of seed) { const map = s.exclude ? excluded : seeded; (map.get(s.id) ?? map.set(s.id, []).get(s.id)).push(s.tag); }
-
-const items = {};
-if (hasTaxonomy) {
-  const queue = [...records];
-  await Promise.all(Array.from({ length: 8 }, async () => {
-    while (queue.length) {
-      const item = queue.shift();
-      const tags = statusTags(item);
-      const scores = await topicScores(item);
-      const topics = taxonomy.tags.map(t => t.id).filter(id => (scores[id] >= THRESHOLD || seeded.get(item.id)?.includes(id)) && !excluded.get(item.id)?.includes(id));
-      items[item.id] = [...topics, ...tags];
-    }
-  }));
-  writeFileSync(cacheFile, JSON.stringify(cache));
-} else {
-  for (const item of records) items[item.id] = [...statusTags(item)];
-}
-
-const vocabulary = [
-  ...(hasTaxonomy ? taxonomy.tags.map(t => ({ id: t.id, label: t.label, kind: "topic", definition: t.definition, ...(t.id === FEATURE ? { feature: true } : {}) })) : []),
-  ...STATUS_BY_AREA[area]
-].map(t => ({ ...t, count: Object.values(items).filter(list => list.includes(t.id)).length })).filter(t => t.count);
-const ordered = Object.fromEntries(records.map(r => [r.id, items[r.id]]));
-const output = hasTaxonomy
-  ? { taxonomy_version: taxonomyVersion, threshold: THRESHOLD, tags: vocabulary, items: ordered }
-  : { tags: vocabulary, items: ordered };
-writeFileSync(path.join(root, `outputs/${area}-tags.json`), `${JSON.stringify(output, null, 1)}\n`);
-console.log(`${area}: ${records.length} entries, tags: ${vocabulary.map(t => `${t.id} ${t.count}`).join(", ")}`);

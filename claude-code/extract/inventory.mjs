@@ -5,10 +5,12 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { files, provenance, sha256, source, VERSION, PLATFORM, BINARY_SHA256 } from "./lib.mjs";
 import { isDerived } from "./decisions-lib.mjs";
+import { openCache } from "../../codex/extract/codex/lib/jev-provider.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const candidates = JSON.parse(readFileSync(`${root}work/candidates.json`, "utf8"));
-const verdicts = JSON.parse(readFileSync(`${root}work/jev-verdicts-v2.json`, "utf8"));
+// classify.mjs writes this cache; keys carry the Jev version (openCache).
+const verdicts = openCache(`${root}work/jev-verdicts-v2.json`);
 const own = new Set(["inventory.json", "other-model-text.json"]);
 
 // Published ranges per embedded file, from every area's records.
@@ -27,7 +29,7 @@ const src = name => sources.get(name) ?? sources.set(name, source(name)).get(nam
 const rows = candidates.map(c => {
   const p = provenance(c.file, src(c.file), c.start, c.end);
   const hit = (ranges.get(c.file) ?? []).find(r => r.start < p.binary_offset + p.length && r.end > p.binary_offset);
-  const v = verdicts[sha256(c.text)];
+  const v = verdicts.get(sha256(c.text));
   return { ...p, words: c.words, audience: v.audience, confidence: v.confidence, published_in: hit ? `${hit.area}#${hit.id}` : null, text: c.text };
 });
 
@@ -85,7 +87,7 @@ const inventory = rows.map(({ text, ...r }) => ({ ...r, text_sha256: sha256(text
 writeFileSync(`${root}outputs/inventory.json`, JSON.stringify({ area: "inventory", version: VERSION, platform: PLATFORM, binary_sha256: BINARY_SHA256, summary, items: inventory.map((r, i) => ({ id: `candidate-${i + 1}`, title: r.preview.slice(0, 60), kind: "other", details: { audience: r.audience, jev_confidence: r.confidence, published_in: r.published_in, words: r.words, text_sha256: r.text_sha256, preview: r.preview }, provenance: [{ file: r.file, binary_offset: r.binary_offset, length: r.length, sha256: r.sha256, version: r.version, platform: r.platform }] })) }, null, 1));
 console.log(summary);
 
-const jevModel = Object.values(verdicts)[0]?.model ?? "jev";
+const jevModel = candidates.map(c => verdicts.get(sha256(c.text))?.model).find(Boolean) ?? "jev";
 writeFileSync(`${root}outputs/provenance.md`, `# Method and inventory
 
 ## Source

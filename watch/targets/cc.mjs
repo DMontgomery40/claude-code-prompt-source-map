@@ -6,6 +6,7 @@
 import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
+import { JEV_TEMPFAIL_EXIT, JevUnavailableError } from "../../codex/extract/codex/lib/jev-provider.mjs";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, writeStatus } from "../lib/publish.mjs";
 import { log, notify, run } from "../lib/run.mjs";
@@ -27,6 +28,14 @@ export function reviewAreas(dir = path.join(repo, "outputs")) {
   return readdirSync(dir).filter(f => f.endsWith(".json")).sort()
     .filter(f => { const items = JSON.parse(readFileSync(path.join(dir, f), "utf8")).items; return Array.isArray(items) && items.some(i => i && i.needs_review); })
     .map(f => f.replace(/\.json$/, ""));
+}
+
+// refresh.mjs, or a step rerun after review, exits 75 when Jev is unavailable. That is an outage, not
+// this release's failure: watch.mjs retries the same release next cycle and notifies once. After a
+// repair or review agent ran (`afterAgent`), it waits for the next daily check instead, so the
+// agents' paid work is not redone every hour.
+export function jevCheck(what, r, afterAgent = false) {
+  if (r.status === JEV_TEMPFAIL_EXIT) throw Object.assign(new JevUnavailableError(`${what} exited ${JEV_TEMPFAIL_EXIT}: ${(r.stderr || r.stdout).trim().split("\n").at(-1).slice(0, 200)}`), { afterAgent });
 }
 
 export const cc = {
@@ -58,11 +67,15 @@ export const cc = {
     const args = ["extract/refresh.mjs", fingerprint.version, fingerprint.integrity];
     const refresh = extra => run(node, [...args, ...extra], { cwd: repo, timeoutMs: 60 * 60 * 1000 });
     let r = refresh([]);
+    let agents = false;
+    jevCheck("extract/refresh.mjs", r);
     if (r.status === 2) {
       // An extractor or source broke; outputs were restored. Repair, then refresh again.
       if (dryRun) throw new Error(`refresh needs repair (exit 2; dry run: agent not started): ${r.stderr.slice(-400)}`);
       runAgent(repo, `Claude Code ${fingerprint.version} was released and \`node ${args.join(" ")}\` failed:\n\n${r.stderr.slice(-4000)}\n\nFix the extraction scripts in extract/ so they work on the new build, then run \`node ${args.join(" ")}\` until it exits 0 or 3.`, { budgetUsd: 10, timeoutMs: 60 * 60 * 1000 });
+      agents = true;
       r = refresh([]);
+      jevCheck("extract/refresh.mjs", r, agents);
     }
     if (r.status === 3) {
       // Records whose source changed need a careful update of their text and conditions.
@@ -77,6 +90,7 @@ export const cc = {
         const decisionsNote = area === "decisions" ? " Read work/DECISIONS-BRIEF.md. Fix the traced ladder so `node extract/probe.mjs --only <id>` passes; change a rung only with evidence from code. outputs/what-wins.md is generated: rerun `node extract/decisions-page.mjs` after editing decisions.json." : "";
         const owned = area === "decisions" ? "outputs/decisions.json and outputs/what-wins.md" : `outputs/${area}.json and outputs/${area}.md`;
         runAgent(repo, `Claude Code ${fingerprint.version} was released. extract/refresh.mjs moved every unchanged record to the new build; the ${area} records below changed at their source and are marked "needs_review": true in outputs/${area}.json.\n\n${lines.join("\n").slice(0, 16000)}\n\nContext from the release report:\n\n${shared}\n\nYou own only ${owned}.${decisionsNote} For each flagged record, update its text, conditions, and provenance so they match ${fingerprint.version} exactly, following work/CONTRACT.md (read the new code in work/extracted/; the "new" excerpts above are candidates chosen by a classifier, so confirm them). Provenance must cite files that exist in work/extracted/. Remove records whose source no longer exists, add new ones where the report shows new behavior, then delete "needs_review". Never type counts or statistics about this reference into prose (how many settings, tools, flags, records, or documented or undocumented ones): write {{count:<area> path=value ...}} or {{value:<file> dotted.path}} tokens, which site/src/facts.mjs fills from the JSON; the publishing gate rejects typed statistics. Finish by running \`node ${args.join(" ")} --verify 2>&1 | grep ${area}\` until it prints nothing.`, { budgetUsd: 8, timeoutMs: 45 * 60 * 1000 });
+        agents = true;
       }
       // Reviews edit records; the views derived from them are rebuilt here so --verify and the
       // gate check what will be published. Ladders reviewed on this build are probed again.
@@ -87,9 +101,11 @@ export const cc = {
       for (const step of derive) {
         // probe.mjs exits 3 when a case fails; it records details.probe_failures, which --verify refuses.
         const s = run(node, step, { cwd: repo, timeoutMs: 30 * 60 * 1000 });
+        jevCheck(step.join(" "), s, agents);
         if (s.status !== 0 && !(step[0] === "extract/probe.mjs" && s.status === 3)) throw new Error(`${step.join(" ")} failed after review (${s.status}): ${(s.stderr || s.stdout).slice(-800)}`);
       }
       r = refresh(["--verify"]);
+      jevCheck("extract/refresh.mjs --verify", r, agents);
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));
@@ -119,6 +135,6 @@ export const cc = {
     const diff = [existsSync(diffFile) ? readFileSync(diffFile, "utf8").trim() : "", ...scanDiffs].filter(Boolean).join("\n\n");
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: { ...summary.sources, version: fingerprint.version, integrity: fingerprint.integrity }, changed: Boolean(diff) });
     if (diff && !dryRun) appendChangelog(repo, `Claude Code ${fingerprint.version}`, diff);
-    return { summary, publish: { message: `Claude Code refresh for ${fingerprint.version}\n\n${diff.slice(0, 3000) || "No prompt or reference changes; provenance moved to the new build."}` } };
+    return { summary, afterAgent: agents, publish: { message: `Claude Code refresh for ${fingerprint.version}\n\n${diff.slice(0, 3000) || "No prompt or reference changes; provenance moved to the new build."}` } };
   }
 };

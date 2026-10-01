@@ -7,14 +7,12 @@
 //                                        with --dry-run the gate runs even when nothing changed
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { commitPaths, deploy, dirtyPaths, foreignChanges, gate, producedSince, pushWithinBudget, restore, ROOT } from "./lib/publish.mjs";
+import { applyFailure, commitPaths, deploy, dirtyPaths, failureDecision, foreignChanges, gate, producedSince, pushWithinBudget, restore, Retry, ROOT } from "./lib/publish.mjs";
 import { confirmChange } from "./lib/confirm.mjs";
 import { log, notify, run } from "./lib/run.mjs";
 import { cc } from "./targets/cc.mjs";
 import { codex } from "./targets/codex.mjs";
 
-// A skipped deploy that should run again next cycle for the same upstream version.
-class Retry extends Error {}
 const here = new URL(".", import.meta.url).pathname;
 const stateFile = `${here}state.json`;
 const lockFile = `${here}.lock`;
@@ -111,13 +109,18 @@ try {
         // Nothing to publish: files that changed only byte-wise (sources.json fetch times) go back.
         restore(produced);
         log(`${target.name}: no content change ${JSON.stringify(result.summary?.changed ?? [])}${result.note ? ` (${result.note})` : ""}`);
-        if (!dryRun) { s.fingerprint = key; delete s.failedFingerprint; delete s.lastError; }
+        if (!dryRun) { s.fingerprint = key; delete s.failedFingerprint; delete s.lastError; delete s.jevOutage; }
       }
     } catch (error) {
       restore(producedSince(claimed, productDir(target)));
-      log(`${target.name}: refresh failed: ${error.message}`);
-      if (!dryRun) s.failedFingerprint = key;
-      notify(`${target.name} watcher`, `Refresh failed, nothing published: ${error.message}`);
+      // A Jev outage (exit 75 or JevUnavailableError) keeps this version unfailed and due next
+      // cycle, or at the next scheduled check once this refresh ran an agent; it is notified when
+      // it starts and daily while it lasts (failureDecision in lib/publish.mjs).
+      const d = failureDecision(error, s.jevOutage, now);
+      const when = d.retryNextCycle ? "next cycle" : "at the next scheduled check, since agents already ran";
+      log(`${target.name}: refresh ${d.jev ? `waits for Jev, retried ${when}` : "failed"}: ${error.message}`);
+      if (!dryRun) applyFailure(s, key, d);
+      if (d.notify) notify(`${target.name} watcher`, d.jev ? `Jev unavailable since ${d.outage.since}, nothing published; retried ${when}: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
     }
     save();
   }
@@ -144,7 +147,7 @@ try {
         for (const c of publishing) {
           commitPaths(c.produced, `${c.result.publish.message}\n\nPublished by the watcher (watch/watch.mjs).`);
           c.result.publish.onPublished?.();
-          c.s.fingerprint = c.key; delete c.s.failedFingerprint; delete c.s.lastError;
+          c.s.fingerprint = c.key; delete c.s.failedFingerprint; delete c.s.lastError; delete c.s.jevOutage;
           notify(`${c.target.origin.replace("https://", "")} updated`, c.result.publish.message.split("\n")[0]);
         }
         // Deployed and committed; a failed push waits for the next cycle's sync.
@@ -153,9 +156,14 @@ try {
     } catch (error) {
       log(`publish failed: ${error.message}`);
       restore(allProduced);
-      // A retry is not this version's failure: the same fingerprint publishes next cycle.
-      if (!dryRun && !(error instanceof Retry)) for (const c of publishing) c.s.failedFingerprint = c.key;
-      notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
+      // A retry is not this version's failure: the same fingerprint publishes again. A Jev outage
+      // in the gate is decided per target: due next cycle, unless that target's refresh ran agents.
+      const decisions = publishing.map(c => {
+        const d = failureDecision(error, c.s.jevOutage, now, { afterAgent: Boolean(c.result.afterAgent) });
+        if (!dryRun) applyFailure(c.s, c.key, d);
+        return d;
+      });
+      if (!decisions.length || decisions.some(d => d.notify)) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
     }
   }
   // A dry run leaves the checkout as it found it.

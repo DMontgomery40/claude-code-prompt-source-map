@@ -7,6 +7,8 @@
 // Exit 2: a source or extractor broke; outputs are restored to the previous release.
 // Exit 1: any other failure; outputs are restored.
 // Exit 4: nothing done: the records already describe a newer release (see --allow-older).
+// Exit 75: Jev was unavailable (a step exited 75); outputs are restored and the same release can be
+// refreshed again later. Steps keep the Jev verdicts they finished.
 // The last stdout line is JSON: {changed, needs_review, sources}.
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -14,17 +16,11 @@ import { closeSync, cpSync, existsSync, mkdirSync, openSync, readdirSync, readFi
 import path from "node:path";
 import { isDerived, knobIndex, validateDecision } from "./decisions-lib.mjs";
 import { compareVersions, describedVersion } from "./versions.mjs";
+import { JEV_TEMPFAIL_EXIT } from "../../codex/extract/codex/lib/jev-provider.mjs";
 
 const [version, integrity, flag] = process.argv.slice(2);
-// Scheduled runs don't inherit a shell profile; the TypeSafe key lives in ~/.env.
-if (!process.env.TYPESAFE_API_KEY) {
-  try {
-    for (const line of readFileSync(path.join(process.env.HOME, ".env"), "utf8").split("\n")) {
-      const m = line.match(/^\s*(?:export\s+)?(TYPESAFE_API_KEY)\s*=\s*["']?([^"'\s]+)/);
-      if (m) process.env[m[1]] = m[2];
-    }
-  } catch {}
-}
+// Scheduled runs don't inherit a shell profile; each Jev step reads its key from ~/.env itself
+// (decisionConfig in codex/extract/codex/lib/jev-provider.mjs).
 const root = new URL("../", import.meta.url).pathname;
 const work = path.join(root, "work");
 const release = path.join(work, "releases", version);
@@ -33,7 +29,8 @@ const npm = path.join(path.dirname(process.execPath), "npm");
 const log = message => console.error(`[refresh ${version}] ${message}`);
 const run = (cmd, args, options = {}) => {
   const r = spawnSync(cmd, args, { cwd: root, encoding: "utf8", maxBuffer: 512 * 1024 * 1024, timeout: 30 * 60 * 1000, ...options });
-  if (r.status !== 0 && !(options.allow ?? []).includes(r.status)) throw Object.assign(new Error(`${path.basename(cmd)} ${args.slice(0, 2).join(" ")} failed: ${(r.stderr || r.stdout || r.error?.message || "").slice(-1500)}`), { code: options.breakCode ?? 1 });
+  // A step that exits 75 found Jev unavailable: the refresh exits 75 too, whatever the step's breakCode.
+  if (r.status !== 0 && !(options.allow ?? []).includes(r.status)) throw Object.assign(new Error(`${path.basename(cmd)} ${args.slice(0, 2).join(" ")} failed: ${(r.stderr || r.stdout || r.error?.message || "").slice(-1500)}`), { code: r.status === JEV_TEMPFAIL_EXIT ? JEV_TEMPFAIL_EXIT : options.breakCode ?? 1 });
   return r.stdout;
 };
 const readJson = file => JSON.parse(readFileSync(file, "utf8"));

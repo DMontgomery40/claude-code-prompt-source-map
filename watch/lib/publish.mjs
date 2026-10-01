@@ -11,11 +11,48 @@ import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 
 import os from "node:os";
 import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
+import { JevUnavailableError } from "../../codex/extract/codex/lib/jev-provider.mjs";
 import { narrativeLint } from "./narrative-lint.mjs";
 import { log, must, run } from "./run.mjs";
 
 export const ROOT = path.resolve(import.meta.dirname, "../..");
 const sha = value => createHash("sha256").update(value).digest("hex");
+
+// A skipped deploy that should run again next cycle for the same upstream version. `jev` marks
+// one caused by a Jev outage.
+export class Retry extends Error {
+  constructor(message, { jev = false } = {}) { super(message); this.name = "Retry"; this.jev = jev; }
+}
+
+// What a failed refresh or publish does to one target's watcher state. A Jev outage (a target's
+// JevUnavailableError, which includes a script's exit 75, or the gate's Jev Retry) is not this
+// version's failure. It is retried next cycle, even for a daily target: an outage that hits before
+// any agent ran in this cycle costs no agent work to retry. Once this cycle's refresh has run a
+// repair or review agent (`afterAgent`, set on the error or the publish result), a retry would redo
+// that agent work, so it waits for the target's next scheduled check instead. An outage is
+// notified when it starts and again each day it lasts, so a missing or revoked key, which also
+// reads as unavailable, is not silent. `outage` is the target's open one from state.json. Any other
+// outcome closes it: another Retry leaves the version unfailed and notifies as before; everything
+// else fails it. The reminder interval is a little under a day, so a daily target, checked five
+// minutes early, still gets it.
+const OUTAGE_REMINDER_MS = 23 * 3600e3;
+export function failureDecision(error, outage, now = Date.now(), { afterAgent = Boolean(error?.afterAgent) } = {}) {
+  if (error instanceof JevUnavailableError || (error instanceof Retry && error.jev)) {
+    const remind = !outage || now - Date.parse(outage.notified ?? outage.since) >= OUTAGE_REMINDER_MS;
+    const open = outage ? { ...outage } : { since: new Date(now).toISOString(), reason: error.message.slice(0, 300) };
+    if (remind) open.notified = new Date(now).toISOString();
+    return { markFailed: false, jev: true, retryNextCycle: !afterAgent, notify: remind, outage: open };
+  }
+  return { markFailed: !(error instanceof Retry), jev: false, retryNextCycle: false, notify: true, outage: undefined };
+}
+
+// Applies a failureDecision to a target's state (`s` in watch.mjs). Clearing lastCheck makes the
+// target due at the next hourly cycle whatever its interval.
+export function applyFailure(s, key, decision) {
+  if (decision.markFailed) s.failedFingerprint = key;
+  if (decision.retryNextCycle) delete s.lastCheck;
+  if (decision.outage) s.jevOutage = decision.outage; else delete s.jevOutage;
+}
 
 // Paths whose contents go into the deployed site or its gate. Uncommitted changes here that the
 // cycle did not produce would be deployed without being committed, so they block publishing.
@@ -89,8 +126,19 @@ export async function gate(productRepos) {
   must("npm", ["run", "check"], { cwd: ROOT, timeoutMs: 30 * 60 * 1000 });
   for (const repo of productRepos) {
     leakCheck(repo);
-    const stale = await narrativeLint(repo);
+    const stale = await lintOrRetry(repo);
     if (stale.length) throw new Error(`narrative lint (${path.basename(repo)}): ${stale.length} typed statistic(s) must be {{count:…}}/{{value:…}} tokens, or the generated page listed in narrative-lint.json:\n${stale.slice(0, 10).map(f => `${f.file}: ${f.sentence.slice(0, 160)}`).join("\n")}`);
+  }
+}
+
+// The narrative lint for one product. Jev being unavailable is no pass: publication waits for
+// the next cycle. Typed statistics it did find still block, as does any other error.
+export async function lintOrRetry(repo, lint = narrativeLint) {
+  try {
+    return await lint(repo);
+  } catch (error) {
+    if (error instanceof JevUnavailableError) throw new Retry(`narrative lint (${path.basename(repo)}) waits for Jev: ${error.message}`, { jev: true });
+    throw error;
   }
 }
 
