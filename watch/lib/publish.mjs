@@ -26,8 +26,9 @@ export class Retry extends Error {
 
 // What a failed refresh or publish does to the watcher's state. A Jev outage (a target's
 // JevUnavailableError, which includes a script's exit 75, or the gate's Jev Retry) is not this
-// version's failure: it is retried next cycle, even for a daily target, and notified once, when the
-// outage starts (`outage` is the open one from state.json, cleared by the next success). Any
+// version's failure: it is tried again at the target's next scheduled check (hourly for
+// Codex/ChatGPT now, daily for Claude Code, so a release that needed paid review agents is not
+// redone every hour), and notified once, when the outage starts (`outage` is the open one from state.json, cleared by the next success). Any
 // other Retry leaves the version unfailed and notifies as before; everything else fails it.
 export function failureDecision(error, outage, now = Date.now()) {
   if (error instanceof JevUnavailableError || (error instanceof Retry && error.jev)) {

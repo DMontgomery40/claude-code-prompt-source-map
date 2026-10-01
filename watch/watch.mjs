@@ -113,13 +113,12 @@ try {
       }
     } catch (error) {
       restore(producedSince(claimed, productDir(target)));
-      // A Jev outage (exit 75 or JevUnavailableError) keeps this version unfailed and due next
-      // cycle, and is notified once per outage (failureDecision in lib/publish.mjs).
+      // A Jev outage (exit 75 or JevUnavailableError) keeps this version unfailed, so it is tried
+      // again at the target's next check, and is notified once per outage (lib/publish.mjs).
       const d = failureDecision(error, state.jevOutage, now);
-      log(`${target.name}: refresh ${d.retryNextCycle ? "waits for Jev, retried next cycle" : "failed"}: ${error.message}`);
+      log(`${target.name}: refresh ${d.retryNextCycle ? "waits for Jev, retried at the next check" : "failed"}: ${error.message}`);
       if (!dryRun) {
         if (d.markFailed) s.failedFingerprint = key;
-        if (d.retryNextCycle) delete s.lastCheck;
         if (d.outage) state.jevOutage = d.outage;
       }
       if (d.notify) notify(`${target.name} watcher`, d.retryNextCycle ? `Jev unavailable, nothing published; retrying every cycle until it answers: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
@@ -158,12 +157,11 @@ try {
     } catch (error) {
       log(`publish failed: ${error.message}`);
       restore(allProduced);
-      // A retry is not this version's failure: the same fingerprint publishes next cycle. A Jev
-      // outage in the gate is notified once per outage and makes a daily target due next cycle.
+      // A retry is not this version's failure: the same fingerprint publishes at the next check.
+      // A Jev outage in the gate is notified once per outage.
       const d = failureDecision(error, state.jevOutage, now);
       if (!dryRun) {
         if (d.markFailed) for (const c of publishing) c.s.failedFingerprint = c.key;
-        if (d.retryNextCycle) for (const c of publishing) delete c.s.lastCheck;
         if (d.outage) state.jevOutage = d.outage;
       }
       if (d.notify) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);

@@ -42,8 +42,9 @@ old file is kept as `.bak-<time>`.
 A failed refresh or gate restores the files the cycle produced and marks that upstream version as
 failed, so the watcher waits for a newer one instead of retrying every hour. A Jev outage is not a
 failure of that version. That covers a refresh step that exits 75 and a narrative lint that gets no
-answer. The cycle's files are restored, nothing is published, and the same version is retried next
-cycle, even for a daily target. A notification goes out once, when the outage starts, not every hour.
+answer. The cycle's files are restored, nothing is published, and the same version is retried at
+the target's next scheduled check. A notification goes out once, when the outage starts, not every
+hour.
 The outage is recorded as `jevOutage` in `watch/state.json` and cleared by the next successful
 refresh or publish.
 
