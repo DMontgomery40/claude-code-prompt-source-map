@@ -6,7 +6,7 @@
 
 ### Settings schema
 
-Source: `chunk-dq5fzxjx.js` · offset 177850922 · sha256 `123d8699…`
+Source: `chunk-hrhfcbdv.js` · offset 178634687 · sha256 `c2b79bce…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference
 
@@ -24,7 +24,7 @@ From code: the settings object schema is built by one function; feature modules 
 
 ### model
 
-Source: `chunk-dq5fzxjx.js` · offset 177862224 · sha256 `b6a9d3b5…`
+Source: `chunk-hrhfcbdv.js` · offset 178645989 · sha256 `b6a9d3b5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#model
 
@@ -36,7 +36,7 @@ Override the default model used by Claude Code
 
 ### fallbackModel
 
-Source: `chunk-dq5fzxjx.js` · offset 177862319 · sha256 `eca808d8…`
+Source: `chunk-hrhfcbdv.js` · offset 178646084 · sha256 `eca808d8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#fallbackmodel
 
@@ -48,7 +48,7 @@ Fallback model(s) tried in order when the primary model is overloaded or unavail
 
 ### availableModels
 
-Source: `chunk-dq5fzxjx.js` · offset 177862578 · sha256 `e169769e…`
+Source: `chunk-hrhfcbdv.js` · offset 178646343 · sha256 `e169769e…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#availablemodels
 
@@ -62,7 +62,7 @@ Allowlist of models that users can select. Accepts family aliases ("opus" allows
 
 ### enforceAvailableModels
 
-Source: `chunk-dq5fzxjx.js` · offset 177863043 · sha256 `d70d5ee6…`
+Source: `chunk-hrhfcbdv.js` · offset 178646808 · sha256 `d70d5ee6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#enforceavailablemodels
 
@@ -76,7 +76,7 @@ When true and availableModels is a non-empty array, the Default model selection 
 
 ### modelOverrides
 
-Source: `chunk-dq5fzxjx.js` · offset 177865140 · sha256 `e96a1af0…`
+Source: `chunk-hrhfcbdv.js` · offset 178648905 · sha256 `e96a1af0…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modeloverrides
 
@@ -90,7 +90,7 @@ Override mapping from Anthropic model ID (e.g. "claude-opus-4-6") to provider-sp
 
 ### modelPicker
 
-Source: `chunk-dq5fzxjx.js` · offset 177865748 · sha256 `6c422b2d…`
+Source: `chunk-hrhfcbdv.js` · offset 178649513 · sha256 `6c422b2d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelpicker
 
@@ -104,7 +104,7 @@ Curate the /model picker: an ordered list of models with your own labels, indepe
 
 ### modelPicker.options
 
-Source: `chunk-dq5fzxjx.js` · offset 177865387 · sha256 `7dcd72b1…`
+Source: `chunk-hrhfcbdv.js` · offset 178649152 · sha256 `7dcd72b1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelpicker
 
@@ -116,7 +116,7 @@ Rows to show in the /model picker, in order.
 
 ### modelPicker.replaceBuiltInOptions
 
-Source: `chunk-dq5fzxjx.js` · offset 177865481 · sha256 `af71b027…`
+Source: `chunk-hrhfcbdv.js` · offset 178649246 · sha256 `af71b027…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelpicker
 
@@ -128,7 +128,7 @@ When true, the picker shows only the Default row and these options — the built
 
 ### modelPricing
 
-Source: `chunk-dq5fzxjx.js` · offset 177866282 · sha256 `48c159a1…`
+Source: `chunk-hrhfcbdv.js` · offset 178650047 · sha256 `48c159a1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelpricing
 
@@ -142,7 +142,7 @@ Price usage at your organization's contracted rates instead of list price. Affec
 
 ### modelPricing.multiplier
 
-Source: `chunk-dq5fzxjx.js` · offset 177866210 · sha256 `a41d1e63…`
+Source: `chunk-hrhfcbdv.js` · offset 178649975 · sha256 `602863d9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelpricing
 
@@ -152,7 +152,7 @@ No description in the schema.
 
 ### modelPricing.overrides
 
-Source: `chunk-dq5fzxjx.js` · offset 177866226 · sha256 `3e3b91d3…`
+Source: `chunk-hrhfcbdv.js` · offset 178649991 · sha256 `f1020a82…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelpricing
 
@@ -162,7 +162,7 @@ No description in the schema.
 
 ### outputStyle
 
-Source: `chunk-dq5fzxjx.js` · offset 177892953 · sha256 `e6c1ed7e…`
+Source: `chunk-hrhfcbdv.js` · offset 178680308 · sha256 `e6c1ed7e…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#outputstyle
 
@@ -174,7 +174,7 @@ Controls the output style for assistant responses
 
 ### language
 
-Source: `chunk-dq5fzxjx.js` · offset 177893166 · sha256 `7c7507f3…`
+Source: `chunk-hrhfcbdv.js` · offset 178680521 · sha256 `7c7507f3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#language
 
@@ -186,7 +186,7 @@ Preferred language for Claude responses and voice dictation (e.g., "japanese", "
 
 ### promptCacheTtl
 
-Source: `chunk-dq5fzxjx.js` · offset 177896932 · sha256 `e18db899…`
+Source: `chunk-hrhfcbdv.js` · offset 178684287 · sha256 `e18db899…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#promptcachettl
 
@@ -200,7 +200,7 @@ Prompt cache TTL for the main conversation (interactive, -p and SDK turns, plus 
 
 ### subagentPromptCacheTtl
 
-Source: `chunk-dq5fzxjx.js` · offset 177897428 · sha256 `af588959…`
+Source: `chunk-hrhfcbdv.js` · offset 178684783 · sha256 `af588959…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#subagentpromptcachettl
 
@@ -214,7 +214,7 @@ Prompt cache TTL for everything outside the main conversation — subagents, wor
 
 ### alwaysThinkingEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177897767 · sha256 `51bbf1e3…`
+Source: `chunk-hrhfcbdv.js` · offset 178685122 · sha256 `51bbf1e3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#alwaysthinkingenabled
 
@@ -226,7 +226,7 @@ When false, thinking is disabled. When absent or true, thinking is enabled autom
 
 ### effortLevel
 
-Source: `chunk-dq5fzxjx.js` · offset 177897966 · sha256 `3edcb0c3…`
+Source: `chunk-hrhfcbdv.js` · offset 178685321 · sha256 `3edcb0c3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#effortlevel
 
@@ -240,7 +240,7 @@ Persisted effort level for supported models.
 
 ### maxEffortLevel
 
-Source: `chunk-dq5fzxjx.js` · offset 177898073 · sha256 `dbbaa0d3…`
+Source: `chunk-hrhfcbdv.js` · offset 178685428 · sha256 `dbbaa0d3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#maxeffortlevel
 
@@ -254,7 +254,7 @@ Maximum effort level. Anything above it (an /effort or /model pick, --effort, CL
 
 ### modelSettings
 
-Source: `chunk-dq5fzxjx.js` · offset 177899248 · sha256 `62cdc3ae…`
+Source: `chunk-hrhfcbdv.js` · offset 178686603 · sha256 `62cdc3ae…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#modelsettings
 
@@ -268,7 +268,7 @@ Per-model settings keyed by canonical model name.
 
 ### ultracode
 
-Source: `chunk-dq5fzxjx.js` · offset 177899353 · sha256 `77a337fc…`
+Source: `chunk-hrhfcbdv.js` · offset 178686708 · sha256 `77a337fc…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#ultracode
 
@@ -284,7 +284,7 @@ Enable ultracode for the session: standing dynamic-workflow orchestration at any
 
 ### advisorModel
 
-Source: `chunk-dq5fzxjx.js` · offset 177899776 · sha256 `ebecdff7…`
+Source: `chunk-hrhfcbdv.js` · offset 178687131 · sha256 `ebecdff7…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#advisormodel
 
@@ -296,7 +296,7 @@ Advisor model for the server-side advisor tool.
 
 ### fastMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177899864 · sha256 `b70219f6…`
+Source: `chunk-hrhfcbdv.js` · offset 178687219 · sha256 `b70219f6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#fastmode
 
@@ -308,7 +308,7 @@ When true, fast mode is enabled. When absent or false, fast mode is off.
 
 ### fastModePerSessionOptIn
 
-Source: `chunk-dq5fzxjx.js` · offset 177899992 · sha256 `d02b6388…`
+Source: `chunk-hrhfcbdv.js` · offset 178687347 · sha256 `d02b6388…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#fastmodepersessionoptin
 
@@ -320,7 +320,7 @@ When true, fast mode does not persist across sessions. Each session starts with 
 
 ### showThinkingSummaries
 
-Source: `chunk-dq5fzxjx.js` · offset 177908603 · sha256 `0949ebdb…`
+Source: `chunk-hrhfcbdv.js` · offset 178695958 · sha256 `0949ebdb…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#showthinkingsummaries
 
@@ -332,7 +332,7 @@ Request API-side thinking summaries and show them in the conversation and in the
 
 ### switchModelsOnFlag
 
-Source: `chunk-dq5fzxjx.js` · offset 177912617 · sha256 `03f1a7d0…`
+Source: `chunk-hrhfcbdv.js` · offset 178699972 · sha256 `03f1a7d0…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#switchmodelsonflag
 
@@ -346,7 +346,7 @@ When safeguards flag a message, automatically switch to a different model to kee
 
 ### permissions
 
-Source: `chunk-dq5fzxjx.js` · offset 177862150 · sha256 `a746c29c…`
+Source: `chunk-hrhfcbdv.js` · offset 178645915 · sha256 `a746c29c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions
 
@@ -358,7 +358,7 @@ Tool usage permissions configuration
 
 ### permissions.allow
 
-Source: `chunk-dq5fzxjx.js` · offset 177833931 · sha256 `d7e3e4ea…`
+Source: `chunk-hrhfcbdv.js` · offset 178617678 · sha256 `d7e3e4ea…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-allow
 
@@ -370,7 +370,7 @@ List of permission rules for allowed operations
 
 ### permissions.deny
 
-Source: `chunk-dq5fzxjx.js` · offset 177834015 · sha256 `33ee5b6b…`
+Source: `chunk-hrhfcbdv.js` · offset 178617762 · sha256 `33ee5b6b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-deny
 
@@ -382,7 +382,7 @@ List of permission rules for denied operations
 
 ### permissions.ask
 
-Source: `chunk-dq5fzxjx.js` · offset 177834097 · sha256 `a9f6396d…`
+Source: `chunk-hrhfcbdv.js` · offset 178617844 · sha256 `a9f6396d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-ask
 
@@ -394,7 +394,7 @@ List of permission rules that should always prompt for confirmation
 
 ### permissions.defaultMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177834227 · sha256 `3b33237d…`
+Source: `chunk-hrhfcbdv.js` · offset 178617974 · sha256 `3b33237d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-defaultmode
 
@@ -406,7 +406,7 @@ Default permission mode when Claude Code needs access ('manual' is accepted as a
 
 ### permissions.disableBypassPermissionsMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177834397 · sha256 `3addfcfa…`
+Source: `chunk-hrhfcbdv.js` · offset 178618144 · sha256 `3addfcfa…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-disablebypasspermissionsmode
 
@@ -418,7 +418,7 @@ Disable the ability to bypass permission prompts
 
 ### permissions.blockReadsOutsideWorkingDirectories
 
-Source: `chunk-dq5fzxjx.js` · offset 177834509 · sha256 `cf415a20…`
+Source: `chunk-hrhfcbdv.js` · offset 178618256 · sha256 `cf415a20…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-blockreadsoutsideworkingdirectories
 
@@ -432,7 +432,7 @@ Refuse file-tool reads (Read, Grep, Glob, LSP) outside the working directories i
 
 ### permissions.disableAutoMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177822698 · sha256 `4c01ca53…`
+Source: `chunk-hrhfcbdv.js` · offset 178606445 · sha256 `4c01ca53…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions
 
@@ -446,7 +446,7 @@ Disable auto mode
 
 ### permissions.additionalDirectories
 
-Source: `chunk-dq5fzxjx.js` · offset 177834823 · sha256 `a0a4a162…`
+Source: `chunk-hrhfcbdv.js` · offset 178618570 · sha256 `a0a4a162…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#permissions-additionaldirectories
 
@@ -458,7 +458,7 @@ Additional directories to include in the permission scope
 
 ### allowManagedPermissionRulesOnly
 
-Source: `chunk-dq5fzxjx.js` · offset 177877716 · sha256 `79cee92f…`
+Source: `chunk-hrhfcbdv.js` · offset 178662045 · sha256 `79cee92f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowmanagedpermissionrulesonly
 
@@ -472,7 +472,7 @@ When true (and set in managed settings), permission rules from user, project, lo
 
 ### skipDangerousModePermissionPrompt
 
-Source: `chunk-dq5fzxjx.js` · offset 177908832 · sha256 `622bf264…`
+Source: `chunk-hrhfcbdv.js` · offset 178696187 · sha256 `622bf264…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#skipdangerousmodepermissionprompt
 
@@ -484,7 +484,7 @@ Whether the user has accepted the bypass permissions mode dialog
 
 ### disableAutoMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177909158 · sha256 `4c01ca53…`
+Source: `chunk-hrhfcbdv.js` · offset 178696513 · sha256 `4c01ca53…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableautomode
 
@@ -496,7 +496,7 @@ Disable auto mode
 
 ### skipAutoPermissionPrompt
 
-Source: `chunk-dq5fzxjx.js` · offset 177821243 · sha256 `740f7683…`
+Source: `chunk-hrhfcbdv.js` · offset 178604990 · sha256 `740f7683…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#skipautopermissionprompt
 
@@ -510,7 +510,7 @@ Whether the user has accepted the auto mode opt-in dialog
 
 ### useAutoModeDuringPlan
 
-Source: `chunk-dq5fzxjx.js` · offset 177821350 · sha256 `cb9c1a74…`
+Source: `chunk-hrhfcbdv.js` · offset 178605097 · sha256 `cb9c1a74…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#useautomodeduringplan
 
@@ -524,7 +524,7 @@ Whether plan mode uses auto mode semantics when auto mode is available (default:
 
 ### autoMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177822577 · sha256 `e31ba7f1…`
+Source: `chunk-hrhfcbdv.js` · offset 178606324 · sha256 `e31ba7f1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automode
 
@@ -538,7 +538,7 @@ Auto mode classifier prompt customization
 
 ### autoMode.allow
 
-Source: `chunk-dq5fzxjx.js` · offset 177821485 · sha256 `33b92bfd…`
+Source: `chunk-hrhfcbdv.js` · offset 178605232 · sha256 `33b92bfd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automode
 
@@ -550,7 +550,7 @@ Rules for the auto mode classifier allow section. Include the literal string "$d
 
 ### autoMode.soft_deny
 
-Source: `chunk-dq5fzxjx.js` · offset 177821662 · sha256 `e484268b…`
+Source: `chunk-hrhfcbdv.js` · offset 178605409 · sha256 `e484268b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automode
 
@@ -562,7 +562,7 @@ Rules for the auto mode classifier SOFT BLOCK section — destructive/irreversib
 
 ### autoMode.hard_deny
 
-Source: `chunk-dq5fzxjx.js` · offset 177821911 · sha256 `8e0d9050…`
+Source: `chunk-hrhfcbdv.js` · offset 178605658 · sha256 `8e0d9050…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automode
 
@@ -574,7 +574,7 @@ Rules for the auto mode classifier HARD BLOCK section — security boundaries th
 
 ### autoMode.environment
 
-Source: `chunk-dq5fzxjx.js` · offset 177822166 · sha256 `1c416dc3…`
+Source: `chunk-hrhfcbdv.js` · offset 178605913 · sha256 `1c416dc3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automode
 
@@ -586,7 +586,7 @@ Entries for the auto mode classifier environment section. Include the literal st
 
 ### autoMode.classifyAllShell
 
-Source: `chunk-dq5fzxjx.js` · offset 177822357 · sha256 `67146569…`
+Source: `chunk-hrhfcbdv.js` · offset 178606104 · sha256 `67146569…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automode-classifyallshell
 
@@ -600,7 +600,7 @@ When true, every Bash/PowerShell allow rule is suspended while auto mode is acti
 
 ### sandbox
 
-Source: `chunk-dq5fzxjx.js` · offset 177893417 · sha256 `0c0ec14f…`
+Source: `chunk-hrhfcbdv.js` · offset 178680772 · sha256 `0e7bf947…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox
 
@@ -610,17 +610,23 @@ No description in the schema.
 
 ### sandbox.enabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177676355 · sha256 `1234856b…`
+Source: `chunk-hrhfcbdv.js` · offset 178456655 · sha256 `f71ccaff…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-enabled
 
 Type: `boolean`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `Xs` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, and managed, --settings or user settings set true, false from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (true there still applies)."`
+
+~~~~~~text
+Run Bash commands inside the sandbox. Default: false. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, and managed, --settings or user settings set true, false from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (true there still applies).
+~~~~~~
 
 ### sandbox.failIfUnavailable
 
-Source: `chunk-dq5fzxjx.js` · offset 177676420 · sha256 `8d367e53…`
+Source: `chunk-hrhfcbdv.js` · offset 178456758 · sha256 `0fb456b9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-failifunavailable
 
@@ -628,13 +634,15 @@ Type: `boolean`
 
 The description names which settings sources honor this key (per description; not independently verified in code).
 
+Interpolated constants (resolved from code): `Xs` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, and managed, --settings or user settings set true, false from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (true there still applies)."`
+
 ~~~~~~text
-Exit with an error at startup if sandbox.enabled is true but the sandbox cannot start (missing dependencies or unsupported platform). When false (default), a warning is shown and commands run unsandboxed. Intended for managed-settings deployments that require sandboxing as a hard gate.
+Exit with an error at startup if sandbox.enabled is true but the sandbox cannot start (missing dependencies or unsupported platform). When false (default), a warning is shown and commands run unsandboxed. Intended for managed-settings deployments that require sandboxing as a hard gate. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, and managed, --settings or user settings set true, false from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (true there still applies).
 ~~~~~~
 
 ### sandbox.autoAllowBashIfSandboxed
 
-Source: `chunk-dq5fzxjx.js` · offset 177676710 · sha256 `f966f1b5…`
+Source: `chunk-hrhfcbdv.js` · offset 178457052 · sha256 `738de767…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-autoallowbashifsandboxed
 
@@ -644,19 +652,23 @@ No description in the schema.
 
 ### sandbox.allowUnsandboxedCommands
 
-Source: `chunk-dq5fzxjx.js` · offset 177676799 · sha256 `73d1ddda…`
+Source: `chunk-hrhfcbdv.js` · offset 178457141 · sha256 `509bfa41…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-allowunsandboxedcommands
 
 Type: `boolean`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `nt` = `"project settings (.claude/settings.json and .claude/settings.local.json)"`
+
 ~~~~~~text
-Allow commands to run outside the sandbox via the dangerouslyDisableSandbox parameter. When false, the dangerouslyDisableSandbox parameter is completely ignored and all commands must run sandboxed. Default: true.
+Allow commands to run outside the sandbox via the dangerouslyDisableSandbox parameter. When false, the dangerouslyDisableSandbox parameter is completely ignored and all commands must run sandboxed. Default: true. A false in managed, --settings or user settings holds whatever project settings (.claude/settings.json and .claude/settings.local.json) say (false there still applies).
 ~~~~~~
 
 ### sandbox.network
 
-Source: `chunk-dq5fzxjx.js` · offset 177677015 · sha256 `5468c602…`
+Source: `chunk-hrhfcbdv.js` · offset 178457459 · sha256 `50692d70…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network
 
@@ -666,17 +678,23 @@ No description in the schema.
 
 ### sandbox.network.allowedDomains
 
-Source: `chunk-dq5fzxjx.js` · offset 177656356 · sha256 `8c6e9cd6…`
+Source: `chunk-hrhfcbdv.js` · offset 178435937 · sha256 `ce1a2146…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-alloweddomains
 
 Type: `array of string`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `yt` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored."`
+
+~~~~~~text
+Domains sandboxed commands may reach without a prompt (wildcards such as *.example.com supported). Merged with WebFetch(domain:…) allow rules and across settings sources. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. With network.allowManagedDomainsOnly, only managed settings supply it.
+~~~~~~
 
 ### sandbox.network.deniedDomains
 
-Source: `chunk-dq5fzxjx.js` · offset 177656430 · sha256 `ac2e4b37…`
+Source: `chunk-hrhfcbdv.js` · offset 178436238 · sha256 `ac2e4b37…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-denieddomains
 
@@ -690,7 +708,7 @@ Domains that are always blocked, even if matched by allowedDomains. Supports the
 
 ### sandbox.network.strictAllowlist
 
-Source: `chunk-dq5fzxjx.js` · offset 177656666 · sha256 `cecb73ed…`
+Source: `chunk-hrhfcbdv.js` · offset 178436474 · sha256 `9d916354…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-strictallowlist
 
@@ -698,13 +716,15 @@ Type: `boolean`
 
 The description names which settings sources honor this key (per description; not independently verified in code).
 
+Interpolated constants (resolved from code): `nt` = `"project settings (.claude/settings.json and .claude/settings.local.json)"`
+
 ~~~~~~text
-When true, the sandbox runtime deterministically denies hosts not in allowedDomains instead of prompting. Enforced for sandboxed commands only — in-process tools such as WebFetch are not gated by this setting. Only honored from user, managed/policy, or CLI (--settings) settings — project settings (.claude/settings.json and .claude/settings.local.json) are ignored.
+When true, the sandbox runtime deterministically denies hosts not in allowedDomains instead of prompting. Enforced for sandboxed commands only — in-process tools such as WebFetch are not gated by this setting. Only honored from user, managed/policy, or CLI (--settings) settings — project settings (.claude/settings.json and .claude/settings.local.json) are ignored, and while it is on their allowedDomains and WebFetch(domain:…) allow rules are left out of the allowlist.
 ~~~~~~
 
 ### sandbox.network.allowManagedDomainsOnly
 
-Source: `chunk-dq5fzxjx.js` · offset 177657103 · sha256 `20b6b184…`
+Source: `chunk-hrhfcbdv.js` · offset 178436958 · sha256 `20b6b184…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-allowmanageddomainsonly
 
@@ -718,73 +738,103 @@ When true (and set in managed settings), only allowedDomains and WebFetch(domain
 
 ### sandbox.network.allowUnixSockets
 
-Source: `chunk-dq5fzxjx.js` · offset 177657399 · sha256 `6fef57bb…`
+Source: `chunk-hrhfcbdv.js` · offset 178437254 · sha256 `a62c5e05…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-allowunixsockets
 
 Type: `array of string`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `yt` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored."`
+
 ~~~~~~text
-macOS only: Unix socket paths to allow. Ignored on Linux (seccomp cannot filter by path).
+macOS only: Unix socket paths to allow. Ignored on Linux (seccomp cannot filter by path). Merged across settings sources. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored.
 ~~~~~~
 
 ### sandbox.network.allowAllUnixSockets
 
-Source: `chunk-dq5fzxjx.js` · offset 177657536 · sha256 `a7809fa8…`
+Source: `chunk-hrhfcbdv.js` · offset 178437427 · sha256 `8f374f72…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-allowallunixsockets
 
 Type: `boolean`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `sn` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies)."`
+
 ~~~~~~text
-If true, allow all Unix sockets (disables blocking on both platforms).
+If true, allow all Unix sockets (disables blocking on both platforms). When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies).
 ~~~~~~
 
 ### sandbox.network.allowLocalBinding
 
-Source: `chunk-dq5fzxjx.js` · offset 177657610 · sha256 `d80ee1d0…`
+Source: `chunk-hrhfcbdv.js` · offset 178437547 · sha256 `194b309f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-allowlocalbinding
 
 Type: `boolean`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `sn` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies)."`
+
+~~~~~~text
+macOS only: If true, sandboxed commands can bind to localhost ports. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies).
+~~~~~~
 
 ### sandbox.network.allowMachLookup
 
-Source: `chunk-dq5fzxjx.js` · offset 177657861 · sha256 `2797f96e…`
+Source: `chunk-hrhfcbdv.js` · offset 178437841 · sha256 `965f1f71…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-allowmachlookup
 
 Type: `array of string`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `yt` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored."`
+
 ~~~~~~text
-macOS only: Additional XPC/Mach service names to allow looking up. Supports trailing-wildcard prefix matching (e.g., "com.apple.coresimulator.*"). Needed for tools that communicate via XPC such as the iOS Simulator or Playwright.
+macOS only: Additional XPC/Mach service names to allow looking up. Supports trailing-wildcard prefix matching (e.g., "com.apple.coresimulator.*"). Needed for tools that communicate via XPC such as the iOS Simulator or Playwright. Merged across settings sources. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored.
 ~~~~~~
 
 ### sandbox.network.httpProxyPort
 
-Source: `chunk-dq5fzxjx.js` · offset 177658094 · sha256 `29c0b5c0…`
+Source: `chunk-hrhfcbdv.js` · offset 178438148 · sha256 `e334277d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-httpproxyport
 
 Type: `number`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `Js` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, network.deniedDomains or a WebFetch(domain:…) deny rule, when managed settings set network.allowManagedDomainsOnly: true, or when managed, --settings or user settings set network.strictAllowlist: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. With network.allowManagedDomainsOnly, only managed settings may set it."`
+
+~~~~~~text
+Local TCP port of your own HTTP proxy for sandboxed traffic, used instead of the proxy Claude Code runs. When managed settings or a --settings file set allowUnsandboxedCommands: false, network.deniedDomains or a WebFetch(domain:…) deny rule, when managed settings set network.allowManagedDomainsOnly: true, or when managed, --settings or user settings set network.strictAllowlist: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. With network.allowManagedDomainsOnly, only managed settings may set it.
+~~~~~~
 
 ### sandbox.network.socksProxyPort
 
-Source: `chunk-dq5fzxjx.js` · offset 177658123 · sha256 `4fc1c7e3…`
+Source: `chunk-hrhfcbdv.js` · offset 178438299 · sha256 `3f724ae2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-socksproxyport
 
 Type: `number`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `Js` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, network.deniedDomains or a WebFetch(domain:…) deny rule, when managed settings set network.allowManagedDomainsOnly: true, or when managed, --settings or user settings set network.strictAllowlist: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. With network.allowManagedDomainsOnly, only managed settings may set it."`
+
+~~~~~~text
+Local TCP port of your own SOCKS5 proxy for sandboxed traffic, used instead of the proxy Claude Code runs. When managed settings or a --settings file set allowUnsandboxedCommands: false, network.deniedDomains or a WebFetch(domain:…) deny rule, when managed settings set network.allowManagedDomainsOnly: true, or when managed, --settings or user settings set network.strictAllowlist: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. With network.allowManagedDomainsOnly, only managed settings may set it.
+~~~~~~
 
 ### sandbox.network.tlsTerminate
 
-Source: `chunk-dq5fzxjx.js` · offset 177658256 · sha256 `9461752c…`
+Source: `chunk-hrhfcbdv.js` · offset 178438516 · sha256 `9461752c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-tlsterminate
 
@@ -798,7 +848,7 @@ The description names which settings sources honor this key (per description; no
 
 ### sandbox.network.tlsTerminate.caCertPath
 
-Source: `chunk-dq5fzxjx.js` · offset 177658169 · sha256 `244b5a32…`
+Source: `chunk-hrhfcbdv.js` · offset 178438429 · sha256 `244b5a32…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-tlsterminate
 
@@ -808,7 +858,7 @@ No description in the schema.
 
 ### sandbox.network.tlsTerminate.caKeyPath
 
-Source: `chunk-dq5fzxjx.js` · offset 177658202 · sha256 `02b35620…`
+Source: `chunk-hrhfcbdv.js` · offset 178438462 · sha256 `02b35620…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-network-tlsterminate
 
@@ -818,7 +868,7 @@ No description in the schema.
 
 ### sandbox.filesystem
 
-Source: `chunk-dq5fzxjx.js` · offset 177677028 · sha256 `d5a61c26…`
+Source: `chunk-hrhfcbdv.js` · offset 178457472 · sha256 `48cbaa70…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem
 
@@ -828,19 +878,23 @@ No description in the schema.
 
 ### sandbox.filesystem.allowWrite
 
-Source: `chunk-dq5fzxjx.js` · offset 177659016 · sha256 `a0ada5a0…`
+Source: `chunk-hrhfcbdv.js` · offset 178439276 · sha256 `eb78ce80…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem-allowwrite
 
 Type: `array of string`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `Dc` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. When managed settings or a --settings file set filesystem.denyRead, a Read(…) deny rule or a credentials.files entry (deny or mask), a value from project settings (.claude/settings.json and .claude/settings.local.json) under or equal to a denied path, or spelled as a glob or a network path (UNC or automount), is ignored. A value inside a directory sandboxed commands can already write is re-checked before every command and dropped once it has been re-pointed into a denied read path."`
+
 ~~~~~~text
-Additional paths to allow writing within the sandbox. Merged with paths from Edit(...) allow permission rules.
+Additional paths to allow writing within the sandbox. Merged with paths from Edit(...) allow permission rules. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored. When managed settings or a --settings file set filesystem.denyRead, a Read(…) deny rule or a credentials.files entry (deny or mask), a value from project settings (.claude/settings.json and .claude/settings.local.json) under or equal to a denied path, or spelled as a glob or a network path (UNC or automount), is ignored. A value inside a directory sandboxed commands can already write is re-checked before every command and dropped once it has been re-pointed into a denied read path.
 ~~~~~~
 
 ### sandbox.filesystem.denyWrite
 
-Source: `chunk-dq5fzxjx.js` · offset 177659167 · sha256 `1cbeff3f…`
+Source: `chunk-hrhfcbdv.js` · offset 178439431 · sha256 `1cbeff3f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem-denywrite
 
@@ -852,7 +906,7 @@ Additional paths to deny writing within the sandbox. Merged with paths from Edit
 
 ### sandbox.filesystem.denyRead
 
-Source: `chunk-dq5fzxjx.js` · offset 177659315 · sha256 `4b99598f…`
+Source: `chunk-hrhfcbdv.js` · offset 178439579 · sha256 `4b99598f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem-denyread
 
@@ -864,19 +918,23 @@ Additional paths to deny reading within the sandbox. Merged with paths from Read
 
 ### sandbox.filesystem.allowRead
 
-Source: `chunk-dq5fzxjx.js` · offset 177659464 · sha256 `994d6f86…`
+Source: `chunk-hrhfcbdv.js` · offset 178439728 · sha256 `b4ca1dfb…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem-allowread
 
 Type: `array of string`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `Tc` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, filesystem.denyRead, a Read(…) deny rule or a credentials.files entry (deny or mask), or managed settings set network.allowManagedDomainsOnly: true, a value from project settings (.claude/settings.json and .claude/settings.local.json) that would re-open a path managed, --settings or user settings deny reading is ignored, as is one spelled as a glob or a network path (UNC or automount); one carving out of the project's own denyRead still applies. A value inside a directory sandboxed commands can write is re-checked before every command and dropped once it has been re-pointed into a denied path."`
+
 ~~~~~~text
-Paths to re-allow reading within denyRead regions. Takes precedence over denyRead for matching paths.
+Paths to re-allow reading within denyRead regions. Takes precedence over denyRead for matching paths. When managed settings or a --settings file set allowUnsandboxedCommands: false, filesystem.denyRead, a Read(…) deny rule or a credentials.files entry (deny or mask), or managed settings set network.allowManagedDomainsOnly: true, a value from project settings (.claude/settings.json and .claude/settings.local.json) that would re-open a path managed, --settings or user settings deny reading is ignored, as is one spelled as a glob or a network path (UNC or automount); one carving out of the project's own denyRead still applies. A value inside a directory sandboxed commands can write is re-checked before every command and dropped once it has been re-pointed into a denied path.
 ~~~~~~
 
 ### sandbox.filesystem.allowManagedReadPathsOnly
 
-Source: `chunk-dq5fzxjx.js` · offset 177659619 · sha256 `7a08c316…`
+Source: `chunk-hrhfcbdv.js` · offset 178439887 · sha256 `7a08c316…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem-allowmanagedreadpathsonly
 
@@ -890,7 +948,7 @@ When true (set in managed settings), only allowRead paths from policySettings ar
 
 ### sandbox.filesystem.disabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177659743 · sha256 `5e3e19fd…`
+Source: `chunk-hrhfcbdv.js` · offset 178440011 · sha256 `5e3e19fd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-filesystem-disabled
 
@@ -904,7 +962,7 @@ macOS and Linux/WSL only: skip filesystem isolation entirely while keeping netwo
 
 ### sandbox.credentials
 
-Source: `chunk-dq5fzxjx.js` · offset 177677044 · sha256 `b0ae994e…`
+Source: `chunk-hrhfcbdv.js` · offset 178457488 · sha256 `b12a68bd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials
 
@@ -914,7 +972,7 @@ No description in the schema.
 
 ### sandbox.credentials.files
 
-Source: `chunk-dq5fzxjx.js` · offset 177673495 · sha256 `6739e050…`
+Source: `chunk-hrhfcbdv.js` · offset 178453763 · sha256 `6739e050…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-files
 
@@ -926,7 +984,7 @@ Credential files or directories to protect. `deny` blocks reads inside the sandb
 
 ### sandbox.credentials.envVars
 
-Source: `chunk-dq5fzxjx.js` · offset 177673795 · sha256 `dc08d15c…`
+Source: `chunk-hrhfcbdv.js` · offset 178454063 · sha256 `dc08d15c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-envvars
 
@@ -938,7 +996,7 @@ Environment variables to protect. `deny` unsets the variable for sandboxed comma
 
 ### sandbox.credentials.allowPlaintextInject
 
-Source: `chunk-dq5fzxjx.js` · offset 177674018 · sha256 `c58c549b…`
+Source: `chunk-hrhfcbdv.js` · offset 178454286 · sha256 `c58c549b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-allowplaintextinject
 
@@ -952,7 +1010,7 @@ Allow sentinel→real substitution on the plain-HTTP proxy path. Defaults to fal
 
 ### sandbox.credentials.awsPairs
 
-Source: `chunk-dq5fzxjx.js` · offset 177674463 · sha256 `42ea324a…`
+Source: `chunk-hrhfcbdv.js` · offset 178454731 · sha256 `42ea324a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-awspairs
 
@@ -966,7 +1024,7 @@ Explicit groupings of masked env vars into AWS credential pairs for SigV4 re-sig
 
 ### sandbox.credentials.sigv4
 
-Source: `chunk-dq5fzxjx.js` · offset 177675498 · sha256 `86e53a5f…`
+Source: `chunk-hrhfcbdv.js` · offset 178455766 · sha256 `86e53a5f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-sigv4
 
@@ -980,7 +1038,7 @@ Policies for AWS SigV4 request shapes the proxy cannot re-sign (streaming, presi
 
 ### sandbox.credentials.sigv4.streaming
 
-Source: `chunk-dq5fzxjx.js` · offset 177672751 · sha256 `05b9cc61…`
+Source: `chunk-hrhfcbdv.js` · offset 178453019 · sha256 `05b9cc61…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-sigv4
 
@@ -994,7 +1052,7 @@ Policy for aws-chunked streaming uploads (x-amz-content-sha256: STREAMING-*): pe
 
 ### sandbox.credentials.sigv4.presigned
 
-Source: `chunk-dq5fzxjx.js` · offset 177673094 · sha256 `edaf4a52…`
+Source: `chunk-hrhfcbdv.js` · offset 178453362 · sha256 `edaf4a52…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-sigv4
 
@@ -1008,7 +1066,7 @@ Policy for presigned URLs (X-Amz-Algorithm/X-Amz-Signature in the query, no Auth
 
 ### sandbox.credentials.sigv4.sigv4a
 
-Source: `chunk-dq5fzxjx.js` · offset 177673299 · sha256 `a88a955f…`
+Source: `chunk-hrhfcbdv.js` · offset 178453567 · sha256 `a88a955f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-credentials-sigv4
 
@@ -1022,39 +1080,55 @@ Policy for SigV4A (AWS4-ECDSA-P256-SHA256) asymmetric signatures: there is no sh
 
 ### sandbox.ignoreViolations
 
-Source: `chunk-dq5fzxjx.js` · offset 177677061 · sha256 `4262880b…`
+Source: `chunk-hrhfcbdv.js` · offset 178457557 · sha256 `4fbd5748…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-ignoreviolations
 
 Type: `record<string, array of string>`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `yt` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored."`
+
+~~~~~~text
+Sandbox violations to leave unreported: a map of command patterns ("*" for every command) to the filesystem paths whose violations are ignored. Merged across settings sources. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored.
+~~~~~~
 
 ### sandbox.enableWeakerNestedSandbox
 
-Source: `chunk-dq5fzxjx.js` · offset 177677104 · sha256 `d325ca83…`
+Source: `chunk-hrhfcbdv.js` · offset 178457790 · sha256 `11a3b0f1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-enableweakernestedsandbox
 
 Type: `boolean`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `sn` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies)."`
+
+~~~~~~text
+Linux only: Run without the fresh /proc mount, for hosts such as unprivileged Docker containers that cannot create one. **Reduces security** — the host /proc stays readable by sandboxed commands. Default: false. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies).
+~~~~~~
 
 ### sandbox.enableWeakerNetworkIsolation
 
-Source: `chunk-dq5fzxjx.js` · offset 177677198 · sha256 `3236d939…`
+Source: `chunk-hrhfcbdv.js` · offset 178458070 · sha256 `8644cef2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-enableweakernetworkisolation
 
 Type: `boolean`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `sn` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies)."`
+
 ~~~~~~text
-macOS only: Allow access to com.apple.trustd.agent in the sandbox. Needed for Go-based CLI tools (gh, gcloud, terraform, etc.) to verify TLS certificates when using httpProxyPort with a MITM proxy and custom CA. **Reduces security** — opens a potential data exfiltration vector through the trustd service. Default: false
+macOS only: Allow access to com.apple.trustd.agent in the sandbox. Needed for Go-based CLI tools (gh, gcloud, terraform, etc.) to verify TLS certificates when using httpProxyPort with a MITM proxy and custom CA. **Reduces security** — opens a potential data exfiltration vector through the trustd service. Default: false. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, true from project settings (.claude/settings.json and .claude/settings.local.json) is ignored (false there still applies).
 ~~~~~~
 
 ### sandbox.allowAppleEvents
 
-Source: `chunk-dq5fzxjx.js` · offset 177677571 · sha256 `d22920a9…`
+Source: `chunk-hrhfcbdv.js` · offset 178458448 · sha256 `d22920a9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-allowappleevents
 
@@ -1068,17 +1142,23 @@ macOS only: Allow sandboxed commands to send Apple Events (and look up the apple
 
 ### sandbox.excludedCommands
 
-Source: `chunk-dq5fzxjx.js` · offset 177678167 · sha256 `27e67670…`
+Source: `chunk-hrhfcbdv.js` · offset 178459088 · sha256 `7c16e135…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-excludedcommands
 
 Type: `array of string`
 
-No description in the schema.
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+Interpolated constants (resolved from code): `yt` = `"When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored."`
+
+~~~~~~text
+Command patterns (Bash permission-rule syntax) that always run outside the sandbox. A convenience, not a security boundary: excluded commands still go through the permission flow. Merged across settings sources. When managed settings or a --settings file set allowUnsandboxedCommands: false, or managed settings set network.allowManagedDomainsOnly: true, values from project settings (.claude/settings.json and .claude/settings.local.json) are ignored.
+~~~~~~
 
 ### sandbox.ripgrep
 
-Source: `chunk-dq5fzxjx.js` · offset 177678498 · sha256 `9ef42d4b…`
+Source: `chunk-hrhfcbdv.js` · offset 178459375 · sha256 `9ef42d4b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-ripgrep
 
@@ -1092,7 +1172,7 @@ Custom ripgrep configuration for bundled ripgrep support. Only honored from user
 
 ### sandbox.ripgrep.command
 
-Source: `chunk-dq5fzxjx.js` · offset 177678441 · sha256 `81b46fda…`
+Source: `chunk-hrhfcbdv.js` · offset 178459318 · sha256 `81b46fda…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-ripgrep
 
@@ -1102,7 +1182,7 @@ No description in the schema.
 
 ### sandbox.ripgrep.args
 
-Source: `chunk-dq5fzxjx.js` · offset 177678453 · sha256 `02737476…`
+Source: `chunk-hrhfcbdv.js` · offset 178459330 · sha256 `8b7fc227…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-ripgrep
 
@@ -1112,7 +1192,7 @@ No description in the schema.
 
 ### sandbox.bwrapPath
 
-Source: `chunk-dq5fzxjx.js` · offset 177678820 · sha256 `833ad201…`
+Source: `chunk-hrhfcbdv.js` · offset 178459697 · sha256 `833ad201…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-bwrappath
 
@@ -1128,7 +1208,7 @@ Linux/WSL only: Absolute path to the bwrap (bubblewrap) binary. Overrides auto-d
 
 ### sandbox.socatPath
 
-Source: `chunk-dq5fzxjx.js` · offset 177679068 · sha256 `d91afdc2…`
+Source: `chunk-hrhfcbdv.js` · offset 178459945 · sha256 `d91afdc2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sandbox-socatpath
 
@@ -1146,7 +1226,7 @@ Linux/WSL only: Absolute path to the socat binary used for the sandbox network p
 
 ### skillListingMaxDescChars
 
-Source: `chunk-dq5fzxjx.js` · offset 177859220 · sha256 `23b90c26…`
+Source: `chunk-hrhfcbdv.js` · offset 178642985 · sha256 `23b90c26…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#skilllistingmaxdescchars
 
@@ -1158,7 +1238,7 @@ Per-skill description character cap in the skill listing sent to Claude (default
 
 ### skillListingBudgetFraction
 
-Source: `chunk-dq5fzxjx.js` · offset 177859474 · sha256 `4a5df7a7…`
+Source: `chunk-hrhfcbdv.js` · offset 178643239 · sha256 `4a5df7a7…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#skilllistingbudgetfraction
 
@@ -1170,7 +1250,7 @@ Fraction of the context window (in characters) reserved for the skill listing se
 
 ### env
 
-Source: `chunk-dq5fzxjx.js` · offset 177860321 · sha256 `e2a83ceb…`
+Source: `chunk-hrhfcbdv.js` · offset 178644086 · sha256 `e2a83ceb…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#env
 
@@ -1182,7 +1262,7 @@ Environment variables to set for Claude Code sessions
 
 ### bashOutputMaxChars
 
-Source: `chunk-dq5fzxjx.js` · offset 177875837 · sha256 `d1501e21…`
+Source: `chunk-hrhfcbdv.js` · offset 178660166 · sha256 `d1501e21…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#bashoutputmaxchars
 
@@ -1196,7 +1276,7 @@ How many characters of a successful Bash or PowerShell command's output Claude r
 
 ### taskOutputMaxChars
 
-Source: `chunk-dq5fzxjx.js` · offset 177876249 · sha256 `f0685955…`
+Source: `chunk-hrhfcbdv.js` · offset 178660578 · sha256 `f0685955…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#taskoutputmaxchars
 
@@ -1210,7 +1290,7 @@ Deprecated: no longer has any effect (the TaskOutput tool was removed). Read a b
 
 ### autoCompactWindow
 
-Source: `chunk-dq5fzxjx.js` · offset 177899701 · sha256 `821940b6…`
+Source: `chunk-hrhfcbdv.js` · offset 178687056 · sha256 `821940b6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#autocompactwindow
 
@@ -1224,7 +1304,7 @@ Auto-compact window size
 
 ### plansDirectory
 
-Source: `chunk-dq5fzxjx.js` · offset 177904079 · sha256 `9046b030…`
+Source: `chunk-hrhfcbdv.js` · offset 178691434 · sha256 `9046b030…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#plansdirectory
 
@@ -1236,7 +1316,7 @@ Custom directory for plan files, relative to project root. If not set, defaults 
 
 ### autoMemoryEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177907986 · sha256 `fb553529…`
+Source: `chunk-hrhfcbdv.js` · offset 178695341 · sha256 `fb553529…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automemoryenabled
 
@@ -1248,7 +1328,7 @@ Enable auto-memory for this project. When false, Claude will not read from or wr
 
 ### autoMemoryDirectory
 
-Source: `chunk-dq5fzxjx.js` · offset 177908151 · sha256 `e468d60b…`
+Source: `chunk-hrhfcbdv.js` · offset 178695506 · sha256 `e468d60b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#automemorydirectory
 
@@ -1260,7 +1340,7 @@ Custom directory path for auto-memory storage. Supports ~/ prefix for home direc
 
 ### claudeMd
 
-Source: `chunk-dq5fzxjx.js` · offset 177910543 · sha256 `c462ee36…`
+Source: `chunk-hrhfcbdv.js` · offset 178697898 · sha256 `c462ee36…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#claudemd
 
@@ -1274,7 +1354,7 @@ CLAUDE.md-style instructions injected as organization-managed memory. Only honor
 
 ### claudeMdExcludes
 
-Source: `chunk-dq5fzxjx.js` · offset 177910707 · sha256 `2cbace6f…`
+Source: `chunk-hrhfcbdv.js` · offset 178698062 · sha256 `2cbace6f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#claudemdexcludes
 
@@ -1288,7 +1368,7 @@ Glob patterns or absolute paths of CLAUDE.md files to exclude from loading. Patt
 
 ### autoCompactEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177912343 · sha256 `50e4bddc…`
+Source: `chunk-hrhfcbdv.js` · offset 178699698 · sha256 `50e4bddc…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#autocompactenabled
 
@@ -1300,7 +1380,7 @@ Automatically compact conversation when context fills
 
 ### fileCheckpointingEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177913293 · sha256 `c06d6b21…`
+Source: `chunk-hrhfcbdv.js` · offset 178700648 · sha256 `c06d6b21…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#filecheckpointingenabled
 
@@ -1314,7 +1394,7 @@ Snapshot files before edits so /rewind can restore them
 
 ### fileSuggestion
 
-Source: `chunk-dq5fzxjx.js` · offset 177854177 · sha256 `2ed587f2…`
+Source: `chunk-hrhfcbdv.js` · offset 178637942 · sha256 `2ed587f2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#filesuggestion
 
@@ -1326,7 +1406,7 @@ Custom file suggestion configuration for @ mentions
 
 ### fileSuggestion.type
 
-Source: `chunk-dq5fzxjx.js` · offset 177854125 · sha256 `15a4934d…`
+Source: `chunk-hrhfcbdv.js` · offset 178637890 · sha256 `83b40bbd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#filesuggestion
 
@@ -1336,7 +1416,7 @@ No description in the schema.
 
 ### fileSuggestion.command
 
-Source: `chunk-dq5fzxjx.js` · offset 177854143 · sha256 `81b46fda…`
+Source: `chunk-hrhfcbdv.js` · offset 178637908 · sha256 `81b46fda…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#filesuggestion
 
@@ -1346,7 +1426,7 @@ No description in the schema.
 
 ### respectGitignore
 
-Source: `chunk-dq5fzxjx.js` · offset 177854277 · sha256 `2d8b86f1…`
+Source: `chunk-hrhfcbdv.js` · offset 178638042 · sha256 `2d8b86f1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#respectgitignore
 
@@ -1358,7 +1438,7 @@ Whether file picker should respect .gitignore files (default: true). Note: .igno
 
 ### defaultShell
 
-Source: `chunk-dq5fzxjx.js` · offset 177875291 · sha256 `231f7f27…`
+Source: `chunk-hrhfcbdv.js` · offset 178659620 · sha256 `231f7f27…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#defaultshell
 
@@ -1370,7 +1450,7 @@ Default shell for input-box ! commands. Defaults to 'bash' on all platforms (no 
 
 ### bashEditDiffEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177875442 · sha256 `f7cf5eb8…`
+Source: `chunk-hrhfcbdv.js` · offset 178659771 · sha256 `f7cf5eb8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#basheditdiffenabled
 
@@ -1384,7 +1464,7 @@ Whether the Bash tool shows a diff of the files a Bash command changed (PostTool
 
 ### respondToBashCommands
 
-Source: `chunk-dq5fzxjx.js` · offset 177876439 · sha256 `0f25f6d8…`
+Source: `chunk-hrhfcbdv.js` · offset 178660768 · sha256 `0f25f6d8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#respondtobashcommands
 
@@ -1396,7 +1476,7 @@ Whether Claude responds after an input-box ! bash command runs. Set to false to 
 
 ### statusLine
 
-Source: `chunk-dq5fzxjx.js` · offset 177881406 · sha256 `22fb1f6a…`
+Source: `chunk-hrhfcbdv.js` · offset 178665735 · sha256 `22fb1f6a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#statusline
 
@@ -1408,7 +1488,7 @@ Custom status line display configuration
 
 ### statusLine.type
 
-Source: `chunk-dq5fzxjx.js` · offset 177880993 · sha256 `15a4934d…`
+Source: `chunk-hrhfcbdv.js` · offset 178665322 · sha256 `83b40bbd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#statusline
 
@@ -1418,7 +1498,7 @@ No description in the schema.
 
 ### statusLine.command
 
-Source: `chunk-dq5fzxjx.js` · offset 177881011 · sha256 `81b46fda…`
+Source: `chunk-hrhfcbdv.js` · offset 178665340 · sha256 `81b46fda…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#statusline
 
@@ -1428,7 +1508,7 @@ No description in the schema.
 
 ### statusLine.padding
 
-Source: `chunk-dq5fzxjx.js` · offset 177881023 · sha256 `40242b41…`
+Source: `chunk-hrhfcbdv.js` · offset 178665352 · sha256 `871c467c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#statusline
 
@@ -1438,7 +1518,7 @@ No description in the schema.
 
 ### statusLine.refreshInterval
 
-Source: `chunk-dq5fzxjx.js` · offset 177881107 · sha256 `83662cbe…`
+Source: `chunk-hrhfcbdv.js` · offset 178665436 · sha256 `83662cbe…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#statusline
 
@@ -1452,7 +1532,7 @@ Re-run the status line command every N seconds in addition to event-driven updat
 
 ### statusLine.hideVimModeIndicator
 
-Source: `chunk-dq5fzxjx.js` · offset 177881238 · sha256 `a951aec2…`
+Source: `chunk-hrhfcbdv.js` · offset 178665567 · sha256 `a951aec2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#statusline
 
@@ -1464,7 +1544,7 @@ Hide the built-in `-- INSERT --` / `-- VISUAL --` indicator below the prompt. Us
 
 ### footerLinksRegexes
 
-Source: `chunk-dq5fzxjx.js` · offset 177881865 · sha256 `e1fb6c5d…`
+Source: `chunk-hrhfcbdv.js` · offset 178666194 · sha256 `e1fb6c5d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#footerlinksregexes
 
@@ -1480,7 +1560,7 @@ Extra clickable footer badges that appear when a regex matches turn output (tool
 
 ### subagentStatusLine
 
-Source: `chunk-dq5fzxjx.js` · offset 177882342 · sha256 `a4281cb6…`
+Source: `chunk-hrhfcbdv.js` · offset 178666671 · sha256 `a4281cb6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#subagentstatusline
 
@@ -1492,7 +1572,7 @@ Custom per-subagent status line shown in the agent panel; receives row context a
 
 ### subagentStatusLine.type
 
-Source: `chunk-dq5fzxjx.js` · offset 177882290 · sha256 `15a4934d…`
+Source: `chunk-hrhfcbdv.js` · offset 178666619 · sha256 `83b40bbd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#subagentstatusline
 
@@ -1502,7 +1582,7 @@ No description in the schema.
 
 ### subagentStatusLine.command
 
-Source: `chunk-dq5fzxjx.js` · offset 177882308 · sha256 `81b46fda…`
+Source: `chunk-hrhfcbdv.js` · offset 178666637 · sha256 `81b46fda…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#subagentstatusline
 
@@ -1512,7 +1592,7 @@ No description in the schema.
 
 ### viewMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177893086 · sha256 `c38dfea5…`
+Source: `chunk-hrhfcbdv.js` · offset 178680441 · sha256 `c38dfea5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#viewmode
 
@@ -1526,7 +1606,7 @@ Default transcript view mode on startup
 
 ### spinnerTipsEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177893952 · sha256 `53045ded…`
+Source: `chunk-hrhfcbdv.js` · offset 178681307 · sha256 `53045ded…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnertipsenabled
 
@@ -1538,7 +1618,7 @@ Whether to show tips in the spinner
 
 ### spinnerVerbs
 
-Source: `chunk-dq5fzxjx.js` · offset 177894075 · sha256 `4797cdf9…`
+Source: `chunk-hrhfcbdv.js` · offset 178681430 · sha256 `4797cdf9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnerverbs
 
@@ -1550,7 +1630,7 @@ Customize spinner verbs. mode: "append" adds verbs to defaults, "replace" uses o
 
 ### spinnerVerbs.mode
 
-Source: `chunk-dq5fzxjx.js` · offset 177894011 · sha256 `ac3c67e0…`
+Source: `chunk-hrhfcbdv.js` · offset 178681366 · sha256 `83808364…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnerverbs
 
@@ -1560,7 +1640,7 @@ No description in the schema.
 
 ### spinnerVerbs.verbs
 
-Source: `chunk-dq5fzxjx.js` · offset 177894040 · sha256 `51b4e72e…`
+Source: `chunk-hrhfcbdv.js` · offset 178681395 · sha256 `218e6e80…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnerverbs
 
@@ -1570,7 +1650,7 @@ No description in the schema.
 
 ### spinnerTipsOverride
 
-Source: `chunk-dq5fzxjx.js` · offset 177894685 · sha256 `1b3661af…`
+Source: `chunk-hrhfcbdv.js` · offset 178682040 · sha256 `1b3661af…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnertipsoverride
 
@@ -1584,7 +1664,7 @@ Add your organization's own tips to the spinner tip rotation. tips: strings or {
 
 ### spinnerTipsOverride.excludeDefault
 
-Source: `chunk-dq5fzxjx.js` · offset 177894201 · sha256 `5f9f96cf…`
+Source: `chunk-hrhfcbdv.js` · offset 178681556 · sha256 `8837a760…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnertipsoverride
 
@@ -1596,7 +1676,7 @@ No description in the schema.
 
 ### spinnerTipsOverride.tips
 
-Source: `chunk-dq5fzxjx.js` · offset 177894245 · sha256 `443fea94…`
+Source: `chunk-hrhfcbdv.js` · offset 178681600 · sha256 `196b3759…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnertipsoverride
 
@@ -1606,7 +1686,7 @@ No description in the schema.
 
 ### spinnerTipsOverride.tipsFile
 
-Source: `chunk-dq5fzxjx.js` · offset 177894314 · sha256 `d4b3adbf…`
+Source: `chunk-hrhfcbdv.js` · offset 178681669 · sha256 `d4b3adbf…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnertipsoverride
 
@@ -1622,7 +1702,7 @@ Absolute or ~/ local path to a JSON file holding an array of tips (same shapes a
 
 ### spinnerTipsOverride.label
 
-Source: `chunk-dq5fzxjx.js` · offset 177894571 · sha256 `92b3889d…`
+Source: `chunk-hrhfcbdv.js` · offset 178681926 · sha256 `92b3889d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spinnertipsoverride
 
@@ -1636,7 +1716,7 @@ Prefix shown before your tips in the spinner (default "Tip")
 
 ### syntaxHighlightingDisabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177895008 · sha256 `ec334ebe…`
+Source: `chunk-hrhfcbdv.js` · offset 178682363 · sha256 `ec334ebe…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#syntaxhighlightingdisabled
 
@@ -1648,7 +1728,7 @@ Whether to disable syntax highlighting in diffs
 
 ### spellcheck
 
-Source: `chunk-dq5fzxjx.js` · offset 177896319 · sha256 `77f9e49a…`
+Source: `chunk-hrhfcbdv.js` · offset 178683674 · sha256 `33f7ca36…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spellcheck
 
@@ -1658,7 +1738,7 @@ Invalid values are dropped rather than failing the whole file (`.catch`, from co
 
 The description names which settings sources honor this key (per description; not independently verified in code).
 
-Interpolated constants (resolved from code): `oEe` = `["aspell","hunspell","ispell"]`
+Interpolated constants (resolved from code): `v0e` = `["aspell","hunspell","ispell"]`
 
 ~~~~~~text
 Underline misspelled words in the prompt input as you type, using an installed aspell, hunspell or ispell (off unless "enabled" is true; does nothing if none is installed). Read from user, flag and managed settings only (the whole block from the highest-precedence of those applies); ignored in project .claude/settings.json and .claude/settings.local.json.
@@ -1666,7 +1746,7 @@ Underline misspelled words in the prompt input as you type, using an installed a
 
 ### spellcheck.enabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177895544 · sha256 `7cfd066f…`
+Source: `chunk-hrhfcbdv.js` · offset 178682899 · sha256 `7cfd066f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spellcheck
 
@@ -1680,7 +1760,7 @@ Turn on spell checking of the prompt input (default: false)
 
 ### spellcheck.checker
 
-Source: `chunk-dq5fzxjx.js` · offset 177895653 · sha256 `6718b673…`
+Source: `chunk-hrhfcbdv.js` · offset 178683008 · sha256 `64fe25ae…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spellcheck
 
@@ -1688,7 +1768,7 @@ Type: `string`
 
 Invalid values are dropped rather than failing the whole file (`.catch`, from code).
 
-Interpolated constants (resolved from code): `oEe` = `["aspell","hunspell","ispell"]`
+Interpolated constants (resolved from code): `v0e` = `["aspell","hunspell","ispell"]`
 
 ~~~~~~text
 Which spell checker to run: "aspell", "hunspell", "ispell", or "auto" (default) for the first of those found on PATH
@@ -1696,7 +1776,7 @@ Which spell checker to run: "aspell", "hunspell", "ispell", or "auto" (default) 
 
 ### spellcheck.language
 
-Source: `chunk-dq5fzxjx.js` · offset 177895826 · sha256 `22b81ece…`
+Source: `chunk-hrhfcbdv.js` · offset 178683181 · sha256 `22b81ece…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spellcheck
 
@@ -1710,7 +1790,7 @@ Dictionary to use, passed to the checker as-is (aspell --lang, hunspell -d, ispe
 
 ### spellcheck.color
 
-Source: `chunk-dq5fzxjx.js` · offset 177896073 · sha256 `d9ae7931…`
+Source: `chunk-hrhfcbdv.js` · offset 178683428 · sha256 `d9ae7931…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#spellcheck
 
@@ -1724,7 +1804,7 @@ Color of misspelled words (they are also underlined): a terminal color name such
 
 ### terminalTitleFromRename
 
-Source: `chunk-dq5fzxjx.js` · offset 177896752 · sha256 `8657af13…`
+Source: `chunk-hrhfcbdv.js` · offset 178684107 · sha256 `8657af13…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#terminaltitlefromrename
 
@@ -1736,7 +1816,7 @@ Whether /rename updates the terminal tab title (defaults to true). Set to false 
 
 ### promptSuggestionEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177900142 · sha256 `267f3af9…`
+Source: `chunk-hrhfcbdv.js` · offset 178687497 · sha256 `267f3af9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#promptsuggestionenabled
 
@@ -1748,7 +1828,7 @@ When false, prompt suggestions are disabled. When absent or true, prompt suggest
 
 ### emojiCompletionEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177900294 · sha256 `23b6afbf…`
+Source: `chunk-hrhfcbdv.js` · offset 178687649 · sha256 `23b6afbf…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#emojicompletionenabled
 
@@ -1760,7 +1840,7 @@ When false, the :emoji: shortcode typeahead (the suggestion popup and the :name:
 
 ### showClearContextOnPlanAccept
 
-Source: `chunk-dq5fzxjx.js` · offset 177900754 · sha256 `5d2c2aa8…`
+Source: `chunk-hrhfcbdv.js` · offset 178688109 · sha256 `5d2c2aa8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#showclearcontextonplanaccept
 
@@ -1772,7 +1852,7 @@ When true, the plan-approval dialog offers a "clear context" option. Defaults to
 
 ### askUserQuestionTimeout
 
-Source: `chunk-dq5fzxjx.js` · offset 177900936 · sha256 `9dc180f2…`
+Source: `chunk-hrhfcbdv.js` · offset 178688291 · sha256 `9dc180f2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#askuserquestiontimeout
 
@@ -1786,7 +1866,7 @@ Idle time before Claude's questions auto-continue with any answers selected so f
 
 ### dialogExpiry
 
-Source: `chunk-dq5fzxjx.js` · offset 177901194 · sha256 `95ca1f19…`
+Source: `chunk-hrhfcbdv.js` · offset 178688549 · sha256 `95ca1f19…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#dialogexpiry
 
@@ -1800,7 +1880,7 @@ Max time a permission/user dialog forwarded to a remote client stays parked awai
 
 ### companyAnnouncements
 
-Source: `chunk-dq5fzxjx.js` · offset 177902515 · sha256 `c4831eb3…`
+Source: `chunk-hrhfcbdv.js` · offset 178689870 · sha256 `c4831eb3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#companyannouncements
 
@@ -1812,7 +1892,7 @@ Company announcements to display at startup (one will be randomly selected if mu
 
 ### tui
 
-Source: `chunk-dq5fzxjx.js` · offset 177904238 · sha256 `801d3f8a…`
+Source: `chunk-hrhfcbdv.js` · offset 178691593 · sha256 `801d3f8a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#tui
 
@@ -1824,7 +1904,7 @@ Terminal UI renderer. "fullscreen" uses the flicker-free alt-screen renderer wit
 
 ### voice
 
-Source: `chunk-dq5fzxjx.js` · offset 177904723 · sha256 `88ae2b41…`
+Source: `chunk-hrhfcbdv.js` · offset 178692078 · sha256 `88ae2b41…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#voice
 
@@ -1836,7 +1916,7 @@ Voice mode settings (hold-to-talk / tap-to-toggle dictation)
 
 ### voice.enabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177904456 · sha256 `1234856b…`
+Source: `chunk-hrhfcbdv.js` · offset 178691811 · sha256 `8cc937dc…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#voice
 
@@ -1846,7 +1926,7 @@ No description in the schema.
 
 ### voice.mode
 
-Source: `chunk-dq5fzxjx.js` · offset 177904522 · sha256 `f41fea13…`
+Source: `chunk-hrhfcbdv.js` · offset 178691877 · sha256 `f41fea13…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#voice
 
@@ -1858,7 +1938,7 @@ Type: `"hold" | "tap"`
 
 ### voice.autoSubmit
 
-Source: `chunk-dq5fzxjx.js` · offset 177904633 · sha256 `066760b5…`
+Source: `chunk-hrhfcbdv.js` · offset 178691988 · sha256 `066760b5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#voice
 
@@ -1870,7 +1950,7 @@ Submit the prompt when hold-to-talk is released (hold mode only)
 
 ### prefersReducedMotion
 
-Source: `chunk-dq5fzxjx.js` · offset 177905443 · sha256 `a590b588…`
+Source: `chunk-hrhfcbdv.js` · offset 178692798 · sha256 `a590b588…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#prefersreducedmotion
 
@@ -1882,7 +1962,7 @@ Reduce or disable animations for accessibility (spinner shimmer, flash effects, 
 
 ### timeFormat
 
-Source: `chunk-dq5fzxjx.js` · offset 177905584 · sha256 `6ad5671c…`
+Source: `chunk-hrhfcbdv.js` · offset 178692939 · sha256 `6ad5671c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#timeformat
 
@@ -1894,7 +1974,7 @@ Clock format for times shown in the UI: "auto" (default, follows the locale), "1
 
 ### timeZone
 
-Source: `chunk-dq5fzxjx.js` · offset 177906012 · sha256 `22e1c4d6…`
+Source: `chunk-hrhfcbdv.js` · offset 178693367 · sha256 `22e1c4d6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#timezone
 
@@ -1906,7 +1986,7 @@ IANA time zone for times shown in the UI, e.g. "UTC" or "Europe/Dublin". Default
 
 ### theme
 
-Source: `chunk-dq5fzxjx.js` · offset 177911489 · sha256 `e9de4f4b…`
+Source: `chunk-hrhfcbdv.js` · offset 178698844 · sha256 `e9de4f4b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#theme
 
@@ -1920,7 +2000,7 @@ Color theme for the UI
 
 ### editorMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177911571 · sha256 `e6ed2426…`
+Source: `chunk-hrhfcbdv.js` · offset 178698926 · sha256 `e6ed2426…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#editormode
 
@@ -1934,7 +2014,7 @@ Key binding mode for the prompt input
 
 ### keybindingFlavor
 
-Source: `chunk-dq5fzxjx.js` · offset 177911693 · sha256 `42f925f2…`
+Source: `chunk-hrhfcbdv.js` · offset 178699048 · sha256 `42f925f2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#keybindingflavor
 
@@ -1948,7 +2028,7 @@ Deprecated: no longer has any effect. The prompt's word-editing keys always foll
 
 ### vimInsertModeRemaps
 
-Source: `chunk-dq5fzxjx.js` · offset 177911879 · sha256 `3b86c736…`
+Source: `chunk-hrhfcbdv.js` · offset 178699234 · sha256 `3b86c736…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#viminsertmoderemaps
 
@@ -1962,7 +2042,7 @@ Vim INSERT-mode key-sequence remaps, e.g. {"jj": "<Esc>"}. Each key is exactly t
 
 ### verbose
 
-Source: `chunk-dq5fzxjx.js` · offset 177912137 · sha256 `855e32a5…`
+Source: `chunk-hrhfcbdv.js` · offset 178699492 · sha256 `855e32a5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#verbose
 
@@ -1974,7 +2054,7 @@ Show full tool output instead of truncated summaries
 
 ### autoContinueAtUsageLimit
 
-Source: `chunk-dq5fzxjx.js` · offset 177912808 · sha256 `9b2d2c0f…`
+Source: `chunk-hrhfcbdv.js` · offset 178700163 · sha256 `9b2d2c0f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#autocontinueatusagelimit
 
@@ -1986,7 +2066,7 @@ When a claude.ai usage limit stops your session, wait for the limit to reset and
 
 ### autoScrollEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177913035 · sha256 `9b9385f0…`
+Source: `chunk-hrhfcbdv.js` · offset 178700390 · sha256 `9b9385f0…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#autoscrollenabled
 
@@ -1998,7 +2078,7 @@ Auto-scroll the conversation view to bottom (fullscreen mode only)
 
 ### wheelScrollAccelerationEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177913164 · sha256 `ac3a4cd6…`
+Source: `chunk-hrhfcbdv.js` · offset 178700519 · sha256 `ac3a4cd6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#wheelscrollaccelerationenabled
 
@@ -2010,7 +2090,7 @@ Ramp mouse-wheel scroll speed during fast scrolls (fullscreen mode only)
 
 ### showTurnDuration
 
-Source: `chunk-dq5fzxjx.js` · offset 177913397 · sha256 `16b4adf0…`
+Source: `chunk-hrhfcbdv.js` · offset 178700752 · sha256 `16b4adf0…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#showturnduration
 
@@ -2022,7 +2102,7 @@ Show "Cooked for Nm Ns" after each assistant turn
 
 ### terminalProgressBarEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177913599 · sha256 `5168489d…`
+Source: `chunk-hrhfcbdv.js` · offset 178700954 · sha256 `5168489d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#terminalprogressbarenabled
 
@@ -2034,7 +2114,7 @@ Emit OSC 9;4 progress sequences during long operations
 
 ### voiceEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177823019 · sha256 `fd668fb7…`
+Source: `chunk-hrhfcbdv.js` · offset 178606766 · sha256 `fd668fb7…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#voiceenabled
 
@@ -2048,7 +2128,7 @@ Enable voice mode (hold-to-talk dictation)
 
 ### axScreenReader
 
-Source: `chunk-dq5fzxjx.js` · offset 177823339 · sha256 `dc99d4a9…`
+Source: `chunk-hrhfcbdv.js` · offset 178607086 · sha256 `dc99d4a9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#axscreenreader
 
@@ -2064,7 +2144,7 @@ Render screen-reader friendly output (flat text, no decorative borders or animat
 
 ### attribution
 
-Source: `chunk-dq5fzxjx.js` · offset 177861377 · sha256 `0236a5e6…`
+Source: `chunk-hrhfcbdv.js` · offset 178645142 · sha256 `0236a5e6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#attribution
 
@@ -2076,7 +2156,7 @@ Customize attribution text for commits and PRs. Each field defaults to the stand
 
 ### attribution.commit
 
-Source: `chunk-dq5fzxjx.js` · offset 177860435 · sha256 `004d57fd…`
+Source: `chunk-hrhfcbdv.js` · offset 178644200 · sha256 `004d57fd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#attribution-commit
 
@@ -2088,7 +2168,7 @@ Attribution text for git commits, including any trailers. Empty string hides att
 
 ### attribution.pr
 
-Source: `chunk-dq5fzxjx.js` · offset 177860555 · sha256 `1750fa5a…`
+Source: `chunk-hrhfcbdv.js` · offset 178644320 · sha256 `1750fa5a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#attribution-pr
 
@@ -2100,7 +2180,7 @@ Attribution text for pull request descriptions. Empty string hides attribution.
 
 ### attribution.sessionUrl
 
-Source: `chunk-dq5fzxjx.js` · offset 177860673 · sha256 `eb104f4c…`
+Source: `chunk-hrhfcbdv.js` · offset 178644438 · sha256 `eb104f4c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#attribution-sessionurl
 
@@ -2112,7 +2192,7 @@ Whether to append the claude.ai session link to commits and PRs created from web
 
 ### includeCoAuthoredBy
 
-Source: `chunk-dq5fzxjx.js` · offset 177861817 · sha256 `b320c81a…`
+Source: `chunk-hrhfcbdv.js` · offset 178645582 · sha256 `b320c81a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#includecoauthoredby
 
@@ -2124,7 +2204,7 @@ Deprecated: Use attribution instead. Whether to include Claude's co-authored by 
 
 ### includeGitInstructions
 
-Source: `chunk-dq5fzxjx.js` · offset 177862013 · sha256 `2c4427c2…`
+Source: `chunk-hrhfcbdv.js` · offset 178645778 · sha256 `2c4427c2…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#includegitinstructions
 
@@ -2136,7 +2216,7 @@ Include built-in commit and PR workflow instructions in Claude's system prompt (
 
 ### prUrlTemplate
 
-Source: `chunk-dq5fzxjx.js` · offset 177881492 · sha256 `29f92b5d…`
+Source: `chunk-hrhfcbdv.js` · offset 178665821 · sha256 `29f92b5d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#prurltemplate
 
@@ -2150,7 +2230,7 @@ URL template for PR links in the footer link badges and inline messages. The det
 
 ### hooks
 
-Source: `chunk-dq5fzxjx.js` · offset 177871045 · sha256 `458efeab…`
+Source: `chunk-hrhfcbdv.js` · offset 178654810 · sha256 `458efeab…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#hooks
 
@@ -2162,7 +2242,7 @@ Custom commands to run before/after tool executions
 
 ### disableAllHooks
 
-Source: `chunk-dq5fzxjx.js` · offset 177872880 · sha256 `207a0015…`
+Source: `chunk-hrhfcbdv.js` · offset 178656645 · sha256 `207a0015…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableallhooks
 
@@ -2174,19 +2254,21 @@ Disable all hooks and statusLine execution: the hooks defined in settings files 
 
 ### disableWorkflows
 
-Source: `chunk-dq5fzxjx.js` · offset 177873568 · sha256 `7d602d4e…`
+Source: `chunk-hrhfcbdv.js` · offset 178657333 · sha256 `5748626d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableworkflows
 
 Type: `boolean`
 
+The description names which settings sources honor this key (per description; not independently verified in code).
+
 ~~~~~~text
-Disable the Workflows feature (also via CLAUDE_CODE_DISABLE_WORKFLOWS).
+Disable the Workflows feature. Code Review on pull requests and /ultrareview run in Anthropic's cloud and are not stopped by this setting, except an /ultrareview that has to restart partway through. A machine that runs a review itself refuses it when that machine's own administrator set this, or CLAUDE_CODE_DISABLE_WORKFLOWS in an `env` block, in its managed settings (MDM, the managed-settings file or an administrator's policy helper). Set in the environment before Claude Code starts, CLAUDE_CODE_DISABLE_WORKFLOWS disables Workflows. Beyond the cases above it stops a review only when the review's own session starts with it set.
 ~~~~~~
 
 ### enableWorkflows
 
-Source: `chunk-dq5fzxjx.js` · offset 177874084 · sha256 `92c09f0c…`
+Source: `chunk-hrhfcbdv.js` · offset 178658413 · sha256 `92c09f0c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#enableworkflows
 
@@ -2198,7 +2280,7 @@ Enable or disable the Workflows feature for this user. Unset = default by plan o
 
 ### workflowSizeGuideline
 
-Source: `chunk-dq5fzxjx.js` · offset 177874288 · sha256 `c982fbcb…`
+Source: `chunk-hrhfcbdv.js` · offset 178658617 · sha256 `c982fbcb…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#workflowsizeguideline
 
@@ -2212,7 +2294,7 @@ Advisory size guideline for the dynamic workflows Claude writes: "small" aims fo
 
 ### workflowKeywordTriggerEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177874834 · sha256 `12c33415…`
+Source: `chunk-hrhfcbdv.js` · offset 178659163 · sha256 `12c33415…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#workflowkeywordtriggerenabled
 
@@ -2224,7 +2306,7 @@ Enable the "ultracode" keyword trigger: including the keyword in a prompt opts t
 
 ### allowManagedHooksOnly
 
-Source: `chunk-dq5fzxjx.js` · offset 177876641 · sha256 `1c878bc1…`
+Source: `chunk-hrhfcbdv.js` · offset 178660970 · sha256 `1c878bc1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowmanagedhooksonly
 
@@ -2238,7 +2320,7 @@ When true (and set in managed settings), only hooks from managed settings and fr
 
 ### allowedHttpHookUrls
 
-Source: `chunk-dq5fzxjx.js` · offset 177876986 · sha256 `0ed874ec…`
+Source: `chunk-hrhfcbdv.js` · offset 178661315 · sha256 `0ed874ec…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowedhttphookurls
 
@@ -2252,7 +2334,7 @@ Allowlist of URL patterns that HTTP hooks may target. Supports * as a wildcard (
 
 ### httpHookAllowedEnvVars
 
-Source: `chunk-dq5fzxjx.js` · offset 177877372 · sha256 `61ea20ab…`
+Source: `chunk-hrhfcbdv.js` · offset 178661701 · sha256 `61ea20ab…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#httphookallowedenvvars
 
@@ -2268,7 +2350,7 @@ Allowlist of environment variable names HTTP hooks may interpolate into headers.
 
 ### syncClaudeAiSkills
 
-Source: `chunk-dq5fzxjx.js` · offset 177857113 · sha256 `6a8ea0f4…`
+Source: `chunk-hrhfcbdv.js` · offset 178640878 · sha256 `6a8ea0f4…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#syncclaudeaiskills
 
@@ -2282,7 +2364,7 @@ Set to false to turn off syncing of the skills you have enabled on claude.ai. In
 
 ### syncClaudeAiPlugins
 
-Source: `chunk-dq5fzxjx.js` · offset 177858125 · sha256 `6b1c37ec…`
+Source: `chunk-hrhfcbdv.js` · offset 178641890 · sha256 `6b1c37ec…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#syncclaudeaiplugins
 
@@ -2296,7 +2378,7 @@ Set to false to turn off syncing of the plugins you have enabled on claude.ai. I
 
 ### skillOverrides
 
-Source: `chunk-dq5fzxjx.js` · offset 177868803 · sha256 `ed922b4c…`
+Source: `chunk-hrhfcbdv.js` · offset 178652568 · sha256 `ed922b4c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#skilloverrides
 
@@ -2308,7 +2390,7 @@ Per-skill listing overrides keyed by skill name. "name-only" lists the skill wit
 
 ### disableBundledSkills
 
-Source: `chunk-dq5fzxjx.js` · offset 177869059 · sha256 `141a4963…`
+Source: `chunk-hrhfcbdv.js` · offset 178652824 · sha256 `141a4963…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disablebundledskills
 
@@ -2320,7 +2402,7 @@ Disable the skills and workflows that ship with Claude Code: bundled skills and 
 
 ### disableSkillShellExecution
 
-Source: `chunk-dq5fzxjx.js` · offset 177875057 · sha256 `0e295b2e…`
+Source: `chunk-hrhfcbdv.js` · offset 178659386 · sha256 `0e295b2e…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableskillshellexecution
 
@@ -2332,7 +2414,7 @@ Disable inline shell execution in skills and custom slash commands from user, pr
 
 ### strictPluginOnlyCustomization
 
-Source: `chunk-dq5fzxjx.js` · offset 177880439 · sha256 `4bc26ecd…`
+Source: `chunk-hrhfcbdv.js` · offset 178664768 · sha256 `4bc26ecd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#strictpluginonlycustomization
 
@@ -2348,7 +2430,7 @@ When set in managed settings, blocks non-plugin customization sources for the li
 
 ### enabledPlugins
 
-Source: `chunk-dq5fzxjx.js` · offset 177882493 · sha256 `5018add9…`
+Source: `chunk-hrhfcbdv.js` · offset 178666822 · sha256 `5018add9…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#enabledplugins
 
@@ -2362,7 +2444,7 @@ Enabled plugins using plugin-id@marketplace-id format. Example: { "formatter@ant
 
 ### extraKnownMarketplaces
 
-Source: `chunk-dq5fzxjx.js` · offset 177884398 · sha256 `09567e51…`
+Source: `chunk-hrhfcbdv.js` · offset 178668921 · sha256 `09567e51…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#extraknownmarketplaces
 
@@ -2374,7 +2456,7 @@ Additional marketplaces to make available for this repository. Typically used in
 
 ### strictKnownMarketplaces
 
-Source: `chunk-dq5fzxjx.js` · offset 177885117 · sha256 `c8864a51…`
+Source: `chunk-hrhfcbdv.js` · offset 178669640 · sha256 `c8864a51…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#strictknownmarketplaces
 
@@ -2388,7 +2470,7 @@ Enterprise strict list of allowed marketplace sources. When set in managed setti
 
 ### blockedMarketplaces
 
-Source: `chunk-dq5fzxjx.js` · offset 177886130 · sha256 `9a13226d…`
+Source: `chunk-hrhfcbdv.js` · offset 178670653 · sha256 `9a13226d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#blockedmarketplaces
 
@@ -2402,7 +2484,7 @@ Enterprise blocklist of marketplace sources. When set in managed settings, these
 
 ### disableCommandPluginSources
 
-Source: `chunk-dq5fzxjx.js` · offset 177886572 · sha256 `7e40300e…`
+Source: `chunk-hrhfcbdv.js` · offset 178671095 · sha256 `7e40300e…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disablecommandpluginsources
 
@@ -2416,7 +2498,7 @@ Controls the `command` plugin source, whose plugin directory is produced by runn
 
 ### pluginSuggestionMarketplaces
 
-Source: `chunk-dq5fzxjx.js` · offset 177887652 · sha256 `f6d2f263…`
+Source: `chunk-hrhfcbdv.js` · offset 178672175 · sha256 `f6d2f263…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#pluginsuggestionmarketplaces
 
@@ -2430,7 +2512,7 @@ Marketplace names whose plugins may surface as contextual install suggestions (r
 
 ### pluginConfigs
 
-Source: `chunk-dq5fzxjx.js` · offset 177903012 · sha256 `36867f49…`
+Source: `chunk-hrhfcbdv.js` · offset 178690367 · sha256 `36867f49…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#pluginconfigs
 
@@ -2442,7 +2524,7 @@ Per-plugin configuration including MCP server user configs, keyed by plugin ID (
 
 ### channelsEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177904831 · sha256 `305cb581…`
+Source: `chunk-hrhfcbdv.js` · offset 178692186 · sha256 `305cb581…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#channelsenabled
 
@@ -2456,7 +2538,7 @@ Managed-org opt-in for channel notifications (MCP servers with the claude/channe
 
 ### allowedChannelPlugins
 
-Source: `chunk-dq5fzxjx.js` · offset 177905161 · sha256 `5f859087…`
+Source: `chunk-hrhfcbdv.js` · offset 178692516 · sha256 `5f859087…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowedchannelplugins
 
@@ -2470,7 +2552,7 @@ Managed-org allowlist of channel plugins. When set, replaces the default Anthrop
 
 ### pluginTrustMessage
 
-Source: `chunk-dq5fzxjx.js` · offset 177911091 · sha256 `e004521b…`
+Source: `chunk-hrhfcbdv.js` · offset 178698446 · sha256 `e004521b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#plugintrustmessage
 
@@ -2486,7 +2568,7 @@ Custom message to append to the plugin trust warning shown before installation. 
 
 ### enableAllProjectMcpServers
 
-Source: `chunk-dq5fzxjx.js` · offset 177867984 · sha256 `d7a7f2d5…`
+Source: `chunk-hrhfcbdv.js` · offset 178651749 · sha256 `d7a7f2d5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#enableallprojectmcpservers
 
@@ -2498,7 +2580,7 @@ Whether to automatically approve all MCP servers in the project
 
 ### enabledMcpjsonServers
 
-Source: `chunk-dq5fzxjx.js` · offset 177868104 · sha256 `0d2d2b6d…`
+Source: `chunk-hrhfcbdv.js` · offset 178651869 · sha256 `0d2d2b6d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#enabledmcpjsonservers
 
@@ -2510,7 +2592,7 @@ List of approved MCP servers from .mcp.json
 
 ### disabledMcpjsonServers
 
-Source: `chunk-dq5fzxjx.js` · offset 177868205 · sha256 `e90fbad1…`
+Source: `chunk-hrhfcbdv.js` · offset 178651970 · sha256 `e90fbad1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disabledmcpjsonservers
 
@@ -2522,7 +2604,7 @@ List of rejected MCP servers from .mcp.json
 
 ### disableClaudeAiConnectors
 
-Source: `chunk-dq5fzxjx.js` · offset 177868306 · sha256 `550d19ac…`
+Source: `chunk-hrhfcbdv.js` · offset 178652071 · sha256 `550d19ac…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableclaudeaiconnectors
 
@@ -2536,7 +2618,7 @@ When true in any settings source, claude.ai MCP cloud connectors are not auto-fe
 
 ### managedMcpServers
 
-Source: `chunk-dq5fzxjx.js` · offset 177869566 · sha256 `93d6695b…`
+Source: `chunk-hrhfcbdv.js` · offset 178653331 · sha256 `93d6695b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#managedmcpservers
 
@@ -2550,7 +2632,7 @@ MCP servers the organization provides to every user, keyed by server name, each 
 
 ### allowedMcpServers
 
-Source: `chunk-dq5fzxjx.js` · offset 177870132 · sha256 `25daf553…`
+Source: `chunk-hrhfcbdv.js` · offset 178653897 · sha256 `25daf553…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowedmcpservers
 
@@ -2564,7 +2646,7 @@ Enterprise allowlist of the MCP servers users may use. Governs servers users add
 
 ### deniedMcpServers
 
-Source: `chunk-dq5fzxjx.js` · offset 177870768 · sha256 `329b3f06…`
+Source: `chunk-hrhfcbdv.js` · offset 178654533 · sha256 `329b3f06…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#deniedmcpservers
 
@@ -2576,7 +2658,7 @@ Enterprise denylist of MCP servers that are explicitly blocked. If a server is o
 
 ### allowManagedMcpServersOnly
 
-Source: `chunk-dq5fzxjx.js` · offset 177879362 · sha256 `c2d2e4f0…`
+Source: `chunk-hrhfcbdv.js` · offset 178663691 · sha256 `c2d2e4f0…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowmanagedmcpserversonly
 
@@ -2590,7 +2672,7 @@ When true (and set in managed settings), allowedMcpServers is only read from man
 
 ### allowAllClaudeAiMcps
 
-Source: `chunk-dq5fzxjx.js` · offset 177879688 · sha256 `615082df…`
+Source: `chunk-hrhfcbdv.js` · offset 178664017 · sha256 `615082df…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#allowallclaudeaimcps
 
@@ -2606,7 +2688,7 @@ When true (and set in managed settings), claude.ai cloud MCP connectors load alo
 
 ### processWrapper
 
-Source: `chunk-dq5fzxjx.js` · offset 177851587 · sha256 `ca9c3a93…`
+Source: `chunk-hrhfcbdv.js` · offset 178635352 · sha256 `ca9c3a93…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#processwrapper
 
@@ -2620,7 +2702,7 @@ Corporate launcher argv prefix for the background-agent supervisor, the sessions
 
 ### worktree
 
-Source: `chunk-dq5fzxjx.js` · offset 177872659 · sha256 `1fd1892e…`
+Source: `chunk-hrhfcbdv.js` · offset 178656424 · sha256 `1fd1892e…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#worktree
 
@@ -2632,7 +2714,7 @@ Git worktree configuration: the CLI --worktree flag, EnterWorktree and agent iso
 
 ### worktree.symlinkDirectories
 
-Source: `chunk-dq5fzxjx.js` · offset 177871162 · sha256 `d9edc894…`
+Source: `chunk-hrhfcbdv.js` · offset 178654927 · sha256 `d9edc894…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#worktree-symlinkdirectories
 
@@ -2644,7 +2726,7 @@ Directories to symlink from main repository to worktrees to avoid disk bloat. Mu
 
 ### worktree.sparsePaths
 
-Source: `chunk-dq5fzxjx.js` · offset 177871405 · sha256 `5ac7d45b…`
+Source: `chunk-hrhfcbdv.js` · offset 178655170 · sha256 `5ac7d45b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#worktree-sparsepaths
 
@@ -2656,7 +2738,7 @@ Directories to include when creating worktrees, via git sparse-checkout (cone mo
 
 ### worktree.baseRef
 
-Source: `chunk-dq5fzxjx.js` · offset 177871633 · sha256 `8541fdb5…`
+Source: `chunk-hrhfcbdv.js` · offset 178655398 · sha256 `8541fdb5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#worktree-baseref
 
@@ -2668,7 +2750,7 @@ Which ref new worktrees branch from. 'fresh' (default) branches from origin/<def
 
 ### worktree.bgIsolation
 
-Source: `chunk-dq5fzxjx.js` · offset 177871978 · sha256 `16ed89c5…`
+Source: `chunk-hrhfcbdv.js` · offset 178655743 · sha256 `16ed89c5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#worktree-bgisolation
 
@@ -2682,7 +2764,7 @@ Isolation mode for background sessions in this repo. 'worktree' (default) blocks
 
 ### worktree.location
 
-Source: `chunk-dq5fzxjx.js` · offset 177872232 · sha256 `4310dc23…`
+Source: `chunk-hrhfcbdv.js` · offset 178655997 · sha256 `4310dc23…`
 
 Status: undocumented
 
@@ -2698,7 +2780,7 @@ Directory under which Claude Code Desktop creates the worktrees of SSH sessions 
 
 ### disableAgentView
 
-Source: `chunk-dq5fzxjx.js` · offset 177873137 · sha256 `5d5595dd…`
+Source: `chunk-hrhfcbdv.js` · offset 178656902 · sha256 `5d5595dd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableagentview
 
@@ -2712,7 +2794,7 @@ Disable agent view (`claude agents`, `--bg`, /background, the on-demand daemon).
 
 ### agent
 
-Source: `chunk-dq5fzxjx.js` · offset 177901782 · sha256 `75f8e0d6…`
+Source: `chunk-hrhfcbdv.js` · offset 178689137 · sha256 `75f8e0d6…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#agent
 
@@ -2724,7 +2806,7 @@ Name of an agent (built-in or custom) to use for the main thread. Applies the ag
 
 ### teammateMode
 
-Source: `chunk-dq5fzxjx.js` · offset 177913803 · sha256 `a82b1c60…`
+Source: `chunk-hrhfcbdv.js` · offset 178701158 · sha256 `a82b1c60…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#teammatemode
 
@@ -2738,7 +2820,7 @@ How spawned teammates execute (tmux, iterm2, in-process, auto)
 
 ### isolatePeerMachines
 
-Source: `chunk-dq5fzxjx.js` · offset 177914812 · sha256 `7f9cb89c…`
+Source: `chunk-hrhfcbdv.js` · offset 178702167 · sha256 `7f9cb89c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#isolatepeermachines
 
@@ -2750,7 +2832,7 @@ Require explicit approval before SendMessage can reach a peer session on another
 
 ### crossSessionInbound
 
-Source: `chunk-dq5fzxjx.js` · offset 177915180 · sha256 `61634f0d…`
+Source: `chunk-hrhfcbdv.js` · offset 178702535 · sha256 `61634f0d…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#crosssessioninbound
 
@@ -2766,7 +2848,7 @@ Inbound cross-session peer messages (SendMessage from your other sessions): 'acc
 
 ### disableRemoteControl
 
-Source: `chunk-dq5fzxjx.js` · offset 177873353 · sha256 `747a4f4a…`
+Source: `chunk-hrhfcbdv.js` · offset 178657118 · sha256 `747a4f4a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableremotecontrol
 
@@ -2780,7 +2862,7 @@ Disable Remote Control (claude.ai/code, `claude remote-control`, `--remote-contr
 
 ### disableArtifact
 
-Source: `chunk-dq5fzxjx.js` · offset 177873687 · sha256 `b54a2e7b…`
+Source: `chunk-hrhfcbdv.js` · offset 178658016 · sha256 `b54a2e7b…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disableartifact
 
@@ -2792,7 +2874,7 @@ Deprecated: use enableArtifact: false. Still honored — true disables the Artif
 
 ### enableArtifact
 
-Source: `chunk-dq5fzxjx.js` · offset 177873844 · sha256 `da14c1e8…`
+Source: `chunk-hrhfcbdv.js` · offset 178658173 · sha256 `da14c1e8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#enableartifact
 
@@ -2806,7 +2888,7 @@ Turn the Artifact tool on or off. Off in any of managed, --settings, or user set
 
 ### sshConfigs
 
-Source: `chunk-dq5fzxjx.js` · offset 177910334 · sha256 `c34cd4d3…`
+Source: `chunk-hrhfcbdv.js` · offset 178697689 · sha256 `c34cd4d3…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#sshconfigs
 
@@ -2820,7 +2902,7 @@ SSH connection configurations for remote environments. Typically set in managed 
 
 ### preferredNotifChannel
 
-Source: `chunk-dq5fzxjx.js` · offset 177912259 · sha256 `688ed8c1…`
+Source: `chunk-hrhfcbdv.js` · offset 178699614 · sha256 `688ed8c1…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#preferrednotifchannel
 
@@ -2834,7 +2916,7 @@ Preferred OS notification channel
 
 ### remoteControlAtStartup
 
-Source: `chunk-dq5fzxjx.js` · offset 177913920 · sha256 `ba06037c…`
+Source: `chunk-hrhfcbdv.js` · offset 178701275 · sha256 `ba06037c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#remotecontrolatstartup
 
@@ -2846,7 +2928,7 @@ Start Remote Control bridge automatically each session
 
 ### inputNeededNotifEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177915890 · sha256 `c88ad510…`
+Source: `chunk-hrhfcbdv.js` · offset 178703245 · sha256 `c88ad510…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#inputneedednotifenabled
 
@@ -2858,7 +2940,7 @@ Push to mobile when a permission prompt or question is waiting
 
 ### agentPushNotifEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177916006 · sha256 `03df7485…`
+Source: `chunk-hrhfcbdv.js` · offset 178703361 · sha256 `03df7485…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#agentpushnotifenabled
 
@@ -2870,7 +2952,7 @@ Allow Claude to push proactive mobile notifications
 
 ### disableDeepLinkRegistration
 
-Source: `chunk-dq5fzxjx.js` · offset 177822876 · sha256 `7f698a27…`
+Source: `chunk-hrhfcbdv.js` · offset 178606623 · sha256 `7f698a27…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disabledeeplinkregistration
 
@@ -2886,7 +2968,7 @@ Prevent claude-cli:// protocol handler registration with the OS
 
 ### apiKeyHelper
 
-Source: `chunk-dq5fzxjx.js` · offset 177851050 · sha256 `2e6f782c…`
+Source: `chunk-hrhfcbdv.js` · offset 178634815 · sha256 `2e6f782c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#apikeyhelper
 
@@ -2898,7 +2980,7 @@ Path to a script that outputs authentication values
 
 ### awsCredentialExport
 
-Source: `chunk-dq5fzxjx.js` · offset 177851268 · sha256 `40906bb8…`
+Source: `chunk-hrhfcbdv.js` · offset 178635033 · sha256 `40906bb8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#awscredentialexport
 
@@ -2910,7 +2992,7 @@ Path to a script that exports AWS credentials
 
 ### awsAuthRefresh
 
-Source: `chunk-dq5fzxjx.js` · offset 177851360 · sha256 `4e5b376c…`
+Source: `chunk-hrhfcbdv.js` · offset 178635125 · sha256 `4e5b376c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#awsauthrefresh
 
@@ -2922,7 +3004,7 @@ Path to a script that refreshes AWS authentication
 
 ### gcpAuthRefresh
 
-Source: `chunk-dq5fzxjx.js` · offset 177851457 · sha256 `f4b9e8d8…`
+Source: `chunk-hrhfcbdv.js` · offset 178635222 · sha256 `f4b9e8d8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#gcpauthrefresh
 
@@ -2934,7 +3016,7 @@ Command to refresh GCP authentication (e.g., gcloud auth application-default log
 
 ### forceLoginMethod
 
-Source: `chunk-dq5fzxjx.js` · offset 177888589 · sha256 `ae22d160…`
+Source: `chunk-hrhfcbdv.js` · offset 178673112 · sha256 `ae22d160…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#forceloginmethod
 
@@ -2948,7 +3030,7 @@ Force a specific login method: "claudeai" for Claude Pro/Max, "console" for Cons
 
 ### forceLoginGatewayUrl
 
-Source: `chunk-dq5fzxjx.js` · offset 177888804 · sha256 `6c22b7f8…`
+Source: `chunk-hrhfcbdv.js` · offset 178673327 · sha256 `6c22b7f8…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#forcelogingatewayurl
 
@@ -2964,7 +3046,7 @@ Cloud gateway URL to pre-fill and auto-connect to during login, alongside forceL
 
 ### gatewayInternalNetworks
 
-Source: `chunk-dq5fzxjx.js` · offset 177889157 · sha256 `725fba04…`
+Source: `chunk-hrhfcbdv.js` · offset 178673680 · sha256 `725fba04…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#gatewayinternalnetworks
 
@@ -2980,7 +3062,7 @@ IPv4 CIDR blocks (at most 4, each /8 to /32, not overlapping) your Cloud gateway
 
 ### forceLoginOrgUUID
 
-Source: `chunk-dq5fzxjx.js` · offset 177892385 · sha256 `424a0a88…`
+Source: `chunk-hrhfcbdv.js` · offset 178676926 · sha256 `424a0a88…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#forceloginorguuid
 
@@ -2994,7 +3076,7 @@ Organization UUID to require for OAuth login. Accepts a single UUID string or an
 
 ### otelHeadersHelper
 
-Source: `chunk-dq5fzxjx.js` · offset 177892858 · sha256 `6ceb19f5…`
+Source: `chunk-hrhfcbdv.js` · offset 178680213 · sha256 `6ceb19f5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#otelheadershelper
 
@@ -3008,7 +3090,7 @@ Path to a script that outputs OpenTelemetry headers
 
 ### autoUpdatesChannel
 
-Source: `chunk-dq5fzxjx.js` · offset 177903357 · sha256 `472b780a…`
+Source: `chunk-hrhfcbdv.js` · offset 178690712 · sha256 `472b780a…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#autoupdateschannel
 
@@ -3020,7 +3102,7 @@ Release channel for auto-updates (latest or stable)
 
 ### minimumVersion
 
-Source: `chunk-dq5fzxjx.js` · offset 177903455 · sha256 `5364febb…`
+Source: `chunk-hrhfcbdv.js` · offset 178690810 · sha256 `5364febb…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#minimumversion
 
@@ -3032,7 +3114,7 @@ Minimum version to stay on - prevents downgrades when switching to stable channe
 
 ### requiredMinimumVersion
 
-Source: `chunk-dq5fzxjx.js` · offset 177903591 · sha256 `5952d555…`
+Source: `chunk-hrhfcbdv.js` · offset 178690946 · sha256 `5952d555…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#requiredminimumversion
 
@@ -3046,7 +3128,7 @@ Minimum Claude Code version required to start. If the running version is older, 
 
 ### requiredMaximumVersion
 
-Source: `chunk-dq5fzxjx.js` · offset 177903829 · sha256 `be65771f…`
+Source: `chunk-hrhfcbdv.js` · offset 178691184 · sha256 `be65771f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#requiredmaximumversion
 
@@ -3062,7 +3144,7 @@ Maximum Claude Code version allowed to start. If the running version is newer, C
 
 ### cleanupPeriodDays
 
-Source: `chunk-dq5fzxjx.js` · offset 177855960 · sha256 `7a36c5a5…`
+Source: `chunk-hrhfcbdv.js` · offset 178639725 · sha256 `7a36c5a5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#cleanupperioddays
 
@@ -3074,7 +3156,7 @@ Number of days to retain chat transcripts before automatic cleanup (default: 30)
 
 ### desktopSessionCleanupPeriodDays
 
-Source: `chunk-dq5fzxjx.js` · offset 177856242 · sha256 `2cce826f…`
+Source: `chunk-hrhfcbdv.js` · offset 178640007 · sha256 `2cce826f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#desktopsessioncleanupperioddays
 
@@ -3088,7 +3170,7 @@ Retention ceiling in days for session transcripts created or last written by a d
 
 ### skipWebFetchPreflight
 
-Source: `chunk-dq5fzxjx.js` · offset 177893309 · sha256 `efdfd122…`
+Source: `chunk-hrhfcbdv.js` · offset 178680664 · sha256 `efdfd122…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#skipwebfetchpreflight
 
@@ -3100,7 +3182,7 @@ Skip the WebFetch blocklist check for enterprise environments with restrictive s
 
 ### feedbackSurveyRate
 
-Source: `chunk-dq5fzxjx.js` · offset 177893502 · sha256 `29722ea5…`
+Source: `chunk-hrhfcbdv.js` · offset 178680857 · sha256 `29722ea5…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#feedbacksurveyrate
 
@@ -3112,7 +3194,7 @@ Probability (0–1) that the session quality survey appears when eligible. 0.05 
 
 ### feedbackDrafts
 
-Source: `chunk-dq5fzxjx.js` · offset 177893687 · sha256 `47081283…`
+Source: `chunk-hrhfcbdv.js` · offset 178681042 · sha256 `47081283…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#feedbackdrafts
 
@@ -3126,7 +3208,7 @@ Model-drafted feedback (the SendFeedback tool). "notify" (default) shows a one-l
 
 ### policyHelper
 
-Source: `chunk-dq5fzxjx.js` · offset 177852170 · sha256 `7293769c…`
+Source: `chunk-hrhfcbdv.js` · offset 178635935 · sha256 `7293769c…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#policyhelper
 
@@ -3140,7 +3222,7 @@ Executable that computes managed settings at startup. Honored only from admin-co
 
 ### policyHelper.path
 
-Source: `chunk-dq5fzxjx.js` · offset 177839704 · sha256 `07e08f24…`
+Source: `chunk-hrhfcbdv.js` · offset 178623451 · sha256 `07e08f24…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#policyhelper-path
 
@@ -3152,7 +3234,7 @@ Absolute path to the helper executable
 
 ### policyHelper.timeoutMs
 
-Source: `chunk-dq5fzxjx.js` · offset 177840093 · sha256 `1d1f6e0a…`
+Source: `chunk-hrhfcbdv.js` · offset 178623840 · sha256 `37f1d5dd…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#policyhelper-timeoutms
 
@@ -3162,7 +3244,7 @@ No description in the schema.
 
 ### policyHelper.refreshIntervalMs
 
-Source: `chunk-dq5fzxjx.js` · offset 177840116 · sha256 `94997441…`
+Source: `chunk-hrhfcbdv.js` · offset 178623863 · sha256 `fe5dc490…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#policyhelper-refreshintervalms
 
@@ -3172,7 +3254,7 @@ No description in the schema.
 
 ### wslInheritsWindowsSettings
 
-Source: `chunk-dq5fzxjx.js` · offset 177859762 · sha256 `5ede4002…`
+Source: `chunk-hrhfcbdv.js` · offset 178643527 · sha256 `5ede4002…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#wslinheritswindowssettings
 
@@ -3186,7 +3268,7 @@ When set to true in either admin-only Windows source — the HKLM SOFTWARE/Polic
 
 ### disableSideloadFlags
 
-Source: `chunk-dq5fzxjx.js` · offset 177887068 · sha256 `7693ff81…`
+Source: `chunk-hrhfcbdv.js` · offset 178671591 · sha256 `7693ff81…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#disablesideloadflags
 
@@ -3200,7 +3282,7 @@ When true (and set in managed settings), rejects the --plugin-dir, --plugin-url,
 
 ### parentSettingsBehavior
 
-Source: `chunk-dq5fzxjx.js` · offset 177890057 · sha256 `45835636…`
+Source: `chunk-hrhfcbdv.js` · offset 178674580 · sha256 `45835636…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#parentsettingsbehavior
 
@@ -3214,7 +3296,7 @@ Controls whether the SDK parent tier (Options.managedSettings / --managed-settin
 
 ### managedSourcesBehavior
 
-Source: `chunk-dq5fzxjx.js` · offset 177890626 · sha256 `4382137b…`
+Source: `chunk-hrhfcbdv.js` · offset 178675149 · sha256 `2a641d8e…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#managedsourcesbehavior
 
@@ -3223,12 +3305,12 @@ Type: `"first-wins" | "merge"`
 The description names which settings sources honor this key (per description; not independently verified in code).
 
 ~~~~~~text
-Controls how the managed settings sources compose. "first-wins" (default): the highest-priority source present (server-managed > MDM (managed plist / HKLM) > managed-settings.json) is the managed tier alone. "merge": every present source deep-merges with fixed precedence server-managed > MDM > managed-settings.json — scalars take the highest source's value (a restrictive boolean or enum — the allowManaged*Only locks, the disable* switches, the sandbox lock family — takes the strictest value any source sets) and arrays union, except fallbackModel, the restriction allowlists allowedMcpServers, availableModels, strictKnownMarketplaces and allowedChannelPlugins, and sandbox.credentials.awsPairs and sandbox.ripgrep (the highest source that sets one owns it whole), modelOverrides (the whole map of the highest source that sets it, dropped when that source sits below the one that sets availableModels), managedMcpServers (server names union; a name set by two sources takes the higher source's whole entry), and the keys taken from the highest source only: the auth pins forceLoginOrgUUID, forceLoginMethod, forceLoginGatewayUrl and gatewayInternalNetworks, the credential helpers apiKeyHelper, awsAuthRefresh, awsCredentialExport, gcpAuthRefresh, otelHeadersHelper and proxyAuthHelper, modelPicker, permissions.defaultMode, parentSettingsBehavior and the policyHelper configuration (env keeps its own per-key union). Honored only from the highest-priority source present; enable it only when every lower source is admin-controlled, since lower sources then contribute entries such as permissions.allow. HKCU and --managed-settings never take part in the merge.
+Controls how the managed settings sources compose. "first-wins" (default): the highest-priority source present (server-managed > MDM (managed plist / HKLM) > managed-settings.json) is the managed tier alone. "merge": every present source deep-merges with fixed precedence server-managed > MDM > managed-settings.json — scalars take the highest source's value (a restrictive boolean or enum — the allowManaged*Only locks, the disable* switches, the sandbox lock family — takes the strictest value any source sets) and arrays union, except fallbackModel, the restriction allowlists allowedMcpServers, allowedProviders, availableModels, strictKnownMarketplaces and allowedChannelPlugins, and sandbox.credentials.awsPairs and sandbox.ripgrep (the highest source that sets one owns it whole), modelOverrides (the whole map of the highest source that sets it, dropped when that source sits below the one that sets availableModels), managedMcpServers (server names union; a name set by two sources takes the higher source's whole entry), and the keys taken from the highest source only: the auth pins forceLoginOrgUUID, forceLoginMethod, forceLoginGatewayUrl and gatewayInternalNetworks, the credential helpers apiKeyHelper, awsAuthRefresh, awsCredentialExport, gcpAuthRefresh, otelHeadersHelper and proxyAuthHelper, modelPicker, permissions.defaultMode, parentSettingsBehavior and the policyHelper configuration (env keeps its own per-key union). Honored only from the highest-priority source present; enable it only when every lower source is admin-controlled, since lower sources then contribute entries such as permissions.allow. HKCU and --managed-settings never take part in the merge.
 ~~~~~~
 
 ### forceRemoteSettingsRefresh
 
-Source: `chunk-dq5fzxjx.js` · offset 177892676 · sha256 `12e02932…`
+Source: `chunk-hrhfcbdv.js` · offset 178680031 · sha256 `12e02932…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#forceremotesettingsrefresh
 
@@ -3244,7 +3326,7 @@ When set in managed settings, the CLI blocks startup until remote managed settin
 
 ### $schema
 
-Source: `chunk-dq5fzxjx.js` · offset 177850959 · sha256 `54ceeba7…`
+Source: `chunk-hrhfcbdv.js` · offset 178634724 · sha256 `54ceeba7…`
 
 Status: documented at https://code.claude.com/docs/en/settings
 
@@ -3256,7 +3338,7 @@ JSON Schema reference for Claude Code settings
 
 ### proxyAuthHelper
 
-Source: `chunk-dq5fzxjx.js` · offset 177851149 · sha256 `32450727…`
+Source: `chunk-hrhfcbdv.js` · offset 178634914 · sha256 `32450727…`
 
 Status: undocumented
 
@@ -3268,7 +3350,7 @@ Shell command that outputs a Proxy-Authorization header value (EAP)
 
 ### xaaIdp
 
-Source: `chunk-dq5fzxjx.js` · offset 177854013 · sha256 `997e561c…`
+Source: `chunk-hrhfcbdv.js` · offset 178637778 · sha256 `997e561c…`
 
 Status: undocumented
 
@@ -3282,7 +3364,7 @@ XAA (SEP-990) IdP connection. Configure once; all XAA-enabled MCP servers reuse 
 
 ### xaaIdp.issuer
 
-Source: `chunk-dq5fzxjx.js` · offset 177853707 · sha256 `aa5c4251…`
+Source: `chunk-hrhfcbdv.js` · offset 178637472 · sha256 `aa5c4251…`
 
 Status: undocumented
 
@@ -3294,7 +3376,7 @@ IdP issuer URL for OIDC discovery
 
 ### xaaIdp.clientId
 
-Source: `chunk-dq5fzxjx.js` · offset 177853766 · sha256 `5994c1a0…`
+Source: `chunk-hrhfcbdv.js` · offset 178637531 · sha256 `5994c1a0…`
 
 Status: undocumented
 
@@ -3306,7 +3388,7 @@ Claude Code's client_id registered at the IdP
 
 ### xaaIdp.callbackPort
 
-Source: `chunk-dq5fzxjx.js` · offset 177853869 · sha256 `30a0ad8e…`
+Source: `chunk-hrhfcbdv.js` · offset 178637634 · sha256 `30a0ad8e…`
 
 Status: undocumented
 
@@ -3318,7 +3400,7 @@ Fixed loopback callback port for the IdP OIDC login. Only needed if the IdP does
 
 ### availableModelsMatch
 
-Source: `chunk-dq5fzxjx.js` · offset 177863476 · sha256 `07d98925…`
+Source: `chunk-hrhfcbdv.js` · offset 178647241 · sha256 `07d98925…`
 
 Status: undocumented
 
@@ -3332,7 +3414,7 @@ How availableModels entries match model IDs. "prefix" (the default) lets an entr
 
 ### deniedModels
 
-Source: `chunk-dq5fzxjx.js` · offset 177864437 · sha256 `7f4303a4…`
+Source: `chunk-hrhfcbdv.js` · offset 178648202 · sha256 `7f4303a4…`
 
 Status: undocumented
 
@@ -3344,9 +3426,23 @@ The description names which settings sources honor this key (per description; no
 Models users cannot select, even when availableModels allows them. A family alias ("opus") blocks that family. A model ID blocks that version in every spelling: dates, -fast and provider prefixes are ignored, so "claude-opus-5-5" blocks every Opus 5.5 ID but not Opus 5. An ID with no minor version ("claude-opus-5") also blocks later minor versions, as it allows them in availableModels. Aliases whose model depends on the release or settings (best, opusplan, default) are ignored. The Default option steps down past a blocked model; if the Default has no allowed model to step down to, Claude Code will not start. Read from managed settings only.
 ~~~~~~
 
+### allowClaudeInChromeWithManagedMcp
+
+Source: `chunk-hrhfcbdv.js` · offset 178664318 · sha256 `4eb114f4…`
+
+Status: undocumented
+
+Type: `boolean`
+
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+~~~~~~text
+When true (and set in device managed settings: MDM, the managed-settings.json file, or a policy helper those configure), the built-in Claude in Chrome MCP server can run alongside managed-mcp.json instead of being blocked by its exclusive-control lockdown. deniedMcpServers and the organization's Claude in Chrome setting still block it. Default off preserves the lockdown.
+~~~~~~
+
 ### prependPlugins
 
-Source: `chunk-dq5fzxjx.js` · offset 177882956 · sha256 `c9dccefd…`
+Source: `chunk-hrhfcbdv.js` · offset 178667285 · sha256 `7f1500e4…`
 
 Status: undocumented
 
@@ -3357,12 +3453,12 @@ Invalid values are dropped rather than failing the whole file (`.catch`, from co
 The description names which settings sources honor this key (per description; not independently verified in code).
 
 ~~~~~~text
-Managed plugins (plugin@marketplace ids that managed enabledPlugins sets true) whose hooks run first, outermost, in the listed order: the first id listed sees every event before any other plugin and every result after it. Managed plugins not listed here or in appendPlugins follow the listed ones; user, project and marketplace plugins come after those; then appendPlugins; then the built-in plugins. The bundled sec-default@builtin seats itself outermost (on a machine with managed settings and for Team and Enterprise organizations) unless this list is set, in which case list sec-default@builtin where it should sit or leave it out. Any other id that is not an enabled managed plugin is skipped; an id listed in both keys is prepended. Only honored from managed settings (or, on a machine with none, from user settings for your own plugins); ignored in project, local and --settings sources.
+Managed plugins (plugin@marketplace ids that managed enabledPlugins sets true) whose hooks run first, outermost, in the listed order: the first id listed sees every event before any other plugin and every result after it. Managed plugins not listed here or in appendPlugins follow the listed ones; user, project and marketplace plugins come after those; then appendPlugins; then the built-in plugins. The bundled cc-plugin-sec-default@builtin seats itself outermost (on a machine with managed settings and for Team and Enterprise organizations) unless this list is set, in which case list it where it should sit or leave it out. Name it there as sec-default@builtin, the id every release reads, for as long as any machine in the organization may run a release from before its rename; a release that knows the new id reads either. Any other id that is not an enabled managed plugin is skipped; an id listed in both keys is prepended. Only honored from managed settings (or, on a machine with none, from user settings for your own plugins); ignored in project, local and --settings sources.
 ~~~~~~
 
 ### appendPlugins
 
-Source: `chunk-dq5fzxjx.js` · offset 177883913 · sha256 `674b47b4…`
+Source: `chunk-hrhfcbdv.js` · offset 178668436 · sha256 `674b47b4…`
 
 Status: undocumented
 
@@ -3378,7 +3474,7 @@ Managed plugins (plugin@marketplace ids that managed enabledPlugins sets true) w
 
 ### additionalMarketplaces
 
-Source: `chunk-dq5fzxjx.js` · offset 177884640 · sha256 `189397ed…`
+Source: `chunk-hrhfcbdv.js` · offset 178669163 · sha256 `189397ed…`
 
 Status: documented at https://code.claude.com/docs/en/plugins/org
 
@@ -3390,7 +3486,7 @@ Alias for extraKnownMarketplaces: this key is read exactly as if it were spelled
 
 ### allowedMarketplaces
 
-Source: `chunk-dq5fzxjx.js` · offset 177885713 · sha256 `12d4d335…`
+Source: `chunk-hrhfcbdv.js` · offset 178670236 · sha256 `12d4d335…`
 
 Status: documented at https://code.claude.com/docs/en/plugins/org
 
@@ -3402,9 +3498,39 @@ The description names which settings sources honor this key (per description; no
 Alias for strictKnownMarketplaces (managed settings only): this key is read exactly as if it were spelled strictKnownMarketplaces. Do not set both in one file — if both appear, this key is ignored with a warning. Clients older than this alias ignore it, so keep using strictKnownMarketplaces when the allowlist must also bind older Claude Code versions.
 ~~~~~~
 
+### allowedProviders
+
+Source: `chunk-hrhfcbdv.js` · offset 178677268 · sha256 `44b9cdf7…`
+
+Status: undocumented
+
+Type: `array of "anthropic" | "customEndpoint" | "bedrock" | "vertex" | "foundry" | "anthropicAws" | "mantle" | "gateway"`
+
+Invalid values are dropped rather than failing the whole file (`.catch`, from code).
+
+The description names which settings sources honor this key (per description; not independently verified in code).
+
+~~~~~~text
+Managed settings only (managed-settings.json, MDM, or server-managed). The API providers Claude Code may use on this machine: "anthropic" (the Anthropic API on Anthropic's own host, via a claude.ai or Console sign-in or an API key; pair it with forceLoginMethod / forceLoginOrgUUID to require a sign-in), "bedrock", "vertex", "foundry", "anthropicAws", "mantle" (each meaning that provider's own service: its regional, FIPS, private-endpoint and sovereign-cloud hosts), "customEndpoint" (the Anthropic API or a cloud provider's API sent to some other host — ANTHROPIC_BASE_URL, that provider's ANTHROPIC_*_BASE_URL, a Foundry resource name that is not a bare name, or for Bedrock the AWS SDK's AWS_ENDPOINT_URL[_BEDROCK[_RUNTIME]] — such as an LLM gateway; admitted only for the value pinned in the "env" block of the same managed source), or "gateway" (the Cloud gateway sign-in). A session on a provider that is not listed is refused at startup, at login, and when it next contacts the API, with a message naming what selected the provider and the entry that would allow it. Under a list, where first-party traffic goes (ANTHROPIC_BASE_URL, a gateway sign-in) is honored only when the same managed source pins it in "env" (or forceLoginGatewayUrl), and a claude ssh tunnel into the machine is refused. A cloud provider's credential and tenancy variables, and the network path and TLS trust (HTTPS_PROXY, NODE_EXTRA_CA_CERTS, CLAUDE_CODE_CERT_STORE), are not judged by this list; set those for the fleet in the managed "env" block, whose values replace the user's. To route Bedrock through a gateway for a fleet, pin ANTHROPIC_BEDROCK_BASE_URL there (it is what the clients use, ahead of an endpoint_url in ~/.aws/config, which this list does not judge); the AWS SDK's AWS_ENDPOINT_URL* pins only sanction where the SDK's own clients go and never stand in for the "bedrock" entry. Unset allows every provider; an empty array allows none. Only a list in managed-settings.json or MDM is enforcement on the machine: it cannot be widened or hidden by server-managed settings and reaches every session. A list set only in the admin console reaches only sessions that fetch your server-managed settings — not a session on a cloud provider, another organization or a non-Anthropic ANTHROPIC_BASE_URL, one authenticating only with apiKeyHelper or ANTHROPIC_AUTH_TOKEN, a Pro/Max login, --bare without an API key, or a first launch before the fetch lands — all conditions the user controls. Versions that predate this setting ignore it; pair it with a minimum-version policy on a mixed fleet. 'claude auth status' reports the Anthropic API as apiProvider "firstParty".
+~~~~~~
+
+### maxProseWidth
+
+Source: `chunk-hrhfcbdv.js` · offset 178682484 · sha256 `7461314f…`
+
+Status: undocumented
+
+Type: `number (integer, >= 40)`
+
+Invalid values are dropped rather than failing the whole file (`.catch`, from code).
+
+~~~~~~text
+Maximum width, in terminal columns, of the prose in Claude's responses (paragraphs, headings, lists, blockquotes). In a wider terminal the prose wraps at this width while tables and code blocks keep the full width; only the display wraps, the response text itself gains no line breaks. Minimum 40. Unset (the default) uses the full terminal width.
+~~~~~~
+
 ### remote
 
-Source: `chunk-dq5fzxjx.js` · offset 177903255 · sha256 `3003aa48…`
+Source: `chunk-hrhfcbdv.js` · offset 178690610 · sha256 `3003aa48…`
 
 Status: undocumented
 
@@ -3416,7 +3542,7 @@ Cloud session configuration
 
 ### remote.defaultEnvironmentId
 
-Source: `chunk-dq5fzxjx.js` · offset 177903181 · sha256 `d8adb36f…`
+Source: `chunk-hrhfcbdv.js` · offset 178690536 · sha256 `d8adb36f…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#remote-defaultenvironmentid
 
@@ -3428,7 +3554,7 @@ Default environment ID to use for cloud sessions
 
 ### autoDreamEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177908452 · sha256 `a2e39c71…`
+Source: `chunk-hrhfcbdv.js` · offset 178695807 · sha256 `a2e39c71…`
 
 Status: undocumented
 
@@ -3440,7 +3566,7 @@ Enable background memory consolidation (auto-dream). When set, overrides the ser
 
 ### precomputeCompactionEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177912456 · sha256 `40ad6236…`
+Source: `chunk-hrhfcbdv.js` · offset 178699811 · sha256 `40ad6236…`
 
 Status: undocumented
 
@@ -3452,7 +3578,7 @@ Precompute the compaction summary in the background before it is needed. Only ap
 
 ### showMessageTimestamps
 
-Source: `chunk-dq5fzxjx.js` · offset 177913500 · sha256 `12f42040…`
+Source: `chunk-hrhfcbdv.js` · offset 178700855 · sha256 `12f42040…`
 
 Status: undocumented
 
@@ -3464,7 +3590,7 @@ Stamp each message with its arrival time
 
 ### todoFeatureEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177913704 · sha256 `33573dcc…`
+Source: `chunk-hrhfcbdv.js` · offset 178701059 · sha256 `33573dcc…`
 
 Status: undocumented
 
@@ -3476,7 +3602,7 @@ Enable the todo / task tracking panel
 
 ### daemonColdStart
 
-Source: `chunk-dq5fzxjx.js` · offset 177914986 · sha256 `b35c6b26…`
+Source: `chunk-hrhfcbdv.js` · offset 178702341 · sha256 `b35c6b26…`
 
 Status: undocumented
 
@@ -3488,7 +3614,7 @@ When no background service is running: 'transient' spawns one for this login ses
 
 ### autoUploadSessions
 
-Source: `chunk-dq5fzxjx.js` · offset 177915767 · sha256 `da382049…`
+Source: `chunk-hrhfcbdv.js` · offset 178703122 · sha256 `da382049…`
 
 Status: undocumented
 
@@ -3500,7 +3626,7 @@ Mirror local sessions to claude.ai as view-only (no remote control)
 
 ### defaultView
 
-Source: `chunk-dq5fzxjx.js` · offset 177823165 · sha256 `a0f88ac1…`
+Source: `chunk-hrhfcbdv.js` · offset 178606912 · sha256 `a0f88ac1…`
 
 Status: undocumented
 
@@ -3516,7 +3642,7 @@ Default transcript view: chat (SendUserMessage checkpoints only) or transcript (
 
 ### policyHelpers
 
-Source: `chunk-dq5fzxjx.js` · offset 177852324 · sha256 `6f2dd778…`
+Source: `chunk-hrhfcbdv.js` · offset 178636089 · sha256 `6f2dd778…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3530,57 +3656,57 @@ The description names which settings sources honor this key (per description; no
 
 ### policyHelpers.macos
 
-Source: `chunk-dq5fzxjx.js` · offset 177852292 · sha256 `e1e29968…`
+Source: `chunk-hrhfcbdv.js` · offset 178636057 · sha256 `f97b3538…`
 
 Status: undocumented
 
 Type: `record<string, any JSON value> | object {timeoutMs, refreshIntervalMs, path, script, interpreter, outputBehavior, onFailure, retries, defaultSettings}`
 
-Undocumented; read at `chunk-dq5fzxjx.js` offset 177852292.
+Undocumented; read at `chunk-hrhfcbdv.js` offset 178636057.
 
 ### policyHelpers.linux
 
-Source: `chunk-dq5fzxjx.js` · offset 177852292 · sha256 `e1e29968…`
+Source: `chunk-hrhfcbdv.js` · offset 178636057 · sha256 `f97b3538…`
 
 Status: undocumented
 
 Type: `record<string, any JSON value> | object {timeoutMs, refreshIntervalMs, path, script, interpreter, outputBehavior, onFailure, retries, defaultSettings}`
 
-Undocumented; read at `chunk-dq5fzxjx.js` offset 177852292.
+Undocumented; read at `chunk-hrhfcbdv.js` offset 178636057.
 
 ### policyHelpers.windows
 
-Source: `chunk-dq5fzxjx.js` · offset 177852292 · sha256 `e1e29968…`
+Source: `chunk-hrhfcbdv.js` · offset 178636057 · sha256 `f97b3538…`
 
 Status: undocumented
 
 Type: `record<string, any JSON value> | object {timeoutMs, refreshIntervalMs, path, script, interpreter, outputBehavior, onFailure, retries, defaultSettings}`
 
-Undocumented; read at `chunk-dq5fzxjx.js` offset 177852292.
+Undocumented; read at `chunk-hrhfcbdv.js` offset 178636057.
 
 ### policyHelpers.wsl
 
-Source: `chunk-dq5fzxjx.js` · offset 177852292 · sha256 `e1e29968…`
+Source: `chunk-hrhfcbdv.js` · offset 178636057 · sha256 `f97b3538…`
 
 Status: undocumented
 
 Type: `record<string, any JSON value> | object {timeoutMs, refreshIntervalMs, path, script, interpreter, outputBehavior, onFailure, retries, defaultSettings}`
 
-Undocumented; read at `chunk-dq5fzxjx.js` offset 177852292.
+Undocumented; read at `chunk-hrhfcbdv.js` offset 178636057.
 
 ### policyHelpers.default
 
-Source: `chunk-dq5fzxjx.js` · offset 177852292 · sha256 `e1e29968…`
+Source: `chunk-hrhfcbdv.js` · offset 178636057 · sha256 `f97b3538…`
 
 Status: undocumented
 
 Type: `record<string, any JSON value> | object {timeoutMs, refreshIntervalMs, path, script, interpreter, outputBehavior, onFailure, retries, defaultSettings}`
 
-Undocumented; read at `chunk-dq5fzxjx.js` offset 177852292.
+Undocumented; read at `chunk-hrhfcbdv.js` offset 178636057.
 
 ### breakReminder
 
-Source: `chunk-dq5fzxjx.js` · offset 177855003 · sha256 `10888883…`
+Source: `chunk-hrhfcbdv.js` · offset 178638768 · sha256 `10888883…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3592,7 +3718,7 @@ Type: `object {enabled, intervalMinutes, breakThresholdMinutes, message}`
 
 ### breakReminder.enabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177854444 · sha256 `7da68813…`
+Source: `chunk-hrhfcbdv.js` · offset 178638209 · sha256 `7da68813…`
 
 Status: undocumented
 
@@ -3604,7 +3730,7 @@ Show a friendly nudge after sustained continuous use (default false). Must be tr
 
 ### breakReminder.intervalMinutes
 
-Source: `chunk-dq5fzxjx.js` · offset 177854613 · sha256 `961ffdf7…`
+Source: `chunk-hrhfcbdv.js` · offset 178638378 · sha256 `961ffdf7…`
 
 Status: undocumented
 
@@ -3616,7 +3742,7 @@ Minutes of continuous use before the reminder fires (default 30). Re-fires every
 
 ### breakReminder.breakThresholdMinutes
 
-Source: `chunk-dq5fzxjx.js` · offset 177854793 · sha256 `bfa9dc89…`
+Source: `chunk-hrhfcbdv.js` · offset 178638558 · sha256 `bfa9dc89…`
 
 Status: undocumented
 
@@ -3628,7 +3754,7 @@ Minutes of inactivity that count as a break and reset the timer (default 10)
 
 ### breakReminder.message
 
-Source: `chunk-dq5fzxjx.js` · offset 177854905 · sha256 `89ec66c0…`
+Source: `chunk-hrhfcbdv.js` · offset 178638670 · sha256 `89ec66c0…`
 
 Status: undocumented
 
@@ -3640,7 +3766,7 @@ Custom reminder text. Leave unset for a rotating set of friendly nudges.
 
 ### quietHours
 
-Source: `chunk-dq5fzxjx.js` · offset 177855751 · sha256 `ede2b853…`
+Source: `chunk-hrhfcbdv.js` · offset 178639516 · sha256 `ede2b853…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3652,7 +3778,7 @@ Type: `object {enabled, start, end}`
 
 ### quietHours.enabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177855207 · sha256 `3838880a…`
+Source: `chunk-hrhfcbdv.js` · offset 178638972 · sha256 `3838880a…`
 
 Status: undocumented
 
@@ -3664,7 +3790,7 @@ Show a one-time nudge when you start or keep using the CLI inside your quiet-hou
 
 ### quietHours.start
 
-Source: `chunk-dq5fzxjx.js` · offset 177855436 · sha256 `0286984c…`
+Source: `chunk-hrhfcbdv.js` · offset 178639201 · sha256 `0286984c…`
 
 Status: undocumented
 
@@ -3676,7 +3802,7 @@ Start of the quiet-hours window, 24-hour local time "HH:MM".
 
 ### quietHours.end
 
-Source: `chunk-dq5fzxjx.js` · offset 177855617 · sha256 `6b4138c7…`
+Source: `chunk-hrhfcbdv.js` · offset 178639382 · sha256 `6b4138c7…`
 
 Status: undocumented
 
@@ -3688,7 +3814,7 @@ End of the quiet-hours window, 24-hour local time "HH:MM". May be earlier than s
 
 ### awaySummaryEnabled
 
-Source: `chunk-dq5fzxjx.js` · offset 177900494 · sha256 `602bf94f…`
+Source: `chunk-hrhfcbdv.js` · offset 178687849 · sha256 `602bf94f…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); documented at https://code.claude.com/docs/en/settings-reference#awaysummaryenabled
 
@@ -3700,7 +3826,7 @@ Type: `boolean`
 
 ### modelProposedGoals
 
-Source: `chunk-dq5fzxjx.js` · offset 177901980 · sha256 `5603d90a…`
+Source: `chunk-hrhfcbdv.js` · offset 178689335 · sha256 `5603d90a…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3716,7 +3842,7 @@ The description names which settings sources honor this key (per description; no
 
 ### doneMeansMerged
 
-Source: `chunk-dq5fzxjx.js` · offset 177906215 · sha256 `80240ad0…`
+Source: `chunk-hrhfcbdv.js` · offset 178693570 · sha256 `80240ad0…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3728,7 +3854,7 @@ Type: `boolean`
 
 ### totalTokensReminder
 
-Source: `chunk-dq5fzxjx.js` · offset 177906490 · sha256 `2b43c131…`
+Source: `chunk-hrhfcbdv.js` · offset 178693845 · sha256 `2b43c131…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3740,7 +3866,7 @@ Type: `"off" | "infinite" | "fixed" | "countdown" | "padded-countdown"`
 
 ### totalTokensReminderBudget
 
-Source: `chunk-dq5fzxjx.js` · offset 177907170 · sha256 `ff231540…`
+Source: `chunk-hrhfcbdv.js` · offset 178694525 · sha256 `ff231540…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3752,7 +3878,7 @@ Type: `number (integer, > 0)`
 
 ### totalTokensReminderAfterUserTurn
 
-Source: `chunk-dq5fzxjx.js` · offset 177907434 · sha256 `ef4a0c82…`
+Source: `chunk-hrhfcbdv.js` · offset 178694789 · sha256 `ef4a0c82…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3764,7 +3890,7 @@ Type: `boolean`
 
 ### skipWorkflowUsageWarning
 
-Source: `chunk-dq5fzxjx.js` · offset 177908953 · sha256 `8f7172e2…`
+Source: `chunk-hrhfcbdv.js` · offset 178696308 · sha256 `8f7172e2…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3776,7 +3902,7 @@ Type: `boolean`
 
 ### remoteTools
 
-Source: `chunk-dq5fzxjx.js` · offset 177909529 · sha256 `f478a2e3…`
+Source: `chunk-hrhfcbdv.js` · offset 178696884 · sha256 `f478a2e3…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3788,7 +3914,7 @@ Type: `object {allowUnattendedServing}`
 
 ### remoteTools.allowUnattendedServing
 
-Source: `chunk-dq5fzxjx.js` · offset 177909245 · sha256 `cd1d7a72…`
+Source: `chunk-hrhfcbdv.js` · offset 178696600 · sha256 `cd1d7a72…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3802,7 +3928,7 @@ The description names which settings sources honor this key (per description; no
 
 ### remoteControl
 
-Source: `chunk-dq5fzxjx.js` · offset 177914702 · sha256 `19c4c0be…`
+Source: `chunk-hrhfcbdv.js` · offset 178702057 · sha256 `19c4c0be…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3814,7 +3940,7 @@ Type: `object {shareHostProfile}`
 
 ### remoteControl.shareHostProfile
 
-Source: `chunk-dq5fzxjx.js` · offset 177914057 · sha256 `7179ad90…`
+Source: `chunk-hrhfcbdv.js` · offset 178701412 · sha256 `7179ad90…`
 
 Status: internal (description is tagged `@internal`; the JSON-schema generator omits it, from code); undocumented
 
@@ -3832,7 +3958,7 @@ The description names which settings sources honor this key (per description; no
 
 ### Safe env check
 
-Source: `chunk-dq5fzxjx.js` · offset 177706503 · sha256 `7d16d275…`
+Source: `chunk-hrhfcbdv.js` · offset 178487881 · sha256 `467df3ee…`
 
 Status: documented at https://code.claude.com/docs/en/settings-reference#when-claude-code-applies-env-values
 
@@ -3846,7 +3972,7 @@ Warning list: a helper returns `.claude/settings.json` and/or `.claude/settings.
 
 ### Safe env names: any value
 
-Source: `chunk-dq5fzxjx.js` · offset 177698717 · sha256 `42866bc5…`
+Source: `chunk-hrhfcbdv.js` · offset 178480062 · sha256 `dc7005f2…`
 
 Status: undocumented
 
@@ -4068,7 +4194,7 @@ Names (exact):
 
 ### Safe env names: truthy value only
 
-Source: `chunk-dq5fzxjx.js` · offset 177705652 · sha256 `ab12f822…`
+Source: `chunk-hrhfcbdv.js` · offset 178486997 · sha256 `32d5bfd3…`
 
 Status: undocumented
 
@@ -4078,13 +4204,14 @@ Names (exact):
 
 - `API_FORCE_IDLE_TIMEOUT`
 - `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
+- `CLAUDE_CODE_DISABLE_WEB_FETCH`
 - `DISABLE_ERROR_REPORTING`
 - `DISABLE_TELEMETRY`
 - `DO_NOT_TRACK`
 
 ### Safe env names: falsy value only
 
-Source: `chunk-dq5fzxjx.js` · offset 177705795 · sha256 `587d78a6…`
+Source: `chunk-hrhfcbdv.js` · offset 178487173 · sha256 `ff622c6d…`
 
 Status: undocumented
 
@@ -4097,7 +4224,7 @@ Names (exact):
 
 ### Safe env names: ANTHROPIC_CUSTOM_HEADERS (validated value)
 
-Source: `chunk-dq5fzxjx.js` · offset 177706243 · sha256 `6dec5cca…`
+Source: `chunk-hrhfcbdv.js` · offset 178487621 · sha256 `1d6089c4…`
 
 Status: undocumented
 

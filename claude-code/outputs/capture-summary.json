@@ -1,5 +1,5 @@
 {
- "version": "2.1.284",
+ "version": "2.1.287",
  "cli": {
   "entrypoint": "cli",
   "identity": "You are Claude Code, Anthropic's official CLI for Claude.",
@@ -40,12 +40,10 @@
   "system_blocks": 3,
   "main_prompt_chars": 6066,
   "trailing_role": "system",
-  "trailing_chars": 9598,
+  "trailing_chars": 9831,
   "betas": [
    "claude-code-20250219",
-   "context-1m-2025-08-07",
    "interleaved-thinking-2025-05-14",
-   "redact-thinking-2026-02-12",
    "thinking-token-count-2026-05-13",
    "context-management-2025-06-27",
    "prompt-caching-scope-2026-01-05",
@@ -55,11 +53,12 @@
    "advisor-tool-2026-03-01",
    "effort-2025-11-24",
    "dangerous-tool-use-2026-09-03",
+   "thinking-display-updates-2026-08-18",
    "afk-mode-2026-01-31"
   ],
   "model": "claude-opus-5-5",
   "max_tokens": 128000,
-  "thinking": "{\"type\":\"adaptive\"}",
+  "thinking": "{\"type\":\"adaptive\",\"display\":\"updates\"}",
   "effort": "medium",
   "context_management": "{\"edits\":[{\"type\":\"clear_thinking_20251015\",\"keep\":\"all\"}]}",
   "side_requests": [
@@ -68,6 +67,7 @@
   ],
   "title_request": {
    "betas_extra": [
+    "redact-thinking-2026-02-12",
     "structured-outputs-2025-12-15"
    ]
   }
@@ -104,10 +104,9 @@
   "system_blocks": 3,
   "main_prompt_chars": 5807,
   "trailing_role": "system",
-  "trailing_chars": 7646,
+  "trailing_chars": 7879,
   "betas": [
    "claude-code-20250219",
-   "context-1m-2025-08-07",
    "interleaved-thinking-2025-05-14",
    "thinking-token-count-2026-05-13",
    "context-management-2025-06-27",
@@ -130,7 +129,6 @@
  },
  "betas_shared": [
   "claude-code-20250219",
-  "context-1m-2025-08-07",
   "interleaved-thinking-2025-05-14",
   "thinking-token-count-2026-05-13",
   "context-management-2025-06-27",
@@ -142,8 +140,8 @@
   "effort-2025-11-24"
  ],
  "betas_cli_only": [
-  "redact-thinking-2026-02-12",
   "dangerous-tool-use-2026-09-03",
+  "thinking-display-updates-2026-08-18",
   "afk-mode-2026-01-31"
  ],
  "betas_sdk_only": []

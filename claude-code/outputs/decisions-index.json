@@ -378,6 +378,11 @@
    "feeds": []
   },
   {
+   "id": "env-anthropic-work-secret",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-anthropic-workspace-id",
    "status": "pending",
    "feeds": []
@@ -724,8 +729,18 @@
    "feeds": []
   },
   {
+   "id": "env-claude-chrome-tab-group-key",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-claude-client-presence-file",
    "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-3p-probe-wrote-haiku-default",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -735,6 +750,16 @@
   },
   {
    "id": "env-claude-code-3p-probe-wrote-sonnet-default",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-3p-seeded-opus-default",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-3p-seeded-sonnet-default",
    "status": "pending",
    "feeds": []
   },
@@ -818,7 +843,7 @@
   },
   {
    "id": "env-claude-code-api-base-url",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -931,7 +956,7 @@
   },
   {
    "id": "env-claude-code-artifact-pin",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -946,6 +971,11 @@
   },
   {
    "id": "env-claude-code-artifact-quickstart",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-artifact-share",
    "status": "pending",
    "feeds": []
   },
@@ -1024,6 +1054,11 @@
   },
   {
    "id": "env-claude-code-auto-mode-server",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-auto-mode-tier",
    "status": "pending",
    "feeds": []
   },
@@ -1151,7 +1186,27 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-ccr-early-plugins-sync",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-ccr-early-remote-connect",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-ccr-early-skills-sync",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-ccr-fold-first-turn-rescan",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-ccr-skip-fresh-migrations",
    "status": "standalone",
    "feeds": []
   },
@@ -1183,6 +1238,11 @@
   {
    "id": "env-claude-code-cold-compact",
    "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-config-probe",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -1279,26 +1339,6 @@
    "feeds": []
   },
   {
-   "id": "env-claude-code-dir-sync-engine",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-dir-sync-ffwd",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-dir-sync-git",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-dir-sync-stream",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
    "id": "env-claude-code-disable-1m-context",
    "status": "standalone",
    "feeds": []
@@ -1348,6 +1388,11 @@
      "of": 5
     }
    ]
+  },
+  {
+   "id": "env-claude-code-disable-auth-refresh-lock",
+   "status": "standalone",
+   "feeds": []
   },
   {
    "id": "env-claude-code-disable-auto-memory",
@@ -1414,11 +1459,6 @@
   },
   {
    "id": "env-claude-code-disable-dangerous-rm-timeout",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-disable-dir-sync",
    "status": "standalone",
    "feeds": []
   },
@@ -1491,11 +1531,16 @@
   },
   {
    "id": "env-claude-code-disable-hook-forwarding",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
    "id": "env-claude-code-disable-legacy-model-remap",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-disable-mcp-task-background",
    "status": "standalone",
    "feeds": []
   },
@@ -1522,6 +1567,11 @@
   {
    "id": "env-claude-code-disable-memory-stream-list",
    "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-disable-model-access-fallback",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -1584,7 +1634,7 @@
   },
   {
    "id": "env-claude-code-disable-plugin-forwarding",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -1661,6 +1711,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-disable-web-fetch",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-disable-windows-shell-launcher",
    "status": "standalone",
    "feeds": []
@@ -1712,14 +1767,14 @@
      "title": "Reasoning effort",
      "rung": "env",
      "rank": 2,
-     "of": 11
+     "of": 12
     },
     {
      "decision": "effort-level",
      "title": "Reasoning effort",
      "rung": "envAuto",
      "rank": 3,
-     "of": 11
+     "of": 12
     }
    ]
   },
@@ -1779,11 +1834,6 @@
   {
    "id": "env-claude-code-enable-fine-grained-tool-streaming",
    "status": "pending",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-enable-function-hooks",
-   "status": "standalone",
    "feeds": []
   },
   {
@@ -1901,7 +1951,7 @@
      "title": "Reasoning effort",
      "rung": "extraBody",
      "rank": 1,
-     "of": 11
+     "of": 12
     },
     {
      "decision": "thinking-mode",
@@ -2033,12 +2083,22 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-growthbook-kick-from-init",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-gzip-ccr-request-bodies",
    "status": "standalone",
    "feeds": []
   },
   {
    "id": "env-claude-code-gzip-request-bodies",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-gzip-request-body-blocks",
    "status": "standalone",
    "feeds": []
   },
@@ -2109,6 +2169,11 @@
   },
   {
    "id": "env-claude-code-host-platform",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-host-prompt-supersedes-record",
    "status": "pending",
    "feeds": []
   },
@@ -2287,11 +2352,21 @@
   },
   {
    "id": "env-claude-code-mcp-connector-prewait-ms",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
    "id": "env-claude-code-mcp-memory-cgroup",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-mcp-prewait-servers",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-mcp-prewait-servers-ms",
    "status": "pending",
    "feeds": []
   },
@@ -2374,6 +2449,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-nonstreaming-timeout-retries",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-oauth-401-wait-ms",
    "status": "standalone",
    "feeds": []
@@ -2440,11 +2520,6 @@
   },
   {
    "id": "env-claude-code-package-manager-auto-update",
-   "status": "standalone",
-   "feeds": []
-  },
-  {
-   "id": "env-claude-code-parchment-fern",
    "status": "standalone",
    "feeds": []
   },
@@ -2732,6 +2807,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-result-nonce",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-resume-from-session",
    "status": "pending",
    "feeds": []
@@ -2964,6 +3044,11 @@
      "of": 15
     }
    ]
+  },
+  {
+   "id": "env-claude-code-skip-model-access-memory",
+   "status": "standalone",
+   "feeds": []
   },
   {
    "id": "env-claude-code-skip-plugin-mcp-servers",
@@ -3374,12 +3459,12 @@
   },
   {
    "id": "env-claude-code-workflow-size-warning-agents",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
    "id": "env-claude-code-workflow-size-warning-tokens",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -3407,7 +3492,7 @@
   },
   {
    "id": "env-claude-cowork-memory-extra-guidelines",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -3588,7 +3673,7 @@
   },
   {
    "id": "env-claude-securestorage-config-dir",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -3638,6 +3723,11 @@
   },
   {
    "id": "env-clipboard-napi-node-path",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-computername",
    "status": "standalone",
    "feeds": []
   },
@@ -4180,7 +4270,7 @@
   },
   {
    "id": "env-system-reminder-memory-context",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -4255,7 +4345,7 @@
   },
   {
    "id": "env-anthropic-small-fast-model-aws-region",
-   "status": "pending",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -4467,6 +4557,11 @@
    "feeds": []
   },
   {
+   "id": "env-cloudsdk-active-config-name",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-cloudsdk-auth-access-token",
    "status": "pending",
    "feeds": []
@@ -4488,7 +4583,7 @@
   },
   {
    "id": "env-google-application-credentials-lowercase",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -5006,6 +5101,11 @@
    "feeds": []
   },
   {
+   "id": "env-ccr-agent-proxy-ca-cert-b64",
+   "status": "pending",
+   "feeds": []
+  },
+  {
    "id": "env-ccr-agent-proxy-enabled",
    "status": "pending",
    "feeds": []
@@ -5416,6 +5516,11 @@
    "feeds": []
   },
   {
+   "id": "env-gh-repo",
+   "status": "os-shell",
+   "feeds": []
+  },
+  {
    "id": "env-gh-token",
    "status": "os-shell",
    "feeds": []
@@ -5467,6 +5572,11 @@
   },
   {
    "id": "env-git-ssh-command",
+   "status": "os-shell",
+   "feeds": []
+  },
+  {
+   "id": "env-git-ssh-variant",
    "status": "os-shell",
    "feeds": []
   },
@@ -6086,7 +6196,17 @@
    "feeds": []
   },
   {
+   "id": "env-set-bun-install-cache-dir",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-bun-options",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-ccr-agent-proxy-ca-cert-b64",
    "status": "set-only",
    "feeds": []
   },
@@ -6192,6 +6312,11 @@
   },
   {
    "id": "env-set-claude-bg-auth-snapshot-path",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-bg-auto-memory-off",
    "status": "set-only",
    "feeds": []
   },
@@ -6336,7 +6461,17 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-chrome-tab-group-key",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-client-presence-file",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-3p-probe-wrote-haiku-default",
    "status": "set-only",
    "feeds": []
   },
@@ -6347,6 +6482,16 @@
   },
   {
    "id": "env-set-claude-code-3p-probe-wrote-sonnet-default",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-3p-seeded-opus-default",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-3p-seeded-sonnet-default",
    "status": "set-only",
    "feeds": []
   },
@@ -6451,6 +6596,11 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-code-auto-mode-tier",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-code-base-ref",
    "status": "set-only",
    "feeds": []
@@ -6506,6 +6656,11 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-code-bridge-source-dir",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-code-brief",
    "status": "set-only",
    "feeds": []
@@ -6537,6 +6692,11 @@
   },
   {
    "id": "env-set-claude-code-client-data-url",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-config-probe",
    "status": "set-only",
    "feeds": []
   },
@@ -6576,26 +6736,6 @@
    "feeds": []
   },
   {
-   "id": "env-set-claude-code-dir-sync-engine",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-claude-code-dir-sync-ffwd",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-claude-code-dir-sync-git",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-claude-code-dir-sync-stream",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
    "id": "env-set-claude-code-disable-attribution-baseline-reuse",
    "status": "set-only",
    "feeds": []
@@ -6607,11 +6747,6 @@
   },
   {
    "id": "env-set-claude-code-disable-claude-mds",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-claude-code-disable-dir-sync",
    "status": "set-only",
    "feeds": []
   },
@@ -6811,6 +6946,11 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-code-host-prompt-supersedes-record",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-code-host-session-id",
    "status": "set-only",
    "feeds": []
@@ -6912,6 +7052,16 @@
   },
   {
    "id": "env-set-claude-code-mcp-memory-cgroup",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-mcp-prewait-servers",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-mcp-prewait-servers-ms",
    "status": "set-only",
    "feeds": []
   },
@@ -7172,6 +7322,11 @@
   },
   {
    "id": "env-set-claude-code-restricted",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-result-nonce",
    "status": "set-only",
    "feeds": []
   },
@@ -7831,17 +7986,7 @@
    "feeds": []
   },
   {
-   "id": "env-set-git-alternate-object-directories",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
    "id": "env-set-git-askpass",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-attr-nosystem",
    "status": "set-only",
    "feeds": []
   },
@@ -7901,32 +8046,7 @@
    "feeds": []
   },
   {
-   "id": "env-set-git-default-ref-format",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-dir",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
    "id": "env-set-git-editor",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-glob-pathspecs",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-graft-file",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-icase-pathspecs",
    "status": "set-only",
    "feeds": []
   },
@@ -7936,22 +8056,7 @@
    "feeds": []
   },
   {
-   "id": "env-set-git-literal-pathspecs",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
    "id": "env-set-git-no-lazy-fetch",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-no-replace-objects",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
-   "id": "env-set-git-noglob-pathspecs",
    "status": "set-only",
    "feeds": []
   },
@@ -7976,22 +8081,17 @@
    "feeds": []
   },
   {
-   "id": "env-set-git-shallow-file",
-   "status": "set-only",
-   "feeds": []
-  },
-  {
    "id": "env-set-git-ssh-command",
    "status": "set-only",
    "feeds": []
   },
   {
-   "id": "env-set-git-terminal-prompt",
+   "id": "env-set-git-ssh-variant",
    "status": "set-only",
    "feeds": []
   },
   {
-   "id": "env-set-git-work-tree",
+   "id": "env-set-git-terminal-prompt",
    "status": "set-only",
    "feeds": []
   },
@@ -8939,14 +9039,14 @@
      "title": "Reasoning effort",
      "rung": "setting",
      "rank": 6,
-     "of": 11
+     "of": 12
     },
     {
      "decision": "effort-level",
      "title": "Reasoning effort",
      "rung": "userSetting",
      "rank": 8,
-     "of": 11
+     "of": 12
     },
     {
      "decision": "settings-layers",
@@ -8979,7 +9079,7 @@
      "title": "Reasoning effort",
      "rung": "modelSettings",
      "rank": 7,
-     "of": 11
+     "of": 12
     },
     {
      "decision": "settings-layers",
@@ -12313,6 +12413,19 @@
    ]
   },
   {
+   "id": "setting-allow-claude-in-chrome-with-managed-mcp",
+   "status": "layered",
+   "feeds": [
+    {
+     "decision": "settings-layers",
+     "title": "Where a setting's value comes from",
+     "rung": null,
+     "rank": null,
+     "of": null
+    }
+   ]
+  },
+  {
    "id": "setting-prepend-plugins",
    "status": "layered",
    "feeds": [
@@ -12353,6 +12466,32 @@
   },
   {
    "id": "setting-allowed-marketplaces",
+   "status": "layered",
+   "feeds": [
+    {
+     "decision": "settings-layers",
+     "title": "Where a setting's value comes from",
+     "rung": null,
+     "rank": null,
+     "of": null
+    }
+   ]
+  },
+  {
+   "id": "setting-allowed-providers",
+   "status": "layered",
+   "feeds": [
+    {
+     "decision": "settings-layers",
+     "title": "Where a setting's value comes from",
+     "rung": null,
+     "rank": null,
+     "of": null
+    }
+   ]
+  },
+  {
+   "id": "setting-max-prose-width",
    "status": "layered",
    "feeds": [
     {
@@ -13295,7 +13434,7 @@
      "title": "Reasoning effort",
      "rung": "cli",
      "rank": 5,
-     "of": 11
+     "of": 12
     }
    ]
   },
@@ -13340,6 +13479,11 @@
    ]
   },
   {
+   "id": "cli-flag-client-data-url",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "cli-flag-managed-settings",
    "status": "standalone",
    "feeds": []
@@ -13356,6 +13500,11 @@
   },
   {
    "id": "cli-flag-ide",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-desktop",
    "status": "standalone",
    "feeds": []
   },
@@ -13680,6 +13829,11 @@
    "feeds": []
   },
   {
+   "id": "cli-cmd-apply-project-settings",
+   "status": "action",
+   "feeds": []
+  },
+  {
    "id": "cli-cmd-attach",
    "status": "action",
    "feeds": []
@@ -13792,6 +13946,16 @@
   {
    "id": "cli-cmd-doctor",
    "status": "action",
+   "feeds": []
+  },
+  {
+   "id": "cli-cmd-drop-worktree-registrations",
+   "status": "action",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-drop-worktree-registrations-json",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -14105,6 +14269,26 @@
    "feeds": []
   },
   {
+   "id": "cli-cmd-plugin-configure",
+   "status": "action",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-plugin-configure-json",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-plugin-configure-values-stdin",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-plugin-configure-cowork",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "cli-cmd-plugin-details",
    "status": "action",
    "feeds": []
@@ -14360,6 +14544,11 @@
    "feeds": []
   },
   {
+   "id": "cli-flag-plugin-install-replace",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "cli-flag-plugin-install-json",
    "status": "standalone",
    "feeds": []
@@ -14386,6 +14575,11 @@
   },
   {
    "id": "cli-flag-plugin-list-available",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-plugin-list-data-size",
    "status": "standalone",
    "feeds": []
   },
@@ -14425,6 +14619,16 @@
    "feeds": []
   },
   {
+   "id": "cli-flag-plugin-marketplace-add-resolve-only",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-plugin-marketplace-add-json",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "cli-cmd-plugin-marketplace-list",
    "status": "action",
    "feeds": []
@@ -14450,6 +14654,11 @@
    "feeds": []
   },
   {
+   "id": "cli-flag-plugin-marketplace-remove-json",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "cli-flag-plugin-marketplace-remove-cowork",
    "status": "standalone",
    "feeds": []
@@ -14457,6 +14666,11 @@
   {
    "id": "cli-cmd-plugin-marketplace-update",
    "status": "action",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-plugin-marketplace-update-json",
+   "status": "standalone",
    "feeds": []
   },
   {
@@ -14517,6 +14731,11 @@
   {
    "id": "cli-flag-plugin-tag-remote",
    "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-cmd-plugin-test",
+   "status": "action",
    "feeds": []
   },
   {

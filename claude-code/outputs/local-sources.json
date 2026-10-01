@@ -1,6 +1,6 @@
 {
   "product": "claude-code",
-  "extractedVersion": "2.1.284",
+  "extractedVersion": "2.1.287",
   "generated": "2026-10-01",
   "sources": [
     {
@@ -33,23 +33,23 @@
       "writer": "session storage (transcript namespace); read by --resume/--continue, /export, forks",
       "evidence": [
         {
-          "file": "chunk-w4t9a3px.js",
-          "offset": 1694,
+          "file": "chunk-13899ncf.js",
+          "offset": 2333,
           "literal": "namespace:\"transcript\",projectKey:e,sessionId:n"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25519,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 25870,
           "literal": "project transcripts (.jsonl) and memory/"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 24242,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 24593,
           "literal": ".map((c)=>`${c}.jsonl`)"
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 12242,
+          "file": "chunk-925etgj7.js",
+          "offset": 12491,
           "literal": "!P.name.endsWith(\".cast\")&&!P.name.endsWith(\".ccr-tip.json\")"
         }
       ],
@@ -79,13 +79,13 @@
       "writer": "transcript namespace with agentId/agentRelPath",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 15794,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 17274,
           "literal": "[\"agentId\",e.agentId,\"optional\"],[\"agentRelPath\",e.agentRelPath,\"optional\"]"
         },
         {
-          "file": "chunk-6ggjj4mg.js",
-          "offset": 1123,
+          "file": "chunk-925etgj7.js",
+          "offset": 14810,
           "literal": "\"subagents\",\"workflows\""
         }
       ],
@@ -119,8 +119,8 @@
       "writer": "subagent launcher",
       "evidence": [
         {
-          "file": "chunk-6ggjj4mg.js",
-          "offset": 1123,
+          "file": "chunk-925etgj7.js",
+          "offset": 14810,
           "literal": "\"subagents\",\"workflows\""
         }
       ],
@@ -146,14 +146,14 @@
       "writer": "Workflow tool runtime",
       "evidence": [
         {
-          "file": "chunk-6ggjj4mg.js",
+          "file": "chunk-vnd55cbp.js",
           "offset": 1115,
           "literal": "p(a,q(),\"subagents\",\"workflows\",r)"
         },
         {
-          "file": "chunk-dnv148zc.js",
-          "offset": 21246,
-          "literal": "this.path=Sr(I0(e),\"journal.jsonl\")"
+          "file": "chunk-jxy1fa30.js",
+          "offset": 21259,
+          "literal": "this.path=Rr(MO(e),\"journal.jsonl\")"
         }
       ],
       "credential": false,
@@ -179,12 +179,12 @@
       "writer": "Workflow tool (sidecar namespace)",
       "evidence": [
         {
-          "file": "chunk-6ggjj4mg.js",
+          "file": "chunk-vnd55cbp.js",
           "offset": 1232,
-          "literal": "xe.sidecar(r,a,[\"workflows\",`${n}.json`])"
+          "literal": "De.sidecar(r,a,[\"workflows\",`${n}.json`])"
         },
         {
-          "file": "chunk-6ggjj4mg.js",
+          "file": "chunk-vnd55cbp.js",
           "offset": 1311,
           "literal": "runId:r,timestamp:new Date().toI"
         }
@@ -214,14 +214,14 @@
       "writer": "session journal (xe.sessionJournal(..., \"world\"))",
       "evidence": [
         {
-          "file": "chunk-01gsm8fb.js",
-          "offset": 51170,
-          "literal": "Xr=\"world.jsonl\""
+          "file": "chunk-t1k2p0jf.js",
+          "offset": 51473,
+          "literal": "Yr=\"world.jsonl\""
         },
         {
-          "file": "chunk-01gsm8fb.js",
-          "offset": 51321,
-          "literal": "xe.sessionJournal(n,Yr(r),\"world\")"
+          "file": "chunk-t1k2p0jf.js",
+          "offset": 51624,
+          "literal": "De.sessionJournal(n,Jr(r),\"world\")"
         }
       ],
       "credential": false,
@@ -245,9 +245,9 @@
       "writer": "tool result persistence",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 25014,
-          "literal": "yue=\"tool-results\""
+          "file": "chunk-2ynta9xc.js",
+          "offset": 26494,
+          "literal": "Afe=\"tool-results\""
         }
       ],
       "credential": false,
@@ -269,8 +269,8 @@
       "writer": "MCP task support (sidecar namespace)",
       "evidence": [
         {
-          "file": "chunk-3m1jf8km.js",
-          "offset": 2287,
+          "file": "chunk-dyg2mvj3.js",
+          "offset": 2290,
           "literal": "[\"mcp-tasks\",`mcp-task-${a}.meta.json`]"
         }
       ],
@@ -293,13 +293,13 @@
       "writer": "compaction (name reserved in the storage-key schema)",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 11837,
-          "literal": "ft=[\".ccr-tip.json\",\".precompact.json\",ue]"
+          "file": "chunk-2ynta9xc.js",
+          "offset": 13317,
+          "literal": "mt=[\".ccr-tip.json\",\".precompact.json\",fe]"
         },
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 11920,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 13400,
           "literal": "those name a session's project-level sibling files"
         }
       ],
@@ -322,9 +322,9 @@
       "writer": "cloud session sync",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 11837,
-          "literal": "ft=[\".ccr-tip.json\",\".precompact.json\",ue]"
+          "file": "chunk-2ynta9xc.js",
+          "offset": 13317,
+          "literal": "mt=[\".ccr-tip.json\",\".precompact.json\",fe]"
         }
       ],
       "credential": false,
@@ -347,13 +347,13 @@
       "writer": "recording namespace",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 11456,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 12936,
           "literal": "inside a session's folder is that session's terminal recording stream"
         },
         {
-          "file": "chunk-apqxkhrm.js",
-          "offset": 5670,
+          "file": "chunk-2z1m9v0n.js",
+          "offset": 6078,
           "literal": "\"CLAUDE_PTY_RECORD\""
         }
       ],
@@ -376,12 +376,12 @@
       "writer": "cloud folder sync (dirSyncRecord namespace)",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 12043,
-          "literal": "NXn=\".dir-sync.json\""
+          "file": "chunk-2ynta9xc.js",
+          "offset": 13523,
+          "literal": "Mrr=\".dir-sync.json\""
         },
         {
-          "file": "chunk-w4t9a3px.js",
+          "file": "chunk-2z86j2rq.js",
           "offset": 4403,
           "literal": "dirSyncRecord:(e,n)=>({namespace:\"dirSyncRecord\""
         }
@@ -405,14 +405,14 @@
       "writer": "bridgePointer / sessionAliases namespaces; cloud sync",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 11241,
-          "literal": "ct=new Set([\"memory\",\"tiny_memory\",\"bagel\",hue,\"bridge-pointer.json\",\".session-aliases\"])"
+          "file": "chunk-2ynta9xc.js",
+          "offset": 12721,
+          "literal": "dt=new Set([\"memory\",\"tiny_memory\",\"bagel\",Ibt,\"bridge-pointer.json\",\".session-aliases\"])"
         },
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 11163,
-          "literal": "var hue=\"cloud-snapshots\",TXe=\"side.git\",nWo=\"archive-sync\",oSn=\"folder-sync\""
+          "file": "chunk-2ynta9xc.js",
+          "offset": 12643,
+          "literal": "var Ibt=\"cloud-snapshots\",KAn=\"side.git\",SYo=\"archive-sync\",bYo=\"folder-sync\""
         }
       ],
       "credential": false,
@@ -434,12 +434,12 @@
       "writer": "sessionLog namespace",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 9000,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 10480,
           "literal": "must be the session-log stem <sessionId8>[-<title-slug>]"
         },
         {
-          "file": "chunk-w4t9a3px.js",
+          "file": "chunk-2z86j2rq.js",
           "offset": 4028,
           "literal": "sessionLog:(e,n,a)=>({namespace:\"sessionLog\""
         }
@@ -465,17 +465,17 @@
       "writer": "auto memory; memory consolidation",
       "evidence": [
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 249713,
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 250429,
           "literal": "auto memory files are allowed for reading"
         },
         {
-          "file": "chunk-jyws720p.js",
+          "file": "chunk-th6jpvf5.js",
           "offset": 1216,
           "literal": "\".consolidate-lock\""
         },
         {
-          "file": "chunk-w4t9a3px.js",
+          "file": "chunk-2z86j2rq.js",
           "offset": 5401,
           "literal": "case\"memory\":return[e.namespace,e.projectKey,e.relPath]"
         }
@@ -571,13 +571,13 @@
       "writer": "session registry; read by claude agents / peers / daemon",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 395636,
-          "literal": "messagingSocketPath:aE.CLAUDE_CODE_MESSAGING_SOCKET"
+          "file": "chunk-nankzm0s.js",
+          "offset": 446687,
+          "literal": "messagingSocketPath:nv.CLAUDE_CODE_MESSAGING_SOCKET"
         },
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 395777,
+          "file": "chunk-nankzm0s.js",
+          "offset": 446828,
           "literal": "logPath:a.CLAUDE_CODE_SESSION_LOG"
         }
       ],
@@ -600,8 +600,8 @@
       "writer": "uds-auth",
       "evidence": [
         {
-          "file": "chunk-erx7m2ye.js",
-          "offset": 5638,
+          "file": "chunk-wb5qh1pz.js",
+          "offset": 5636,
           "literal": "messaging key folder could not be made through storage"
         }
       ],
@@ -624,13 +624,13 @@
       "writer": "Bash tool shell snapshot",
       "evidence": [
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 781563,
-          "literal": "`snapshot-${r}-${b}-${w}${F!==void 0?`-${F}`:\"\"}.sh`"
+          "file": "chunk-mphp7acd.js",
+          "offset": 849090,
+          "literal": "`snapshot-${r}-${b}-${w}${j!==void 0?`-${j}`:\"\"}.sh`"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25999,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 26350,
           "literal": "shell-snapshots/ are not project-scoped and will not be touched"
         }
       ],
@@ -654,23 +654,23 @@
       "writer": "hooks (SessionStart etc.) via the env file; Bash tool reads",
       "evidence": [
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 128094,
-          "literal": "XS=[\"shell-snapshots\",\"session-env\",\"projects\",\"file-history\",\"backups\"]"
+          "file": "chunk-09m4fzsj.js",
+          "offset": 302606,
+          "literal": "_A=[\"shell-snapshots\",\"session-env\",\"projects\",\"file-history\",\"backups\"]"
         },
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 7208,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 8688,
           "literal": "\"rules\",\"session-env\",\"uploads\""
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 20867,
-          "literal": "M(\"session-env\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 21221,
+          "literal": "N(\"session-env\")"
         },
         {
-          "file": "chunk-k5bbc3f7.js",
-          "offset": 169548,
+          "file": "chunk-e2javxcw.js",
+          "offset": 170070,
           "literal": "CLAUDE_ENV_FILE"
         }
       ],
@@ -693,13 +693,13 @@
       "writer": "file checkpointing",
       "evidence": [
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 4109460,
+          "file": "chunk-mphp7acd.js",
+          "offset": 4386640,
           "literal": ".digest(\"hex\").slice(0,16)}@v${n}`"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25432,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 25783,
           "literal": "file edit history for session"
         }
       ],
@@ -726,14 +726,14 @@
       "writer": "TodoWrite (older task tracking)",
       "evidence": [
         {
-          "file": "chunk-zzv0mx12.js",
-          "offset": 14507,
+          "file": "chunk-8xhw5h9f.js",
+          "offset": 14827,
           "literal": "\"projects\",\"sessions\",\"todos\",\"shell-snapshots\""
         },
         {
-          "file": "chunk-yafdqrx7.js",
-          "offset": 781850,
-          "literal": "_6n=[\"todos\",\"statsig\",\"logs\",\"access-audit\"]"
+          "file": "chunk-5vadtxaa.js",
+          "offset": 782302,
+          "literal": "z5n=[\"todos\",\"statsig\",\"logs\",\"access-audit\"]"
         }
       ],
       "credential": false,
@@ -764,23 +764,23 @@
       "writer": "Task tools; read by teammates",
       "evidence": [
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25140,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 25491,
           "literal": "tasks for session"
         },
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 249840,
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 250556,
           "literal": "Task files are allowed for reading"
         },
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 13535,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 15015,
           "literal": "a task key names an item, the list metadata or the list high-water mark"
         },
         {
-          "file": "chunk-6bdxb0yq.js",
-          "offset": 87838,
+          "file": "chunk-f2cpzzp9.js",
+          "offset": 83216,
           "literal": "CLAUDE_CODE_TASK_LIST_ID"
         }
       ],
@@ -803,18 +803,18 @@
       "writer": "agent teams / TeammateMailbox",
       "evidence": [
         {
-          "file": "chunk-acfy6mvh.js",
+          "file": "chunk-4nawnnf1.js",
           "offset": 1800,
-          "literal": "return F(v(e),\"config.json\")"
+          "literal": "return F(S(e),\"config.json\")"
         },
         {
-          "file": "chunk-sv69c8sw.js",
-          "offset": 20465,
+          "file": "chunk-rgd7eyd0.js",
+          "offset": 22121,
           "literal": "[TeammateMailbox] getInboxPath"
         },
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 249960,
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 250676,
           "literal": "Team files are allowed for reading"
         }
       ],
@@ -838,9 +838,9 @@
       "writer": "plan mode",
       "evidence": [
         {
-          "file": "chunk-kf8pdq4s.js",
-          "offset": 12080,
-          "literal": "return p(be(),\"plans\")"
+          "file": "chunk-epk29mef.js",
+          "offset": 12707,
+          "literal": "return h(we(),\"plans\")"
         }
       ],
       "credential": false,
@@ -863,18 +863,18 @@
       "writer": "debug channel (xe.log(id,\"debug\"))",
       "evidence": [
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25276,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 25627,
           "literal": "debug log for session"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25172,
-          "literal": "k(o,\"debug\",`${h}.txt`)"
+          "file": "chunk-xztdt5v3.js",
+          "offset": 25523,
+          "literal": "b(o,\"debug\",`${h}.txt`)"
         },
         {
-          "file": "chunk-apqxkhrm.js",
-          "offset": 5690,
+          "file": "chunk-2z1m9v0n.js",
+          "offset": 6098,
           "literal": "\"CLAUDE_CODE_DEBUG_LOGS_DIR\""
         }
       ],
@@ -897,19 +897,19 @@
       "writer": "prompt dump (apiDump channel)",
       "evidence": [
         {
-          "file": "chunk-jkvndy4p.js",
-          "offset": 3111,
+          "file": "chunk-7gjg43eb.js",
+          "offset": 3240,
           "literal": "\"dump-prompts\",`${e??q()}.jsonl`"
         },
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 13331,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 14811,
           "literal": "else the session's (today's dump-prompts/<id>.jsonl)"
         },
         {
-          "file": "chunk-jkvndy4p.js",
-          "offset": 3347,
-          "literal": "function V(e,r,i,n,o){try{return}catch{}finally{i.dumpInFlight=!1}}"
+          "file": "chunk-7gjg43eb.js",
+          "offset": 3494,
+          "literal": "function J(e,r,i,n,o){try{return}catch{}finally{i.dumpInFlight=!1}}"
         }
       ],
       "credential": false,
@@ -931,8 +931,8 @@
       "writer": "not traced",
       "evidence": [
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 2903697,
+          "file": "chunk-mphp7acd.js",
+          "offset": 2962959,
           "literal": "\"agent-memory-project\",\"api-dumps\",\"backups\""
         }
       ],
@@ -964,14 +964,14 @@
       "writer": "1P event logger (telemetry channel)",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 423904,
-          "literal": "Ad=\"1p_failed_events.\""
+          "file": "chunk-nankzm0s.js",
+          "offset": 475112,
+          "literal": "yc=\"1p_failed_events.\""
         },
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 425611,
-          "literal": "`${Ad}${q()}.${Ao}.json`"
+          "file": "chunk-nankzm0s.js",
+          "offset": 476819,
+          "literal": "`${yc}${q()}.${Zo}.json`"
         }
       ],
       "credential": false,
@@ -993,9 +993,9 @@
       "writer": "older builds",
       "evidence": [
         {
-          "file": "chunk-yafdqrx7.js",
-          "offset": 781850,
-          "literal": "_6n=[\"todos\",\"statsig\",\"logs\",\"access-audit\"]"
+          "file": "chunk-5vadtxaa.js",
+          "offset": 782302,
+          "literal": "z5n=[\"todos\",\"statsig\",\"logs\",\"access-audit\"]"
         }
       ],
       "credential": false,
@@ -1018,9 +1018,9 @@
       "writer": "not traced (possibly Perfetto tracing)",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 30331,
-          "literal": "m(be(),\"traces\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 30686,
+          "literal": "h(we(),\"traces\")"
         }
       ],
       "credential": false,
@@ -1042,9 +1042,9 @@
       "writer": "startup profiler",
       "evidence": [
         {
-          "file": "chunk-pz5v8y6d.js",
-          "offset": 7676,
-          "literal": "G(be(),\"startup-perf\",`${q()}.json`)"
+          "file": "chunk-5m30we7w.js",
+          "offset": 8501,
+          "literal": "W(we(),\"startup-perf\",`${q()}.json`)"
         }
       ],
       "credential": false,
@@ -1066,14 +1066,14 @@
       "writer": "/insights",
       "evidence": [
         {
-          "file": "chunk-50qtypn7.js",
-          "offset": 17319,
-          "literal": "xe.userConfigDir(\"usage-data\",[\"session-meta\",`${e}.json`])"
+          "file": "chunk-q5ps74rj.js",
+          "offset": 17630,
+          "literal": "De.userConfigDir(\"usage-data\",[\"session-meta\",`${e}.json`])"
         },
         {
-          "file": "chunk-50qtypn7.js",
-          "offset": 17243,
-          "literal": "xe.userConfigDir(\"usage-data\",[\"facets\",`${e}.json`])"
+          "file": "chunk-q5ps74rj.js",
+          "offset": 17554,
+          "literal": "De.userConfigDir(\"usage-data\",[\"facets\",`${e}.json`])"
         }
       ],
       "credential": false,
@@ -1101,18 +1101,18 @@
       "writer": "prompt input history",
       "evidence": [
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 408500,
-          "literal": "MA(be(),\"history.jsonl\")"
+          "file": "chunk-09m4fzsj.js",
+          "offset": 519154,
+          "literal": "fO(we(),\"history.jsonl\")"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 26683,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 27034,
           "literal": "prompt history across all projects"
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 17854,
+          "file": "chunk-925etgj7.js",
+          "offset": 18208,
           "literal": "History retention prune skipped"
         }
       ],
@@ -1135,13 +1135,13 @@
       "writer": "prompt input paste store",
       "evidence": [
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 393400,
-          "literal": "var SW=\"paste-cache\""
+          "file": "chunk-09m4fzsj.js",
+          "offset": 504017,
+          "literal": "var kX=\"paste-cache\""
         },
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 394543,
+          "file": "chunk-09m4fzsj.js",
+          "offset": 505160,
           "literal": "invalid paste-content hash"
         }
       ],
@@ -1164,9 +1164,9 @@
       "writer": "image paste handling",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 3377,
-          "literal": "De=\"image-cache\""
+          "file": "chunk-925etgj7.js",
+          "offset": 3339,
+          "literal": "Pe=\"image-cache\""
         }
       ],
       "credential": false,
@@ -1188,13 +1188,13 @@
       "writer": "peer file transfer",
       "evidence": [
         {
-          "file": "chunk-e915stm6.js",
-          "offset": 1538,
+          "file": "chunk-e3z54dd6.js",
+          "offset": 1537,
           "literal": "H=\"file-transfers\""
         },
         {
-          "file": "chunk-e915stm6.js",
-          "offset": 1574,
+          "file": "chunk-e3z54dd6.js",
+          "offset": 1573,
           "literal": "[peer-file-transfer]"
         }
       ],
@@ -1217,14 +1217,14 @@
       "writer": "not traced",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 7208,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 8688,
           "literal": "\"rules\",\"session-env\",\"uploads\""
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 20937,
-          "literal": "M(\"uploads\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 21291,
+          "literal": "N(\"uploads\")"
         }
       ],
       "credential": false,
@@ -1246,9 +1246,9 @@
       "writer": "share / export",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 25704,
-          "literal": "m(be(),\"shares\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 26059,
+          "literal": "h(we(),\"shares\")"
         }
       ],
       "credential": false,
@@ -1270,9 +1270,9 @@
       "writer": "/bug",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 29879,
-          "literal": "m(be(),\"feedback\",\"drafts\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 30234,
+          "literal": "h(we(),\"feedback\",\"drafts\")"
         }
       ],
       "credential": false,
@@ -1299,14 +1299,14 @@
       "writer": "/bug",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 29815,
-          "literal": "m(be(),\"feedback-bundles\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 30170,
+          "literal": "h(we(),\"feedback-bundles\")"
         },
         {
-          "file": "chunk-6bdxb0yq.js",
-          "offset": 867209,
-          "literal": "subagentTranscripts:pt,lastApiRequest:ht,rawTranscriptJsonl:ft"
+          "file": "chunk-f2cpzzp9.js",
+          "offset": 876646,
+          "literal": "subagentTranscripts:pt,lastApiRequest:St,rawTranscriptJsonl:ht"
         }
       ],
       "credential": false,
@@ -1328,13 +1328,13 @@
       "writer": "global config save",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 493833,
+          "file": "chunk-nankzm0s.js",
+          "offset": 548205,
           "literal": "`${g}.backup.${Date.now()}`"
         },
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 26192,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 26543,
           "literal": "at most 5 are kept and they rotate out automatically"
         }
       ],
@@ -1374,13 +1374,13 @@
       "writer": "session exit",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 479335,
+          "file": "chunk-nankzm0s.js",
+          "offset": 533679,
           "literal": "\"lastFpsLow1Pct\",\"lastSessionId\",\"lastGracefulShutdown\""
         },
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 670022,
+          "file": "chunk-mphp7acd.js",
+          "offset": 734790,
           "literal": "costUSD:r.costUSD})),lastSessionId:q()}"
         }
       ],
@@ -1411,8 +1411,8 @@
       "writer": "global config",
       "evidence": [
         {
-          "file": "chunk-e4fkgvnr.js",
-          "offset": 25742,
+          "file": "chunk-xztdt5v3.js",
+          "offset": 26093,
           "literal": "project entry in ~/.claude.json (trust, history, MCP servers)"
         }
       ],
@@ -1450,13 +1450,13 @@
       "writer": "feature-flag client; account/model fetches",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 114296,
+          "file": "chunk-nankzm0s.js",
+          "offset": 153380,
           "literal": "cachedGrowthBookFeatures:n,cachedExperimentFeatures"
         },
         {
-          "file": "chunk-9rz2hpfp.js",
-          "offset": 12769,
+          "file": "chunk-kjjppes5.js",
+          "offset": 12776,
           "literal": "i.clientDataCacheSlots=void 0"
         }
       ],
@@ -1479,8 +1479,8 @@
       "writer": "global config",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 479335,
+          "file": "chunk-nankzm0s.js",
+          "offset": 533679,
           "literal": "\"lastFpsLow1Pct\",\"lastSessionId\",\"lastGracefulShutdown\""
         }
       ],
@@ -1503,8 +1503,8 @@
       "writer": "model catalog fetch",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 337643,
+          "file": "chunk-nankzm0s.js",
+          "offset": 388172,
           "literal": "\"model-catalog\""
         }
       ],
@@ -1527,14 +1527,14 @@
       "writer": "various fetchers",
       "evidence": [
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 49373,
-          "literal": "as=\"org-memory-discovery.json\""
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 49876,
+          "literal": "ss=\"org-memory-discovery.json\""
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 15409,
-          "literal": "m(be(),\"cache\",\"team-discovery.json\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 15666,
+          "literal": "h(we(),\"cache\",\"team-discovery.json\")"
         }
       ],
       "credential": false,
@@ -1556,9 +1556,9 @@
       "writer": "MCP client",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 16014,
-          "literal": "m(be(),\"mcp-needs-auth-cache.json\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 16289,
+          "literal": "h(we(),\"mcp-needs-auth-cache.json\")"
         }
       ],
       "credential": false,
@@ -1580,14 +1580,14 @@
       "writer": "MCP discovery",
       "evidence": [
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 19669,
-          "literal": "m(be(),\"mcp-discovery-cache\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 20023,
+          "literal": "h(we(),\"mcp-discovery-cache\")"
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 16552,
-          "literal": "m(be(),\"state\",\"mcp-discover-verdicts.json\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 16827,
+          "literal": "h(we(),\"state\",\"mcp-discover-verdicts.json\")"
         }
       ],
       "credential": false,
@@ -1607,14 +1607,14 @@
       "writer": "MCP client logging",
       "evidence": [
         {
-          "file": "chunk-c44rdggd.js",
-          "offset": 11925,
-          "literal": "mcpLogs:(e)=>T(f(),`mcp-logs-${_(e)}`)"
+          "file": "chunk-amhtwhch.js",
+          "offset": 11976,
+          "literal": "mcpLogs:(e)=>T(f(),`mcp-logs-${h(e)}`)"
         },
         {
-          "file": "chunk-1xs7prve.js",
-          "offset": 1165,
-          "literal": "g(WXe.mcpLogs(e),a()+\".jsonl\")"
+          "file": "chunk-c36grtde.js",
+          "offset": 1213,
+          "literal": "g(iet.mcpLogs(e),a()+\".jsonl\")"
         }
       ],
       "credential": false,
@@ -1636,19 +1636,19 @@
       "writer": "various (state namespace)",
       "evidence": [
         {
-          "file": "chunk-4y8fw9xy.js",
+          "file": "chunk-nczv01x6.js",
           "offset": 1118,
-          "literal": "var w=\"active-time.json\""
+          "literal": "var y=\"active-time.json\""
         },
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 655626,
-          "literal": "Qq(be(),\"gh-pr-status-cache.json\")"
+          "file": "chunk-09m4fzsj.js",
+          "offset": 876767,
+          "literal": "Jre(we(),\"gh-pr-status-cache.json\")"
         },
         {
-          "file": "chunk-s3c3fm9y.js",
-          "offset": 9320,
-          "literal": "return b(be(),\"loop.md\")"
+          "file": "chunk-gx44aetg.js",
+          "offset": 9476,
+          "literal": "return v(we(),\"loop.md\")"
         }
       ],
       "credential": false,
@@ -1670,9 +1670,9 @@
       "writer": "/stats",
       "evidence": [
         {
-          "file": "chunk-79xjf52g.js",
-          "offset": 77367,
-          "literal": "Mm=\"stats-cache.json\""
+          "file": "chunk-4app56pf.js",
+          "offset": 71589,
+          "literal": "Dd=\"stats-cache.json\""
         }
       ],
       "credential": false,
@@ -1694,19 +1694,19 @@
       "writer": "policy and remote-settings fetchers",
       "evidence": [
         {
-          "file": "chunk-tweqa2pw.js",
-          "offset": 17996,
-          "literal": "bqn=\"policy-limits.json\""
+          "file": "chunk-b5kmgz2n.js",
+          "offset": 18067,
+          "literal": "KXn=\"policy-limits.json\""
         },
         {
-          "file": "chunk-dq5fzxjx.js",
-          "offset": 319745,
-          "literal": "ggt=\"remote-settings.json\""
+          "file": "chunk-hrhfcbdv.js",
+          "offset": 329967,
+          "literal": "ibt=\"remote-settings.json\""
         },
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 156250,
-          "literal": "Tsn=\"remote-settings-consent.json\""
+          "file": "chunk-09m4fzsj.js",
+          "offset": 331195,
+          "literal": "Wcn=\"remote-settings-consent.json\""
         }
       ],
       "credential": false,
@@ -1731,12 +1731,12 @@
       "writer": "computer use",
       "evidence": [
         {
-          "file": "chunk-enj3b7xa.js",
+          "file": "chunk-z3dg08he.js",
           "offset": 1202,
-          "literal": "I=\"computer-use.lock\""
+          "literal": "T=\"computer-use.lock\""
         },
         {
-          "file": "chunk-enj3b7xa.js",
+          "file": "chunk-z3dg08he.js",
           "offset": 1344,
           "literal": "\"sessionId\"in e&&typeof e.sessionId===\"string\""
         }
@@ -1761,14 +1761,14 @@
       "writer": "background jobs / daemon",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 14650,
+          "file": "chunk-2ynta9xc.js",
+          "offset": 16130,
           "literal": "is the job's timeline stream"
         },
         {
-          "file": "chunk-5yt83nd2.js",
-          "offset": 29104,
-          "literal": "cSt=\"recap.trigger\""
+          "file": "chunk-rhhjwy45.js",
+          "offset": 29122,
+          "literal": "LCt=\"recap.trigger\""
         }
       ],
       "credential": false,
@@ -1790,18 +1790,18 @@
       "writer": "claude daemon",
       "evidence": [
         {
-          "file": "chunk-vevdyzq4.js",
+          "file": "chunk-myqr645z.js",
           "offset": 6390,
           "literal": "\"attach-journal\""
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 28046,
+          "file": "chunk-1jqp49rh.js",
+          "offset": 11161,
           "literal": "\"roster.json\""
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 29012,
+          "file": "chunk-925etgj7.js",
+          "offset": 29367,
           "literal": "\"daemon.log\""
         }
       ],
@@ -1824,7 +1824,7 @@
       "writer": "claude daemon",
       "evidence": [
         {
-          "file": "chunk-vevdyzq4.js",
+          "file": "chunk-myqr645z.js",
           "offset": 3759,
           "literal": "\"control.key\""
         }
@@ -1854,14 +1854,14 @@
       "writer": "IDE extension writes; CLI reads",
       "evidence": [
         {
-          "file": "chunk-07xvx33k.js",
-          "offset": 87925,
-          "literal": "ideName:k.name,authToken:k.authToken"
+          "file": "chunk-9975a2ae.js",
+          "offset": 88710,
+          "literal": "ideName:C.name,authToken:C.authToken"
         },
         {
-          "file": "chunk-1a7xf92b.js",
-          "offset": 17314,
-          "literal": "le(tn.workspaceFolders)"
+          "file": "chunk-g1fkyacs.js",
+          "offset": 17431,
+          "literal": "ce(an.workspaceFolders)"
         }
       ],
       "credential": true,
@@ -1883,9 +1883,9 @@
       "writer": "subagent memory",
       "evidence": [
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 151648,
-          "literal": "Ue(oe(),\".claude\",\"agent-memory\",r)"
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 147894,
+          "literal": "je(oe(),\".claude\",\"agent-memory\",r)"
         }
       ],
       "credential": false,
@@ -1907,8 +1907,8 @@
       "writer": "read by the memory loader",
       "evidence": [
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 250075,
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 250791,
           "literal": "The user memory file is allowed for"
         }
       ],
@@ -1931,9 +1931,9 @@
       "writer": "settings loader; permission prompts write",
       "evidence": [
         {
-          "file": "chunk-zzv0mx12.js",
-          "offset": 15429,
-          "literal": "pu=new Set([\"settings.json\",\"settings.local.json\",\"claude.md\"])"
+          "file": "chunk-8xhw5h9f.js",
+          "offset": 15749,
+          "literal": "Eu=new Set([\"settings.json\",\"settings.local.json\",\"claude.md\"])"
         }
       ],
       "credential": false,
@@ -1955,13 +1955,13 @@
       "writer": "plugin manager; read by loaders",
       "evidence": [
         {
-          "file": "chunk-68gmwmt6.js",
-          "offset": 7127,
-          "literal": "Je=[\"commands\",\"agents\",\"output-styles\",\"skills\",\"workflows\",\"routines\",\"themes\",\"rules\""
+          "file": "chunk-2ynta9xc.js",
+          "offset": 8607,
+          "literal": "et=[\"commands\",\"agents\",\"output-styles\",\"skills\",\"workflows\",\"routines\",\"themes\",\"rules\""
         },
         {
-          "file": "chunk-qptxy51r.js",
-          "offset": 2541,
+          "file": "chunk-mphp7acd.js",
+          "offset": 3527524,
           "literal": "\"installed_plugins.json\""
         }
       ],
@@ -1984,18 +1984,18 @@
       "writer": "remote control / claude server",
       "evidence": [
         {
-          "file": "chunk-yafdqrx7.js",
-          "offset": 781615,
-          "literal": "h6n=\"bridge-spawn\""
+          "file": "chunk-5vadtxaa.js",
+          "offset": 782067,
+          "literal": "W5n=\"bridge-spawn\""
         },
         {
-          "file": "chunk-zfxvkdxa.js",
-          "offset": 29991,
-          "literal": "m(be(),\"remote-control\",\"fork-seeds\")"
+          "file": "chunk-925etgj7.js",
+          "offset": 30346,
+          "literal": "h(we(),\"remote-control\",\"fork-seeds\")"
         },
         {
-          "file": "chunk-zzv0mx12.js",
-          "offset": 15158,
+          "file": "chunk-8xhw5h9f.js",
+          "offset": 15478,
           "literal": "\"server-sessions.json\""
         }
       ],
@@ -2018,13 +2018,13 @@
       "writer": "storage-v5 backend (gated)",
       "evidence": [
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 2904153,
+          "file": "chunk-mphp7acd.js",
+          "offset": 2963415,
           "literal": "\"statsig\",\"storage-v2\",\"systemd\""
         },
         {
-          "file": "chunk-9gy1t01w.js",
-          "offset": 406241,
+          "file": "chunk-09m4fzsj.js",
+          "offset": 516895,
           "literal": "throw Error(\"history readRecords failed\""
         }
       ],
@@ -2047,14 +2047,14 @@
       "writer": "various",
       "evidence": [
         {
-          "file": "chunk-zzv0mx12.js",
-          "offset": 15070,
+          "file": "chunk-8xhw5h9f.js",
+          "offset": 15390,
           "literal": "\"local\",\"antproto.json\",\"ccr\",\"session-env\",\"bridge-spawn\""
         },
         {
-          "file": "chunk-7q0xh79w.js",
+          "file": "chunk-31g8tfvj.js",
           "offset": 3011,
-          "literal": "aM=\".cc-writes\""
+          "literal": "bL=\".cc-writes\""
         }
       ],
       "credential": false,
@@ -2077,8 +2077,8 @@
       "writer": "login",
       "evidence": [
         {
-          "file": "chunk-1pjbcr84.js",
-          "offset": 19469,
+          "file": "chunk-4cfspby6.js",
+          "offset": 1114,
           "literal": "\".credentials.json\""
         }
       ],
@@ -2101,14 +2101,14 @@
       "writer": "login",
       "evidence": [
         {
-          "file": "chunk-1pjbcr84.js",
-          "offset": 16472,
+          "file": "chunk-nankzm0s.js",
+          "offset": 641933,
           "literal": "security find-generic-password -a"
         },
         {
-          "file": "chunk-xfdxjhkk.js",
+          "file": "chunk-fge68w3a.js",
           "offset": 868,
-          "literal": "mue=\"-credentials\""
+          "literal": "cfe=\"-credentials\""
         }
       ],
       "credential": true,
@@ -2130,7 +2130,7 @@
       "writer": "remote / CCR setup",
       "evidence": [
         {
-          "file": "chunk-7z7dpds1.js",
+          "file": "chunk-4cfspby6.js",
           "offset": 1642,
           "literal": "[\".oauth_token\",\".api_key\",\".session_ingress_token\"]"
         }
@@ -2155,12 +2155,12 @@
       "writer": "scratchpad; background tasks",
       "evidence": [
         {
-          "file": "chunk-02rxxxnf.js",
-          "offset": 214358,
-          "literal": "_e(hA(),e,\"scratchpad\")"
+          "file": "chunk-6xrs6gmd.js",
+          "offset": 214484,
+          "literal": "ve(Ak(),e,\"scratchpad\")"
         },
         {
-          "file": "chunk-5z3sh1vh.js",
+          "file": "chunk-9rrqtnad.js",
           "offset": 888,
           "literal": "n=\".output\""
         }
@@ -2188,13 +2188,13 @@
       "writer": "various",
       "evidence": [
         {
-          "file": "chunk-apqxkhrm.js",
-          "offset": 5719,
+          "file": "chunk-2z1m9v0n.js",
+          "offset": 6127,
           "literal": "\"CLAUDE_CODE_DIAGNOSTICS_FILE\",\"CLAUDE_CODE_PERFETTO_TRACE\",\"CLAUDE_CODE_FRAME_TIMING_LOG\""
         },
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 395777,
+          "file": "chunk-nankzm0s.js",
+          "offset": 446828,
           "literal": "logPath:a.CLAUDE_CODE_SESSION_LOG"
         }
       ],
@@ -2215,9 +2215,9 @@
       "writer": "worktree isolation",
       "evidence": [
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 1123234,
-          "literal": "function Zg(e){return Lmt(e,\".claude\",\"worktrees\")}"
+          "file": "chunk-mphp7acd.js",
+          "offset": 1167205,
+          "literal": "function Wg(e){return fwt(e,\".claude\",\"worktrees\")}"
         }
       ],
       "credential": false,
@@ -2247,13 +2247,13 @@
       "writer": "OTel exporters",
       "evidence": [
         {
-          "file": "chunk-dq5fzxjx.js",
-          "offset": 42407,
+          "file": "chunk-hrhfcbdv.js",
+          "offset": 46242,
           "literal": "[\"OTEL_LOG_RAW_API_BODIES\",\"OTEL_LOG_USER_PROMPTS\",\"OTEL_LOG_ASSISTANT_RESPONSES\""
         },
         {
-          "file": "chunk-nxw00mr3.js",
-          "offset": 39300,
+          "file": "chunk-64smfct9.js",
+          "offset": 1164003,
           "literal": "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL"
         }
       ],
@@ -2277,8 +2277,8 @@
       "writer": "beta tracing",
       "evidence": [
         {
-          "file": "chunk-apqxkhrm.js",
-          "offset": 5582,
+          "file": "chunk-2z1m9v0n.js",
+          "offset": 5990,
           "literal": "\"ENABLE_BETA_TRACING_DETAILED\",\"BETA_TRACING_ENDPOINT\""
         }
       ],
@@ -2302,9 +2302,9 @@
       "writer": "1P event logger",
       "evidence": [
         {
-          "file": "chunk-f5tnbmwk.js",
-          "offset": 423904,
-          "literal": "Ad=\"1p_failed_events.\""
+          "file": "chunk-nankzm0s.js",
+          "offset": 475112,
+          "literal": "yc=\"1p_failed_events.\""
         }
       ],
       "credential": false,
@@ -2324,13 +2324,13 @@
       "writer": "teleport / remote control",
       "evidence": [
         {
-          "file": "chunk-1pjbcr84.js",
-          "offset": 123630,
-          "literal": "/v1/sessions/${e}/events?beta=true"
+          "file": "chunk-09m4fzsj.js",
+          "offset": 136399,
+          "literal": "/v1/sessions/${n}/events?beta=true"
         },
         {
-          "file": "chunk-0axah9dy.js",
-          "offset": 12424,
+          "file": "chunk-mphp7acd.js",
+          "offset": 3173053,
           "literal": "teleportFromSessionsAPI"
         }
       ],
@@ -2351,8 +2351,8 @@
       "writer": "cloud sync",
       "evidence": [
         {
-          "file": "chunk-ra61p37g.js",
-          "offset": 2906743,
+          "file": "chunk-mphp7acd.js",
+          "offset": 2964867,
           "literal": "kind:\"inside_home\",home:"
         }
       ],
@@ -2373,9 +2373,9 @@
       "writer": "/bug",
       "evidence": [
         {
-          "file": "chunk-6bdxb0yq.js",
-          "offset": 867089,
-          "literal": "_(\"feedback_transcript_share\")"
+          "file": "chunk-f2cpzzp9.js",
+          "offset": 876526,
+          "literal": "y(\"feedback_transcript_share\")"
         }
       ],
       "credential": false,

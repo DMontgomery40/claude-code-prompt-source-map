@@ -15,35 +15,35 @@
    "label": "Security and permissions",
    "kind": "topic",
    "definition": "Environment variables that change what Claude Code is allowed to do, or how exposed the machine and its secrets are. Counts: permission modes, permission rules and auto-mode review; restricted, safe or plan-required modes; sandboxing (bubblewrap, sandboxed or container-sandbox flags); workspace trust; confirmation prompts before dangerous commands; PowerShell execution policy; turning TLS certificate verification off; stripping or allowlisting credentials in the environments of Bash, hooks and MCP servers; upload or egress gates that limit data leaving the machine; and file write protection. Applies whatever group the variable is in. Does NOT include which API key, token or login to use (that is Authentication), telemetry or analytics opt-outs (Privacy), or ordinary proxy and CA-certificate settings that don't weaken verification (Network).",
-   "count": 43
+   "count": 44
   },
   {
    "id": "privacy-telemetry",
    "label": "Privacy, telemetry and nonessential traffic",
    "kind": "topic",
    "definition": "Environment variables that control what Claude Code reports about the user, or sends beyond the model request itself. Counts: telemetry and analytics opt-outs (DISABLE_TELEMETRY, DO_NOT_TRACK); error reporting; the nonessential-traffic switch; feature-flag (GrowthBook) fetching; feedback commands and session-quality surveys; demo mode that hides account details; account or session identifiers attached to metrics; and switches that put prompt text, model responses, tool content or raw API bodies into exported logs and traces. Applies whatever group the variable is in. Does NOT include plain OpenTelemetry plumbing with no privacy effect, such as exporter endpoints, protocols, intervals, timeouts or length limits (that is Observability), or permission and sandbox controls (Security).",
-   "count": 44
+   "count": 45
   },
   {
    "id": "observability",
    "label": "Logging, tracing and diagnostics",
    "kind": "topic",
    "definition": "Environment variables for the logs, metrics and traces that the user collects about Claude Code. Counts: enabling OpenTelemetry; OTEL_* exporter endpoints, headers, protocols, intervals, temporality and attribute limits; trace-context propagation (TRACEPARENT); Datadog and beta tracing; debug log files and levels; diagnostics files; startup profiling and performance traces. Switches that add prompts, responses, tool content or raw API bodies to exports count here and also under Privacy. Applies whatever group the variable is in. Does NOT include Anthropic telemetry opt-outs (Privacy), network timeouts (Network), or debug-logging variables read only by bundled third-party libraries (GRPC_TRACE, NODE_DEBUG).",
-   "count": 66
+   "count": 65
   },
   {
    "id": "authentication",
    "label": "Authentication and credentials",
    "kind": "topic",
    "definition": "Environment variables that supply or control credentials for reaching Anthropic, cloud providers, gateways or MCP servers. Counts: API keys; bearer, OAuth access and refresh tokens; OAuth scopes, client IDs and client secrets; apiKeyHelper refresh; token file descriptors and token files; session JWTs; workload identity federation IDs; cloud credentials (AWS keys and profiles, Google application credentials, Azure identities); mTLS client certificates and keys; credential caches; and switches that skip a provider's own authentication. Applies whatever group the variable is in. Does NOT include which provider, region or endpoint is used (Providers), or scrubbing credentials out of subprocess environments (Security).",
-   "count": 110
+   "count": 114
   },
   {
    "id": "providers",
    "label": "Model providers and API endpoints",
    "kind": "topic",
    "definition": "Environment variables that choose or configure the backend serving model requests. Counts: switches for Amazon Bedrock, Mantle, Google Cloud Agent Platform (Vertex), Microsoft Foundry, Anthropic on AWS or Google Cloud, and LLM gateways; base URLs and endpoint overrides; regions, projects, resource and workspace names, and per-model region overrides; gateway model discovery and hint headers; and extra beta headers, custom headers or extra body fields sent with API requests. Applies whatever group the variable is in. Does NOT include credentials or skip-auth switches (Authentication); generic HTTP proxies, certificates and timeouts (Network); or choosing which Claude model runs and how it thinks, including thinking-related beta headers (Models).",
-   "count": 80
+   "count": 81
   },
   {
    "id": "models-context",
@@ -57,14 +57,14 @@
    "label": "Prompt, instructions and memory",
    "kind": "topic",
    "definition": "Environment variables that replace, shorten, add or remove text that Claude Code puts in the model's context. Counts: system prompt variants (simple or minimal prompts); built-in git or browser-tool instructions; CLAUDE.md and memory-file loading; auto memory and memory guidelines; system reminders and their text; resume or continuation prompts; skill-listing budgets; MCP description length limits; and prompt override files. Applies whatever group the variable is in. Does NOT include model choice or compaction (Models), or settings that change behavior without changing the prompt text.",
-   "count": 50
+   "count": 51
   },
   {
    "id": "mcp",
    "label": "MCP servers",
    "kind": "topic",
    "definition": "Environment variables for Model Context Protocol servers and their tools. Counts: MCP_* and CLAUDE_CODE_MCP_* settings; server connection batching; startup and tool timeouts; the MCP discovery cache; MCP OAuth callbacks and client secrets; MCP tool search; MCP output and description limits; claude.ai connectors and SDK-created MCP servers; and the environment MCP servers are spawned with. Applies whatever group the variable is in. Does NOT include plugins, skills or hooks in general (Plugins, skills and hooks) unless the variable is about the MCP servers they bring.",
-   "count": 59
+   "count": 63
   },
   {
    "id": "plugins-skills-hooks",
@@ -78,28 +78,28 @@
    "label": "Subagents, teams and background work",
    "kind": "topic",
    "definition": "Environment variables for work that runs beside or beyond the main conversation. Counts: subagents and their spawn depth, concurrency and stall timeouts; built-in Explore and Plan agents; forked subagents; agent teams and teammates; workflows; coordinator mode; background tasks and background sessions (CLAUDE_BG_*); agent view; scheduled or cron tasks; goals, auto-continue and away summaries. A subagent-specific model setting counts here and also under Models. Applies whatever group the variable is in. Does NOT include cloud-hosted or self-hosted sessions (Cloud, remote and hosted sessions), or hook settings that merely mention subagent events such as SubagentStop (Plugins, skills and hooks).",
-   "count": 88
+   "count": 90
   },
   {
    "id": "built-in-tools",
    "label": "Built-in tools",
    "kind": "topic",
    "definition": "Environment variables that change tools shipped with Claude Code that the model calls. Counts: Bash and PowerShell (shell choice, timeouts, output limits, working directory, prefixes, memory caps); Glob, Grep and ripgrep; file reads and file checkpointing; WebFetch and WebSearch; task and todo tools; AskUserQuestion; the advisor tool; Claude in Chrome browser tools; artifacts (CLAUDE_CODE_ARTIFACT_*); attachments; and push notifications. Applies whatever group the variable is in. Does NOT include MCP tools (MCP), plugin or skill tools (Plugins, skills and hooks), subagent spawning (Subagents), or plain OS shell variables such as SHELL.",
-   "count": 97
+   "count": 99
   },
   {
    "id": "remote-hosted",
    "label": "Cloud, remote and hosted sessions",
    "kind": "topic",
    "definition": "Environment variables for Claude Code running somewhere other than a local terminal, or embedded by a host. Counts: cloud sessions (claude --cloud, CCR_*); Remote Control and bridge reattachment (CLAUDE_BRIDGE_*); self-hosted runners (SELF_HOSTED_RUNNER_*, CLAUDE_RUNNER_*); session ingress tokens and URLs; host platforms, desktop apps and SDKs that embed Claude Code (CLAUDE_CODE_HOST_*, Cowork); and remote environment identifiers. Applies whatever group the variable is in. Does NOT include local background sessions (Subagents) or ordinary provider endpoints (Providers).",
-   "count": 188
+   "count": 194
   },
   {
    "id": "network",
    "label": "Network, proxies and timeouts",
    "kind": "topic",
    "definition": "Environment variables for how Claude Code's network connections behave. Counts: HTTP, HTTPS and SOCKS proxies and NO_PROXY; proxy authentication helpers; CA certificate stores and extra CA files; TLS settings; DNS resolution; API request timeouts; retry counts; streaming idle and first-byte watchdogs; non-streaming fallback; and request compression. Applies whatever group the variable is in. Does NOT include which model provider or base URL is used (Providers), or tool-specific timeouts such as Bash or MCP timeouts (those belong to their tool's topic).",
-   "count": 80
+   "count": 84
   },
   {
    "id": "terminal-ui",
@@ -118,19 +118,19 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 1116
+   "count": 1136
   },
   {
    "id": "read",
    "label": "Read by Claude Code",
    "kind": "status",
-   "count": 1160
+   "count": 1182
   },
   {
    "id": "set",
    "label": "Set by Claude Code",
    "kind": "status",
-   "count": 469
+   "count": 467
   },
   {
    "id": "any-value",
@@ -142,13 +142,13 @@
    "id": "removed-for-children",
    "label": "Removed from child environments",
    "kind": "status",
-   "count": 54
+   "count": 57
   },
   {
    "id": "passed-to-children",
    "label": "Passed to tools, hooks or MCP servers",
    "kind": "status",
-   "count": 121
+   "count": 127
   },
   {
    "id": "fixed-values",
@@ -166,7 +166,7 @@
    "id": "os-shell",
    "label": "OS, shell or CI",
    "kind": "status",
-   "count": 161
+   "count": 163
   }
  ],
  "items": {
@@ -404,6 +404,7 @@
    "read"
   ],
   "env-anthropic-service-account-id": [
+   "authentication",
    "undocumented",
    "read"
   ],
@@ -428,6 +429,11 @@
    "read"
   ],
   "env-anthropic-work-id": [
+   "undocumented",
+   "read"
+  ],
+  "env-anthropic-work-secret": [
+   "authentication",
    "undocumented",
    "read"
   ],
@@ -752,8 +758,17 @@
    "undocumented",
    "read"
   ],
+  "env-claude-chrome-tab-group-key": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
   "env-claude-client-presence-file": [
    "documented",
+   "read"
+  ],
+  "env-claude-code-3p-probe-wrote-haiku-default": [
+   "undocumented",
    "read"
   ],
   "env-claude-code-3p-probe-wrote-opus-default": [
@@ -761,6 +776,14 @@
    "read"
   ],
   "env-claude-code-3p-probe-wrote-sonnet-default": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-3p-seeded-opus-default": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-3p-seeded-sonnet-default": [
    "undocumented",
    "read"
   ],
@@ -952,6 +975,11 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-artifact-share": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-artifact-start-kit": [
    "built-in-tools",
    "undocumented",
@@ -1020,6 +1048,10 @@
   "env-claude-code-auto-mode-server": [
    "security-permissions",
    "documented",
+   "read"
+  ],
+  "env-claude-code-auto-mode-tier": [
+   "undocumented",
    "read"
   ],
   "env-claude-code-basalt-cove": [
@@ -1128,7 +1160,29 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-ccr-early-plugins-sync": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-ccr-early-remote-connect": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ccr-early-skills-sync": [
+   "plugins-skills-hooks",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ccr-fold-first-turn-rescan": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-ccr-skip-fresh-migrations": [
    "remote-hosted",
    "undocumented",
    "read"
@@ -1156,6 +1210,10 @@
    "read"
   ],
   "env-claude-code-cold-compact": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-config-probe": [
    "undocumented",
    "read"
   ],
@@ -1238,22 +1296,6 @@
    "undocumented",
    "read"
   ],
-  "env-claude-code-dir-sync-engine": [
-   "undocumented",
-   "read"
-  ],
-  "env-claude-code-dir-sync-ffwd": [
-   "undocumented",
-   "read"
-  ],
-  "env-claude-code-dir-sync-git": [
-   "undocumented",
-   "read"
-  ],
-  "env-claude-code-dir-sync-stream": [
-   "undocumented",
-   "read"
-  ],
   "env-claude-code-disable-1m-context": [
    "models-context",
    "documented",
@@ -1286,6 +1328,11 @@
   "env-claude-code-disable-attachments": [
    "built-in-tools",
    "documented",
+   "read"
+  ],
+  "env-claude-code-disable-auth-refresh-lock": [
+   "authentication",
+   "undocumented",
    "read"
   ],
   "env-claude-code-disable-auto-memory": [
@@ -1350,10 +1397,6 @@
    "undocumented",
    "read"
   ],
-  "env-claude-code-disable-dir-sync": [
-   "undocumented",
-   "read"
-  ],
   "env-claude-code-disable-experimental-betas": [
    "prompt-caching",
    "providers",
@@ -1399,16 +1442,21 @@
    "documented",
    "read"
   ],
+  "env-claude-code-disable-mcp-task-background": [
+   "agents-background",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-disable-memory-bulk-inflate": [
    "undocumented",
    "read"
   ],
   "env-claude-code-disable-memory-mass-delete-hold": [
+   "security-permissions",
    "undocumented",
    "read"
   ],
   "env-claude-code-disable-memory-periodic-resync": [
-   "prompt-instructions",
    "undocumented",
    "read"
   ],
@@ -1418,6 +1466,11 @@
   ],
   "env-claude-code-disable-memory-stream-list": [
    "prompt-instructions",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-model-access-fallback": [
+   "models-context",
    "undocumented",
    "read"
   ],
@@ -1539,6 +1592,11 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-disable-web-fetch": [
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-disable-windows-shell-launcher": [
    "built-in-tools",
    "documented",
@@ -1619,11 +1677,6 @@
   ],
   "env-claude-code-enable-fine-grained-tool-streaming": [
    "documented",
-   "read"
-  ],
-  "env-claude-code-enable-function-hooks": [
-   "plugins-skills-hooks",
-   "undocumented",
    "read"
   ],
   "env-claude-code-enable-menu-kind-lanes": [
@@ -1824,6 +1877,11 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-growthbook-kick-from-init": [
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-gzip-ccr-request-bodies": [
    "remote-hosted",
    "network",
@@ -1831,6 +1889,11 @@
    "read"
   ],
   "env-claude-code-gzip-request-bodies": [
+   "network",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-gzip-request-body-blocks": [
    "network",
    "undocumented",
    "read"
@@ -1897,6 +1960,12 @@
    "read"
   ],
   "env-claude-code-host-platform": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-prompt-supersedes-record": [
+   "prompt-instructions",
    "remote-hosted",
    "undocumented",
    "read"
@@ -2000,7 +2069,6 @@
    "read"
   ],
   "env-claude-code-max-effort-reminder": [
-   "models-context",
    "undocumented",
    "read"
   ],
@@ -2063,6 +2131,16 @@
    "read"
   ],
   "env-claude-code-mcp-memory-cgroup": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-mcp-prewait-servers": [
+   "mcp",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-mcp-prewait-servers-ms": [
    "mcp",
    "undocumented",
    "read"
@@ -2134,6 +2212,11 @@
    "documented",
    "read"
   ],
+  "env-claude-code-nonstreaming-timeout-retries": [
+   "network",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-oauth-401-wait-ms": [
    "undocumented",
    "read"
@@ -2169,10 +2252,6 @@
   ],
   "env-claude-code-package-manager-auto-update": [
    "documented",
-   "read"
-  ],
-  "env-claude-code-parchment-fern": [
-   "undocumented",
    "read"
   ],
   "env-claude-code-parked-permission-wait-ms": [
@@ -2426,6 +2505,10 @@
    "documented",
    "read"
   ],
+  "env-claude-code-result-nonce": [
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-resume-from-session": [
    "prompt-instructions",
    "undocumented",
@@ -2462,7 +2545,6 @@
    "read"
   ],
   "env-claude-code-resume-tolerates-context-appends": [
-   "prompt-instructions",
    "undocumented",
    "read"
   ],
@@ -2608,6 +2690,10 @@
    "models-context",
    "network",
    "documented",
+   "read"
+  ],
+  "env-claude-code-skip-model-access-memory": [
+   "undocumented",
    "read"
   ],
   "env-claude-code-skip-plugin-mcp-servers": [
@@ -2806,7 +2892,6 @@
    "read"
   ],
   "env-claude-code-tmux-prefix-conflicts": [
-   "built-in-tools",
    "undocumented",
    "read"
   ],
@@ -3091,7 +3176,6 @@
    "read"
   ],
   "env-claude-remote-workflow-args": [
-   "remote-hosted",
    "undocumented",
    "read"
   ],
@@ -3183,6 +3267,10 @@
    "undocumented",
    "read"
   ],
+  "env-computername": [
+   "undocumented",
+   "read"
+  ],
   "env-container-sandbox-mount-point": [
    "security-permissions",
    "undocumented",
@@ -3211,7 +3299,6 @@
    "read"
   ],
   "env-disable-brief-mode-stop-hook": [
-   "plugins-skills-hooks",
    "undocumented",
    "read"
   ],
@@ -3488,7 +3575,6 @@
    "read"
   ],
   "env-self-hosted-runner-debug-dir": [
-   "observability",
    "remote-hosted",
    "undocumented",
    "read"
@@ -3959,6 +4045,11 @@
    "read"
   ],
   "env-cloud-ml-region": [
+   "providers",
+   "undocumented",
+   "read"
+  ],
+  "env-cloudsdk-active-config-name": [
    "providers",
    "undocumented",
    "read"
@@ -4495,6 +4586,11 @@
    "undocumented",
    "read"
   ],
+  "env-ccr-agent-proxy-ca-cert-b64": [
+   "network",
+   "undocumented",
+   "read"
+  ],
   "env-ccr-agent-proxy-enabled": [
    "remote-hosted",
    "network",
@@ -4926,6 +5022,11 @@
    "read",
    "os-shell"
   ],
+  "env-gh-repo": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
   "env-gh-token": [
    "authentication",
    "undocumented",
@@ -4978,6 +5079,11 @@
    "os-shell"
   ],
   "env-git-ssh-command": [
+   "undocumented",
+   "read",
+   "os-shell"
+  ],
+  "env-git-ssh-variant": [
    "undocumented",
    "read",
    "os-shell"
@@ -5619,9 +5725,21 @@
    "removed-for-children",
    "passed-to-children"
   ],
+  "env-set-bun-install-cache-dir": [
+   "undocumented",
+   "set"
+  ],
   "env-set-bun-options": [
    "undocumented",
    "set",
+   "passed-to-children"
+  ],
+  "env-set-ccr-agent-proxy-ca-cert-b64": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "set",
+   "removed-for-children",
    "passed-to-children"
   ],
   "env-set-ccr-agent-proxy-include-hosts": [
@@ -5738,6 +5856,12 @@
    "set",
    "removed-for-children",
    "passed-to-children"
+  ],
+  "env-set-claude-bg-auto-memory-off": [
+   "prompt-instructions",
+   "agents-background",
+   "undocumented",
+   "set"
   ],
   "env-set-claude-bg-backend": [
    "agents-background",
@@ -5911,9 +6035,21 @@
    "undocumented",
    "set"
   ],
+  "env-set-claude-chrome-tab-group-key": [
+   "built-in-tools",
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
   "env-set-claude-client-presence-file": [
    "documented",
    "set"
+  ],
+  "env-set-claude-code-3p-probe-wrote-haiku-default": [
+   "undocumented",
+   "set",
+   "passed-to-children"
   ],
   "env-set-claude-code-3p-probe-wrote-opus-default": [
    "undocumented",
@@ -5921,6 +6057,16 @@
    "passed-to-children"
   ],
   "env-set-claude-code-3p-probe-wrote-sonnet-default": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-3p-seeded-opus-default": [
+   "undocumented",
+   "set",
+   "passed-to-children"
+  ],
+  "env-set-claude-code-3p-seeded-sonnet-default": [
    "undocumented",
    "set",
    "passed-to-children"
@@ -6025,6 +6171,10 @@
    "documented",
    "set"
   ],
+  "env-set-claude-code-auto-mode-tier": [
+   "undocumented",
+   "set"
+  ],
   "env-set-claude-code-base-ref": [
    "undocumented",
    "set"
@@ -6080,6 +6230,10 @@
    "removed-for-children",
    "passed-to-children"
   ],
+  "env-set-claude-code-bridge-source-dir": [
+   "undocumented",
+   "set"
+  ],
   "env-set-claude-code-brief": [
    "undocumented",
    "set"
@@ -6113,6 +6267,10 @@
    "set",
    "passed-to-children"
   ],
+  "env-set-claude-code-config-probe": [
+   "undocumented",
+   "set"
+  ],
   "env-set-claude-code-container-id": [
    "undocumented",
    "set"
@@ -6145,22 +6303,6 @@
    "undocumented",
    "set"
   ],
-  "env-set-claude-code-dir-sync-engine": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-claude-code-dir-sync-ffwd": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-claude-code-dir-sync-git": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-claude-code-dir-sync-stream": [
-   "undocumented",
-   "set"
-  ],
   "env-set-claude-code-disable-attribution-baseline-reuse": [
    "undocumented",
    "set"
@@ -6175,10 +6317,6 @@
    "documented",
    "set",
    "passed-to-children"
-  ],
-  "env-set-claude-code-disable-dir-sync": [
-   "undocumented",
-   "set"
   ],
   "env-set-claude-code-disable-experimental-betas": [
    "prompt-caching",
@@ -6361,6 +6499,12 @@
    "undocumented",
    "set"
   ],
+  "env-set-claude-code-host-prompt-supersedes-record": [
+   "prompt-instructions",
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
   "env-set-claude-code-host-session-id": [
    "remote-hosted",
    "undocumented",
@@ -6461,6 +6605,16 @@
    "set"
   ],
   "env-set-claude-code-mcp-memory-cgroup": [
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-prewait-servers": [
+   "mcp",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-mcp-prewait-servers-ms": [
+   "mcp",
    "undocumented",
    "set"
   ],
@@ -6714,6 +6868,12 @@
    "security-permissions",
    "documented",
    "set"
+  ],
+  "env-set-claude-code-result-nonce": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
   ],
   "env-set-claude-code-resume-from-session": [
    "prompt-instructions",
@@ -7337,15 +7497,7 @@
    "undocumented",
    "set"
   ],
-  "env-set-git-alternate-object-directories": [
-   "undocumented",
-   "set"
-  ],
   "env-set-git-askpass": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-attr-nosystem": [
    "undocumented",
    "set"
   ],
@@ -7394,49 +7546,16 @@
    "undocumented",
    "set"
   ],
-  "env-set-git-default-ref-format": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-dir": [
-   "undocumented",
-   "set"
-  ],
   "env-set-git-editor": [
    "undocumented",
    "set",
    "passed-to-children"
   ],
-  "env-set-git-glob-pathspecs": [
-   "built-in-tools",
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-graft-file": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-icase-pathspecs": [
-   "undocumented",
-   "set"
-  ],
   "env-set-git-index-file": [
    "undocumented",
    "set"
   ],
-  "env-set-git-literal-pathspecs": [
-   "undocumented",
-   "set"
-  ],
   "env-set-git-no-lazy-fetch": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-no-replace-objects": [
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-noglob-pathspecs": [
    "undocumented",
    "set"
   ],
@@ -7456,20 +7575,16 @@
    "undocumented",
    "set"
   ],
-  "env-set-git-shallow-file": [
+  "env-set-git-ssh-command": [
    "undocumented",
    "set"
   ],
-  "env-set-git-ssh-command": [
+  "env-set-git-ssh-variant": [
    "undocumented",
    "set"
   ],
   "env-set-git-terminal-prompt": [
    "terminal-ui",
-   "undocumented",
-   "set"
-  ],
-  "env-set-git-work-tree": [
    "undocumented",
    "set"
   ],
@@ -8150,6 +8265,7 @@
    "third-party"
   ],
   "env-otel-exporter-otlp-certificate": [
+   "authentication",
    "network",
    "undocumented",
    "read",

@@ -57,7 +57,8 @@ export const GATE_ANCHORS = [
   { what: "non-interactive session", label: "non-interactive session", def: false, own: /^function [\w$]+\(\)\{return![\w$]+\(\)\.host\.launchOptions\.isInteractive\(\)\}$/ },
   { what: "brief mode on", label: "brief mode on", def: false, own: /^function [\w$]+\(\)\{return [\w$]+\(\)&&[\w$]+\(\)\|\|[\w$]+\(\)\}$/, deep: ["userMsgOptIn", "CLAUDE_CODE_BRIEF", "pewter_owl_brief"] },
   { what: "host renders extended questions", label: "host renders extended questions", own: /^function [\w$]+\(\)\{return [\w$]+\(\)\.host\.launchOptions\.extendedQuestionsEnabled\(\)\}$/ },
-  { what: "background tasks disabled", label: "background tasks disabled", def: false, own: /^function [\w$]+\(\)\{return [\w$]+\(\)\.backgroundTasksDisabled\|\|[\w$]+\.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS\}$/ },
+  // 2.1.286 also disables them in bare mode (a trailing ||X() reading CLAUDE_CODE_SIMPLE / --bare).
+  { what: "background tasks disabled", label: "background tasks disabled", def: false, own: /^function [\w$]+\(\)\{return [\w$]+\(\)\.backgroundTasksDisabled\|\|[\w$]+\.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS\|\|[\w$]+\(\)\}$/, deep: ["CLAUDE_CODE_SIMPLE", "--bare"] },
   { what: "agent push notifications on", label: "agent push notifications on (agentPushNotifEnabled)", def: false, own: /\("agentPushNotifEnabled",!1\)\.value\}$/, max: 120 },
   { what: "first-party API provider", label: "first-party API provider", def: true, own: /^function [\w$]+\(\)\{return [\w$]+\(\)==="firstParty"\}$/, deep: ["CLAUDE_CODE_USE_BEDROCK"] },
   { what: "Remote Control bridge active", label: "Remote Control bridge active", def: false, own: /^function [\w$]+\(\)\{return [\w$]+\(\)\.surfaceCapabilities\.replBridgeActive\(\)\}$/ },

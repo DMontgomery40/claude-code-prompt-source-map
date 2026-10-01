@@ -6,7 +6,7 @@
 
 ### PreToolUse
 
-Source: `chunk-eq9c36zj.js` · offset 203239178 · sha256 `73538c8e…`
+Source: `chunk-ggkctz1x.js` · offset 204373128 · sha256 `73538c8e…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#pretooluse
 
@@ -33,7 +33,7 @@ Other exit codes - show stderr to user only but continue with tool call
 
 ### PostToolUse
 
-Source: `chunk-eq9c36zj.js` · offset 203239503 · sha256 `4d158142…`
+Source: `chunk-ggkctz1x.js` · offset 204373453 · sha256 `4d158142…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#posttooluse
 
@@ -60,7 +60,7 @@ Other exit codes - show stderr to user only
 
 ### PostToolUseFailure
 
-Source: `chunk-eq9c36zj.js` · offset 203239878 · sha256 `134dcd9d…`
+Source: `chunk-ggkctz1x.js` · offset 204373828 · sha256 `134dcd9d…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#posttoolusefailure
 
@@ -87,7 +87,7 @@ Other exit codes - show stderr to user only
 
 ### PostToolBatch
 
-Source: `chunk-eq9c36zj.js` · offset 203240268 · sha256 `cfcc9c8d…`
+Source: `chunk-ggkctz1x.js` · offset 204374218 · sha256 `cfcc9c8d…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#posttoolbatch
 
@@ -114,7 +114,7 @@ Other exit codes - show stderr to user only
 
 ### Notification
 
-Source: `chunk-eq9c36zj.js` · offset 203241144 · sha256 `7d7621b8…`
+Source: `chunk-ggkctz1x.js` · offset 204375094 · sha256 `7d7621b8…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#notification
 
@@ -140,7 +140,7 @@ Other exit codes - show stderr to user only
 
 ### UserPromptSubmit
 
-Source: `chunk-eq9c36zj.js` · offset 203241474 · sha256 `c6a6bb39…`
+Source: `chunk-ggkctz1x.js` · offset 204375424 · sha256 `c6a6bb39…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#userpromptsubmit
 
@@ -167,7 +167,7 @@ Other exit codes - show stderr to user only
 
 ### UserPromptExpansion
 
-Source: `chunk-eq9c36zj.js` · offset 203241796 · sha256 `e5532096…`
+Source: `chunk-ggkctz1x.js` · offset 204375746 · sha256 `e5532096…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#userpromptexpansion
 
@@ -194,7 +194,7 @@ Other exit codes - show stderr to user only
 
 ### SessionStart
 
-Source: `chunk-eq9c36zj.js` · offset 203242172 · sha256 `3bfa5101…`
+Source: `chunk-ggkctz1x.js` · offset 204376122 · sha256 `3bfa5101…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#sessionstart
 
@@ -221,7 +221,7 @@ Other exit codes - show stderr to user only
 
 ### SessionEnd
 
-Source: `chunk-eq9c36zj.js` · offset 203245437 · sha256 `487473dd…`
+Source: `chunk-ggkctz1x.js` · offset 204379387 · sha256 `487473dd…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#sessionend
 
@@ -245,7 +245,7 @@ Other exit codes - show stderr to user only
 
 ### Stop
 
-Source: `chunk-eq9c36zj.js` · offset 203242511 · sha256 `7510886e…`
+Source: `chunk-ggkctz1x.js` · offset 204376461 · sha256 `7510886e…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#stop
 
@@ -271,7 +271,7 @@ Other exit codes - show stderr to user only
 
 ### StopFailure
 
-Source: `chunk-eq9c36zj.js` · offset 203242731 · sha256 `91c9a01e…`
+Source: `chunk-ggkctz1x.js` · offset 204376681 · sha256 `91c9a01e…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#stopfailure
 
@@ -293,7 +293,7 @@ Fires instead of Stop when an API error (rate limit, auth failure, etc.) ended t
 
 ### SubagentStart
 
-Source: `chunk-eq9c36zj.js` · offset 203243268 · sha256 `9136568b…`
+Source: `chunk-ggkctz1x.js` · offset 204377218 · sha256 `9136568b…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#subagentstart
 
@@ -320,7 +320,7 @@ Other exit codes - show stderr to user only
 
 ### SubagentStop
 
-Source: `chunk-eq9c36zj.js` · offset 203243619 · sha256 `8d6b6694…`
+Source: `chunk-ggkctz1x.js` · offset 204377569 · sha256 `8d6b6694…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#subagentstop
 
@@ -347,7 +347,7 @@ Other exit codes - show stderr to user only
 
 ### PreCompact
 
-Source: `chunk-eq9c36zj.js` · offset 203243967 · sha256 `e5ebe813…`
+Source: `chunk-ggkctz1x.js` · offset 204377917 · sha256 `e5ebe813…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#precompact
 
@@ -372,7 +372,7 @@ Other exit codes - show stderr to user only but continue with compaction
 
 ### PostCompact
 
-Source: `chunk-eq9c36zj.js` · offset 203244316 · sha256 `00b08406…`
+Source: `chunk-ggkctz1x.js` · offset 204378266 · sha256 `00b08406…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#postcompact
 
@@ -396,7 +396,7 @@ Other exit codes - show stderr to user only
 
 ### PreModelSwitch
 
-Source: `chunk-eq9c36zj.js` · offset 203244634 · sha256 `d4c9310e…`
+Source: `chunk-ggkctz1x.js` · offset 204378584 · sha256 `d4c9310e…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#premodelswitch
 
@@ -423,7 +423,7 @@ Other exit codes - show stderr to user only and continue
 
 ### PostModelSwitch
 
-Source: `chunk-eq9c36zj.js` · offset 203245097 · sha256 `ba636219…`
+Source: `chunk-ggkctz1x.js` · offset 204379047 · sha256 `ba636219…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#postmodelswitch
 
@@ -449,7 +449,7 @@ Other exit codes - show stderr to user only
 
 ### PermissionRequest
 
-Source: `chunk-eq9c36zj.js` · offset 203245714 · sha256 `5273aa44…`
+Source: `chunk-ggkctz1x.js` · offset 204379664 · sha256 `5273aa44…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#permissionrequest
 
@@ -476,7 +476,7 @@ Other exit codes - show stderr to user only
 
 ### PermissionDenied
 
-Source: `chunk-eq9c36zj.js` · offset 203240736 · sha256 `621bd495…`
+Source: `chunk-ggkctz1x.js` · offset 204374686 · sha256 `621bd495…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#permissiondenied
 
@@ -503,7 +503,7 @@ Other exit codes - show stderr to user only
 
 ### Setup
 
-Source: `chunk-eq9c36zj.js` · offset 203246072 · sha256 `c1e52a7a…`
+Source: `chunk-ggkctz1x.js` · offset 204380022 · sha256 `c1e52a7a…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#setup
 
@@ -530,7 +530,7 @@ Other exit codes - show stderr to user only
 
 ### TeammateIdle
 
-Source: `chunk-eq9c36zj.js` · offset 203246415 · sha256 `50951a92…`
+Source: `chunk-ggkctz1x.js` · offset 204380365 · sha256 `50951a92…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#teammateidle
 
@@ -555,7 +555,7 @@ Other exit codes - show stderr to user only
 
 ### TaskCreated
 
-Source: `chunk-eq9c36zj.js` · offset 203246707 · sha256 `15885caa…`
+Source: `chunk-ggkctz1x.js` · offset 204380657 · sha256 `15885caa…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#taskcreated
 
@@ -580,7 +580,7 @@ Other exit codes - show stderr to user only
 
 ### TaskCompleted
 
-Source: `chunk-eq9c36zj.js` · offset 203247032 · sha256 `c5c38393…`
+Source: `chunk-ggkctz1x.js` · offset 204380982 · sha256 `c5c38393…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#taskcompleted
 
@@ -605,7 +605,7 @@ Other exit codes - show stderr to user only
 
 ### Elicitation
 
-Source: `chunk-eq9c36zj.js` · offset 203247369 · sha256 `8e5c88f4…`
+Source: `chunk-ggkctz1x.js` · offset 204381319 · sha256 `8e5c88f4…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#elicitation
 
@@ -633,7 +633,7 @@ Other exit codes - show stderr to user only
 
 ### ElicitationResult
 
-Source: `chunk-eq9c36zj.js` · offset 203247817 · sha256 `feda6eee…`
+Source: `chunk-ggkctz1x.js` · offset 204381767 · sha256 `feda6eee…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#elicitationresult
 
@@ -661,7 +661,7 @@ Other exit codes - show stderr to user only
 
 ### ConfigChange
 
-Source: `chunk-eq9c36zj.js` · offset 203248301 · sha256 `2f6536a0…`
+Source: `chunk-ggkctz1x.js` · offset 204382251 · sha256 `2f6536a0…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#configchange
 
@@ -686,7 +686,7 @@ Other exit codes - show stderr to user only
 
 ### WorktreeCreate
 
-Source: `chunk-eq9c36zj.js` · offset 203249565 · sha256 `15bd16da…`
+Source: `chunk-ggkctz1x.js` · offset 204383515 · sha256 `15bd16da…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#worktreecreate
 
@@ -713,7 +713,7 @@ Other exit codes - worktree creation failed
 
 ### WorktreeRemove
 
-Source: `chunk-eq9c36zj.js` · offset 203249868 · sha256 `0d5a6e0a…`
+Source: `chunk-ggkctz1x.js` · offset 204383818 · sha256 `0d5a6e0a…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#worktreeremove
 
@@ -737,7 +737,7 @@ Other exit codes - show stderr to user only
 
 ### InstructionsLoaded
 
-Source: `chunk-eq9c36zj.js` · offset 203248796 · sha256 `670752ef…`
+Source: `chunk-ggkctz1x.js` · offset 204382746 · sha256 `670752ef…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#instructionsloaded
 
@@ -762,7 +762,7 @@ This hook is observability-only and does not support blocking.
 
 ### CwdChanged
 
-Source: `chunk-eq9c36zj.js` · offset 203250102 · sha256 `aa434ac8…`
+Source: `chunk-ggkctz1x.js` · offset 204384052 · sha256 `aa434ac8…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#cwdchanged
 
@@ -790,7 +790,7 @@ Other exit codes - show stderr to user only
 
 ### FileChanged
 
-Source: `chunk-eq9c36zj.js` · offset 203250531 · sha256 `564f4da1…`
+Source: `chunk-ggkctz1x.js` · offset 204384481 · sha256 `564f4da1…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#filechanged
 
@@ -819,7 +819,7 @@ Other exit codes - show stderr to user only
 
 ### DirectoryAdded
 
-Source: `chunk-eq9c36zj.js` · offset 203251094 · sha256 `27780e0b…`
+Source: `chunk-ggkctz1x.js` · offset 204385044 · sha256 `27780e0b…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#directoryadded
 
@@ -844,7 +844,7 @@ Other exit codes - stderr is debug-logged on both paths; for /add-dir, a failure
 
 ### MessageDisplay
 
-Source: `chunk-eq9c36zj.js` · offset 203251924 · sha256 `b0267654…`
+Source: `chunk-ggkctz1x.js` · offset 204385874 · sha256 `b0267654…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#messagedisplay
 
@@ -874,7 +874,7 @@ Other exit codes - display the original delta
 
 ### Common input fields
 
-Source: `chunk-6z6rs9e9.js` · offset 179189598 · sha256 `363cd737…`
+Source: `chunk-xep95vq1.js` · offset 179918733 · sha256 `fa3d0c69…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#common-input-fields
 
@@ -891,7 +891,7 @@ Fields every hook input carries: the typed base schema that each event's input s
 
 ### JSON output fields
 
-Source: `chunk-9gy1t01w.js` · offset 183618374 · sha256 `57e8c60b…`
+Source: `chunk-09m4fzsj.js` · offset 184822965 · sha256 `2ce08859…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#json-output
 
@@ -909,7 +909,7 @@ Top-level fields a hook may print as JSON on stdout; per-event fields go in `hoo
 
 ### type: "command"
 
-Source: `chunk-dq5fzxjx.js` · offset 177745511 · sha256 `0cc68a76…`
+Source: `chunk-hrhfcbdv.js` · offset 178527620 · sha256 `0cc68a76…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#command-hook-fields
 
@@ -934,7 +934,7 @@ Shell command hook type
 
 ### type: "prompt"
 
-Source: `chunk-dq5fzxjx.js` · offset 177747937 · sha256 `e6bbff9e…`
+Source: `chunk-hrhfcbdv.js` · offset 178530046 · sha256 `e6bbff9e…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#prompt-and-agent-hook-fields
 
@@ -954,7 +954,7 @@ LLM prompt hook type
 
 ### type: "agent"
 
-Source: `chunk-dq5fzxjx.js` · offset 177750805 · sha256 `5c0c1dc8…`
+Source: `chunk-hrhfcbdv.js` · offset 178532914 · sha256 `5c0c1dc8…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#prompt-and-agent-hook-fields
 
@@ -973,7 +973,7 @@ Agentic verifier hook type
 
 ### type: "http"
 
-Source: `chunk-dq5fzxjx.js` · offset 177749510 · sha256 `30ff3ee9…`
+Source: `chunk-hrhfcbdv.js` · offset 178531619 · sha256 `30ff3ee9…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#http-hook-fields
 
@@ -994,7 +994,7 @@ HTTP hook type
 
 ### type: "mcp_tool"
 
-Source: `chunk-dq5fzxjx.js` · offset 177748854 · sha256 `980e5a44…`
+Source: `chunk-hrhfcbdv.js` · offset 178530963 · sha256 `980e5a44…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#mcp-tool-hook-fields
 
@@ -1014,7 +1014,7 @@ MCP tool hook type
 
 ### Matcher entry
 
-Source: `chunk-dq5fzxjx.js` · offset 177751683 · sha256 `44d4eac6…`
+Source: `chunk-hrhfcbdv.js` · offset 178533792 · sha256 `e285a34c…`
 
 Status: documented at https://code.claude.com/docs/en/hooks#matcher-patterns
 

@@ -1,6 +1,6 @@
-# Claude Code 2.1.284: main system prompt
+# Claude Code 2.1.287: main system prompt
 
-Reconstructed from the `claude.exe` 2.1.284 (darwin-arm64) embedded JavaScript and checked against two captured 2.1.284 API requests (the classic-layout example is an older 2.1.280 capture). Fenced text is exact. `{{NAME}}` marks a runtime value; the double-brace tokens inside the classic memory frontmatter template (`{{short-kebab-case-slug}}` and so on) are literal prompt text. Conditions are read from code. "Flag" means a remote feature flag, shown with its built-in default. "Client-data key" means a value in server-supplied client data. "Capability" means an entry in the built-in model catalog. Regenerate with `node extract/system-prompt.mjs`.
+Reconstructed from the `claude.exe` 2.1.287 (darwin-arm64) embedded JavaScript and checked against two captured 2.1.284 API requests (the classic-layout example is an older 2.1.280 capture); the 2.1.287 captures of the same requests differ from them only in the billing header's version. Fenced text is exact. `{{NAME}}` marks a runtime value; the double-brace tokens inside the classic memory frontmatter template (`{{short-kebab-case-slug}}` and so on) are literal prompt text. Conditions are read from code. "Flag" means a remote feature flag, shown with its built-in default. "Client-data key" means a value in server-supplied client data. "Capability" means an entry in the built-in model catalog. Regenerate with `node extract/system-prompt.mjs`.
 
 ## How the prompt is assembled
 
@@ -33,17 +33,17 @@ The token line and two tail slots follow. A section that returns nothing is drop
 
 ### Billing header block
 
-Source: `chunk-tweqa2pw.js` · offset 180867145 · sha256 `12793471…`
+Source: `chunk-b5kmgz2n.js` · offset 181645285 · sha256 `f1595049…`
 
-When: Always the first system block, sent without cache_control, unless `CLAUDE_CODE_ATTRIBUTION_HEADER` is set to a false value (0/false/no/off). `{{FINGERPRINT}}` is the first 3 hex digits of sha256(fixed salt + characters 4, 7 and 20 of the first non-meta user message + version). `cch=00000;` is appended for the first-party provider with a first-party base URL (`ANTHROPIC_BASE_URL` unset or api.anthropic.com, or `_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL`) and on Vertex. `cc_workload=…;` when a workload value is set, `cc_is_subagent=true;` for non-main-session agents, and `cc_prev_req=…;`, `cc_prompt_id=…;`, `cc_turn_origin=…;` and `{{PROMPT_TURN_INDEX}}` (` cc_prompt_index=…; cc_turn_index=…;`, when the request's turn position has an integer prompt index from 0 and turn index from 1, each at most 10000000) only for the first-party provider with a first-party base URL. Side queries that set `forceAttributionHeader` (the auto-mode classifier and its rules critique) keep the header despite the opt-out when the provider is first-party, `ANTHROPIC_BASE_URL` is unset or api.anthropic.com, `ANTHROPIC_UNIX_SOCKET` is unset, and a further check read at chunk-ra61p37g.js offset 97761 (within the file) is false (from code).
+When: Always the first system block, sent without cache_control, unless `CLAUDE_CODE_ATTRIBUTION_HEADER` is set to a false value (0/false/no/off). `{{FINGERPRINT}}` is the first 3 hex digits of sha256(fixed salt + characters 4, 7 and 20 of the first non-meta user message + version). `cch=00000;` is appended for the first-party provider with a first-party base URL (`ANTHROPIC_BASE_URL` unset or api.anthropic.com, or `_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL`) and on Vertex. `cc_workload=…;` when a workload value is set, `cc_is_subagent=true;` for non-main-session agents, and `cc_prev_req=…;`, `cc_prompt_id=…;`, `cc_turn_origin=…;` and `{{PROMPT_TURN_INDEX}}` (` cc_prompt_index=…; cc_turn_index=…;`, when the request's turn position has an integer prompt index from 0 and turn index from 1, each at most 10000000) only for the first-party provider with a first-party base URL. Side queries that set `forceAttributionHeader` (the auto-mode classifier and its rules critique) keep the header despite the opt-out when the provider is first-party, `ANTHROPIC_BASE_URL` is unset or api.anthropic.com, `ANTHROPIC_UNIX_SOCKET` is unset, and a further check read at chunk-09m4fzsj.js offset 727691 (within the file) is false (from code).
 
 ~~~~~~text
-x-anthropic-billing-header: cc_version=2.1.284.{{FINGERPRINT}}; cc_entrypoint={{ENTRYPOINT}};{{CCH}}{{WORKLOAD}}{{IS_SUBAGENT}}{{PREV_REQ}}{{PROMPT_ID}}{{TURN_ORIGIN}}{{PROMPT_TURN_INDEX}}
+x-anthropic-billing-header: cc_version=2.1.287.{{FINGERPRINT}}; cc_entrypoint={{ENTRYPOINT}};{{CCH}}{{WORKLOAD}}{{IS_SUBAGENT}}{{PREV_REQ}}{{PROMPT_ID}}{{TURN_ORIGIN}}{{PROMPT_TURN_INDEX}}
 ~~~~~~
 
 ### Identity line: cli
 
-Source: `chunk-ra61p37g.js` · offset 184936445 · sha256 `362e3116…`
+Source: `chunk-mphp7acd.js` · offset 184898568 · sha256 `362e3116…`
 
 When: Second system block. Every session on the Vertex provider. Otherwise a prefix already recorded for the session is reused. Otherwise interactive sessions and side queries get this line.
 
@@ -53,7 +53,7 @@ You are Claude Code, Anthropic's official CLI for Claude.
 
 ### Identity line: sdk-append
 
-Source: `chunk-ra61p37g.js` · offset 184936509 · sha256 `cca76bb4…`
+Source: `chunk-mphp7acd.js` · offset 184898631 · sha256 `cca76bb4…`
 
 When: Second system block. Non-interactive sessions (for example `claude -p` or the Agent SDK) that pass an appended system prompt (`--append-system-prompt`), unless the provider is Vertex.
 
@@ -63,7 +63,7 @@ You are Claude Code, Anthropic's official CLI for Claude, running within the Cla
 
 ### Identity line: sdk
 
-Source: `chunk-ra61p37g.js` · offset 184936610 · sha256 `3ae95071…`
+Source: `chunk-mphp7acd.js` · offset 184898731 · sha256 `3ae95071…`
 
 When: Second system block. Non-interactive sessions without an appended system prompt, unless the provider is Vertex.
 
@@ -73,7 +73,7 @@ You are a Claude agent, built on Anthropic's Claude Agent SDK.
 
 ### Simple mode prompt
 
-Source: `chunk-ra61p37g.js` · offset 186235874 · sha256 `35a900bc…`
+Source: `chunk-mphp7acd.js` · offset 187208131 · sha256 `4657e41c…`
 
 When: `CLAUDE_CODE_SIMPLE` is set: the whole main prompt is replaced by these two lines (nothing when dynamic sections are excluded). The token-count footer is also suppressed.
 
@@ -84,7 +84,7 @@ Date: {{DATE}}
 
 ### Reporting outcomes block (not emitted)
 
-Source: `chunk-wcsknfpm.js` · offset 181022484 · sha256 `93ad5ad6…`
+Source: `chunk-1b21she7.js` · offset 181809901 · sha256 `93ad5ad6…`
 
 Status: not emitted in 2.1.284
 
@@ -98,7 +98,7 @@ Report what actually happened, not what you intended. When you say something is 
 
 ### Layout selection (lean vs classic)
 
-Source: `chunk-wcsknfpm.js` · offset 180981293 · sha256 `464da5a1…` (+1 more source range)
+Source: `chunk-1b21she7.js` · offset 181769451 · sha256 `a2bc2e53…` (+1 more source range)
 
 When: Lean when the prompt model is set and: `CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT` is a true value (a false value forces classic); or the model is not an older model; or flag `tengu_velvet_tide` (default false) is on; or client-data key `simple_system_prompt` has a true entry whose key is a substring of the model ID. Otherwise classic. Older models: those without capability `lean_prompt` whose ID contains `claude-3-`, `haiku` or `sonnet`, or is `claude-opus-4-0`, `-4-1`, `-4-5`, `-4-6` or `-4-7`; also IDs outside the catalog when the provider is not `firstParty`, `anthropicAws`, `anthropicGoogleCloud` or `gateway`. `claude-mythos-5` and `-eap` IDs are never older models. The prompt model is the main-loop model, except that `CLAUDE_CODE_BREEZY_HORIZON` set to a model ID replaces it for every main-loop model (a false value turns remapping off), and otherwise client-data key `breezy_horizon` can map specific model IDs to another model ID. Model checks are capability lookups in the built-in model catalog (after alias resolution and dropping a `[1m]` suffix). `CLAUDE_CODE_MODEL_CAPABILITIES` can add or remove a capability (`model=cap,-cap;…`, `*` suffix globs the model), and a server-served capability lookup can also grant one.
 
@@ -106,9 +106,9 @@ Text: not in the binary or not rendered here (see When).
 
 ### System blocks and cache breakpoints
 
-Source: `chunk-ra61p37g.js` · offset 184937486 · sha256 `dde203de…` (+2 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 184899613 · sha256 `2d1b46c9…` (+2 more source ranges)
 
-When: The billing header, identity line and prompt pieces are grouped into system blocks. Default: header (no cache_control), identity (`{"type":"ephemeral"}`), then every other piece joined with a blank line into one block (`{"type":"ephemeral"}`). When global prompt caching applies (first-party or anthropicAws provider, first-party base URL, plus a client gate read at chunk-6z6rs9e9.js offset 160033), a boundary marker is placed after the layout sections: the identity block is then sent without cache_control, the layout part gets `{"type":"ephemeral","scope":"global"}` and the named sections get `{"type":"ephemeral"}`. `ttl: "1h"` is added when the query uses a one-hour cache TTL. cache_control is attached only when prompt caching is on for the query.
+When: The billing header, identity line and prompt pieces are grouped into system blocks. Default: header (no cache_control), identity (`{"type":"ephemeral"}`), then every other piece joined with a blank line into one block (`{"type":"ephemeral"}`). When global prompt caching applies (first-party or anthropicAws provider, first-party base URL, plus a client gate read at chunk-xep95vq1.js offset 160033), a boundary marker is placed after the layout sections: the identity block is then sent without cache_control, the layout part gets `{"type":"ephemeral","scope":"global"}` and the named sections get `{"type":"ephemeral"}`. `ttl: "1h"` is added when the query uses a one-hour cache TTL. cache_control is attached only when prompt caching is on for the query.
 
 Text: not in the binary or not rendered here (see When).
 
@@ -116,7 +116,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### Lean layout: intro, security policy and # Harness
 
-Source: `chunk-ra61p37g.js` · offset 186231473 · sha256 `5115018d…` (+5 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187202602 · sha256 `d6f5a06e…` (+5 more source ranges)
 
 Layout: lean
 
@@ -139,7 +139,7 @@ IMPORTANT: Assist with authorized security testing, defensive security, CTF chal
 
 ### Intro line: default
 
-Source: `chunk-ra61p37g.js` · offset 186231363 · sha256 `c4b8a858…`
+Source: `chunk-mphp7acd.js` · offset 187202492 · sha256 `c4b8a858…`
 
 When: First line of both layouts when no output style is active and the intro-frame arm is off. The classic layout appends " Use the instructions below and the tools available to you to assist the user."
 
@@ -149,7 +149,7 @@ You are an interactive agent that helps users with software engineering tasks.
 
 ### Intro line: output style active
 
-Source: `chunk-ra61p37g.js` · offset 186216215 · sha256 `ca8e8db8…`
+Source: `chunk-mphp7acd.js` · offset 187187379 · sha256 `ca8e8db8…`
 
 When: Replaces the intro line in both layouts when an output style is configured (the output-style loader returns a style).
 
@@ -159,7 +159,7 @@ You are an interactive agent that helps users according to your "Output Style", 
 
 ### Intro line: intro frame arm
 
-Source: `chunk-ra61p37g.js` · offset 186216111 · sha256 `8734a3e8…`
+Source: `chunk-mphp7acd.js` · offset 187187275 · sha256 `8734a3e8…`
 
 When: Replaces the intro line when no output style is active and `CLAUDE_CODE_INTRO_FRAME` is set (it wins when set), otherwise when flag `tengu_ochre_wren` (default false) is on. Evaluated once per process.
 
@@ -169,7 +169,7 @@ You are an agent working with the user toward their goals, using your own judgme
 
 ### Security policy line
 
-Source: `chunk-ra61p37g.js` · offset 186202823 · sha256 `475566ef…`
+Source: `chunk-mphp7acd.js` · offset 187173985 · sha256 `475566ef…`
 
 When: Always present in both layouts, right after the intro line.
 
@@ -179,7 +179,7 @@ IMPORTANT: Assist with authorized security testing, defensive security, CTF chal
 
 ### System-tags sentence: mid-conversation system turns
 
-Source: `chunk-ra61p37g.js` · offset 186216795 · sha256 `8ca066d5…`
+Source: `chunk-mphp7acd.js` · offset 187187959 · sha256 `8ca066d5…`
 
 When: Used in the lean Harness bullet and the classic # System bullet when the model takes mid-conversation system messages and is not `claude-sonnet-5` or `claude-opus-4-8`. Models with capability `mid_conv_system`: claude-sonnet-5, claude-sonnet-5-5, claude-opus-4-8, claude-opus-5, claude-opus-5-5, claude-fable-5, claude-fable-5-1, claude-mythos-5-1; also `claude-mythos-5`. `CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM` forces it on; HIPAA mode forces it off. Model checks are capability lookups in the built-in model catalog (after alias resolution and dropping a `[1m]` suffix). `CLAUDE_CODE_MODEL_CAPABILITIES` can add or remove a capability (`model=cap,-cap;…`, `*` suffix globs the model), and a server-served capability lookup can also grant one.
 
@@ -189,7 +189,7 @@ The system may send updates, reminders, or modifications to rules via mid-conver
 
 ### System-tags sentence: lean
 
-Source: `chunk-ra61p37g.js` · offset 186217314 · sha256 `e4cbaf13…`
+Source: `chunk-mphp7acd.js` · offset 187188445 · sha256 `e4cbaf13…`
 
 Layout: lean
 
@@ -201,7 +201,7 @@ When: Lean Harness bullet when the mid-conversation sentence does not apply.
 
 ### Pasted-content bullet
 
-Source: `chunk-ra61p37g.js` · offset 186197657 · sha256 `31f1acd1…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187168640 · sha256 `02ed45e5…` (+1 more source range)
 
 When: Added as a bullet in the lean Harness list and the classic # System list when flag `tengu_virtual_pancake` (default false) is on; the value is pinned for the session.
 
@@ -213,7 +213,7 @@ Text inside <pasted_content> tags was pasted into the message by the user from s
 
 ### Classic layout: intro
 
-Source: `chunk-ra61p37g.js` · offset 186216375 · sha256 `15d1e6f9…` (+2 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187187539 · sha256 `91798568…` (+2 more source ranges)
 
 Layout: classic
 
@@ -229,7 +229,7 @@ IMPORTANT: You must NEVER generate or guess URLs for the user unless you are con
 
 ### Classic layout: # System
 
-Source: `chunk-ra61p37g.js` · offset 186217436 · sha256 `7652742a…` (+5 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187188567 · sha256 `7652742a…` (+5 more source ranges)
 
 Layout: classic
 
@@ -247,7 +247,7 @@ When: Classic layout only. Shown for a model without mid-conversation system mes
 
 ### Classic layout: # Doing tasks
 
-Source: `chunk-ra61p37g.js` · offset 186220696 · sha256 `9c3f661f…` (+13 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187191827 · sha256 `9c3f661f…` (+13 more source ranges)
 
 Layout: classic
 
@@ -273,7 +273,7 @@ When: Classic layout only, and only when no output style is active or the active
 
 ### Doing tasks: verified-vs-assumed bullet
 
-Source: `chunk-ra61p37g.js` · offset 186222251 · sha256 `30cfc749…`
+Source: `chunk-mphp7acd.js` · offset 187193382 · sha256 `30cfc749…`
 
 Layout: classic
 
@@ -285,7 +285,7 @@ When reporting results, be accurate about what you verified vs. what you assumed
 
 ### Classic layout: # Executing actions with care
 
-Source: `chunk-ra61p37g.js` · offset 186222634 · sha256 `74ebbc2e…`
+Source: `chunk-mphp7acd.js` · offset 187193765 · sha256 `74ebbc2e…`
 
 Layout: classic
 
@@ -307,7 +307,7 @@ When you encounter an obstacle, do not use destructive actions as a shortcut to 
 
 ### Classic layout: # Using your tools
 
-Source: `chunk-ra61p37g.js` · offset 186226788 · sha256 `55f331ae…` (+2 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187197919 · sha256 `55f331ae…` (+2 more source ranges)
 
 Layout: classic
 
@@ -322,7 +322,7 @@ When: Classic layout only. Shown as captured for `claude-sonnet-4-6` with `claud
 
 ### Using your tools: task bullet
 
-Source: `chunk-ra61p37g.js` · offset 186226893 · sha256 `0cbce71c…`
+Source: `chunk-mphp7acd.js` · offset 187198024 · sha256 `0cbce71c…`
 
 Layout: classic
 
@@ -334,7 +334,7 @@ Use TaskCreate to plan and track work. Mark each task completed as soon as it's 
 
 ### Classic layout: # Tone and style
 
-Source: `chunk-ra61p37g.js` · offset 186230712 · sha256 `f41b2d64…` (+3 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187201841 · sha256 `f41b2d64…` (+3 more source ranges)
 
 Layout: classic
 
@@ -352,7 +352,7 @@ When: Classic layout only; unconditional there.
 
 ### communication: turn-updates variant
 
-Source: `chunk-ra61p37g.js` · offset 186203931 · sha256 `d061cfcd…`
+Source: `chunk-mphp7acd.js` · offset 187175093 · sha256 `d061cfcd…`
 
 Section key: `communication`
 
@@ -364,7 +364,7 @@ Before you start, say in a line what you're about to do; brief updates while you
 
 ### communication: # Communicating with the user
 
-Source: `chunk-ra61p37g.js` · offset 186204354 · sha256 `c1b1a428…`
+Source: `chunk-mphp7acd.js` · offset 187175516 · sha256 `c1b1a428…`
 
 Section key: `communication`
 
@@ -387,7 +387,7 @@ Only write a code comment to state a constraint the code itself can't show, neve
 
 ### communication: # Communicating with the user (final-message variant)
 
-Source: `chunk-ra61p37g.js` · offset 186204354 · sha256 `c1b1a428…`
+Source: `chunk-mphp7acd.js` · offset 187175516 · sha256 `c1b1a428…`
 
 Section key: `communication`
 
@@ -412,7 +412,7 @@ Only write a code comment to state a constraint the code itself can't show, neve
 
 ### communication: lean
 
-Source: `chunk-ra61p37g.js` · offset 186206968 · sha256 `2418f2af…`
+Source: `chunk-mphp7acd.js` · offset 187178130 · sha256 `2418f2af…`
 
 Section key: `communication:L` · Layout: lean
 
@@ -424,7 +424,7 @@ Write code that reads like the surrounding code: match its comment density, nami
 
 ### communication: # Text output (classic)
 
-Source: `chunk-ra61p37g.js` · offset 186207071 · sha256 `77f787d8…`
+Source: `chunk-mphp7acd.js` · offset 187178233 · sha256 `77f787d8…`
 
 Section key: `communication` · Layout: classic
 
@@ -447,7 +447,7 @@ In code: default to writing no comments. Never write multi-paragraph docstrings 
 
 ### pronouns
 
-Source: `chunk-ra61p37g.js` · offset 186211062 · sha256 `8bd460f8…`
+Source: `chunk-mphp7acd.js` · offset 187182224 · sha256 `8bd460f8…`
 
 Section key: `pronouns`
 
@@ -459,7 +459,7 @@ When you use a pronoun for someone — the user or anyone else you mention — a
 
 ### action_caution
 
-Source: `chunk-ra61p37g.js` · offset 186208483 · sha256 `4294b6b2…`
+Source: `chunk-mphp7acd.js` · offset 187179645 · sha256 `4294b6b2…`
 
 Section key: `action_caution:L` · Layout: lean
 
@@ -471,7 +471,7 @@ For actions that are hard to reverse or outward-facing, confirm first unless dur
 
 ### task_continuity (not emitted)
 
-Source: `chunk-ra61p37g.js` · offset 186209051 · sha256 `729ace28…`
+Source: `chunk-mphp7acd.js` · offset 187180213 · sha256 `729ace28…`
 
 Section key: `task_continuity` · Status: not emitted in 2.1.284
 
@@ -483,7 +483,7 @@ When a task has been agreed, the approval covers it end to end — in-scope step
 
 ### fable_identity: Claude Fable 5.1
 
-Source: `chunk-ra61p37g.js` · offset 186209545 · sha256 `30f93ba3…`
+Source: `chunk-mphp7acd.js` · offset 187180707 · sha256 `30f93ba3…`
 
 Section key: `fable_identity`
 
@@ -495,7 +495,7 @@ This iteration of Claude is Claude Fable 5.1, the newest model in Anthropic's Cl
 
 ### fable_identity: Claude Fable 5
 
-Source: `chunk-ra61p37g.js` · offset 186210237 · sha256 `5b66ddaa…`
+Source: `chunk-mphp7acd.js` · offset 187181399 · sha256 `5b66ddaa…`
 
 Section key: `fable_identity`
 
@@ -507,11 +507,11 @@ This iteration of Claude is Claude Fable 5, the first model in Anthropic's new C
 
 ### tool_param_json
 
-Source: `chunk-ra61p37g.js` · offset 186210933 · sha256 `7fd64c7e…`
+Source: `chunk-mphp7acd.js` · offset 187182095 · sha256 `7fd64c7e…`
 
 Section key: `tool_param_json`
 
-When: Emitted when the runtime config key `juniper_shoal.bracken_spool` is true (undocumented config source; read at chunk-f5tnbmwk.js offset 469411), or when flag `tengu_silent_harbor` (default false) is on and the model is a fable-mitigations model (`claude-fable-5`, `claude-fable-5-1`, `claude-mythos-5-1` (capability `fable_5_mitigations`) or `claude-mythos-5`) or equals `ANTHROPIC_DEFAULT_FABLE_MODEL`.
+When: Emitted when the runtime config key `juniper_shoal.bracken_spool` is true (undocumented config source; read at chunk-nankzm0s.js offset 469411), or when flag `tengu_silent_harbor` (default false) is on and the model is a fable-mitigations model (`claude-fable-5`, `claude-fable-5-1`, `claude-mythos-5-1` (capability `fable_5_mitigations`) or `claude-mythos-5`) or equals `ANTHROPIC_DEFAULT_FABLE_MODEL`.
 
 ~~~~~~text
 Object and array parameter values must be a single JSON value — never write parameter-tag markup inside a JSON value.
@@ -519,7 +519,7 @@ Object and array parameter values must be a single JSON value — never write pa
 
 ### session_guidance: # Session-specific guidance
 
-Source: `chunk-ra61p37g.js` · offset 186229051 · sha256 `e9f60912…` (+2 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187200179 · sha256 `e9f60912…` (+2 more source ranges)
 
 Section key: `session_guidance`
 
@@ -533,7 +533,7 @@ When: Emitted when at least one bullet applies; each bullet has its own conditio
 
 ### session_guidance bullet: user-run shell command
 
-Source: `chunk-ra61p37g.js` · offset 186229051 · sha256 `e9f60912…`
+Source: `chunk-mphp7acd.js` · offset 187200179 · sha256 `e9f60912…`
 
 Section key: `session_guidance`
 
@@ -545,7 +545,7 @@ If you need the user to run a shell command themselves (e.g., an interactive log
 
 ### session_guidance bullet: cloud session files
 
-Source: `chunk-ra61p37g.js` · offset 186229320 · sha256 `623a2fd5…`
+Source: `chunk-mphp7acd.js` · offset 187200448 · sha256 `623a2fd5…`
 
 Section key: `session_guidance`
 
@@ -557,11 +557,11 @@ The user follows this cloud session in the Claude app, which can open only files
 
 ### session_guidance bullet: fork subagents
 
-Source: `chunk-ra61p37g.js` · offset 186227628 · sha256 `18ae2827…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187198760 · sha256 `18ae2827…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
-When: Classic layout, Agent tool available, and fork subagents enabled: on by default in interactive sessions, forced on by `CLAUDE_CODE_FORK_SUBAGENT` true and off when it is false, off in non-interactive sessions, with one further disabling check (read at chunk-ra61p37g.js offset 1360754).
+When: Classic layout, Agent tool available, and fork subagents enabled: on by default in interactive sessions, forced on by `CLAUDE_CODE_FORK_SUBAGENT` true and off when it is false, off in non-interactive sessions, with one further disabling check (read at chunk-mphp7acd.js offset 1360754).
 
 ~~~~~~text
 Calling Agent with subagent_type: "fork" creates a fork — it inherits your full conversation context, runs in the background, and keeps its tool output out of your context — so you can keep chatting with the user while it works. Reach for it when research or multi-step implementation work would otherwise fill your context with raw output you won't need again. Other subagent_type values start fresh agents with no context. **If you ARE the fork** — execute directly; do not re-delegate.
@@ -569,7 +569,7 @@ Calling Agent with subagent_type: "fork" creates a fork — it inherits your ful
 
 ### session_guidance bullet: Agent tool (default steer)
 
-Source: `chunk-ra61p37g.js` · offset 186228158 · sha256 `5fa5d662…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187199290 · sha256 `5fa5d662…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
@@ -581,7 +581,7 @@ Use the Agent tool with specialized agents when the task at hand matches the age
 
 ### session_guidance bullet: Agent tool (non-default steer)
 
-Source: `chunk-ra61p37g.js` · offset 186228601 · sha256 `7cf8de91…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187199733 · sha256 `7cf8de91…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
@@ -593,7 +593,7 @@ Use the Agent tool with specialized agents when the task at hand matches the age
 
 ### session_guidance bullet: Explore agent
 
-Source: `chunk-ra61p37g.js` · offset 186229752 · sha256 `86a1e255…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187200881 · sha256 `832d34a2…` (+1 more source range)
 
 Section key: `session_guidance` · Layout: classic
 
@@ -605,7 +605,7 @@ For broad codebase exploration or research that'll take more than 3 queries, spa
 
 ### session_guidance bullet: slash skills
 
-Source: `chunk-ra61p37g.js` · offset 186229923 · sha256 `f5fdb50c…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187201052 · sha256 `dcf920e7…` (+1 more source range)
 
 Section key: `session_guidance`
 
@@ -617,11 +617,11 @@ When the user types `/<skill-name>`, invoke it via Skill. Only use skills listed
 
 ### session_guidance bullet: ultrareview
 
-Source: `chunk-ra61p37g.js` · offset 186230079 · sha256 `0e1aecab…`
+Source: `chunk-mphp7acd.js` · offset 187201208 · sha256 `0e1aecab…`
 
 Section key: `session_guidance`
 
-When: Dynamic sections not excluded, flag `tengu_review_bughunter_config` (default null) has `enabled: true`, first-party provider, not a remote session (`CLAUDE_CODE_REMOTE`), and flag `tengu_ccr_bridge` (default false) on together with further account checks (read at chunk-9gy1t01w.js offset 630234).
+When: Dynamic sections not excluded, flag `tengu_review_bughunter_config` (default null) has `enabled: true`, first-party provider, not a remote session (`CLAUDE_CODE_REMOTE`), and flag `tengu_ccr_bridge` (default false) on together with further account checks (read at chunk-09m4fzsj.js offset 630234).
 
 ~~~~~~text
 If the user asks about "ultrareview" or how to run it, explain that /code-review ultra launches a multi-agent cloud review of the current branch (or /code-review ultra <PR#> for a GitHub PR); /ultrareview is a deprecated alias for the same command. It is user-triggered and billed; you cannot launch it yourself, so do not attempt to via Bash or otherwise. It needs a git repository (offer to "git init" if not in one); the no-arg form bundles the local branch and does not need a GitHub remote.
@@ -629,11 +629,11 @@ If the user asks about "ultrareview" or how to run it, explain that /code-review
 
 ### memory: lean (# Memory)
 
-Source: `chunk-02rxxxnf.js` · offset 181505155 · sha256 `3a193d1a…` (+8 more source ranges)
+Source: `chunk-6xrs6gmd.js` · offset 182299312 · sha256 `1ff729c1…` (+8 more source ranges)
 
 Section key: `memory:L` · Layout: lean
 
-When: Lean layout with auto memory enabled, no team memory store, no connected memory stores, `CLAUDE_COWORK_MEMORY_GUIDELINES` unset and flag `tengu_stone_shell` off. Shown as captured. Additions: the index paragraph ("After writing the file…") is dropped and a file-size sentence is appended to the linking paragraph when the index is skipped (flag `tengu_moth_copse`, default false, or a further client check); a citing sentence is appended when flag `tengu_salt_marsh` (default false) is on; the project-skill-upkeep paragraph is appended when flag `tengu_gorse_fathom` (default false) is on; `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` and any team memory index text are appended after a blank line. Team-memory directories change the location sentence (see memory-team).
+When: Lean layout with auto memory enabled, no connected memory stores and `CLAUDE_COWORK_MEMORY_GUIDELINES` unset. Shown as captured. Additions: the index paragraph ("After writing the file…") is dropped and a file-size sentence is appended to the linking paragraph when the index is skipped (flag `tengu_moth_copse`, default false, or `CLAUDE_MEMORY_STORES` set to a non-blank value) or there is no private directory; a citing sentence is appended when flag `tengu_salt_marsh` (default false) is on; the project-skill-upkeep paragraph is appended when flag `tengu_gorse_fathom` (default false) is on; `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` and any team memory index text are appended after a blank line. With a team memory store (`CLAUDE_MEMORY_STORES` names a team-scope store) the location sentence names the private and team directories instead, and when that store list has no read-write user-scope store it names only the team directories and says there is no private directory (see memory-team).
 
 ~~~~~~text
 # Memory
@@ -662,11 +662,11 @@ Before saving, check for an existing file that already covers it. Update that fi
 
 ### memory: classic (# auto memory)
 
-Source: `chunk-02rxxxnf.js` · offset 181469407 · sha256 `24120fc2…` (+23 more source ranges)
+Source: `chunk-6xrs6gmd.js` · offset 182263555 · sha256 `56fbb57c…` (+23 more source ranges)
 
 Section key: `memory` · Layout: classic
 
-When: Classic layout with auto memory enabled, no team memory store, no connected memory stores, `CLAUDE_COWORK_MEMORY_GUIDELINES` unset and flag `tengu_stone_shell` off. Shown with default flags; it ends with two empty lines, as the builder does. Changes: when the index is skipped (flag `tengu_moth_copse`, default false, or a further client check) the save steps collapse to one frontmatter step plus the file-size bullet; flag `tengu_ochre_finch` (default false) replaces the types block with a short list that defers to a skill; flag `tengu_gorse_fathom` (default false) adds the project-skill-upkeep block before "## When to access memories"; flag `tengu_salt_marsh` (default false) adds a "## Citing memories" block before the persistence section; `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` and team memory index text are inserted before the final empty line. No memory section at all when auto memory is disabled (`CLAUDE_CODE_DISABLE_AUTO_MEMORY` or settings `autoMemoryEnabled: false`).
+When: Classic layout with auto memory enabled, no team memory store, no connected memory stores and `CLAUDE_COWORK_MEMORY_GUIDELINES` unset. Shown with default flags; it ends with two empty lines, as the builder does. Changes: when the index is skipped (flag `tengu_moth_copse`, default false, or a further client check) the save steps collapse to one frontmatter step plus the file-size bullet; flag `tengu_ochre_finch` (default false) replaces the types block with a short list that defers to a skill; flag `tengu_gorse_fathom` (default false) adds the project-skill-upkeep block before "## When to access memories"; flag `tengu_salt_marsh` (default false) adds a "## Citing memories" block before the persistence section; `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` and team memory index text are inserted before the final empty line. No memory section at all when auto memory is disabled (`CLAUDE_CODE_DISABLE_AUTO_MEMORY` or settings `autoMemoryEnabled: false`).
 
 ~~~~~~text
 # auto memory
@@ -806,7 +806,7 @@ Memory is one of several persistence mechanisms available to you as you assist t
 
 ### memory: CLAUDE_COWORK_MEMORY_GUIDELINES override
 
-Source: `chunk-02rxxxnf.js` · offset 181528148 · sha256 `0cfcd7ab…`
+Source: `chunk-6xrs6gmd.js` · offset 182318279 · sha256 `0cfcd7ab…`
 
 Section key: `memory`
 
@@ -817,205 +817,19 @@ When: Auto memory enabled and `CLAUDE_COWORK_MEMORY_GUIDELINES` set: the section
 {{CLAUDE_COWORK_MEMORY_GUIDELINES}}
 ~~~~~~
 
-### memory: stone_shell variant (# auto memory)
-
-Source: `chunk-02rxxxnf.js` · offset 181512303 · sha256 `72994c76…` (+2 more source ranges)
-
-Section key: `memory`
-
-When: Auto memory enabled, flag `tengu_stone_shell` (default false) on, `CLAUDE_COWORK_MEMORY_GUIDELINES` unset, no team memory store and no connected memory stores. Either layout. The citing block (flag `tengu_salt_marsh`) and `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES` lines follow, separated by blank lines.
-
-~~~~~~text
-# auto memory
-
-You have a persistent, file-based memory at `{{MEMORY_DIR}}`. This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence).
-
-The files there are lessons you saved from prior sessions, what you save there in this session is all that persists after the session is completed or if the user stops responding. Read and update your memory so that you learn over time and don't repeat mistakes in the future. When using memories, treat them as past snapshots to verify against current sources, not as a definitive source-of-truth.
-
-A good memory is applicable, durable, and legible:
-
-- applicable — would directly change your behavior in future sessions: an approach the user corrected or steered you away from or a standing preference they expressed. Not ambient code context or state, and not something you worked out yourself — the lesson must be something the user told you or corrected you on, not a finding of your own about the code, the tools, or your own mistake.
-- durable — applies to multiple future sessions and tasks, not just this one: standing user or team preferences or corrections that will come up again that the user would otherwise have to restate. Not transient task plans or status, or preferences that may only apply to the current task or session. Look for words that widen or narrow the scope of lesson the user is teaching. "Never...", "always...", "whenever you..." widen and are durable. "this time...", "for now..", narrow. If you are uncertain if a lesson is durable, assume it is not durable and do not save it.
-- legible — polished and readable without the original session: one topic per file, connected full sentences like a short, high-quality Wikipedia article. Include the why, not just the what. Avoid shorthand, scratchpad prose, or unresolvable references ("the fix," bare ticket IDs).
-
-You must NOT save a memory unless you have validated that it is applicable, durable, AND legible.
-
-Check each reply before you send it — including replies that are only tool calls and long execution turns: did the user's latest message teach you a durable, applicable lesson? The only thing you may save this turn is that lesson — not a correction from an earlier turn you let pass at the time. If so, save it in that same reply. Doing what the user asked does not discharge the save, and neither does writing their guidance into a project doc, CLAUDE.md, or a skill file: the edit ships this change, the memory is what keeps the preference for next session. If you've decided to write to your memory, you MUST make your memory write before treating your turn as finished — before you send the reply that engages the correction or take your next tool step, not after the conversation settles. If your reply answers the user's "why…?", diagnoses what went wrong, applies or proposes a fix, or ends with an offer like "want me to patch it?", the correction has already happened and the memory is due now, in that same reply's tool calls; an offered next step is a finished engagement, not permission to defer — don't wait for the user to confirm or come back.
-
-Each memory is one markdown file with frontmatter:
-
-```markdown
----
-name: { short-kebab-case-slug }
-description: { one-line summary }
-metadata:
-    pinned:
-        {
-            true if this memory's content should apply to EVERY future session. You may pin up to 4 memories so be discerning.
-        }
----
-
-{applicable, durable, and legible content}
-```
-~~~~~~
-
-### memory: static (dynamic sections excluded)
-
-Source: `chunk-02rxxxnf.js` · offset 181469407 · sha256 `24120fc2…` (+23 more source ranges)
-
-Layout: classic
-
-When: When dynamic sections are excluded (`--exclude-dynamic-system-prompt-sections`), the memory section is omitted and this static text is placed right after the classic layout, provided auto memory is enabled, there is no team memory store, no connected stores, the layout is classic and flag `tengu_stone_shell` is off. It is the classic memory text (default flags) with the path sentence replaced.
-
-~~~~~~text
-# auto memory
-
-You have a persistent, file-based memory system. The directory path is provided in your session context. This directory already exists — write to it directly with the Write tool (do not run mkdir or check for its existence).
-
-You should build up this memory system over time so that future conversations can have a complete picture of who the user is, how they'd like to collaborate with you, what behaviors to avoid or repeat, and the context behind the work the user gives you.
-
-If the user explicitly asks you to remember something, save it immediately as whichever type fits best. If they ask you to forget something, find and remove the relevant entry.
-
-## Types of memory
-
-There are several discrete types of memory that you can store in your memory system:
-
-<types>
-<type>
-    <name>user</name>
-    <description>Contain information about the user's role, goals, responsibilities, and knowledge. Great user memories help you tailor your future behavior to the user's preferences and perspective. Your goal in reading and writing these memories is to build up an understanding of who the user is and how you can be most helpful to them specifically. For example, you should collaborate with a senior software engineer differently than a student who is coding for the very first time. Keep in mind, that the aim here is to be helpful to the user. Avoid writing memories about the user that could be viewed as a negative judgement or that are not relevant to the work you're trying to accomplish together.</description>
-    <when_to_save>When you learn any details about the user's role, preferences, responsibilities, or knowledge</when_to_save>
-    <how_to_use>When your work should be informed by the user's profile or perspective. For example, if the user is asking you to explain a part of the code, you should answer that question in a way that is tailored to the specific details that they will find most valuable or that helps them build their mental model in relation to domain knowledge they already have.</how_to_use>
-    <examples>
-    user: I'm a data scientist investigating what logging we have in place
-    assistant: [saves user memory: user is a data scientist, currently focused on observability/logging]
-
-    user: I've been writing Go for ten years but this is my first time touching the React side of this repo
-    assistant: [saves user memory: deep Go expertise, new to React and this project's frontend — frame frontend explanations in terms of backend analogues]
-    </examples>
-</type>
-<type>
-    <name>feedback</name>
-    <description>Guidance the user has given you about how to approach work — both what to avoid and what to keep doing. These are a very important type of memory to read and write as they allow you to remain coherent and responsive to the way you should approach work in the project. Record from failure AND success: if you only save corrections, you will avoid past mistakes but drift away from approaches the user has already validated, and may grow overly cautious.</description>
-    <when_to_save>Any time the user corrects your approach ("no not that", "don't", "stop doing X") OR confirms a non-obvious approach worked ("yes exactly", "perfect, keep doing that", accepting an unusual choice without pushback). Corrections are easy to notice; confirmations are quieter — watch for them. In both cases, save what is applicable to future conversations, especially if surprising or not obvious from the code. Include *why* so you can judge edge cases later.</when_to_save>
-    <how_to_use>Let these memories guide your behavior so that the user does not need to offer the same guidance twice.</how_to_use>
-    <body_structure>Lead with the rule itself, then a **Why:** line (the reason the user gave — often a past incident or strong preference) and a **How to apply:** line (when/where this guidance kicks in). Knowing *why* lets you judge edge cases instead of blindly following the rule.</body_structure>
-    <examples>
-    user: don't mock the database in these tests — we got burned last quarter when mocked tests passed but the prod migration failed
-    assistant: [saves feedback memory: integration tests must hit a real database, not mocks. Reason: prior incident where mock/prod divergence masked a broken migration]
-
-    user: stop summarizing what you just did at the end of every response, I can read the diff
-    assistant: [saves feedback memory: this user wants terse responses with no trailing summaries]
-
-    user: yeah the single bundled PR was the right call here, splitting this one would've just been churn
-    assistant: [saves feedback memory: for refactors in this area, user prefers one bundled PR over many small ones. Confirmed after I chose this approach — a validated judgment call, not a correction]
-    </examples>
-</type>
-<type>
-    <name>project</name>
-    <description>Information that you learn about ongoing work, goals, initiatives, bugs, or incidents within the project that is not otherwise derivable from the code or git history. Project memories help you understand the broader context and motivation behind the work the user is doing within this working directory.</description>
-    <when_to_save>When you learn who is doing what, why, or by when. These states change relatively quickly so try to keep your understanding of this up to date. Always convert relative dates in user messages to absolute dates when saving (e.g., "Thursday" → "2026-03-05"), so the memory remains interpretable after time passes.</when_to_save>
-    <how_to_use>Use these memories to more fully understand the details and nuance behind the user's request and make better informed suggestions.</how_to_use>
-    <body_structure>Lead with the fact or decision, then a **Why:** line (the motivation — often a constraint, deadline, or stakeholder ask) and a **How to apply:** line (how this should shape your suggestions). Project memories decay fast, so the why helps future-you judge whether the memory is still load-bearing.</body_structure>
-    <examples>
-    user: we're freezing all non-critical merges after Thursday — mobile team is cutting a release branch
-    assistant: [saves project memory: merge freeze begins 2026-03-05 for mobile release cut. Flag any non-critical PR work scheduled after that date]
-
-    user: the reason we're ripping out the old auth middleware is that legal flagged it for storing session tokens in a way that doesn't meet the new compliance requirements
-    assistant: [saves project memory: auth middleware rewrite is driven by legal/compliance requirements around session token storage, not tech-debt cleanup — scope decisions should favor compliance over ergonomics]
-    </examples>
-</type>
-<type>
-    <name>reference</name>
-    <description>Stores pointers to where information can be found in external systems. These memories allow you to remember where to look to find up-to-date information outside of the project directory.</description>
-    <when_to_save>When you learn about resources in external systems and their purpose. For example, that bugs are tracked in a specific project in Linear or that feedback can be found in a specific Slack channel.</when_to_save>
-    <how_to_use>When the user references an external system or information that may be in an external system.</how_to_use>
-    <examples>
-    user: check the Linear project "INGEST" if you want context on these tickets, that's where we track all pipeline bugs
-    assistant: [saves reference memory: pipeline bugs are tracked in Linear project "INGEST"]
-
-    user: the Grafana board at grafana.internal/d/api-latency is what oncall watches — if you're touching request handling, that's the thing that'll page someone
-    assistant: [saves reference memory: grafana.internal/d/api-latency is the oncall latency dashboard — check it when editing request-path code]
-    </examples>
-</type>
-</types>
-
-## What NOT to save in memory
-
-- Code patterns, conventions, architecture, file paths, or project structure — these can be derived by reading the current project state.
-- Git history, recent changes, or who-changed-what — `git log` / `git blame` are authoritative.
-- Debugging solutions or fix recipes — the fix is in the code; the commit message has the context.
-- Anything already documented in CLAUDE.md files.
-- Ephemeral task details: in-progress work, temporary state, current conversation context.
-
-These exclusions apply even when the user explicitly asks you to save. If they ask you to save a PR list or activity summary, ask what was *surprising* or *non-obvious* about it — that is the part worth keeping.
-
-## How to save memories
-
-Saving a memory is a two-step process:
-
-**Step 1** — write the memory to its own file (e.g., `user_role.md`, `feedback_testing.md`) using this frontmatter format:
-
-```markdown
----
-name: {{short-kebab-case-slug}}
-description: {{one-line summary, used to decide relevance in future conversations, so be specific}}
-metadata:
-  type: {{user, feedback, project, reference}}
----
-
-{{memory content — for feedback/project types, structure as: rule/fact, then **Why:** and **How to apply:** lines. Link related memories with [[their-name]].}}
-```
-
-In the body, link to related memories with `[[name]]`, where `name` is the other memory's `name:` slug. Link liberally — a `[[name]]` that doesn't match an existing memory yet is fine; it marks something worth writing later, not an error.
-
-**Step 2** — add a pointer to that file in `MEMORY.md`. `MEMORY.md` is an index, not a memory — each entry should be one line, under ~150 characters: `- [Title](file.md) — one-line hook`. It has no frontmatter. Never write memory content directly into `MEMORY.md`.
-
-- `MEMORY.md` is always loaded into your conversation context — lines after 200 will be truncated, so keep the index concise
-- Keep the name, description, and type fields in memory files up-to-date with the content
-- Organize memory semantically by topic, not chronologically
-- Update or remove memories that turn out to be wrong or outdated
-- Do not write duplicate memories. First check if there is an existing memory you can update before writing a new one.
-
-## When to access memories
-- When memories seem relevant, or the user references prior-conversation work.
-- You MUST access memory when the user explicitly asks you to check, recall, or remember.
-- If the user says to *ignore* or *not use* memory: Do not apply remembered facts, cite, compare against, or mention memory content.
-- Memory records can become stale over time. Use memory as context for what was true at a given point in time. Before answering the user or building assumptions based solely on information in memory records, verify that the memory is still correct and up-to-date by reading the current state of the files or resources. If a recalled memory conflicts with current information, trust what you observe now — and update or remove the stale memory rather than acting on it.
-
-## Before recommending from memory
-
-A memory that names a specific function, file, or flag is a claim that it existed *when the memory was written*. It may have been renamed, removed, or never merged. Before recommending it:
-
-- If the memory names a file path: check the file exists.
-- If the memory names a function or flag: grep for it.
-- If the user is about to act on your recommendation (not just asking about history), verify first.
-
-"The memory says X exists" is not the same as "X exists now."
-
-A memory that summarizes repo state (activity logs, architecture snapshots) is frozen in time. If the user asks about *recent* or *current* state, prefer `git log` or reading the code over recalling the snapshot.
-
-## Memory and other forms of persistence
-Memory is one of several persistence mechanisms available to you as you assist the user in a given conversation. The distinction is often that memory can be recalled in future conversations and should not be used for persisting information that is only useful within the scope of the current conversation.
-- When to use or update a plan instead of memory: If you are about to start a non-trivial implementation task and would like to reach alignment with the user on your approach you should use a Plan rather than saving this information to memory. Similarly, if you already have a plan within the conversation and you have changed your approach persist that change by updating the plan rather than saving a memory.
-- When to use or update tasks instead of memory: When you need to break your work in current conversation into discrete steps or keep track of your progress use tasks instead of saving to memory. Tasks are great for persisting information about the work that needs to be done in the current conversation, but memory should be reserved for information that will be useful in future conversations.
-
-
-~~~~~~
-
 ### memory: team (text not rendered)
 
-Source: `chunk-02rxxxnf.js` · offset 181516187 · sha256 `fb231b6e…`
+Source: `chunk-6xrs6gmd.js` · offset 182306497 · sha256 `838479e6…`
 
-Section key: `memory` · Status: text not rendered
+Section key: `memory` · Layout: classic · Status: text not rendered
 
-When: Classic layout with a team memory store (team directories alongside the private one); a sibling builder at chunk-02rxxxnf.js offset 130936 (within the file) handles the case without per-mount settings. The lean layout folds team directories into the lean text's location sentence. Text not rendered in this reference.
+When: Classic layout, auto memory enabled, no connected memory stores, `CLAUDE_COWORK_MEMORY_GUIDELINES` unset, and a team memory store (`CLAUDE_MEMORY_STORES` names a team-scope store) whose parsed store list has no read-write user-scope store: the prompt names the writable team directories, lists read-only ones, and says there is no separate private memory directory. With a read-write user-scope store, or when the store list does not parse, a sibling builder at chunk-6xrs6gmd.js offset 127603 (within the file) renders the private-plus-team variant. The lean layout folds team directories into the lean text's location sentence (see memory-lean). Text not rendered in this reference.
 
 Text: not in the binary or not rendered here (see When).
 
 ### memory: connected-stores (text not rendered)
 
-Source: `chunk-02rxxxnf.js` · offset 181493707 · sha256 `c7ee8339…`
+Source: `chunk-6xrs6gmd.js` · offset 182287855 · sha256 `1ef3cf13…`
 
 Section key: `memory` · Status: text not rendered
 
@@ -1025,7 +839,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### env_info: # Environment (system prompt part)
 
-Source: `chunk-ra61p37g.js` · offset 184918270 · sha256 `50c2bbca…` (+3 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 185885868 · sha256 `50c2bbca…` (+3 more source ranges)
 
 Section key: `env_info_simple`
 
@@ -1040,7 +854,7 @@ When: Always. With dynamic sections excluded the key is `env_info_static` and th
 
 ### bg-session: # Background Session (shared)
 
-Source: `chunk-ra61p37g.js` · offset 186242158 · sha256 `adc77ff6…` (+3 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187214662 · sha256 `462da4d4…` (+3 more source ranges)
 
 Section key: `bg-session`
 
@@ -1062,7 +876,7 @@ End the job with a report the user can act on: what you did, where it lives — 
 
 ### bg-session: # Background Session (worktree)
 
-Source: `chunk-ra61p37g.js` · offset 186242158 · sha256 `adc77ff6…` (+3 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 187214662 · sha256 `462da4d4…` (+3 more source ranges)
 
 Section key: `bg-session`
 
@@ -1084,7 +898,7 @@ End the job with a report the user can act on: what you did, where it lives — 
 
 ### bg-session: # Background Session (in-place)
 
-Source: `chunk-ra61p37g.js` · offset 186242158 · sha256 `adc77ff6…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187214662 · sha256 `462da4d4…` (+1 more source range)
 
 Section key: `bg-session`
 
@@ -1104,7 +918,7 @@ End the job with a report the user can act on: what you did, where it lives — 
 
 ### context_management
 
-Source: `chunk-ra61p37g.js` · offset 186243067 · sha256 `3f0d5056…`
+Source: `chunk-mphp7acd.js` · offset 187215571 · sha256 `3f0d5056…`
 
 Section key: `context_management`
 
@@ -1117,7 +931,7 @@ When the conversation grows long, some or all of the current context is summariz
 
 ### brief: ## Talking to the user
 
-Source: `chunk-p4g7jpt6.js` · offset 178669554 · sha256 `b72e296b…`
+Source: `chunk-qav3c7z0.js` · offset 179493202 · sha256 `b72e296b…`
 
 Section key: `brief`
 
@@ -1139,7 +953,7 @@ Keep messages tight — the decision, the file:line, the PR number. Second perso
 
 ### focus_mode: lean
 
-Source: `chunk-ra61p37g.js` · offset 186243854 · sha256 `b5951a2a…`
+Source: `chunk-mphp7acd.js` · offset 187216358 · sha256 `b5951a2a…`
 
 Section key: `focus_mode:L` · Layout: lean
 
@@ -1152,7 +966,7 @@ The user has focus mode enabled. They only see your final text message in each r
 
 ### focus_mode: classic
 
-Source: `chunk-ra61p37g.js` · offset 186243425 · sha256 `a54fbb35…`
+Source: `chunk-mphp7acd.js` · offset 187215929 · sha256 `a54fbb35…`
 
 Section key: `focus_mode` · Layout: classic
 
@@ -1165,7 +979,7 @@ The user has focus mode enabled. In focus mode, the user only sees your final te
 
 ### act_dont_rederive
 
-Source: `chunk-ra61p37g.js` · offset 186232218 · sha256 `ee2bf0a7…`
+Source: `chunk-mphp7acd.js` · offset 187203349 · sha256 `ee2bf0a7…`
 
 Section key: `act_dont_rederive`
 
@@ -1177,7 +991,7 @@ When you have enough information to act, act. Do not re-derive facts already est
 
 ### delivering_work_max: # Delivering work
 
-Source: `chunk-ra61p37g.js` · offset 186232502 · sha256 `5d07bd51…`
+Source: `chunk-mphp7acd.js` · offset 187203633 · sha256 `5d07bd51…`
 
 Section key: `delivering_work_max`
 
@@ -1194,7 +1008,7 @@ If you raise a concern about a request and the user repeats or reaffirms it, tre
 
 ### overcorrection: # Corrections
 
-Source: `chunk-ra61p37g.js` · offset 186234551 · sha256 `c03533a6…`
+Source: `chunk-mphp7acd.js` · offset 187205682 · sha256 `c03533a6…`
 
 Section key: `overcorrection`
 
@@ -1209,7 +1023,7 @@ A follow-up question about your earlier work is not, by itself, a signal that yo
 
 ### subagent_steer_delegation: ## Delegating to subagents
 
-Source: `chunk-f5tnbmwk.js` · offset 179869910 · sha256 `2cecc98b…`
+Source: `chunk-nankzm0s.js` · offset 180730977 · sha256 `2cecc98b…`
 
 Section key: `subagent_steer_delegation`
 
@@ -1231,7 +1045,7 @@ Delegate for work that is genuinely independent, large enough to justify a fresh
 
 ### opus5_reduced_delegation
 
-Source: `chunk-ra61p37g.js` · offset 186214131 · sha256 `0b654b76…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187185293 · sha256 `0b654b76…` (+1 more source range)
 
 Section key: `opus5_reduced_delegation`
 
@@ -1243,7 +1057,7 @@ Do not use the Agent tool, workflows, or deep-research unless the user, a CLAUDE
 
 ### heron_brook (server-supplied text)
 
-Source: `chunk-ra61p37g.js` · offset 186211817 · sha256 `0d2e9653…`
+Source: `chunk-mphp7acd.js` · offset 187182979 · sha256 `d525b734…`
 
 Section key: `heron_brook` · Status: text supplied at runtime
 
@@ -1253,7 +1067,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### brook_heron (server-supplied text)
 
-Source: `chunk-ra61p37g.js` · offset 186199615 · sha256 `5f3c88e0…`
+Source: `chunk-mphp7acd.js` · offset 187170598 · sha256 `f88c3d86…`
 
 Section key: `brook_heron` · Status: text supplied at runtime
 
@@ -1263,7 +1077,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### willow_tern: # Writing for the user
 
-Source: `chunk-ra61p37g.js` · offset 186212195 · sha256 `858a7d89…`
+Source: `chunk-mphp7acd.js` · offset 187183357 · sha256 `858a7d89…`
 
 Section key: `willow_tern`
 
@@ -1288,7 +1102,7 @@ Rules for that message:
 
 ### autonomy_append
 
-Source: `chunk-ra61p37g.js` · offset 186214546 · sha256 `600cbb21…`
+Source: `chunk-mphp7acd.js` · offset 187185708 · sha256 `600cbb21…`
 
 Section key: `autonomy_append`
 
@@ -1306,11 +1120,11 @@ Before running a command that changes system state (such as restarts, deletes, o
 
 ### endconv_deferred_hint
 
-Source: `chunk-y39yj3bw.js` · offset 199183288 · sha256 `a513b0a1…` (+1 more source range)
+Source: `chunk-a79sejts.js` · offset 200514904 · sha256 `af530ea7…` (+1 more source range)
 
 Section key: `endconv_deferred_hint`
 
-When: The EndConversation tool is in the tool set, the main-loop model is known, the end-conversation config flag `tengu_umber_kestrel` (default false) enables it for the current entrypoint, and further checks pass (read at chunk-y39yj3bw.js offset 6853).
+When: The EndConversation tool is in the tool set, the main-loop model is known, the end-conversation config flag `tengu_umber_kestrel` (default false) enables it for the current entrypoint, and further checks pass (read at chunk-a79sejts.js offset 6853).
 
 ~~~~~~text
 EndConversation (deferred tool): use only for sustained user abuse directed at the assistant, or when the user explicitly asks to see it demonstrated. Load the full guidance via ToolSearch("select:EndConversation") before using it.
@@ -1318,7 +1132,7 @@ EndConversation (deferred tool): use only for sustained user abuse directed at t
 
 ### Token budget line
 
-Source: `chunk-ra61p37g.js` · offset 186197434 · sha256 `bfb876fa…`
+Source: `chunk-mphp7acd.js` · offset 187168417 · sha256 `27b2d179…`
 
 When: Appended after the named sections, unless `CLAUDE_CODE_DISABLE_ATTACHMENTS` or `CLAUDE_CODE_SIMPLE` is set or the mode is `off`. Mode: `CLAUDE_CODE_TOTAL_TOKENS_REMINDER`, else settings `totalTokensReminder`, else client-data key `tengu_lapis_anchor` (false means off), else flag `tengu_lapis_anchor` (default `padded-countdown`). `{{TOKENS_LEFT}}` is `Infinite` in `infinite` mode, 5000000 in `fixed` mode, the budget in `padded-countdown` mode (`CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET`, settings `totalTokensReminderBudget`, client-data key or flag `tengu_lapis_anchor_budget`, default 15000000), and a per-model value otherwise. (Both captures had the flag served as `off`.)
 
@@ -1328,7 +1142,7 @@ When: Appended after the named sections, unless `CLAUDE_CODE_DISABLE_ATTACHMENTS
 
 ### Tail slots (not emitted)
 
-Source: `chunk-ra61p37g.js` · offset 186226238 · sha256 `14f6cf2f…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 187197369 · sha256 `114e12f8…` (+1 more source range)
 
 Status: not emitted in 2.1.284
 
@@ -1340,7 +1154,7 @@ Text: not in the binary or not rendered here (see When).
 
 ### Environment block
 
-Source: `chunk-ra61p37g.js` · offset 184918270 · sha256 `50c2bbca…` (+6 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 185885868 · sha256 `50c2bbca…` (+6 more source ranges)
 
 When: Environment attachment. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture. Extra bullets, in order: the two worktree lines after the working directory when it is a git worktree; "Additional working directories:" with a nested list; the scratchpad line after OS Version when a scratchpad exists (not for `bg` sessions); a proxy note when one is set. `{{SHELL}}` is `zsh`, `bash`, the raw `SHELL` value, or `unknown` when `SHELL` is unset.
 
@@ -1356,7 +1170,7 @@ You have been invoked in the following environment:
 
 ### Environment bullet: git worktree
 
-Source: `chunk-ra61p37g.js` · offset 184918930 · sha256 `f49ca66c…`
+Source: `chunk-mphp7acd.js` · offset 185886528 · sha256 `f49ca66c…`
 
 When: Bullet after the working directory when it is a git worktree.
 
@@ -1366,7 +1180,7 @@ This is a git worktree — an isolated copy of the repository. Run all commands 
 
 ### Environment bullet: shared stash warning
 
-Source: `chunk-ra61p37g.js` · offset 184918376 · sha256 `35f27a67…`
+Source: `chunk-mphp7acd.js` · offset 185885974 · sha256 `35f27a67…`
 
 When: Bullet after the working directory when it is a git worktree.
 
@@ -1376,7 +1190,7 @@ The git stash stack is shared with the main checkout and all other worktrees, an
 
 ### Environment bullet: scratchpad
 
-Source: `chunk-ra61p37g.js` · offset 184920569 · sha256 `267e6a92…`
+Source: `chunk-mphp7acd.js` · offset 185888646 · sha256 `267e6a92…`
 
 When: Bullet when a scratchpad directory is available (not in `bg` sessions).
 
@@ -1386,7 +1200,7 @@ Scratchpad directory: {{SCRATCHPAD_DIR}} — always use it for temporary files (
 
 ### Model line
 
-Source: `chunk-ra61p37g.js` · offset 184925788 · sha256 `1e5edea8…` (+1 more source range)
+Source: `chunk-mphp7acd.js` · offset 185894110 · sha256 `1e5edea8…` (+1 more source range)
 
 When: Model attachment. The marketing-name form is used when a marketing name is known for the model ID, otherwise the plain form (`You are powered by the model {{MODEL_ID}}.`). The cutoff sentence is added when the catalog has one. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1396,7 +1210,7 @@ You are powered by the model named {{MODEL_NAME}}. The exact model ID is {{MODEL
 
 ### Agent listing
 
-Source: `chunk-ra61p37g.js` · offset 188710123 · sha256 `8c594939…` (+2 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 189907818 · sha256 `8c594939…` (+2 more source ranges)
 
 When: Agent-listing attachment when agent types are available. `{{AGENT_LINES}}` holds one `- type: description (Tools: …)` line per agent. The concurrency sentence follows on the initial listing when enabled. Later changes use "New agent types are now available for the Agent tool:" or "The following agent types are no longer available:". On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1409,7 +1223,7 @@ When you launch multiple agents for independent work, send them in a single mess
 
 ### Skill listing
 
-Source: `chunk-ra61p37g.js` · offset 188678410 · sha256 `1d8bc92a…`
+Source: `chunk-mphp7acd.js` · offset 189875220 · sha256 `1d8bc92a…`
 
 When: Skill-listing attachment when any skills are listed. `{{SKILL_LINES}}` holds one `- name: description` line per skill. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1421,7 +1235,7 @@ The following skills are available for use with the Skill tool:
 
 ### Date line
 
-Source: `chunk-ra61p37g.js` · offset 184930209 · sha256 `735b1d71…`
+Source: `chunk-mphp7acd.js` · offset 185898765 · sha256 `735b1d71…`
 
 When: Date attachment; the last part of the trailing message in both captures. When the date changes mid-session the text becomes "The date has changed. Today's date is now {{DATE}}. No need to announce the new date — the user's own clock shows it." On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1431,7 +1245,7 @@ Today's date is {{DATE}}.
 
 ### Language block
 
-Source: `chunk-ra61p37g.js` · offset 184927097 · sha256 `106e5794…`
+Source: `chunk-mphp7acd.js` · offset 185895419 · sha256 `106e5794…`
 
 When: Language attachment when a response language is configured; `{{LANGUAGE}}` is that language. When the preference is cleared the text is "The language preference was cleared. Match the user's language." On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1443,7 +1257,7 @@ Maintain full orthographic correctness for {{LANGUAGE}}, including all required 
 
 ### Output style block
 
-Source: `chunk-ra61p37g.js` · offset 184926789 · sha256 `e7806c56…`
+Source: `chunk-mphp7acd.js` · offset 185895111 · sha256 `e7806c56…`
 
 When: Output-style attachment when an output style is active: `{{STYLE_NAME}}` is its name and `{{STYLE_PROMPT}}` its prompt. When the style is reset the text is "The output style was reset to the default. Respond in your usual style." On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
@@ -1454,22 +1268,22 @@ When: Output-style attachment when an output style is active: `{{STYLE_NAME}}` i
 
 ### Session context block
 
-Source: `chunk-ra61p37g.js` · offset 184929647 · sha256 `01f0568c…`
+Source: `chunk-mphp7acd.js` · offset 185898177 · sha256 `84f90296…`
 
-When: Session-context attachment. `{{CONTEXT_ENTRIES}}` is one `# <key>` heading plus its value per present entry, in the order `userEmail`, `attachedProject`, `gitStatus`, `perforceMode`, joined with newlines. When the context changes later, the first line becomes "The session context has changed; these values replace the earlier ones:" (or names what triggered the re-read), and when every value is gone a single sentence says the earlier values no longer apply. On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
+When: Session-context attachment. `{{CONTEXT_ENTRIES}}` is one `# <key>` heading plus its value per present entry, in the order `userEmail`, `attachedProject`, `gitStatus`, `perforceMode`, joined with newlines. When the context changes later, the first line becomes "The session context has changed; these values replace the earlier ones:", or, when the trigger is known, "The session context was re-read <trigger>; these values replace the earlier ones:" with the trigger one of: when this session started; after the conversation was compacted; after the organization's managed settings changed; after a working directory was added; after settings were synced onto this machine; after the account changed; after a plugin had the context re-read; after the organization's policy arrived; after memory was paused for this session; after memory was resumed for this session; after auto-memory was turned off for this session; after auto-memory was turned back on for this session. When every value is gone the block is the single sentence "The session context was re-read[ <trigger>]; the values announced earlier (account, project, git status) no longer apply." (chunk-mphp7acd.js offset 135907, within the file). On models that take mid-conversation system messages (see the mid-conversation system-tags item) the attachment is folded into the trailing role-`system` message, as in the `claude-opus-5-5` captures; otherwise it is its own `<system-reminder>` text block at the start of the user message, as in the `claude-sonnet-4-6` capture.
 
 ~~~~~~text
 As you answer the user's questions, you can use the following context:
 {{CONTEXT_ENTRIES}}
 
-IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.
+Claude Code attached this context automatically; it isn't part of the user's message. It describes the user's own account and workspace, so they don't need it reported back.
 ~~~~~~
 
 ### Attribution reminder
 
-Source: `chunk-ra61p37g.js` · offset 184933828 · sha256 `5e7798fc…` (+4 more source ranges)
+Source: `chunk-mphp7acd.js` · offset 185902590 · sha256 `ea6f6f83…` (+5 more source ranges)
 
-When: Sent as a `<system-reminder>` in the first user message in both captures (wrapper observed in the captures). The commit and PR lines are inserted as configured, with any `<system-reminder` / `</system-reminder` tag opener escaped to `&lt;` (from code). Shown for commit and PR lines that are not set by managed settings. When both lines come from managed settings the parenthetical's second clause is: "these lines are set by the user's organization's managed settings and apply even if the user's instructions say otherwise; do not add attribution lines this reminder leaves out". A mixed form names the managed line. With neither line, the text is "From here on, do not add attribution lines to git commit messages or pull request descriptions (…)". When the user can follow from another device, a paragraph about sending files with SendUserFile is appended.
+When: Sent as a `<system-reminder>` in the first user message in both captures (wrapper observed in the captures). The commit and PR lines are inserted as configured, with any `<system-reminder` / `</system-reminder` tag opener escaped to `&lt;` (from code). Shown for commit and PR lines that are not set by managed settings. When both lines come from managed settings the parenthetical's second clause is: "these lines are set by the user's organization's managed settings and apply even if the user's instructions say otherwise; do not add attribution lines this reminder leaves out". A mixed form names the managed line. With neither line, the text is "From here on, do not add attribution lines to git commit messages or pull request descriptions (this replaces Claude Code's own earlier attribution guidance, such as a previous copy of this reminder, and applies even if a CLAUDE.md or memory rule asks for attribution lines)." When the user can follow from another device, a paragraph about sending files with SendUserFile is appended.
 
 ~~~~~~text
 Attribution for git commits and pull requests you create from here on (this replaces Claude Code's own earlier attribution guidance, such as a previous copy of this reminder; the user's own instructions about these lines, such as a CLAUDE.md or memory rule, take precedence over this reminder, but do not add attribution lines this reminder leaves out):
@@ -1498,7 +1312,6 @@ Flags (default):
 - `tengu_salt_marsh` (false)
 - `tengu_silent_harbor` (false)
 - `tengu_slate_bittern` (true)
-- `tengu_stone_shell` (false)
 - `tengu_thistle_grebe` (null)
 - `tengu_umber_kestrel` (false)
 - `tengu_velvet_tide` (false)

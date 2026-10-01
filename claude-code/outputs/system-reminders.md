@@ -6,7 +6,7 @@ Text Claude Code injects into the conversation after the system prompt: attachme
 
 ### Plan mode (full reminder)
 
-Source: `chunk-ra61p37g.js` · offset 188669630 · sha256 `fe09ee9f…` · attachment `plan_mode`
+Source: `chunk-mphp7acd.js` · offset 189866735 · sha256 `33dfe8df…` · attachment `plan_mode`
 
 - When: From code: permission mode is plan. At most one plan_mode attachment per 5 real (non-meta) user turns since the last plan_mode/plan_mode_reentry attachment; attachments 1, 6, 11, … in the plan-mode stretch are full, the rest sparse. Main agent only (subagents get plan-mode-subagent).
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -47,7 +47,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
 
 ### Plan mode (full, custom workflow)
 
-Source: `chunk-ra61p37g.js` · offset 188666071 · sha256 `209ba66f…` · attachment `plan_mode`
+Source: `chunk-mphp7acd.js` · offset 189863176 · sha256 `9272c0b4…` · attachment `plan_mode`
 
 - When: From code: full reminder when options.planModeInstructions is set (SDK/custom); the custom instructions replace the five phases.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -72,7 +72,7 @@ You should build your plan incrementally by writing to or editing this file. NOT
 
 ### Plan mode header
 
-Source: `chunk-ra61p37g.js` · offset 188659879 · sha256 `f6cd22b8…`
+Source: `chunk-mphp7acd.js` · offset 189856984 · sha256 `f6cd22b8…`
 
 - When: From code: opens both full variants.
 - Wrapping: Part of plan-mode-full.
@@ -84,7 +84,7 @@ Plan mode is active. The user indicated that they do not want you to execute yet
 
 ### Plan file info (file exists)
 
-Source: `chunk-ra61p37g.js` · offset 188665525 · sha256 `70bb0b7d…`
+Source: `chunk-mphp7acd.js` · offset 189862630 · sha256 `c4bd632d…`
 
 - When: From code: a plan file already exists for this session.
 - Wrapping: Part of plan-mode-full.
@@ -97,7 +97,7 @@ A plan file already exists at {{planFilePath}}. You can read it and make increme
 
 ### Plan file info (no file yet)
 
-Source: `chunk-ra61p37g.js` · offset 188665641 · sha256 `9ad94e0b…`
+Source: `chunk-mphp7acd.js` · offset 189862746 · sha256 `1f452355…`
 
 - When: From code: no plan file exists yet.
 - Wrapping: Part of plan-mode-full.
@@ -110,7 +110,7 @@ No plan file exists yet. You should create your plan at {{planFilePath}} using t
 
 ### Plan mode: interactive workshop option
 
-Source: `chunk-ra61p37g.js` · offset 188666492 · sha256 `60b2d6fc…`
+Source: `chunk-mphp7acd.js` · offset 189863597 · sha256 `8911706f…`
 
 - When: From code: first full reminder of the main agent, when the workshop feature is available and not already active (plan_workshop_offer).
 - Wrapping: Part of plan-mode-full.
@@ -135,7 +135,7 @@ This narrowly extends the plan-mode file exception above: {{expr:X$e(e.workshopO
 
 ### Plan mode: workshop in progress
 
-Source: `chunk-ra61p37g.js` · offset 188665790 · sha256 `cd333119…`
+Source: `chunk-mphp7acd.js` · offset 189862895 · sha256 `aeb22b50…`
 
 - When: From code: a workshop document is active for this session.
 - Wrapping: Part of plan-mode-full.
@@ -149,7 +149,7 @@ A decision workshop is in progress for this session — exactly as granted when 
 
 ### Plan mode: prototype artifact option
 
-Source: `chunk-ra61p37g.js` · offset 188668468 · sha256 `886a5c2b…`
+Source: `chunk-mphp7acd.js` · offset 189865573 · sha256 `c1f3bbbb…`
 
 - When: From code: first full reminder when the prototype offer is enabled and no workshop offer/activity applies.
 - Wrapping: Part of plan-mode-full.
@@ -168,7 +168,7 @@ If the user accepts: the prototype is built after plan mode ends, never during i
 
 ### Plan mode Phase 1 (with Explore agents)
 
-Source: `chunk-ra61p37g.js` · offset 188661766 · sha256 `1f2d8cee…`
+Source: `chunk-mphp7acd.js` · offset 189858871 · sha256 `4e087601…`
 
 - When: From code: when the plan-agents path is enabled and its mode is default; otherwise plan-mode-phase1-direct.
 - Wrapping: Part of plan-mode-full.
@@ -190,7 +190,7 @@ Goal: Gain a comprehensive understanding of the user's request by reading throug
 
 ### Plan mode Phase 1 (read directly)
 
-Source: `chunk-ra61p37g.js` · offset 188663048 · sha256 `5cdc2f7a…`
+Source: `chunk-mphp7acd.js` · offset 189860153 · sha256 `5cdc2f7a…`
 
 - When: From code: alternative to plan-mode-phase1-agents.
 - Wrapping: Part of plan-mode-full.
@@ -207,7 +207,7 @@ Goal: Gain a comprehensive understanding of the user's request by reading throug
 
 ### Plan mode Phase 2 (with Plan agents)
 
-Source: `chunk-ra61p37g.js` · offset 188663542 · sha256 `047fda7b…`
+Source: `chunk-mphp7acd.js` · offset 189860647 · sha256 `1d3afffb…`
 
 - When: From code: same condition as plan-mode-phase1-agents. The multiple-agents block appears when more than one agent is allowed.
 - Wrapping: Part of plan-mode-full.
@@ -235,7 +235,7 @@ In the agent prompt:
 
 ### Plan mode Phase 2 (direct)
 
-Source: `chunk-ra61p37g.js` · offset 188664783 · sha256 `46078d07…`
+Source: `chunk-mphp7acd.js` · offset 189861888 · sha256 `46078d07…`
 
 - When: From code: alternative to plan-mode-phase2-agents.
 - Wrapping: Part of plan-mode-full.
@@ -252,7 +252,7 @@ Goal: Design an implementation approach based on the user's intent and your expl
 
 ### Plan mode Phase 3
 
-Source: `chunk-ra61p37g.js` · offset 188665140 · sha256 `37cf6ef4…`
+Source: `chunk-mphp7acd.js` · offset 189862245 · sha256 `34e9ab74…`
 
 - When: From code: always in the five-phase reminder.
 - Wrapping: Part of plan-mode-full.
@@ -269,7 +269,7 @@ Goal: Review the plan(s) from Phase 2 and ensure alignment with the user's inten
 
 ### Plan mode Phase 4
 
-Source: `chunk-ra61p37g.js` · offset 188658971 · sha256 `5556c2b5…`
+Source: `chunk-mphp7acd.js` · offset 189856076 · sha256 `5556c2b5…`
 
 - When: From code: always in the five-phase reminder; the workshop clause appears when a workshop is offered or active.
 - Wrapping: Part of plan-mode-full.
@@ -288,7 +288,7 @@ Goal: Write your final plan to the plan file (the only file you can edit{{expr:e
 
 ### Plan mode Phase 5 / end-of-turn rule
 
-Source: `chunk-ra61p37g.js` · offset 188660917 · sha256 `174ddd36…`
+Source: `chunk-mphp7acd.js` · offset 189858022 · sha256 `e41de7dc…`
 
 - When: From code: always in the full reminder.
 - Wrapping: Part of plan-mode-full.
@@ -304,7 +304,7 @@ This is critical - your turn should only end with either using the AskUserQuesti
 
 ### Plan mode (sparse reminder)
 
-Source: `chunk-ra61p37g.js` · offset 188670573 · sha256 `6eb40ea5…` · attachment `plan_mode`
+Source: `chunk-mphp7acd.js` · offset 189867678 · sha256 `9c371d21…` · attachment `plan_mode`
 
 - When: From code: plan_mode attachments that are not the 1st, 6th, 11th, … of the stretch.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -317,7 +317,7 @@ Plan mode still active (see full instructions earlier in conversation). Read-onl
 
 ### Plan mode sparse end-of-turn rule
 
-Source: `chunk-ra61p37g.js` · offset 188660774 · sha256 `a95dcf83…`
+Source: `chunk-mphp7acd.js` · offset 189857879 · sha256 `58ac73ca…`
 
 - When: From code: always in the sparse reminder.
 - Wrapping: Part of plan-mode-sparse.
@@ -330,7 +330,7 @@ End turns with AskUserQuestion (for clarifications) or ExitPlanMode (for plan ap
 
 ### Plan mode (subagent)
 
-Source: `chunk-ra61p37g.js` · offset 188670837 · sha256 `d5d57f69…` · attachment `plan_mode`
+Source: `chunk-mphp7acd.js` · offset 189867942 · sha256 `04b4ace6…` · attachment `plan_mode`
 
 - When: From code: plan mode active and the attachment is for a subagent (agentId set).
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -349,7 +349,7 @@ Answer the user's query comprehensively, using the AskUserQuestion tool if you n
 
 ### Re-entering plan mode
 
-Source: `chunk-ra61p37g.js` · offset 188696517 · sha256 `3db1edee…` · attachment `plan_mode_reentry`
+Source: `chunk-mphp7acd.js` · offset 189894208 · sha256 `6435245c…` · attachment `plan_mode_reentry`
 
 - When: From code: entering plan mode after having exited it earlier in the session, when a plan file exists; emitted together with the plan_mode attachment.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -374,7 +374,7 @@ Treat this as a fresh planning session. Do not assume the existing plan is relev
 
 ### Exited plan mode
 
-Source: `chunk-ra61p37g.js` · offset 188679470 · sha256 `5f2a5e57…` · attachment `plan_mode_exit`
+Source: `chunk-mphp7acd.js` · offset 189876280 · sha256 `5f2a5e57…` · attachment `plan_mode_exit`
 
 - When: From code: mode is no longer plan and either the session flag needsPlanModeExitAttachment is set or a plan_mode attachment appears since the last exit. The suffix naming the plan file appears when the plan file exists.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -389,7 +389,7 @@ You have exited plan mode. You can now make edits, run tools, and take actions.{
 
 ### Plan file reference
 
-Source: `chunk-ra61p37g.js` · offset 188677364 · sha256 `fe431cba…` · attachment `plan_file_reference`
+Source: `chunk-mphp7acd.js` · offset 189873883 · sha256 `fe431cba…` · attachment `plan_file_reference`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -407,7 +407,7 @@ If this plan is relevant to the current work and not already complete, continue 
 
 ### Plan rejected (stay in plan mode)
 
-Source: `chunk-ra61p37g.js` · offset 188586986 · sha256 `a9414805…`
+Source: `chunk-mphp7acd.js` · offset 189779691 · sha256 `a9414805…`
 
 - When: Undocumented; text constant read in code (used for the ExitPlanMode rejection result).
 - Wrapping: Not wrapped.
@@ -422,7 +422,7 @@ Rejected plan:
 
 ### Output style active
 
-Source: `chunk-ra61p37g.js` · offset 188679120 · sha256 `f31a21f8…` · attachment `output_style`
+Source: `chunk-mphp7acd.js` · offset 189875930 · sha256 `19f0ce5f…` · attachment `output_style`
 
 - When: From code: main thread, the settings outputStyle is not 'default' and the style resolves. {{expr:…}} is the style's turn reminder (or its waiting-turn reminder while a background task started by a tool is running), defaulting to the literal sentence shown. Suppressed if the style name exceeds 256 characters.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -434,7 +434,7 @@ Source: `chunk-ra61p37g.js` · offset 188679120 · sha256 `f31a21f8…` · attac
 
 ### ultrathink keyword
 
-Source: `chunk-ra61p37g.js` · offset 188684010 · sha256 `0c78e8db…` · attachment `ultrathink_effort`
+Source: `chunk-mphp7acd.js` · offset 189880820 · sha256 `0c78e8db…` · attachment `ultrathink_effort`
 
 - When: From code: the prompt matches /\bultrathink\b/i and flag tengu_turtle_carbon (default true) is on.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -446,7 +446,7 @@ The user included the keyword "ultrathink", requesting deeper reasoning on this 
 
 ### ultracode keyword
 
-Source: `chunk-ra61p37g.js` · offset 188684200 · sha256 `78e20eba…` · attachment `workflow_keyword_request`
+Source: `chunk-mphp7acd.js` · offset 189881010 · sha256 `78e20eba…` · attachment `workflow_keyword_request`
 
 - When: From code: main thread, human-typed prompt containing the workflow keyword, the setting workflowKeywordTriggerEnabled is not false, and a further gate (not traced) holds.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -458,7 +458,7 @@ The user included the keyword "ultracode", opting this turn into multi-agent orc
 
 ### Ultracode on (full)
 
-Source: `chunk-ra61p37g.js` · offset 188684426 · sha256 `a08a243f…` · attachment `ultra_effort_enter`
+Source: `chunk-mphp7acd.js` · offset 189881236 · sha256 `a08a243f…` · attachment `ultra_effort_enter`
 
 - When: From code: main thread, on a regular user prompt, when the producer's ultra-effort check is true and the most recent ultra_effort_* attachment is not an enter.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -470,7 +470,7 @@ Ultracode is on: optimize for the most exhaustive, correct answer — not the fa
 
 ### Ultracode still on (sparse)
 
-Source: `chunk-ra61p37g.js` · offset 188684742 · sha256 `b2868414…` · attachment `ultra_effort_enter`
+Source: `chunk-mphp7acd.js` · offset 189881552 · sha256 `b2868414…` · attachment `ultra_effort_enter`
 
 - When: From code: the ultra-effort check is still true and a threshold of non-meta user turns has passed since the last enter reminder.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -482,7 +482,7 @@ Ultracode is still on — use the Workflow tool; see the Ultracode section of th
 
 ### Ultracode off
 
-Source: `chunk-ra61p37g.js` · offset 188684911 · sha256 `54740a82…` · attachment `ultra_effort_exit`
+Source: `chunk-mphp7acd.js` · offset 189881721 · sha256 `54740a82…` · attachment `ultra_effort_exit`
 
 - When: From code: the ultra-effort check is false and the most recent ultra_effort_* attachment was an enter.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -494,7 +494,7 @@ Ultracode is off — the Workflow tool's standard opt-in rule applies again.
 
 ### Workflow size unrestricted
 
-Source: `chunk-wmw5xqnr.js` · offset 180909905 · sha256 `e7f59e00…` · attachment `workflow_size_guideline_change`
+Source: `chunk-980njedm.js` · offset 181691306 · sha256 `e7f59e00…` · attachment `workflow_size_guideline_change`
 
 - When: From code: main thread, regular user prompt, the workflowSizeGuideline setting changed to unrestricted.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -506,7 +506,7 @@ Workflow size is now unrestricted — no size guideline applies.
 
 ### Workflow size guideline changed
 
-Source: `chunk-wmw5xqnr.js` · offset 180909981 · sha256 `e2809178…` · attachment `workflow_size_guideline_change`
+Source: `chunk-980njedm.js` · offset 181691382 · sha256 `e2809178…` · attachment `workflow_size_guideline_change`
 
 - When: From code: main thread, regular user prompt, the workflowSizeGuideline setting changed.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -520,7 +520,7 @@ The workflow size guideline for this session changed: {{expr:f(e)}}. {{expr:d()}
 
 ### TodoWrite reminder
 
-Source: `chunk-ra61p37g.js` · offset 188692437 · sha256 `a93d88d5…` · attachment `todo_reminder`
+Source: `chunk-mphp7acd.js` · offset 189890128 · sha256 `a93d88d5…` · attachment `todo_reminder`
 
 - When: From code: the todo tools are enabled (a gate that includes CLAUDE_CODE_ENABLE_TODO_TOOLS) but CLAUDE_CODE_ENABLE_TASKS is false (otherwise task_reminder is used instead), the TodoWrite tool is present, there is conversation history, the reminder mode is not 'off' (CLAUDE_CODE_TODO_REMINDER_MODE, else flag tengu_soft_slate_nudge default 'baseline'), and at least 10 assistant messages have passed since the last TodoWrite call and since the last todo_reminder.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -533,7 +533,7 @@ The TodoWrite tool hasn't been used recently. If you're working on tasks that wo
 
 ### TodoWrite reminder: existing list
 
-Source: `chunk-ra61p37g.js` · offset 188692842 · sha256 `cb88564d…` · attachment `todo_reminder`
+Source: `chunk-mphp7acd.js` · offset 189890533 · sha256 `cb88564d…` · attachment `todo_reminder`
 
 - When: From code: the current todo list is non-empty. Each line is '{{index}}. [{{status}}] {{content}}'.
 - Wrapping: Part of todo-reminder.
@@ -550,7 +550,7 @@ Here are the existing contents of your todo list:
 
 ### Task tools reminder
 
-Source: `chunk-ra61p37g.js` · offset 188693059 · sha256 `27733858…` · attachment `task_reminder`
+Source: `chunk-mphp7acd.js` · offset 189890750 · sha256 `775d3859…` · attachment `task_reminder`
 
 - When: From code: task tools are enabled (CLAUDE_CODE_ENABLE_TASKS not false and todo tools enabled), TaskUpdate is available, there is history, the reminder mode is not 'off', and the producer's counters since the last task-management call and since the last task_reminder both reach 10.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -564,7 +564,7 @@ The task tools haven't been used recently. If you're working on tasks that would
 
 ### Task tools reminder: existing tasks
 
-Source: `chunk-ra61p37g.js` · offset 188693490 · sha256 `35fb0ef5…` · attachment `task_reminder`
+Source: `chunk-mphp7acd.js` · offset 189891181 · sha256 `35fb0ef5…` · attachment `task_reminder`
 
 - When: From code: the task list is non-empty. Each line is '#{{id}}. [{{status}}] {{subject}}'.
 - Wrapping: Part of task-reminder.
@@ -583,7 +583,7 @@ Here are the existing tasks:
 
 ### File changed on disk
 
-Source: `chunk-ra61p37g.js` · offset 188674389 · sha256 `f96f6f83…` · attachment `edited_text_file`
+Source: `chunk-mphp7acd.js` · offset 189871521 · sha256 `129de407…` · attachment `edited_text_file`
 
 - When: From code: a file previously read in full (no offset/limit) has a newer mtime than the read, re-reads without hitting the token cap, and its content differs. Snippets across all changed files this turn share a 16384-character budget; files past the budget get the no-diff variant.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -595,7 +595,7 @@ Note: {{filename}} changed on disk since you last read it. That's usually delibe
 
 ### File changed on disk: diff follows
 
-Source: `chunk-ra61p37g.js` · offset 188674767 · sha256 `04657c79…` · attachment `edited_text_file`
+Source: `chunk-mphp7acd.js` · offset 189871899 · sha256 `04657c79…` · attachment `edited_text_file`
 
 - When: From code: snippet within budget.
 - Wrapping: Part of edited-text-file.
@@ -609,7 +609,7 @@ Source: `chunk-ra61p37g.js` · offset 188674767 · sha256 `04657c79…` · attac
 
 ### File changed on disk: diff omitted
 
-Source: `chunk-ra61p37g.js` · offset 188674685 · sha256 `0d1f924b…` · attachment `edited_text_file`
+Source: `chunk-mphp7acd.js` · offset 189871817 · sha256 `40aef2dd…` · attachment `edited_text_file`
 
 - When: From code: the attachment's snippet is empty.
 - Wrapping: Part of edited-text-file.
@@ -623,7 +623,7 @@ Source: `chunk-ra61p37g.js` · offset 188674685 · sha256 `0d1f924b…` · attac
 
 ### @-mentioned file truncated
 
-Source: `chunk-ra61p37g.js` · offset 188691052 · sha256 `cbb344da…` · attachment `file`
+Source: `chunk-mphp7acd.js` · offset 189888740 · sha256 `d364fae3…` · attachment `file`
 
 - When: From code: an attached (@-mentioned) text file was truncated.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -636,7 +636,7 @@ Note: The file {{filename}} was too large and has been truncated to the first 20
 
 ### @-mention without attached contents
 
-Source: `chunk-ra61p37g.js` · offset 188674901 · sha256 `98758c85…` · attachment `at_mention_reference`
+Source: `chunk-mphp7acd.js` · offset 189872033 · sha256 `8cf12488…` · attachment `at_mention_reference`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -649,7 +649,7 @@ The user @-mentioned {{mentions}}. File contents are not attached automatically 
 
 ### File read before compaction
 
-Source: `chunk-ra61p37g.js` · offset 188675189 · sha256 `4747acb9…` · attachment `compact_file_reference`
+Source: `chunk-mphp7acd.js` · offset 189872321 · sha256 `bab02c96…` · attachment `compact_file_reference`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -662,7 +662,7 @@ Note: {{filename}} was read before the last conversation was summarized, but the
 
 ### Large PDF (page count unknown)
 
-Source: `chunk-ra61p37g.js` · offset 188676035 · sha256 `533a2314…` · attachment `pdf_reference`
+Source: `chunk-mphp7acd.js` · offset 189872554 · sha256 `97da112c…` · attachment `pdf_reference`
 
 - When: Renderer read in code: @-mentioned PDF not attached; page count unknown. Followed by pdf-reference-suffix.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -675,7 +675,7 @@ PDF file: {{filename}} (page count unknown, {{expr:Dt(e.fileSize)}}). It was not
 
 ### Large PDF
 
-Source: `chunk-ra61p37g.js` · offset 188676250 · sha256 `e59616cc…` · attachment `pdf_reference`
+Source: `chunk-mphp7acd.js` · offset 189872769 · sha256 `45ebbcd8…` · attachment `pdf_reference`
 
 - When: Renderer read in code: @-mentioned PDF too large to attach. Followed by pdf-reference-suffix.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -688,7 +688,7 @@ PDF file: {{filename}} ({{pageCount}} pages, {{expr:Dt(e.fileSize)}}). This PDF 
 
 ### Large PDF: reading advice
 
-Source: `chunk-ra61p37g.js` · offset 188676535 · sha256 `5c42f606…` · attachment `pdf_reference`
+Source: `chunk-mphp7acd.js` · offset 189873054 · sha256 `5c42f606…` · attachment `pdf_reference`
 
 - When: From code: appended to both PDF variants.
 - Wrapping: Part of pdf-reference.
@@ -700,7 +700,7 @@ Start by reading the first few pages to understand the structure, then read more
 
 ### @-mentioned audio transcript
 
-Source: `chunk-ra61p37g.js` · offset 188675562 · sha256 `381dc3c9…` · attachment `audio_transcript`
+Source: `chunk-mphp7acd.js` · offset 188675562 · sha256 `381dc3c9…` · attachment `audio_transcript`
 
 - When: Renderer read in code: an @-mentioned audio file was transcribed. The transcript follows in an <audio-transcript> element.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -713,7 +713,7 @@ The user @-mentioned the audio file {{filename}}. Claude Code transcribed it wit
 
 ### @-mentioned audio not transcribed
 
-Source: `chunk-ra61p37g.js` · offset 188675422 · sha256 `59736e6f…` · attachment `audio_transcript`
+Source: `chunk-mphp7acd.js` · offset 188675422 · sha256 `59736e6f…` · attachment `audio_transcript`
 
 - When: Renderer read in code: transcription failed.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -726,7 +726,7 @@ The user @-mentioned the audio file {{filename}}, but Claude Code could not tran
 
 ### IDE selection
 
-Source: `chunk-ra61p37g.js` · offset 188676716 · sha256 `07ab75b4…` · attachment `selected_lines_in_ide`
+Source: `chunk-mphp7acd.js` · offset 189873235 · sha256 `6fc4f94f…` · attachment `selected_lines_in_ide`
 
 - When: From code: main thread, an IDE is connected, the selection has text and a file path, and the path is not denied by permission rules. Content longer than the display limit is cut and ends with a new line reading '... (truncated)'.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -741,7 +741,7 @@ This may or may not be related to the current task.
 
 ### Diff-view selection
 
-Source: `chunk-ra61p37g.js` · offset 188676930 · sha256 `ad746f26…` · attachment `selected_lines_in_diff`
+Source: `chunk-mphp7acd.js` · offset 189873449 · sha256 `c546e703…` · attachment `selected_lines_in_diff`
 
 - When: From code: main thread, the selection source is a diff view and has text.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -756,7 +756,7 @@ This may or may not be related to the current task.
 
 ### File opened in IDE
 
-Source: `chunk-ra61p37g.js` · offset 188677200 · sha256 `71c380a3…` · attachment `opened_file_in_ide`
+Source: `chunk-mphp7acd.js` · offset 189873719 · sha256 `3268315a…` · attachment `opened_file_in_ide`
 
 - When: From code: main thread, a file is focused in the IDE with no selection text and the path is not denied; nested CLAUDE.md files for that path are attached first.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -768,7 +768,7 @@ The user opened the file {{filename}} in the IDE. This may or may not be related
 
 ### New diagnostics
 
-Source: `chunk-ra61p37g.js` · offset 187964882 · sha256 `99ddb404…` · attachment `diagnostics`
+Source: `chunk-mphp7acd.js` · offset 189068464 · sha256 `27319f34…` · attachment `diagnostics`
 
 - When: From code: main thread, new diagnostics from the IDE MCP server or pending LSP diagnostics exist and a file-editing tool is available. Each line: '  {{severity}} [Line L:C] {{message}} [code] (source)'.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -782,7 +782,7 @@ Source: `chunk-ra61p37g.js` · offset 187964882 · sha256 `99ddb404…` · attac
 
 ### @-mentioned directory
 
-Source: `chunk-ra61p37g.js` · offset 188674279 · sha256 `19b1094d…` · attachment `directory`
+Source: `chunk-mphp7acd.js` · offset 189871411 · sha256 `19b1094d…` · attachment `directory`
 
 - When: From code: rendered as a synthetic Bash tool_use (command 'ls <path>', description 'Lists files in <path>') plus its tool_result with the listing.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -790,7 +790,7 @@ Source: `chunk-ra61p37g.js` · offset 188674279 · sha256 `19b1094d…` · attac
 
 ### Bash output audience note
 
-Source: `chunk-ra61p37g.js` · offset 188677852 · sha256 `56d5cbe4…` · attachment `bash_output_audience_note`
+Source: `chunk-mphp7acd.js` · offset 189874371 · sha256 `56d5cbe4…` · attachment `bash_output_audience_note`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -802,7 +802,7 @@ Only you see that command's output — the user's terminal shows at most a few l
 
 ### Attached image saved path
 
-Source: `chunk-ra61p37g.js` · offset 188672101 · sha256 `1ca93e8e…` · attachment `inlined_image_paths`
+Source: `chunk-mphp7acd.js` · offset 189869206 · sha256 `1ca93e8e…` · attachment `inlined_image_paths`
 
 - When: From code: pasted/attached images that were also saved to disk. {{expr:n}} is the quoted path list.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -815,7 +815,7 @@ The attached image is also saved at {{expr:n}}. Use this file path only if a tas
 
 ### Attached images saved paths
 
-Source: `chunk-ra61p37g.js` · offset 188672347 · sha256 `a64b879b…` · attachment `inlined_image_paths`
+Source: `chunk-mphp7acd.js` · offset 189869452 · sha256 `a64b879b…` · attachment `inlined_image_paths`
 
 - When: From code: more than one saved image.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -828,7 +828,7 @@ The {{length}} attached images, in display order, are also saved at {{expr:n}}. 
 
 ### Read: empty file warning
 
-Source: `chunk-ra61p37g.js` · offset 185676129 · sha256 `3a2b887f…`
+Source: `chunk-mphp7acd.js` · offset 186665337 · sha256 `3a2b887f…`
 
 - When: From code: Read result for an existing empty file.
 - Wrapping: Literal tags inside the text.
@@ -840,7 +840,7 @@ Source: `chunk-ra61p37g.js` · offset 185676129 · sha256 `3a2b887f…`
 
 ### Read: offset past end warning
 
-Source: `chunk-ra61p37g.js` · offset 185676226 · sha256 `723e8d9e…`
+Source: `chunk-mphp7acd.js` · offset 186665434 · sha256 `723e8d9e…`
 
 - When: From code: Read result when the offset is past the end of the file.
 - Wrapping: Literal tags inside the text.
@@ -852,7 +852,7 @@ Source: `chunk-ra61p37g.js` · offset 185676226 · sha256 `723e8d9e…`
 
 ### Date changed
 
-Source: `chunk-ra61p37g.js` · offset 188681526 · sha256 `97dedb55…` · attachment `date_change`
+Source: `chunk-mphp7acd.js` · offset 189878336 · sha256 `97dedb55…` · attachment `date_change`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -864,7 +864,7 @@ The date has changed. Today's date is now {{newDate}}. No need to announce the n
 
 ### Current date
 
-Source: `chunk-ra61p37g.js` · offset 187150652 · sha256 `0dff862b…` · attachment `date`
+Source: `chunk-mphp7acd.js` · offset 184667571 · sha256 `0dff862b…` · attachment `date`
 
 - When: From code: the date attachment; when the date has not changed it renders the date line of the trailing system message (rendered text: see Main system prompt). Producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -872,7 +872,7 @@ Source: `chunk-ra61p37g.js` · offset 187150652 · sha256 `0dff862b…` · attac
 
 ### Current date (changed)
 
-Source: `chunk-ra61p37g.js` · offset 184930083 · sha256 `5546d80e…` · attachment `date`
+Source: `chunk-mphp7acd.js` · offset 185898639 · sha256 `5546d80e…` · attachment `date`
 
 - When: Renderer read in code: the date attachment with changed set.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -884,9 +884,9 @@ The date has changed. Today's date is now {{date}}. No need to announce the new 
 
 ### Read: file already in context
 
-Source: `chunk-wcsknfpm.js` · offset 181073452 · sha256 `4d50c017…`
+Source: `chunk-1b21she7.js` · offset 181861044 · sha256 `d1925050…`
 
-- When: Undocumented; read at chunk-wcsknfpm.js (Read of a file whose contents are already in context and unchanged).
+- When: Undocumented; read at chunk-1b21she7.js (Read of a file whose contents are already in context and unchanged).
 - Wrapping: Literal <system-reminder> tags inside the text.
 - Placement: Inside a tool_result block. (Read)
 - Inlined constants: `<system-reminder>This file is already in your context`
@@ -897,9 +897,9 @@ Source: `chunk-wcsknfpm.js` · offset 181073452 · sha256 `4d50c017…`
 
 ### Read: wasted call
 
-Source: `chunk-wcsknfpm.js` · offset 181073245 · sha256 `888d903c…`
+Source: `chunk-1b21she7.js` · offset 181860837 · sha256 `888d903c…`
 
-- When: Undocumented; read at chunk-wcsknfpm.js.
+- When: Undocumented; read at chunk-1b21she7.js.
 - Wrapping: Not wrapped.
 - Placement: Inside a tool_result block. (Read)
 
@@ -911,7 +911,7 @@ Wasted call — file unchanged since your last Read. Refer to that earlier tool_
 
 ### Hook success output
 
-Source: `chunk-ra61p37g.js` · offset 188704184 · sha256 `95b74150…` · attachment `hook_success`
+Source: `chunk-mphp7acd.js` · offset 189901875 · sha256 `95b74150…` · attachment `hook_success`
 
 - When: From code: only for SessionStart, UserPromptSubmit and UserPromptExpansion hooks with non-empty output; other events render nothing.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -923,7 +923,7 @@ Source: `chunk-ra61p37g.js` · offset 188704184 · sha256 `95b74150…` · attac
 
 ### Hook additional context
 
-Source: `chunk-ra61p37g.js` · offset 188680931 · sha256 `b6285803…` · attachment `hook_additional_context`
+Source: `chunk-mphp7acd.js` · offset 189877741 · sha256 `b6285803…` · attachment `hook_additional_context`
 
 - When: From code: a hook returned additionalContext; entries are joined with newlines. The docs describe additionalContext as wrapped in a system reminder at the point where the hook fired.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -935,7 +935,7 @@ Source: `chunk-ra61p37g.js` · offset 188680931 · sha256 `b6285803…` · attac
 
 ### Hook blocking error
 
-Source: `chunk-ra61p37g.js` · offset 188680719 · sha256 `e7bf15fd…` · attachment `hook_blocking_error`
+Source: `chunk-mphp7acd.js` · offset 189877529 · sha256 `e7bf15fd…` · attachment `hook_blocking_error`
 
 - When: From code: a hook result carried a blocking error; the text quotes the hook command and its error.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -947,7 +947,7 @@ Source: `chunk-ra61p37g.js` · offset 188680719 · sha256 `e7bf15fd…` · attac
 
 ### Hook stopped continuation
 
-Source: `chunk-ra61p37g.js` · offset 188681225 · sha256 `950a48cf…` · attachment `hook_stopped_continuation`
+Source: `chunk-mphp7acd.js` · offset 189878035 · sha256 `950a48cf…` · attachment `hook_stopped_continuation`
 
 - When: Renderer read in code; producer not traced. The docs describe stopReason as shown when continue is false and kept in the conversation.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -959,7 +959,7 @@ Source: `chunk-ra61p37g.js` · offset 188681225 · sha256 `950a48cf…` · attac
 
 ### PreToolUse hook denial reason
 
-Source: `chunk-ra61p37g.js` · offset 185317698 · sha256 `ad8a8a55…`
+Source: `chunk-mphp7acd.js` · offset 186297303 · sha256 `ad8a8a55…`
 
 - When: From code: a PreToolUse hook returned a blocking error; {{expr:e}} is 'PreToolUse:<tool name>' and the result becomes the denial message.
 - Wrapping: Not wrapped.
@@ -971,7 +971,7 @@ Source: `chunk-ra61p37g.js` · offset 185317698 · sha256 `ad8a8a55…`
 
 ### Async hook response
 
-Source: `chunk-ra61p37g.js` · offset 188044590 · sha256 `11c6796a…` · attachment `async_hook_response`
+Source: `chunk-mphp7acd.js` · offset 189160525 · sha256 `11c6796a…` · attachment `async_hook_response`
 
 - When: From code: main thread; a background (async) hook finished since the last turn. The hook's systemMessage and additionalContext strings are injected verbatim.
 - Wrapping: Mixed: systemMessage and hookSpecificOutput.additionalContext are emitted as separate meta messages, each wrapped by the attachment renderer.
@@ -979,7 +979,7 @@ Source: `chunk-ra61p37g.js` · offset 188044590 · sha256 `11c6796a…` · attac
 
 ### Async Stop hook blocking error (task notification)
 
-Source: `chunk-ra61p37g.js` · offset 186998213 · sha256 `e63662d2…`
+Source: `chunk-mphp7acd.js` · offset 187997270 · sha256 `e63662d2…`
 
 - When: From code: an asyncRewake hook exits with code 2; the prefix can be replaced by the hook's rewakeMessage and the summary by rewakeSummary (default summary 'Stop hook feedback').
 - Wrapping: Wrapped in <system-reminder> tags. (the body, inside a <task-notification> envelope)
@@ -993,7 +993,7 @@ Stop hook blocking error from command "{{expr:h}}":
 
 ### Nested CLAUDE.md / memory file
 
-Source: `chunk-ra61p37g.js` · offset 188677601 · sha256 `704ce0ee…` · attachment `nested_memory`
+Source: `chunk-mphp7acd.js` · offset 189874120 · sha256 `704ce0ee…` · attachment `nested_memory`
 
 - When: From code: paths queued as nested-memory triggers (queueing not traced) are resolved to memory files and each is attached with its path and content. Disabled by CLAUDE_CODE_DISABLE_CLAUDE_MDS.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1007,7 +1007,7 @@ Contents of {{content.path}}:
 
 ### Relevant memories
 
-Source: `chunk-ra61p37g.js` · offset 188694206 · sha256 `2cdb2e42…` · attachment `relevant_memories`
+Source: `chunk-mphp7acd.js` · offset 189891897 · sha256 `2168d8a2…` · attachment `relevant_memories`
 
 - When: Renderer read in code: first memory block starts with this sentence, then '{{header}}\n\n{{content}}'. Producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1022,7 +1022,7 @@ Retrieved for possible relevance — use only if it actually applies to what the
 
 ### Relevant memories: citation clause
 
-Source: `chunk-ra61p37g.js` · offset 188694315 · sha256 `a5f1e940…` · attachment `relevant_memories`
+Source: `chunk-mphp7acd.js` · offset 189892006 · sha256 `a5f1e940…` · attachment `relevant_memories`
 
 - When: From code: flag tengu_salt_marsh (default false) is on.
 - Wrapping: Part of relevant-memories.
@@ -1034,7 +1034,7 @@ Source: `chunk-ra61p37g.js` · offset 188694315 · sha256 `a5f1e940…` · attac
 
 ### Memory directory updated
 
-Source: `chunk-ra61p37g.js` · offset 188711813 · sha256 `3645a33c…` · attachment `memory_update`
+Source: `chunk-mphp7acd.js` · offset 189909508 · sha256 `7b417aee…` · attachment `memory_update`
 
 - When: From code: main thread; pending memory updates exist (source 'dream' renders as 'Background memory consolidation').
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1046,7 +1046,7 @@ Source: `chunk-ra61p37g.js` · offset 188711813 · sha256 `3645a33c…` · attac
 
 ### Memory update: stale loaded copy
 
-Source: `chunk-ra61p37g.js` · offset 188711998 · sha256 `0e67eb9b…` · attachment `memory_update`
+Source: `chunk-mphp7acd.js` · offset 189909693 · sha256 `a7315a1a…` · attachment `memory_update`
 
 - When: From code: some changed paths are already in context.
 - Wrapping: Part of memory-update.
@@ -1059,7 +1059,7 @@ Your loaded copy of {{expr:y}} is now stale relative to disk — Read it again i
 
 ### Memory snapshot withdrawn
 
-Source: `chunk-ra61p37g.js` · offset 188685724 · sha256 `4aa7c3b2…` · attachment `cowork_memory_context`
+Source: `chunk-mphp7acd.js` · offset 189882714 · sha256 `9bf8cf04…` · attachment `cowork_memory_context`
 
 - When: Renderer read in code: cowork_memory_context with null content and without the `anchor` field set (an anchor also has null content but renders nothing). Producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1073,7 +1073,7 @@ The previous memory snapshot was withdrawn; disregard it.
 
 ### Compaction continuation summary
 
-Source: `chunk-ra61p37g.js` · offset 186601551 · sha256 `a818b427…`
+Source: `chunk-mphp7acd.js` · offset 186601551 · sha256 `a818b427…`
 
 - When: From code: text built for the post-compaction summary; {{expr:r}} is the formatted summary.
 - Wrapping: Not wrapped.
@@ -1089,7 +1089,7 @@ Source: `chunk-ra61p37g.js` · offset 186601551 · sha256 `a818b427…`
 
 ### Compaction: foreign Artifact content note
 
-Source: `chunk-ra61p37g.js` · offset 186601588 · sha256 `49ec2e51…`
+Source: `chunk-mphp7acd.js` · offset 187579418 · sha256 `49ec2e51…`
 
 - When: From code: the summarized conversation included Artifact content by others.
 - Wrapping: Part of compact-summary.
@@ -1101,7 +1101,7 @@ The summarized conversation included Artifact content written by people other th
 
 ### Compaction: transcript path
 
-Source: `chunk-ra61p37g.js` · offset 186601950 · sha256 `a347bfbd…`
+Source: `chunk-mphp7acd.js` · offset 187579780 · sha256 `a347bfbd…`
 
 - When: From code: a transcript path is known and the host did not launch the session diskless.
 - Wrapping: Part of compact-summary.
@@ -1115,7 +1115,7 @@ If you need specific details from before compaction (like exact code snippets, e
 
 ### Compaction: recent messages preserved
 
-Source: `chunk-ra61p37g.js` · offset 186602158 · sha256 `d476904e…`
+Source: `chunk-mphp7acd.js` · offset 187579988 · sha256 `d476904e…`
 
 - When: From code: recent messages were kept verbatim.
 - Wrapping: Part of compact-summary.
@@ -1129,7 +1129,7 @@ Recent messages are preserved verbatim.
 
 ### Compaction: head truncated
 
-Source: `chunk-ra61p37g.js` · offset 186602225 · sha256 `9f347b9e…`
+Source: `chunk-mphp7acd.js` · offset 187580055 · sha256 `6e2f9f1c…`
 
 - When: From code: the head of the conversation did not fit. The parenthetical is added when a transcript path is known and the host did not launch the session diskless (`Ln()` reads the diskless launch option).
 - Wrapping: Part of compact-summary.
@@ -1143,7 +1143,7 @@ Note: the earliest part of the conversation was too large to include and is NOT 
 
 ### Compaction: continue without questions
 
-Source: `chunk-ra61p37g.js` · offset 186602559 · sha256 `e7cf3022…`
+Source: `chunk-mphp7acd.js` · offset 187580398 · sha256 `944af1cb…`
 
 - When: From code: suppressFollowUpQuestions is set.
 - Wrapping: Part of compact-summary.
@@ -1156,7 +1156,7 @@ Continue the conversation from where it left off without asking the user any fur
 
 ### Skills invoked before compaction
 
-Source: `chunk-ra61p37g.js` · offset 188691590 · sha256 `20eca51f…` · attachment `invoked_skills`
+Source: `chunk-mphp7acd.js` · offset 189889281 · sha256 `20eca51f…` · attachment `invoked_skills`
 
 - When: Renderer read in code: after compaction, skills invoked earlier are re-attached. Each is '### Skill: {{name}}\nPath: {{path}}\n\n{{content}}', separated by '---'.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1173,7 +1173,7 @@ IMPORTANT: Do NOT re-execute these skills or perform their one-time setup action
 
 ### Remaining tokens
 
-Source: `chunk-ra61p37g.js` · offset 186197434 · sha256 `bfb876fa…` · attachment `total_tokens_reminder`
+Source: `chunk-mphp7acd.js` · offset 187168417 · sha256 `27b2d179…` · attachment `total_tokens_reminder`
 
 - When: From code: total-tokens reminder mode (session-latched) is not 'off'; emitted on non-user turns, and after a regular user prompt when the after-user-turn option is on. Mode 'infinite' prints 'Infinite', 'fixed' prints 5000000, 'countdown' prints the model context budget minus tokens used, 'padded-countdown' prints the task budget remaining.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1185,7 +1185,7 @@ Source: `chunk-ra61p37g.js` · offset 186197434 · sha256 `bfb876fa…` · attac
 
 ### Token usage
 
-Source: `chunk-ra61p37g.js` · offset 188680050 · sha256 `55131e22…` · attachment `token_usage`
+Source: `chunk-mphp7acd.js` · offset 189876860 · sha256 `55131e22…` · attachment `token_usage`
 
 - When: From code: main thread and CLAUDE_CODE_ENABLE_TOKEN_USAGE_ATTACHMENT is set.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1197,7 +1197,7 @@ Token usage: {{used}}/{{total}}; {{remaining}} remaining
 
 ### Output token usage
 
-Source: `chunk-ra61p37g.js` · offset 188680598 · sha256 `d123b550…` · attachment `output_token_usage`
+Source: `chunk-mphp7acd.js` · offset 189877408 · sha256 `d39ae6cb…` · attachment `output_token_usage`
 
 - When: From code: the producer in this build returns no attachment, so this is never emitted.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1209,9 +1209,9 @@ Output tokens — turn: {{expr:n}} · session: {{expr:As(e.session)}}
 
 ### Silent-turn reminder
 
-Source: `chunk-ra61p37g.js` · offset 187986054 · sha256 `9170d777…` · attachment `silent_turn_reminder`
+Source: `chunk-mphp7acd.js` · offset 189098765 · sha256 `9170d777…` · attachment `silent_turn_reminder`
 
-- When: From code: main thread, a turn not started by the user, brief/focus view off, the main-loop model enabled for silent_turn_reminder, and enough silent assistant turns since the last reminder; at most 3 per stretch. Model enablement (read at chunk-ra61p37g.js offset 3147051 and chunk-wcsknfpm.js offset 3863): CLAUDE_CODE_SILENT_TURN_REMINDER decides when set; otherwise capability silent_turn_reminder, which in the 2.1.284 catalog only claude-sonnet-5-5 has (CLAUDE_CODE_MODEL_CAPABILITIES or a server-served capability lookup can also grant it); otherwise it is on by default for claude-fable-5-1 and claude-mythos-5-1 (capability fable_5_1_prompt_bundle) and claude-opus-5-5 (capability opus_5_5_prompt_bundle), except for the entrypoints local-agent, local_agent and a further set read at chunk-9m0embvk.js offset 5557 in a non-child session, and client-data key silent_turn_reminder false turns that default off; for any other model client-data key silent_turn_reminder true turns it on. Text overridable by CLAUDE_CODE_SILENT_TURN_REMINDER_TEXT or flag tengu_hushed_lark_text.
+- When: From code: main thread, a turn not started by the user, brief/focus view off, the main-loop model enabled for silent_turn_reminder, and enough silent assistant turns since the last reminder; at most 3 per stretch. Model enablement (read at chunk-mphp7acd.js offset 3147051 and chunk-1b21she7.js offset 3863): CLAUDE_CODE_SILENT_TURN_REMINDER decides when set; otherwise capability silent_turn_reminder, which in the 2.1.284 catalog only claude-sonnet-5-5 has (CLAUDE_CODE_MODEL_CAPABILITIES or a server-served capability lookup can also grant it); otherwise it is on by default for claude-fable-5-1 and claude-mythos-5-1 (capability fable_5_1_prompt_bundle) and claude-opus-5-5 (capability opus_5_5_prompt_bundle), except for the entrypoints local-agent, local_agent and a further set read at chunk-0a47xg8f.js offset 5557 in a non-child session, and client-data key silent_turn_reminder false turns that default off; for any other model client-data key silent_turn_reminder true turns it on. Text overridable by CLAUDE_CODE_SILENT_TURN_REMINDER_TEXT or flag tengu_hushed_lark_text.
 - Wrapping: Wrapped in <system-reminder> tags.
 - Placement: Attachment rendered as a meta user message. On models with the mid-conversation system capability, the rendered text is instead folded (tags stripped, except for claude-sonnet-5) into a role-system message.
 
@@ -1221,7 +1221,7 @@ The user hasn't heard from you in a while. As you continue, keep them updated wh
 
 ### Unloaded tool schemas reminder
 
-Source: `chunk-ra61p37g.js` · offset 188693755 · sha256 `f5f87098…` · attachment `tool_search_usage_reminder`
+Source: `chunk-mphp7acd.js` · offset 189891446 · sha256 `9928281c…` · attachment `tool_search_usage_reminder`
 
 - When: From code: a toolSearchReminder config exists, tool search mode is 'tst', the model supports it (not Vertex), undiscovered deferred tools exist, at least everyNTurns turns since the last ToolSearch call and since the last reminder, and no task reminder fired in the same turn.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1234,7 +1234,7 @@ Some available tools' schemas are not loaded in this conversation yet: {{expr:h}
 
 ### Context sections
 
-Source: `chunk-ra61p37g.js` · offset 188682875 · sha256 `839b4193…` · attachment `context_sections`
+Source: `chunk-mphp7acd.js` · offset 189879685 · sha256 `839b4193…` · attachment `context_sections`
 
 - When: Renderer read in code: each section is '# {{name}}\n{{text}}', followed by the ambient-context suffix. Producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1244,7 +1244,7 @@ Source: `chunk-ra61p37g.js` · offset 188682875 · sha256 `839b4193…` · attac
 
 ### Auto mode active
 
-Source: `chunk-ra61p37g.js` · offset 188697587 · sha256 `d91765c2…` · attachment `auto_mode`
+Source: `chunk-mphp7acd.js` · offset 189895278 · sha256 `17a878d9…` · attachment `auto_mode`
 
 - When: From code: permission mode is auto, not already announced since the last exit, and the model is not in lean-prompt mode (lean-prompt models get only the bash-first steer). Heading is '## Auto Mode Active'.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1261,7 +1261,7 @@ Before any command that could discard uncommitted work — `git checkout`/`resto
 
 ### Auto mode: classifier block handling
 
-Source: `chunk-ra61p37g.js` · offset 188698590 · sha256 `1b08bbda…` · attachment `auto_mode`
+Source: `chunk-mphp7acd.js` · offset 189896281 · sha256 `1b08bbda…` · attachment `auto_mode`
 
 - When: From code: not bypass mode and the consent flow is enabled for this agent.
 - Wrapping: Part of auto-mode.
@@ -1283,7 +1283,7 @@ For example:
 
 ### Bash-first steer (strict)
 
-Source: `chunk-ra61p37g.js` · offset 188700037 · sha256 `c16c93ee…` · attachment `auto_mode`
+Source: `chunk-mphp7acd.js` · offset 189897728 · sha256 `76a46b03…` · attachment `auto_mode`
 
 - When: From code: Bash plus Edit/Write are available and the bash-first experiment is on (CLAUDE_CODE_THRIFTY_SONIC, else cohort flag); strict unless the steer is 'relaxed'.
 - Wrapping: Part of auto-mode.
@@ -1296,7 +1296,7 @@ Do your work through the Bash tool wherever it can accomplish the job: read file
 
 ### Bash-first steer (relaxed)
 
-Source: `chunk-ra61p37g.js` · offset 188700375 · sha256 `0fa41d51…` · attachment `auto_mode`
+Source: `chunk-mphp7acd.js` · offset 189898066 · sha256 `2548dd7a…` · attachment `auto_mode`
 
 - When: From code: bash-first steer 'relaxed'.
 - Wrapping: Part of auto-mode.
@@ -1309,7 +1309,7 @@ You can do much of your work through the Bash tool when it is the simpler route:
 
 ### Bypass permissions mode steer
 
-Source: `chunk-ra61p37g.js` · offset 188700879 · sha256 `e2532268…` · attachment `auto_mode`
+Source: `chunk-mphp7acd.js` · offset 189898570 · sha256 `e2532268…` · attachment `auto_mode`
 
 - When: From code: permission mode bypassPermissions and the bash-first steer applies; the text is this line followed by one of the bash-first steers.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1324,7 +1324,7 @@ While bypass permissions mode is active:
 
 ### Auto mode steer only
 
-Source: `chunk-ra61p37g.js` · offset 188700940 · sha256 `78566a60…` · attachment `auto_mode`
+Source: `chunk-mphp7acd.js` · offset 189898631 · sha256 `78566a60…` · attachment `auto_mode`
 
 - When: From code: auto mode on a lean-prompt model with the bash-first steer.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1339,7 +1339,7 @@ While auto mode is active:
 
 ### Exited auto mode
 
-Source: `chunk-ra61p37g.js` · offset 188679775 · sha256 `87e1ce87…` · attachment `auto_mode_exit`
+Source: `chunk-mphp7acd.js` · offset 189876585 · sha256 `87e1ce87…` · attachment `auto_mode_exit`
 
 - When: From code: main agent, session flag needsAutoModeExitAttachment set, mode no longer auto, and an auto_mode attachment was sent earlier.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1354,7 +1354,7 @@ You have exited auto mode. The user may now want to interact more directly. You 
 
 ### Exited auto mode (steer only)
 
-Source: `chunk-ra61p37g.js` · offset 188679721 · sha256 `ffd9f4bf…` · attachment `auto_mode_exit`
+Source: `chunk-mphp7acd.js` · offset 189876531 · sha256 `ffd9f4bf…` · attachment `auto_mode_exit`
 
 - When: From code: exit after a steer-only auto_mode.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1369,7 +1369,7 @@ You have exited auto mode.{{expr:n}}
 
 ### Exited auto mode: resume dedicated tools
 
-Source: `chunk-ra61p37g.js` · offset 188679631 · sha256 `bb2f2ef4…` · attachment `auto_mode_exit`
+Source: `chunk-mphp7acd.js` · offset 189876441 · sha256 `bb2f2ef4…` · attachment `auto_mode_exit`
 
 - When: From code: the earlier auto_mode used the bash-first steer.
 - Wrapping: Part of auto-mode-exit.
@@ -1381,7 +1381,7 @@ Source: `chunk-ra61p37g.js` · offset 188679631 · sha256 `bb2f2ef4…` · attac
 
 ### Tool use rejected by user
 
-Source: `chunk-ra61p37g.js` · offset 188586174 · sha256 `351a62a0…`
+Source: `chunk-mphp7acd.js` · offset 189778879 · sha256 `351a62a0…`
 
 - When: Undocumented; constant read in code (tool-use rejection result).
 - Wrapping: Not wrapped.
@@ -1393,7 +1393,7 @@ The user doesn't want to proceed with this tool use. The tool use was rejected (
 
 ### Tool use rejected with user feedback
 
-Source: `chunk-ra61p37g.js` · offset 188586405 · sha256 `009d49a1…`
+Source: `chunk-mphp7acd.js` · offset 189779110 · sha256 `009d49a1…`
 
 - When: Undocumented; constant read in code (followed by the user's text).
 - Wrapping: Not wrapped.
@@ -1406,7 +1406,7 @@ The user doesn't want to proceed with this tool use. The tool use was rejected (
 
 ### Permission denied
 
-Source: `chunk-ra61p37g.js` · offset 188586606 · sha256 `07d34bbd…`
+Source: `chunk-mphp7acd.js` · offset 189779311 · sha256 `07d34bbd…`
 
 - When: Undocumented; constant read in code.
 - Wrapping: Not wrapped.
@@ -1418,7 +1418,7 @@ Permission for this tool use was denied. The tool use was rejected (eg. if it wa
 
 ### Permission denied with user feedback
 
-Source: `chunk-ra61p37g.js` · offset 188586824 · sha256 `07a79c71…`
+Source: `chunk-mphp7acd.js` · offset 189779529 · sha256 `07a79c71…`
 
 - When: Undocumented; constant read in code (followed by the user's text).
 - Wrapping: Not wrapped.
@@ -1431,7 +1431,7 @@ Permission for this tool use was denied. The tool use was rejected (eg. if it wa
 
 ### Permission to use a tool denied
 
-Source: `chunk-ra61p37g.js` · offset 188588910 · sha256 `fe302940…`
+Source: `chunk-mphp7acd.js` · offset 189781615 · sha256 `eafe0ebb…`
 
 - When: From code: a permission rule denied the tool; the workaround guidance follows.
 - Wrapping: Not wrapped.
@@ -1444,7 +1444,7 @@ Permission to use {{expr:e}} has been denied. IMPORTANT: You *may* attempt to ac
 
 ### Permission denied (don't ask mode)
 
-Source: `chunk-ra61p37g.js` · offset 188588981 · sha256 `c5f723f5…`
+Source: `chunk-mphp7acd.js` · offset 189781686 · sha256 `0a901ff1…`
 
 - When: From code: dontAsk permission mode.
 - Wrapping: Not wrapped.
@@ -1457,7 +1457,7 @@ Permission to use {{expr:e}} has been denied because Claude Code is running in d
 
 ### Permission denied (no prompt available)
 
-Source: `chunk-ra61p37g.js` · offset 188589101 · sha256 `d570808a…`
+Source: `chunk-mphp7acd.js` · offset 189781806 · sha256 `d570808a…`
 
 - When: From code: approval needed in a session without permission prompts.
 - Wrapping: Not wrapped.
@@ -1469,9 +1469,9 @@ Permission for this tool use was denied: it requires interactive approval, and p
 
 ### Request interrupted
 
-Source: `chunk-6yze33ce.js` · offset 178713327 · sha256 `4171f803…`
+Source: `chunk-a56phknn.js` · offset 179537280 · sha256 `4171f803…`
 
-- When: Undocumented; text constant read at chunk-6yze33ce.js (callers not traced).
+- When: Undocumented; text constant read at chunk-a56phknn.js (callers not traced).
 - Wrapping: Not wrapped.
 - Placement: User message.
 
@@ -1481,9 +1481,9 @@ Source: `chunk-6yze33ce.js` · offset 178713327 · sha256 `4171f803…`
 
 ### Request interrupted during tool use
 
-Source: `chunk-6yze33ce.js` · offset 178713362 · sha256 `d31fd8f8…`
+Source: `chunk-a56phknn.js` · offset 179537315 · sha256 `d31fd8f8…`
 
-- When: Undocumented; text constant read at chunk-6yze33ce.js (callers not traced).
+- When: Undocumented; text constant read at chunk-a56phknn.js (callers not traced).
 - Wrapping: Not wrapped.
 - Placement: User message.
 
@@ -1493,9 +1493,9 @@ Source: `chunk-6yze33ce.js` · offset 178713362 · sha256 `d31fd8f8…`
 
 ### Local command caveat
 
-Source: `chunk-ra61p37g.js` · offset 188605870 · sha256 `3e54dc05…`
+Source: `chunk-mphp7acd.js` · offset 189799896 · sha256 `da7b13e6…`
 
-- When: Undocumented; read at chunk-ra61p37g.js (built as a meta user message; callers not traced).
+- When: Undocumented; read at chunk-mphp7acd.js (built as a meta user message; callers not traced).
 - Wrapping: Literal <local-command-caveat> tags.
 - Placement: Meta user message.
 - Inlined constants: `local-command-caveat`
@@ -1506,7 +1506,7 @@ Source: `chunk-ra61p37g.js` · offset 188605870 · sha256 `3e54dc05…`
 
 ### Sandbox disabled
 
-Source: `chunk-ra61p37g.js` · offset 188672648 · sha256 `ace18bd4…` · attachment `sandbox_instructions`
+Source: `chunk-mphp7acd.js` · offset 189869753 · sha256 `4f826013…` · attachment `sandbox_instructions`
 
 - When: From code: sandbox_instructions attachment with empty content (sandbox turned off). Non-empty content is injected verbatim.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1521,7 +1521,7 @@ The Bash command sandbox has been disabled. Commands now run without sandbox res
 
 ### Task stopped by user
 
-Source: `chunk-ra61p37g.js` · offset 188702147 · sha256 `18305e19…` · attachment `task_status`
+Source: `chunk-mphp7acd.js` · offset 189899838 · sha256 `18305e19…` · attachment `task_status`
 
 - When: From code: main thread; a tracked task changed to killed.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1533,7 +1533,7 @@ Task "{{description}}" ({{taskId}}) was stopped by the user.
 
 ### Background shell still running
 
-Source: `chunk-ra61p37g.js` · offset 188702516 · sha256 `2512a08c…` · attachment `task_status`
+Source: `chunk-mphp7acd.js` · offset 189900207 · sha256 `bf24182f…` · attachment `task_status`
 
 - When: From code: status update for a running local_bash task; first sentence is '{{Background shell|Background monitor}} {{taskId}} ("{{description}}") is still running (command, shown on one line: `{{command}}`).' and 'You can read its output at {{outputFilePath}}.' when known.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1546,7 +1546,7 @@ Do not start it again; to restart it, stop it with TaskStop first.
 
 ### Background shell still running (first sentence)
 
-Source: `chunk-ra61p37g.js` · offset 188702466 · sha256 `8f98745a…` · attachment `task_status`
+Source: `chunk-mphp7acd.js` · offset 189900157 · sha256 `4e2130b0…` · attachment `task_status`
 
 - When: From code: see task-status-shell-running.
 - Wrapping: Part of task-status-shell-running.
@@ -1558,7 +1558,7 @@ Source: `chunk-ra61p37g.js` · offset 188702466 · sha256 `8f98745a…` · attac
 
 ### Background agent still running
 
-Source: `chunk-ra61p37g.js` · offset 188702883 · sha256 `460f276b…` · attachment `task_status`
+Source: `chunk-mphp7acd.js` · offset 189900574 · sha256 `b59f7144…` · attachment `task_status`
 
 - When: From code: status update for a running background agent, preceded by 'Background agent "{{description}}" ({{taskId}}) is still running.' and optional 'Progress: …'.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1571,7 +1571,7 @@ Do NOT spawn a duplicate. You will be notified when it completes. You can read p
 
 ### Background agent still running (no output file)
 
-Source: `chunk-ra61p37g.js` · offset 188703033 · sha256 `d23d27d4…` · attachment `task_status`
+Source: `chunk-mphp7acd.js` · offset 189900724 · sha256 `2e85ac9f…` · attachment `task_status`
 
 - When: From code: running agent without an output file path.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1584,7 +1584,7 @@ Do NOT spawn a duplicate. You will be notified when it completes. Send it a mess
 
 ### Task status (completed/failed)
 
-Source: `chunk-ra61p37g.js` · offset 188703373 · sha256 `3de0dd3f…` · attachment `task_status`
+Source: `chunk-mphp7acd.js` · offset 189901064 · sha256 `3de0dd3f…` · attachment `task_status`
 
 - When: From code: other statuses: 'Task {{taskId}} (type: {{taskType}}) (status: {{status}}) (description: {{description}})', optional 'Delta: …', then this sentence or 'Send it a message with SendMessage to retrieve its result.'
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -1596,7 +1596,7 @@ Read the output file to retrieve the result: {{expr:h}}
 
 ### Team coordination
 
-Source: `chunk-ra61p37g.js` · offset 188690017 · sha256 `e4c34096…` · attachment `team_context`
+Source: `chunk-mphp7acd.js` · offset 189887628 · sha256 `e4c34096…` · attachment `team_context`
 
 - When: From code: agent teams are enabled (CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS or another gate, and flag tengu_amber_flint, default true); producer not traced. Rendered before the attachment table.
 - Wrapping: Literal <system-reminder> tags inside the text (stripped when folded into a system-role message).
@@ -1632,7 +1632,7 @@ Read the team config to discover your teammates' names.{{expr:h}}
 
 ### Team coordination: task list
 
-Source: `chunk-ra61p37g.js` · offset 188689877 · sha256 `2e230e01…` · attachment `team_context`
+Source: `chunk-mphp7acd.js` · offset 189887488 · sha256 `2e230e01…` · attachment `team_context`
 
 - When: From code: task-list tools are available.
 - Wrapping: Part of team-context.
@@ -1644,7 +1644,7 @@ Source: `chunk-ra61p37g.js` · offset 188689877 · sha256 `2e230e01…` · attac
 
 ### @-mentioned agent
 
-Source: `chunk-ra61p37g.js` · offset 188678124 · sha256 `66333e50…` · attachment `agent_mention`
+Source: `chunk-mphp7acd.js` · offset 189874643 · sha256 `66333e50…` · attachment `agent_mention`
 
 - When: From code: the user's prompt @-mentions an active agent type.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1656,7 +1656,7 @@ The user has expressed a desire to invoke the agent "{{agentType}}". Please invo
 
 ### @-mentioned Claude session
 
-Source: `chunk-ra61p37g.js` · offset 188738784 · sha256 `a14493ee…` · attachment `peer_mention`
+Source: `chunk-mphp7acd.js` · offset 189936544 · sha256 `a14493ee…` · attachment `peer_mention`
 
 - When: From code: human-typed prompt @-mentions another Claude session that resolves to one candidate.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1668,7 +1668,7 @@ The user @-mentioned the Claude session "{{expr:r(s.token)}}" ({{where}}) as {{e
 
 ### Agent types listing
 
-Source: `chunk-ra61p37g.js` · offset 188710123 · sha256 `8c594939…` · attachment `agent_listing_delta`
+Source: `chunk-mphp7acd.js` · offset 189907818 · sha256 `8c594939…` · attachment `agent_listing_delta`
 
 - When: From code: first announcement of agent types ('New agent types are now available for the Agent tool:' for later additions). The initial listing is part of the trailing system message (see Main system prompt).
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1680,7 +1680,7 @@ Available agent types for the Agent tool:
 
 ### Agent listing: concurrency note
 
-Source: `chunk-ra61p37g.js` · offset 188710442 · sha256 `06e1ed00…` · attachment `agent_listing_delta`
+Source: `chunk-mphp7acd.js` · offset 189908137 · sha256 `06e1ed00…` · attachment `agent_listing_delta`
 
 - When: From code: initial listing with showConcurrencyNote.
 - Wrapping: Part of agent-listing.
@@ -1692,7 +1692,7 @@ When you launch multiple agents for independent work, send them in a single mess
 
 ### Agent types removed
 
-Source: `chunk-ra61p37g.js` · offset 188710274 · sha256 `df6846fd…` · attachment `agent_listing_delta`
+Source: `chunk-mphp7acd.js` · offset 189907969 · sha256 `df6846fd…` · attachment `agent_listing_delta`
 
 - When: From code: agent types were removed; followed by the ambient-context suffix.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1706,7 +1706,7 @@ The following agent types are no longer available:
 
 ### Task notification envelope
 
-Source: `chunk-ra61p37g.js` · offset 184965833 · sha256 `10db6e55…`
+Source: `chunk-mphp7acd.js` · offset 185930523 · sha256 `10db6e55…`
 
 - When: From code: background task completions and async Stop-hook rewakes enqueue '<task-notification> <task-id>… <summary>…</summary>{{body}} </task-notification>' followed by the wrapped body.
 - Wrapping: Body wrapped by the <system-reminder> wrapper and appended after a <task-notification> element.
@@ -1714,7 +1714,7 @@ Source: `chunk-ra61p37g.js` · offset 184965833 · sha256 `10db6e55…`
 
 ### Coordinator mode ended
 
-Source: `chunk-ra61p37g.js` · offset 188682874 · sha256 `887a5b95…` · attachment `coordinator_context`
+Source: `chunk-mphp7acd.js` · offset 189879684 · sha256 `887a5b95…` · attachment `coordinator_context`
 
 - When: Renderer read in code: coordinator context changed to empty.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1726,7 +1726,7 @@ Coordinator mode has ended; the earlier list of worker tools no longer applies.
 
 ### Coordinator worker tools changed
 
-Source: `chunk-ra61p37g.js` · offset 188683006 · sha256 `499e4415…` · attachment `coordinator_context`
+Source: `chunk-mphp7acd.js` · offset 189879816 · sha256 `499e4415…` · attachment `coordinator_context`
 
 - When: Renderer read in code: coordinator context changed.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1740,7 +1740,7 @@ The worker tools have changed; this replaces the earlier list.
 
 ### Thread state
 
-Source: `chunk-ra61p37g.js` · offset 184944627 · sha256 `9e1e0c56…` · attachment `thread_state`
+Source: `chunk-mphp7acd.js` · offset 185909752 · sha256 `9e1e0c56…` · attachment `thread_state`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1752,7 +1752,7 @@ Thread state: the user last wrote {{expr:e}}. Claude has sent {{expr:r}} since t
 
 ### Background-task notification wrapper
 
-Source: `chunk-wcsknfpm.js` · offset 181031798 · sha256 `b42db023…`
+Source: `chunk-1b21she7.js` · offset 181819391 · sha256 `b42db023…`
 
 - When: From code: message normalisation rewrites every user message with origin kind task-notification (except scheduled triggers and projects relays) this way, unless it is already wrapped.
 - Wrapping: The user message text is re-wrapped as '<system-reminder>\n' + this prefix + the text (closing tags inside neutralised) + '\n</system-reminder>'.
@@ -1769,9 +1769,9 @@ No human input has been received since the last genuine user message in this con
 
 ### Background-task notification (same turn as user message)
 
-Source: `chunk-wcsknfpm.js` · offset 181032383 · sha256 `bae9a7b6…`
+Source: `chunk-1b21she7.js` · offset 181819976 · sha256 `bae9a7b6…`
 
-- When: Undocumented; alternative prefix read at chunk-wcsknfpm.js offset 59697 (applied when a notification shares a turn with a genuine user message: the `inHumanTurn` branch read at chunk-ra61p37g.js offset 3895933).
+- When: Undocumented; alternative prefix read at chunk-1b21she7.js offset 59697 (applied when a notification shares a turn with a genuine user message: the `inHumanTurn` branch read at chunk-mphp7acd.js offset 3895933).
 - Wrapping: Prefix.
 - Placement: User message.
 
@@ -1786,7 +1786,7 @@ The notification brings no human input of its own: apart from the user's own mes
 
 ### Scheduled task firing
 
-Source: `chunk-wcsknfpm.js` · offset 181033637 · sha256 `9c70ecb9…`
+Source: `chunk-1b21she7.js` · offset 181033637 · sha256 `9c70ecb9…`
 
 - When: From code: task-notification messages whose origin subkind is scheduled-trigger get this prefix instead of the background-task wrapper.
 - Wrapping: Not wrapped.
@@ -1804,11 +1804,11 @@ The schedule attests that the prompt was stored ahead of time by an authorized s
 
 ### Container restarted
 
-Source: `chunk-wfyp1qx3.js` · offset 184760224 · sha256 `4989f2b4…`
+Source: `chunk-dndmrt2q.js` · offset 185689504 · sha256 `4c60968e…`
 
-- When: Undocumented; read at chunk-wfyp1qx3.js (lists background tasks that were stopped by a container restart, and tasks that finished before it without their results being delivered).
+- When: Undocumented; read at chunk-dndmrt2q.js (lists background tasks that were stopped by a container restart, and tasks that finished before it without their results being delivered).
 - Wrapping: Literal <system-reminder> tags inside the text.
-- Placement: From code: pushed as a meta user message by the non-interactive runner when background tasks were orphaned or finished undelivered across a worker restart (read at chunk-n2thq0xg.js offset 316519).
+- Placement: From code: pushed as a meta user message by the non-interactive runner when background tasks were orphaned or finished undelivered across a worker restart (read at chunk-xapeakym.js offset 316519).
 
 ~~~~~~text
 <system-reminder>
@@ -1838,11 +1838,11 @@ These background tasks finished before the restart, but their results were not d
 
 ### Non-interactive team shutdown
 
-Source: `chunk-n2thq0xg.js` · offset 203574520 · sha256 `c322be08…`
+Source: `chunk-xapeakym.js` · offset 204759249 · sha256 `c322be08…`
 
-- When: Undocumented; read at chunk-n2thq0xg.js (non-interactive session with an active agent team).
+- When: Undocumented; read at chunk-xapeakym.js (non-interactive session with an active agent team).
 - Wrapping: Literal <system-reminder> tags inside the text.
-- Placement: From code: enqueued as a prompt-mode queued command by the non-interactive runner (read at chunk-n2thq0xg.js offset 377203).
+- Placement: From code: enqueued as a prompt-mode queued command by the non-interactive runner (read at chunk-xapeakym.js offset 377203).
 
 ~~~~~~text
 <system-reminder>
@@ -1862,7 +1862,7 @@ Shut down your team and prepare your final response for the user.
 
 ### Teammate message envelope
 
-Source: `chunk-sv69c8sw.js` · offset 184349500 · sha256 `0458b11a…` · attachment `teammate_mailbox`
+Source: `chunk-rgd7eyd0.js` · offset 185366179 · sha256 `94896eab…` · attachment `teammate_mailbox`
 
 - When: From code: agent teams enabled and messages arrived in this agent's mailbox; one element per message, joined. {{expr:…}} attributes are the sender's color, summary and verified="false" for forged provenance.
 - Wrapping: Not wrapped by the attachment renderer (bare meta message); see system-role-folding for the flag-gated wrapping.
@@ -1877,7 +1877,7 @@ Source: `chunk-sv69c8sw.js` · offset 184349500 · sha256 `0458b11a…` · attac
 
 ### Queued / mid-turn user input
 
-Source: `chunk-ra61p37g.js` · offset 188694689 · sha256 `6ac7da4e…` · attachment `queued_command`
+Source: `chunk-mphp7acd.js` · offset 189892380 · sha256 `6ac7da4e…` · attachment `queued_command`
 
 - When: From code: prompts queued while the agent was busy (typed mid-turn, relayed, or delivered to an agent) are attached on the next pass. Saved image paths add inlined-image-paths.
 - Wrapping: Depends on origin: task notifications get the background-task wrapper (or the scheduled-task prefix); human-typed prompts are not wrapped; other origins (coordinator, channel, peer, Slack) get origin-specific envelopes not traced here. Meta queued commands are marked meta.
@@ -1885,7 +1885,7 @@ Source: `chunk-ra61p37g.js` · offset 188694689 · sha256 `6ac7da4e…` · attac
 
 ### Messages from the bound thread
 
-Source: `chunk-ra61p37g.js` · offset 188735082 · sha256 `018c9b84…` · attachment `queued_command`
+Source: `chunk-mphp7acd.js` · offset 189932791 · sha256 `018c9b84…` · attachment `queued_command`
 
 - When: From code: batched relay prompts for a bound thread are prefixed with this line (followed by the messages joined by blank lines).
 - Wrapping: Not wrapped.
@@ -1898,7 +1898,7 @@ Messages arrived in the bound thread while you were working:
 
 ### Spawn-time context label: user
 
-Source: `chunk-f5tnbmwk.js` · offset 179884955 · sha256 `fc4cc7a4…` · attachment `queued_command`
+Source: `chunk-nankzm0s.js` · offset 180746067 · sha256 `fc4cc7a4…` · attachment `queued_command`
 
 - When: From code: a queued command carrying spawn-time context with source typed; followed by the escaped context text.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1910,7 +1910,7 @@ What the user said to the coordinator session that started this agent, copied in
 
 ### Spawn-time context label: channel
 
-Source: `chunk-f5tnbmwk.js` · offset 179885205 · sha256 `124af16a…` · attachment `queued_command`
+Source: `chunk-nankzm0s.js` · offset 180746317 · sha256 `124af16a…` · attachment `queued_command`
 
 - When: From code: spawn-time context with source relay.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1922,7 +1922,7 @@ What a participant in the messaging channel bound to the coordinator session tha
 
 ### Spawn-time context label: project owner
 
-Source: `chunk-f5tnbmwk.js` · offset 179885525 · sha256 `264bc89b…` · attachment `queued_command`
+Source: `chunk-nankzm0s.js` · offset 180746637 · sha256 `264bc89b…` · attachment `queued_command`
 
 - When: From code: spawn-time context with source owner.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1934,7 +1934,7 @@ What the owner of the project wrote on its timeline, relayed to the session that
 
 ### Spawn-time context label: unattributed
 
-Source: `chunk-f5tnbmwk.js` · offset 179885805 · sha256 `45956cbf…` · attachment `queued_command`
+Source: `chunk-nankzm0s.js` · offset 180746917 · sha256 `45956cbf…` · attachment `queued_command`
 
 - When: From code: spawn-time context with source unattributed.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1948,7 +1948,7 @@ Background recorded in the coordinator session that started this agent, whose au
 
 ### Skills listing
 
-Source: `chunk-ra61p37g.js` · offset 188678410 · sha256 `1d8bc92a…` · attachment `skill_listing`
+Source: `chunk-mphp7acd.js` · offset 189875220 · sha256 `1d8bc92a…` · attachment `skill_listing`
 
 - When: From code: slash commands enabled, skills not exposed as tools, the Skill tool is present, and there are new (or initial) model-invocable skills to announce. The initial listing is part of the trailing system message (see Main system prompt).
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1962,7 +1962,7 @@ The following skills are available for use with the Skill tool:
 
 ### New skills discovered
 
-Source: `chunk-ra61p37g.js` · offset 188678758 · sha256 `145b1c84…` · attachment `dynamic_skill`
+Source: `chunk-mphp7acd.js` · offset 189875568 · sha256 `145b1c84…` · attachment `dynamic_skill`
 
 - When: From code: skill directories under the working directory were discovered during the session; followed by '- {{name}}' lines.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1976,7 +1976,7 @@ New skills discovered in {{expr:s}}, now available via the Skill tool:
 
 ### Unknown slash command
 
-Source: `chunk-ra61p37g.js` · offset 188673373 · sha256 `5e4da1f5…` · attachment `unknown_command_fallback`
+Source: `chunk-mphp7acd.js` · offset 189870478 · sha256 `5e4da1f5…` · attachment `unknown_command_fallback`
 
 - When: Renderer read in code; producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -1990,7 +1990,7 @@ The user's message starts with a slash command, but no command with that name is
 
 ### USD budget
 
-Source: `chunk-ra61p37g.js` · offset 188680406 · sha256 `91474f43…` · attachment `budget_usd`
+Source: `chunk-mphp7acd.js` · offset 189877216 · sha256 `91474f43…` · attachment `budget_usd`
 
 - When: From code: options.maxBudgetUsd is set; emitted on every attachment pass.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -2002,7 +2002,7 @@ USD budget: ${{used}}/${{total}}; ${{remaining}} remaining
 
 ### GitHub API rate limit hint
 
-Source: `chunk-9gy1t01w.js` · offset 183768415 · sha256 `3b521361…`
+Source: `chunk-09m4fzsj.js` · offset 185064195 · sha256 `3b521361…`
 
 - When: From code: a gh command's output matches the rate-limit patterns, outside the backoff window; sets a backoff.
 - Wrapping: Literal <system-reminder> tags inside the text.
@@ -2016,7 +2016,7 @@ Source: `chunk-9gy1t01w.js` · offset 183768415 · sha256 `3b521361…`
 
 ### <system-reminder> wrapper
 
-Source: `chunk-c44rdggd.js` · offset 177332865 · sha256 `1d6b82bf…`
+Source: `chunk-amhtwhch.js` · offset 178148550 · sha256 `1d6b82bf…`
 
 - When: From code: the wrapper function joins the opening tag, a newline, the content, a newline and the closing tag. The attachment renderer wraps each text block with it; some tool results and hook messages call it directly.
 - Wrapping: This is the wrapper.
@@ -2030,7 +2030,7 @@ Source: `chunk-c44rdggd.js` · offset 177332865 · sha256 `1d6b82bf…`
 
 ### System-role folding of attachments
 
-Source: `chunk-wcsknfpm.js` · offset 181038327 · sha256 `cd1431b1…`
+Source: `chunk-1b21she7.js` · offset 181825920 · sha256 `cd1431b1…`
 
 - When: From code: in message normalisation, when the main-loop model has the mid_conversation_system capability (from model capabilities; forced on by CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM; off in HIPAA mode and for claude-opus-4-8), rendered attachments are collected into one api_system (role: system) message instead of a meta user message. Excluded types stay as user messages: dir_sync_notice, unknown_command_fallback, session_context, instructions, coordinator_context, context_sections, remote_session_change, fork_briefing, poll_events, cowork_memory_context, artifact_opening_prefetch, some queued_command variants, and relevant_memories when flag tengu_mill_orange (default false) is on. batching_reminder and secondary_reminder are dropped entirely on models without this capability.
 - Wrapping: Tags stripped, except for claude-sonnet-5, where each folded block is re-wrapped.
@@ -2038,7 +2038,7 @@ Source: `chunk-wcsknfpm.js` · offset 181038327 · sha256 `cd1431b1…`
 
 ### Attachment collection per turn
 
-Source: `chunk-ra61p37g.js` · offset 187994811 · sha256 `8a18c8fd…`
+Source: `chunk-mphp7acd.js` · offset 189108875 · sha256 `8a18c8fd…`
 
 - When: From code: attachments are gathered before each model request. With CLAUDE_CODE_DISABLE_ATTACHMENTS, CLAUDE_CODE_SIMPLE or a bare fork, only four collectors run: queued commands, sandbox instructions, the agent listing delta and one further collector (not traced). Delegated-observation subagents get none. Collection is aborted after 1000 ms. The main thread (no agentId) also collects IDE selection/opened file, output style, diagnostics, LSP diagnostics, task status, async hook responses, memory updates and token usage; subagents skip that group. @-mention, MCP resource and agent-mention attachments are collected only when there is user input.
 - Wrapping: n/a
@@ -2046,7 +2046,7 @@ Source: `chunk-ra61p37g.js` · offset 187994811 · sha256 `8a18c8fd…`
 
 ### Git attribution reminder
 
-Source: `chunk-ra61p37g.js` · offset 184933828 · sha256 `5e7798fc…` · attachment `remote_session_change`
+Source: `chunk-mphp7acd.js` · offset 184933828 · sha256 `5e7798fc…` · attachment `remote_session_change`
 
 - When: From code: rendered from the remote_session_change attachment when commit and/or pull-request attribution lines are configured. {{expr:r}} is the precedence clause (see attribution-precedence-clause).
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2060,7 +2060,7 @@ Attribution for git commits and pull requests you create from here on (this repl
 
 ### Git attribution reminder (no attribution)
 
-Source: `chunk-ra61p37g.js` · offset 184933931 · sha256 `b2fcf64f…` · attachment `remote_session_change`
+Source: `chunk-mphp7acd.js` · offset 184933931 · sha256 `b2fcf64f…` · attachment `remote_session_change`
 
 - When: From code: same attachment when neither a commit nor a pull-request attribution line is set.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2073,7 +2073,7 @@ From here on, do not add attribution lines to git commit messages or pull reques
 
 ### Attribution precedence clause (mixed managed settings)
 
-Source: `chunk-ra61p37g.js` · offset 184933258 · sha256 `7f5c0225…`
+Source: `chunk-mphp7acd.js` · offset 185902020 · sha256 `7f5c0225…`
 
 - When: From code: used when only one of the commit/PR lines comes from managed settings.
 - Wrapping: Part of attribution-reminder.
@@ -2085,7 +2085,7 @@ the {{expr:g}} line is set by the user's organization's managed settings and app
 
 ### Attribution reminder: send-file hint
 
-Source: `chunk-ra61p37g.js` · offset 184934134 · sha256 `06bd1b30…`
+Source: `chunk-mphp7acd.js` · offset 185902745 · sha256 `c1ff4390…`
 
 - When: From code: appended when the attachment's sendUserFileHint is set.
 - Wrapping: Part of attribution-reminder.
@@ -2100,7 +2100,7 @@ The user can follow this conversation from another device; to put a file in fron
 
 ### Ambient-context suffix
 
-Source: `chunk-ra61p37g.js` · offset 188716221 · sha256 `c022bb16…`
+Source: `chunk-mphp7acd.js` · offset 189913930 · sha256 `c022bb16…`
 
 - When: From code: appended after removal notices and ambient context blocks.
 - Wrapping: Appended inside the wrapped block.
@@ -2112,7 +2112,7 @@ This is ambient context — do not narrate it to the user unless they ask or it 
 
 ### Deferred tools available
 
-Source: `chunk-ra61p37g.js` · offset 188686254 · sha256 `0fdf2f3b…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189883368 · sha256 `5080c97e…` · attachment `deferred_tools_delta`
 
 - When: From code: new deferred tools appeared and ToolSearch is present; followed by one tool name per line.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2125,7 +2125,7 @@ The following deferred tools are now available via ToolSearch. Their schemas are
 
 ### Tools now available
 
-Source: `chunk-ra61p37g.js` · offset 188686740 · sha256 `4c2e94e7…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189883854 · sha256 `4c2e94e7…` · attachment `deferred_tools_delta`
 
 - When: From code: same, when ToolSearch is absent.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2137,7 +2137,7 @@ The following tools are now available:
 
 ### Tools became available
 
-Source: `chunk-ra61p37g.js` · offset 188686504 · sha256 `4ef9aef4…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189883618 · sha256 `4ef9aef4…` · attachment `deferred_tools_delta`
 
 - When: From code: tool definitions were surfaced on the wire this turn.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2149,7 +2149,7 @@ The following tools just became available and are ready to use:
 
 ### Tool definitions updated
 
-Source: `chunk-ra61p37g.js` · offset 188686574 · sha256 `1be920bf…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189883688 · sha256 `1be920bf…` · attachment `deferred_tools_delta`
 
 - When: From code: surfaced tools replaced earlier definitions.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2161,7 +2161,7 @@ The following tools have updated definitions, which replace the earlier ones fro
 
 ### Tools no longer available (blocked)
 
-Source: `chunk-ra61p37g.js` · offset 188686671 · sha256 `644e2b02…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189883785 · sha256 `644e2b02…` · attachment `deferred_tools_delta`
 
 - When: From code: tools removed by a block.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2173,7 +2173,7 @@ The following tools are no longer available. Do not call them:
 
 ### Tools no longer available
 
-Source: `chunk-ra61p37g.js` · offset 188706114 · sha256 `9769075c…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189903808 · sha256 `3a0bf3ec…` · attachment `deferred_tools_delta`
 
 - When: From code: non-MCP tools removed.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2186,7 +2186,7 @@ The following {{expr:M}}s are no longer available in this session. {{expr:D}}:
 
 ### MCP tools no longer available
 
-Source: `chunk-ra61p37g.js` · offset 188705980 · sha256 `7fe72c45…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189903674 · sha256 `02fafef2…` · attachment `deferred_tools_delta`
 
 - When: From code: MCP tools removed after a disconnect (30 or fewer; larger sets get a one-line summary).
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2199,7 +2199,7 @@ The following {{expr:M}}s are no longer available (their MCP server disconnected
 
 ### Tools available again
 
-Source: `chunk-ra61p37g.js` · offset 188705362 · sha256 `977ab51a…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189903054 · sha256 `8eeac8ee…` · attachment `deferred_tools_delta`
 
 - When: From code: previously retracted tools are restored.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2212,7 +2212,7 @@ The following tools are available again in this session. The earlier instruction
 
 ### Tool definitions retracted
 
-Source: `chunk-ra61p37g.js` · offset 188706501 · sha256 `31820b92…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189904196 · sha256 `40debf8e…` · attachment `deferred_tools_delta`
 
 - When: From code: tools whose source was removed; grouped by cause.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2225,7 +2225,7 @@ Definitions of the following tools were loaded earlier in this conversation and 
 
 ### MCP servers need authentication
 
-Source: `chunk-ra61p37g.js` · offset 188707311 · sha256 `ecf661ea…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189905006 · sha256 `91dea823…` · attachment `deferred_tools_delta`
 
 - When: From code: MCP servers are in the needs-auth state.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2245,7 +2245,7 @@ The following MCP servers require authentication before their tools can be used:
 
 ### MCP servers failed to connect
 
-Source: `chunk-ra61p37g.js` · offset 188707869 · sha256 `ac159138…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189905564 · sha256 `cab8b3ea…` · attachment `deferred_tools_delta`
 
 - When: From code: MCP servers failed (not policy-blocked); up to 30 listed.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2261,7 +2261,7 @@ Treat this as a connection failure, not a missing capability — do not conclude
 
 ### MCP servers blocked by policy
 
-Source: `chunk-ra61p37g.js` · offset 188708569 · sha256 `efefb0c9…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189906264 · sha256 `ec3c7e13…` · attachment `deferred_tools_delta`
 
 - When: From code: MCP servers blocked by managed policy.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2277,7 +2277,7 @@ This is an administrative block, not a connection failure: retrying will not hel
 
 ### MCP servers still connecting (ToolSearch)
 
-Source: `chunk-ra61p37g.js` · offset 188709459 · sha256 `28493a3a…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189907154 · sha256 `85260e44…` · attachment `deferred_tools_delta`
 
 - When: From code: pending MCP servers and ToolSearch present.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2293,7 +2293,7 @@ If the user's request might be served by one of these servers (even if they didn
 
 ### MCP servers still connecting
 
-Source: `chunk-ra61p37g.js` · offset 188709100 · sha256 `f52820a1…` · attachment `deferred_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189906795 · sha256 `ddd9bbd9…` · attachment `deferred_tools_delta`
 
 - When: From code: pending MCP servers and ToolSearch absent.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2308,7 +2308,7 @@ If the user's request might be served by one of these servers (even if they didn
 
 ### MCP server instructions
 
-Source: `chunk-ra61p37g.js` · offset 188710786 · sha256 `e9f62001…` · attachment `mcp_instructions_delta`
+Source: `chunk-mphp7acd.js` · offset 189908481 · sha256 `e9f62001…` · attachment `mcp_instructions_delta`
 
 - When: From code: connected MCP servers provided instructions not yet announced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2324,7 +2324,7 @@ The following MCP servers have provided instructions for how to use their tools 
 
 ### MCP server instructions withdrawn
 
-Source: `chunk-ra61p37g.js` · offset 188710949 · sha256 `5ffebcfb…` · attachment `mcp_instructions_delta`
+Source: `chunk-mphp7acd.js` · offset 189908644 · sha256 `5ffebcfb…` · attachment `mcp_instructions_delta`
 
 - When: From code: servers with announced instructions disconnected.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2337,7 +2337,7 @@ The following MCP servers have disconnected. Their instructions above no longer 
 
 ### Unavailable MCP tools
 
-Source: `chunk-ra61p37g.js` · offset 188711228 · sha256 `6a78646e…` · attachment `mcp_dropped_tools_delta`
+Source: `chunk-mphp7acd.js` · offset 189908923 · sha256 `6a78646e…` · attachment `mcp_dropped_tools_delta`
 
 - When: From code: MCP tools excluded because their schemas would be rejected by the API.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2353,7 +2353,7 @@ The following MCP tools were excluded when their server's tools were loaded, bec
 
 ### MCP resource contents
 
-Source: `chunk-ra61p37g.js` · offset 188701470 · sha256 `d4a4a014…` · attachment `mcp_resource`
+Source: `chunk-mphp7acd.js` · offset 189899161 · sha256 `d4a4a014…` · attachment `mcp_resource`
 
 - When: From code: the prompt @-mentions an MCP resource; preceded by 'Full contents of resource:' and the contents.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2365,7 +2365,7 @@ Do NOT read this resource again unless you think it may have changed, since you 
 
 ### Critical system reminder (experimental)
 
-Source: `chunk-ra61p37g.js` · offset 187997857 · sha256 `6b68431f…` · attachment `critical_system_reminder`
+Source: `chunk-mphp7acd.js` · offset 189112196 · sha256 `6b68431f…` · attachment `critical_system_reminder`
 
 - When: From code: every attachment pass while the context's criticalSystemReminder_EXPERIMENTAL string is set; injected verbatim.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2373,7 +2373,7 @@ Source: `chunk-ra61p37g.js` · offset 187997857 · sha256 `6b68431f…` · attac
 
 ### Batching reminder
 
-Source: `chunk-bmsv2yvk.js` · offset 192494098 · sha256 `d8a79cb7…` · attachment `batching_reminder`
+Source: `chunk-w8a1w7ad.js` · offset 193816837 · sha256 `d8a79cb7…` · attachment `batching_reminder`
 
 - When: From code: the text comes from CLAUDE_CODE_TOASTY_THIMBLE, client data key tengu_toasty_thimble, or, for models with the fable_5_1_prompt_bundle capability, this built-in text. Only on models with the mid-conversation system capability. Emission frequency not traced.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -2385,7 +2385,7 @@ First privately list what you need next; then request every item that doesn't de
 
 ### Secondary reminder
 
-Source: `chunk-bmsv2yvk.js` · offset 192495390 · sha256 `b0516716…` · attachment `secondary_reminder`
+Source: `chunk-w8a1w7ad.js` · offset 193818129 · sha256 `b0516716…` · attachment `secondary_reminder`
 
 - When: From code: the text comes only from CLAUDE_CODE_GENTLE_PARASOL or client data key tengu_gentle_parasol; there is no built-in text. Emission frequency not traced.
 - Wrapping: Wrapped in <system-reminder> tags.
@@ -2393,7 +2393,7 @@ Source: `chunk-bmsv2yvk.js` · offset 192495390 · sha256 `b0516716…` · attac
 
 ### Model changed (remote session)
 
-Source: `chunk-n2thq0xg.js` · offset 203405679 · sha256 `dbe53a0b…`
+Source: `chunk-xapeakym.js` · offset 204557601 · sha256 `f00c6e91…`
 
 - When: From code: model switch while CLAUDE_CODE_REMOTE is set.
 - Wrapping: Literal <system-reminder> tags inside the text.
@@ -2405,9 +2405,9 @@ Source: `chunk-n2thq0xg.js` · offset 203405679 · sha256 `dbe53a0b…`
 
 ### Side question (/btw)
 
-Source: `chunk-6vjxxvcp.js` · offset 203128965 · sha256 `7fb9cf64…`
+Source: `chunk-rh1dp384.js` · offset 204243116 · sha256 `7fb9cf64…`
 
-- When: Undocumented; read at chunk-6vjxxvcp.js (side-question request built from the current context).
+- When: Undocumented; read at chunk-rh1dp384.js (side-question request built from the current context).
 - Wrapping: Literal <system-reminder> tags inside the text.
 - Placement: First text block of the side-question request's user message; the question follows as a second block.
 
@@ -2435,11 +2435,11 @@ Simply answer the question with the information you have.</system-reminder>
 
 ### Brief mode toggled on
 
-Source: `chunk-dekwpew8.js` · offset 198884735 · sha256 `b7fe3425…`
+Source: `chunk-tdsxsjna.js` · offset 198884735 · sha256 `b7fe3425…`
 
 - When: From code: the brief-mode slash command turns brief-only mode on.
 - Wrapping: Inside a literal '<system-reminder>\n … \n</system-reminder>' template.
-- Placement: Undocumented; read at chunk-dekwpew8.js.
+- Placement: Undocumented; read at chunk-tdsxsjna.js.
 - Inlined constants: `SendUserMessage`
 
 ~~~~~~text
@@ -2448,11 +2448,11 @@ Brief mode is now enabled. Use the SendUserMessage tool for all user-facing outp
 
 ### Brief mode toggled off
 
-Source: `chunk-dekwpew8.js` · offset 198884871 · sha256 `2adb0875…`
+Source: `chunk-tdsxsjna.js` · offset 198884871 · sha256 `2adb0875…`
 
 - When: From code: the brief-mode slash command turns brief-only mode off.
 - Wrapping: Inside a literal '<system-reminder>\n … \n</system-reminder>' template.
-- Placement: Undocumented; read at chunk-dekwpew8.js.
+- Placement: Undocumented; read at chunk-tdsxsjna.js.
 - Inlined constants: `SendUserMessage`
 
 ~~~~~~text
@@ -2461,7 +2461,7 @@ Brief mode is now disabled. The SendUserMessage tool is no longer available — 
 
 ### Multi-entry tool tip
 
-Source: `chunk-w3tj324j.js` · offset 182719117 · sha256 `d541c420…`
+Source: `chunk-dec2r715.js` · offset 183575346 · sha256 `d541c420…`
 
 - When: From code: a batch-capable tool was called with a single entry.
 - Wrapping: Literal <system-reminder> tags inside the text.
@@ -2473,7 +2473,7 @@ Source: `chunk-w3tj324j.js` · offset 182719117 · sha256 `d541c420…`
 
 ### Advisor tool instructions
 
-Source: `chunk-9gy1t01w.js` · offset 183522457 · sha256 `7e492a73…` · attachment `advisor_tool`
+Source: `chunk-09m4fzsj.js` · offset 184706978 · sha256 `7e492a73…` · attachment `advisor_tool`
 
 - When: From code: the advisor_tool attachment when the advisor is available and the announcement is not abbreviated.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2500,7 +2500,7 @@ If you've already retrieved data pointing one way and the advisor points another
 
 ### Advisor available again
 
-Source: `chunk-9gy1t01w.js` · offset 184044920 · sha256 `21e5f26a…` · attachment `advisor_tool`
+Source: `chunk-09m4fzsj.js` · offset 185101352 · sha256 `21e5f26a…` · attachment `advisor_tool`
 
 - When: From code: advisor available with the abbreviated announcement.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2512,7 +2512,7 @@ The advisor tool is available; the advisor instructions announced earlier apply.
 
 ### Advisor no longer available
 
-Source: `chunk-9gy1t01w.js` · offset 184044830 · sha256 `a0ee1d5f…` · attachment `advisor_tool`
+Source: `chunk-09m4fzsj.js` · offset 185101261 · sha256 `a0ee1d5f…` · attachment `advisor_tool`
 
 - When: From code: advisor_tool attachment with available false.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2524,7 +2524,7 @@ The advisor tool is no longer available; disregard the earlier advisor instructi
 
 ### Attachment types that inject nothing
 
-Source: `chunk-ra61p37g.js` · offset 188712517 · sha256 `938a84ec…`
+Source: `chunk-mphp7acd.js` · offset 189910222 · sha256 `938a84ec…`
 
 - When: From code: these attachment types exist in transcripts but render no model-visible text in this build: already_read_file, async_hook_response_batch, attention_budget, autocheckpointing, background_task_status, batching_reminder_sent, command_permissions, companion_intro, compaction_reminder, context_efficiency, context_tip, current_session_memory, deferred_tools_record, echo_activities, edited_image_file, fold_nudge, goal_status, hook_cancelled, hook_deferred_tool, hook_error_during_execution, hook_non_blocking_error, hook_permission_decision, hook_system_message, max_turns_reached, pen_mode_enter, pen_mode_exit, prompt_render_point, prompt_snapshot, repl_mcp_needs_auth, secondary_reminder_sent, structured_output, task_progress, teammate_shutdown_batch, thinking_drop, thinking_reminder, thinking_stripped, todo, tool_host_result_lines, ultramemory, ultrawork_request, verify_plan_reminder. (batching_reminder_sent and secondary_reminder_sent are replayed through a separate path when cleared at the next user message.)
 - Wrapping: n/a
@@ -2532,7 +2532,7 @@ Source: `chunk-ra61p37g.js` · offset 188712517 · sha256 `938a84ec…`
 
 ### Attribution precedence clause (default)
 
-Source: `chunk-ra61p37g.js` · offset 184932713 · sha256 `446a205b…`
+Source: `chunk-mphp7acd.js` · offset 185901475 · sha256 `446a205b…`
 
 - When: From code: no attribution line comes from managed settings. This is the form in the captured first request.
 - Wrapping: Part of attribution-reminder.
@@ -2544,7 +2544,7 @@ the user's own instructions about these lines, such as a CLAUDE.md or memory rul
 
 ### Attribution precedence clause (all managed)
 
-Source: `chunk-ra61p37g.js` · offset 184932896 · sha256 `1840b787…`
+Source: `chunk-mphp7acd.js` · offset 185901658 · sha256 `1840b787…`
 
 - When: From code: every attribution line present comes from managed settings.
 - Wrapping: Part of attribution-reminder.
@@ -2556,7 +2556,7 @@ these lines are set by the user's organization's managed settings and apply even
 
 ### Attribution reminder: commit line
 
-Source: `chunk-ra61p37g.js` · offset 184933578 · sha256 `6072a228…`
+Source: `chunk-mphp7acd.js` · offset 185902340 · sha256 `87886713…`
 
 - When: From code: a commit attribution line is configured; closing tags in the value are neutralised.
 - Wrapping: Part of attribution-reminder.
@@ -2569,7 +2569,7 @@ Source: `chunk-ra61p37g.js` · offset 184933578 · sha256 `6072a228…`
 
 ### Attribution reminder: pull-request line
 
-Source: `chunk-ra61p37g.js` · offset 184933639 · sha256 `49103bd6…`
+Source: `chunk-mphp7acd.js` · offset 185902401 · sha256 `39a145ed…`
 
 - When: From code: a pull-request attribution line is configured.
 - Wrapping: Part of attribution-reminder.
@@ -2582,7 +2582,7 @@ Source: `chunk-ra61p37g.js` · offset 184933639 · sha256 `49103bd6…`
 
 ### Wake / poll events
 
-Source: `chunk-ra61p37g.js` · offset 188674086 · sha256 `a62b647a…` · attachment `poll_events`
+Source: `chunk-mphp7acd.js` · offset 189871191 · sha256 `a62b647a…` · attachment `poll_events`
 
 - When: From code: rendered text is built from the event envelopes and the remaining wake count; not rendered when already delivered another way. Excluded from system-role folding. Envelope text not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2590,7 +2590,7 @@ Source: `chunk-ra61p37g.js` · offset 188674086 · sha256 `a62b647a…` · attac
 
 ### Read truncation notice
 
-Source: `chunk-ra61p37g.js` · offset 188677670 · sha256 `a4c85dc1…` · attachment `read_truncation_notice`
+Source: `chunk-mphp7acd.js` · offset 189874189 · sha256 `a4c85dc1…` · attachment `read_truncation_notice`
 
 - When: From code: the attachment's banner string, HTML-escaped, injected as is. Banner text not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2598,7 +2598,7 @@ Source: `chunk-ra61p37g.js` · offset 188677670 · sha256 `a4c85dc1…` · attac
 
 ### Directory sync notice
 
-Source: `chunk-ra61p37g.js` · offset 188677741 · sha256 `54217102…` · attachment `dir_sync_notice`
+Source: `chunk-mphp7acd.js` · offset 189874260 · sha256 `54217102…` · attachment `dir_sync_notice`
 
 - When: From code: the attachment's content string, escaped, injected as is. Excluded from system-role folding.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2606,7 +2606,7 @@ Source: `chunk-ra61p37g.js` · offset 188677741 · sha256 `54217102…` · attac
 
 ### Prefix delta
 
-Source: `chunk-ra61p37g.js` · offset 188681295 · sha256 `26b94087…` · attachment `prefix_delta`
+Source: `chunk-mphp7acd.js` · offset 189878105 · sha256 `26b94087…` · attachment `prefix_delta`
 
 - When: From code: the attachment's text injected verbatim. Producer not traced.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2614,7 +2614,7 @@ Source: `chunk-ra61p37g.js` · offset 188681295 · sha256 `26b94087…` · attac
 
 ### Fork briefing
 
-Source: `chunk-ra61p37g.js` · offset 188683749 · sha256 `88815e72…` · attachment `fork_briefing`
+Source: `chunk-mphp7acd.js` · offset 189880559 · sha256 `88815e72…` · attachment `fork_briefing`
 
 - When: From code: the attachment's text (system-reminder tags neutralised) injected verbatim. Excluded from system-role folding.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2622,7 +2622,7 @@ Source: `chunk-ra61p37g.js` · offset 188683749 · sha256 `88815e72…` · attac
 
 ### Artifact opening prefetch
 
-Source: `chunk-ra61p37g.js` · offset 188681803 · sha256 `15fdf674…` · attachment `artifact_opening_prefetch`
+Source: `chunk-mphp7acd.js` · offset 189878613 · sha256 `15fdf674…` · attachment `artifact_opening_prefetch`
 
 - When: From code: collected when the artifact prefetch gate holds and CLAUDE_CODE_ARTIFACT_OPENING_PREFETCH is not false; the content (tags neutralised) is injected verbatim. Excluded from system-role folding.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2630,7 +2630,7 @@ Source: `chunk-ra61p37g.js` · offset 188681803 · sha256 `15fdf674…` · attac
 
 ### Tool hosts notice
 
-Source: `chunk-ra61p37g.js` · offset 188685149 · sha256 `a00241d7…` · attachment `tool_hosts_notice`
+Source: `chunk-mphp7acd.js` · offset 189881959 · sha256 `a00241d7…` · attachment `tool_hosts_notice`
 
 - When: From code: remote tool-host lines joined by newlines, followed by the ambient-context suffix; collected only when the remote tool-host feature supplies a notice.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2638,7 +2638,7 @@ Source: `chunk-ra61p37g.js` · offset 188685149 · sha256 `a00241d7…` · attac
 
 ### Tool hosts correction
 
-Source: `chunk-ra61p37g.js` · offset 188685037 · sha256 `b14022a7…` · attachment `tool_hosts_correction`
+Source: `chunk-mphp7acd.js` · offset 189881847 · sha256 `b14022a7…` · attachment `tool_hosts_correction`
 
 - When: From code: remote tool-host correction lines joined by newlines.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2646,15 +2646,15 @@ Source: `chunk-ra61p37g.js` · offset 188685037 · sha256 `b14022a7…` · attac
 
 ### Cowork memory snapshot
 
-Source: `chunk-ra61p37g.js` · offset 188685648 · sha256 `5e0dcdd4…` · attachment `cowork_memory_context`
+Source: `chunk-mphp7acd.js` · offset 188685648 · sha256 `5e0dcdd4…` · attachment `cowork_memory_context`
 
-- When: From code: the memory snapshot content (tags neutralised) injected verbatim; see cowork-memory-withdrawn for the null case. An attachment with the `anchor` field set renders nothing. An anchor carries no content, only the version of a snapshot whose `leg` is laptop: chunk-t6wjb9ry.js pushes one directly after such a snapshot, and elsewhere in that chunk re-inserts the held snapshot in front of an anchor when the same-version snapshot is not already directly before it and the held version still matches (calling condition not read). Excluded from system-role folding.
+- When: From code: the memory snapshot content (tags neutralised) injected verbatim; see cowork-memory-withdrawn for the null case. An attachment with the `anchor` field set renders nothing. An anchor carries no content, only the version of a snapshot whose `leg` is laptop: chunk-5ne43w2c.js pushes one directly after such a snapshot, and elsewhere in that chunk re-inserts the held snapshot in front of an anchor when the same-version snapshot is not already directly before it and the held version still matches (calling condition not read). Excluded from system-role folding.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
 - Placement: Attachment rendered as a meta user message. Excluded from system-role folding, so it stays in the user turn on every model.
 
 ### Environment block
 
-Source: `chunk-ra61p37g.js` · offset 188681944 · sha256 `c1451a5d…` · attachment `environment`
+Source: `chunk-mphp7acd.js` · offset 189878754 · sha256 `c1451a5d…` · attachment `environment`
 
 - When: From code: an environment snapshot (or its changes) is rendered; collected every pass. Rendered text: see Main system prompt. Captured as the '# Environment' block in the trailing system message.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2662,7 +2662,7 @@ Source: `chunk-ra61p37g.js` · offset 188681944 · sha256 `c1451a5d…` · attac
 
 ### Model identity
 
-Source: `chunk-ra61p37g.js` · offset 188682213 · sha256 `0a24ff16…` · attachment `model`
+Source: `chunk-mphp7acd.js` · offset 189879023 · sha256 `0a24ff16…` · attachment `model`
 
 - When: From code: the model identity is rendered when present. Rendered text: see Main system prompt.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2670,7 +2670,7 @@ Source: `chunk-ra61p37g.js` · offset 188682213 · sha256 `0a24ff16…` · attac
 
 ### Session context
 
-Source: `chunk-ra61p37g.js` · offset 188682520 · sha256 `530edc5a…` · attachment `session_context`
+Source: `chunk-mphp7acd.js` · offset 189879330 · sha256 `530edc5a…` · attachment `session_context`
 
 - When: From code: session context (or its change, with a reason) is rendered. Excluded from system-role folding. Rendered text: see Main system prompt.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2678,7 +2678,7 @@ Source: `chunk-ra61p37g.js` · offset 188682520 · sha256 `530edc5a…` · attac
 
 ### Instructions
 
-Source: `chunk-ra61p37g.js` · offset 188681677 · sha256 `e37d0a63…` · attachment `instructions`
+Source: `chunk-mphp7acd.js` · offset 189878487 · sha256 `e37d0a63…` · attachment `instructions`
 
 - When: From code: an instructions record is rendered. Excluded from system-role folding. Rendered text: see Main system prompt.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2686,7 +2686,7 @@ Source: `chunk-ra61p37g.js` · offset 188681677 · sha256 `e37d0a63…` · attac
 
 ### Language
 
-Source: `chunk-ra61p37g.js` · offset 188683851 · sha256 `da6d9f0f…` · attachment `language`
+Source: `chunk-mphp7acd.js` · offset 189880661 · sha256 `da6d9f0f…` · attachment `language`
 
 - When: From code: a language preference is rendered. Rendered text: see Main system prompt.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).
@@ -2694,7 +2694,7 @@ Source: `chunk-ra61p37g.js` · offset 188683851 · sha256 `da6d9f0f…` · attac
 
 ### Output style instructions
 
-Source: `chunk-ra61p37g.js` · offset 188682385 · sha256 `aef28eb1…` · attachment `output_style_instructions`
+Source: `chunk-mphp7acd.js` · offset 189879195 · sha256 `aef28eb1…` · attachment `output_style_instructions`
 
 - When: From code: the active output style's instructions are rendered. Rendered text: see Main system prompt.
 - Wrapping: Wrapped in <system-reminder> tags (every text block of the attachment's rendered messages).

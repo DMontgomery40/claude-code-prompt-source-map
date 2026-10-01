@@ -7,6 +7,21 @@
    "length": 335,
    "sha256": "8f99904209539b0c367f8714eb880075cf8f8a45d3ba2cf3892a9e49d72fe046"
   },
+  "/$bunfs/root/README-0c3ba4a4.md.zst": {
+   "kind": "zst",
+   "length": 4289,
+   "sha256": "69eb62c75e1b721e51f4e61c47d0ec8b624c9616825d672c583bebe57368d9a8"
+  },
+  "/$bunfs/root/README-1855f6cc.md.zst": {
+   "kind": "zst",
+   "length": 3966,
+   "sha256": "7a0474863f25154898d775290842558f616ef0ec5ac605a13c1df1fa72e6c21d"
+  },
+  "/$bunfs/root/README-1cca0538.md.zst": {
+   "kind": "zst",
+   "length": 3832,
+   "sha256": "3375b2b3ff469c75292348eb3455fb775768f799250f820df29f0545689f64fe"
+  },
   "/$bunfs/root/README-24484caa.md.zst": {
    "kind": "zst",
    "length": 6851,
@@ -17,35 +32,30 @@
    "length": 6869,
    "sha256": "d63842a2789618206729a732927d01752191c032806437921913bebf7cf4216d"
   },
+  "/$bunfs/root/README-620716f1.md.zst": {
+   "kind": "zst",
+   "length": 4370,
+   "sha256": "2191f594f53354560472652aae1800041f09f0de5620b15e646cd727bfdafe10"
+  },
   "/$bunfs/root/README-63298f3f.md.zst": {
    "kind": "zst",
    "length": 4318,
    "sha256": "8060799c2f07ebf9199d283934588674368a7d032ace6e732d11523115560e15"
-  },
-  "/$bunfs/root/README-684b148f.md.zst": {
-   "kind": "zst",
-   "length": 3628,
-   "sha256": "0c6c2f7d573bcb881736b28f0f45d231ec12d58c1b823d01cc164f66493f40de"
   },
   "/$bunfs/root/README-6fm6xx7t.md": {
    "kind": "md",
    "length": 6550,
    "sha256": "bda48184f250729a008d9fc462e00dc477111b56f2feb75cdf9a4b48dbd14655"
   },
-  "/$bunfs/root/README-76a53979.md.zst": {
+  "/$bunfs/root/README-9be4d7fb.md.zst": {
    "kind": "zst",
-   "length": 3942,
-   "sha256": "f2aef141d4702f49a80871fa7e9417b6be23003b7d6df55c083af2619b8c6e1d"
+   "length": 4277,
+   "sha256": "2c4aac45908e51c3ca81b88b07eb042cbdde9e949d601f6c4be80f371c561636"
   },
-  "/$bunfs/root/README-b9dd4b0d.md.zst": {
+  "/$bunfs/root/README-b89c1b11.md.zst": {
    "kind": "zst",
-   "length": 4263,
-   "sha256": "d66cf64f48b8ba9826d12f772d81bb17ec08db74c81357739272dbb7cb4d3d49"
-  },
-  "/$bunfs/root/README-df11cb83.md.zst": {
-   "kind": "zst",
-   "length": 3811,
-   "sha256": "624a92e77769f5d18bb229ce0659579f2436d9a629052bea45ab0460322a8bc2"
+   "length": 3648,
+   "sha256": "b96c0a3190bb3dadaa76794cf814a5e8c686519a55755962b14952a7a6be180b"
   },
   "/$bunfs/root/README-e32e4b66.md.zst": {
    "kind": "zst",
@@ -57,16 +67,6 @@
    "length": 3311,
    "sha256": "b2f7085811a927156752ba10a9f3e70324cb7b09ee62b8a4f4344cc9dce1b1da"
   },
-  "/$bunfs/root/README-f90d90cb.md.zst": {
-   "kind": "zst",
-   "length": 4342,
-   "sha256": "9c88c0a2d827675d723ef945291937df5ed9ea3ffc933af9ce60c3f5163b3818"
-  },
-  "/$bunfs/root/README-fa3aafd3.md.zst": {
-   "kind": "zst",
-   "length": 4255,
-   "sha256": "3c23413f23d3799508f8c21aa5d7c95084122c541e344dce12733070e4c4dca8"
-  },
   "/$bunfs/root/README-hq1c04z5.md": {
    "kind": "md",
    "length": 4833,
@@ -77,10 +77,10 @@
    "length": 6348,
    "sha256": "6b41a2614c936dc80e499f5402061530ad13f295cd74a5149a7c6aa3e086133b"
   },
-  "/$bunfs/root/SKILL-057df712.md.zst": {
+  "/$bunfs/root/SKILL-0a9ffeb5.md.zst": {
    "kind": "zst",
-   "length": 21608,
-   "sha256": "05db1592cbdda27b70435987cd0abf87f56a49fd323962fd9eb2e9761e70487f"
+   "length": 21708,
+   "sha256": "ffe43d890ec1e353583fbe7c1401c0774ca65faf70808f5fdee75975000bfe47"
   },
   "/$bunfs/root/SKILL-0e9ec89e.md.zst": {
    "kind": "zst",
@@ -92,20 +92,25 @@
    "length": 14316,
    "sha256": "f9b1ce96b30b811aeddc4c8dec9b43e50bfe171cea7fe48e86091421beaaf5c5"
   },
+  "/$bunfs/root/SKILL-234249ce.md.zst": {
+   "kind": "zst",
+   "length": 15128,
+   "sha256": "fac84f65560b08dd8821938d9b016dcf2da7e1c316a811806472347d54ceccf1"
+  },
   "/$bunfs/root/SKILL-2caf8bec.md.zst": {
    "kind": "zst",
    "length": 8499,
    "sha256": "1b5ae93846f417e9d969c4cab13d30beb67dbe708ded3c14cfe15db58d70c300"
   },
-  "/$bunfs/root/SKILL-36c4fed4.md.zst": {
-   "kind": "zst",
-   "length": 14901,
-   "sha256": "1fc2c8d1bb53e709827b5410e6409552ae4bb508c5e53cd37b92b9b4134119f8"
-  },
   "/$bunfs/root/SKILL-444049f3.md.zst": {
    "kind": "zst",
    "length": 5434,
    "sha256": "c367e25e30e39a16b40b97e2e47de9b31a8e0351161d8e17771e6ba6bd1eedc1"
+  },
+  "/$bunfs/root/SKILL-4d74e410.md.zst": {
+   "kind": "zst",
+   "length": 20135,
+   "sha256": "b179af6a127761cc0fccc071fa46fb7b913c72d2decd2ea52e61d658991a84e1"
   },
   "/$bunfs/root/SKILL-5vqnvygj.md": {
    "kind": "md",
@@ -122,11 +127,6 @@
    "length": 6393,
    "sha256": "91d92481e8ee0c12df26d05c4863879b9844aa80c6a4b8c5f4cfdcb2eec0e130"
   },
-  "/$bunfs/root/SKILL-8c94d789.md.zst": {
-   "kind": "zst",
-   "length": 20042,
-   "sha256": "3c725237cc8ec6da27294114e2a61968e20c0ef895fa98da636c27d8236c2a74"
-  },
   "/$bunfs/root/SKILL-8e6c8b5d.md.zst": {
    "kind": "zst",
    "length": 9426,
@@ -141,11 +141,6 @@
    "kind": "md",
    "length": 3591,
    "sha256": "bf8228e1e384ae86797434e6d7e4110f61e36029277b7f3e325efc6d3db0631b"
-  },
-  "/$bunfs/root/SKILL-af503b63.md.zst": {
-   "kind": "zst",
-   "length": 3518,
-   "sha256": "54ffdd82143ff12e4f6941591bd9848d9c23290e9614ce54c4b5d5e1bab305d8"
   },
   "/$bunfs/root/SKILL-b0897508.md.zst": {
    "kind": "zst",
@@ -181,6 +176,11 @@
    "kind": "md",
    "length": 1060,
    "sha256": "961a841db097991c114c4ec0cb30480c3fa9be3d09eac392123b81e98665677f"
+  },
+  "/$bunfs/root/SKILL-ed5500be.md.zst": {
+   "kind": "zst",
+   "length": 3560,
+   "sha256": "18802e9492a4b236727246e52c2da12b91228c6f63b01cd0fe1e6941bcb50bf5"
   },
   "/$bunfs/root/SKILL-f1be9d20.md.zst": {
    "kind": "zst",
@@ -232,10 +232,10 @@
    "length": 7410,
    "sha256": "972d091434cd8f1f1abd6734b913ac0d7171ab34d2062dac3f32dbc8973c859a"
   },
-  "/$bunfs/root/anthropic-cli-f3a21b91.md.zst": {
+  "/$bunfs/root/anthropic-cli-c11c9d4d.md.zst": {
    "kind": "zst",
-   "length": 8675,
-   "sha256": "1de1f26542d6d8aee6c88cd7af1500ee77591768b5ee423463f42ac84b681acf"
+   "length": 8688,
+   "sha256": "e9382565fba7cbbf5c0a7954a1a21afaa2191f37024590d0feeb4bae58f146a8"
   },
   "/$bunfs/root/anthropicSans400.woff2.asset": {
    "kind": "asset",
@@ -307,10 +307,10 @@
    "length": 28340,
    "sha256": "fc660d16cda123c51da8e1241fe7b9852b1b4fe9926721c80598896bcd7fa84f"
   },
-  "/$bunfs/root/build-eval-4635c719.md.zst": {
+  "/$bunfs/root/build-eval-310c4ca7.md.zst": {
    "kind": "zst",
-   "length": 19804,
-   "sha256": "fc80f5344f27b35d145121cd1c52ddbcd55a78e68a54ade1435be4b938dc2644"
+   "length": 20309,
+   "sha256": "30e1d167f2d2e76009ec7e1617c517a6a7da35f1058a6dc8ebc3d84676be4a21"
   },
   "/$bunfs/root/bundle.mjs-c7466167.txt.zst": {
    "kind": "zst",
@@ -322,10 +322,10 @@
    "length": 5996,
    "sha256": "95e405b84589920957ef7b89f83c3356bf97b3bcf1bae4aa965604f1881bd94e"
   },
-  "/$bunfs/root/causes-2fd4293b.md.zst": {
+  "/$bunfs/root/causes-6fcf085a.md.zst": {
    "kind": "zst",
-   "length": 12280,
-   "sha256": "f8ed1a52ed59b5d657dad908f5effa974b7cc5739bee9c3bfef61001dff728f2"
+   "length": 12684,
+   "sha256": "cb82f144b9996a2fd5084f50f5e3918ed9149e95c53f6f44cd877e008653a975"
   },
   "/$bunfs/root/check.mjs-9esx2ea6.txt": {
    "kind": "txt",
@@ -337,10 +337,10 @@
    "length": 6170,
    "sha256": "86fa422e96ef6a120e0364472114b5445c1f7957eff0ffa76cb7cb48a93a95d7"
   },
-  "/$bunfs/root/claude-code.d.ts-c417f0db.txt.zst": {
+  "/$bunfs/root/claude-code.d.ts-e37ccc4a.txt.zst": {
    "kind": "zst",
-   "length": 121696,
-   "sha256": "77f7926854d9b4376e92f56dd1cf995a1109cb5f2412c8e3f3297995d677b271"
+   "length": 128090,
+   "sha256": "da361c4be7ee4200576e98e99c4c43c7668358d5005b751d55e7f318910f5622"
   },
   "/$bunfs/root/claude-platform-on-aws-dy6hstzj.md": {
    "kind": "md",
@@ -354,8 +354,8 @@
   },
   "/$bunfs/root/cli": {
    "kind": "(none)",
-   "length": 21915,
-   "sha256": "d5ad0fda4ffdde46c0b722c743c40256952740dc23a957ca8e917c20ce417e8c"
+   "length": 23541,
+   "sha256": "6bc800c3fa1069f12de645dccef9338fe226bf770eb86124cbb9c97a31e27edd"
   },
   "/$bunfs/root/cli-40vh1c3p.md": {
    "kind": "md",
@@ -412,15 +412,15 @@
    "length": 16203,
    "sha256": "4f8b4893e2050467787a6d573fd6dd71254616ae1b3f12d76151f573e106b061"
   },
-  "/$bunfs/root/cost-hillclimb-64a97a56.md.zst": {
+  "/$bunfs/root/cost-hillclimb-be195324.md.zst": {
    "kind": "zst",
-   "length": 12170,
-   "sha256": "707e8a06dbb6f099c89130b6184d64c1d9a068653cc3e1fa62a100aebc66c619"
+   "length": 12192,
+   "sha256": "ab3686c7cdeb9ef1d57173c702d907769145f2bed107d8e39abbb1d37489779c"
   },
-  "/$bunfs/root/cost-optimization-fab93caf.md.zst": {
+  "/$bunfs/root/cost-optimization-836ac573.md.zst": {
    "kind": "zst",
-   "length": 16728,
-   "sha256": "3ba15e3b8f160aa263a999fefbf5ba88d8349bc89c1efbea2bfdaa463f16778f"
+   "length": 19949,
+   "sha256": "e7950784327a59b59a54835f975a04ba1f619002d227c44ceafaf884595efaac"
   },
   "/$bunfs/root/css-fallback.mjs-75zwvs8w.txt": {
    "kind": "txt",
@@ -437,10 +437,10 @@
    "length": 6046,
    "sha256": "a50dad35318f87c37bf9ce8c0154d7daa3ff558fd8143790cc184230e76337bf"
   },
-  "/$bunfs/root/ct.mjs-c4c5ed4a.txt.zst": {
+  "/$bunfs/root/ct.mjs-ffadfc21.txt.zst": {
    "kind": "zst",
-   "length": 26843,
-   "sha256": "961fc47104187c4508c2d3d0c881201d33d76abcce1316810e16bf47e6a23ef1"
+   "length": 27434,
+   "sha256": "b04a6aa3dd0dfa864048ef0489e75a8932a552546c60ab969dbe3e553c0393bc"
   },
   "/$bunfs/root/ctbrowser.mjs-ec939aea.txt.zst": {
    "kind": "zst",
@@ -482,10 +482,10 @@
    "length": 5278,
    "sha256": "8014463cc126bf883b5a126e6d2e6e9acda85b9a8498989f96025904c1f7d87e"
   },
-  "/$bunfs/root/drop_block_probe-2a790492.py.zst": {
+  "/$bunfs/root/drop_block_probe-492dab40.py.zst": {
    "kind": "zst",
-   "length": 18330,
-   "sha256": "ad82074816f6ffb5df8d7dcbc6713bbef42ca9f478a732fffa756adb8ae09e03"
+   "length": 18679,
+   "sha256": "49170dc672def75152b003abaa3958f31399b42351484c57d5d426104a11e038"
   },
   "/$bunfs/root/dts.mjs-59972049.txt.zst": {
    "kind": "zst",
@@ -517,10 +517,10 @@
    "length": 11072,
    "sha256": "bbd0c36b96b782e7bc8a6d68cc775b273d880b7cbc5a80f83ffeb0aba66d28b0"
   },
-  "/$bunfs/root/eval-hillclimb-bc802041.md.zst": {
+  "/$bunfs/root/eval-hillclimb-20e5214e.md.zst": {
    "kind": "zst",
-   "length": 24171,
-   "sha256": "a1b267bc71895735da68684d0bfb10a67f9fadcd9a5824db7b0d06e0666465ac"
+   "length": 24715,
+   "sha256": "80efe0d0d83fc62f301ae3723ea2d61f6529542726a458d9f2ea254e5f833e9f"
   },
   "/$bunfs/root/example-plugins-9n8v6pe1.md": {
    "kind": "md",
@@ -622,15 +622,15 @@
    "length": 5380,
    "sha256": "3b682315b0a4a9f8c56dba9b3ff7e53d85cdb622d058c6166c469d1828318439"
   },
+  "/$bunfs/root/managed-agents-a70ef3ab.md.zst": {
+   "kind": "zst",
+   "length": 2488,
+   "sha256": "7e60035fbea0e17c4cde5776f25eaa7b5e09fae7aded07f07d6607cf3f665cfa"
+  },
   "/$bunfs/root/managed-agents-api-reference-1c4d0876.md.zst": {
    "kind": "zst",
    "length": 9056,
    "sha256": "382edb3f5804ea7603e8f3ddf9d7bdd4c45540055722c36dbe4e19a3d6d7b83f"
-  },
-  "/$bunfs/root/managed-agents-b15f66a5.md.zst": {
-   "kind": "zst",
-   "length": 2478,
-   "sha256": "3caf41a4b39a861ea35fa33e961a8d1fc0acc4fd9790b939228d7b5e9298d8a8"
   },
   "/$bunfs/root/managed-agents-client-patterns-64ae8032.md.zst": {
    "kind": "zst",
@@ -642,10 +642,10 @@
    "length": 10826,
    "sha256": "5f132d4e8a5308674131d754761206b97a08678077924f72db5042c10ce36a16"
   },
-  "/$bunfs/root/managed-agents-environments-c17fe404.md.zst": {
+  "/$bunfs/root/managed-agents-environments-6d4d417e.md.zst": {
    "kind": "zst",
-   "length": 4645,
-   "sha256": "e21f8c1b423ef76ddd8fd6c020d25438385444559306a988be31ab454e879e50"
+   "length": 4664,
+   "sha256": "c81255f4d8d74e03e55c836a9315c1b37a1c7582498209be3faf6ebf67a5e85f"
   },
   "/$bunfs/root/managed-agents-events-7a51440b.md.zst": {
    "kind": "zst",
@@ -662,10 +662,10 @@
    "length": 8810,
    "sha256": "87a9d26dd657cae3d43c55f09998ae3bb5f020b7a056e4c863a9552a3a9831b8"
   },
-  "/$bunfs/root/managed-agents-onboarding-0a2135d9.md.zst": {
+  "/$bunfs/root/managed-agents-onboarding-fb773221.md.zst": {
    "kind": "zst",
-   "length": 5638,
-   "sha256": "c645b0aa55179c624c28d003f320f22946325ed80a83afc2f93c75c796e9aa21"
+   "length": 5776,
+   "sha256": "a06210fe8308a62d8ea4580e14846b49d2c2264e36b4b9df8e1a262ff94d6efb"
   },
   "/$bunfs/root/managed-agents-outcomes-yhqb83gc.md": {
    "kind": "md",
@@ -757,10 +757,10 @@
    "length": 1588,
    "sha256": "19ff8f66c35bf147045c24d396460792eec38c8347bc6f6c3f7c8910e76c467c"
   },
-  "/$bunfs/root/permissions_external-bf8e779c.txt.zst": {
+  "/$bunfs/root/permissions_external-64ee756a.txt.zst": {
    "kind": "zst",
-   "length": 29665,
-   "sha256": "f482f0950c59f512b468a7bcc2055c2512b6252458ae310f91d88b231384f324"
+   "length": 31473,
+   "sha256": "834da19dcab30cbbc562e289245d0c6da44a5d5cbf7e11c527b316859f29857b"
   },
   "/$bunfs/root/platform-availability-d322cc6d.md.zst": {
    "kind": "zst",
@@ -787,20 +787,20 @@
    "length": 4596,
    "sha256": "d23e08891bb3ba773325a83e65428f8547508161f1094d6d8ca0bbcd7be23ac4"
   },
-  "/$bunfs/root/plugin.json-xzq3ee3q.txt": {
+  "/$bunfs/root/plugin.json-k4hx5dk1.txt": {
    "kind": "txt",
    "length": 762,
-   "sha256": "19b3ccacc9a4b88dc9f8ec024df843ebaa4f55ecd73111fecc5f461b840e708c"
+   "sha256": "d3308c811ccd159b15cced6bb9aac208c650a7d2682788c4526ec5b84d985cdb"
   },
   "/$bunfs/root/prefix_diff-69deb9d3.py.zst": {
    "kind": "zst",
    "length": 24379,
    "sha256": "11c3e750b5fc92ce88cb941d64643d97a9e68f74c1544f4524cacc47ff80e7bd"
   },
-  "/$bunfs/root/preserved-thinking-migration-9352e3d5.md.zst": {
+  "/$bunfs/root/preserved-thinking-migration-23d9deca.md.zst": {
    "kind": "zst",
-   "length": 20779,
-   "sha256": "aacbb65b37311dbb98b34794e121f9f3c954138f556a4a31e8194a432b88156f"
+   "length": 20771,
+   "sha256": "382ef69289182e328b68e47288caf84f8dd654a32a687399e4552d6333a15c8f"
   },
   "/$bunfs/root/preview-gen-storybook.mjs-yedg6ts5.txt": {
    "kind": "txt",
@@ -842,10 +842,10 @@
    "length": 9970,
    "sha256": "6aa2f3a69c9328037791b6ac15d9b664f42ae56b4f3a01fb052566ce2dda6d34"
   },
-  "/$bunfs/root/reference-9c79fa3b.md.zst": {
+  "/$bunfs/root/reference-d0b11ced.md.zst": {
    "kind": "zst",
-   "length": 9716,
-   "sha256": "37a956e0317ae4591356265dd9889f5acfc38f6bdc8929acea012072cb19985b"
+   "length": 11969,
+   "sha256": "c2dc595ce232d54356d8e09ede401781cc272e669d1bb8eff55eed4f0ae12957"
   },
   "/$bunfs/root/remote-diff.mjs-a2ecedbc.txt.zst": {
    "kind": "zst",
@@ -1136,17 +1136,17 @@
  "files": {
   "package/claude": {
    "kind": "macho-executable",
-   "sha256": "50a14c2f50f56668380fdda490167f1d3630d5cc18fb8aed3073c2c7ea7314fe",
-   "size": 226563088
+   "sha256": "6eab8333fe2121553100d8f40bfada384a3e989b94f947e18ba6677a6fcb41ea",
+   "size": 227827120
   },
   "package/package.json": {
    "kind": "config",
-   "sha256": "79bf9c38fedc21fb1bac67f5dd464da0b4c4d4d03954bcf3fb2b7b6e8ad92916",
+   "sha256": "b58958a5a2906602203ad8e45d565fb5daadee2c18ea41f0c0652532a806a419",
    "size": 277
   },
   "wrapper/package/package.json": {
    "kind": "config",
-   "sha256": "02e9a68295497f8f9faf5df1176c876e62cc18faa62f9824530e558fee09137f",
+   "sha256": "1f65f3c9dd891c967b38e049663ae8f49d70f8e0b60363a3179d56a9b163a655",
    "size": 1476
   }
  },
@@ -9832,7 +9832,7 @@
   },
   "web-code": {
    "count": 1,
-   "digest": "f9ec55362930ad5d219dc266790363e76096a39885642d60fdb7c854d1405892"
+   "digest": "987d017602fccca862c869229a61a44771a7b8a2e8f25c3ab12359945834ad33"
   }
  },
  "product": "Claude Code",
@@ -9840,13 +9840,13 @@
  "source": {
   "bun_section": {
    "fileoff": 68206592,
-   "filesize": 157696000
+   "filesize": 158957568
   },
   "package": "@anthropic-ai/claude-code-darwin-arm64",
-  "version": "2.1.284"
+  "version": "2.1.287"
  },
  "summary": {
-  "bytes": 226733856,
+  "bytes": 227998821,
   "files": 6,
   "kinds": {
    "config": {
@@ -9858,11 +9858,11 @@
     "count": 2
    },
    "macho-executable": {
-    "bytes": 226563088,
+    "bytes": 227827120,
     "count": 1
    },
    "web-code": {
-    "bytes": 168715,
+    "bytes": 169648,
     "count": 1
    }
   }

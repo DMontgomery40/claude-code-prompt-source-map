@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import * as acorn from "acorn";
-import { AnchorError, PIPELINE_ANCHORS, find, functionIndex } from "../tools-anchors.mjs";
+import { AnchorError, GATE_ANCHORS, PIPELINE_ANCHORS, find, functionIndex } from "../tools-anchors.mjs";
 
 // A module shaped like zodlite's mod(): top-level declarations by name, no imports.
 function moduleOf(name, src) {
@@ -34,6 +34,19 @@ test("deferral decision anchor rejects a head whose callees lack the MCP or shou
 test("deferral decision anchor rejects a head that ends by returning something other than a call on the tool", () => {
   const src = `function bAe(e){if(e.alwaysLoad===!0)return!1;if(h(e))return!1;return Lin()}function h(e){if(e.isMcp===!0)return!0;return e.shouldDefer===!0}${stubs}`;
   assert.throws(() => found(src, PIPELINE_ANCHORS["pipeline-deferral"]), /anchor not found: the deferral decision/);
+});
+
+const backgroundTasks = GATE_ANCHORS.find(a => a.what === "background tasks disabled");
+const bgStubs = "function xk(){}function Le(){}function i(){}";
+test("background-tasks gate anchor finds the gate that also disables them in bare mode (2.1.286, 2.1.287)", () => {
+  const src = `function Za(){return xk().backgroundTasksDisabled||a.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS||xr()}function xr(){return Le(process.env.CLAUDE_CODE_SIMPLE)||i("--bare")}${bgStubs}`;
+  assert.deepEqual(found(src, backgroundTasks), ["Za"]);
+});
+
+test("background-tasks gate anchor fails when the gate's checks change, rather than keep the old label", () => {
+  const twoChecks = `function _l(){return YH().backgroundTasksDisabled||a.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS}function YH(){}`;
+  const otherThird = `function Za(){return xk().backgroundTasksDisabled||a.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS||yr()}function yr(){return Le(process.env.CLAUDE_CODE_SAFE_MODE)||i("--safe-mode")}${bgStubs}`;
+  for (const src of [twoChecks, otherThird]) assert.throws(() => found(src, backgroundTasks), /anchor not found: background tasks disabled/);
 });
 
 test("an anchor matching two functions is ambiguous, not a pick", () => {
