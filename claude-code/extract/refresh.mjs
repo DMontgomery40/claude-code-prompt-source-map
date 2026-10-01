@@ -182,6 +182,8 @@ try {
   run(node, ["--max-old-space-size=8192", "extract/skills.mjs"], { breakCode: 2 });
   run(node, ["extract/classify.mjs"]);
   run(node, ["extract/inventory.mjs"]);
+  // Trace's Sources lens: evidence found again in this build; a literal gone from it needs repair.
+  run(node, ["extract/local-sources.cjs"], { breakCode: 2 });
   const newOther = readJson(path.join(root, "outputs/other-model-text.json")).items.filter(i => !otherBefore.has(i.text));
 
   // 5. One report a person or a reviewing agent can act on.

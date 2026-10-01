@@ -11,10 +11,11 @@ const fs=require('fs');const path=require('path');const ROOT=path.join(__dirname
 const D=path.join(ROOT,'claude-code','work','extracted')+'/';
 const OUT=path.join(ROOT,'claude-code','outputs','local-sources.json');
 const VERSION=(()=>{try{return JSON.parse(fs.readFileSync(path.join(ROOT,'claude-code','work','current.json'),'utf8')).version;}catch{return null;}})();
-const cache={};function src(f){return cache[f]??=fs.readFileSync(D+f,'latin1');}
+// Evidence is found by content, so renamed chunks and minified identifiers move it instead of breaking it
+// (evidence-match.cjs); only a literal gone from the whole build is reported.
+const {evidenceFinder}=require('./evidence-match.cjs');const find=evidenceFinder(D);
 const missing=[];
-function ev(f,lit,hint){const s=src(f);let best=-1,i=-1;while((i=s.indexOf(lit,i+1))!==-1){if(best===-1||(hint!==undefined&&Math.abs(i-hint)<Math.abs(best-hint)))best=i;if(hint===undefined)break;}
- if(best===-1){missing.push(f+' :: '+lit);return null;} if(lit.length>=120)throw Error('literal too long '+lit);return {file:f,offset:best,literal:lit};}
+function ev(f,lit,hint){if(lit.length>=120)throw Error('literal too long '+lit);const e=find(f,lit,hint);if(!e)missing.push(f+' :: '+lit);return e;}
 const S=[];
 function add(o){o.evidence=(o.evidence||[]).map(e=>ev(...e)).filter(Boolean);
  if(o.evidence.length===0&&!(o.notes||'').startsWith('found on disk'))missing.push('NO EVIDENCE '+o.id);
@@ -267,7 +268,7 @@ add({id:'remote-1p-events',path:'remote: Anthropic first-party event logging',en
 add({id:'remote-sessions',path:'remote: /v1/sessions API (cloud sessions, teleport, remote control)',env:[],kind:'remote',what:'Cloud copies of a session: teleport to and from claude.ai sessions and the session events stream.',join:'exact',joinKey:'remote session id; bridgeSessionId in sessions/<pid>.json',writer:'teleport / remote control',
  evidence:[['chunk-1pjbcr84.js','/v1/sessions/${e}/events?beta=true'],['chunk-0axah9dy.js','teleportFromSessionsAPI']],enabledBy:'teleport, --remote, remote control'});
 add({id:'remote-folder-sync',path:'remote: cloud session folder sync',env:[],kind:'remote',what:'Sync of working-folder files to cloud sessions; config-dir state is excluded.',join:'approximate',joinKey:'cloud session id',writer:'cloud sync',
- evidence:[['chunk-ra61p37g.js','this folder is your Claude Code configuration home']]});
+ evidence:[['chunk-ra61p37g.js','kind:"inside_home",home:']]});
 add({id:'remote-feedback',path:'remote: /bug feedback upload',env:[],kind:'remote',what:'A /bug report upload with the transcript, subagent transcripts and last API request.',join:'approximate',joinKey:'report id',writer:'/bug',
  evidence:[['chunk-6bdxb0yq.js','_("feedback_transcript_share")']],enabledBy:'running /bug and agreeing to share the transcript'});
 
@@ -295,9 +296,12 @@ addD({id:'desktop-bundled-cli',path:DS+'/{claude-code/<version>/claude.app,claud
  what:'Claude Code builds the desktop app ships and runs its sessions with (host and VM).',join:'snapshot',joinKey:'version folder; the transcript version field',retention:'replaced on update',writer:'Claude desktop app',
  aevidence:['"claude-code-vm");const t=khe()'],notes:'Version-dependent: desktop sessions may run a different Claude Code version than the terminal CLI.'});
 
-// --check: write nothing; fail when evidence moved or the committed list differs from what this build gives.
+// --check: write nothing; fail when evidence is gone from the build, or when the committed list differs from what
+// the build it names gives. work/extracted can hold a newer build than the committed list (a Claude Code refresh
+// that has not published yet); then only the evidence is checked, and that refresh regenerates the list.
 if(process.argv.includes('--check')){
  let had=null;try{had=JSON.parse(fs.readFileSync(OUT,'utf8'));}catch{}
- if(!had||JSON.stringify(had.sources)!==JSON.stringify(S)||had.extractedVersion!==VERSION){console.error('claude-code/outputs/local-sources.json is out of date for this build: run node claude-code/extract/local-sources.cjs');process.exitCode=1;}
+ if(had&&VERSION&&had.extractedVersion!==VERSION)console.log(`local-sources.json describes ${had.extractedVersion}; work/extracted holds ${VERSION}, so only its evidence was checked`);
+ else if(!had||JSON.stringify(had.sources)!==JSON.stringify(S)){console.error('claude-code/outputs/local-sources.json is out of date for this build: run node claude-code/extract/local-sources.cjs');process.exitCode=1;}
 }else fs.writeFileSync(OUT,JSON.stringify({product:'claude-code',extractedVersion:VERSION,generated:new Date().toISOString().slice(0,10),sources:S},null,2)+'\n');
 const c={};for(const s of S)c[s.join]=(c[s.join]||0)+1;console.log('sources',S.length,JSON.stringify(c));if(missing.length){console.error('Evidence not found in this build (update the entries):\n'+missing.join('\n'));process.exitCode=1;}

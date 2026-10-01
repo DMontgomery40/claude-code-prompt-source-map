@@ -1,7 +1,7 @@
 {
   "product": "claude-code",
   "extractedVersion": "2.1.284",
-  "generated": "2026-09-28",
+  "generated": "2026-10-01",
   "sources": [
     {
       "id": "claude-code.transcript",
@@ -2352,8 +2352,8 @@
       "evidence": [
         {
           "file": "chunk-ra61p37g.js",
-          "offset": 2904791,
-          "literal": "this folder is your Claude Code configuration home"
+          "offset": 2906743,
+          "literal": "kind:\"inside_home\",home:"
         }
       ],
       "credential": false,
