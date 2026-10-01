@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import {createSessionSanitizer,sanitizeSessionFiles,localSecretValues} from '../privacy/sanitize-session.mjs';
-import {semanticCandidates,reviewSanitizedCandidates,validateSemanticAnswers,neutralCandidate,textHash} from '../privacy/review-session.mjs';
+import {semanticCandidates,reviewSanitizedCandidates,validateSemanticAnswer,neutralCandidate,textHash} from '../privacy/review-session.mjs';
 const A='019b76da-a800-7000-8000-000000000001',B='019b76da-f044-7000-8000-000000000003';
 test('UUID aliases preserve UUID7 birth time and joins while removing secrets and sensitive records',()=>{
  const secret='fixtureOpaque'+ 'Q'.repeat(24);const s=createSessionSanitizer({salt:'fixture',secretValues:[secret],privateNames:['Private Person']});
@@ -44,11 +44,11 @@ test('gzip input keeps original rows and hashes the compressed source',async t=>
 });
 test('semantic review deduplicates, rejects raw secrets before sending, and validates every answer',async()=>{
  const candidates=semanticCandidates([{text:'A neutral software engineering fixture describes request routing.'},{text:'A neutral software engineering fixture describes request routing.'}]);assert.equal(candidates.length,1);let calls=0;
- const fetcher=async(url,options)=>{calls++;const sent=JSON.parse(options.body);assert.ok(sent.state.texts[candidates[0].hash]);return {ok:true,json:async()=>({answers:{['privacy_'+candidates[0].hash]:{noul:0.01}}})};};
+ const fetcher=async(url,options)=>{calls++;const sent=JSON.parse(options.body);assert.deepEqual(sent.state,{text:candidates[0].text});return {ok:true,json:async()=>({answers:{privacy:{noul:0.01}}})};};
  const config={key:'synthetic',endpoint:'https://fixture.example/',model:'fixture'};
  await assert.rejects(reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],boundary:{privateValues:['request routing']},config,fetcher}));assert.equal(calls,0);
  const review=await reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],config,fetcher});assert.equal(calls,1);assert.equal(review.publicationApproved,false);assert.equal(review.results[0].privateContentProbability,.01);
- assert.throws(()=>validateSemanticAnswers({answers:{['privacy_'+candidates[0].hash]:{noul:2}}},[candidates[0].hash]));assert.throws(()=>validateSemanticAnswers({answers:{}},[candidates[0].hash]));
+ assert.throws(()=>validateSemanticAnswer({answers:{privacy:{noul:2}}},candidates[0].hash));assert.throws(()=>validateSemanticAnswer({answers:{}},candidates[0].hash));
 });
 
 test('all long env values are scrubbed regardless of DATABASE_URL, SENTRY_DSN or NPM_TOKEN names',()=>{

@@ -27,9 +27,16 @@ Additional secret/private literals and original IDs can be supplied to the check
 Repository and home `.env` values are collected independently of variable names,
 including quoted, multiline and encoded representations.
 Credentials are read through the existing Jev provider and are never printed.
-Questions are batched, answers must match every exact text hash, and probabilities
-must be finite numbers within `[0,1]`. Review output never grants publication
-approval. Store semantic candidates, approvals and results privately with mode 0600.
+Each request carries exactly one candidate text (`state.text`) and one `privacy`
+question; packing several texts into one state skews each answer by its position.
+Requests run with bounded `concurrency` (default 4, an integer from 1 to 16) through
+the shared helper's `ask()`, which retries rate limits, server errors and network
+failures. Every answer must be a finite probability within `[0,1]`, and results keep
+the candidates' order. The first failure stops further requests: an outage throws
+`JevUnavailableError`, a rejected request or malformed answer throws a plain error,
+and neither message carries source text or a response body. Review output never
+grants publication approval. Store semantic candidates, approvals and results
+privately with mode 0600.
 
 Before promotion, independently inspect the scrubbed content, compare adapter
 counts/joins/timing/usage with the original family, scan decompressed assets through
