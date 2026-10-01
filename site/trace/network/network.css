@@ -157,3 +157,4 @@
 .net-party.first { color: #b9d6f5; }
 .net-timeline .linkbtn, .net-occ .linkbtn { margin-left: 6px; font-size: 12.5px; }
 .net-mark.warn { color: #ffc49b; font-weight: 600; }
+.net-id { overflow-wrap: anywhere; font-size: 11.5px; }

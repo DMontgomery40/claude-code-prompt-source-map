@@ -332,9 +332,9 @@ function endpointItem(cap, e, byI, A) {
 // Every entry of a group: the first 25, then the rest one click away.
 function entryList(cap, e, g, A) {
   const row = (x) => el("li", { "data-anchor": `entry:${x.i}` },
-    el("code", { text: `${x.method} ${x.host}${clip(x.path, 60)}` }),
+    el("code", { text: `${x.method} ${x.host}${x.path}${x.query && x.query.length ? `?${x.query.join("&")}` : ""}` }),
     el("span", { class: "meta", text: ` ${x.status || "–"} · ${x.t ? `${fmtClock(x.t)} · ` : ""}${fmtBytes(x.reqBytes)} → ${fmtBytes(x.resBytes)}${x.ws ? ` · ${fmtInt(x.ws)} frames` : ""}${x.eager ? "" : " · read on demand"} ` }),
-    bodyButtons(A, x.i, [["headers", "Headers"], ...(x.reqBytes ? [["request", "Request"]] : []), ...(x.ws ? [["frames", "Frames"]] : x.resBytes ? [["response", "Response"]] : [])], `${x.method} ${x.host}${clip(x.path, 40)}`, `entry:${x.i}`),
+    bodyButtons(A, x.i, [["headers", "Headers"], ...(x.reqBytes ? [["request", "Request"]] : []), ...(x.ws ? [["frames", "Frames"]] : x.resBytes ? [["response", "Response"]] : [])], `${x.method} ${x.host}${x.path}`, `entry:${x.i}`),
     readerAt(A, `entry:${x.i}`));
   const head = g.items.slice(0, 25), rest = g.items.slice(25);
   return [el("ul", { class: "net-entries" }, head.map(row)),
@@ -357,7 +357,7 @@ function telemetrySection(cap, trace, A) {
     const calls = [...new Set(r.items.map((x) => x.call).filter((x) => x != null))];
     const head = [el("span", { class: "meta", text: span(r.t0, r.t1) }), " ", el("b", { text: e.name }), r.count > 1 ? el("span", { class: "meta", text: ` ×${fmtInt(r.count)}` }) : null,
       ...calls.slice(0, 6).map(callLink), calls.length > 6 ? el("span", { class: "meta", text: ` and ${fmtInt(calls.length - 6)} more calls` }) : null,
-      metas.size === 1 && e.meta ? el("div", { class: "meta net-meta", text: metaLine(e.meta) }) : metas.size > 1 ? el("div", { class: "meta net-meta", text: `${fmtInt(metas.size)} different details: open to read each` }) : null];
+      metas.size === 1 && e.meta ? el("div", { class: "meta net-meta", text: metaLine(e.meta, Infinity) }) : metas.size > 1 ? el("div", { class: "meta net-meta", text: `${fmtInt(metas.size)} different details: open to read each` }) : null];
     if (r.count === 1) return el("li", { "data-net-key": `event:${e.name}` }, ...head);
     const key = `tdecision:${pick}|${k}`;
     return el("li", { "data-net-key": `event:${e.name}` }, el("details", { class: "net-run", "data-fold": key, open: foldOpen(key, false) || null }, el("summary", {}, ...head),
@@ -399,7 +399,7 @@ function onSection(cap, focus, A) {
   const catalog = () => fold([`Model catalog (${fmtInt(cap.catalog.length)}, ${fmtInt(cap.catalog.filter((m) => m.hidden).length)} hidden)`], false, "catalog",
     el("ul", { class: "items" }, cap.catalog.map((m) => el("li", { "data-net-key": `model:${m.slug}` }, el("b", { text: m.slug }), m.hidden ? el("span", { class: "net-mark warn", text: " hidden" }) : null,
       el("span", { class: "meta", text: ` ${m.visibility || ""}${m.baseInstructions ? ` · base instructions ${fmtInt(m.baseInstructions)} chars` : ""}` }),
-      Object.keys(m.switches || {}).length ? el("div", { class: "meta net-meta", text: shortJson(m.switches, 2000) }) : null))));
+      Object.keys(m.switches || {}).length ? el("div", { class: "meta net-meta", text: shortJson(m.switches, Infinity) }) : null))));
   if (product === "codex") {
     if (cap.flags.length) kids.push(flags("Feature states"));
     if (cap.catalog.length) kids.push(catalog());
@@ -407,7 +407,7 @@ function onSection(cap, focus, A) {
       const h = cap.handshake;
       kids.push(fold(["Websocket handshake", `${plural(h.betaFeatures.length, "beta feature")}`], false, "handshake",
         kv([["openai-beta", h.openaiBeta], ["x-codex-beta-features", h.betaFeatures.join(", ") || "–"], ["originator", h.originator], ["version", h.version], ["routing hint", h.routingHint],
-          ["x-codex-turn-metadata", h.turnMetadata ? el("code", { text: shortJson(h.turnMetadata, 2000) }) : "–", "decoded; identity redacted"]]),
+          ["x-codex-turn-metadata", h.turnMetadata ? el("code", { text: shortJson(h.turnMetadata, Infinity) }) : "–", "decoded; identity redacted"]]),
         cap.metrics && Object.keys(cap.metrics.names).length ? fold([`${fmtInt(Object.keys(cap.metrics.names).length)} metrics reported`], false, "metrics", el("ul", { class: "net-counts" }, Object.entries(cap.metrics.names).map(([n, c]) => el("li", {}, el("code", { text: n }), el("span", { class: "meta", text: ` ${fmtInt(c)}` }))))) : null,
         cap.metrics && cap.metrics.shadowSelectionMethods.length ? el("p", { class: "meta", text: `Skill shadow selection methods: ${cap.metrics.shadowSelectionMethods.join(", ")}` }) : null));
     }
@@ -466,7 +466,7 @@ function headersSection(cap) {
 function metaLine(m, max = 10) {
   if (!m || typeof m !== "object") return String(m ?? "");
   const skip = /^(subscription_type|cc_prompt_id)$/;
-  return Object.entries(m).filter(([k]) => !skip.test(k)).slice(0, max).map(([k, v]) => `${k}=${typeof v === "object" ? shortJson(v, max === Infinity ? 2000 : 60) : v}`).join(" · ");
+  return Object.entries(m).filter(([k]) => !skip.test(k)).slice(0, max).map(([k, v]) => `${k}=${typeof v === "object" ? shortJson(v, max === Infinity ? Infinity : 60) : v}`).join(" · ");
 }
 
 function revealFocus(focus) {
@@ -604,10 +604,10 @@ function callCard(cap, c, trace, A, at) {
     const notLog = [
       m.midSystem.length ? `${m.midSystem.length} mid-conversation system message${m.midSystem.length === 1 ? "" : "s"} (role "system"; ${fmtInt(m.midSystem.reduce((s, y) => s + y.chars, 0))} chars)` : null,
       m.toolAdditions.length ? `tool_addition parts: ${m.toolAdditions.flatMap((y) => y.names).join(", ")}` : null,
-      c.params.thinking ? `thinking ${shortJson(c.params.thinking, 400)}` : null,
+      c.params.thinking ? `thinking ${shortJson(c.params.thinking, Infinity)}` : null,
       c.params.effort ? `effort ${c.params.effort}` : null,
-      c.params.context_management ? `context_management ${shortJson(c.params.context_management, 400)}` : null,
-      c.params.diagnostics ? `diagnostics ${shortJson(c.params.diagnostics, 400)}` : null,
+      c.params.context_management ? `context_management ${shortJson(c.params.context_management, Infinity)}` : null,
+      c.params.diagnostics ? `diagnostics ${shortJson(c.params.diagnostics, Infinity)}` : null,
       c.params.metadataKeys.length ? `metadata keys: ${c.params.metadataKeys.join(", ")} (values redacted)` : null,
       c.params.max_tokens ? `max_tokens ${fmtInt(c.params.max_tokens)}` : null,
     ].filter(Boolean);
@@ -635,8 +635,8 @@ function callCard(cap, c, trace, A, at) {
       kv([
         ["Service", [r.service_tier, r.inference_geo].filter(Boolean).join(" · ") || "–"],
         r.iterations ? ["Iterations", r.iterations.map((y) => `${y.type}${y.model ? ` (${y.model})` : ""}`).join(", ")] : null,
-        ["Stop", [r.stop_reason, r.stop_details ? shortJson(r.stop_details, 400) : null].filter(Boolean).join(" · ") || (r.complete === false ? "the stream ended early" : "–")],
-        r.applied_edits && (!Array.isArray(r.applied_edits) || r.applied_edits.length) ? ["Context edits applied", shortJson(r.applied_edits, 600)] : null,
+        ["Stop", [r.stop_reason, r.stop_details ? shortJson(r.stop_details, Infinity) : null].filter(Boolean).join(" · ") || (r.complete === false ? "the stream ended early" : "–")],
+        r.applied_edits && (!Array.isArray(r.applied_edits) || r.applied_edits.length) ? ["Context edits applied", shortJson(r.applied_edits, Infinity)] : null,
         c.timing ? ["Server timing", metaLine(Object.fromEntries(Object.entries(c.timing).filter(([, v]) => v != null && typeof v !== "object")), Infinity)] : null,
       ])));
     if (c.rateLimit) kids.push(fold(["Rate limits at this call", Object.entries(c.rateLimit.windows).map(([w, y]) => `${w} ${pct(y.utilization)}`).concat(c.rateLimit.status ? [c.rateLimit.status] : []).join(" · ")], false, key("rate"), kv([
@@ -649,19 +649,19 @@ function callCard(cap, c, trace, A, at) {
       ["Input items", c.items.map((y) => `${y.type}${y.role ? ` (${y.role})` : ""}`).join(", ") || "–"],
       c.additionalTools.length ? ["additional_tools", c.additionalTools.join(", "), "tools travel as an input item, not in the log"] : null,
       c.previousResponseId ? ["Previous response", el("code", { text: c.previousResponseId })] : null,
-      ["Parameters", shortJson(c.params, 2000)],
-      c.turnMetadata ? ["x-codex-turn-metadata", shortJson(c.turnMetadata, 2000), "decoded; identity redacted"] : null,
+      ["Parameters", shortJson(c.params, Infinity)],
+      c.turnMetadata ? ["x-codex-turn-metadata", shortJson(c.turnMetadata, Infinity), "decoded; identity redacted"] : null,
     ])));
     const r = c.response || {}, u = c.usage || {};
     kids.push(fold(["The response", [r.service_tier, u.output_tokens != null ? `${fmtInt(u.output_tokens)} output tokens` : null].filter(Boolean).join(" · ")], false, key("response"), kv([
-      ["access_programs", shortJson(r.access_programs, 2000)], ["prompt_cache_retention", r.prompt_cache_retention || "–"], ["Service tier", r.service_tier || "–"],
+      ["access_programs", shortJson(r.access_programs, Infinity)], ["prompt_cache_retention", r.prompt_cache_retention || "–"], ["Service tier", r.service_tier || "–"],
       logged ? null : ["Input", fmtInt(u.input_tokens), u.input_tokens_details ? `cached ${fmtInt(u.input_tokens_details.cached_tokens)} · cache write ${fmtInt(u.input_tokens_details.cache_write_tokens)}` : null],
       logged ? null : ["Output", fmtInt(u.output_tokens), u.output_tokens_details ? `reasoning ${fmtInt(u.output_tokens_details.reasoning_tokens)}` : null],
-      c.promptCache ? ["Prompt cache", shortJson(c.promptCache, 2000)] : null,
-      c.metadata ? ["Response metadata", shortJson(c.metadata, 2000)] : null,
+      c.promptCache ? ["Prompt cache", shortJson(c.promptCache, Infinity)] : null,
+      c.metadata ? ["Response metadata", shortJson(c.metadata, Infinity)] : null,
     ]), logged ? el("p", { class: "note", text: "Token figures: in the Tokens table above, the log's beside the wire's." }) : null));
     if (c.attribution.length) kids.push(attributionTable(c, at, A, key));
-    if (c.rateLimits) kids.push(fold(["Rate limits at this call"], false, key("rate"), el("p", { class: "meta net-meta", text: shortJson(c.rateLimits, 4000) })));
+    if (c.rateLimits) kids.push(fold(["Rate limits at this call"], false, key("rate"), el("p", { class: "meta net-meta", text: shortJson(c.rateLimits, Infinity) })));
   }
   card.append(...kids);
   return card;
@@ -683,8 +683,8 @@ function attributionTable(c, at, A, key) {
     const label = blocks.length && agent ? blocks.map((b) => agent.blocks[b.block]?.label || "block").join(", ") : blocks.length ? `${blocks.length} block${blocks.length === 1 ? "" : "s"}` : "not in the log";
     const est = agent ? blocks.reduce((s, b) => s + (agent.blocks[b.block]?.est || 0), 0) : null;
     return el("tr", { class: blocks.length ? "" : "net-miss" },
-      el("td", {}, el("code", { text: a.id.length > 18 ? `${a.id.slice(0, 17)}…` : a.id, title: a.id })),
-      el("td", {}, blocks.length && agent ? el("button", { class: "linkbtn", type: "button", text: clip(label, 48), onclick: () => A.openBlockAt(agent.id, blocks[0].block) }) : label),
+      el("td", {}, el("code", { class: "net-id", text: a.id })),
+      el("td", {}, blocks.length && agent ? el("button", { class: "linkbtn", type: "button", text: clip(label, 48), title: label, onclick: () => A.openBlockAt(agent.id, blocks[0].block) }) : label),
       el("td", { class: "num", text: fmtInt(a.input) }), el("td", { class: "num", text: fmtInt(a.cached) }),
       el("td", { class: "num", text: est != null && blocks.length ? `≈ ${fmtTok(est)}${blocks.some((b) => b.exact === "part") ? " (split)" : ""}` : "–" }));
   };
