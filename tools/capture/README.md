@@ -102,11 +102,15 @@ Needs `mitmproxy` (`brew install mitmproxy`), `python3` and `node`.
   deleted when the command exits. `localhost` traffic (local MCP servers) is not proxied.
 - `trace_capture.py` keeps live traffic unchanged in memory, makes a detached copy at each checkpoint and scrubs that
   copy before any disk write. Requests still authenticate; the recording holds credential descriptions. Each credential is replaced where it
-  was by a description such as `Bearer <redacted by trace-capture: JWT | 1849 chars | fp 04b7401a | alg RS256 | claims
-  aud,exp,…,https://api.openai.com/profile{email,email_verified,name},… | issuer https://auth.openai.com | lifetime 10d>`:
-  its kind (OAuth access token, API key, npm token, JWT, cookie…), length, a fingerprint that matches the same value
-  elsewhere in the same capture (and is meaningless outside it), and for a JWT its algorithm, claim names, issuer,
-  audience, scopes and lifetime, never claim values. Cookies keep their names and Set-Cookie attributes. It covers auth,
+  was by a description such as `Bearer <redacted by trace-capture: JWT | 1849 chars | ends …x9Qw | fp 04b7401a | alg RS256 |
+  claims aud,exp,…,https://api.openai.com/profile{email,email_verified,name},… | issuer https://auth.openai.com |
+  lifetime 10d | issued 2026-09-30T15:51:00Z | expires 2026-10-10T15:51:00Z>`: its kind (OAuth access token, API key,
+  npm token, JWT, cookie…), length, its last four characters (for values of 16 or more, so you can tell which key it was:
+  against the one in your config, or across captures), a fingerprint that matches the same value elsewhere in the same
+  capture (and is meaningless outside it), and for a JWT its algorithm, claim names, issuer, audience, scopes, lifetime
+  and when it was issued and expires, never claim values. Account, organization and project ids get no ending. Trace
+  shows each credential with every send, its host and header, and the server's answer, so an expired or refused key
+  stands out. Cookies keep their names and Set-Cookie attributes. It covers auth,
   cookie and API-key headers, bearer tokens, JWTs, API keys and OAuth token fields in bodies and websocket frames, and
   token-like URL query parameters. Server-sent event streams pass through as they arrive, so an interactive session
   still streams, and are teed into the recording.

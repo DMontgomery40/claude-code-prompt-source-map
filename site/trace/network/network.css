@@ -93,3 +93,6 @@
   .net-spark { display: none; }
   .net-counts { columns: 1; }
 }
+/* A credential's sends (panel.js credentialCard): time, host, request, header, answer. */
+.net-sends { margin: 4px 0 2px; padding-left: 6ch; font: 12px/1.55 var(--mono); color: var(--ink-2); max-height: 40vh; overflow: auto; }
+.net-sends li { overflow-wrap: anywhere; }

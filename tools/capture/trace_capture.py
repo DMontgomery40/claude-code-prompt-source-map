@@ -115,7 +115,21 @@ def jwt_facts(token):
         facts.append("scopes " + ",".join(scopes))
     if isinstance(claims.get("exp"), (int, float)) and isinstance(claims.get("iat"), (int, float)):
         facts.append("lifetime " + _duration(claims["exp"] - claims["iat"]))
+    # When it was issued and when it stops working: what you need when a key may have expired.
+    for claim, label in (("iat", "issued"), ("nbf", "not before"), ("exp", "expires")):
+        when = _utc(claims.get(claim))
+        if when:
+            facts.append(f"{label} {when}")
     return facts
+
+
+def _utc(seconds):
+    if isinstance(seconds, bool) or not isinstance(seconds, (int, float)):
+        return None
+    try:
+        return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(seconds))
+    except (OverflowError, OSError, ValueError):
+        return None
 
 
 def _duration(seconds):
@@ -125,9 +139,18 @@ def _duration(seconds):
     return f"{int(seconds)}s"
 
 
+# A key's last characters, so it can be recognised: against the one in your config, or across captures
+# (fingerprints are keyed per run). Only for values long enough that four characters can't be used, and never
+# for identity (account, organization and project ids), which is described by kind alone.
+TAIL = re.compile(r"[A-Za-z0-9._~+/=-]{4}")
+IDENTITY_KINDS = {"ChatGPT account id", "OpenAI organization id", "OpenAI project id"}
+
+
 def describe(value, kind=None):
     token = value.strip()
     parts = [kind or token_kind(token), f"{len(token)} chars", f"fp {fingerprint(token)}"]
+    if parts[0] not in IDENTITY_KINDS and len(token) >= 16 and TAIL.fullmatch(token[-4:]):
+        parts.insert(2, f"ends …{token[-4:]}")
     if parts[0] == "JWT":
         parts += jwt_facts(token)
     return f"{PREFIX}: {' | '.join(parts)}>"

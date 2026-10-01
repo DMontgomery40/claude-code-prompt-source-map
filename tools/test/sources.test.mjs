@@ -82,7 +82,9 @@ test("a Claude Code session's sources: found, matched by time, snapshots, empty 
     if (r.kind === "files") r = await readSource(session.cc, id, { home: h, part: r.files[0].path });
     reads.push(r);
   }
-  assert.match(reads[0].text, /Bearer ‹redacted›/);
+  // A token reads as its kind, length and last four characters (so you can tell which one it was), never its value.
+  assert.match(reads[0].text, /Bearer ‹bearer token \| 36 chars \| ends …Wq7W›/);
+  assert.equal(reads[0].text.includes(TOKEN.slice(7)), false);
   assert.deepEqual(reads[1].rows.map((x) => x.display), ["mine"]);
   assert.equal(reads[3].kind, "note");
   assert.deepEqual(leaks(JSON.stringify([rep, reads])), [], "no token, email or credential leaves");

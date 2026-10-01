@@ -258,6 +258,47 @@ test("transit: the capture tool's descriptions, cookies and raw JWTs are read wi
 
 async function transitOf(file, trace) { return (await analyzeCapture([har(file)], trace)).capture; }
 
+test("transit: each credential says which key it was, what it is, and every send with the server's answer", async () => {
+  // Bug repro: the panel showed a rule chip and kinds, never which key went where, nor that a key was expired or
+  // refused. A capture from the capture tool now carries a key's last four characters and a JWT's times.
+  const cc = await claudeTrace();
+  const h = JSON.parse(readFileSync(join(NET, "claude-described.har"), "utf8"));
+  const oauth = "Bearer <redacted by trace-capture: Anthropic OAuth access token | 108 chars | ends …Zq_1 | fp 0a1b2c3d4e5f6071>";
+  for (const e of h.log.entries.slice(0, 2)) e.request.headers = e.request.headers.map((x) => (x.name === "authorization" ? { ...x, value: oauth } : x));
+  h.log.entries[1].response.status = 401;
+  // A second token of the same kind, on the same host and header: each counts its own sends.
+  const second = structuredClone(h.log.entries[0]);
+  second.startedDateTime = "2026-01-05T10:00:03.000Z";
+  second.request.headers = second.request.headers.map((x) => (x.name === "authorization" ? { ...x, value: "Bearer <redacted by trace-capture: Anthropic OAuth access token | 108 chars | ends …Yy_2 | fp 9999aaaa9999aaaa>" } : x));
+  h.log.entries.push(second);
+  const jwt = h.log.entries[3].request.headers.find((x) => x.name === "authorization");
+  jwt.value = jwt.value.replace(/>$/, " | issued 2026-01-05T09:00:00Z | expires 2026-01-05T10:00:02Z>");
+  const { transit } = (await analyzeCapture([{ name: "described-ends.har", text: JSON.stringify(h) }], cc)).capture;
+  const key = transit.credentials.find((c) => c.kind === "Anthropic OAuth access token" && c.fp === "0a1b2c3d");
+  const next = transit.credentials.find((c) => c.fp === "9999aaaa");
+  assert.deepEqual([next.ends, next.count, next.hosts], ["Yy_2", 1, ["api.anthropic.com"]]);
+  assert.deepEqual([key.ends, key.chars, key.fp, key.count], ["Zq_1", 108, "0a1b2c3d", 2], "its own sends, not every token on those headers");
+  assert.deepEqual(key.statuses, { 200: 1, 401: 1 });
+  assert.deepEqual([key.rejected, key.firstRejected], [1, Date.parse("2026-01-05T10:00:01.800Z")]);
+  assert.deepEqual(key.sends.map((x) => [x.host, x.method, x.url, x.where, x.status]), [
+    ["api.anthropic.com", "POST", "/v1/messages", "authorization", 200],
+    ["mcp-proxy.anthropic.com", "POST", "/v1/mcp/mcpsrv_01SYNTHETICserver0", "authorization", 401],
+  ]);
+  assert.deepEqual([key.first, key.last], [Date.parse("2026-01-05T10:00:01.500Z"), Date.parse("2026-01-05T10:00:01.800Z")]);
+  const token = transit.credentials.find((c) => c.kind === "JWT");
+  assert.deepEqual([token.jwt.issued, token.jwt.expires, token.afterExpiry], ["2026-01-05T09:00:00Z", "2026-01-05T10:00:02Z", 1], "sent 200 ms after it expired");
+  assert.equal(transit.credentials.find((c) => c.kind === "npm token").ends, null, "an older capture has no ending to show");
+  assert.deepEqual(transit.rows.find((r) => r.kind === "Anthropic OAuth access token" && r.host === "api.anthropic.com").ends, ["Zq_1", "Yy_2"], "a row lists each key it carried");
+  // In the headers view a credential reads as its description; identity stays removed; the value never shows.
+  const R = createRedactor();
+  const shown = R.headers([{ name: "authorization", value: oauth }, { name: "authorization", value: `Bearer ${PLANTED.bearer}` }, { name: "cookie", value: `sid=${PLANTED.bearer}; theme=dark` }, { name: "x-organization-uuid", value: PLANTED.org }]);
+  assert.equal(shown[0].value, "Bearer ‹Anthropic OAuth access token | 108 chars | ends …Zq_1 | fp 0a1b2c3d4e5f6071›");
+  assert.match(shown[1].value, new RegExp(`^Bearer ‹[^›]+ \\| ${PLANTED.bearer.length} chars \\| ends …${PLANTED.bearer.slice(-4).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}›$`));
+  assert.match(shown[2].value, /^sid=‹cookie value \| \d+ chars \| ends …\S{4}›; theme=‹cookie value \| 4 chars›$/);
+  assert.equal(shown[3].value, REDACTED);
+  assert.ok(!JSON.stringify(shown).includes(PLANTED.bearer) && !JSON.stringify(shown).includes(PLANTED.org));
+});
+
 test("transit: every one of the ten rules fires on the synthetic captures, and a first-party session header fires none", async () => {
   const cc = await claudeTrace(), cx = await codexTrace();
   const caps = [await transitOf("claude.har", cc), await transitOf("codex.har", cx), await transitOf("claude-described.har", cc)];

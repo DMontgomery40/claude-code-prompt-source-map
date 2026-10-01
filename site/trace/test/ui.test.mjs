@@ -941,6 +941,11 @@ test("network lens and On-the-wire card render for both products with nothing pl
     const text = lens.textContent;
     assert.ok(text.includes("What went over the wire") && text.includes("Sensitive data in transit") && text.includes("Endpoints by role"), file);
     assert.deepEqual(Object.entries(PLANTED).filter(([, v]) => text.includes(v)).map(([k]) => k), [], `${file}: the lens shows no planted value`);
+    // Each credential is listed by itself, with where it went, what the servers answered and every send.
+    const cards = lens.all(n => /\bnet-cred\b/.test(n.className));
+    assert.equal(cards.length, capture.transit.credentials.length, `${file}: a card per credential`);
+    assert.ok(text.includes("Credentials sent") && cards.every(c => /Server answers: (\d{3}|no answer recorded) ×/.test(c.textContent) && /Every send \(\d+\)/.test(c.textContent)), file);
+    if (file === "claude.har") assert.ok(cards.some(c => /ends …\S{4}/.test(c.textContent)), "a raw key shows its last four characters");
     // A call in the log opens its request; the request inspector then carries the card.
     const call = lens.all(n => n.tagName === "BUTTON" && n.className === "item" && !/not in your log/.test(n.textContent))[0];
     call.dispatch("click");

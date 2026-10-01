@@ -96,16 +96,16 @@ test("trace_capture.py replaces every credential kind with a description, idempo
 print(json.dumps({"once": once, "same": once == tc.scrub_text(once)}))`);
   assert.deepEqual(findSecrets(r.once), []);
   assert.equal(r.same, true);
-  assert.match(r.once, /Bearer <redacted by trace-capture: opaque token \| 32 chars \| fp [0-9a-f]{8}>/);
-  assert.match(r.once, /<redacted by trace-capture: Anthropic API key \| \d+ chars \| fp [0-9a-f]{8}>/);
-  assert.match(r.once, /"access_token":"<redacted by trace-capture: opaque token \| 30 chars \| fp [0-9a-f]{8}>"/);
+  assert.match(r.once, /Bearer <redacted by trace-capture: opaque token \| 32 chars \| ends …c3D4 \| fp [0-9a-f]{8}>/);
+  assert.match(r.once, /<redacted by trace-capture: Anthropic API key \| \d+ chars \| ends …xxxx \| fp [0-9a-f]{8}>/);
+  assert.match(r.once, /"access_token":"<redacted by trace-capture: opaque token \| 30 chars \| ends …tttt \| fp [0-9a-f]{8}>"/);
 });
 
-test("a JWT is described by its shape (algorithm, claim names, issuer, audience, scopes, lifetime), never its identity claims", { skip: !python && "python3 not available" }, () => {
+test("a JWT is described by its shape (algorithm, claim names, issuer, audience, scopes, lifetime, times), never its identity claims", { skip: !python && "python3 not available" }, () => {
   const r = runAddon(`print(json.dumps(tc.describe(${JSON.stringify(JWT_WITH_CLAIMS)})))`);
-  assert.match(r, /^<redacted by trace-capture: JWT \| \d+ chars \| fp [0-9a-f]{8} \| alg RS256 \| /);
+  assert.match(r, /^<redacted by trace-capture: JWT \| \d+ chars \| ends …dXJl \| fp [0-9a-f]{8} \| alg RS256 \| /);
   assert.match(r, /claims aud,email,exp,https:\/\/api\.example\.test\/auth\{account_id,plan\},iat,iss,scp,sub/);
-  assert.match(r, /issuer https:\/\/auth\.example\.test \| audience https:\/\/api\.example\.test\/v1 \| scopes openid,offline_access \| lifetime 10d>$/);
+  assert.match(r, /issuer https:\/\/auth\.example\.test \| audience https:\/\/api\.example\.test\/v1 \| scopes openid,offline_access \| lifetime 10d \| issued 2026-09-21T14:13:20Z \| expires 2026-10-01T14:13:20Z>$/);
   for (const secret of ["SECRETSUBJECT", "someone@", "acct-SECRET", "pro;"]) assert.equal(r.includes(secret), false, secret);
 });
 
@@ -128,10 +128,10 @@ print(json.dumps({
   "query": dict(once), "stable": once == q.pairs}))`);
   assert.match(r.cookie, /^session=<redacted by trace-capture: cookie value \| 12 chars \| fp [0-9a-f]{8}>; theme=<redacted by trace-capture: cookie value \| 4 chars \| fp [0-9a-f]{8}>$/);
   assert.match(r.set, /^__Secure-session=<redacted by trace-capture: cookie value \| 12 chars \| fp [0-9a-f]{8}>; Path=\/; Secure; HttpOnly; SameSite=Lax$/);
-  assert.match(r.auth, /^Bearer <redacted by trace-capture: opaque token \| 32 chars \| fp [0-9a-f]{8}>$/);
+  assert.match(r.auth, /^Bearer <redacted by trace-capture: opaque token \| 32 chars \| ends …c3D4 \| fp [0-9a-f]{8}>$/);
   assert.match(r.account, /^<redacted by trace-capture: ChatGPT account id \| 36 chars \| fp [0-9a-f]{8}>$/);
   assert.equal(r.dd[0], true);
-  assert.match(r.dd[1], /^<redacted by trace-capture: Datadog client key \| 35 chars \| fp [0-9a-f]{8}>$/);
+  assert.match(r.dd[1], /^<redacted by trace-capture: Datadog client key \| 35 chars \| ends …0000 \| fp [0-9a-f]{8}>$/);
   assert.equal(r.again.match(/redacted/g).length, 1);
   assert.equal(r.query.limit, "20");
   assert.equal(r.query.k, "client-public-key");

@@ -2,7 +2,10 @@
 // by kind, host, channel and path, and the ways of sending that are "not the best way" (the 10 rules
 // below). Values are never kept: a row says what kind of thing went where, how often, first when, and a
 // fingerprint (the capture tool's, or Trace's own keyed hash under a key made for this load and never
-// stored) so equal values can be grouped. Runs in the worker on the raw capture, in two passes:
+// stored) so equal values can be grouped. A credential also keeps its last four characters (so you can tell which
+// key it was) and, for a JWT, when it was issued and expires; every send of it keeps its time, host, request and
+// the server's answer, which is how an expired or rejected key shows. Runs in the worker on the raw capture, in
+// two passes:
 //   collect() before anything is redacted: it decodes raw JWTs and hands the identity inside them (email,
 //     name) to the redactor, so they are removed everywhere, and remembers them to find them in prompt text;
 //   report() after the findings: it walks the entries again and returns the rows.
@@ -28,7 +31,8 @@ export function partyOf(product, host) {
 }
 
 // ---------------------------------------------------------------- the capture tool's descriptions
-// <redacted by trace-capture: KIND | N chars | fp X | alg A | claims a,b{x,y} | issuer U | audience U | scopes s,t | lifetime 10d>
+// <redacted by trace-capture: KIND | N chars | ends …WXYZ | fp X | alg A | claims a,b{x,y} | issuer U | audience U |
+//   scopes s,t | lifetime 10d | issued T | not before T | expires T>   (ends and the times: captures from 2026-09-30 on)
 // (";" separates in some captures), <redacted Nch>, or a bare <redacted by trace-capture>.
 const DESCRIPTION = /<redacted(?: by trace-capture)?(?::\s*([^>]*)| (\d+)ch)?>/g;
 export function descriptions(s) {
@@ -52,6 +56,8 @@ export function parseDescription(body, legacyChars) {
     else if ((m = /^audience (.+)$/.exec(p))) d.audience = m[1];
     else if ((m = /^scopes (.+)$/.exec(p))) d.scopes = m[1].split(/[,\s]+/).filter(Boolean);
     else if ((m = /^lifetime (\S+)$/.exec(p))) d.lifetime = m[1];
+    else if ((m = /^ends …(\S{4})$/.exec(p))) d.ends = m[1];
+    else if ((m = /^(issued|not before|expires) (\d{4}-\d\d-\d\dT[\d:]+Z)$/.exec(p))) d[{ issued: "issued", "not before": "notBefore", expires: "expires" }[m[1]]] = m[2];
   }
   return d;
 }
@@ -91,7 +97,9 @@ export function decodeJwt(token) {
     const aud = Array.isArray(body.aud) ? body.aud.join(",") : body.aud;
     const scopes = Array.isArray(body.scp) ? body.scp : typeof body.scope === "string" ? body.scope.split(/\s+/) : Array.isArray(body.scope) ? body.scope : null;
     const life = Number.isFinite(body.exp) && Number.isFinite(body.iat) ? body.exp - body.iat : null;
-    return { alg: head.alg || null, claims, issuer: typeof body.iss === "string" ? body.iss : null, audience: typeof aud === "string" ? aud : null, scopes, lifetime: life != null ? fmtLife(life) : null, lifetimeSeconds: life, personal };
+    const at = (x) => { try { return Number.isFinite(x) ? new Date(x * 1000).toISOString().replace(/\.\d+Z$/, "Z") : null; } catch { return null; } };
+    return { alg: head.alg || null, claims, issuer: typeof body.iss === "string" ? body.iss : null, audience: typeof aud === "string" ? aud : null, scopes, lifetime: life != null ? fmtLife(life) : null, lifetimeSeconds: life,
+      issued: at(body.iat), notBefore: at(body.nbf), expires: at(body.exp), personal };
   } catch { return null; }
 }
 function fmtLife(s) { return s >= 86400 ? `${Math.round(s / 86400)}d` : s >= 3600 ? `${Math.round(s / 3600)}h` : `${Math.round(s / 60)}m`; }
@@ -188,8 +196,18 @@ export function collectTransit({ entries, R }) {
 export async function reportTransit({ product, entries, R, personal }) {
   const fpOf = await fingerprinter();
   const rows = new Map();
+  // One record per credential (by fingerprint): what it is, and every send of it.
+  const creds = new Map();
   const occ = async (o) => {
     const fp = o.fp ? { v: o.fp, src: "capture" } : o.value != null ? { v: await fpOf(String(o.value)), src: "trace" } : null;
+    if (o.cat === "credential" && fp) {
+      const k = `${fp.src}\u0000${fp.v}`;
+      let c = creds.get(k);
+      if (!c) creds.set(k, c = { kind: o.kind, fp: fp.v.slice(0, 8), source: fp.src, ends: null, chars: o.details?.chars ?? null, jwt: null, sends: [] });
+      if (o.ends && !c.ends) c.ends = o.ends;
+      if (o.jwt && !c.jwt) c.jwt = { alg: o.jwt.alg || null, issuer: o.jwt.issuer || null, audience: o.jwt.audience || null, scopes: o.jwt.scopes || null, lifetime: o.jwt.lifetime || null, issued: o.jwt.issued || null, notBefore: o.jwt.notBefore || null, expires: o.jwt.expires || null };
+      c.sends.push({ t: o.t ?? null, host: o.host, method: o.method || null, url: o.urlPath ? R.str(o.urlPath) : "", channel: o.channel, where: o.path ? scrubPath(R, o.path) : "", status: o.status ?? null, entry: o.entry });
+    }
     const path = o.path ? scrubPath(R, o.path) : "";
     const key = [o.cat, o.kind, o.host, o.channel, path, fp ? fp.src : ""].join("\u0000");
     let r = rows.get(key);
@@ -197,6 +215,7 @@ export async function reportTransit({ product, entries, R, personal }) {
     r.count++;
     if (o.t != null && (r.first == null || o.t < r.first)) r.first = o.t;
     if (fp) r.fps.add(fp.v);
+    if (o.ends) (r.ends ||= new Set()).add(o.ends);
     for (const [k, v] of Object.entries(o.details || {})) if (v != null && r.details[k] == null) r.details[k] = v;
     for (const n of o.rules || []) r.rules.add(n);
     for (const n of o.notes || []) r.notes.add(n);
@@ -208,12 +227,12 @@ export async function reportTransit({ product, entries, R, personal }) {
   // A credential found as text: a capture-tool description, or a raw value.
   const credentialFacts = (value, where) => {
     const ds = descriptions(value);
-    if (ds.length) return ds.map((d) => ({ kind: d.kind || credentialKind("", where), chars: d.chars, fp: d.fp, jwt: d.alg || d.claims ? { alg: d.alg, claims: d.claims || [], issuer: d.issuer, audience: d.audience, scopes: d.scopes, lifetime: d.lifetime } : null, described: d.described, value: null }));
+    if (ds.length) return ds.map((d) => ({ kind: d.kind || credentialKind("", where), chars: d.chars, fp: d.fp, ends: d.ends || null, jwt: d.alg || d.claims ? { alg: d.alg, claims: d.claims || [], issuer: d.issuer, audience: d.audience, scopes: d.scopes, lifetime: d.lifetime, issued: d.issued, notBefore: d.notBefore, expires: d.expires } : null, described: d.described, value: null }));
     const v = String(value).replace(/^(bearer|basic)\s+/i, "").trim();
     if (!v) return [];
     const kind = credentialKind(v, where);
     const jwt = kind === "JWT" ? decodeJwt(v) : null;
-    return [{ kind, chars: v.length, fp: null, jwt: jwt ? { alg: jwt.alg, claims: jwt.claims, issuer: jwt.issuer, audience: jwt.audience, scopes: jwt.scopes, lifetime: jwt.lifetime } : null, described: null, value: v }];
+    return [{ kind, chars: v.length, fp: null, ends: v.length >= 16 ? v.slice(-4) : null, jwt: jwt ? { alg: jwt.alg, claims: jwt.claims, issuer: jwt.issuer, audience: jwt.audience, scopes: jwt.scopes, lifetime: jwt.lifetime, issued: jwt.issued, notBefore: jwt.notBefore, expires: jwt.expires } : null, described: null, value: v }];
   };
   const jwtRules = (jwt) => {
     const rules = [], notes = [];
@@ -231,7 +250,7 @@ export async function reportTransit({ product, entries, R, personal }) {
       const j = jwtRules(f.jwt);
       const rules = [...j.rules, ...(base.rules || [])];
       if (/client key/.test(f.kind) && partyOf(product, base.host) === "third") rules.push(10);
-      await occ({ ...base, cat: /account id|user id|organization id|device id|installation id|session id|email/i.test(f.kind) ? "identity" : "credential", kind: f.kind, fp: f.fp, value: f.value,
+      await occ({ ...base, cat: /account id|user id|organization id|device id|installation id|session id|email/i.test(f.kind) ? "identity" : "credential", kind: f.kind, fp: f.fp, value: f.value, ends: f.ends, jwt: f.jwt,
         details: { chars: f.chars, described: f.described, ...(f.jwt ? { alg: f.jwt.alg, claims: f.jwt.claims, issuer: f.jwt.issuer, audience: f.jwt.audience, scopes: f.jwt.scopes, lifetime: f.jwt.lifetime } : {}), ...(base.details || {}) },
         rules, notes: [...j.notes, ...(base.notes || [])] });
     }
@@ -292,11 +311,11 @@ export async function reportTransit({ product, entries, R, personal }) {
   };
 
   for (const { info, entry, reqJson, resJson, frames, call } of entries) {
-    const base = { host: info.host, t: info.t, entry: info.i, call: call ?? null };
-    const model = info.role === "model" || info.role === "side";
     // The URL: plain http, ids and credentials in the path or the query.
     let u = null;
     try { u = new URL(entry.request.url); } catch { u = null; }
+    const base = { host: info.host, t: info.t, entry: info.i, call: call ?? null, method: entry.request.method || null, status: entry.response?.status || null, urlPath: u ? u.pathname : "" };
+    const model = info.role === "model" || info.role === "side";
     if (u && u.protocol === "http:" && partyOf(product, info.host) !== "local") await occ({ ...base, cat: "transport", kind: "plain http", channel: "URL", path: "", rules: [8] });
     if (u) {
       const segs = u.pathname.split("/");
@@ -348,7 +367,9 @@ export async function reportTransit({ product, entries, R, personal }) {
   for (const [k, hosts] of byFp) {
     const [src, fp] = k.split("\u0000");
     const rs = list.filter((r) => r.cat === "credential" && r.fpSource === src && r.fps.has(fp));
-    credentials.push({ kind: rs[0].kind, fp: fp.slice(0, 8), source: src, hosts: [...hosts], count: rs.reduce((s, r) => s + r.count, 0), chars: rs[0].details.chars ?? null });
+    // Its own count: a row's count is every value of its kind on that host and header, not this one's.
+    const c = creds.get(k);
+    credentials.push({ ...credentialRecord(c), kind: rs[0].kind, fp: fp.slice(0, 8), source: src, hosts: [...hosts], count: c ? c.sends.length : rs.reduce((s, r) => s + r.count, 0), chars: rs[0].details.chars ?? null });
     if (hosts.size > 1) for (const r of rs) { r.rules.add(5); r.notes.add(`same credential on ${hosts.size} hosts: ${[...hosts].join(", ")}`); }
   }
   // A second credential: another kind of user credential (cookies and public client keys don't count).
@@ -369,12 +390,31 @@ export async function reportTransit({ product, entries, R, personal }) {
 
   const out = list.map((r, id) => ({
     id, cat: r.cat, kind: r.kind, host: r.host, party: r.party, channel: r.channel, path: r.path, count: r.count, first: r.first,
-    values: r.fps.size || null, fp: [...r.fps].slice(0, 3).map((x) => x.slice(0, 8)), fpSource: r.fpSource, details: cleanDetails(R, r.details),
+    values: r.fps.size || null, fp: [...r.fps].slice(0, 3).map((x) => x.slice(0, 8)), fpSource: r.fpSource, ends: r.cat === "credential" && r.ends ? [...r.ends].slice(0, 3) : [], details: cleanDetails(R, r.details),
     rules: [...r.rules].sort((a, b) => a - b), notes: [...r.notes].map((n) => R.str(n)), entries: [...r.entries], calls: [...r.calls], prompt: r.prompt,
   })).sort((a, b) => b.rules.length - a.rules.length || (a.cat === b.cat ? 0 : a.cat === "credential" ? -1 : 1) || b.count - a.count);
   out.forEach((r, i) => { r.id = i; });
   const rules = RULES.map((x) => ({ ...x, rows: out.filter((r) => r.rules.includes(x.id)).length })).filter((x) => x.rows);
   return { rows: out, rules, credentials: credentials.map((c) => ({ ...c, hosts: c.hosts })), counts: { credential: out.filter((r) => r.cat === "credential").length, identity: out.filter((r) => r.cat === "identity").length, flagged: out.filter((r) => r.rules.length).length } };
+}
+
+// A credential's record for the page: its last characters and JWT facts, when it was first and last sent, the
+// server's answers (401 and 403 are how an expired or revoked key shows), and every send in time order.
+const MAX_SENDS = 2000;
+function credentialRecord(c) {
+  if (!c) return { ends: null, jwt: null, first: null, last: null, statuses: {}, rejected: 0, firstRejected: null, afterExpiry: 0, sends: [], moreSends: 0 };
+  const sends = c.sends.slice().sort((a, b) => (a.t ?? 0) - (b.t ?? 0));
+  const times = sends.map((x) => x.t).filter((t) => t != null);
+  const statuses = {};
+  for (const x of sends) if (x.status != null) statuses[x.status] = (statuses[x.status] || 0) + 1;
+  const rejected = sends.filter((x) => x.status === 401 || x.status === 403);
+  const exp = c.jwt?.expires ? Date.parse(c.jwt.expires) : NaN;
+  return {
+    ends: c.ends, jwt: c.jwt, first: times.length ? times[0] : null, last: times.length ? times[times.length - 1] : null, statuses,
+    rejected: rejected.length, firstRejected: rejected.length ? rejected[0].t : null,
+    afterExpiry: Number.isFinite(exp) ? sends.filter((x) => x.t != null && x.t > exp).length : 0,
+    sends: sends.slice(0, MAX_SENDS), moreSends: Math.max(0, sends.length - MAX_SENDS),
+  };
 }
 
 function cleanDetails(R, d) {

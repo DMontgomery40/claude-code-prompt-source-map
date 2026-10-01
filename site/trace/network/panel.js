@@ -75,6 +75,43 @@ function transitLine(r) {
 function ruleChips(r) {
   return r.rules.map((id) => { const x = RULES.find((y) => y.id === id); return el("span", { class: "net-rule", title: x ? `${x.title}: ${x.why}` : "", text: `${id}` }); });
 }
+// ---------------------------------------------------------------- credentials, one by one
+const clockS = (t) => new Date(t).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" }).toLowerCase();
+const whenIso = (iso) => { const t = Date.parse(iso); return Number.isFinite(t) ? `${fmtWhen(t)} (${iso})` : iso; };
+// Which key it was (kind, last four characters, length, fingerprint), what it is (a JWT's issuer, scopes and
+// times), where and when it went, what each server answered (a 401 or 403 is how an expired or revoked key
+// shows), and every send. The value itself never reaches the page.
+function credentialCard(c) {
+  const jwt = c.jwt, exp = jwt?.expires ? Date.parse(jwt.expires) : NaN;
+  const head = [c.kind, c.ends ? `ends …${c.ends}` : null, c.chars != null ? `${fmtInt(c.chars)} chars` : null, `fp ${c.fp}${c.source === "capture" ? " (capture tool)" : ""}`].filter(Boolean).join(" · ");
+  const where = [...new Set(c.sends.map((x) => (x.where ? `${x.where} (${x.channel})` : x.channel)))].join(", ");
+  const total = c.sends.length + (c.moreSends || 0);
+  const answered = Object.values(c.statuses || {}).reduce((n, x) => n + x, 0);
+  const statuses = [...Object.entries(c.statuses || {}).sort((a, b) => b[1] - a[1]).map(([code, n]) => `${code} ×${fmtInt(n)}`),
+    total > answered ? `no answer recorded ×${fmtInt(total - answered)}` : null].filter(Boolean).join(" · ");
+  return el("li", { class: `net-transit net-cred${c.rejected || c.afterExpiry ? " flagged" : ""}`, "data-net-key": `cred:${c.source}:${c.fp}` },
+    el("div", { class: "net-transit-head" }, el("span", { class: "net-cat credential", text: "credential" }), el("b", { text: head })),
+    el("div", { class: "meta", text: `${fmtInt(c.count)}× to ${c.hosts.join(", ")}${where ? ` · in ${where}` : ""}${c.first ? ` · first ${clockS(c.first)}` : ""}${c.last && c.last !== c.first ? ` · last ${clockS(c.last)}` : ""}` }),
+    !c.ends && c.source === "capture" ? el("div", { class: "note", text: "Recorded before the capture tool kept a key's last four characters; a new recording shows them." }) : null,
+    jwt ? el("div", { class: "meta", text: [jwt.alg && `alg ${jwt.alg}`, jwt.issuer && `issuer ${jwt.issuer}`, jwt.audience && `audience ${jwt.audience}`, jwt.scopes && jwt.scopes.length ? `scopes ${jwt.scopes.join(", ")}` : null, jwt.lifetime && `lifetime ${jwt.lifetime}`, jwt.issued && `issued ${whenIso(jwt.issued)}`, jwt.notBefore && `not before ${whenIso(jwt.notBefore)}`, jwt.expires && `expires ${whenIso(jwt.expires)}`].filter(Boolean).join(" · ") }) : null,
+    Number.isFinite(exp) && c.last != null ? el("div", { class: c.afterExpiry ? "warnline" : "note", text: c.afterExpiry ? `Sent ${fmtInt(c.afterExpiry)}× after it expired at ${clockS(exp)}.` : `Still valid at its last send; it expires ${fmtWhen(exp)}.` }) : null,
+    statuses ? el("div", { class: c.rejected ? "warnline" : "meta", text: `Server answers: ${statuses}${c.rejected ? ` · first 401/403 at ${clockS(c.firstRejected)}` : ""}` }) : null,
+    fold(`Every send (${fmtInt(total)})`, false, `cred-sends:${c.source}:${c.fp}`,
+      el("ol", { class: "net-sends" }, c.sends.map((x) => el("li", {}, `${x.t != null ? clockS(x.t) : "–"} · ${x.host} · ${[x.method, x.url].filter(Boolean).join(" ")} · ${x.where || x.channel}`,
+        x.status != null ? chipText(String(x.status), x.status >= 400 ? "warn" : "") : null))),
+      c.moreSends ? el("p", { class: "note", text: `and ${fmtInt(c.moreSends)} more` }) : null));
+}
+// Rejected or expired first, then the most used; cookie values after the keys and tokens. The first ten show; the
+// rest are a fold away (opened when the palette points into one).
+const credOrder = (a, b) => (b.rejected + b.afterExpiry > 0) - (a.rejected + a.afterExpiry > 0) || (a.kind === "cookie value") - (b.kind === "cookie value") || b.count - a.count;
+function credentialList(list, focus) {
+  if (!list.length) return [];
+  const all = list.slice().sort(credOrder), head = all.slice(0, 10), rest = all.slice(10);
+  const inRest = focus && rest.some((c) => focus.key === `cred:${c.source}:${c.fp}`);
+  return [el("ul", { class: "items net-transit-list" }, head.map(credentialCard)),
+    rest.length ? fold(`${fmtInt(rest.length)} more credentials`, inRest, "cred-rest", el("ul", { class: "items net-transit-list" }, rest.map(credentialCard))) : null];
+}
+
 function transitRow(r, capture) {
   const { what, where } = transitLine(r);
   const d = r.details || {};
@@ -82,6 +119,7 @@ function transitRow(r, capture) {
   return el("li", { class: `net-transit ${r.rules.length ? "flagged" : ""}`, "data-net-key": `transit:${r.id}` },
     el("div", { class: "net-transit-head" },
       el("span", { class: `net-cat ${r.cat}`, text: r.cat }), el("b", { text: what }), ...ruleChips(r)),
+    r.ends && r.ends.length ? el("div", { class: "meta", text: `ends …${r.ends.join(", …")}` }) : null,
     el("div", { class: "meta" }, `${r.host} `, chipText(r.party === "third" ? "third party" : r.party === "local" ? "this machine" : "first party", r.party), ` · ${where} · ${fmtInt(r.count)}×${r.first ? ` · first ${fmtClock(r.first)}` : ""}${r.values > 1 ? ` · ${fmtInt(r.values)} different values` : ""}${r.fp && r.fp.length ? ` · fp ${r.fp[0]}${r.fpSource === "capture" ? " (capture tool)" : ""}` : ""}${d.described === "old" || d.described === "bare" ? " · redacted before Trace saw it" : ""}`),
     jwt ? el("div", { class: "meta" }, jwt) : null,
     d.fields ? el("div", { class: "meta", text: `with ${d.fields}` }) : null,
@@ -127,8 +165,11 @@ export function networkLens(S, A) {
     const flagged = tr.rows.filter((r) => r.rules.length), rest = tr.rows.filter((r) => !r.rules.length);
     const multi = tr.credentials.filter((c) => c.hosts.length > 1);
     out.push(section("Sensitive data in transit",
-      el("p", { class: "note", text: "Where credentials and identity travel: kinds, hosts, channels and counts. Values are never shown; a fingerprint (fp) is a keyed hash made for this load only, so equal values can be matched." }),
-      el("p", { class: "meta", text: `${fmtInt(tr.counts.credential)} credential and ${fmtInt(tr.counts.identity)} identity places · ${fmtInt(tr.counts.flagged)} flagged` }),
+      el("p", { class: "note", text: "Where credentials and identity travel: kinds, hosts, channels and counts. A credential shows its kind, length and last four characters (so you can tell which key it was), its JWT issuer, scopes and times, and every send with the server's answer; its full value is never shown. Identity values are removed. A fingerprint (fp) groups equal values within this capture." }),
+      el("p", { class: "meta", text: `${fmtInt(tr.credentials.length)} credentials · ${fmtInt(tr.counts.credential)} credential and ${fmtInt(tr.counts.identity)} identity places · ${fmtInt(tr.counts.flagged)} flagged` }),
+      tr.credentials.length ? el("h4", { text: "Credentials sent" }) : null,
+      ...credentialList(tr.credentials, focus),
+      el("h4", { text: "Where they travel" }),
       tr.rules.length ? el("ol", { class: "net-rules" }, tr.rules.map((x) => el("li", { "data-rule": x.id }, el("b", { text: `${x.id}. ${x.title}` }), el("span", { class: "note", text: ` ${x.why} (${fmtInt(x.rows)})` })))) : el("p", { class: "note", text: "None of the ten rules fired." }),
       multi.length ? el("p", { class: "warnline", text: multi.map((c) => `The same ${c.kind} goes to ${c.hosts.length} hosts: ${c.hosts.join(", ")}.`).join(" ") }) : null,
       el("ul", { class: "items net-transit-list" }, flagged.map((r) => transitRow(r, cap))),
