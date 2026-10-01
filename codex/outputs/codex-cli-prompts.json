@@ -1,9 +1,9 @@
 {
   "source": {
     "repository": "openai/codex",
-    "tag": "rust-v0.159.0",
-    "commit": "687a119f0fcaace47e1f1abcc77cec6c813fd6da",
-    "cli_version": "codex-cli 0.159.0"
+    "tag": "rust-v0.159.2",
+    "commit": "ff6aec96948b70d94983af2641a6b67c94faeff5",
+    "cli_version": "codex-cli 0.159.2"
   },
   "items": [
     {

@@ -1,38 +1,38 @@
 {
  "asar": {
-  "bytes": 533121319,
-  "entries": 20352,
+  "bytes": 533189228,
+  "entries": 20359,
   "paths": [
    ".vite/build/_baseSlice-BXYPgFit.js",
    ".vite/build/app-protocol-DaeIspKt.js",
    ".vite/build/application-network-startup-D74LEWDz.js",
-   ".vite/build/bootstrap-ClH9X4Aa.js",
+   ".vite/build/bootstrap-B7ariqxX.js",
    ".vite/build/browser-background-switches-BqIMvv24.js",
    ".vite/build/browser-page-preload.js",
    ".vite/build/build-flavor-IWwoo-v9.js",
-   ".vite/build/capture-FpdrU5P6.js",
+   ".vite/build/capture-Co6M_NLD.js",
    ".vite/build/character-preview-aWZT6FxB.js",
    ".vite/build/core-B-w7xKIn.js",
    ".vite/build/core-DlTZhmo0.js",
    ".vite/build/desktop-open-path-queue-BHXvnlW9.js",
-   ".vite/build/dist-GXhDbIGm.js",
+   ".vite/build/dist-DIN9p4ot.js",
    ".vite/build/early-bootstrap.js",
    ".vite/build/electron-resources-path-5IMYgkOb.js",
    ".vite/build/logger-CUwSCKgw.js",
-   ".vite/build/main-DPn4U9E8.js",
+   ".vite/build/main-BbeJ4AAR.js",
    ".vite/build/mcp-app-attachment-FKHSY4wH.js",
    ".vite/build/path-browserify-win32-DubphUXU.js",
    ".vite/build/preload.js",
-   ".vite/build/record-aeon-assistant-message-delivery-dTz6-8B5.js",
+   ".vite/build/record-aeon-assistant-message-delivery-CNVrpbk0.js",
    ".vite/build/rolldown-runtime-CPUxUITh.js",
    ".vite/build/sandbox-preload.js",
-   ".vite/build/service-D_DRdjOb.js",
-   ".vite/build/skills-C63ZAnKS.js",
+   ".vite/build/service-CfoPTlYu.js",
+   ".vite/build/skills-dBJL9FsS.js",
    ".vite/build/src-BSoROW9v.js",
    ".vite/build/src-C9YLnbgY.js",
    ".vite/build/src-ghAWefM3.js",
    ".vite/build/startup-requirements-Da3KfG8r.js",
-   ".vite/build/upload-5lE9t64o.js",
+   ".vite/build/upload-BDaLOHBf.js",
    ".vite/build/windows-file-copy-BC90BUDy.js",
    ".vite/build/worker.js",
    ".vite/build/zod-ClKgiFhi.js",
@@ -318,8 +318,8 @@
     ]
    },
    "version": {
-    "CFBundleShortVersionString": "26.928.20755",
-    "CFBundleVersion": "12246"
+    "CFBundleShortVersionString": "26.928.21956",
+    "CFBundleVersion": "12404"
    }
   },
   "Contents/Frameworks/Codex Framework.framework": {
@@ -874,7 +874,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Codex Framework": {
    "kind": "macho-dylib",
-   "sha256": "67506a9ed770d4f5a756d30600ed8768d914e5e5589c07b0d18a75d290154c19",
+   "sha256": "07c1ac7cbeee1746745ce9bb5ea308825d8bbb51922403a912ff9ddcc9d97012",
    "size": 272109248
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/Info.plist": {
@@ -884,7 +884,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/MacOS/Codex (Alerts)": {
    "kind": "macho-executable",
-   "sha256": "ed5c1cc1131f8206e843a3ec0c538eefbcfb8f44fd60995bea058208945933ab",
+   "sha256": "d3d4ebbb444ab80cb875910a235d7841e8950c97ac2c89ac359ba63cc98b787c",
    "size": 87520
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/PkgInfo": {
@@ -899,7 +899,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/MacOS/Codex (Aperitif Alerts)": {
    "kind": "macho-executable",
-   "sha256": "4e69a1d344eab51a4c63431c07ba59082a1478e5e07152f3f8d575e556b1b0e3",
+   "sha256": "9564e94770e3960a7e7c8b9a858882e78ce0fbc911b108327c10f2213a2222d2",
    "size": 51568
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/PkgInfo": {
@@ -914,7 +914,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/MacOS/Codex (Aperitif GPU)": {
    "kind": "macho-executable",
-   "sha256": "a3c334aae0a623fd76b69b57a8c56c6fbc7e1c4b80ce96a526ef92db6f22d315",
+   "sha256": "1bd9eddf2d53545addb5ef95b756f6a20c1c7d6b31218c82b3ac5348bc2728b9",
    "size": 51568
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/PkgInfo": {
@@ -929,7 +929,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/MacOS/Codex (Aperitif Renderer)": {
    "kind": "macho-executable",
-   "sha256": "dbb66afe04271b5349b13d950c9510cff340b169cd31a282616e8f9f95d9e15e",
+   "sha256": "efe44c3adbacbf1235332e1387f66b41619e46d4d56bc0b4a032c8f80126c526",
    "size": 51568
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/PkgInfo": {
@@ -944,7 +944,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/MacOS/Codex (Aperitif)": {
    "kind": "macho-executable",
-   "sha256": "84d155996168ac5b34f2b0f0ca0f3b705b461360aa8785d0ffe585180ec17827",
+   "sha256": "e113c948a656f85c1a693901176264b8fe174c5184b3f1c88e7c6203d09283f6",
    "size": 51568
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/PkgInfo": {
@@ -959,7 +959,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/MacOS/Codex (GPU)": {
    "kind": "macho-executable",
-   "sha256": "2d39444e8f48e988d4b78f283754986342b7e03eb57f4e9a81eb651e43c1a18a",
+   "sha256": "5ab71b43b367def5fd3f173d6611bd4661c15f228b49755e26136f96271fc848",
    "size": 87520
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/PkgInfo": {
@@ -974,7 +974,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)": {
    "kind": "macho-executable",
-   "sha256": "9e6bf6c8b180bc20273efb3c1baab1058d6af5aef768004f952525c347816bc5",
+   "sha256": "a81c68cd902c3754adc2ef52116b9e340ca2ae0ed0a82698ceaabcfd05238061",
    "size": 87520
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/PkgInfo": {
@@ -989,7 +989,7 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)": {
    "kind": "macho-executable",
-   "sha256": "d8e111948bdb4d2d835a42af90b21beb7ac6a4d38204d320e0d1c84428acab48",
+   "sha256": "0fc88625f12dd29451bc192849ca8f62ec8e9e70e4fea69480bab1cd69d5308b",
    "size": 87520
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/PkgInfo": {
@@ -999,17 +999,17 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/app_mode_loader": {
    "kind": "macho-executable",
-   "sha256": "e784e02e8958b67f038e01e6ef05fab6deffd08f71d13f9ff01d0ffab7c1ef9c",
+   "sha256": "d393178c631ac49cb24a5b339f934276c2b38d6ea849230fe60d859e82ebbf7b",
    "size": 811312
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/browser_crashpad_handler": {
    "kind": "macho-executable",
-   "sha256": "6d0cc550989d0baa28ca7f8624ddec26815b1eb0062e66c8efb9cdb5b78fe915",
+   "sha256": "a21513609ae6f19b05577b7f8bfce5b80a5118ba86892c2221f8ef7e688c7f0b",
    "size": 1411136
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/web_app_shortcut_copier": {
    "kind": "macho-executable",
-   "sha256": "f64628a941d5d7b6930c28231c02a746cf58fe6c0318d6b41e8fcb4d3100d292",
+   "sha256": "9e4097815188fa1bb521404e58425244db8566dee6eb28a74ce1d7ff7ca9931c",
    "size": 51488
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/IwaKeyDistribution/manifest.json": {
@@ -1029,17 +1029,17 @@
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib": {
    "kind": "macho-dylib",
-   "sha256": "1a5a642bb6adcc8e317eb90d2ea323031185f63bf3fc61002f1e6b0862b4a056",
+   "sha256": "44d3c02a6190e1c82ee89076f0461ecad709252c0e014702bd35ffedfbbd4714",
    "size": 87504
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libvk_swiftshader.dylib": {
    "kind": "macho-dylib",
-   "sha256": "7f8737e3112cd78379186ae38347591a032600057e5cc039091a5949be406699",
+   "sha256": "33adb987988b5ccb66e946c3639547bed19fc299cb54881be636a98ff11816e4",
    "size": 16393376
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libvulkan.dylib": {
    "kind": "macho-dylib",
-   "sha256": "b57486adf6f2b66d2d66cf0a7cc87023eb6ca350cf0c25117deed08ebbf16e6a",
+   "sha256": "d79e94476abf14a62371059395ae942034e43df5a725087118926dabc9363201",
    "size": 516992
   },
   "Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/vk_swiftshader_icd.json": {
@@ -1092,7 +1092,7 @@
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate": {
    "kind": "macho-dylib",
-   "sha256": "68eff383b4e00071ea55234d8c828eb452f4451aa92b4cdca69e2a3fd0507d0b",
+   "sha256": "163b9140c1ad540075e64c1e294c1e1946bd90529c9126f46884eae677a40faf",
    "size": 710496
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Info.plist": {
@@ -1102,7 +1102,7 @@
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle": {
    "kind": "macho-dylib",
-   "sha256": "ac53aeabf5b3d89714a2afe65148446a1781bddf6525eea04d9b881e5c963332",
+   "sha256": "ea8bef6eba140cbecd270b1678fc9cd8354eb014e20ec783815662abc8c38e56",
    "size": 979904
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist": {
@@ -1112,7 +1112,7 @@
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater": {
    "kind": "macho-executable",
-   "sha256": "78e846745b291460bd5390acfbd6964dbf9f2a13b63ec9b0da85cf3f045d22e1",
+   "sha256": "a92a46968b0c4e028001d9a3671aceef76efa29d14d0133fb57350d233ad76e4",
    "size": 290096
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo": {
@@ -1127,7 +1127,7 @@
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader": {
    "kind": "xpc-service",
-   "sha256": "6678163bac70019ff6a2b7771cc40da73cfe1bb6345d5e3d8272d668d176b8bb",
+   "sha256": "fa7631fd6d927cc50839ccff70ce9978edcea9fff463f5af110bdb1b0ce0bb44",
    "size": 171872
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist": {
@@ -1137,7 +1137,7 @@
   },
   "Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer": {
    "kind": "xpc-service",
-   "sha256": "a567a878c610cd36ff96d10e63162c087f6608f1bfe688bad56257c6e6ca4bc8",
+   "sha256": "987a9a4bab0e4cdbf83ab80d3ec652dd4d5b51a82d12c0aca1f5e1d3e5e7237e",
    "size": 223088
   },
   "Contents/Frameworks/Sparkle.framework/Versions/Current": {
@@ -1150,12 +1150,12 @@
   },
   "Contents/Info.plist": {
    "kind": "plist",
-   "sha256": "b1bc3d06c5a6109a3d2f8358a5877ecf2a89f49f258cf16d6151fbe47a7e7265",
+   "sha256": "93de83465b18d6769e9f2afca4a38bbc1bbc31c9f6c19f0acf8369e6129293b3",
    "size": 20810
   },
   "Contents/MacOS/ChatGPT": {
    "kind": "macho-executable",
-   "sha256": "32e349ef6f9a5cd4e0b8c8686ac7d6b7661cad6d0125502915ef982c63e0685f",
+   "sha256": "26c20bfedc74cc96b2e6d3700e4c1c575ba2f8d37059f5b9283417af467897ab",
    "size": 69984
   },
   "Contents/PkgInfo": {
@@ -1170,12 +1170,12 @@
   },
   "Contents/PlugIns/CodexDockTilePlugin.docktileplugin/Contents/MacOS/CodexDockTilePlugin": {
    "kind": "macho-bundle",
-   "sha256": "543131665592feb2ebd597c5e1dc50f5af72899a19820631162720d145941884",
+   "sha256": "6634cf8bc8c2c2f369767edba2ced6daba9a9f3990117b1ffb3a3e408587cf74",
    "size": 76320
   },
   "Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/dist/native/darwin/permissions.node": {
    "kind": "node-addon",
-   "sha256": "a10476462b7064935dd43e8da8d88cd93c84052f957779889bbcd14b3903aa58",
+   "sha256": "711666a68646cfc9532b4f5f2aed89019d22f81d6068116dfefc865ef19df4b2",
    "size": 138704
   },
   "Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid/hidapi/.appveyor.yml": {
@@ -1290,7 +1290,7 @@
   },
   "Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid/prebuilds/HID-darwin-arm64/node-napi-v4.node": {
    "kind": "node-addon",
-   "sha256": "2384b2555fa4a37188ef75f3c3a822f16bfaa2bbff7edab43a23ce7879ed1ebf",
+   "sha256": "6815f7ab93926f8fc22916899d24632f75ba5ca34f6998607faa96e4f6ad888c",
    "size": 240608
   },
   "Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid/src/show-devices.js": {
@@ -1385,7 +1385,7 @@
   },
   "Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/serialport/node_modules/@serialport/bindings-cpp/prebuilds/darwin-x64+arm64/node.napi.node": {
    "kind": "node-addon",
-   "sha256": "d4adba2a08f937ecce2d58ed26b5441c08696f74fe5fcfc0526b752e9753e7d5",
+   "sha256": "fba5e7d6547a27d64955ede10e776419890f91f09e5df6862b62654dea9dfd1f",
    "size": 324672
   },
   "Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/serialport/node_modules/@serialport/bindings-cpp/src/serialport_linux.cpp": {
@@ -1400,7 +1400,7 @@
   },
   "Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/build/Release/better_sqlite3.node": {
    "kind": "node-addon",
-   "sha256": "30770e1faeb50cf6c7300eccd7e7a8930fbd887fd4ed91eb2bb1676edf130f08",
+   "sha256": "f948c40c8da4bdd183396ada4d9ec8f35517d38ca69d8c33b860a242bc4ed61b",
    "size": 1882320
   },
   "Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/node_modules/.bin/prebuild-install": {
@@ -1410,12 +1410,12 @@
   },
   "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node": {
    "kind": "node-addon",
-   "sha256": "a63e072a3299d5c709fa5dbbd25f0f9a7fcaee36c5a874d46b63cd364f6314bf",
+   "sha256": "c9a66fc12470a66d3016fb9b8182a229464fbd22c8f64a999362f3fdf8a4531f",
    "size": 102368
   },
   "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node.dSYM/Contents/Info.plist": {
    "kind": "plist",
-   "sha256": "8fe100e37b9ce1630c406d294db14d8e1fd6c08d877abdd2830635f992540bfb",
+   "sha256": "6cd421453013e59c63ffbd550dd6d133ff78a7de93c7038d0d9ec97f6e8d6d06",
    "size": 658
   },
   "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node.dSYM/Contents/Resources/DWARF/pty.node": {
@@ -1430,7 +1430,7 @@
   },
   "Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/spawn-helper": {
    "kind": "macho-executable",
-   "sha256": "01d69a488e91f8b358141862b70b6205822b563b79fb3a3e70fa4fd858c96dd9",
+   "sha256": "0b7338216e2e3f0fa08d1909f3346324ed9bd5ee6feed290fbd93bdac56b32fa",
    "size": 68448
   },
   "Contents/Resources/app.asar.unpacked/node_modules/objc-js/node_modules/.bin/node-gyp-build": {
@@ -1470,7 +1470,7 @@
   },
   "Contents/Resources/app.asar.unpacked/node_modules/objc-js/prebuilds/darwin-arm64/node.napi.armv8.node": {
    "kind": "node-addon",
-   "sha256": "074e444690f221d792daf8e421b49e70bb62ea8ed1c7381ae0574b8737e5b4fe",
+   "sha256": "7f743ddbf959070a394793416114876dd7519c0a10dfcc40b6bf02e73b99019b",
    "size": 642064
   },
   "Contents/Resources/codex-cli/CodexCLI.app/Contents/Info.plist": {
@@ -1480,8 +1480,8 @@
   },
   "Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex": {
    "kind": "macho-executable",
-   "sha256": "ccd1b9441d35ce30102059c78514a125d676e6765ea1d001033e8cbe88718314",
-   "size": 240167616
+   "sha256": "50ac633af64851511f9bbc71032cdae7f1ba20b3234c189687d61ba846c354c5",
+   "size": 240185120
   },
   "Contents/Resources/codex-cli/CodexCLI.app/Contents/embedded.provisionprofile": {
    "kind": "certificate-or-key",
@@ -1495,157 +1495,157 @@
   },
   "Contents/Resources/codex-cli/bin/codex-code-mode-host": {
    "kind": "macho-executable",
-   "sha256": "cc02fea0bc65e50e0f8ed1eac3412521dd6d9be5d2d2e5e64b3200366758336e",
+   "sha256": "16fea600263ce5ce283b343c2b62d34e3448933b1de9af391e3f87c7da95c683",
    "size": 65359872
   },
   "Contents/Resources/codex-cli/codex-package.json": {
    "kind": "config",
-   "sha256": "b51997f7485c06f1307c07c59afab83b0dd54d9536a063f9db15f8d24bc3c93e",
+   "sha256": "824178a0339491c83a5b74d045e7aa1874102dfb66552a9ab787ebbd5accbff1",
    "size": 200
   },
   "Contents/Resources/codex-cli/codex-path/rg": {
    "kind": "macho-executable",
-   "sha256": "50f5c6300ffe8432d7806b5b7f144b2632e8bbb09578dd6d751c25f151bf8f6d",
+   "sha256": "c755a455049f3b1408f6525a54a139135cf145f5a2b68ab3ebdc64e821b87ea0",
    "size": 4030432
   },
   "Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host": {
    "kind": "macho-executable",
-   "sha256": "32d2044ad58ff42ee566f018b98810528e5beddac393f2351f5cd3ba2c523747",
-   "size": 9900192
+   "sha256": "65419b8a53356b32442220f8d549d5e088b219856ff9d1175e7efc9ff51b62c7",
+   "size": 9900112
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libffi.8.dylib": {
    "kind": "macho-dylib",
-   "sha256": "b4cfed0cdbbb1c00db4e59da0caf5ccaf9315e4b9f7dbe253baf9ff244b040d8",
+   "sha256": "e8c7c3b4147e4ff7b1f0c573c24d3583e0b3def17c84a40aed9fcee462891c03",
    "size": 136768
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgio-2.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "2d7c4bac30dc92e788da22baa2cfa2e7fb882b8f813aa4852c2bb704e97ad36a",
+   "sha256": "7eb05cd1971a96e081a2f0d29e8f17fa5d53c38c14e1cf1bdd09484c5ff102d8",
    "size": 1866272
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libglib-2.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "b21a31544a40ba80ec3288ce34cc732cc4d89fadc9367b81a1bbc5f34522a968",
+   "sha256": "5348603ca471efde3b3e5521e9f62789c9bf5a282b42c4f287644b936eb69d17",
    "size": 1310992
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgmodule-2.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "0eb9e92316e42ebf34ee73c1745014efd6265ff6cf0407108213fc81a7ea5e0a",
+   "sha256": "52cb0ebf461e33473cd3d797a4b0cda145d3c429556266d853078dacf18b575e",
    "size": 68912
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgobject-2.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "9a9ffed1abfbd6020cfd49e6550a7a092fffc02bcbbfbe6107c820c0b49e4f5b",
+   "sha256": "31da67b38db38aa32037ac0d0909757c05e865abca66dc276d7331edd3769917",
    "size": 403088
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstapp-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "0dcf7df18b448d7197381f0cddaff6efff7281b5e30e9632b40cac406ad86afd",
+   "sha256": "5c83c0f5bf61c381a8a88524e5afd5d78b4593a0c751fff7471bd3acf4e3779a",
    "size": 152608
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstaudio-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "428c3bc8cc712539b557cb94170d969f978e044c9c35d8b329cdae63ff5b1d3a",
+   "sha256": "2c1967e49b54334fa6c395983d4c7235f52a84d92bc2c3a57ae869ec6a05d81d",
    "size": 530400
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstbase-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "ddfbf8826ae066293c14100a25e9aa43df07014a9185ae00b484ff7306382dc3",
+   "sha256": "486c660daa7e891325d738d09cb68c82190ccd7f498edd1de792de44b15dec01",
    "size": 505968
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstnet-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "06840653d4dbf61fc60ceb2c7b23dc4a7abaa72e39014f3c2f29dff006dea3b7",
+   "sha256": "a240560e2a05ae05951937bcaf37011f9931b014c372bba0adac4c25d15e5d7f",
    "size": 117008
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstpbutils-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "04baede24afdffeb83c73ba5ff0403ec48736b55f36cb515935e31efaa57c9df",
+   "sha256": "690f3630cf5461ce3821704092d0b7d2834ae93c518f894d3ce0a5505f895d5b",
    "size": 309856
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstreamer-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "76b254f5c1345a3dceed61b6ae79ae226a33dc40419f27ccb2bda3b9f115f06b",
+   "sha256": "b7f5b59b794f106fd29355abe9706e7e7b2c396901fb26af9fecd3eace46bcd9",
    "size": 1304704
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstrtp-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "415adb8bb9a23681bf91b2b48fc6cab6b5791c5e3a55fee13a78b7e0432eb6d6",
+   "sha256": "f6f9ba2d4ad08d33dcd028d4f7cb53a8b249d4ac065a3c23daa39368162fafa7",
    "size": 205696
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgsttag-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "6c2f519cdfcb06e8e3406d61ffa4c39121be2815d36f05be0d8519e8a7fee2ee",
+   "sha256": "a071e2f24ced71ed3f03161343bab1bc592555d7dabc1270a503d547fdf208f3",
    "size": 283696
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libgstvideo-1.0.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "5e5952891a0b09d0e614817344cd5252e83012655b1654cac8cc348bbe75d3a5",
+   "sha256": "529cd41f7aaf7232a19874e422c53c35120abc72c0b841da7c3b81ec1a8cb1c9",
    "size": 903664
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libintl.8.dylib": {
    "kind": "macho-dylib",
-   "sha256": "2a2341d63ab559fdc2a525e2fea925335a7cbf28ee86486cbf1e5b8bd24e9811",
+   "sha256": "9ddee26312301b9c901458877a8f0da35137bf84768eb44fa05df68c3cd6e77e",
    "size": 50112
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libopus.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "d79993722d26df3d1c1f4cb8aa8757e5c0f5dfc378967ae6cd04691f60c6c7c0",
+   "sha256": "90cedd1ad93caa063673d48edbdadfc6787f264b385a6b163ae9afa9c57acf48",
    "size": 504080
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libpcre2-8.0.dylib": {
    "kind": "macho-dylib",
-   "sha256": "06f0a75d38adacada6e2d1c6ec5cb94382d892001c2e9088fa7c4e7b29cc8541",
+   "sha256": "904129be3b70d6712a37225c0bc30d1dbe9c56580e58fa8d490a7bf9fca7f5e3",
    "size": 456816
   },
   "Contents/Resources/codex-cli/codex-resources/voice/lib/libz.1.dylib": {
    "kind": "macho-dylib",
-   "sha256": "ba7782fb4c1129dd02d5f9b18aebb29311ab65cd7235d88bde6bb7e78f96424f",
+   "sha256": "631a1aa1f535f95223227874a5a024843c53ffae9a5346ad911bef5fa6500220",
    "size": 123312
   },
   "Contents/Resources/codex-cli/codex-resources/voice/manifest.json": {
    "kind": "config",
-   "sha256": "e4d72edda31963185a677ab9e2f5049fe3f9d4dbe4b82d666e4d094111b881fb",
+   "sha256": "e7b170a2be9f55d411c6ef3ec7c59c216a2477c9808d77c7b9bf6f9e666e5ae4",
    "size": 4637
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstapp.dylib": {
    "kind": "macho-dylib",
-   "sha256": "ceed652451a0bafbb27a71e5899b0c397e22099efcc1a18377b75882b91691cd",
+   "sha256": "a6e2c99ac5589aaa9f8e05f27c3907dc1a82b1a5d7a722895fd25607dcfd6460",
    "size": 49872
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstaudioconvert.dylib": {
    "kind": "macho-dylib",
-   "sha256": "dacd18aa737fd819224e7bf619800e5beb9712e25bb45c4d581145e46f6b5283",
+   "sha256": "81f6d43debffa690e1df447e29878a0fdf0bf36dc5a19e287a438bff8f270929",
    "size": 93824
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstaudioresample.dylib": {
    "kind": "macho-dylib",
-   "sha256": "35d1a5977a3d32a45324f238967aea34341368d9b22ee80300c0e0efa26a8283",
+   "sha256": "b9142f9a05a2c1eea678dfc33748675cfaf1ab990b1c8fe0a853846c0fa8507f",
    "size": 91840
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstcoreelements.dylib": {
    "kind": "macho-dylib",
-   "sha256": "520cfe2cace17bade2d7eb93d2a714b775a3c79b4f7a5d10d913597df71d7a14",
+   "sha256": "7bec8ee0f3af95dce6e151c445e5da83c81a4fdf675f7d164900a4c92c692370",
    "size": 446608
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstopus.dylib": {
    "kind": "macho-dylib",
-   "sha256": "0ae7c4415f98edb7d03bf1117ca3104103698add3f69327810d99bd7a86f5790",
+   "sha256": "f02be252c08ef71dd362086c9010b98b7bf6b1dde78101747ff08e1f1067bc90",
    "size": 131680
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstrtp.dylib": {
    "kind": "macho-dylib",
-   "sha256": "e9f1bcc403e7ec89912f3957b2176fe5db064e443331e769cc56892787a7386d",
+   "sha256": "3df9d1b30d350f671bbee5d18a86e12b2b7759864d9887d74c052b9972154818",
    "size": 673888
   },
   "Contents/Resources/codex-cli/codex-resources/voice/plugins/libgstrtpmanager.dylib": {
    "kind": "macho-dylib",
-   "sha256": "34d5311f1ecd3676cbc37f895b3e3e0781a1b271b9393d9be03b492af38b82d0",
+   "sha256": "a70edb6d089c8a3a5f4f79e73e8ab8955f70c104964666552e9244e8da6bab2e",
    "size": 527568
   },
   "Contents/Resources/codex-cli/codex-resources/voice/runtime.json": {
    "kind": "config",
-   "sha256": "1ebba99b736593eadef887f99b0213c50d29eb7a2fabac875961058cae2b8a16",
+   "sha256": "406a41bd010e667af1434c7f0609919bb4f5f0e3e150f6f84061642f1d923efa",
    "size": 14915
   },
   "Contents/Resources/codex-cli/codex-resources/voice/sources.json": {
@@ -1655,7 +1655,7 @@
   },
   "Contents/Resources/codex-cli/codex-resources/zsh/bin/zsh": {
    "kind": "macho-executable",
-   "sha256": "ccfcb74e8852608835d4d78377677b54bceaff2ab3028a7ea12ae084320dd427",
+   "sha256": "1c3c37d60076d6d1c2133c0a08d7d2c7f1f0bb9c20cc0ace4691096bd580e792",
    "size": 754208
   },
   "Contents/Resources/cua_node/bin/corepack": {
@@ -1665,12 +1665,12 @@
   },
   "Contents/Resources/cua_node/bin/node": {
    "kind": "macho-executable",
-   "sha256": "9b080121472d9a2bb04c5692bd8b265c2027103ed68080d3a1d70669a6b6648c",
+   "sha256": "585821f92da83ee4ac9eb5557fee03ce286130b61d93efbcc9ca0de2cb1a9e77",
    "size": 122127712
   },
   "Contents/Resources/cua_node/bin/node_repl": {
    "kind": "macho-executable",
-   "sha256": "826afecae5bd0cdf747fc4b8597aad8ac450a2fa9def58185865be82b180b5eb",
+   "sha256": "1d3a0c09f8ec0ef3a5346b48c3b2b869a42a546337ffba3782f537b479f96d6d",
    "size": 17712272
   },
   "Contents/Resources/cua_node/bin/setup.ps1": {
@@ -1742,7 +1742,7 @@
   },
   "Contents/Resources/cua_node/lib/node_modules/@img/sharp-darwin-arm64/lib/sharp-darwin-arm64-0.35.4.node": {
    "kind": "node-addon",
-   "sha256": "509fb9bd981210264831d45c2d67ba698705db6edc17637dba56279b698b6b54",
+   "sha256": "2e4e5ddbe951d3a10220d875be806f069258540d73c6744a37a5c6573037027e",
    "size": 298416
   },
   "Contents/Resources/cua_node/lib/node_modules/@img/sharp-darwin-arm64/package.json": {
@@ -1752,7 +1752,7 @@
   },
   "Contents/Resources/cua_node/lib/node_modules/@img/sharp-libvips-darwin-arm64/lib/libvips-cpp.8.18.6.dylib": {
    "kind": "macho-dylib",
-   "sha256": "3870d709be01ffb721ea25302a2089502623b499cd616346bffcf4974cbfcfeb",
+   "sha256": "5cd3e84180a8217cf513abeec7eb65a356e9ccc73fa2d0d3ff2d2e59de11ba32",
    "size": 18182288
   },
   "Contents/Resources/cua_node/lib/node_modules/@img/sharp-libvips-darwin-arm64/package.json": {
@@ -1852,7 +1852,7 @@
   },
   "Contents/Resources/cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node": {
    "kind": "node-addon",
-   "sha256": "7b930ee6d2d0ec899d790a3d235dc1412e6119d852c0f9a71f6e73fb5c017d07",
+   "sha256": "255081c27422885b6e642f1dbcf2d674b39df1c19dd5ed3fa0c38ba49af0c723",
    "size": 766064
   },
   "Contents/Resources/cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/node_modules/is-buffer/package.json": {
@@ -2129,7 +2129,7 @@
   },
   "Contents/Resources/cua_node/lib/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node": {
    "kind": "node-addon",
-   "sha256": "723044e6868739142cbc66f75db73384f18cb109801df4c6147beae7bc59a822",
+   "sha256": "b02707b91e22748613140dff41cdee170d34c2159cd91f2ac34cd764bc71edac",
    "size": 766064
   },
   "Contents/Resources/cua_node/lib/node_modules/corepack/dist/corepack.js": {
@@ -2354,7 +2354,7 @@
   },
   "Contents/Resources/cua_node/lib/node_modules/fsevents/fsevents.node": {
    "kind": "node-addon",
-   "sha256": "80a1fe82dc276b62e0e006daaf8066dd8a1aafee7b2c03d99fc3e80043cd2cfe",
+   "sha256": "40136f0efba828d7fc39da1cf723665e208e3eb2909a23cf69922176cc2635dd",
    "size": 198720
   },
   "Contents/Resources/cua_node/lib/node_modules/fsevents/package.json": {
@@ -2559,67 +2559,67 @@
   },
   "Contents/Resources/native/airpods-mute.node": {
    "kind": "node-addon",
-   "sha256": "f8007e8ae1a81544594bcd890947f8f4b6a67250bc2a5e1da3805fc340854aeb",
+   "sha256": "57ee52dd64a3f5f2f4866768f63b17aa1b61a8f84614001abd89bc0cb452069e",
    "size": 114400
   },
   "Contents/Resources/native/bare-modifier-monitor": {
    "kind": "macho-executable",
-   "sha256": "22ba1c3f34157a45e4a4dcf28ea89ef206b01eb8e788e212b74d5d3a02657878",
+   "sha256": "86f2bb33099bc543e04c9ec5512c9578d65d94a5cd08b88e10047376cbeed688",
    "size": 260688
   },
   "Contents/Resources/native/browser-use-peer-authorization.node": {
    "kind": "node-addon",
-   "sha256": "ac4ea8f3602716378794714fcde2bfb7a5041d7c53ebe7e8eb62d0145e1c4c73",
+   "sha256": "d4e99ed57ed84d90aea303cddfa8aa5d59ed486fb9fc737109ad273356b41a19",
    "size": 106048
   },
   "Contents/Resources/native/devicecheck.node": {
    "kind": "node-addon",
-   "sha256": "be8b763bd00fc286e32fa7b6ffe43cc13414bcfdb68285c5b35dd35d2a869bab",
+   "sha256": "de717a8c02b6942d9660c3af24d04fed5ffde6d180675f4ccc1a772af26d889f",
    "size": 106272
   },
   "Contents/Resources/native/hid-topology-watcher.node": {
    "kind": "node-addon",
-   "sha256": "66c886b6db7097c80237cc22d191555b4f038887baa1b044b337dfbfafa3db74",
+   "sha256": "70b1fe360dccf8a78038c53939dd2ba0f58fd83d9683068e9cfa9dbfe44c2241",
    "size": 133520
   },
   "Contents/Resources/native/input-monitoring-permission.node": {
    "kind": "node-addon",
-   "sha256": "712d3a6ca1c8f645948668381a4ddbd641210ad9074a3e0e9854aaae13f7eb89",
+   "sha256": "51132b554e449bb7b7a9b4a3440cbad199e18534a624b5c25f1406d84d5b9bdc",
    "size": 79152
   },
   "Contents/Resources/native/launch-services-helper": {
    "kind": "macho-executable",
-   "sha256": "aa1bd71e1c17cba722de06c8534188cc671af2eeef73105644073592e063f8a9",
+   "sha256": "bfc3f7d1c1d1ac1d164fdf17c781c36cb4f9df347f885f69893e306464b6bb8c",
    "size": 162848
   },
   "Contents/Resources/native/remote-control-device-key.node": {
    "kind": "node-addon",
-   "sha256": "fd00d53b87361e4b7a800546a0cb3c5c78a173c71c69e16e34868b580f56256e",
+   "sha256": "7b2c80e536eebd100b46946b6670df73cf16c47f356a0d9193b8ccccbd04426e",
    "size": 139616
   },
   "Contents/Resources/native/sky.node": {
    "kind": "node-addon",
-   "sha256": "40d587578894159d617cca2af15db8e3d39c6ed8b6267a8a294da65a178a0f30",
+   "sha256": "3dacf8e4d8b2cb13b95fb724c1f8a7e339ee86e025a33910ff6bbfd162aaf78e",
    "size": 1385024
   },
   "Contents/Resources/native/sparkle.node": {
    "kind": "node-addon",
-   "sha256": "a68661475a5f6a07dc232e2edb76a92ac532df435e49fe88a563fbc8e91367d8",
+   "sha256": "cdf0945d60613e15ef3394ddfbf590d867c84b6cc3a716592f95037c119868e1",
    "size": 238496
   },
   "Contents/Resources/native/system-audio-spectrum": {
    "kind": "macho-executable",
-   "sha256": "d7589247c0b40071ce971740bb72f158bd60b45449a258e1c2bc3aa741292e46",
+   "sha256": "a939e77a312569d09f7065a713608dd3658f00e356b2955078658b4d738fdc31",
    "size": 118992
   },
   "Contents/Resources/native/usb_webauthn.node": {
    "kind": "node-addon",
-   "sha256": "14e0a6788c74ef0c134f1aeefdc9bc5f87fd5a5cd5242f30f31e9b9adf19a25b",
+   "sha256": "16f36c03bcd8e282fa0dd1144b909577017a8fa8386f12606d4c0b0f53b7ae5a",
    "size": 4821440
   },
   "Contents/Resources/owl-app.ini": {
    "kind": "config",
-   "sha256": "0bfcd6a08233a368551a0b7f888879211f3ff93f20029a2edaa9dc5cda6ac58b",
+   "sha256": "7450c702e80f40714395cc87123f11e5d11e61e631b1350533f5a1fd4c17a2fe",
    "size": 61
   },
   "Contents/Resources/owl-electron-app.json": {
@@ -2634,7 +2634,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json": {
    "kind": "config",
-   "sha256": "65cc4543f988a39cf471b80bcc0a3dd4daea6b4260990712ae46d8dc1f61b825",
+   "sha256": "3566bdf964ac66e8fe5d707e7db751b3290f689309fb73ce03156a4feda0d865",
    "size": 3431
   },
   "Contents/Resources/plugins/openai-bundled/plugins/browser/docs/api.json": {
@@ -2664,7 +2664,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/browser/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node": {
    "kind": "node-addon",
-   "sha256": "778bb76bb9a1bc72768ca6aed5e24fc1f591400b3b8f91d6449d5436fbe6ec0b",
+   "sha256": "fdf55e26c7e6e01a8c7e5a67c12473ed44ee9cfd14934b73e2d86154245373c7",
    "size": 766064
   },
   "Contents/Resources/plugins/openai-bundled/plugins/browser/node_modules/is-buffer/package.json": {
@@ -2759,7 +2759,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json": {
    "kind": "config",
-   "sha256": "e570139ae2f07f4b2ca89f56dbe488b528a310f423619f749c269b3635425ea6",
+   "sha256": "3d24894fa69bcfeaa2c5c61ad4bf33e5e93475f899eb8d5c3aac56e1d3862d29",
    "size": 3302
   },
   "Contents/Resources/plugins/openai-bundled/plugins/chrome/docs/api.json": {
@@ -2774,7 +2774,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/chrome/extension-host/macos/arm64/ChatGPT for Chrome": {
    "kind": "macho-executable",
-   "sha256": "58e66dfc1789fd9b5280a051874b55946c999744080d3551ad980b57549e4fbd",
+   "sha256": "e7a35591ae2659e10dec8a57ffdaacf1093ca3527fb257c92b28a74b60762548",
    "size": 1059472
   },
   "Contents/Resources/plugins/openai-bundled/plugins/chrome/node_modules/abstract-level/package.json": {
@@ -2794,7 +2794,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/chrome/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node": {
    "kind": "node-addon",
-   "sha256": "d53c9d53289a55409a39522f13c0e04ac96ead8ceed270097f62cfa357c4aaea",
+   "sha256": "d6c7cc4552327eb0e97a8c4d5b10d0895b249256c3d3f93bb3fdeb1009d2315f",
    "size": 766064
   },
   "Contents/Resources/plugins/openai-bundled/plugins/chrome/node_modules/is-buffer/package.json": {
@@ -2884,7 +2884,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/code-review/.codex-plugin/plugin.json": {
    "kind": "config",
-   "sha256": "baf4c75af53b14820185d3feab0a9eea5fb911417adf8ce02147b7fb99e7dd13",
+   "sha256": "61a7f4e9d14d5d6ae655a95cd353715e132431cd4280ab750e7a86684c9c06a8",
    "size": 1486
   },
   "Contents/Resources/plugins/openai-bundled/plugins/code-review/.mcp.json": {
@@ -3019,7 +3019,7 @@
   },
   "Contents/Resources/plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json": {
    "kind": "config",
-   "sha256": "d9d317e08afdf80f8e4eab27f08d5a856debdea9ddc3e5da25ff86a8853ffc94",
+   "sha256": "8f7cd292bd3ca8b735447226712edea5ba6a16d92b355fe3bb94de1985b5dad5",
    "size": 1397
   },
   "Contents/Resources/plugins/openai-bundled/plugins/unified-computer-use/.mcp.json": {
@@ -3044,7 +3044,7 @@
   },
   "Contents/Resources/rg": {
    "kind": "macho-executable",
-   "sha256": "78d06da65aa6559108aaecf7b4852678a0e37c62cd166c38943a1d10d55be493",
+   "sha256": "2a6f27b8be5df4cc93183328cbe91bb82ce358966f8ecc6f65823ce4f8a0323f",
    "size": 4032480
   },
   "Contents/Resources/skills/skills/.curated/hatch-pet/agents/openai.yaml": {
@@ -3159,7 +3159,7 @@
   },
   "Contents/Resources/tectonic/tectonic": {
    "kind": "macho-executable",
-   "sha256": "f50d3ccd335ed996312f7a395d0b7baeba185edf55ec010b58b59fbc6e084af4",
+   "sha256": "0cfe7a1e346af7647885c7a6a2fffd46864f290288b05113924be0d6f2333329",
    "size": 54016384
   },
   "Contents/embedded.provisionprofile": {
@@ -3173,8 +3173,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3266,9 +3280,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3322,9 +3350,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3371,9 +3413,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3421,9 +3477,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3471,9 +3541,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3521,9 +3605,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3578,9 +3676,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3635,9 +3747,24 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.cs.disable-library-validation": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3692,8 +3819,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3730,8 +3871,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3766,8 +3921,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3789,9 +3958,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3850,8 +4033,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3881,8 +4078,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3906,8 +4117,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3938,8 +4163,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -3973,8 +4212,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4003,8 +4256,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4030,8 +4297,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4060,9 +4341,30 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.application-identifier": "2DC432GLL2.com.openai.codex",
+    "com.apple.developer.aps-environment": "production",
+    "com.apple.developer.team-identifier": "2DC432GLL2",
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true,
+    "keychain-access-groups": [
+     "2DC432GLL2.*",
+     "2DC432GLL2.com.openai.shared"
+    ]
+   },
    "flags": [
     "runtime"
    ],
@@ -4116,9 +4418,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4172,8 +4488,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4196,8 +4526,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4223,8 +4567,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4248,8 +4606,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4271,8 +4643,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4312,8 +4698,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4335,8 +4735,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -4358,14 +4772,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [
     {
-     "hash": "a0d879464e65",
+     "hash": "d4a8311a0e38",
      "pattern": "openai-key"
     }
    ],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.application-identifier": "2DC432GLL2.com.openai.codex.cli",
+    "com.apple.developer.team-identifier": "2DC432GLL2",
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "keychain-access-groups": [
+     "2DC432GLL2.com.openai.codex.cli"
+    ]
+   },
    "flags": [
     "runtime"
    ],
@@ -4390,9 +4812,10 @@
    "minos": [
     "11.0"
    ],
-   "private_strings": 4668,
+   "private_strings": 4666,
    "prose_hashes": [
     "00088a1507",
+    "001485affc",
     "0021a0f776",
     "00238ef7e0",
     "0035b69384",
@@ -4400,6 +4823,7 @@
     "004b3991fd",
     "005733f23a",
     "0064ec06e8",
+    "00758a383d",
     "007c717da8",
     "008316f90f",
     "00891799f6",
@@ -4410,6 +4834,7 @@
     "00d9e82c75",
     "00dca22639",
     "00df02d43a",
+    "00eba8f82e",
     "00fafdc198",
     "0104060654",
     "010cb45451",
@@ -4420,18 +4845,16 @@
     "015b570414",
     "01700d7a70",
     "01724762a9",
-    "018367b0d7",
     "0194b9c06f",
     "01965df952",
     "019e439a0d",
     "01a28552f6",
-    "01c5317afa",
     "01c892c690",
-    "01d5e632e2",
     "01fae7b9ef",
     "0204899d96",
     "02076844c8",
     "022c923f59",
+    "023fc260d5",
     "024a44b73d",
     "024dc66369",
     "02596510ad",
@@ -4455,9 +4878,9 @@
     "032ec95db5",
     "03318f4c8d",
     "0344472bee",
+    "037edc1013",
     "038e8409f4",
     "0392b31256",
-    "03a6210871",
     "03b38bd2bd",
     "03b9253402",
     "03bab81eee",
@@ -4486,6 +4909,7 @@
     "0525d220f8",
     "0528169ebb",
     "053060d45f",
+    "0536360acf",
     "0536ba62bd",
     "05450fae7a",
     "054c4a53ca",
@@ -4493,7 +4917,6 @@
     "05583b793e",
     "055f61f630",
     "05707bf462",
-    "057fb877f7",
     "059198896a",
     "0593f82f8f",
     "059b6f824a",
@@ -4511,6 +4934,7 @@
     "0613a132e6",
     "065ba44ea5",
     "0662e5cfb2",
+    "06663da0ac",
     "066eedc006",
     "0670a8dc1a",
     "0670f758ce",
@@ -4528,15 +4952,14 @@
     "06ddc9835b",
     "06e1465362",
     "06ea19ecd3",
-    "06f57a4c01",
     "0714095276",
     "07180248cb",
+    "0724af71bd",
     "072578fd71",
     "0743d4c469",
     "0757a5d1e3",
     "07780d0d40",
     "077b83b1e9",
-    "077edfb826",
     "078320281a",
     "07a0de2cb0",
     "07aa8ca763",
@@ -4551,7 +4974,6 @@
     "07edbc1667",
     "07f0938cfe",
     "07fe8c41e7",
-    "080d212e08",
     "081767470c",
     "082338252b",
     "0824e5b380",
@@ -4566,7 +4988,6 @@
     "0899ebf88b",
     "08abda558e",
     "08afc10412",
-    "08bacc6136",
     "08df7b8bea",
     "08e0cd247a",
     "08f6d2a689",
@@ -4586,7 +5007,6 @@
     "09e68fc9c3",
     "09ee465492",
     "09f002887a",
-    "0a128f2f65",
     "0a1ef69e77",
     "0a25a8d137",
     "0a263c2143",
@@ -4604,7 +5024,6 @@
     "0a9cca02ca",
     "0aadddeb24",
     "0ab3b42b1f",
-    "0ad6e94e48",
     "0ae111a459",
     "0aeab561a4",
     "0af723e096",
@@ -4614,6 +5033,7 @@
     "0b145bf5e2",
     "0b20005eb8",
     "0b2a7baa11",
+    "0b4ce6fb21",
     "0b707fd8f9",
     "0b7340bf4f",
     "0b890c0385",
@@ -4630,6 +5050,7 @@
     "0c01b22718",
     "0c20e2a031",
     "0c22c8fa99",
+    "0c31afe0d5",
     "0c4b828085",
     "0c602ffb02",
     "0c62ed179f",
@@ -4652,7 +5073,6 @@
     "0d8385126a",
     "0d897522f3",
     "0d931ae7a2",
-    "0d96456579",
     "0d9ed130a4",
     "0da095a94c",
     "0da0f6a1c2",
@@ -4687,6 +5107,7 @@
     "0ec534c089",
     "0ec87a2b11",
     "0ec92d7dbc",
+    "0ecacf068b",
     "0ecbfdc076",
     "0ed1ed30d1",
     "0eeb002490",
@@ -4697,7 +5118,6 @@
     "0f037f5b8f",
     "0f06b3621c",
     "0f266b994d",
-    "0f2bb5a417",
     "0f3591a4a8",
     "0f52cf1edc",
     "0f6c3e9d67",
@@ -4719,6 +5139,7 @@
     "10840a5485",
     "10864e8ccf",
     "108ef835ec",
+    "1091d24f4d",
     "1096aa69fa",
     "109865e9d0",
     "10b52975a9",
@@ -4783,25 +5204,23 @@
     "130b0dec01",
     "130d0a13ac",
     "1318c32b0d",
-    "1318d8cc8e",
     "131c503920",
     "131e9c25ee",
     "1341ab5769",
     "1344ecf751",
     "1359425fdc",
-    "135c1e2f1e",
     "1365ca9a8c",
     "138b751994",
-    "1394033e5a",
     "139f3b7f09",
     "13b23d51f3",
     "13b644832c",
     "13cae401bb",
+    "13d8e41a3f",
     "13e35b78bb",
+    "140a989ab0",
     "140e1f7dab",
     "14191e0ef7",
     "1427a3b9f1",
-    "14367b3f33",
     "14370154d7",
     "145ae6e89d",
     "146ad181a8",
@@ -4817,9 +5236,11 @@
     "14e8caf04e",
     "14f9cde2ed",
     "152088b625",
+    "1526c8303a",
     "1536556242",
     "154093b3e1",
     "155b44c815",
+    "155fa4be5b",
     "156161f73c",
     "1564464225",
     "157164987d",
@@ -4872,7 +5293,6 @@
     "1848f1e6bf",
     "18550bcf5c",
     "185b5b99a9",
-    "18736d7463",
     "18aa2fecfb",
     "18bf1ebd70",
     "18c7d4ead2",
@@ -4880,9 +5300,9 @@
     "18cc239f41",
     "18ceb2731d",
     "18d7498d38",
+    "18e031d348",
     "18e10d3bdc",
     "18e80d9b5a",
-    "190114acbc",
     "190e4074aa",
     "191447f604",
     "1915a84aa5",
@@ -4890,10 +5310,7 @@
     "19282f63a2",
     "1931588de0",
     "19316c4e2b",
-    "1963722910",
     "19725cba44",
-    "197908e39c",
-    "197f3629ed",
     "199032ba3f",
     "199f3a50a0",
     "19ab36bd08",
@@ -4915,12 +5332,12 @@
     "1a514dc434",
     "1a67b77ce1",
     "1a6c9442f8",
-    "1a7d00842b",
     "1a7d5aa7fd",
     "1aa27c247a",
     "1aaac856c6",
     "1ac0b9a04a",
     "1ac32eb088",
+    "1ac9ceac14",
     "1acc9d0285",
     "1ae8cc74dc",
     "1af633e10b",
@@ -4931,6 +5348,7 @@
     "1ba339d9c3",
     "1bc6624b0a",
     "1bc73a8e11",
+    "1bdeb3a40c",
     "1be87cc339",
     "1be99a6eb1",
     "1bec90862e",
@@ -4940,21 +5358,21 @@
     "1c5ee243aa",
     "1c86759658",
     "1c8cf38e02",
+    "1cacce1f8b",
     "1cbafae68c",
     "1cc35f7071",
     "1cc5cdd23c",
-    "1cc5d0446e",
     "1ce4a010b1",
     "1ce950963c",
     "1ced4349ee",
     "1cf3582771",
     "1cf811ee75",
-    "1cfe2cd40f",
     "1d0632b853",
     "1d0fd35b12",
     "1d100095c6",
     "1d133caaa8",
     "1d17d27d22",
+    "1d31f8ea4d",
     "1d392ac4eb",
     "1d398a8101",
     "1d427af933",
@@ -4988,7 +5406,6 @@
     "1ebe71a51b",
     "1ec4bcbe54",
     "1ee6648afd",
-    "1eef397631",
     "1ef02f6ac4",
     "1f13c130e4",
     "1f1ffb8b6e",
@@ -5011,6 +5428,7 @@
     "1fd899631e",
     "1ffe693aff",
     "200463a427",
+    "200475c905",
     "20057f57fb",
     "2007a36d9b",
     "200f3343e5",
@@ -5022,6 +5440,7 @@
     "2034c24632",
     "203a0a6761",
     "203d0acef4",
+    "204c75727b",
     "206c902ea1",
     "20716d01de",
     "2072144eb7",
@@ -5040,9 +5459,9 @@
     "210aac0a34",
     "211a0e32b3",
     "211bc4edf2",
+    "212467dc93",
     "21682710e0",
     "2175c47dae",
-    "218bf40418",
     "218f9d0010",
     "21a1866589",
     "21a502f4c2",
@@ -5100,7 +5519,6 @@
     "24be4ced0c",
     "24c3f26fe2",
     "24dca577e2",
-    "24e8d35a25",
     "24e8eb285b",
     "24f04d4078",
     "250154dc07",
@@ -5118,7 +5536,6 @@
     "2587f41488",
     "258d7e6bdf",
     "25908b85b7",
-    "25938f281c",
     "259439bf5a",
     "25a5c1aea3",
     "25a9a0993e",
@@ -5130,6 +5547,8 @@
     "25ee4c44d7",
     "25f5d1ff88",
     "2601207c93",
+    "260bca3540",
+    "2617d1519a",
     "26346921dd",
     "2640c58392",
     "2658a5f58d",
@@ -5138,6 +5557,7 @@
     "26704c6821",
     "26712179ef",
     "268410b822",
+    "268598645a",
     "2694383d67",
     "26af3dcdc8",
     "26ce2ab681",
@@ -5160,7 +5580,6 @@
     "27a30f9f68",
     "27afcc9032",
     "27bae9dce3",
-    "27c0810e5e",
     "27c693ff5d",
     "27de396a9f",
     "27ed9e7bfc",
@@ -5169,9 +5588,9 @@
     "27fc286bab",
     "27fff7a7ed",
     "2803734208",
+    "2804879b94",
     "2805a5d547",
     "28163099e9",
-    "2818126aef",
     "28251b72be",
     "2834f4eebf",
     "283ba2b5c2",
@@ -5194,7 +5613,6 @@
     "28f11cf399",
     "2920748fad",
     "29238c3347",
-    "292a88bcb6",
     "293798be0d",
     "295c1a25c6",
     "295dac5d71",
@@ -5215,10 +5633,10 @@
     "2a5d6ad181",
     "2a76d7cd38",
     "2a790aeb53",
+    "2aa0d4bdab",
     "2aa32dca5a",
     "2aa7af0fce",
     "2ab612ab5f",
-    "2ad10ed0c7",
     "2ae2d061b9",
     "2af1cb1275",
     "2b0830f846",
@@ -5239,6 +5657,7 @@
     "2b91950a9d",
     "2b9e3c7e36",
     "2bb25e561b",
+    "2bbe4ba21d",
     "2bc8621bda",
     "2be4c8ae95",
     "2bed292534",
@@ -5246,7 +5665,6 @@
     "2bf30ec411",
     "2bfacf917c",
     "2bfb8932d6",
-    "2c129a397b",
     "2c2215ed24",
     "2c2a5f81bf",
     "2c335ea6ce",
@@ -5256,18 +5674,18 @@
     "2c571cda7e",
     "2c6eee23ff",
     "2c79e6f4f6",
-    "2c91bfe99d",
     "2cabf5522f",
     "2cb5e30601",
     "2cbb9d5b7d",
-    "2cbe19ae40",
     "2cd7664617",
     "2cd84fb36f",
     "2cff2385b7",
     "2d1b2e14b7",
     "2d8d6f3df9",
     "2d90d62567",
+    "2d9a426409",
     "2d9e803457",
+    "2db079391d",
     "2dbeb2389c",
     "2ddee5ac15",
     "2de4835e27",
@@ -5277,13 +5695,14 @@
     "2e15e17f1a",
     "2e194c6396",
     "2e38d49f0c",
-    "2e3a04c8bd",
     "2e3b1deb0a",
     "2e3e0ae08f",
     "2e40ef9831",
+    "2e42dedbbe",
     "2e6b86411c",
     "2e814a08af",
     "2e8b1199ae",
+    "2e9ee77d61",
     "2eadc85ca1",
     "2eb58c41d5",
     "2eb6fa3613",
@@ -5296,7 +5715,9 @@
     "2f10c46f4f",
     "2f27c61035",
     "2f2baad443",
+    "2f3760de19",
     "2f4fd1b94b",
+    "2f54d53429",
     "2f5ab1a5a2",
     "2f5b5656fe",
     "2f67c73bc5",
@@ -5323,7 +5744,6 @@
     "301d769cc3",
     "301f148399",
     "30377418f1",
-    "3037cf451d",
     "303af091a6",
     "303cd461a5",
     "304f600e80",
@@ -5337,6 +5757,7 @@
     "30ac2b3fb0",
     "30b6aa567e",
     "30b76ead49",
+    "30c1079384",
     "30dff7dd59",
     "30e6613d85",
     "30e786abb6",
@@ -5361,6 +5782,7 @@
     "319f3e2e01",
     "31a84b8040",
     "31abef1d54",
+    "31d99e638d",
     "31f7b25ef3",
     "31f960f3b5",
     "31fe60752a",
@@ -5372,6 +5794,7 @@
     "3238c68f5d",
     "323e4d43de",
     "3244d3b1d3",
+    "32457e7524",
     "325501eb78",
     "326750a539",
     "326b744791",
@@ -5392,6 +5815,7 @@
     "3359c39cd4",
     "3365aaf64c",
     "336a4f15e2",
+    "3381b24091",
     "3391622afc",
     "339da4ed7b",
     "339db630c4",
@@ -5409,6 +5833,7 @@
     "3434164401",
     "344d90d754",
     "345592ff91",
+    "3457346b66",
     "345abfb1ac",
     "347238edfd",
     "347c8fdeb4",
@@ -5423,10 +5848,10 @@
     "3500ae7071",
     "3510525090",
     "3519519d72",
+    "351c267f6d",
+    "35210960e4",
     "353f15bb40",
-    "356f93431b",
     "3583fab836",
-    "3597cf2198",
     "35ad4cc571",
     "35b3a15356",
     "35b45fb99f",
@@ -5437,8 +5862,6 @@
     "35f9d168b1",
     "360324e86a",
     "360ede8b20",
-    "3618fcc911",
-    "3626e7fbe9",
     "3640f6d7d0",
     "3648bdc4b4",
     "364ed95410",
@@ -5475,7 +5898,6 @@
     "377c176978",
     "377e7d1a2f",
     "378b6b77d6",
-    "3795559542",
     "379d1ed9c5",
     "37aa61fc12",
     "37b617096b",
@@ -5497,15 +5919,17 @@
     "38b5bdaf27",
     "38b7dfaab7",
     "38b9cd72f5",
+    "38bebf150b",
     "38dec8c1fa",
+    "38e2e21eb0",
     "39014508fc",
     "391c71c81d",
     "3928b3f42b",
+    "3935d7ab6e",
     "39372caa30",
     "3941287b1e",
     "394469221a",
     "394d8960b3",
-    "396c38f50a",
     "3974b76ebb",
     "398081e73b",
     "399eb4fc28",
@@ -5517,8 +5941,6 @@
     "39c88f148d",
     "39cfb9b533",
     "39d2b2eca8",
-    "39dab68d49",
-    "39e29b25cb",
     "39fa60622b",
     "3a0337643a",
     "3a06a399b3",
@@ -5530,7 +5952,6 @@
     "3a5456c60e",
     "3a62794f0a",
     "3a687abee0",
-    "3a78c893b7",
     "3a7ced6e8a",
     "3a8baf9d10",
     "3aa1dcdcc3",
@@ -5542,15 +5963,12 @@
     "3adb47fa52",
     "3aec5facf4",
     "3af1822aaa",
-    "3af982b778",
     "3afc054ddf",
     "3b03eb1e38",
     "3b19c60173",
     "3b453d8bf1",
     "3b4836af5e",
-    "3b5e7ec469",
     "3b5fb58230",
-    "3b638b6bd3",
     "3b779f126e",
     "3b77fad938",
     "3b811a8444",
@@ -5573,10 +5991,10 @@
     "3c21fad101",
     "3c29330272",
     "3c331f5ed9",
-    "3c54f8416a",
     "3c63ef9226",
     "3c82220d37",
     "3c83613012",
+    "3c887a8a42",
     "3c8c73cea3",
     "3c954d41ef",
     "3cb2875b6f",
@@ -5620,10 +6038,10 @@
     "3ea4f2811c",
     "3eb5903fb2",
     "3ecb3a25c9",
+    "3ed64703f5",
     "3f0e1e1845",
     "3f18cd46f6",
     "3f1912610a",
-    "3f3684da51",
     "3f4a18b78c",
     "3f513814d8",
     "3f552df990",
@@ -5638,7 +6056,6 @@
     "3f9c78e4cf",
     "3fb68c37e2",
     "3fbdfff31f",
-    "3fc52c7ed7",
     "3ff440ec1f",
     "3ffa7de44c",
     "3ffd31258a",
@@ -5654,10 +6071,10 @@
     "407d1e7552",
     "407d6ef6fb",
     "4081b503fa",
-    "40873a9cfe",
     "40947e4c4d",
     "409524d38e",
     "40b40176c9",
+    "40c5b2078f",
     "40ce1b4d21",
     "40d370b608",
     "40e8975106",
@@ -5679,7 +6096,6 @@
     "417e54ab9f",
     "418158ad25",
     "418d229170",
-    "419266ff4e",
     "41b1d698df",
     "41c06e1a55",
     "41c626fc10",
@@ -5711,7 +6127,6 @@
     "43537b89ed",
     "436827b298",
     "4377a30e7f",
-    "437865aa01",
     "437a127b5c",
     "439fd9d427",
     "43a44cc09f",
@@ -5743,6 +6158,7 @@
     "447dea8938",
     "44888b7a3f",
     "448d4fc977",
+    "4495fc6212",
     "44acdc8b04",
     "44acfccad5",
     "44fb157315",
@@ -5750,11 +6166,9 @@
     "4508f8cadf",
     "450984aef7",
     "450c335fe4",
-    "45126dbf8f",
     "4514f3d9fb",
     "4517508660",
     "45345ad815",
-    "4537fd6fde",
     "4543e45fbf",
     "454ceb340b",
     "45506f4e66",
@@ -5822,7 +6236,6 @@
     "482c31fbe5",
     "48385f96a6",
     "483c8de5e8",
-    "485013d4a1",
     "4855e492b3",
     "4859a27ec8",
     "4873bc0604",
@@ -5834,7 +6247,6 @@
     "48af0888a9",
     "48b0a5fbd3",
     "48b5092213",
-    "48c074b7de",
     "48d2150689",
     "48d92d1f8c",
     "48df8363ca",
@@ -5851,6 +6263,7 @@
     "4960d1a553",
     "497a59d706",
     "499ebe4377",
+    "49acafe2cf",
     "49adefc0ef",
     "49bcc1024b",
     "49ee5c84c4",
@@ -5862,6 +6275,7 @@
     "4a03b9df59",
     "4a248e22bb",
     "4a2b4b6bd9",
+    "4a328ccf23",
     "4a400ed3a8",
     "4a650f5e18",
     "4a69b5e4b8",
@@ -5869,7 +6283,6 @@
     "4a71d7f7d8",
     "4a7ea778b0",
     "4a8667699d",
-    "4a9cbfc00a",
     "4abd81161e",
     "4ac5af06a4",
     "4aed9b2cfd",
@@ -5896,11 +6309,14 @@
     "4be7121673",
     "4c0bb13bd6",
     "4c0e2d967d",
+    "4c13b05ef0",
     "4c1a199cd7",
     "4c2e1283f6",
     "4c2e81816b",
     "4c377d5d1a",
     "4c3b92e9df",
+    "4c43330699",
+    "4c48906169",
     "4c4b62a853",
     "4c4da5ff1f",
     "4c63da0256",
@@ -5913,6 +6329,8 @@
     "4cdeee03ea",
     "4ce80d5c81",
     "4d0352e055",
+    "4d038fce2a",
+    "4d092baf0b",
     "4d0f2eaec4",
     "4d194b4f81",
     "4d37a63d78",
@@ -5925,6 +6343,7 @@
     "4d7afbe9f3",
     "4d8a2727a4",
     "4d8d305e20",
+    "4d9c394c06",
     "4d9e1562e6",
     "4da6dd63ca",
     "4dad9776f4",
@@ -5936,10 +6355,12 @@
     "4df686ccfe",
     "4e01979b01",
     "4e027d09cc",
+    "4e16312a7b",
     "4e1e6516c5",
     "4e253454bd",
     "4e2c55e3a1",
     "4e32fff553",
+    "4e6e66652f",
     "4e720b350a",
     "4e7b3d4a19",
     "4e7dea8f5a",
@@ -5961,6 +6382,7 @@
     "4f5362a750",
     "4f5b9c5d1a",
     "4f68b37cb3",
+    "4f741befae",
     "4f7a4ba580",
     "4f827ccb6e",
     "4f93b7d39e",
@@ -5979,7 +6401,6 @@
     "502c197061",
     "505ac6a2ad",
     "5068cedd90",
-    "50692406a2",
     "506abe1459",
     "506b296a71",
     "506f598298",
@@ -5988,7 +6409,6 @@
     "5089191f35",
     "5090019db9",
     "5091ac6699",
-    "50a9af67e5",
     "50ad3bc86b",
     "50c550733f",
     "50c627d1d7",
@@ -6001,7 +6421,7 @@
     "51065e59ed",
     "51088406b4",
     "5109dd2e4f",
-    "510c983560",
+    "510eb70e75",
     "5132916044",
     "513294d542",
     "5136fb36c6",
@@ -6011,7 +6431,6 @@
     "51b65bfa6e",
     "51bb637bc0",
     "51d020d0e6",
-    "51d430c54e",
     "51eb58ce9d",
     "51f6c56cd7",
     "5213ef64b5",
@@ -6028,7 +6447,6 @@
     "52a300263c",
     "52a79088de",
     "52a8bfbad1",
-    "52acf1905c",
     "52b33c676c",
     "52cae4c1c6",
     "52edf9d7f3",
@@ -6051,6 +6469,7 @@
     "539bf5b90d",
     "53a170a76a",
     "53b2b656ee",
+    "53b99db4c8",
     "53c4adacd3",
     "53cc973011",
     "53d742cb57",
@@ -6082,8 +6501,8 @@
     "551e015ed7",
     "552214d0ab",
     "5522ef450b",
+    "55256ba8ea",
     "5537016021",
-    "5539cbb08f",
     "554eeca3bb",
     "555e356759",
     "55600e2d00",
@@ -6096,6 +6515,7 @@
     "55ed1f047d",
     "55f12528dd",
     "5603725746",
+    "5625958707",
     "56380b84a5",
     "563ed714e6",
     "564427072d",
@@ -6120,6 +6540,7 @@
     "570c8da63b",
     "5728c29b7d",
     "572b794323",
+    "573c7fcf95",
     "574907a309",
     "574b2a56a1",
     "576a51b8b5",
@@ -6148,7 +6569,6 @@
     "5874ef0984",
     "5875e0c25f",
     "5878a59031",
-    "58acff696f",
     "58bac818a4",
     "58c846c8b2",
     "58d29de06b",
@@ -6172,7 +6592,9 @@
     "5a23e53f87",
     "5a24efa6dd",
     "5a25a00ab4",
+    "5a28e32872",
     "5a45fc0d87",
+    "5a46ddb83b",
     "5a5b44fbc8",
     "5a5eed5820",
     "5a6918b217",
@@ -6184,7 +6606,6 @@
     "5ac32838ec",
     "5ac896ba4a",
     "5ad2ce897e",
-    "5ada466366",
     "5af1ad5384",
     "5b0314e12d",
     "5b18fbe94d",
@@ -6212,7 +6633,6 @@
     "5c3c06193b",
     "5c414f24dc",
     "5c423417a8",
-    "5c4733b073",
     "5c6902e980",
     "5c7466b69d",
     "5c7da30057",
@@ -6225,12 +6645,12 @@
     "5d003077bb",
     "5d1d9ed143",
     "5d3e7f79bf",
+    "5d4174eb97",
     "5d54a7266e",
     "5d5805b3be",
     "5d598963ab",
     "5d67938c85",
     "5d6ec5827b",
-    "5d772fcb87",
     "5d993ac261",
     "5d9e10f4d2",
     "5d9f8aef7a",
@@ -6250,8 +6670,6 @@
     "5e5d1770bb",
     "5e63d33035",
     "5e815586af",
-    "5e817b09d8",
-    "5e828be850",
     "5e90186477",
     "5e9b737b82",
     "5ea79e8c98",
@@ -6296,13 +6714,11 @@
     "60ac500565",
     "60b26b0397",
     "60c4a78f42",
-    "60dc4295f8",
     "61032659d1",
     "610c9d7341",
     "61179d2c37",
     "6133dda965",
     "61469a4b23",
-    "615be2820c",
     "6167983eb3",
     "617345bde5",
     "6192973cef",
@@ -6321,8 +6737,6 @@
     "623e5c303d",
     "625a282419",
     "627c55f2f1",
-    "62863bbf60",
-    "62879cbc40",
     "628e92bbab",
     "62a7140f25",
     "62aee9157e",
@@ -6335,8 +6749,7 @@
     "62d7e1e98b",
     "62e1c4c570",
     "62fdfb8c8d",
-    "630b2be773",
-    "630b37c5b2",
+    "633579742a",
     "633744262a",
     "633a1825d8",
     "633d96901b",
@@ -6369,8 +6782,6 @@
     "6473c165fb",
     "6480007498",
     "649680140b",
-    "64976b1c90",
-    "64a8ee74c9",
     "64bbe60397",
     "64bfc9e21b",
     "64cd2869b2",
@@ -6379,10 +6790,9 @@
     "64d483bc48",
     "64d7910da1",
     "64d9cf69fc",
-    "650081f422",
+    "64fb8305fc",
     "6501f32654",
     "6504635bb7",
-    "6513423b5c",
     "6514fdf80c",
     "652848df86",
     "654741d0b1",
@@ -6397,7 +6807,6 @@
     "65897dd488",
     "658f6a78dd",
     "659604c549",
-    "6596453842",
     "6597bf8eaf",
     "65bcc2d66e",
     "65c08166f3",
@@ -6407,6 +6816,7 @@
     "65d539d909",
     "65e24a439e",
     "65e92d05a7",
+    "65ee1a2fdf",
     "65eefbb2a6",
     "65f8156f66",
     "65ff824f79",
@@ -6443,7 +6853,7 @@
     "6776f8a7f8",
     "67921e2386",
     "67934fcfd0",
-    "679391bee0",
+    "67a2901166",
     "67a7786def",
     "67b1ac8cec",
     "67d678a75b",
@@ -6471,7 +6881,6 @@
     "6889ffe9c4",
     "68a020a306",
     "68a06f3562",
-    "68a49cb778",
     "68a5e4e4b7",
     "68c8f12f65",
     "68df5c0a19",
@@ -6482,6 +6891,7 @@
     "68f96d0214",
     "68fe09cb4c",
     "69043beab6",
+    "6916832e0d",
     "69319ded9c",
     "693b7ee1e8",
     "6940cd588a",
@@ -6492,7 +6902,6 @@
     "69ba44d1b2",
     "69c604f33b",
     "69e093818f",
-    "69e0e7560e",
     "6a12662074",
     "6a2a88234b",
     "6a2db7bd81",
@@ -6519,7 +6928,6 @@
     "6b02942819",
     "6b1c59c22d",
     "6b236cd753",
-    "6b37dd4da4",
     "6b47d4593b",
     "6b4b8b83b2",
     "6b7d0afbdf",
@@ -6534,7 +6942,6 @@
     "6be5510c6b",
     "6be96fe2a4",
     "6bf377a9d6",
-    "6bfc5fa9f1",
     "6bfe4778ed",
     "6bfe78589c",
     "6c1085a95e",
@@ -6562,8 +6969,10 @@
     "6cd7a6540c",
     "6ce9462358",
     "6cf5144bdf",
+    "6d0719e755",
     "6d0e61f753",
     "6d17627091",
+    "6d1c0cb01a",
     "6d359525a1",
     "6d3e56939a",
     "6d45aa5a10",
@@ -6581,6 +6990,7 @@
     "6de1ed2ab6",
     "6df03cd3fe",
     "6dfad36a83",
+    "6dfd04f69b",
     "6dfd7d5878",
     "6dff058420",
     "6e086efd77",
@@ -6598,11 +7008,11 @@
     "6ea8d709de",
     "6eab5a5ab2",
     "6eab99afe4",
-    "6ebaa8a274",
     "6ebcda99a5",
     "6ecfc42eb8",
     "6edbbe8462",
     "6edd661935",
+    "6ee6d36794",
     "6ef0f560cd",
     "6ef5950a26",
     "6f0238712e",
@@ -6617,7 +7027,6 @@
     "6f436baafe",
     "6f4dff10c0",
     "6f70170950",
-    "6f71ad3142",
     "6f71be137f",
     "6f850c61eb",
     "6f88af7b40",
@@ -6682,7 +7091,6 @@
     "71898fde34",
     "71972a652e",
     "71b2e959d7",
-    "71e0809d58",
     "71ec5ffc15",
     "71f148be10",
     "71f9d7703b",
@@ -6694,16 +7102,18 @@
     "7235a9f33b",
     "723cf680b1",
     "7249a075c3",
-    "7254a106cb",
     "725a839d37",
     "725e293e2b",
     "725e46f47e",
+    "72620202a9",
     "7279f0231d",
     "72921874a4",
     "72978fe36c",
+    "72b44b3081",
     "72b9164582",
     "72bd57073f",
     "72c368e559",
+    "72d7e3da1c",
     "72dd583150",
     "72e1b3f262",
     "72e67a8e9a",
@@ -6715,12 +7125,10 @@
     "7313db8a97",
     "73289aef32",
     "733e99feb9",
-    "7350733e07",
     "73542316f4",
     "735c388108",
     "73797a2706",
     "73a104f5f1",
-    "73aeceb979",
     "73b50d274a",
     "73ed0aa210",
     "73f3d8faf8",
@@ -6787,6 +7195,7 @@
     "77b717e9a3",
     "77bcaa99e7",
     "77cc9238d7",
+    "77f88e8a10",
     "77fd96ade3",
     "781a56c8c8",
     "7843311904",
@@ -6800,6 +7209,7 @@
     "78aa1ed88c",
     "78be8a8b15",
     "78ccf88f90",
+    "78ce88748f",
     "78d167b44b",
     "78d5252352",
     "78ebeacaa7",
@@ -6853,6 +7263,7 @@
     "7b68e88736",
     "7b6d197f3a",
     "7b7472bd9f",
+    "7b8027ac97",
     "7b84ecd086",
     "7b8c32226c",
     "7b95813509",
@@ -6873,6 +7284,7 @@
     "7c88e6933b",
     "7c9f4fc856",
     "7ca060647d",
+    "7caee1c0b2",
     "7cb68166ac",
     "7cb79ab8b3",
     "7ccdee92ee",
@@ -6890,11 +7302,9 @@
     "7d6d2558d0",
     "7d6eb0f16d",
     "7d7e1ae2e1",
-    "7d89e4e128",
     "7d8d14342a",
     "7d8d1897d3",
     "7d8e29321c",
-    "7da3768be7",
     "7db1140322",
     "7db96b99a9",
     "7dbdf1de27",
@@ -6906,7 +7316,6 @@
     "7e4ccb8d03",
     "7e4efb8a2d",
     "7e591ba53e",
-    "7e706913a0",
     "7e7ea55ebc",
     "7e98c33ae9",
     "7e9a0da77a",
@@ -6915,9 +7324,7 @@
     "7eb0b07dcf",
     "7eb88c7162",
     "7ebd7d982d",
-    "7ec94cead3",
     "7ed962609f",
-    "7ee1f7831f",
     "7ee280e944",
     "7eee9ba503",
     "7f24b30d1d",
@@ -6935,9 +7342,11 @@
     "7fc5809b90",
     "7fc7ad038b",
     "7fc9fdd4dd",
+    "7fdaccd6bc",
     "7fdbca4207",
     "7fdbd76e1b",
     "7fdd54c9c2",
+    "7fe0ea91d1",
     "7fe2702466",
     "7ffd55cc01",
     "800c08cf96",
@@ -6963,7 +7372,6 @@
     "80be3529c8",
     "80bffc4d38",
     "80c7368cf2",
-    "80d1a8d79f",
     "80da7ddaaf",
     "80de433a0b",
     "80f5485c69",
@@ -6981,6 +7389,7 @@
     "8169fd21fb",
     "8196c26248",
     "819a80841a",
+    "819c01b291",
     "81a0691e0d",
     "81a0908845",
     "81a4c8423d",
@@ -6992,6 +7401,7 @@
     "81f890d976",
     "81fe2b418b",
     "8202cff30c",
+    "821a17ec4e",
     "822c5084a3",
     "82383345be",
     "823f386449",
@@ -7012,7 +7422,6 @@
     "82ccf60621",
     "82d264349e",
     "82d2cbaee0",
-    "82fcb0f2a7",
     "8305dbf12a",
     "831151f544",
     "831966e123",
@@ -7023,8 +7432,8 @@
     "834b0bc55b",
     "835217b304",
     "8365e18426",
+    "8368f318f9",
     "837885e9e7",
-    "837d8462dd",
     "8387a0a10a",
     "8391b3f4fc",
     "839743560b",
@@ -7039,7 +7448,6 @@
     "83e2f9c46f",
     "8404ac1cbc",
     "84059af82c",
-    "84080a628f",
     "841da7cd04",
     "842a6663d3",
     "8430fc6e6a",
@@ -7068,11 +7476,11 @@
     "85b9df6b09",
     "85d183e7b7",
     "85d3f309c9",
-    "85dc260fb4",
     "85e795f05d",
     "85eaa435e3",
     "85fe6d9654",
     "860f71a110",
+    "861ebea9ec",
     "862288a171",
     "8626309cf9",
     "862e60af69",
@@ -7091,6 +7499,7 @@
     "86d2f6a606",
     "86fb1b2d0a",
     "87096a5d2b",
+    "8715c32e60",
     "871a3d1c45",
     "872388c2d4",
     "8728bf9259",
@@ -7131,7 +7540,9 @@
     "88bab99f61",
     "88c719d4f9",
     "88c94c285e",
+    "88ccca26ea",
     "88dcfa680c",
+    "88dfacfe55",
     "88f3c0493f",
     "88f9401cc5",
     "88fe2ac601",
@@ -7148,7 +7559,6 @@
     "898b8feb8c",
     "8990dc669b",
     "899c93e3fc",
-    "89a13b526a",
     "89a31d7aa2",
     "89b1e580ee",
     "89bec9159b",
@@ -7174,14 +7584,12 @@
     "8ae8aefef1",
     "8aea7e0844",
     "8af9bb5764",
-    "8b0386506b",
     "8b07a915bc",
     "8b09583c9e",
     "8b1c0ac8c8",
     "8b25fdcb7f",
     "8b315f89a9",
     "8b37a418a2",
-    "8b585fcba5",
     "8b5f907492",
     "8b69309d6b",
     "8b6fc7f25f",
@@ -7214,6 +7622,7 @@
     "8d00dc115d",
     "8d0372b6c8",
     "8d0b4b3e80",
+    "8d0dba7089",
     "8d413fc3bc",
     "8d4211d72e",
     "8d4982902e",
@@ -7235,11 +7644,13 @@
     "8dd19fef4f",
     "8dd2daa71a",
     "8dd66edf6f",
+    "8defb194b6",
     "8e087dc270",
     "8e11f333e7",
     "8e1bb7a429",
     "8e1e9c888f",
     "8e426ba97f",
+    "8e44c6af7c",
     "8e46215b7b",
     "8e4daf02de",
     "8e5cb47817",
@@ -7250,6 +7661,7 @@
     "8e8c5a3561",
     "8eb3f05c0a",
     "8eb994407d",
+    "8ec473b9d3",
     "8ee3af8247",
     "8ee8e4e65a",
     "8ef47aacd4",
@@ -7275,10 +7687,10 @@
     "8fd73e35ce",
     "8fda2f5f2f",
     "8feff92b3b",
-    "9003afe745",
     "900812458c",
     "9023c06d47",
     "9025c6712f",
+    "90269abc44",
     "90296e50af",
     "9040521e51",
     "904b88ccbd",
@@ -7289,6 +7701,7 @@
     "90abcb9922",
     "90ba71d6e8",
     "90bd42c309",
+    "90c4fd246e",
     "90cf13f8bf",
     "90e93c4004",
     "90f0cc8dd0",
@@ -7296,6 +7709,7 @@
     "9105068442",
     "911c418642",
     "911d81055c",
+    "913461d21c",
     "91473c7ab5",
     "9152a3ca88",
     "91559965a0",
@@ -7307,12 +7721,12 @@
     "91781d8fea",
     "9186b3cf9b",
     "919df8e6d0",
+    "919f4626b3",
     "91a7f534fc",
     "91aeb3a043",
     "91b0c4284a",
     "91b3d32859",
     "91c3371844",
-    "91c6e3cc1a",
     "91d748c892",
     "91eb07b03f",
     "91ebe8ff21",
@@ -7329,6 +7743,7 @@
     "92319f43e6",
     "9238a9a85a",
     "926b70748a",
+    "9298d4ad7a",
     "92a3ec6fcc",
     "92b7aa55d0",
     "92cffe9e16",
@@ -7340,7 +7755,6 @@
     "932e9bff7a",
     "93389186ae",
     "933d75c5f7",
-    "93404da1ad",
     "93459bc284",
     "9347838a6e",
     "93492ca207",
@@ -7369,7 +7783,6 @@
     "948f09da34",
     "948f3cc160",
     "949a65325a",
-    "94a1cf6eff",
     "94a2bd8cbc",
     "94a53ffc34",
     "94b19b010f",
@@ -7380,6 +7793,7 @@
     "94deae3308",
     "94dff6fd04",
     "94eab1817e",
+    "94f300ff4c",
     "94f8d13789",
     "94fb9ab904",
     "94fb9ffe3b",
@@ -7399,11 +7813,13 @@
     "95a1e0def5",
     "95a2059976",
     "95a79645bd",
+    "95c1461586",
     "95cbf4cc9a",
     "95ce51d45d",
     "95cfa3e67b",
     "95ec484dab",
     "96024a1158",
+    "9603cbf456",
     "9606075472",
     "961e24dac7",
     "961efeaeca",
@@ -7437,12 +7853,13 @@
     "976ad14faa",
     "976d5dea3d",
     "97792b6941",
-    "9798bc976d",
     "979f36ffbc",
+    "97b6b52b67",
     "97be58e8b8",
-    "97e09df251",
+    "97dfabf661",
     "97f3f109f7",
     "97fd49530f",
+    "980fd9a71f",
     "982313df4a",
     "9837d743a7",
     "98452ad7c2",
@@ -7451,10 +7868,12 @@
     "9859a2f577",
     "985e195f74",
     "986d8bb6e0",
+    "9872cf863e",
     "98731b74a6",
     "98825c8230",
     "988744c679",
     "989699c555",
+    "98a55b29c7",
     "98ad03c0c1",
     "98b24236b1",
     "98edbd1b7f",
@@ -7465,7 +7884,6 @@
     "991c571899",
     "991d02ae90",
     "993116d01f",
-    "993868e6c1",
     "9944afb552",
     "994a52ddfc",
     "997ee90305",
@@ -7475,6 +7893,7 @@
     "998d753644",
     "998eeb74b7",
     "99b4fbf26c",
+    "99b87310fa",
     "99c1481ea3",
     "99c6399bd4",
     "99c9e3865a",
@@ -7482,6 +7901,7 @@
     "99d8c515a0",
     "99f48a7119",
     "9a217502e0",
+    "9a37d0ccaa",
     "9a395df862",
     "9a3c0b0fe1",
     "9a3d73576d",
@@ -7505,7 +7925,6 @@
     "9b260b76c2",
     "9b2b55bcb5",
     "9b2de1caf3",
-    "9b3b52559a",
     "9b3b838d11",
     "9b4d80e1d7",
     "9b566cba02",
@@ -7517,6 +7936,7 @@
     "9b909bcf8a",
     "9b9b74ec58",
     "9ba0f577f1",
+    "9baefc6d90",
     "9bcfbb8f7f",
     "9bd20ea38a",
     "9bd9a20e81",
@@ -7530,7 +7950,6 @@
     "9c40b4c29f",
     "9c45ab08b4",
     "9c491cdf6f",
-    "9c49464ec2",
     "9c4e9c240a",
     "9c5a1de364",
     "9c84eee14b",
@@ -7541,6 +7960,7 @@
     "9ce6039ac7",
     "9cf92f3a5a",
     "9d08fcb365",
+    "9d22b95d1a",
     "9d2ed7359c",
     "9d91abeae6",
     "9d95cc4323",
@@ -7553,9 +7973,7 @@
     "9ddd7b2d89",
     "9de3fb13df",
     "9de572db4b",
-    "9debabaddc",
     "9ded2843aa",
-    "9df2bdeec4",
     "9df31c3596",
     "9e1e35553e",
     "9e30549fc3",
@@ -7580,7 +7998,6 @@
     "9f12092829",
     "9f1730aef0",
     "9f18d3cec5",
-    "9f1f73b39d",
     "9f255e8bb0",
     "9f28e0a25d",
     "9f34a16d29",
@@ -7595,6 +8012,7 @@
     "9f9d41e1de",
     "9fa9558785",
     "9fbac08b81",
+    "9fcbde1915",
     "9fd04ed480",
     "9fd4ada969",
     "9fd8fd7293",
@@ -7627,12 +8045,12 @@
     "a0ce9780ba",
     "a0dcdf721c",
     "a0e43f08ee",
+    "a0edb360c1",
     "a0f5f5043e",
     "a0fca46a70",
     "a1072c0e65",
     "a1133b7d1e",
     "a12deecf2b",
-    "a1493a28d6",
     "a153ded7ef",
     "a1624cc535",
     "a177a8f118",
@@ -7653,7 +8071,6 @@
     "a22cb21bd8",
     "a22f8dc223",
     "a232aebd74",
-    "a2419d4a7b",
     "a241e7c1dd",
     "a24f82ffaa",
     "a268c15754",
@@ -7661,9 +8078,7 @@
     "a27852aa50",
     "a281766199",
     "a295ed696b",
-    "a2a321e7e6",
     "a2ab3dd2ee",
-    "a2b2c3f32f",
     "a2cda4096a",
     "a2d2c2689a",
     "a2d36fc84c",
@@ -7694,6 +8109,7 @@
     "a42b62977e",
     "a4586ab68b",
     "a463bdf796",
+    "a48a3ffe1a",
     "a48d0f54fc",
     "a49727f883",
     "a498ce0f44",
@@ -7706,7 +8122,6 @@
     "a4dca79c7d",
     "a4e57dbbf8",
     "a4e653d394",
-    "a4e81cccca",
     "a4ed950b91",
     "a4f9e5863d",
     "a4fcd457ab",
@@ -7714,6 +8129,7 @@
     "a50a7fd32c",
     "a52c1d385f",
     "a53f89913c",
+    "a5419ea5f2",
     "a54c120f83",
     "a564b73455",
     "a5760c2df2",
@@ -7730,7 +8146,6 @@
     "a616df1d04",
     "a6173e90aa",
     "a6197718c6",
-    "a61b167f36",
     "a627d6ec8c",
     "a631617c00",
     "a64f9ad1da",
@@ -7743,6 +8158,7 @@
     "a6a8eb3030",
     "a6b126969d",
     "a6cfc5ad09",
+    "a6d7ec8a9f",
     "a6d93eada1",
     "a6e9c7cecf",
     "a6f9276bfa",
@@ -7765,8 +8181,10 @@
     "a7ef600215",
     "a81094f203",
     "a825d322d8",
+    "a8516e7a68",
     "a8717f2901",
     "a88159c106",
+    "a89194715e",
     "a8a0e52490",
     "a8a4590b9a",
     "a8a7a3fa36",
@@ -7778,7 +8196,6 @@
     "a8db6021e9",
     "a8e11b4f00",
     "a9004d26d0",
-    "a90af5a2a7",
     "a9175acb74",
     "a91cc8d7f3",
     "a926be1713",
@@ -7815,7 +8232,6 @@
     "aada03af0f",
     "aadbf46834",
     "aadebd848d",
-    "aae9f026fd",
     "aaf0d96fcb",
     "aaf216b5e1",
     "aaf547e92e",
@@ -7823,7 +8239,6 @@
     "ab4124693a",
     "ab72de3d7b",
     "ab7863409e",
-    "ab81ac3326",
     "ab84479187",
     "ab8f8b5d47",
     "aba1495873",
@@ -7845,10 +8260,12 @@
     "ac4b84a2d2",
     "ac5752176b",
     "ac6213162d",
+    "ac68a553e8",
     "ac6d3fb4a7",
     "ac87f463a4",
     "ac94119e42",
     "aca10bbe22",
+    "acd279da63",
     "acd5f692ed",
     "ace167a6d6",
     "ace37f7d96",
@@ -7856,7 +8273,6 @@
     "ad06e8ebd4",
     "ad17c7e347",
     "ad189f382b",
-    "ad1eb3f29a",
     "ad20853e18",
     "ad33d66989",
     "ad36b7682d",
@@ -7910,6 +8326,7 @@
     "af59897062",
     "af65f7c2e9",
     "af6af69d14",
+    "af8b614dff",
     "af8d7cc317",
     "afac7472b9",
     "afaf196010",
@@ -7927,12 +8344,10 @@
     "b047ad16b5",
     "b04d10289f",
     "b0583f73c3",
-    "b06593a657",
     "b06859e6c3",
     "b07165dd78",
     "b07da9463e",
     "b0a184dbbe",
-    "b0b985ef47",
     "b0f43cce35",
     "b1031c4912",
     "b103ad0bb3",
@@ -7955,8 +8370,8 @@
     "b1c7a010c7",
     "b1d1fb3662",
     "b1e822b44b",
+    "b1f172c9eb",
     "b1f4ef7aae",
-    "b1f8fe787d",
     "b20b51e1a1",
     "b215f820ae",
     "b22328b119",
@@ -7969,7 +8384,6 @@
     "b24d8d9a52",
     "b258fd7d3a",
     "b25df49630",
-    "b25e5e25ff",
     "b26cc7390f",
     "b27bddc389",
     "b287f4b103",
@@ -7990,6 +8404,7 @@
     "b30b30533a",
     "b31b70b009",
     "b33522c119",
+    "b385b9e88b",
     "b389f6baed",
     "b3ac7bea89",
     "b3b377855f",
@@ -7998,6 +8413,7 @@
     "b3ea373ef2",
     "b3fa8f3a35",
     "b3faa18d52",
+    "b3fbc63b1a",
     "b4013472ec",
     "b402db6836",
     "b41539b1a4",
@@ -8035,11 +8451,9 @@
     "b5c6e04100",
     "b5c7998c00",
     "b5d1c72886",
-    "b5e0f859bb",
     "b5e728100a",
     "b5e728efcd",
     "b5e869a84c",
-    "b607bedf57",
     "b607e7ffdd",
     "b60dac8f24",
     "b610a022be",
@@ -8054,16 +8468,16 @@
     "b66fcbeac3",
     "b678185526",
     "b67b6e2770",
-    "b68cb9d72e",
+    "b698c67ca3",
     "b6ce991244",
     "b6d9ae7b84",
     "b6df8f62ba",
     "b7097dad83",
     "b727ed7cc8",
     "b73bcdcf02",
+    "b742559b90",
     "b769db53e3",
     "b76d3af07c",
-    "b76f96f936",
     "b7701cfb87",
     "b7712bc920",
     "b77f03195f",
@@ -8148,13 +8562,13 @@
     "bbc771c767",
     "bbcf3af5cb",
     "bc03bfc0c7",
-    "bc2a014182",
     "bc2bb7ec2a",
     "bc2f3ed444",
     "bc38d488ca",
     "bc63c85727",
     "bc6c4012fb",
     "bc880e57ed",
+    "bc8ef23f58",
     "bc913dafec",
     "bcae93d2a7",
     "bcb2f5538c",
@@ -8163,13 +8577,12 @@
     "bcca35144e",
     "bcd11b13b9",
     "bcd53074c3",
-    "bcdec5c345",
     "bce6cfa395",
     "bd1c2aea2b",
     "bd1fd929ca",
     "bd20d5cde5",
-    "bd282e55fb",
     "bd2f350718",
+    "bd3155d8dc",
     "bd440c775b",
     "bd49de6802",
     "bd4c07fc14",
@@ -8186,12 +8599,15 @@
     "bdec65d5cc",
     "bdf67c1142",
     "be0673e8f4",
+    "be076adb2a",
     "be1840f559",
     "be359ad6a6",
     "be378c19d0",
+    "be3dfd0f22",
     "be4fb91d45",
     "be5daf5378",
     "be64fd48cc",
+    "be75875bee",
     "be78e358ad",
     "be7d370371",
     "be7da1a65a",
@@ -8199,6 +8615,7 @@
     "be891656de",
     "bea83e4dc7",
     "beb0b9aa8c",
+    "beb86b1c6e",
     "bedeab5d19",
     "bef0450746",
     "bef52c73cb",
@@ -8254,14 +8671,12 @@
     "c0f092aa92",
     "c0f772e751",
     "c0ff4ce5f5",
+    "c1119380b6",
     "c130d5536b",
-    "c131dc5ffd",
     "c148ffd7cf",
     "c16da76a76",
-    "c17139bfe4",
     "c17531bdcc",
     "c17aad04e2",
-    "c185a1c93f",
     "c1a0d6a35c",
     "c1b536202f",
     "c1c0452ef1",
@@ -8280,7 +8695,6 @@
     "c23f2d55c3",
     "c2785e8e50",
     "c28ec279f9",
-    "c299c5e8ce",
     "c29c84fcff",
     "c2a6748010",
     "c2abca9f7b",
@@ -8308,6 +8722,7 @@
     "c3bc6c00b1",
     "c3bf7ee2db",
     "c3c5508729",
+    "c3d4a0432c",
     "c3d7413c48",
     "c3d74d6870",
     "c3e75e823c",
@@ -8327,6 +8742,7 @@
     "c47f497b2d",
     "c48c782b4b",
     "c48eb5cbbf",
+    "c4935d42d3",
     "c49ba565f9",
     "c4a35bf29b",
     "c4ab17a917",
@@ -8351,6 +8767,7 @@
     "c537169d1a",
     "c53bbbdb09",
     "c53f0124d6",
+    "c565fd01ad",
     "c5693adaa8",
     "c58b777ba3",
     "c59dd72188",
@@ -8360,6 +8777,7 @@
     "c5b57b5676",
     "c5b81ced99",
     "c5ba4cca92",
+    "c5be47b631",
     "c5bf9e7f28",
     "c5d90f808a",
     "c5e4d4c33e",
@@ -8386,10 +8804,12 @@
     "c6b8998f0e",
     "c6ba5c893c",
     "c6cdadac82",
+    "c6e4620d41",
     "c6e6f52d90",
     "c6ea43332a",
     "c73517db49",
     "c7397b8f61",
+    "c73a038631",
     "c73b0b25ad",
     "c7576a7b99",
     "c75971950b",
@@ -8401,6 +8821,7 @@
     "c7acb90c83",
     "c7ef2b1872",
     "c805965c7a",
+    "c80dcb431e",
     "c80fae9a37",
     "c81360bb86",
     "c813d915b5",
@@ -8429,6 +8850,7 @@
     "c9b4e83177",
     "c9ba74d5f1",
     "c9c00ddd02",
+    "c9e5e51bc3",
     "ca09aea431",
     "ca0dbeed0b",
     "ca145e6cff",
@@ -8444,7 +8866,6 @@
     "ca910279d9",
     "cab91ba40a",
     "cabe4cbdc7",
-    "cac9db8b13",
     "cae0ec40e3",
     "caf4869089",
     "cb01cc0651",
@@ -8465,35 +8886,35 @@
     "cbb07cf878",
     "cbb900fec8",
     "cbba157442",
-    "cbc8c5ba2d",
     "cbd97dcc80",
     "cbdda94e95",
     "cbe38f96e8",
     "cbe61b046b",
     "cbed19d4c9",
     "cbef730a14",
-    "cbf1aca738",
     "cbf55cd86c",
     "cc0c683ed4",
     "cc17bfcc77",
     "cc1f81ff09",
     "cc39c19b90",
+    "cc435ebf0c",
     "cc4b210b28",
     "cc5328c1c9",
     "cc636b8a9a",
     "cc65494f68",
     "cc725495d5",
     "cc8a10925c",
+    "cca9143d55",
     "ccb15263b1",
     "ccb76f8207",
     "ccd7c01f71",
     "ccd8039a1c",
     "ccdc3db2b0",
     "ccec1c8cab",
+    "cd024a5a4e",
     "cd09d3e1dd",
     "cd0d91bca3",
     "cd20c7a197",
-    "cd217be5a5",
     "cd24eb3a94",
     "cd33591796",
     "cd349bc393",
@@ -8510,7 +8931,6 @@
     "cddd228122",
     "cdebe5c208",
     "cdf1777c21",
-    "cdf7bc2e8c",
     "cdf93dfff3",
     "cdfb7a88dc",
     "ce00501667",
@@ -8563,7 +8983,6 @@
     "cfd83c1677",
     "cfef9aa60e",
     "cff2a2e6ec",
-    "d016d2769e",
     "d027794861",
     "d03043a80b",
     "d0501d3c1b",
@@ -8579,7 +8998,6 @@
     "d0b213b824",
     "d0b4b542a4",
     "d0badb5e55",
-    "d0c2f232f5",
     "d0c4383827",
     "d0cd4c35a4",
     "d0e8b3bafb",
@@ -8608,7 +9026,7 @@
     "d1f7453444",
     "d1fca753fe",
     "d2047df4d7",
-    "d206d9af3f",
+    "d20ca5f599",
     "d20d03e35f",
     "d20e650495",
     "d2185c6c28",
@@ -8654,7 +9072,6 @@
     "d3d8ef6138",
     "d3eb795e08",
     "d408fc2080",
-    "d40ebeb789",
     "d425924ce2",
     "d44a6b4a6e",
     "d450c14bef",
@@ -8673,6 +9090,7 @@
     "d51576eb6c",
     "d536ee4cc8",
     "d540d2ebc2",
+    "d55295dd44",
     "d5537d758a",
     "d5564d7d21",
     "d557f4537c",
@@ -8694,7 +9112,6 @@
     "d655ee9124",
     "d660951b12",
     "d678b7aee3",
-    "d680058eed",
     "d682c4144a",
     "d68870fa5d",
     "d68e3b9a61",
@@ -8727,6 +9144,7 @@
     "d7bd7d2923",
     "d7be16421f",
     "d7be168c18",
+    "d7e46ad9a9",
     "d7e74b205d",
     "d7ec126c9e",
     "d80b1e8679",
@@ -8736,12 +9154,12 @@
     "d821f8579a",
     "d8255c8d19",
     "d828bdbf9b",
-    "d82c291d96",
     "d836c48044",
     "d837e5d75d",
     "d84d5a42cb",
     "d86fe800c7",
     "d8839c667a",
+    "d886a082e8",
     "d8aa734c5a",
     "d8c0f2be97",
     "d90fa35a74",
@@ -8778,6 +9196,7 @@
     "da70463852",
     "da84dd1444",
     "da95cc1057",
+    "da978ee296",
     "daa0d77c74",
     "daa7ef6533",
     "dabafcfa0a",
@@ -8821,6 +9240,7 @@
     "dca039eb09",
     "dca7929191",
     "dcb5cd84c4",
+    "dcc3267041",
     "dcd6389a35",
     "dcdc7e6bcf",
     "dcded3a265",
@@ -8865,6 +9285,7 @@
     "deb8e842c4",
     "dec4ce7d27",
     "ded7afd2b1",
+    "ded82f78c9",
     "dedd96630c",
     "deebff5415",
     "def07378ea",
@@ -8881,7 +9302,6 @@
     "df99b0f3d6",
     "df9a9a4a7e",
     "dfa116b747",
-    "dfbc7c7963",
     "dfbc8fcca3",
     "dfc049f3a4",
     "dfcd01633f",
@@ -8907,9 +9327,9 @@
     "e10acf61ac",
     "e11066d668",
     "e117b8edf4",
+    "e11f61fa0d",
     "e120c5195b",
     "e127d69321",
-    "e13d2dad99",
     "e15abe39a4",
     "e16f9a01e3",
     "e1706b1d55",
@@ -8937,6 +9357,7 @@
     "e29cdc3b15",
     "e2b5446108",
     "e2c8b08a53",
+    "e2cf287de0",
     "e2d53c7920",
     "e2dbdcb7f1",
     "e2ddc0198e",
@@ -8989,6 +9410,7 @@
     "e5085f0247",
     "e5312640a2",
     "e546c17c8e",
+    "e54e8b0e00",
     "e56cc7219e",
     "e589882232",
     "e59f14c2a6",
@@ -9033,6 +9455,7 @@
     "e71fbac092",
     "e7224be65b",
     "e73b0d0016",
+    "e73cc14e13",
     "e749f41dcf",
     "e7654b1e66",
     "e77295e60f",
@@ -9046,7 +9469,6 @@
     "e7c1d9920d",
     "e7e2cdbcec",
     "e803007c1a",
-    "e8052169ef",
     "e805d528b6",
     "e80a4fd699",
     "e810349911",
@@ -9081,6 +9503,7 @@
     "e9631d4797",
     "e97d2f619d",
     "e98013ae88",
+    "e992b35508",
     "e993e6f1ea",
     "e9a9f13c6a",
     "e9aa15f382",
@@ -9104,7 +9527,6 @@
     "ea4e9a555e",
     "ea58e2a8bb",
     "ea8d4a240f",
-    "ea90e0e02a",
     "eaaab8e7ca",
     "eaad0724a6",
     "eaadaa4291",
@@ -9118,13 +9540,12 @@
     "eb43586b2d",
     "eb511098dc",
     "eb66d01275",
-    "eb6ffa1013",
     "eb835682e7",
     "eb903a9918",
     "eb9209ccbe",
+    "eb93e3ff11",
     "eb98d0026d",
     "eb9dbd7e40",
-    "ebaa82f1f4",
     "ebaae4421a",
     "ebab7da9ad",
     "ebb1bcf623",
@@ -9151,6 +9572,8 @@
     "ec55ca59e4",
     "ec5ccead6a",
     "ec6c206e09",
+    "ec862fcd21",
+    "ec98abac36",
     "ec9e9e62d6",
     "eca21e5bad",
     "ecad0e1f5e",
@@ -9158,7 +9581,6 @@
     "ecc4547041",
     "ecc66787b3",
     "ecd89afed8",
-    "ecdd24bddf",
     "ece89f289b",
     "eced9a373f",
     "ecef3ccdb1",
@@ -9203,7 +9625,6 @@
     "eecd9bcd6f",
     "eedef4adf0",
     "eee0497269",
-    "ef0561dc9f",
     "ef06b3a11f",
     "ef3f9ca10e",
     "ef4bec6a35",
@@ -9227,8 +9648,6 @@
     "efdc8cc3c3",
     "efe648c8ef",
     "eff8925061",
-    "f0014a0df6",
-    "f016c1a307",
     "f01e20cafa",
     "f022c69554",
     "f02ab0179d",
@@ -9247,7 +9666,6 @@
     "f0bcbedb99",
     "f0bfe6cac3",
     "f0c22e05f0",
-    "f0c93558f0",
     "f0d8b28c1f",
     "f0e6d9c4e3",
     "f0fce0e7a1",
@@ -9260,7 +9678,6 @@
     "f15ef867b9",
     "f169038c68",
     "f16dd2ee06",
-    "f1760dfd79",
     "f17c37607d",
     "f17fa45e24",
     "f1855524b6",
@@ -9290,7 +9707,6 @@
     "f26da83ce2",
     "f26f672b1a",
     "f274f50be8",
-    "f284e3172d",
     "f28ab6884a",
     "f293f28724",
     "f294e7dc8f",
@@ -9315,6 +9731,7 @@
     "f3a0e80d19",
     "f3a3ae33b0",
     "f3ae21b117",
+    "f3b0595881",
     "f3b9a8ea25",
     "f3bfdf66ac",
     "f3d0247a6d",
@@ -9323,6 +9740,7 @@
     "f3d8ce5c42",
     "f3db3ba257",
     "f3e7d1e546",
+    "f3ed22b532",
     "f3fa5024fc",
     "f4024f08c9",
     "f410f04ece",
@@ -9330,12 +9748,10 @@
     "f41f06edb1",
     "f422736cd2",
     "f4293f3bd1",
-    "f4308d3242",
     "f4377e5fbe",
     "f438d571d6",
     "f43ba20e75",
     "f44e0f2b5f",
-    "f450e2131b",
     "f46796ed10",
     "f46a7ef91b",
     "f46ef72433",
@@ -9346,11 +9762,11 @@
     "f48e17a468",
     "f49dfc7e82",
     "f4a1d54160",
-    "f4aec8ce83",
     "f4bcbc6c08",
     "f4d6168107",
     "f4df3f34cf",
     "f4e48ad406",
+    "f4f65888b5",
     "f4fae1ba52",
     "f4fc66a2dd",
     "f504a83345",
@@ -9365,7 +9781,6 @@
     "f5579a92d5",
     "f580bf7b06",
     "f59f055f1d",
-    "f5a49d5db4",
     "f5aa198fd3",
     "f5d0c7ca78",
     "f5ebb162a3",
@@ -9381,6 +9796,7 @@
     "f62c6b9d78",
     "f62e18b0df",
     "f62f3dedc6",
+    "f641577b41",
     "f64dd16ce8",
     "f650a699ec",
     "f653266155",
@@ -9411,6 +9827,7 @@
     "f78f69bb17",
     "f78fb1ec6b",
     "f7bcfb5085",
+    "f7c33efe54",
     "f7c4418cd2",
     "f7d1847675",
     "f7e0bf74b3",
@@ -9426,6 +9843,7 @@
     "f877761548",
     "f87d46fbe6",
     "f8862fa88e",
+    "f8865abcc2",
     "f888f3d025",
     "f88c664931",
     "f88dc2ba02",
@@ -9443,7 +9861,6 @@
     "f92c82b0a1",
     "f92e63e7e9",
     "f9576931d6",
-    "f958ea7cb6",
     "f96113c85f",
     "f96894b19b",
     "f97393e0ca",
@@ -9465,7 +9882,6 @@
     "fa655bfbeb",
     "fa6c2ca988",
     "fa90abac3d",
-    "faa2f23034",
     "fabe58e0d3",
     "fac41ce668",
     "fac98ad522",
@@ -9504,7 +9920,6 @@
     "fc2586a9e6",
     "fc28cb946a",
     "fc29ebc177",
-    "fc2a3ce63a",
     "fc2d058939",
     "fc3e851a8b",
     "fc40cca0ba",
@@ -9573,6 +9988,7 @@
     "ff05c105e0",
     "ff12d54f53",
     "ff2ddbc1f2",
+    "ff36f9e0f5",
     "ff3d955506",
     "ff534a68d5",
     "ff5a08cbe0",
@@ -9584,11 +10000,13 @@
     "ff91b71710",
     "ff91c95801",
     "ffad6ae063",
+    "ffb5251dcd",
     "ffcee1c5a2",
     "ffe7227a92",
     "ffeb02aa0b",
     "ffee1f526b",
     "ffef1eb3be",
+    "fff219e8e0",
     "fff93d2934",
     "fffdf16950",
     "fffe424fb9"
@@ -9645,7 +10063,6 @@
     "codename": [
      "codex-run-as-apply-patchtmpcodex-arg0internal",
      "codex-world-state-fragment-v1",
-     "codex-ws-stream-request-start-msx-openai-subagent1failed",
      "gpt-4.1",
      "gpt-5.2",
      "gpt-5.4",
@@ -9658,6 +10075,7 @@
      "gpt-6-luna",
      "gpt-6-pro",
      "gpt-6-sol",
+     "gpt-6.1-sol",
      "gpt-image-1",
      "gpt-image-1-mini",
      "gpt-image-1.5",
@@ -9666,6 +10084,7 @@
     "config_key": [
      "a.bidodyd",
      "analytics.yamlversionoperationsconfig.tomlmarketplaces",
+     "code.module.namecode.line.number",
      "codex.approval.requested",
      "codex.mcp.error.code",
      "codex.turn.tool.call",
@@ -9687,7 +10106,6 @@
      "env.template",
      "excluded.last_checked_thread_created_at",
      "f4f9f.f",
-     "feedback.enabledc",
      "go.mod",
      "go.sum",
      "go.work",
@@ -9706,6 +10124,8 @@
      "hxx.in",
      "i58.h58l",
      "ik8.kk8",
+     "image_gen.generation",
+     "insert_history_cell.clean.process",
      "js.erb",
      "kern.bootsessionuuid",
      "known_hosts.old",
@@ -9920,9 +10340,7 @@
      "user.heartbeatnotesthread_hintdeveloper",
      "uv.lock",
      "xhtml.j2",
-     "xml.j2",
-     "y4x.kr",
-     "y_3f.o"
+     "xml.j2"
     ],
     "crate": [],
     "env": [
@@ -9952,7 +10370,7 @@
      "daybreak_enabled",
      "disable_in_process_fallback",
      "features.multi_agent_v2.tool_namespacemcp",
-     "groupanimations_enabled",
+     "feedback.enabled",
      "has_hw_feature",
      "internal_chat_message_metadata_passthroughauthorrecipient",
      "next_rollout_ordinal",
@@ -9967,6 +10385,7 @@
      "/tmp/test.txt/tmp/test2.txt+test",
      "/usr/tmp",
      "/var/tmp",
+     "~/7]^9",
      "~/9hvo9",
      "~/9hvo9Hh",
      "~/A$Eu"
@@ -10468,6 +10887,7 @@
      "https://github.com/bazelbuild/starlark/blob/master/spec.md#zip",
      "https://github.com/clap-rs/clap/issues",
      "https://github.com/clap-rs/clap/issues=internal",
+     "https://github.com/clap-rs/clap/issuesBrowserUseConfigTomlallow_history_accessdefault_origin_policyoriginsBrowserUseOriginPolicyConfigTomlaccessdownloadsuploadsfull_cdp_access",
      "https://github.com/clap-rs/clap/issuesCOLUMNSLINES",
      "https://github.com/clap-rs/clap/issuesa",
      "https://github.com/clap-rs/clap/issuescapacity",
@@ -10482,14 +10902,14 @@
      "https://github.com/ollama/ollama?tab=readme-ov-file#ollamaFailed",
      "https://github.com/openai/codex",
      "https://github.com/openai/codex/discussions/7782",
-     "https://github.com/openai/codex/discussions/7782:read-onlygoals.max_goal_token_budget",
+     "https://github.com/openai/codex/discussions/7782:read-onlylogfewer",
      "https://github.com/openai/codex/discussions/7782DHEECDHEAutoReviewOut",
-     "https://github.com/openai/codex/discussions/7782ModelInvocationContextFileSystemPermissionsDHEECDHEUtf8BytesConciseContentItemsDeveloperAssistantReviewCompactSupersededServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMismatchactualActiveTurnNotSteerableturn_kindActiveTurnOutputSchemaMi",
-     "https://github.com/openai/codex/discussions/7782TrueColorAnsi256Ansi16",
+     "https://github.com/openai/codex/discussions/7782ModelInvocationContextFileSystemPermissionsDHEECDHESendErrorUtf8BytesConciseContentItemsDeveloperAssistantReviewCompactServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMismatchactualActiveTurnNotSteerableturn_kindActiveTurnOutputSchemaMis",
+     "https://github.com/openai/codex/discussions/7782TrueColorAnsi256Ansi16overflow",
      "https://github.com/openai/codex/discussions/7782UsAutoReviewminimalxhighmaxultrapersistenta",
      "https://github.com/openai/codex/discussions/7782WholeItemInlineMarkdownInlineVisualizationRealtimeSessionStartedTranscriptSegmentBemItemPromoteditem_idRealtimeSessionClosedDHEECDHEMemoryCitationrollout_ids",
      "https://github.com/openai/codex/discussions/7782goals.max_goal_token_budget",
-     "https://github.com/openai/codex/discussions/7782invocationstart_timeanimations_enabledMcpToolCallCellFlowControlwindow_sizeavailableDHEECDHECloseSectionInnerpropertiesServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMismatchactualActiveTurnNotSteerableturn_kindActiveTurnOutputSchemaMis",
+     "https://github.com/openai/codex/discussions/7782invocationstart_timeanimations_enabledMcpToolCallCellTrueColorAnsi256Ansi16FlowControlwindow_sizeavailableDHEECDHEMaxAttemptsMustNotBeZeroFailedToParseMaxAttemptsSectionInnerpropertiesServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMisma",
      "https://github.com/openai/codex/issues/new?template=3-cli.ymlSending",
      "https://github.com/openai/codex/releases/latestSee",
      "https://github.com/openai/codex/releases/latestSkip",
@@ -10540,9 +10960,12 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true
+   },
    "flags": [
     "runtime"
    ],
@@ -10578,7 +11001,6 @@
     "0398fc7666",
     "03e6445d62",
     "0411388ffa",
-    "0431b0d3cb",
     "04cb971989",
     "04e6d9b495",
     "0526971c99",
@@ -11007,7 +11429,6 @@
     "5a1b32c349",
     "5a4a0c4548",
     "5a9025ae98",
-    "5b098972b8",
     "5b1686351c",
     "5b946e873e",
     "5bbb2d5f1a",
@@ -11175,6 +11596,7 @@
     "7e487a222d",
     "7e98c33ae9",
     "7effdb61a7",
+    "7f3dcbe01a",
     "7fae20a772",
     "7fcb047723",
     "7fdcaefbcf",
@@ -11639,6 +12061,7 @@
     "df2e458489",
     "df36c32249",
     "df4a638178",
+    "df4d08a02b",
     "df5e6075c2",
     "dfa116b747",
     "dfd033ea71",
@@ -11649,7 +12072,6 @@
     "e06587cebf",
     "e0732dddab",
     "e0b9cd2ee5",
-    "e102476e43",
     "e10309f424",
     "e10a605eaa",
     "e150ec381a",
@@ -11939,6 +12361,7 @@
      "metadata.code.compilation_priority",
      "metadata.code.instr_freq",
      "metadata.code.trace_inst",
+     "n.a15j7",
      "new.target",
      "scavenge.free_remembered_set",
      "scavenge.parallel",
@@ -12213,7 +12636,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12236,9 +12659,11 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.device.audio-input": true
+   },
    "flags": [
     "runtime"
    ],
@@ -12497,7 +12922,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12522,7 +12947,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12556,7 +12981,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12584,7 +13009,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12608,7 +13033,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12633,7 +13058,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12660,7 +13085,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12688,7 +13113,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12714,7 +13139,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12741,7 +13166,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12771,7 +13196,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12800,7 +13225,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12827,7 +13252,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12855,7 +13280,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12882,7 +13307,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12905,7 +13330,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12930,7 +13355,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12955,7 +13380,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -12980,7 +13405,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13005,7 +13430,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13033,7 +13458,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13061,7 +13486,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13088,7 +13513,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13118,7 +13543,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13150,7 +13575,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13181,7 +13606,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "entitlements": null,
    "flags": [
     "runtime"
@@ -13205,8 +13630,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -13230,9 +13669,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -13835,8 +14288,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -13866,8 +14333,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -13900,8 +14381,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -13923,9 +14418,20 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.application-identifier": "2DC432GLL2.com.openai.sky.CUAService",
+    "com.apple.developer.team-identifier": "2DC432GLL2",
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.personal-information.addressbook": true,
+    "keychain-access-groups": [
+     "2DC432GLL2.*"
+    ]
+   },
    "flags": [
     "runtime"
    ],
@@ -14609,7 +15115,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
    "entitlements": null,
    "flags": [
@@ -15280,7 +15786,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
    "entitlements": null,
    "flags": [
@@ -15354,7 +15860,7 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
    "entitlements": null,
    "flags": [
@@ -15419,9 +15925,11 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.application-identifier": "2DC432GLL2.com.openai.sky.app.CodexComputerUseAuthorizationPluginInstallerTool"
+   },
    "flags": [
     "runtime"
    ],
@@ -15497,9 +16005,18 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.application-identifier": "2DC432GLL2.com.openai.sky.CUAService.cli",
+    "com.apple.developer.team-identifier": "2DC432GLL2",
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "keychain-access-groups": [
+     "2DC432GLL2.*"
+    ]
+   },
    "flags": [
     "runtime"
    ],
@@ -15969,8 +16486,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -15993,8 +16524,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16018,9 +16563,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16074,9 +16633,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16165,9 +16738,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16222,9 +16809,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16279,9 +16880,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16335,9 +16950,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16388,9 +17017,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16482,9 +17125,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16539,9 +17196,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16666,9 +17337,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16732,9 +17417,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16816,9 +17515,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16953,8 +17666,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -16976,9 +17703,23 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
    "credentials": [],
-   "entitlements": null,
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -17088,8 +17829,22 @@
     "arm64",
     "x86_64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -17111,8 +17866,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -17134,8 +17903,22 @@
    "archs": [
     "arm64"
    ],
-   "authority": "(unavailable)",
-   "entitlements": null,
+   "authority": "Developer ID Application: OpenAI OpCo, LLC (2DC432GLL2)",
+   "entitlements": {
+    "com.apple.security.app-sandbox": false,
+    "com.apple.security.application-groups": [
+     "2DC432GLL2.com.openai.codex.notifications",
+     "2DC432GLL2.com.openai.sky.CUAService"
+    ],
+    "com.apple.security.automation.apple-events": true,
+    "com.apple.security.cs.allow-jit": true,
+    "com.apple.security.cs.allow-unsigned-executable-memory": true,
+    "com.apple.security.device.audio-input": true,
+    "com.apple.security.device.camera": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true,
+    "com.apple.security.personal-information.calendars": true
+   },
    "flags": [
     "runtime"
    ],
@@ -17174,7 +17957,7 @@
   },
   "image": {
    "count": 151,
-   "digest": "6830272bd6c6dc738bcdbd49c88f50f71014ded5b4ec1028bab6e9ac37eaab46"
+   "digest": "ac13d3ad92ff488301a4c73a9a258ef334226b44629ae6382627137ab55739b5"
   },
   "locale": {
    "count": 313,
@@ -17186,7 +17969,7 @@
   },
   "other": {
    "count": 1055,
-   "digest": "e1d02008c8c2d299577bb787a6618e0d12857e721b4f71bd76996ac894175d77"
+   "digest": "43b1602ef8a3a3a7f8253a69958751a59397418fd8aeec7a6a042b51f9dce5d6"
   },
   "resource": {
    "count": 12,
@@ -17194,19 +17977,19 @@
   },
   "web-code": {
    "count": 1889,
-   "digest": "cef386c08ad6cfb778cb9042034fc682add5394148f8d482dd6e497e68ae1edd"
+   "digest": "641bd57297f776a1bc83b80defb4b36c603c2603a84761619f79077efa3519cd"
   }
  },
  "product": "Codex/ChatGPT",
  "schema": 1,
  "source": {
   "app": "ChatGPT.app",
-  "build": "12246",
+  "build": "12404",
   "framework_version": "154.0.8037.57",
-  "version": "26.928.20755"
+  "version": "26.928.21956"
  },
  "summary": {
-  "bytes": 1670385023,
+  "bytes": 1670472174,
   "files": 4351,
   "kinds": {
    "certificate-or-key": {
@@ -17242,7 +18025,7 @@
     "count": 32
    },
    "macho-executable": {
-    "bytes": 585185840,
+    "bytes": 585203264,
     "count": 32
    },
    "media": {
@@ -17254,7 +18037,7 @@
     "count": 22
    },
    "other": {
-    "bytes": 581908890,
+    "bytes": 581978727,
     "count": 1055
    },
    "plist": {
@@ -17282,7 +18065,7 @@
     "count": 4
    },
    "web-code": {
-    "bytes": 42617438,
+    "bytes": 42617328,
     "count": 1889
    },
    "xpc-service": {

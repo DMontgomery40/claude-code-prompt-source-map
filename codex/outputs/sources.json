@@ -1,17 +1,17 @@
 {
   "app": {
     "bundle_id": "com.openai.codex",
-    "version": "26.928.20755",
-    "build": "12246",
-    "asar_sha256": "2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee"
+    "version": "26.928.21956",
+    "build": "12404",
+    "asar_sha256": "3bda98f2265ad23677dfe0163d1cc7855beade6bef11d27f830f6663d7658406"
   },
   "cli": {
-    "version": "codex-cli 0.159.0",
-    "binary_sha256": "ccd1b9441d35ce30102059c78514a125d676e6765ea1d001033e8cbe88718314"
+    "version": "codex-cli 0.159.2",
+    "binary_sha256": "50ac633af64851511f9bbc71032cdae7f1ba20b3234c189687d61ba846c354c5"
   },
   "catalog": {
-    "fetched_at": "2026-09-29T18:45:55.875186Z",
-    "client_version": "0.159.0",
+    "fetched_at": "2026-10-01T21:31:09.323828Z",
+    "client_version": "0.159.2",
     "models": [
       "gpt-6.1-sol",
       "gpt-6-astra",
@@ -27,6 +27,7 @@
     ],
     "bundled_models": [
       "gpt-6-astra",
+      "gpt-6.1-sol",
       "gpt-6-sol",
       "gpt-6-luna",
       "gpt-5.6-sol",
@@ -39,12 +40,12 @@
     ]
   },
   "asar_prompt_files": {
-    ".vite/build/bootstrap-ClH9X4Aa.js": "d152df26e2ec31fb745335b9684c577d1c592a65611fb45c2be4a37682284944",
-    ".vite/build/main-DPn4U9E8.js": "a4f5c2a3370c1b50f1a1c371fe2ebe6d196152e6c245be0dcdf04b02e7cac172",
-    "webview/assets/app-initial-74096abaa6b3.js": "c7ce23320a36c6a52cc0357a1b76571475445bd8966b31d179dc25f3b05e78f8",
-    "webview/assets/app-shared-5d8e744d1fa1.js": "f7edf3bfe729e74f0e375732a956f4d428ce4baea920908ae0ab5e325e4196f6",
-    "webview/assets/code-review-a627b3efcf9c.js": "de6dbd1db8ecc10c1c2a348cdc7bdac294cfb5815df7ed3e3b3dfed42ffea705",
-    "webview/assets/local-conversation-side-chat-2f0d64fc6b8e.js": "b9041d2cecd024585c4c4e31cc131588ca65facc9bac5ff7e8ef93c2b12b46b7"
+    ".vite/build/bootstrap-B7ariqxX.js": "ad9f3da3d96e6713c89b800d1e0c369f8fad1cc20af8233cf7bd906550a2a5fd",
+    ".vite/build/main-BbeJ4AAR.js": "1ff5a43bde26ea6c1b77dbcf782625c890e35a836d489163c19d5ba9942d68b4",
+    "webview/assets/app-initial-135a4ef2552c.js": "8d0cf4d91cf95805808464d43e06ab3106e03924b4f51020e20f143553e746c3",
+    "webview/assets/app-shared-eececb2d2eb0.js": "f2fc22fc0e515c150fa94784e49ea45703b96eccc9bb341f676742902baa91bd",
+    "webview/assets/code-review-7319013c835c.js": "ce66453d9123fe2128f070b797e2cf2227e064334e4a9127826c55d76e6a0acc",
+    "webview/assets/local-conversation-side-chat-544b1e61bca6.js": "d760fe5a82e7074168c5edb841af62d97e3b8913b0c1ae14b79d2347e5124442"
   },
   "documents": {
     "persistent-instructions.md": {
@@ -92,19 +93,19 @@
       "bytes": 7323
     },
     "capture-metadata.json": {
-      "sha256": "60d0f6a7e73c1bbe69585483c7d086983722a4e5f4fda5880766402153b322a8",
+      "sha256": "8fbe13dc5e3ad0c081e2bdb0cb67a204f5a70e3459abb9da02f4094db184dbe8",
       "bytes": 1803
     },
     "desktop-helper-prompts.md": {
-      "sha256": "b80647a59971d5233df2c59eee2912f0ccafec1225dd48454588bac82fe61a4c",
+      "sha256": "5b7597596cfb1c508ce7e2ecdb1641ecac3e5291ec21f926e5e7868d6ff2fda0",
       "bytes": 59980
     },
     "voice-prompts.md": {
-      "sha256": "c671b211e5a48a359ed03ea54cd1961b3549c36720e6a9b06f1df2000c094901",
+      "sha256": "4f3ba03000a68837597ac27d645b0411a8c50ccfe23bb2cb1bdb8a0db7d29d8e",
       "bytes": 13848
     },
     "prompt-provenance-inventory.json": {
-      "sha256": "2f68a76718282031db34dc7d66639f5441b10a1aa743c3a302ec3a506bbb2b3e",
+      "sha256": "619d882c86a21cc2d2bd2803195d45b61cd5c76f94becd319501a1229878ac0a",
       "bytes": 45937
     },
     "other-catalog-models.md": {

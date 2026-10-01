@@ -1,6 +1,6 @@
 # Tool manifest (live)
 
-Source: `ChatGPT.app` ChatGPT desktop 26.928.20755 (build 12246), `app.asar` SHA-256 `2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee`.
+Source: `ChatGPT.app` ChatGPT desktop 26.928.21956 (build 12404), `app.asar` SHA-256 `3bda98f2265ad23677dfe0163d1cc7855beade6bef11d27f830f6663d7658406`.
 
 Every tool the Codex/ChatGPT desktop app defines for models, read from the installed app on each update. Each entry gives the tool's description as shipped and its parameters, says how each was recovered, and compares the tool with the [2026-09-24 host tool capture](#current-host-tool-manifest-2026-09-24-json). Parameters marked as evaluated come from running the app's own zod and toJSONSchema code; approximate parameters are reconstructed without the app's run-time values and shown as a table only.
 
@@ -8,7 +8,7 @@ Every tool the Codex/ChatGPT desktop app defines for models, read from the insta
 
 ### archive_worktree
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9360818, SHA-256 `350e06501777b6af8eca9a5b6db71b019c74dbd55a06b9db7fbf32450dfabe72`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9401561, SHA-256 `350e06501777b6af8eca9a5b6db71b019c74dbd55a06b9db7fbf32450dfabe72`.
 
 Description: exact.
 
@@ -27,7 +27,7 @@ Not in the 2026-09-24 capture.
 
 ### attach_artifact
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9356825, SHA-256 `0291fbe4663ae937a92e8a2f6228ab051ee7a955d16ecdca5fccd81eddbe7642`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9397568, SHA-256 `0291fbe4663ae937a92e8a2f6228ab051ee7a955d16ecdca5fccd81eddbe7642`.
 
 Description: exact.
 
@@ -46,7 +46,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### automation_update
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 3846197, SHA-256 `4104ff96ebac0eedc7dc54f34b9771b3ec60e9bbd278ea24342c89f361552974`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 3846194, SHA-256 `4104ff96ebac0eedc7dc54f34b9771b3ec60e9bbd278ea24342c89f361552974`.
 
 Description: exact.
 
@@ -60,7 +60,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### check_app_update
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9355984, SHA-256 `da41f578e041cc0a07e5998e346403113a95de735d8dd150485db258f6de712e`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9396727, SHA-256 `da41f578e041cc0a07e5998e346403113a95de735d8dd150485db258f6de712e`.
 
 Description: exact.
 
@@ -76,7 +76,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### compile_latex_document
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 2825320, SHA-256 `08a45c39bd42ea6519b2e5aaf1d485a58ffd004206095af06299c64cda05237e`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 2825317, SHA-256 `08a45c39bd42ea6519b2e5aaf1d485a58ffd004206095af06299c64cda05237e`.
 
 Description: exact.
 
@@ -90,7 +90,7 @@ Not in the 2026-09-24 capture.
 
 ### complete_conversational_onboarding_task
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9355437, SHA-256 `42f91bfe322f69938d216237cd4220bed95b36161d578253be27aa16a28b639b`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9396180, SHA-256 `42f91bfe322f69938d216237cd4220bed95b36161d578253be27aa16a28b639b`.
 
 Description: exact.
 
@@ -106,7 +106,7 @@ Not in the 2026-09-24 capture.
 
 ### complete_sidebar_onboarding_checklist_task
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9364831, SHA-256 `3f418017c6bd0613d717d267da35b5500f354c46010a04f5f980c6bd406147ae`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9405574, SHA-256 `3f418017c6bd0613d717d267da35b5500f354c46010a04f5f980c6bd406147ae`.
 
 Description: exact.
 
@@ -122,7 +122,7 @@ Not in the 2026-09-24 capture.
 
 ### consume_usage_reset
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9392096, SHA-256 `3c74b51f299d3c6aef64fc8fe029a871e0582d77d55462c805fd91f0b371ee6e`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9432839, SHA-256 `3c74b51f299d3c6aef64fc8fe029a871e0582d77d55462c805fd91f0b371ee6e`.
 
 Description: exact.
 
@@ -149,7 +149,7 @@ Changed since the 2026-09-24 capture:
 
 ### create_project
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9374018, SHA-256 `226cdfa0d32d135eb597224344ee640f44ed9f41b7186129ef9dfa2b5752d0b0`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9414761, SHA-256 `226cdfa0d32d135eb597224344ee640f44ed9f41b7186129ef9dfa2b5752d0b0`.
 
 Description: exact.
 
@@ -235,7 +235,7 @@ Not in the 2026-09-24 capture.
 
 ### create_sidebar_section
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9368665, SHA-256 `e368526017771d501db1266718dc419493e1778e9608ac1c6f008baefe9615f4`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9409408, SHA-256 `e368526017771d501db1266718dc419493e1778e9608ac1c6f008baefe9615f4`.
 
 Description: exact.
 
@@ -253,7 +253,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### create_thread
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9376110, SHA-256 `771626fa3d916110e6702a2dd6fa67344e8f31a3970ca3c1657eaa65f65b55a9`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9416853, SHA-256 `771626fa3d916110e6702a2dd6fa67344e8f31a3970ca3c1657eaa65f65b55a9`.
 
 Description: exact.
 
@@ -467,7 +467,7 @@ Changed since the 2026-09-24 capture:
 
 ### create_worktree
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9358794, SHA-256 `250afd6bc68e8d14ba8967ebe47770e10755bafab721ec790d89a5a439e18fc9`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9399537, SHA-256 `250afd6bc68e8d14ba8967ebe47770e10755bafab721ec790d89a5a439e18fc9`.
 
 Description: exact.
 
@@ -509,7 +509,7 @@ Changed since the 2026-09-24 capture:
 
 ### delete_sidebar_section
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9368847, SHA-256 `f0bad5a0c777f3974d909f0853c34a4c0f30662650d106612ade6826de964282`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9409590, SHA-256 `f0bad5a0c777f3974d909f0853c34a4c0f30662650d106612ade6826de964282`.
 
 Description: exact.
 
@@ -527,7 +527,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### finalize_environment
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 2462065, SHA-256 `4f26a3eef3131ad6625e595212f30272ef185edcffa2554687be0797a1c3ca8c`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 2462062, SHA-256 `4f26a3eef3131ad6625e595212f30272ef185edcffa2554687be0797a1c3ca8c`.
 
 Description: exact.
 
@@ -541,7 +541,7 @@ Not in the 2026-09-24 capture.
 
 ### fire_confetti
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 5412727, SHA-256 `33276be7cf9d0f4f4e2875b3845a881963880e400b05ee775b0c9f1427a783f7`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 5453711, SHA-256 `33276be7cf9d0f4f4e2875b3845a881963880e400b05ee775b0c9f1427a783f7`.
 
 Description: exact.
 
@@ -559,7 +559,7 @@ Not in the 2026-09-24 capture.
 
 ### fork_thread
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9379388, SHA-256 `2e527811d9d6ad229e4882eca8a9f0f079d8d3a1e73593939b3000737c1c61d0`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9420131, SHA-256 `2e527811d9d6ad229e4882eca8a9f0f079d8d3a1e73593939b3000737c1c61d0`.
 
 Description: exact.
 
@@ -634,7 +634,7 @@ Changed since the 2026-09-24 capture:
 
 ### get_handoff_status
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9388070, SHA-256 `e99c0724c1b438f27aa7d64b3955dda93751b95a8405e5650013c4211ea1d3c9`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9428813, SHA-256 `e99c0724c1b438f27aa7d64b3955dda93751b95a8405e5650013c4211ea1d3c9`.
 
 Description: exact.
 
@@ -672,7 +672,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### get_thread_emoji
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9370378, SHA-256 `b5939d94543da1bd0f5a1345d09f8c4c6317f8eb941fa46812d4cdc80f567d46`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9411121, SHA-256 `b5939d94543da1bd0f5a1345d09f8c4c6317f8eb941fa46812d4cdc80f567d46`.
 
 Description: exact.
 
@@ -690,7 +690,7 @@ Not in the 2026-09-24 capture.
 
 ### get_usage_limits
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9391097, SHA-256 `8f127373914092e0c054d3f7dd3594b12da131b29ab57b22df38df640d2328c8`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9431840, SHA-256 `8f127373914092e0c054d3f7dd3594b12da131b29ab57b22df38df640d2328c8`.
 
 Description: exact.
 
@@ -706,7 +706,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### get_worktree_creation_status
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9359782, SHA-256 `42a9a48acaf6b7795963ec5bf2f24111c5c2d31a6c4fe61beba7ecd74d4a2a41`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9400525, SHA-256 `42a9a48acaf6b7795963ec5bf2f24111c5c2d31a6c4fe61beba7ecd74d4a2a41`.
 
 Description: exact.
 
@@ -724,7 +724,7 @@ Not in the 2026-09-24 capture.
 
 ### handoff_thread
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9386718, SHA-256 `4b7c567a020ca4824bc3fa4010ed713740c06ae66aebb0f2d74d8e61ecc49565`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9427461, SHA-256 `4b7c567a020ca4824bc3fa4010ed713740c06ae66aebb0f2d74d8e61ecc49565`.
 
 Description: assembled at run time; `<…>` marks text filled in when the tool list is built.
 
@@ -744,7 +744,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### list_archived_threads
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9381656, SHA-256 `2ea48ae799107d36fe5dae065bdce3370d501fb6724282d1fdd861c77637774a`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9422399, SHA-256 `2ea48ae799107d36fe5dae065bdce3370d501fb6724282d1fdd861c77637774a`.
 
 Description: exact.
 
@@ -789,7 +789,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### list_artifacts
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9357342, SHA-256 `e0f0faa7dc2f0980903c1c7fbaff98b1827eeaa8988ae7c156b4a33a98c3b832`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9398085, SHA-256 `e0f0faa7dc2f0980903c1c7fbaff98b1827eeaa8988ae7c156b4a33a98c3b832`.
 
 Description: exact.
 
@@ -815,7 +815,7 @@ Changed since the 2026-09-24 capture:
 
 ### list_hosts
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9362018, SHA-256 `b923e4beb5b7550f5b59919b12d13891575f2d4a2f432470fda0c1e038c3c468`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9402761, SHA-256 `b923e4beb5b7550f5b59919b12d13891575f2d4a2f432470fda0c1e038c3c468`.
 
 Description: exact.
 
@@ -831,7 +831,7 @@ Not in the 2026-09-24 capture.
 
 ### list_projects
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9375848, SHA-256 `28b55531578bb941616ff7674e9fc288ba8483464ea4a7f22d8d9e2b902da8a7`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9416591, SHA-256 `28b55531578bb941616ff7674e9fc288ba8483464ea4a7f22d8d9e2b902da8a7`.
 
 Description: exact.
 
@@ -859,7 +859,7 @@ Changed since the 2026-09-24 capture:
 
 ### list_threads
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9380655, SHA-256 `594f114c6220a51c129394cf8fcc6bbd93170cfa518cf7833a64f28bc6bbb777`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9421398, SHA-256 `594f114c6220a51c129394cf8fcc6bbd93170cfa518cf7833a64f28bc6bbb777`.
 
 Description: exact.
 
@@ -888,7 +888,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### load_workspace_dependencies
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 3853305, SHA-256 `e28c600dc70cdffac466f2d34cfe1025117d0446b024ee6d56ade5f1be685d0d`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 3853302, SHA-256 `e28c600dc70cdffac466f2d34cfe1025117d0446b024ee6d56ade5f1be685d0d`.
 
 Description: exact.
 
@@ -910,7 +910,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### move_project_to_sidebar_section
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9368977, SHA-256 `8adc8fbe503a589048775e5bc24b2993815687277ccb00ad8f30dbcdb9798759`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9409720, SHA-256 `8adc8fbe503a589048775e5bc24b2993815687277ccb00ad8f30dbcdb9798759`.
 
 Description: exact.
 
@@ -929,7 +929,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### move_thread_to_sidebar_section
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9369197, SHA-256 `cb770fe1306db5ad5b0b6aa341234c196f589be845be0439b36726391dff22db`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9409940, SHA-256 `cb770fe1306db5ad5b0b6aa341234c196f589be845be0439b36726391dff22db`.
 
 Description: exact.
 
@@ -950,7 +950,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### navigate_to_codex_page
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 5428813, SHA-256 `bd0876b07255921fcd1cdda2acd887f6970ba48f4131ab5baa4c08ea0d0d28bb`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 5469796, SHA-256 `bd0876b07255921fcd1cdda2acd887f6970ba48f4131ab5baa4c08ea0d0d28bb`.
 
 Description: exact.
 
@@ -968,7 +968,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### open_in_codex
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 5426178, SHA-256 `d652f164d8bc6db3c06cac4f4e5a78793401487c39a925087873bd4cfcd7db71`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 5467161, SHA-256 `d652f164d8bc6db3c06cac4f4e5a78793401487c39a925087873bd4cfcd7db71`.
 
 Description: assembled at run time; `<…>` marks text filled in when the tool list is built.
 
@@ -1002,7 +1002,7 @@ Changed since the 2026-09-24 capture:
 
 ### read_settings
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9362339, SHA-256 `8943b825f93f6d897009b6500b188938b5e6fad60577d79906b55a1af0ad621c`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9403082, SHA-256 `8943b825f93f6d897009b6500b188938b5e6fad60577d79906b55a1af0ad621c`.
 
 Description: exact.
 
@@ -1037,7 +1037,7 @@ Not in the 2026-09-24 capture.
 
 ### read_thread
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9382721, SHA-256 `6cfde1c8be7519c602bc3cb0d379c46dd2ffd1df31782ceb97bf3c49c15cee3c`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9423464, SHA-256 `6cfde1c8be7519c602bc3cb0d379c46dd2ffd1df31782ceb97bf3c49c15cee3c`.
 
 Description: exact.
 
@@ -1091,7 +1091,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### read_thread_terminal
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9396563, SHA-256 `44c4ffe6c65fccb55693c3eb20a7864c456e5dbd9f8db9d913ec61f2ba913851`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9437306, SHA-256 `44c4ffe6c65fccb55693c3eb20a7864c456e5dbd9f8db9d913ec61f2ba913851`.
 
 Description: exact.
 
@@ -1113,7 +1113,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### remove_artifact
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9357715, SHA-256 `18298f1c29e23c153d3243b434c6295a9b225972d7fa72d78708e6fa9433835d`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9398458, SHA-256 `18298f1c29e23c153d3243b434c6295a9b225972d7fa72d78708e6fa9433835d`.
 
 Description: exact.
 
@@ -1132,7 +1132,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### rename_sidebar_section
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9368768, SHA-256 `311795d14149b2a41d6419c7c48ea170df87da5ed4144d300e8f595f2007af79`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9409511, SHA-256 `311795d14149b2a41d6419c7c48ea170df87da5ed4144d300e8f595f2007af79`.
 
 Description: exact.
 
@@ -1151,7 +1151,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### reorder_section
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9369529, SHA-256 `ca8d81b3b799b19845779e9600bc7fd2964b895f7988caa5b91b21325b0b3aea`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9410272, SHA-256 `ca8d81b3b799b19845779e9600bc7fd2964b895f7988caa5b91b21325b0b3aea`.
 
 Description: exact.
 
@@ -1170,7 +1170,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### reorder_sidebar_projects
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9369715, SHA-256 `3a480a5dbbce9f783a381ec4e0f909284ba6cf8f22893929077c7aef2d01b58a`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9410458, SHA-256 `3a480a5dbbce9f783a381ec4e0f909284ba6cf8f22893929077c7aef2d01b58a`.
 
 Description: exact.
 
@@ -1188,7 +1188,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### reorder_sidebar_sections
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9369884, SHA-256 `2d047c1618f90071651f9e10cf65519702c08d0f2ae9d3ec680391baff192441`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9410627, SHA-256 `2d047c1618f90071651f9e10cf65519702c08d0f2ae9d3ec680391baff192441`.
 
 Description: exact.
 
@@ -1200,13 +1200,13 @@ Parameters, approximate (reconstructed without the app's run-time values; not th
 
 | Name | Required | Type | Description |
 |---|---|---|---|
-| `sectionIds` | required | array of string | Every custom section id, plus any built-in headings to move: "pinned" (Pinned), "orbit" (Your dot), "[stub Sie]" (Agents), "chats" (Tasks), or "projects" (Projects). List them in the desired order; omitted built-in headings keep their positions. |
+| `sectionIds` | required | array of string | Every custom section id, plus any built-in headings to move: "pinned" (Pinned), "orbit" (Your dot), "[stub xie]" (Agents), "chats" (Tasks), or "projects" (Projects). List them in the desired order; omitted built-in headings keep their positions. |
 
 Unchanged since the 2026-09-24 capture.
 
 ### request_environment_input
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 2461685, SHA-256 `1a8ec64f36284abc012fba9d9732a169dc6f11278d30bbc412345f03e9dc4eb5`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 2461682, SHA-256 `1a8ec64f36284abc012fba9d9732a169dc6f11278d30bbc412345f03e9dc4eb5`.
 
 Description: exact.
 
@@ -1220,7 +1220,7 @@ Not in the 2026-09-24 capture.
 
 ### restore_worktree
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9361436, SHA-256 `7a6f11be88b01667976ee029c743e5b9dec88ccbd73efd6cb863ab4276460d6f`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9402179, SHA-256 `7a6f11be88b01667976ee029c743e5b9dec88ccbd73efd6cb863ab4276460d6f`.
 
 Description: exact.
 
@@ -1238,7 +1238,7 @@ Not in the 2026-09-24 capture.
 
 ### send_message_to_thread
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9378156, SHA-256 `fc5cb182b571124f840cd21527d0f748631e9f699ec96498d2f362c798c30a12`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9418899, SHA-256 `fc5cb182b571124f840cd21527d0f748631e9f699ec96498d2f362c798c30a12`.
 
 Description: exact.
 
@@ -1308,7 +1308,7 @@ Changed since the 2026-09-24 capture:
 
 ### set_thread_archived
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9385214, SHA-256 `fc5eff9890d0742b9bf031fca7f596d19cbc0987b98a86006e27014191cecf70`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9425957, SHA-256 `fc5eff9890d0742b9bf031fca7f596d19cbc0987b98a86006e27014191cecf70`.
 
 Description: exact.
 
@@ -1356,7 +1356,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### set_thread_emoji
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9370537, SHA-256 `1813fcc51f3f85ecde08bb52afe3b31c45624c961bce205c97f8a811c2acbf50`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9411280, SHA-256 `1813fcc51f3f85ecde08bb52afe3b31c45624c961bce205c97f8a811c2acbf50`.
 
 Description: exact.
 
@@ -1375,7 +1375,7 @@ Not in the 2026-09-24 capture.
 
 ### set_thread_pinned
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9384866, SHA-256 `0964b09e69b98ba4ea296ac08fe9381b7d2a803834f3ce5facfd38266c652d90`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9425609, SHA-256 `0964b09e69b98ba4ea296ac08fe9381b7d2a803834f3ce5facfd38266c652d90`.
 
 Description: exact.
 
@@ -1418,7 +1418,7 @@ Not in the 2026-09-24 capture.
 
 ### set_thread_read_state
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9386121, SHA-256 `e8d639c486c1a7c156821c3a1ed1421d13681ca5362bfff902ea38c4df229022`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9426864, SHA-256 `e8d639c486c1a7c156821c3a1ed1421d13681ca5362bfff902ea38c4df229022`.
 
 Description: exact.
 
@@ -1467,7 +1467,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### set_thread_title
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9385783, SHA-256 `931bdcb55488048edd1da28a0920daf47900eae54a412fa8ceff38d894d35ca2`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9426526, SHA-256 `931bdcb55488048edd1da28a0920daf47900eae54a412fa8ceff38d894d35ca2`.
 
 Description: exact.
 
@@ -1509,7 +1509,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### share_thread
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9390549, SHA-256 `ce11178a2b4b1dd60c6a63c70f23aa095340045dc9873922d943d8015d48bdf7`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9431292, SHA-256 `ce11178a2b4b1dd60c6a63c70f23aa095340045dc9873922d943d8015d48bdf7`.
 
 Description: exact.
 
@@ -1540,7 +1540,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### uninstall_plugin
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9400309, SHA-256 `1d8718fad2912dc18e5571df81843035f9bed710c6b142187508532eddd08b49`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9441052, SHA-256 `1d8718fad2912dc18e5571df81843035f9bed710c6b142187508532eddd08b49`.
 
 Description: exact.
 
@@ -1570,7 +1570,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### update_running_summary
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 2826748, SHA-256 `152f013c35138d40e2b29185720f6f6e4c88fe6ed56089f4f312e1b2f6ad442f`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 2826745, SHA-256 `152f013c35138d40e2b29185720f6f6e4c88fe6ed56089f4f312e1b2f6ad442f`.
 
 Description: exact.
 
@@ -1601,7 +1601,7 @@ Not in the 2026-09-24 capture.
 
 ### update_sidebar_preferences
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9366102, SHA-256 `8e714eefdf604bec68dc231a930c820b84d999a0cf24b74cbc88fb1ea6ff5cbf`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9406845, SHA-256 `8e714eefdf604bec68dc231a930c820b84d999a0cf24b74cbc88fb1ea6ff5cbf`.
 
 Description: exact.
 
@@ -1628,7 +1628,7 @@ Changed since the 2026-09-24 capture:
 
 ### wait_threads
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9383554, SHA-256 `3a8545f4ba536e17dbf27270b56f9129242687cd92deb12b4ff7945e29b1320c`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9424297, SHA-256 `3a8545f4ba536e17dbf27270b56f9129242687cd92deb12b4ff7945e29b1320c`.
 
 Description: exact.
 
@@ -1690,7 +1690,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### write_settings
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9362963, SHA-256 `4f9ae96947e3682bd5cbe6340c92e2c5f172f2cf8ff9cc03172f79bfaa1deef3`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9403706, SHA-256 `4f9ae96947e3682bd5cbe6340c92e2c5f172f2cf8ff9cc03172f79bfaa1deef3`.
 
 Description: exact.
 
@@ -1787,7 +1787,7 @@ Not in the 2026-09-24 capture.
 
 ### capture_screen_context
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 5460111, SHA-256 `6884d374d0e5528e618156d21385350b50d933149682135611568e1bf8197baf`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 5460108, SHA-256 `6884d374d0e5528e618156d21385350b50d933149682135611568e1bf8197baf`.
 
 Description: exact.
 
@@ -1801,7 +1801,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### end_realtime_voice_call
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 5459447, SHA-256 `5d043919dfc827388f61f30983708dafd66461df77800e3d0e44375a2284233a`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 5459444, SHA-256 `5d043919dfc827388f61f30983708dafd66461df77800e3d0e44375a2284233a`.
 
 Description: exact.
 
@@ -1815,7 +1815,7 @@ Unchanged since the 2026-09-24 capture.
 
 ### transfer_voice_call
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 5459781, SHA-256 `8c5468c28460eea5d0d73d630a72cb0c181ca596771a38d07278bccbe58ecc6a`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 5459778, SHA-256 `8c5468c28460eea5d0d73d630a72cb0c181ca596771a38d07278bccbe58ecc6a`.
 
 Description: exact.
 
@@ -1831,7 +1831,7 @@ Not in the 2026-09-24 capture.
 
 ### request_onboarding_input
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 1649547, SHA-256 `68d2d99c0227555602c3189324f5f705d358000ad878c1a38fb8f61b247adbe3`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 1649549, SHA-256 `68d2d99c0227555602c3189324f5f705d358000ad878c1a38fb8f61b247adbe3`.
 
 Description: exact.
 
@@ -1901,7 +1901,7 @@ Not in the 2026-09-24 capture.
 
 ### request_option_picker
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 1649094, SHA-256 `da410780ea3e476a13e7783b6de5c4c3c7124dd0c0fb358bd4f27305c0fa0fb1`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 1649096, SHA-256 `da410780ea3e476a13e7783b6de5c4c3c7124dd0c0fb358bd4f27305c0fa0fb1`.
 
 Description: exact.
 
@@ -1958,7 +1958,7 @@ Not in the 2026-09-24 capture.
 
 ### setup_codex_step
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 1648869, SHA-256 `46867ac82d16a501b0d26f48d2e23260393d8cccb29215e633b3c2474b0a32b7`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 1648871, SHA-256 `46867ac82d16a501b0d26f48d2e23260393d8cccb29215e633b3c2474b0a32b7`.
 
 Description: exact.
 
@@ -1994,7 +1994,7 @@ Not in the 2026-09-24 capture.
 
 ### getTabContext
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 3505680, SHA-256 `28927294389d5a1fa67e010f7f18dfe98ab5dc45362be6b6974017df6a63a0ca`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 3505677, SHA-256 `28927294389d5a1fa67e010f7f18dfe98ab5dc45362be6b6974017df6a63a0ca`.
 
 Description: exact.
 
@@ -2078,7 +2078,7 @@ Not in the 2026-09-24 capture.
 
 ### connect_spaces_artifact
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9393345, SHA-256 `5da8bcc3c725ee46caeb3d568cfe9b471d211dff44fe41e4866a51af199c0e08`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9434088, SHA-256 `5da8bcc3c725ee46caeb3d568cfe9b471d211dff44fe41e4866a51af199c0e08`.
 
 Description: exact.
 
@@ -2096,7 +2096,7 @@ Not in the 2026-09-24 capture.
 
 ### create_spaces_artifact
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9394079, SHA-256 `c0df62cf7b5912a773d522baad2fa9bb3670d113e0324a508d4a31bcfa21a131`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9434822, SHA-256 `c0df62cf7b5912a773d522baad2fa9bb3670d113e0324a508d4a31bcfa21a131`.
 
 Description: exact.
 
@@ -2117,7 +2117,7 @@ Not in the 2026-09-24 capture.
 
 ### read_page_reference
 
-Source: `app.asar › webview/assets/app-initial-74096abaa6b3.js`, offset 9395166, SHA-256 `dffba98a4e2fbb8b6176f843a0b90f7b9f34249ed815df6b97965558913013d2`.
+Source: `app.asar › webview/assets/app-initial-135a4ef2552c.js`, offset 9435909, SHA-256 `dffba98a4e2fbb8b6176f843a0b90f7b9f34249ed815df6b97965558913013d2`.
 
 Description: exact.
 
@@ -2136,7 +2136,7 @@ Not in the 2026-09-24 capture.
 
 ### record_private_review
 
-Source: `app.asar › webview/assets/app-shared-5d8e744d1fa1.js`, offset 3480934, SHA-256 `178ddc71468f0aaabf7aee2ddd2d5ab6f4a7aaf30d5b73b860b2b1a9019f59c3`.
+Source: `app.asar › webview/assets/app-shared-eececb2d2eb0.js`, offset 3480931, SHA-256 `178ddc71468f0aaabf7aee2ddd2d5ab6f4a7aaf30d5b73b860b2b1a9019f59c3`.
 
 Description: exact.
 

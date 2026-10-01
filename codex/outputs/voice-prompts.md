@@ -1,10 +1,10 @@
 # Codex/ChatGPT voice prompt inventory
 
-Source: ChatGPT desktop 26.928.20755, `app.asar` → `webview/assets/app-initial-74096abaa6b3.js` (SHA-256 `c7ce23320a36c6a52cc0357a1b76571475445bd8966b31d179dc25f3b05e78f8`). These are bundled prompt strings or fallbacks. Runtime configuration can override several of them; this capture does not prove which variant was active for a specific call. The placeholders are preserved exactly as shipped. These strings belong to **Codex/ChatGPT voice**, not the ChatGPT Work instruction stack.
+Source: ChatGPT desktop 26.928.21956, `app.asar` → `webview/assets/app-initial-135a4ef2552c.js` (SHA-256 `8d0cf4d91cf95805808464d43e06ab3106e03924b4f51020e20f143553e746c3`). These are bundled prompt strings or fallbacks. Runtime configuration can override several of them; this capture does not prove which variant was active for a specific call. The placeholders are preserved exactly as shipped. These strings belong to **Codex/ChatGPT voice**, not the ChatGPT Work instruction stack.
 
 # New voice thread: planning override
 
-Source identifier: `Vsi` · asset offsets 4,182,651–4,183,436 · 785 UTF-8 bytes.
+Source identifier: `Tdi` · asset offsets 4,229,571–4,230,356 · 785 UTF-8 bytes.
 
 Voice planning intent:
 - For planning or exploration, these rules supersede earlier instructions to delegate every request, always use the backend, or limit clarifying questions.
@@ -17,7 +17,7 @@ Voice planning intent:
 
 # New voice thread: base prompt
 
-Source identifier: `Hsi` · asset offsets 4,183,443–4,188,361 · 4912 UTF-8 bytes.
+Source identifier: `Edi` · asset offsets 4,230,363–4,235,281 · 4912 UTF-8 bytes.
 
 ## Identity, tone, and role
 
@@ -89,7 +89,7 @@ When interacting with the user, do not mention "backend". Present every work as 
 
 # Resumed voice thread: continuity
 
-Source identifier: `Usi` · asset offsets 4,188,368–4,189,315 · 947 UTF-8 bytes.
+Source identifier: `Ddi` · asset offsets 4,235,288–4,236,235 · 947 UTF-8 bytes.
 
 ## Conversation continuity
 
@@ -109,7 +109,7 @@ Remain silent unless the current session explicitly instructs you to greet the u
 
 # Voice memory summary
 
-Source identifier: `Wsi` · asset offsets 4,189,322–4,189,724 · 402 UTF-8 bytes.
+Source identifier: `Odi` · asset offsets 4,236,242–4,236,644 · 402 UTF-8 bytes.
 
 ## Codex memory
 
@@ -125,7 +125,7 @@ Do not acknowledge the memory or produce speech, audio, or text merely because t
 
 # Voice coordinator: developer prompt
 
-Source identifier: `Zsi fallback` · asset offsets 4,190,052–4,193,886 · 3834 UTF-8 bytes.
+Source identifier: `Fdi fallback` · asset offsets 4,236,972–4,240,806 · 3834 UTF-8 bytes.
 
 You are coordinating a voice chat.
 
@@ -166,7 +166,7 @@ If unsure, start with a brief answer or clarifying question here. Dispatch once 
 
 # Existing Codex/ChatGPT task: realtime start
 
-Source identifier: `Aci fallback` · asset offsets 4,196,117–4,197,213 · 1096 UTF-8 bytes.
+Source identifier: `mfi fallback` · asset offsets 4,243,037–4,244,133 · 1096 UTF-8 bytes.
 
 Realtime voice is active for this existing Codex task. Preserve the task's original instructions, role, collaboration mode, permissions, memory policy, and ongoing work.
 
@@ -180,7 +180,7 @@ During this voice session, these Codex app tools are deferred: capture_screen_co
 
 # Existing Codex/ChatGPT task: realtime end
 
-Source identifier: `jci fallback` · asset offsets 4,197,220–4,197,626 · 406 UTF-8 bytes.
+Source identifier: `hfi fallback` · asset offsets 4,244,140–4,244,546 · 406 UTF-8 bytes.
 
 Realtime voice mode has ended. Resume this task's original instructions, role, collaboration mode, normal text-output policy, permissions, memory policy, and ongoing work. Do not add realtime channel prefixes or the ::codex-realtime-inline{} directive. Do not load or call capture_screen_context or end_realtime_voice_call for the ended session; they apply only after another explicit voice session begins.
 

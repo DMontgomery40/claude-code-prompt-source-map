@@ -1,8 +1,8 @@
 {
  "source": {
-  "app_version": "26.928.20755",
-  "app_build": "12246",
-  "asar_sha256": "2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee"
+  "app_version": "26.928.21956",
+  "app_build": "12404",
+  "asar_sha256": "3bda98f2265ad23677dfe0163d1cc7855beade6bef11d27f830f6663d7658406"
  },
  "asset_families": {
   "webview/assets/abnfDiagram-VRR7QNED.js": 5,
@@ -484,7 +484,7 @@
   "openaiMcpCapabilities": 10,
   "operationError": 4,
   "optionPickerRequest": 4,
-  "orbit": 128,
+  "orbit": 133,
   "pageCodeBlock": 3,
   "pageEditor": 2,
   "pages": 61,
@@ -2441,9 +2441,9 @@
   "openaiMcpCapabilities.unavailable": 6,
   "orbit.eligibility": 18,
   "orbit.messaging": 5,
-  "orbit.onboarding": 40,
+  "orbit.onboarding": 41,
   "orbit.primary": 21,
-  "orbit.safety": 12,
+  "orbit.safety": 16,
   "pages.native": 19,
   "pages.presentation": 6,
   "pages.sharedViewer": 6,

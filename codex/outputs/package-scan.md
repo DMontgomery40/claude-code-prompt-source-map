@@ -2,11 +2,29 @@
 
 Everything the ChatGPT desktop app ships besides the JavaScript the other pages read: every file in the bundle, the code signing and entitlements of every Mach-O binary, the security-relevant Info.plist keys of every bundle, linking, bundled dependency versions, and the interesting strings in OpenAI's own native code. Each new build is compared with this one, so a new permission, helper, endpoint, flag or codename shows up the day the build ships. Third-party runtimes (Electron, Sparkle, Node.js, GStreamer, npm native modules) are hashed and their signing recorded, but their strings are not listed. Credential-looking strings are never shown; only their kind and a hash.
 
-Source: ChatGPT desktop 26.928.20755 (build 12246), `ChatGPT.app`; paths are relative to the app. `app.asar`: 20352 entries (256 outside `webview/assets` and `node_modules`, listed in the JSON).
+Source: ChatGPT desktop 26.928.21956 (build 12404), `ChatGPT.app`; paths are relative to the app. `app.asar`: 20359 entries (256 outside `webview/assets` and `node_modules`, listed in the JSON).
 
 ## Security-relevant surface
 
-**Sensitive entitlements** (0).
+**Sensitive entitlements** (17):
+
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.codex.notifications","2DC432GLL2.com.openai.sky.CUAService"]`: 53 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 50 more)
+- `com.apple.security.automation.apple-events`: 54 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 51 more)
+- `com.apple.security.cs.allow-jit`: 55 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 52 more)
+- `com.apple.security.cs.allow-unsigned-executable-memory`: 55 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 52 more)
+- `com.apple.security.device.audio-input`: 54 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 51 more)
+- `com.apple.security.device.camera`: 53 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 50 more)
+- `com.apple.security.files.user-selected.read-write`: 53 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 50 more)
+- `com.apple.security.network.client`: 53 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 50 more)
+- `com.apple.security.personal-information.calendars`: 53 binaries (`Codex Framework`, `Codex (Alerts)`, `Codex (Aperitif Alerts)` and 50 more)
+- `com.apple.security.cs.disable-library-validation`: 1 binary (`Codex (Service)`)
+- `com.apple.developer.aps-environment` = `production`: 1 binary (`ChatGPT`)
+- `com.apple.developer.team-identifier` = `2DC432GLL2`: 4 binaries (`ChatGPT`, `codex`, `SkyComputerUseService` and 1 more)
+- `keychain-access-groups` = `["2DC432GLL2.*","2DC432GLL2.com.openai.shared"]`: 1 binary (`ChatGPT`)
+- `keychain-access-groups` = `["2DC432GLL2.com.openai.codex.cli"]`: 1 binary (`codex`)
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.sky.CUAService"]`: 2 binaries (`SkyComputerUseService`, `SkyComputerUseClient`)
+- `com.apple.security.personal-information.addressbook`: 1 binary (`SkyComputerUseService`)
+- `keychain-access-groups` = `["2DC432GLL2.*"]`: 2 binaries (`SkyComputerUseService`, `SkyComputerUseClient`)
 
 **Privileged helpers, update feeds, ATS and environment** (14):
 
@@ -42,9 +60,176 @@ Source: ChatGPT desktop 26.928.20755 (build 12246), `ChatGPT.app`; paths are rel
 
 **Credential-looking strings (value withheld)** (1):
 
-- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex`: openai-key (hash a0d879464e65)
+- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex`: openai-key (hash d4a8311a0e38)
 
 ## Entitlements and privacy prompts
+
+### Codex Framework and 50 more
+
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Codex Framework`: team `2DC432GLL2`, identifier `com.openai.codex.framework`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/MacOS/Codex (Alerts)`: team `2DC432GLL2`, identifier `com.openai.codex.framework.AlertNotificationService`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/MacOS/Codex (Aperitif Alerts)`: team `2DC432GLL2`, identifier `com.openai.codex.framework.AlertNotificationService`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/MacOS/Codex (Aperitif GPU)`: team `2DC432GLL2`, identifier `com.openai.codex.helper`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/MacOS/Codex (Aperitif Renderer)`: team `2DC432GLL2`, identifier `com.openai.codex.helper.renderer`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/MacOS/Codex (Aperitif)`: team `2DC432GLL2`, identifier `com.openai.codex.helper`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/MacOS/Codex (GPU)`: team `2DC432GLL2`, identifier `com.openai.codex.helper`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)`: team `2DC432GLL2`, identifier `com.openai.codex.helper.renderer`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/app_mode_loader`: team `2DC432GLL2`, identifier `app_mode_loader`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/browser_crashpad_handler`: team `2DC432GLL2`, identifier `browser_crashpad_handler`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/web_app_shortcut_copier`: team `2DC432GLL2`, identifier `web_app_shortcut_copier`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib`: team `2DC432GLL2`, identifier `libaperitif`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libvk_swiftshader.dylib`: team `2DC432GLL2`, identifier `libvk_swiftshader`, flags `runtime`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libvulkan.dylib`: team `2DC432GLL2`, identifier `libvulkan`, flags `runtime`
+- `Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate`: team `2DC432GLL2`, identifier `Autoupdate`, flags `runtime`
+- `Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle`: team `2DC432GLL2`, identifier `org.sparkle-project.Sparkle`, flags `runtime`
+- `Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater`: team `2DC432GLL2`, identifier `org.sparkle-project.Sparkle.Updater`, flags `runtime`
+- `Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader`: team `2DC432GLL2`, identifier `org.sparkle-project.DownloaderService`, flags `runtime`
+- `Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer`: team `2DC432GLL2`, identifier `org.sparkle-project.InstallerLauncher`, flags `runtime`
+- `Contents/PlugIns/CodexDockTilePlugin.docktileplugin/Contents/MacOS/CodexDockTilePlugin`: team `2DC432GLL2`, identifier `com.openai.codex.dock-tile-plugin`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/dist/native/darwin/permissions.node`: team `2DC432GLL2`, identifier `permissions.node`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid/prebuilds/HID-darwin-arm64/node-napi-v4.node`: team `2DC432GLL2`, identifier `node-napi-v4.node`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/serialport/node_modules/@serialport/bindings-cpp/prebuilds/darwin-x64+arm64/node.napi.node`: team `2DC432GLL2`, identifier `bindings.node`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/build/Release/better_sqlite3.node`: team `2DC432GLL2`, identifier `better_sqlite3.node`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node`: team `2DC432GLL2`, identifier `pty.node`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/spawn-helper`: team `2DC432GLL2`, identifier `spawn-helper`, flags `runtime`
+- `Contents/Resources/app.asar.unpacked/node_modules/objc-js/prebuilds/darwin-arm64/node.napi.armv8.node`: team `2DC432GLL2`, identifier `nobjc_native.node`, flags `runtime`
+- `Contents/Resources/cua_node/bin/node`: team `2DC432GLL2`, identifier `node`, flags `runtime`
+- `Contents/Resources/cua_node/bin/node_repl`: team `2DC432GLL2`, identifier `node_repl`, flags `runtime`
+- `Contents/Resources/cua_node/lib/node_modules/@img/sharp-darwin-arm64/lib/sharp-darwin-arm64-0.35.4.node`: team `2DC432GLL2`, identifier `sharp-darwin-arm64-0.35.4.node`, flags `runtime`
+- `Contents/Resources/cua_node/lib/node_modules/@img/sharp-libvips-darwin-arm64/lib/libvips-cpp.8.18.6.dylib`: team `2DC432GLL2`, identifier `libvips-cpp.8.18.6.dylib`, flags `runtime`
+- `Contents/Resources/cua_node/lib/node_modules/@oai/cua/dist/lib/js/oai_js_browser/dist/skill/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node`: team `2DC432GLL2`, identifier `classic_level.node`, flags `runtime`
+- `Contents/Resources/cua_node/lib/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node`: team `2DC432GLL2`, identifier `classic_level.node`, flags `runtime`
+- `Contents/Resources/cua_node/lib/node_modules/fsevents/fsevents.node`: team `2DC432GLL2`, identifier `-928abb.out`, flags `runtime`
+- `Contents/Resources/native/airpods-mute.node`: team `2DC432GLL2`, identifier `airpods_mute.node`, flags `runtime`
+- `Contents/Resources/native/bare-modifier-monitor`: team `2DC432GLL2`, identifier `bare-modifier-monitor`, flags `runtime`
+- `Contents/Resources/native/browser-use-peer-authorization.node`: team `2DC432GLL2`, identifier `browser_use_peer_authorization.node`, flags `runtime`
+- `Contents/Resources/native/devicecheck.node`: team `2DC432GLL2`, identifier `devicecheck.node`, flags `runtime`
+- `Contents/Resources/native/hid-topology-watcher.node`: team `2DC432GLL2`, identifier `hid_topology_watcher.node`, flags `runtime`
+- `Contents/Resources/native/input-monitoring-permission.node`: team `2DC432GLL2`, identifier `input_monitoring_permission.node`, flags `runtime`
+- `Contents/Resources/native/launch-services-helper`: team `2DC432GLL2`, identifier `launch-services-helper`, flags `runtime`
+- `Contents/Resources/native/remote-control-device-key.node`: team `2DC432GLL2`, identifier `remote_control_device_key.node`, flags `runtime`
+- `Contents/Resources/native/sky.node`: team `2DC432GLL2`, identifier `sky.node`, flags `runtime`
+- `Contents/Resources/native/sparkle.node`: team `2DC432GLL2`, identifier `sparkle.node`, flags `runtime`
+- `Contents/Resources/native/system-audio-spectrum`: team `2DC432GLL2`, identifier `system-audio-spectrum`, flags `runtime`
+- `Contents/Resources/native/usb_webauthn.node`: team `2DC432GLL2`, identifier `usb_webauthn.node`, flags `runtime`
+- `Contents/Resources/plugins/openai-bundled/plugins/browser/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node`: team `2DC432GLL2`, identifier `classic_level.node`, flags `runtime`
+- `Contents/Resources/plugins/openai-bundled/plugins/chrome/extension-host/macos/arm64/ChatGPT for Chrome`: team `2DC432GLL2`, identifier `extension-host`, flags `runtime`
+- `Contents/Resources/plugins/openai-bundled/plugins/chrome/node_modules/classic-level/prebuilds/darwin-x64+arm64/classic-level.node`: team `2DC432GLL2`, identifier `classic_level.node`, flags `runtime`
+- `Contents/Resources/rg`: team `2DC432GLL2`, identifier `rg`, flags `runtime`
+- `Contents/Resources/tectonic/tectonic`: team `2DC432GLL2`, identifier `tectonic-85dd05953467e990`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.security.app-sandbox` = `false`
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.codex.notifications","2DC432GLL2.com.openai.sky.CUAService"]`
+- `com.apple.security.automation.apple-events`
+- `com.apple.security.cs.allow-jit`
+- `com.apple.security.cs.allow-unsigned-executable-memory`
+- `com.apple.security.device.audio-input`
+- `com.apple.security.device.camera`
+- `com.apple.security.files.user-selected.read-write`
+- `com.apple.security.network.client`
+- `com.apple.security.personal-information.calendars`
+
+### Codex (Service)
+
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)`: team `2DC432GLL2`, identifier `com.openai.codex.helper`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.security.app-sandbox` = `false`
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.codex.notifications","2DC432GLL2.com.openai.sky.CUAService"]`
+- `com.apple.security.automation.apple-events`
+- `com.apple.security.cs.allow-jit`
+- `com.apple.security.cs.allow-unsigned-executable-memory`
+- `com.apple.security.cs.disable-library-validation`
+- `com.apple.security.device.audio-input`
+- `com.apple.security.device.camera`
+- `com.apple.security.files.user-selected.read-write`
+- `com.apple.security.network.client`
+- `com.apple.security.personal-information.calendars`
+
+### ChatGPT
+
+- `Contents/MacOS/ChatGPT`: team `2DC432GLL2`, identifier `com.openai.codex`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.application-identifier` = `2DC432GLL2.com.openai.codex`
+- `com.apple.developer.aps-environment` = `production`
+- `com.apple.developer.team-identifier` = `2DC432GLL2`
+- `com.apple.security.app-sandbox` = `false`
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.codex.notifications","2DC432GLL2.com.openai.sky.CUAService"]`
+- `com.apple.security.automation.apple-events`
+- `com.apple.security.cs.allow-jit`
+- `com.apple.security.cs.allow-unsigned-executable-memory`
+- `com.apple.security.device.audio-input`
+- `com.apple.security.device.camera`
+- `com.apple.security.files.user-selected.read-write`
+- `com.apple.security.network.client`
+- `com.apple.security.personal-information.calendars`
+- `keychain-access-groups` = `["2DC432GLL2.*","2DC432GLL2.com.openai.shared"]`
+
+### codex
+
+- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex`: team `2DC432GLL2`, identifier `codex`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.application-identifier` = `2DC432GLL2.com.openai.codex.cli`
+- `com.apple.developer.team-identifier` = `2DC432GLL2`
+- `com.apple.security.cs.allow-jit`
+- `com.apple.security.cs.allow-unsigned-executable-memory`
+- `keychain-access-groups` = `["2DC432GLL2.com.openai.codex.cli"]`
+
+### codex-code-mode-host
+
+- `Contents/Resources/codex-cli/bin/codex-code-mode-host`: team `2DC432GLL2`, identifier `codex-code-mode-host`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.security.cs.allow-jit`
+- `com.apple.security.cs.allow-unsigned-executable-memory`
+
+### codex-voice-host
+
+- `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host`: team `2DC432GLL2`, identifier `com.openai.codex.voice-host`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.security.device.audio-input`
+
+### SkyComputerUseService
+
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: team `2DC432GLL2`, identifier `com.openai.sky.CUAService`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.application-identifier` = `2DC432GLL2.com.openai.sky.CUAService`
+- `com.apple.developer.team-identifier` = `2DC432GLL2`
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.sky.CUAService"]`
+- `com.apple.security.automation.apple-events`
+- `com.apple.security.personal-information.addressbook`
+- `keychain-access-groups` = `["2DC432GLL2.*"]`
+
+### CodexComputerUseAuthorizationPluginInstallerTool
+
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/Resources/CodexComputerUseAuthorizationPluginInstallerTool`: team `2DC432GLL2`, identifier `CodexComputerUseAuthorizationPluginInstallerTool-55554944bfc124f3c74d3a9c8ed8efc9f53e0d21`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.application-identifier` = `2DC432GLL2.com.openai.sky.app.CodexComputerUseAuthorizationPluginInstallerTool`
+
+### SkyComputerUseClient
+
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient`: team `2DC432GLL2`, identifier `com.openai.sky.CUAService.cli`, flags `runtime`
+
+Entitlements:
+
+- `com.apple.application-identifier` = `2DC432GLL2.com.openai.sky.CUAService.cli`
+- `com.apple.developer.team-identifier` = `2DC432GLL2`
+- `com.apple.security.application-groups` = `["2DC432GLL2.com.openai.sky.CUAService"]`
+- `keychain-access-groups` = `["2DC432GLL2.*"]`
 
 **Privacy prompts:**
 
@@ -111,7 +296,7 @@ Strings in first-party native code. URLs:
 - `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib` (8): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://www.apple.com/appleca0`, `https://www.apple.com/appleca/0`, `https://www.apple.com/certificateauthority/0`
 - `Contents/MacOS/ChatGPT` (8): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://www.apple.com/appleca0`, `https://www.apple.com/appleca/0`, `https://www.apple.com/certificateauthority/0`
 - `Contents/PlugIns/CodexDockTilePlugin.docktileplugin/Contents/MacOS/CodexDockTilePlugin` (8): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://www.apple.com/appleca0`, `https://www.apple.com/appleca/0`, `https://www.apple.com/certificateauthority/0`
-- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (183): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://erlang.org/doc/man/erlang.html#data-types`, `http://erlang.org/doc/reference_manual/typespec.html#the-erlang-type-language`, `http://groovy-lang.org/syntax.html#_normal_identifiers`, `http://json-schema.org/draft-07/schema#`, `http://no.url.provided.localDeferred`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://opensource.org/licenses/MIT`, `http://schemas.xmlsoap.org/soap/envelope/`, `http://www.apache.org/licenses/`, `http://www.apache.org/licenses/LICENSE-2.0`, `http://www.apple.com/appleca0`, `https://api.github.com/repos/`, `https://api.github.com/repos/openai/codex/releases/latest`, `https://api.githubcopilot.com/mcp/`, `https://api.openai.com/auth`, `https://api.openai.com/v1route`, `https://cdn.jsdelivr.net`, `https://cdnjs.cloudflare.com`, `https://chatgpt-staging.comhttps`, `https://chatgpt.com/backend-api`, `https://chatgpt.com/backend-api/`, `https://chatgpt.com/backend-apicodex_cloud_tasks_diffcodex_cloud_tasks_execcodex_cloud_tasks_list`, `https://chatgpt.com/backend-apifailed`, `https://chatgpt.com/codex/install.ps1`, `https://chatgpt.com/codex/install.sh`, `https://chatgpt.com/codex/settings/usage`, `https://chatgpt.com/codex?app-landing-page=true*New*`, `https://chatgpt.com/codex?app-landing-page=trueftp`, `https://chatgpt.com/cyber`, `https://chatgpt.com/explore/plus`, `https://chatgpt.com/explore/plus.We`, `https://chatgpt.com/explore/pro`, `https://chatgpt.com/oauth/codex/`, `https://chatgpt.com/procta_tabhighlight_planpro_variant2xpricinghttps://chatgpt.com/explore/prohttps://chatgpt.com/explore/plushttps://chatgpt.com/admin/usage-limits/workspacehttps://chatgpt.com/codex/settings/usagehttps://chatgpt.com/codex/purchase/resethttps://chatgpt.com/admin/billing?codex_credi`, `https://codeload.github.com/`, `https://codex.invalid/inline-visualization/::codex-inline-vis`, `https://community.openai.com/c/codex/37`, `https://crbug.com/792228`, `https://developers.openai.com`, `https://developers.openai.com/api/docs/guides/async-tool-calling`, `https://developers.openai.com/api/docs/guides/compaction`, `https://developers.openai.com/api/docs/guides/fast-mode`, `https://developers.openai.com/api/docs/guides/fast-mode#is-fast-mode-compatible-with-data-residency-zero-data-retention-and-a-baa`, `https://developers.openai.com/api/docs/guides/latest-model`, `https://developers.openai.com/api/docs/guides/latest-model.md`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#initiative-and-follow-through`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#migration-quickstart`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#prompting-best-practices`, `https://developers.openai.com/api/docs/guides/migrate-to-responses`, `https://developers.openai.com/api/docs/guides/migrate-to-responses#migrating-from-chat-completions`, `https://developers.openai.com/api/docs/guides/prompt-caching`, `https://developers.openai.com/api/docs/guides/prompt-caching#summary-of-model-differences`, `https://developers.openai.com/api/docs/guides/reasoning#change-reasoning-mid-conversation`, `https://developers.openai.com/api/docs/guides/reasoning#preserve-reasoning-across-calls`, `https://developers.openai.com/api/docs/guides/reasoning#reasoning-effort`, … (123 more in the JSON)
+- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (184): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://erlang.org/doc/man/erlang.html#data-types`, `http://erlang.org/doc/reference_manual/typespec.html#the-erlang-type-language`, `http://groovy-lang.org/syntax.html#_normal_identifiers`, `http://json-schema.org/draft-07/schema#`, `http://no.url.provided.localDeferred`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://opensource.org/licenses/MIT`, `http://schemas.xmlsoap.org/soap/envelope/`, `http://www.apache.org/licenses/`, `http://www.apache.org/licenses/LICENSE-2.0`, `http://www.apple.com/appleca0`, `https://api.github.com/repos/`, `https://api.github.com/repos/openai/codex/releases/latest`, `https://api.githubcopilot.com/mcp/`, `https://api.openai.com/auth`, `https://api.openai.com/v1route`, `https://cdn.jsdelivr.net`, `https://cdnjs.cloudflare.com`, `https://chatgpt-staging.comhttps`, `https://chatgpt.com/backend-api`, `https://chatgpt.com/backend-api/`, `https://chatgpt.com/backend-apicodex_cloud_tasks_diffcodex_cloud_tasks_execcodex_cloud_tasks_list`, `https://chatgpt.com/backend-apifailed`, `https://chatgpt.com/codex/install.ps1`, `https://chatgpt.com/codex/install.sh`, `https://chatgpt.com/codex/settings/usage`, `https://chatgpt.com/codex?app-landing-page=true*New*`, `https://chatgpt.com/codex?app-landing-page=trueftp`, `https://chatgpt.com/cyber`, `https://chatgpt.com/explore/plus`, `https://chatgpt.com/explore/plus.We`, `https://chatgpt.com/explore/pro`, `https://chatgpt.com/oauth/codex/`, `https://chatgpt.com/procta_tabhighlight_planpro_variant2xpricinghttps://chatgpt.com/explore/prohttps://chatgpt.com/explore/plushttps://chatgpt.com/admin/usage-limits/workspacehttps://chatgpt.com/codex/settings/usagehttps://chatgpt.com/codex/purchase/resethttps://chatgpt.com/admin/billing?codex_credi`, `https://codeload.github.com/`, `https://codex.invalid/inline-visualization/::codex-inline-vis`, `https://community.openai.com/c/codex/37`, `https://crbug.com/792228`, `https://developers.openai.com`, `https://developers.openai.com/api/docs/guides/async-tool-calling`, `https://developers.openai.com/api/docs/guides/compaction`, `https://developers.openai.com/api/docs/guides/fast-mode`, `https://developers.openai.com/api/docs/guides/fast-mode#is-fast-mode-compatible-with-data-residency-zero-data-retention-and-a-baa`, `https://developers.openai.com/api/docs/guides/latest-model`, `https://developers.openai.com/api/docs/guides/latest-model.md`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#initiative-and-follow-through`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#migration-quickstart`, `https://developers.openai.com/api/docs/guides/latest-model/gpt-6-astra.md#prompting-best-practices`, `https://developers.openai.com/api/docs/guides/migrate-to-responses`, `https://developers.openai.com/api/docs/guides/migrate-to-responses#migrating-from-chat-completions`, `https://developers.openai.com/api/docs/guides/prompt-caching`, `https://developers.openai.com/api/docs/guides/prompt-caching#summary-of-model-differences`, `https://developers.openai.com/api/docs/guides/reasoning#change-reasoning-mid-conversation`, `https://developers.openai.com/api/docs/guides/reasoning#preserve-reasoning-across-calls`, `https://developers.openai.com/api/docs/guides/reasoning#reasoning-effort`, … (124 more in the JSON)
 - `Contents/Resources/codex-cli/bin/codex-code-mode-host` (47): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://www.apple.com/appleca0`, `http://www.unicode.org/copyright.html`, `https://crbug.com/v8/8520`, `https://docs.python.org/3.9/library/stdtypes.html#str.removeprefix`, `https://docs.python.org/3.9/library/stdtypes.html#str.removesuffix`, `https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eofNot`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#all`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#any`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#bool`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#bytes`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#dict`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#dir`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#enumerate`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#float`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#getattr`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#hasattr`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#hash`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#indexing`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#int`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#len`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#list`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#max`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#min`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#ord`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#range`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#repr`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#reversed`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#sorted`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#str`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#string`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#string%C2%B7capitalize`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#tuple`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#type`, `https://github.com/bazelbuild/starlark/blob/master/spec.md#zip`, `https://github.com/clap-rs/clap/issues`, `https://github.com/clap-rs/clap/issues=internal`, `https://github.com/clap-rs/clap/issuesCOLUMNSLINES`, `https://github.com/clap-rs/clap/issuesa`, `https://github.com/clap-rs/clap/issuesfalse`, `https://github.com/tc39/ecma262/pull/3715`, `https://www.apple.com/appleca/0`, `https://www.apple.com/certificateauthority/0`
 - `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host` (9): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://www.apple.com/appleca0`, `https://docs.rs/getrandom#nodejs-es-module-support`, `https://www.apple.com/appleca/0`, `https://www.apple.com/certificateauthority/0`
 - `Contents/Resources/cua_node/bin/node_repl` (12): `http://certs.apple.com/devidg2.der02`, `http://crl.apple.com/root.crl0`, `http://crl.apple.com/timestamp.crl0`, `http://ocsp.apple.com/ocsp03-applerootca0`, `http://ocsp.apple.com/ocsp03-devidg2010`, `http://www.apple.com/appleca0`, `https://docs.rs/rustls/latest/rustls/manual/_03_howto/index.html#unexpected-eofHMAC_Update`, `https://github.com/clap-rs/clap/issues`, `https://github.com/clap-rs/clap/issuesa`, `https://github.com/clap-rs/clap/issuesinternal`, `https://www.apple.com/appleca/0`, `https://www.apple.com/certificateauthority/0`
@@ -164,7 +349,7 @@ Environment-variable-shaped strings (9 names the config.toml and environment-var
 
 Flag-shaped strings (enable, feature, gate, experiment, beta, internal…):
 
-- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (10): `daybreak_enabled`, `disable_in_process_fallback`, `features.multi_agent_v2.tool_namespacemcp`, `groupanimations_enabled`, `has_hw_feature`, `internal_chat_message_metadata_passthroughauthorrecipient`, `next_rollout_ordinal`, `regexp_flags`, `remote_control_enabled`, `rollout_contents`
+- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (10): `daybreak_enabled`, `disable_in_process_fallback`, `features.multi_agent_v2.tool_namespacemcp`, `feedback.enabled`, `has_hw_feature`, `internal_chat_message_metadata_passthroughauthorrecipient`, `next_rollout_ordinal`, `regexp_flags`, `remote_control_enabled`, `rollout_contents`
 - `Contents/Resources/codex-cli/bin/codex-code-mode-host` (103): `api_internal`, `async_module_evaluate_internal`, `beta-metsehaf`, `code-disable-optimization`, `debug_code`, `debug_context_id`, `debug_evaluate_context_map`, `debug_info_map`, `developer_only_features`, `disable_abortjs`, `disable_optimizing_compilers`, `disable_write_barriers`, `disabled-by-default-devtools.v8-source-rundown`, `disabled-by-default-devtools.v8-source-rundown-sources`, `disabled-by-default-v8.compile`, `disabled-by-default-v8.cpu_profiler`, `disabled-by-default-v8.gc`, `disabled-by-default-v8.gc_stats`, `disabled-by-default-v8.ic_stats`, `disabled-by-default-v8.maglev`, `disabled-by-default-v8.runtime_stats`, `disabled-by-default-v8.runtime_stats_sampling`, `disabled-by-default-v8.turbofan`, `disabled-by-default-v8.wasm.turbofan`, `disabled-by-default-v8.zone_stats`, `disallow_developer_only_features`, `disallow_unsafe_flags`, `efficiency_mode_disable_turbofan`, `enable_32dregs`, `enable_allocation_folding`, `enable_armv7`, `enable_armv8`, `enable_avx`, `enable_avx2`, `enable_avx_vnni`, `enable_avx_vnni_int8`, `enable_bmi1`, `enable_bmi2`, `enable_bytecode_compiler_ablation`, `enable_enumerated_keyed_access_bytecode`, `enable_etw_by_custom_filter_only`, `enable_etw_stack_walking`, `enable_experimental_regexp_engine`, `enable_experimental_regexp_engine_on_excessive_backtracks`, `enable_f16c`, `enable_fma3`, `enable_lazy_source_positions`, `enable_lzcnt`, `enable_neon`, `enable_parser_ablation`, `enable_popcnt`, `enable_preparser_ablation`, `enable_queue_microtask`, `enable_regexp_unaligned_accesses`, `enable_sahf`, `enable_sharedarraybuffer_per_context`, `enable_slow_asserts`, `enable_source_at_csa_bind`, `enable_sse3`, `enable_sse4_1`, … (43 more in the JSON)
 - `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host` (2): `debug_map`, `debug_struct`
 - `Contents/Resources/cua_node/bin/node_repl` (3): `clear_enabled`, `debug_struct`, `has_hw_feature`
@@ -178,7 +363,7 @@ Flag-shaped strings (enable, feature, gate, experiment, beta, internal…):
 
 Model and product names:
 
-- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (19): `codex-run-as-apply-patchtmpcodex-arg0internal`, `codex-world-state-fragment-v1`, `codex-ws-stream-request-start-msx-openai-subagent1failed`, `gpt-4.1`, `gpt-5.2`, `gpt-5.4`, `gpt-5.5`, `gpt-5.6-luna`, `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-terrafailed`, `gpt-6-astra`, `gpt-6-luna`, `gpt-6-pro`, `gpt-6-sol`, `gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`, `gpt-image-2`
+- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (19): `codex-run-as-apply-patchtmpcodex-arg0internal`, `codex-world-state-fragment-v1`, `gpt-4.1`, `gpt-5.2`, `gpt-5.4`, `gpt-5.5`, `gpt-5.6-luna`, `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-terrafailed`, `gpt-6-astra`, `gpt-6-luna`, `gpt-6-pro`, `gpt-6-sol`, `gpt-6.1-sol`, `gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`, `gpt-image-2`
 
 Sandbox profile text:
 
@@ -194,7 +379,7 @@ SQL:
 
 File-system locations:
 
-- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (9): `/dev/null`, `/dev/urandom`, `/private/var/tmpError`, `/tmp/test.txt/tmp/test2.txt+test`, `/usr/tmp`, `/var/tmp`, `~/9hvo9`, `~/9hvo9Hh`, `~/A$Eu`
+- `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` (10): `/dev/null`, `/dev/urandom`, `/private/var/tmpError`, `/tmp/test.txt/tmp/test2.txt+test`, `/usr/tmp`, `/var/tmp`, `~/7]^9`, `~/9hvo9`, `~/9hvo9Hh`, `~/A$Eu`
 - `Contents/Resources/codex-cli/bin/codex-code-mode-host` (5): `/dev/null`, `/etc/localtime`, `/tmp/__v8_gc__`, `/var/db/timezone/zoneinfo/`, `~/A$Eu`
 - `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host` (1): `/dev/null`
 - `Contents/Resources/cua_node/bin/node_repl` (2): `/dev/null`, `~/A$Eu`
@@ -208,7 +393,7 @@ File-system locations:
 - `Contents/Resources/native/usb_webauthn.node` (6): `/dev/hwrng`, `/dev/random`, `/dev/srandom`, `/dev/tty`, `/dev/urandom`, `/tmp/lto.o`
 - `Contents/Resources/plugins/openai-bundled/plugins/chrome/extension-host/macos/arm64/ChatGPT for Chrome` (1): `/dev/null`
 
-Prose strings (kept as hashes, shown in full only when new): `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/MacOS/Codex (Alerts)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/MacOS/Codex (Aperitif Alerts)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/MacOS/Codex (Aperitif GPU)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/MacOS/Codex (Aperitif Renderer)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/MacOS/Codex (Aperitif)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/MacOS/Codex (GPU)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib` 8; `Contents/MacOS/ChatGPT` 4; `Contents/PlugIns/CodexDockTilePlugin.docktileplugin/Contents/MacOS/CodexDockTilePlugin` 2; `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` 5200; `Contents/Resources/codex-cli/bin/codex-code-mode-host` 1250; `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host` 176; `Contents/Resources/cua_node/bin/node_repl` 440; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService` 294; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian` 288; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/MacOS/Codex Computer Use Installer` 2; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/Resources/CodexComputerUseAuthorizationPlugin.bundle/Contents/MacOS/CodexComputerUseAuthorizationPlugin` 10; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/Resources/CodexComputerUseAuthorizationPluginInstallerTool` 4; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient` 169; `Contents/Resources/native/airpods-mute.node` 2; `Contents/Resources/native/bare-modifier-monitor` 3; `Contents/Resources/native/browser-use-peer-authorization.node` 2; `Contents/Resources/native/devicecheck.node` 2; `Contents/Resources/native/hid-topology-watcher.node` 2; `Contents/Resources/native/input-monitoring-permission.node` 2; `Contents/Resources/native/launch-services-helper` 3; `Contents/Resources/native/remote-control-device-key.node` 3; `Contents/Resources/native/sky.node` 18; `Contents/Resources/native/sparkle.node` 10; `Contents/Resources/native/system-audio-spectrum` 3; `Contents/Resources/native/usb_webauthn.node` 25; `Contents/Resources/plugins/openai-bundled/plugins/chrome/extension-host/macos/arm64/ChatGPT for Chrome` 48.
+Prose strings (kept as hashes, shown in full only when new): `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/MacOS/Codex (Alerts)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/MacOS/Codex (Aperitif Alerts)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/MacOS/Codex (Aperitif GPU)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/MacOS/Codex (Aperitif Renderer)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/MacOS/Codex (Aperitif)` 2; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/MacOS/Codex (GPU)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)` 8; `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib` 8; `Contents/MacOS/ChatGPT` 4; `Contents/PlugIns/CodexDockTilePlugin.docktileplugin/Contents/MacOS/CodexDockTilePlugin` 2; `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex` 5196; `Contents/Resources/codex-cli/bin/codex-code-mode-host` 1249; `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host` 176; `Contents/Resources/cua_node/bin/node_repl` 440; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService` 294; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian` 288; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/MacOS/Codex Computer Use Installer` 2; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/Resources/CodexComputerUseAuthorizationPlugin.bundle/Contents/MacOS/CodexComputerUseAuthorizationPlugin` 10; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/Codex Computer Use Installer.app/Contents/Resources/CodexComputerUseAuthorizationPluginInstallerTool` 4; `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient` 169; `Contents/Resources/native/airpods-mute.node` 2; `Contents/Resources/native/bare-modifier-monitor` 3; `Contents/Resources/native/browser-use-peer-authorization.node` 2; `Contents/Resources/native/devicecheck.node` 2; `Contents/Resources/native/hid-topology-watcher.node` 2; `Contents/Resources/native/input-monitoring-permission.node` 2; `Contents/Resources/native/launch-services-helper` 3; `Contents/Resources/native/remote-control-device-key.node` 3; `Contents/Resources/native/sky.node` 18; `Contents/Resources/native/sparkle.node` 10; `Contents/Resources/native/system-audio-spectrum` 3; `Contents/Resources/native/usb_webauthn.node` 25; `Contents/Resources/plugins/openai-bundled/plugins/chrome/extension-host/macos/arm64/ChatGPT for Chrome` 48.
 
 ## Linking
 
@@ -243,7 +428,7 @@ Rust crates compiled into first-party binaries (from source paths in panic locat
 
 ## File inventory
 
-4351 files, 1593.0 MB. Kinds in the first table are listed file by file in the JSON; the rest are counted and hashed as a group.
+4351 files, 1593.1 MB. Kinds in the first table are listed file by file in the JSON; the rest are counted and hashed as a group.
 
 | Kind | Files | MB |
 | --- | ---: | ---: |

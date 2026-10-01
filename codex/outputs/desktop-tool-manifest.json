@@ -1,8 +1,8 @@
 {
   "page": "desktop-tool-manifest.md",
-  "app_version": "26.928.20755",
-  "app_build": "12246",
-  "source_file_sha256": "2301fba40bd8fa237ccdb1369363e1deefaf27953da2d767d428225d5e9eedee",
+  "app_version": "26.928.21956",
+  "app_build": "12404",
+  "source_file_sha256": "3bda98f2265ad23677dfe0163d1cc7855beade6bef11d27f830f6663d7658406",
   "capture": "outputs/current-host-tool-manifest-2026-09-24.json",
   "tools": [
     {
@@ -31,8 +31,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9360818
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9401561
     },
     {
       "id": "codex_app/attach_artifact",
@@ -60,8 +60,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9356825
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9397568
     },
     {
       "id": "codex_app/automation_update",
@@ -73,8 +73,8 @@
       "sha256": "4104ff96ebac0eedc7dc54f34b9771b3ec60e9bbd278ea24342c89f361552974",
       "parameters": null,
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 3846197
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 3846194
     },
     {
       "id": "codex_app/check_app_update",
@@ -89,8 +89,8 @@
         "rows": []
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9355984
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9396727
     },
     {
       "id": "codex_app/compile_latex_document",
@@ -102,8 +102,8 @@
       "sha256": "08a45c39bd42ea6519b2e5aaf1d485a58ffd004206095af06299c64cda05237e",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 2825320
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 2825317
     },
     {
       "id": "codex_app/complete_conversational_onboarding_task",
@@ -118,8 +118,8 @@
         "rows": []
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9355437
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9396180
     },
     {
       "id": "codex_app/complete_sidebar_onboarding_checklist_task",
@@ -134,8 +134,8 @@
         "rows": []
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9364831
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9405574
     },
     {
       "id": "codex_app/consume_usage_reset",
@@ -157,8 +157,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9392096
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9432839
     },
     {
       "id": "codex_app/create_project",
@@ -241,8 +241,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9374018
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9414761
     },
     {
       "id": "codex_app/create_sidebar_section",
@@ -264,8 +264,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9368665
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9409408
     },
     {
       "id": "codex_app/create_thread",
@@ -467,8 +467,8 @@
         "model"
       ],
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9376110
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9416853
     },
     {
       "id": "codex_app/create_worktree",
@@ -502,8 +502,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9358794
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9399537
     },
     {
       "id": "codex_app/delete_sidebar_section",
@@ -525,8 +525,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9368847
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9409590
     },
     {
       "id": "codex_app/finalize_environment",
@@ -538,8 +538,8 @@
       "sha256": "4f26a3eef3131ad6625e595212f30272ef185edcffa2554687be0797a1c3ca8c",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 2462065
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 2462062
     },
     {
       "id": "codex_app/fire_confetti",
@@ -561,8 +561,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 5412727
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 5453711
     },
     {
       "id": "codex_app/fork_thread",
@@ -621,8 +621,8 @@
         }
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9379388
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9420131
     },
     {
       "id": "codex_app/get_handoff_status",
@@ -657,8 +657,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9388070
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9428813
     },
     {
       "id": "codex_app/get_thread_emoji",
@@ -680,8 +680,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9370378
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9411121
     },
     {
       "id": "codex_app/get_usage_limits",
@@ -696,8 +696,8 @@
         "rows": []
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9391097
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9431840
     },
     {
       "id": "codex_app/get_worktree_creation_status",
@@ -719,8 +719,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9359782
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9400525
     },
     {
       "id": "codex_app/handoff_thread",
@@ -754,8 +754,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9386718
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9427461
     },
     {
       "id": "codex_app/list_archived_threads",
@@ -797,8 +797,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9381656
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9422399
     },
     {
       "id": "codex_app/list_artifacts",
@@ -813,8 +813,8 @@
         "rows": []
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9357342
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9398085
     },
     {
       "id": "codex_app/list_hosts",
@@ -829,8 +829,8 @@
         "rows": []
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9362018
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9402761
     },
     {
       "id": "codex_app/list_projects",
@@ -849,8 +849,8 @@
         }
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9375848
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9416591
     },
     {
       "id": "codex_app/list_threads",
@@ -876,8 +876,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9380655
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9421398
     },
     {
       "id": "codex_app/load_workspace_dependencies",
@@ -896,8 +896,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 3853305
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 3853302
     },
     {
       "id": "codex_app/move_project_to_sidebar_section",
@@ -925,8 +925,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9368977
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9409720
     },
     {
       "id": "codex_app/move_thread_to_sidebar_section",
@@ -966,8 +966,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9369197
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9409940
     },
     {
       "id": "codex_app/navigate_to_codex_page",
@@ -989,8 +989,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 5428813
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 5469796
     },
     {
       "id": "codex_app/open_in_codex",
@@ -1024,8 +1024,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 5426178
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 5467161
     },
     {
       "id": "codex_app/read_settings",
@@ -1057,8 +1057,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9362339
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9403082
     },
     {
       "id": "codex_app/read_thread",
@@ -1109,8 +1109,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9382721
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9423464
     },
     {
       "id": "codex_app/read_thread_terminal",
@@ -1129,8 +1129,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9396563
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9437306
     },
     {
       "id": "codex_app/remove_artifact",
@@ -1158,8 +1158,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9357715
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9398458
     },
     {
       "id": "codex_app/rename_sidebar_section",
@@ -1187,8 +1187,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9368768
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9409511
     },
     {
       "id": "codex_app/reorder_section",
@@ -1216,8 +1216,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9369529
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9410272
     },
     {
       "id": "codex_app/reorder_sidebar_projects",
@@ -1239,8 +1239,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9369715
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9410458
     },
     {
       "id": "codex_app/reorder_sidebar_sections",
@@ -1257,13 +1257,13 @@
             "name": "sectionIds",
             "required": true,
             "type": "array of string",
-            "description": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub Sie]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions."
+            "description": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub xie]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions."
           }
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9369884
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9410627
     },
     {
       "id": "codex_app/request_environment_input",
@@ -1275,8 +1275,8 @@
       "sha256": "1a8ec64f36284abc012fba9d9732a169dc6f11278d30bbc412345f03e9dc4eb5",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 2461685
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 2461682
     },
     {
       "id": "codex_app/restore_worktree",
@@ -1298,8 +1298,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9361436
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9402179
     },
     {
       "id": "codex_app/send_message_to_thread",
@@ -1356,8 +1356,8 @@
         "model"
       ],
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9378156
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9418899
     },
     {
       "id": "codex_app/set_thread_archived",
@@ -1402,8 +1402,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9385214
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9425957
     },
     {
       "id": "codex_app/set_thread_emoji",
@@ -1431,8 +1431,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9370537
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9411280
     },
     {
       "id": "codex_app/set_thread_pinned",
@@ -1472,8 +1472,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9384866
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9425609
     },
     {
       "id": "codex_app/set_thread_read_state",
@@ -1519,8 +1519,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9386121
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9426864
     },
     {
       "id": "codex_app/set_thread_title",
@@ -1559,8 +1559,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9385783
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9426526
     },
     {
       "id": "codex_app/share_thread",
@@ -1588,8 +1588,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9390549
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9431292
     },
     {
       "id": "codex_app/uninstall_plugin",
@@ -1616,8 +1616,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9400309
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9441052
     },
     {
       "id": "codex_app/update_running_summary",
@@ -1645,8 +1645,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 2826748
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 2826745
     },
     {
       "id": "codex_app/update_sidebar_preferences",
@@ -1674,8 +1674,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9366102
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9406845
     },
     {
       "id": "codex_app/wait_threads",
@@ -1734,8 +1734,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9383554
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9424297
     },
     {
       "id": "codex_app/write_settings",
@@ -1827,8 +1827,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9362963
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9403706
     },
     {
       "id": "codex_app/capture_screen_context",
@@ -1840,8 +1840,8 @@
       "sha256": "6884d374d0e5528e618156d21385350b50d933149682135611568e1bf8197baf",
       "parameters": null,
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 5460111
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 5460108
     },
     {
       "id": "codex_app/end_realtime_voice_call",
@@ -1853,8 +1853,8 @@
       "sha256": "5d043919dfc827388f61f30983708dafd66461df77800e3d0e44375a2284233a",
       "parameters": null,
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 5459447
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 5459444
     },
     {
       "id": "codex_app/transfer_voice_call",
@@ -1866,8 +1866,8 @@
       "sha256": "8c5468c28460eea5d0d73d630a72cb0c181ca596771a38d07278bccbe58ecc6a",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 5459781
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 5459778
     },
     {
       "id": "onboarding/request_onboarding_input",
@@ -1934,8 +1934,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 1649547
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 1649549
     },
     {
       "id": "onboarding/request_option_picker",
@@ -1989,8 +1989,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 1649094
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 1649096
     },
     {
       "id": "onboarding/setup_codex_step",
@@ -2021,8 +2021,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 1648869
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 1648871
     },
     {
       "id": "tab/getTabContext",
@@ -2049,8 +2049,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 3505680
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 3505677
     },
     {
       "id": "node_repl/js",
@@ -2150,8 +2150,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9393345
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9434088
     },
     {
       "id": "other/create_spaces_artifact",
@@ -2191,8 +2191,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9394079
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9434822
     },
     {
       "id": "other/read_page_reference",
@@ -2220,8 +2220,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-74096abaa6b3.js",
-      "byte_offset": 9395166
+      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
+      "byte_offset": 9435909
     },
     {
       "id": "other/record_private_review",
@@ -2233,8 +2233,8 @@
       "sha256": "178ddc71468f0aaabf7aee2ddd2d5ab6f4a7aaf30d5b73b860b2b1a9019f59c3",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-5d8e744d1fa1.js",
-      "byte_offset": 3480934
+      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
+      "byte_offset": 3480931
     }
   ],
   "parameter_texts": [
@@ -2500,8 +2500,8 @@
     },
     {
       "id": "codex_app/reorder_sidebar_sections#sectionIds",
-      "text": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub Sie]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions.",
-      "sha256": "b4ead30df303be1575fda4e8720c2825ceff96b8df5ce0b11ccdd8f9b8be3af1"
+      "text": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub xie]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions.",
+      "sha256": "3495a5f58af3f64294dc4e61131dae87f1e263d8990343cdf6cc55ca447d24f5"
     },
     {
       "id": "codex_app/restore_worktree#root",
