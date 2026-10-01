@@ -26,7 +26,8 @@ import { promptCandidates } from "./lib/prompt-candidates.mjs";
 import { renderChangedDocuments, semanticDiff } from "./lib/semantic-diff.mjs";
 import { execFileSync } from "node:child_process";
 import { functionHelperPrompts, staticHelperPrompts, voicePrompts } from "./prompts.mjs";
-import { decisionConfig, decisionFetch } from "./lib/jev-provider.mjs";
+import { JevUnavailableError, decisionConfig, openCache } from "./lib/jev-provider.mjs";
+import { modelFacing, verdictKey } from "./lib/prompt-verdict.mjs";
 import { candidateDecision, localReviewFor, publishDecision } from "./prompt-reviews.mjs";
 
 const repo = path.resolve(import.meta.dirname, "..", "..");
@@ -35,7 +36,6 @@ const readJson = (file, fallback) => { try { return JSON.parse(fs.readFileSync(f
 const LIKELY = 0.5;
 const PUBLISH = 0.8;
 const PAGE = "desktop-model-facing-text.md";
-const QUESTION_VERSION = "v1";
 
 const app = codexApp();
 const asar = openAsar(app.asar);
@@ -52,48 +52,26 @@ const known = [...extracted.staticHelpers, ...extracted.functionHelpers, ...extr
 const anchors = [...staticHelperPrompts, ...functionHelperPrompts, ...voicePrompts].map(spec => spec.anchor);
 const candidates = promptCandidates(asar, { known, anchors });
 
-const provider = decisionConfig();
-const key = process.env.JEV_OFFLINE === "1" ? null : provider.key;
-const fetchDecision = decisionFetch(provider);
+const config = decisionConfig();
 const cacheFile = path.join(work, "prompt-candidate-verdicts.json");
-const cache = readJson(cacheFile, {});
-const question = {
-  model_facing: {
-    type: "noul",
-    instructions: "Is `state.text` written to be sent to an AI language model as instructions or context (a system or developer prompt, a tool description, or a template the app fills in and sends to a model), rather than text shown to people (UI labels, onboarding or marketing copy, help and documentation, notifications, error messages, legal text) or code, SQL, markup or data? `state.file` is the bundle file it was found in.",
-    criteria: {
-      true: "Model-facing: it addresses the model (e.g. 'You are…', 'Do not…', 'Respond with…'), describes a tool or its parameters for the model, or frames context and rules for a model.",
-      false: "Human-facing or not natural-language prose: UI or help text, docs, notifications, errors, code, SQL, markup, or data."
-    }
-  }
-};
+const cache = openCache(cacheFile);
 let unavailable = process.env.JEV_OFFLINE === "1" ? "offline review; candidates without cached Jev or explicit local decisions remain unclassified" : null;
+// A cached verdict, or a new one through ask() (which retries). Once Jev is unavailable the rest
+// stay unclassified for this run; a malformed request (JevRequestError) fails the sweep.
 async function verdict(candidate) {
-  const cacheKey = `${QUESTION_VERSION}:${candidate.hash}`;
-  if (cacheKey in cache) return cache[cacheKey];
-  if (!key || unavailable) return null;
+  const cacheKey = verdictKey(candidate.hash);
+  if (cache.has(cacheKey)) return cache.get(cacheKey);
+  if (unavailable) return null;
   const state = { file: candidate.file, text: candidate.text.slice(0, 6000) };
   try { privacyScan(new Map([["classification state", JSON.stringify(state)]])); }
   catch { return null; }
-  for (let attempt = 0; attempt < 4; attempt += 1) {
-    try {
-      const response = await fetchDecision("https://api.typesafe.ai/v1/systemone", {
-        method: "POST",
-        headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-        body: JSON.stringify({ model: "jev-latest", state, questions: question })
-      });
-      if (response.status === 429 || response.status >= 500) { await new Promise(r => setTimeout(r, 1000 * 2 ** attempt)); continue; }
-      if (!response.ok) { unavailable = `TypeSafe ${response.status}`; return null; }
-      const p = (await response.json()).answers.model_facing.noul;
-      cache[cacheKey] = p;
-      return p;
-    } catch (error) {
-      unavailable = error.message;
-      return null;
-    }
+  try {
+    return cache.set(cacheKey, await modelFacing(config, state));
+  } catch (error) {
+    if (!(error instanceof JevUnavailableError)) throw error;
+    unavailable ??= error.reason;
+    return null;
   }
-  unavailable = "TypeSafe retries exhausted";
-  return null;
 }
 const queue = [...candidates];
 await Promise.all(Array.from({ length: 8 }, async () => {
@@ -101,11 +79,11 @@ await Promise.all(Array.from({ length: 8 }, async () => {
     const candidate = queue.shift();
     const local = localReviewFor(candidate);
     // Local boolean judgments never enter the Jev probability cache or trigger a request.
-    const p = local ? cache[`${QUESTION_VERSION}:${candidate.hash}`] ?? null : await verdict(candidate);
+    const p = local ? cache.get(verdictKey(candidate.hash)) ?? null : await verdict(candidate);
     Object.assign(candidate, candidateDecision(candidate, p));
   }
 }));
-fs.writeFileSync(cacheFile, JSON.stringify(cache));
+cache.save();
 
 const snippet = text => text.replace(/\s+/g, " ").trim().slice(0, 160);
 fs.writeFileSync(path.join(work, "prompt-candidates.json"), `${JSON.stringify({ asar_sha256: asar.sha256, candidates: candidates.map(c => ({ hash: c.hash, file: c.file, role: c.role, p: c.p, origin: c.origin, model_facing: c.model_facing, local_review: c.review, snippet: snippet(c.text) })) }, null, 1)}\n`);

@@ -16,6 +16,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { JevUnavailableError, ask, decisionConfig, openCache } from "../../codex/extract/codex/lib/jev-provider.mjs";
 
 export const SCHEMA_VERSION = 1;
 // Bump when string classification changes, so cached per-binary analyses are recomputed.
@@ -522,49 +523,38 @@ export const TRIAGE_QUESTION = {
   }
 };
 
-export function typesafeKey() {
-  if (process.env.TYPESAFE_API_KEY) return process.env.TYPESAFE_API_KEY;
-  try { return fs.readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
-}
+// Cache keys: "v1:<h12 of product, where and change>"; openCache adds the Jev version.
+export const triageKey = (product, it) => `v1:${h12(`${product}\n${it.where}\n${it.text}`)}`;
 
 // Labels up to `cap` items. Returns { labels: [{...item, choice, confidence}], unavailable }.
-// `fetchImpl` and `key` are injectable for tests.
-export async function triage(items, { product, cacheFile, cap = 60, key = typesafeKey(), fetchImpl = globalThis.fetch } = {}) {
-  let cache = {};
-  if (cacheFile) { try { cache = JSON.parse(fs.readFileSync(cacheFile, "utf8")); } catch { cache = {}; } }
+// Each request retries through ask(); once Jev is unavailable the remaining items stay unlabelled.
+// A malformed request (JevRequestError) is a bug here and throws. `config` and `askOptions`
+// ({ fetchImpl, attempts, sleep, ... }) are injectable for tests.
+export async function triage(items, { product, cacheFile, cap = 60, config = decisionConfig(), ...askOptions } = {}) {
+  const cache = cacheFile ? openCache(cacheFile) : null;
   const chosen = items.slice(0, cap);
-  let unavailable = key ? null : "TYPESAFE_API_KEY not set";
+  let unavailable = null;
   const labels = chosen.map(it => ({ ...it, choice: null, confidence: null }));
   const queue = labels.map((it, i) => i);
   await Promise.all(Array.from({ length: 8 }, async () => {
     while (queue.length) {
       const i = queue.shift();
       const it = labels[i];
-      const ck = `v1:${h12(`${product}\n${it.where}\n${it.text}`)}`;
-      if (cache[ck]) { Object.assign(it, cache[ck]); continue; }
+      const ck = triageKey(product, it);
+      if (cache?.has(ck)) { Object.assign(it, cache.get(ck)); continue; }
       if (unavailable) continue;
-      for (let attempt = 0; attempt < 4; attempt += 1) {
-        try {
-          const r = await fetchImpl("https://api.typesafe.ai/v1/systemone", {
-            method: "POST",
-            headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-            body: JSON.stringify({ model: "jev-latest", state: { product, where: it.where, change: it.text }, questions: TRIAGE_QUESTION })
-          });
-          if (r.status === 429 || r.status >= 500) { await new Promise(res => setTimeout(res, 500 * 2 ** attempt)); continue; }
-          if (!r.ok) { unavailable = `TypeSafe ${r.status}`; break; }
-          const a = (await r.json()).answers.signal;
-          const verdict = { choice: a.choice, confidence: Math.round(a.confidence * 100) / 100 };
-          cache[ck] = verdict;
-          Object.assign(it, verdict);
-          break;
-        } catch (error) {
-          unavailable = error.message;
-          break;
-        }
+      try {
+        const a = (await ask(config, { state: { product, where: it.where, change: it.text }, questions: TRIAGE_QUESTION }, askOptions)).answers.signal;
+        const verdict = { choice: a.choice, confidence: Math.round(a.confidence * 100) / 100 };
+        cache?.set(ck, verdict);
+        Object.assign(it, verdict);
+      } catch (error) {
+        if (!(error instanceof JevUnavailableError)) { cache?.save(); throw error; }
+        unavailable ??= error.reason;
       }
     }
   }));
-  if (cacheFile) { fs.mkdirSync(path.dirname(cacheFile), { recursive: true }); fs.writeFileSync(cacheFile, JSON.stringify(cache)); }
+  cache?.save();
   return { labels, unavailable, skipped: Math.max(0, items.length - cap) };
 }
 

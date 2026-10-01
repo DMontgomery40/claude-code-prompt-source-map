@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { JevUnavailableError } from '../../codex/extract/codex/lib/jev-provider.mjs';
 import { codex } from '../targets/codex.mjs';
 
 const generated = [
@@ -73,4 +74,25 @@ test('missing required surface scan cannot reuse cached triage',async()=>fixture
  await assert.rejects(codex.refresh({now:Date.now(),dryRun:false,fingerprint,previous:fingerprint},runtime(repo,commands)),/required surface scan is missing; publication stopped/);
  assert.equal(commands.calls.some(call=>/^extract\/codex\/(?:devday-coverage|devday-overview|key-findings)\.mjs$/.test(call.args[0])),false);
  assert.equal(fs.existsSync(path.join(repo,'outputs/status.json')),false);
+}));
+
+// A required script that exits 75 found Jev unavailable: outputs are restored and nothing is
+// published, but the refresh rejects with JevUnavailableError so watch.mjs retries the same
+// version next cycle instead of marking it failed; the target sends no notification of its own.
+function outageRunner(failure) {
+ const commands=runner(null);
+ const base=commands.run;
+ commands.run=(command,args,options)=>{
+  if(args[0]!==failure) return base(command,args,options);
+  commands.calls.push({command,args});
+  return {status:75,stderr:'Jev unavailable: TypeSafe 503 after 4 attempts',stdout:''};
+ };
+ return commands;
+}
+for(const [script,previous] of [['extract/codex-config/run_all.sh',null],['extract/codex/chatgpt-prompts.mjs',fingerprint],['extract/codex/prompt-sweep.mjs',fingerprint]]) test(`${script} exiting 75 is a Jev outage: restored, unpublished, not a failure`,async()=>fixture(async repo=>{
+ const commands=outageRunner(script);
+ const notes=[];
+ await assert.rejects(codex.refresh({now:Date.now(),dryRun:false,fingerprint,previous},{...runtime(repo,commands),notify:(...n)=>notes.push(n)}),error=>error instanceof JevUnavailableError&&error.message.includes(`${script} exited 75`));
+ assertNoPublication(repo,commands.calls);
+ assert.deepEqual(notes,[]);
 }));

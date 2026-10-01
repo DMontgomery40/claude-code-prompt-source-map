@@ -5,9 +5,12 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { asarDiff, isThirdParty } from "../package-scan.mjs";
-import { classifyString, diffInventories, diffIsEmpty, publishScan, renderPage, scanTree, stringFamilies, triage, triageItems } from "../../../../tools/package-scan/core.mjs";
+import { classifyString, diffInventories, diffIsEmpty, publishScan, renderPage, scanTree, stringFamilies, triage, triageItems, triageKey } from "../../../../tools/package-scan/core.mjs";
+import { JevRequestError, decisionConfig } from "../lib/jev-provider.mjs";
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), "package-scan-"));
+// A test key and no home environment file: nothing here reaches a real provider.
+const config = decisionConfig({ TYPESAFE_API_KEY: "test-key" }, () => "");
 
 // A small app bundle: a copied system Mach-O ad-hoc re-signed with the given entitlements, an
 // Info.plist, a config file and an image. Appending bytes would break the signature, so the
@@ -89,8 +92,8 @@ test("publishScan: Jev unavailable still writes the raw diff; an unchanged basel
   const { inventory: cur, texts } = scan(fakeApp(b), ["https://new.example.com/x"]);
   const inventory = { ...cur, schema: 1 };
   const failing = async () => { throw new Error("network down"); };
-  const summary = await publishScan({ product: "Fake", repo, inventory, texts, page: "# Fake\n", readBaseline: () => JSON.stringify(before), triageOptions: { key: "test-key", fetchImpl: failing } });
-  assert.equal(summary.jev_unavailable, "network down");
+  const summary = await publishScan({ product: "Fake", repo, inventory, texts, page: "# Fake\n", readBaseline: () => JSON.stringify(before), triageOptions: { config, fetchImpl: failing, attempts: 2, sleep: async () => {} } });
+  assert.match(summary.jev_unavailable, /network down after 2 attempts/);
   const diff = fs.readFileSync(path.join(repo, "work/package-diff.md"), "utf8");
   assert.match(diff, /unlabelled/);
   assert.match(diff, /new\.example\.com/);
@@ -104,11 +107,36 @@ test("Jev labels are recorded with choice and confidence, cached, and capped", a
   let calls = 0;
   const fetchImpl = async () => { calls += 1; return { ok: true, status: 200, json: async () => ({ answers: { signal: { choice: "security", confidence: 0.812 } } }) }; };
   const cacheFile = path.join(tmp(), "verdicts.json");
-  const r = await triage(items, { product: "Fake", cacheFile, cap: 3, key: "k", fetchImpl });
+  const r = await triage(items, { product: "Fake", cacheFile, cap: 3, config, fetchImpl });
   assert.equal(r.skipped, 2);
   assert.deepEqual(r.labels.map(l => [l.choice, l.confidence]), [["security", 0.81], ["security", 0.81], ["security", 0.81]]);
-  await triage(items, { product: "Fake", cacheFile, cap: 3, key: "k", fetchImpl });
+  await triage(items, { product: "Fake", cacheFile, cap: 3, config, fetchImpl });
   assert.equal(calls, 3);
+});
+
+test("package triage: a verdict cached before the model was pinned (untagged \"v1:<h12>\") is still a hit", async () => {
+  const item = { kind: "url", where: "bin", text: "New url string in bin: https://legacy.example.com" };
+  const cacheFile = path.join(tmp(), "verdicts.json");
+  fs.writeFileSync(cacheFile, JSON.stringify({ [triageKey("Fake", item)]: { choice: "feature", confidence: 0.9 } }));
+  const fetchImpl = async () => { throw new Error("a cached verdict must not be asked again"); };
+  const r = await triage([item], { product: "Fake", cacheFile, config, fetchImpl });
+  assert.deepEqual([r.labels[0].choice, r.labels[0].confidence, r.unavailable], ["feature", 0.9, null]);
+  assert.match(triageKey("Fake", item), /^v1:[0-9a-f]{12}$/);
+  assert.deepEqual(Object.keys(JSON.parse(fs.readFileSync(cacheFile, "utf8"))), [`jev-1.13:${triageKey("Fake", item)}`]);
+});
+
+test("package triage: retries a rate limit, degrades on an outage, and fails on a malformed request", async () => {
+  const items = [{ kind: "url", where: "bin", text: "a" }, { kind: "url", where: "bin", text: "b" }];
+  const answer = { ok: true, status: 200, json: async () => ({ answers: { signal: { choice: "routine", confidence: 0.7 } } }) };
+  let calls = 0;
+  const flaky = async () => (++calls === 1 ? { ok: false, status: 429, headers: new Headers() } : answer);
+  const retried = await triage(items.slice(0, 1), { product: "Fake", config, fetchImpl: flaky, sleep: async () => {} });
+  assert.deepEqual([retried.labels[0].choice, calls], ["routine", 2]);
+  const down = await triage(items, { product: "Fake", config, fetchImpl: async () => ({ ok: false, status: 503, headers: new Headers() }), attempts: 2, sleep: async () => {} });
+  assert.deepEqual(down.labels.map(l => l.choice), [null, null]);
+  assert.match(down.unavailable, /503 after 2 attempts/);
+  const bad = async () => ({ ok: false, status: 400, headers: new Headers(), text: async () => "bad request" });
+  await assert.rejects(triage(items, { product: "Fake", config, fetchImpl: bad }), JevRequestError);
 });
 
 test("Codex/ChatGPT: third-party runtimes get no strings; app.asar file-list delta", () => {

@@ -6,6 +6,7 @@
 import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
+import { JEV_TEMPFAIL_EXIT, JevUnavailableError } from "../../codex/extract/codex/lib/jev-provider.mjs";
 import { runAgent } from "../lib/agent.mjs";
 import { appendChangelog, writeStatus } from "../lib/publish.mjs";
 import { log, notify, run } from "../lib/run.mjs";
@@ -27,6 +28,12 @@ export function reviewAreas(dir = path.join(repo, "outputs")) {
   return readdirSync(dir).filter(f => f.endsWith(".json")).sort()
     .filter(f => { const items = JSON.parse(readFileSync(path.join(dir, f), "utf8")).items; return Array.isArray(items) && items.some(i => i && i.needs_review); })
     .map(f => f.replace(/\.json$/, ""));
+}
+
+// refresh.mjs, or a step rerun after review, exits 75 when Jev is unavailable. That is an outage, not
+// this release's failure: watch.mjs retries the same release next cycle and notifies once.
+export function jevCheck(what, r) {
+  if (r.status === JEV_TEMPFAIL_EXIT) throw new JevUnavailableError(`${what} exited ${JEV_TEMPFAIL_EXIT}: ${(r.stderr || r.stdout).trim().split("\n").at(-1).slice(0, 200)}`);
 }
 
 export const cc = {
@@ -58,11 +65,13 @@ export const cc = {
     const args = ["extract/refresh.mjs", fingerprint.version, fingerprint.integrity];
     const refresh = extra => run(node, [...args, ...extra], { cwd: repo, timeoutMs: 60 * 60 * 1000 });
     let r = refresh([]);
+    jevCheck("extract/refresh.mjs", r);
     if (r.status === 2) {
       // An extractor or source broke; outputs were restored. Repair, then refresh again.
       if (dryRun) throw new Error(`refresh needs repair (exit 2; dry run: agent not started): ${r.stderr.slice(-400)}`);
       runAgent(repo, `Claude Code ${fingerprint.version} was released and \`node ${args.join(" ")}\` failed:\n\n${r.stderr.slice(-4000)}\n\nFix the extraction scripts in extract/ so they work on the new build, then run \`node ${args.join(" ")}\` until it exits 0 or 3.`, { budgetUsd: 10, timeoutMs: 60 * 60 * 1000 });
       r = refresh([]);
+      jevCheck("extract/refresh.mjs", r);
     }
     if (r.status === 3) {
       // Records whose source changed need a careful update of their text and conditions.
@@ -87,9 +96,11 @@ export const cc = {
       for (const step of derive) {
         // probe.mjs exits 3 when a case fails; it records details.probe_failures, which --verify refuses.
         const s = run(node, step, { cwd: repo, timeoutMs: 30 * 60 * 1000 });
+        jevCheck(step.join(" "), s);
         if (s.status !== 0 && !(step[0] === "extract/probe.mjs" && s.status === 3)) throw new Error(`${step.join(" ")} failed after review (${s.status}): ${(s.stderr || s.stdout).slice(-800)}`);
       }
       r = refresh(["--verify"]);
+      jevCheck("extract/refresh.mjs --verify", r);
     }
     if (r.status !== 0) throw new Error(`refresh failed (${r.status}): ${(r.stderr || r.stdout).slice(-800)}`);
     const summary = JSON.parse(r.stdout.trim().split("\n").at(-1));

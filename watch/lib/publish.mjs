@@ -11,11 +11,30 @@ import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 
 import os from "node:os";
 import path from "node:path";
 import { productOrigin } from "../../site/src/shared/site.mjs";
+import { JevUnavailableError } from "../../codex/extract/codex/lib/jev-provider.mjs";
 import { narrativeLint } from "./narrative-lint.mjs";
 import { log, must, run } from "./run.mjs";
 
 export const ROOT = path.resolve(import.meta.dirname, "../..");
 const sha = value => createHash("sha256").update(value).digest("hex");
+
+// A skipped deploy that should run again next cycle for the same upstream version. `jev` marks
+// one caused by a Jev outage.
+export class Retry extends Error {
+  constructor(message, { jev = false } = {}) { super(message); this.name = "Retry"; this.jev = jev; }
+}
+
+// What a failed refresh or publish does to the watcher's state. A Jev outage (a target's
+// JevUnavailableError, which includes a script's exit 75, or the gate's Jev Retry) is not this
+// version's failure: it is retried next cycle, even for a daily target, and notified once, when the
+// outage starts (`outage` is the open one from state.json, cleared by the next success). Any
+// other Retry leaves the version unfailed and notifies as before; everything else fails it.
+export function failureDecision(error, outage, now = Date.now()) {
+  if (error instanceof JevUnavailableError || (error instanceof Retry && error.jev)) {
+    return { markFailed: false, retryNextCycle: true, notify: !outage, outage: outage ?? { since: new Date(now).toISOString(), reason: error.message.slice(0, 300) } };
+  }
+  return { markFailed: !(error instanceof Retry), retryNextCycle: false, notify: true, outage };
+}
 
 // Paths whose contents go into the deployed site or its gate. Uncommitted changes here that the
 // cycle did not produce would be deployed without being committed, so they block publishing.
@@ -89,8 +108,19 @@ export async function gate(productRepos) {
   must("npm", ["run", "check"], { cwd: ROOT, timeoutMs: 30 * 60 * 1000 });
   for (const repo of productRepos) {
     leakCheck(repo);
-    const stale = await narrativeLint(repo);
+    const stale = await lintOrRetry(repo);
     if (stale.length) throw new Error(`narrative lint (${path.basename(repo)}): ${stale.length} typed statistic(s) must be {{count:…}}/{{value:…}} tokens, or the generated page listed in narrative-lint.json:\n${stale.slice(0, 10).map(f => `${f.file}: ${f.sentence.slice(0, 160)}`).join("\n")}`);
+  }
+}
+
+// The narrative lint for one product. Jev being unavailable is no pass: publication waits for
+// the next cycle. Typed statistics it did find still block, as does any other error.
+export async function lintOrRetry(repo, lint = narrativeLint) {
+  try {
+    return await lint(repo);
+  } catch (error) {
+    if (error instanceof JevUnavailableError) throw new Retry(`narrative lint (${path.basename(repo)}) waits for Jev: ${error.message}`, { jev: true });
+    throw error;
   }
 }
 
