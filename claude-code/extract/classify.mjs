@@ -1,14 +1,17 @@
 // Classifies every prose literal found in the binary by its audience, using TypeSafe's
 // Jev model. Results feed the inventory, so omissions from the published documents are
-// detectable. Requires TYPESAFE_API_KEY. Verdicts are cached in work/jev-verdicts.json.
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { sha256 } from "./lib.mjs";
+// detectable. Needs a Jev key (see codex/extract/codex/lib/jev-provider.mjs). Verdicts are cached
+// in work/jev-verdicts-v2.json; when Jev is unavailable it keeps them and exits 75.
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { ask, decisionConfig, openCache } from "../../codex/extract/codex/lib/jev-provider.mjs";
+import { keepVerdicts } from "./jev-step.mjs";
 
 const root = new URL("../work/", import.meta.url).pathname;
-const candidates = JSON.parse(readFileSync(`${root}candidates.json`, "utf8"));
 // Bump the file name when the question changes; verdicts are cached by text hash.
-const cacheFile = `${root}jev-verdicts-v2.json`;
-const cache = existsSync(cacheFile) ? JSON.parse(readFileSync(cacheFile, "utf8")) : {};
+export const cacheFile = `${root}jev-verdicts-v2.json`;
+export const verdictKey = text => createHash("sha256").update(text).digest("hex");
 const criteria = {
   model: "Sent to the AI model while Claude Code runs: a prompt or instructions, a tool or tool-parameter description, an agent or skill definition, an injected reminder, or a tool result or error message returned to the model.",
   developer_docs: "Documentation for developers: SDK or API type descriptions, JSON schema or settings field descriptions shown in an editor, or code comments.",
@@ -17,37 +20,30 @@ const criteria = {
   other: "Anything else, such as test fixtures, sample data, or code."
 };
 
-async function classify(text) {
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const response = await fetch("https://api.typesafe.ai/v1/systemone", {
-      method: "POST",
-      headers: { authorization: `Bearer ${process.env.TYPESAFE_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({
-        model: "jev-latest",
-        state: { text: text.slice(0, 6000) },
-        questions: { audience: { type: "choice", instructions: "This string was found inside the Claude Code CLI program. Who is `text` written for?", criteria } }
-      })
-    });
-    if (response.status === 429 || response.status >= 500) { await new Promise(r => setTimeout(r, 1000 * 2 ** attempt)); continue; }
-    if (!response.ok) throw new Error(`TypeSafe ${response.status}: ${await response.text()}`);
-    const body = await response.json();
-    const answer = body.answers.audience;
-    return { audience: answer.choice, confidence: answer.confidence, probabilities: answer.probabilities, model: body.model };
-  }
-  throw new Error("TypeSafe retries exhausted");
+// One verdict, in the shape inventory.mjs reads: { audience, confidence, probabilities, model }.
+export async function classify(config, text, options) {
+  const body = await ask(config, {
+    state: { text: text.slice(0, 6000) },
+    questions: { audience: { type: "choice", instructions: "This string was found inside the Claude Code CLI program. Who is `text` written for?", criteria } }
+  }, options);
+  const answer = body.answers.audience;
+  return { audience: answer.choice, confidence: answer.confidence, probabilities: answer.probabilities, model: body.model };
 }
 
-const unique = [...new Map(candidates.map(c => [sha256(c.text), c.text])).entries()].filter(([hash]) => !cache[hash]);
-let done = 0;
-async function worker() {
-  while (unique.length) {
-    const [hash, text] = unique.pop();
-    cache[hash] = await classify(text);
-    if (++done % 200 === 0) { writeFileSync(cacheFile, JSON.stringify(cache)); console.log(done, "classified"); }
-  }
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const config = decisionConfig();
+  const candidates = JSON.parse(readFileSync(`${root}candidates.json`, "utf8"));
+  const cache = openCache(cacheFile);
+  const unique = [...new Map(candidates.map(c => [verdictKey(c.text), c.text])).entries()].filter(([hash]) => !cache.has(hash));
+  let done = 0;
+  await keepVerdicts(cache, () => Promise.all(Array.from({ length: 8 }, async () => {
+    while (unique.length) {
+      const [hash, text] = unique.pop();
+      cache.set(hash, await classify(config, text));
+      if (++done % 200 === 0) { cache.save(); console.log(done, "classified"); }
+    }
+  })));
+  const counts = {};
+  for (const c of candidates) { const a = cache.get(verdictKey(c.text)).audience; counts[a] = (counts[a] ?? 0) + 1; }
+  console.log("candidates", candidates.length, "unique", cache.size, counts);
 }
-await Promise.all(Array.from({ length: 8 }, worker));
-writeFileSync(cacheFile, JSON.stringify(cache));
-const counts = {};
-for (const c of candidates) { const a = cache[sha256(c.text)].audience; counts[a] = (counts[a] ?? 0) + 1; }
-console.log("candidates", candidates.length, "unique", Object.keys(cache).length, counts);

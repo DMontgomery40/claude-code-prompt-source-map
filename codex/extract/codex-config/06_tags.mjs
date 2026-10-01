@@ -5,10 +5,13 @@
 // evidence seed lists it (persistent mode) or when Jev scores it at or above the threshold.
 // Jev verdicts are cached by entry text and taxonomy version, so a refresh only classifies
 // new or changed entries. Writes outputs/codex-config-tags.json and codex-env-vars-tags.json.
+// When Jev is unavailable it keeps the verdicts it has, writes no tags and exits 75, so
+// run_all.sh fails with 75 and the watcher retries next cycle. Without a key, topic tags are skipped.
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { JEV_TEMPFAIL_EXIT, JevUnavailableError, ask, decisionConfig, openCache } from "../codex/lib/jev-provider.mjs";
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const repo = path.resolve(here, "../..");
@@ -18,14 +21,14 @@ const taxonomyFile = path.join(here, "taxonomy.json");
 const seedFile = path.join(here, "persistent-seed.json");
 const taxonomy = existsSync(taxonomyFile) ? readJson(taxonomyFile) : { tags: [] };
 const seed = existsSync(seedFile) ? readJson(seedFile) : [];
-const cacheFile = path.join(repo, "work", "tag-verdicts.json");
-const cache = existsSync(cacheFile) ? readJson(cacheFile) : {};
+const cache = openCache(path.join(repo, "work", "tag-verdicts.json"));
 const taxonomyVersion = sha(JSON.stringify(taxonomy)).slice(0, 12);
 const THRESHOLD = 0.7;
 
-const key = process.env.TYPESAFE_API_KEY ?? (() => {
-  try { return readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
-})();
+const config = decisionConfig();
+const key = config.key;
+// Cache keys: "<taxonomy version>:<sha256 of the state sent>".
+export const tagKey = (taxonomyVersion, state) => `${taxonomyVersion}:${sha(JSON.stringify(state))}`;
 
 const STATUS = [
   { id: "documented", label: "Documented", kind: "status" },
@@ -81,8 +84,8 @@ function describe(item) {
 
 async function topicScores(item) {
   const state = describe(item);
-  const cacheKey = `${taxonomyVersion}:${sha(JSON.stringify(state))}`;
-  if (cache[cacheKey]) return cache[cacheKey];
+  const cacheKey = tagKey(taxonomyVersion, state);
+  if (cache.has(cacheKey)) return cache.get(cacheKey);
   const questions = Object.fromEntries(taxonomy.tags.map(tag => [tag.id, {
     type: "noul",
     instructions: `Does the Codex setting described in \`state\` belong to this topic? Topic: ${tag.label}. ${tag.definition}`,
@@ -91,45 +94,48 @@ async function topicScores(item) {
       false: `It does not, like these near misses: ${tag.false_examples.join(", ")}.`
     }
   }]));
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const response = await fetch("https://api.typesafe.ai/v1/systemone", {
-      method: "POST",
-      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify({ model: "jev-latest", state, questions })
-    });
-    if (response.status === 429 || response.status >= 500) { await new Promise(r => setTimeout(r, 1000 * 2 ** attempt)); continue; }
-    if (!response.ok) throw new Error(`TypeSafe ${response.status}: ${await response.text()}`);
-    const answers = (await response.json()).answers;
-    cache[cacheKey] = Object.fromEntries(Object.entries(answers).map(([id, a]) => [id, a.noul]));
-    return cache[cacheKey];
-  }
-  throw new Error("TypeSafe retries exhausted");
+  const answers = (await ask(config, { state, questions })).answers;
+  return cache.set(cacheKey, Object.fromEntries(Object.entries(answers).map(([id, a]) => [id, a.noul])));
 }
 
-const topics = taxonomy.tags.map((tag, i) => ({ id: tag.id, label: tag.label, kind: "topic", definition: tag.definition, ...(i === 0 ? { feature: true } : {}) }));
-const seeded = new Map(seed.map(s => [s.id, s]));
-for (const name of ["codex-config", "codex-env-vars"]) {
-  const records = readJson(path.join(repo, "outputs", `${name}.json`)).items;
-  const items = {};
-  const queue = [...records];
-  const workers = Array.from({ length: taxonomy.tags.length && key ? 8 : 1 }, async () => {
-    while (queue.length) {
-      const item = queue.shift();
-      const tags = statusTags(item);
-      if (taxonomy.tags.length && key) {
-        const scores = await topicScores(item);
-        for (const [id, p] of Object.entries(scores)) if (p >= THRESHOLD) tags.add(id);
-      }
-      if (seeded.has(item.id)) tags.add("persistent-mode");
-      items[item.id] = [...tags];
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const topics = taxonomy.tags.map((tag, i) => ({ id: tag.id, label: tag.label, kind: "topic", definition: tag.definition, ...(i === 0 ? { feature: true } : {}) }));
+  const seeded = new Map(seed.map(s => [s.id, s]));
+  // Score both files before writing either, so an outage leaves no half-tagged output.
+  const results = [];
+  try {
+    for (const name of ["codex-config", "codex-env-vars"]) {
+      const records = readJson(path.join(repo, "outputs", `${name}.json`)).items;
+      const items = {};
+      const queue = [...records];
+      const workers = Array.from({ length: taxonomy.tags.length && key ? 8 : 1 }, async () => {
+        while (queue.length) {
+          const item = queue.shift();
+          const tags = statusTags(item);
+          if (taxonomy.tags.length && key) {
+            const scores = await topicScores(item);
+            for (const [id, p] of Object.entries(scores)) if (p >= THRESHOLD) tags.add(id);
+          }
+          if (seeded.has(item.id)) tags.add("persistent-mode");
+          items[item.id] = [...tags];
+        }
+      });
+      await Promise.all(workers);
+      results.push({ name, records, items });
     }
-  });
-  await Promise.all(workers);
-  // Workers finish out of order; write entries in record order so reruns don't churn the file.
-  const ordered = Object.fromEntries(records.map(record => [record.id, items[record.id]]));
-  const used = new Set(Object.values(ordered).flat());
-  const vocabulary = [...topics, ...STATUS].filter(t => used.has(t.id)).map(t => ({ ...t, count: Object.values(ordered).filter(list => list.includes(t.id)).length }));
-  writeFileSync(path.join(repo, "outputs", `${name}-tags.json`), `${JSON.stringify({ taxonomy_version: taxonomyVersion, threshold: THRESHOLD, tags: vocabulary, items: ordered }, null, 1)}\n`);
-  console.log(`${name}: ${records.length} entries, tags: ${vocabulary.map(t => `${t.id} ${t.count}`).join(", ")}`);
+  } catch (error) {
+    cache.save();
+    if (!(error instanceof JevUnavailableError)) throw error;
+    console.error(`${error.message}; tags not written, ${cache.size} cached verdicts kept; retry later`);
+    process.exit(JEV_TEMPFAIL_EXIT);
+  }
+  cache.save();
+  for (const { name, records, items } of results) {
+    // Workers finish out of order; write entries in record order so reruns don't churn the file.
+    const ordered = Object.fromEntries(records.map(record => [record.id, items[record.id]]));
+    const used = new Set(Object.values(ordered).flat());
+    const vocabulary = [...topics, ...STATUS].filter(t => used.has(t.id)).map(t => ({ ...t, count: Object.values(ordered).filter(list => list.includes(t.id)).length }));
+    writeFileSync(path.join(repo, "outputs", `${name}-tags.json`), `${JSON.stringify({ taxonomy_version: taxonomyVersion, threshold: THRESHOLD, tags: vocabulary, items: ordered }, null, 1)}\n`);
+    console.log(`${name}: ${records.length} entries, tags: ${vocabulary.map(t => `${t.id} ${t.count}`).join(", ")}`);
+  }
 }
-writeFileSync(cacheFile, JSON.stringify(cache));
