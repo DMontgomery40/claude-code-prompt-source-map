@@ -30,7 +30,9 @@ test("a Jev outage keeps the version unfailed, makes the target due next cycle, 
   assert.equal(s.lastCheck, undefined);
   // The gate's Jev retry belongs to the same outage.
   assert.equal(failureDecision(new Retry("narrative lint waits for Jev", { jev: true }), s.jevOutage, now).notify, false);
-  // A day on (a missing or revoked key also reads as unavailable), it is notified again.
+  // A day on (a missing or revoked key also reads as unavailable), it is notified again, including
+  // at a daily target's check, which comes five minutes early.
+  assert.equal(failureDecision(new JevUnavailableError("TypeSafe 401"), s.jevOutage, now + 86400e3 - 5 * 60e3).notify, true);
   const day = failureDecision(new JevUnavailableError("TypeSafe 401"), s.jevOutage, now + 86400e3);
   assert.equal(day.notify, true);
   assert.equal(day.outage.since, "2026-10-01T12:00:00.000Z");

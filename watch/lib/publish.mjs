@@ -26,14 +26,16 @@ export class Retry extends Error {
 
 // What a failed refresh or publish does to one target's watcher state. A Jev outage (a target's
 // JevUnavailableError, which includes a script's exit 75, or the gate's Jev Retry) is not this
-// version's failure. It is retried next cycle, even for a daily target, because every Jev step
-// runs before any paid agent. Once this cycle's refresh has run a repair or review agent
-// (`afterAgent`, set on the error or the publish result), a retry would redo that agent work, so it
-// waits for the target's next scheduled check instead. An outage is notified when it starts and
-// again each day it lasts, so a missing or revoked key, which also reads as unavailable, is not
-// silent. `outage` is the target's open one from state.json. Any other outcome closes it: another
-// Retry leaves the version unfailed and notifies as before; everything else fails it.
-const OUTAGE_REMINDER_MS = 86400e3;
+// version's failure. It is retried next cycle, even for a daily target: an outage that hits before
+// any agent ran in this cycle costs no agent work to retry. Once this cycle's refresh has run a
+// repair or review agent (`afterAgent`, set on the error or the publish result), a retry would redo
+// that agent work, so it waits for the target's next scheduled check instead. An outage is
+// notified when it starts and again each day it lasts, so a missing or revoked key, which also
+// reads as unavailable, is not silent. `outage` is the target's open one from state.json. Any other
+// outcome closes it: another Retry leaves the version unfailed and notifies as before; everything
+// else fails it. The reminder interval is a little under a day, so a daily target, checked five
+// minutes early, still gets it.
+const OUTAGE_REMINDER_MS = 23 * 3600e3;
 export function failureDecision(error, outage, now = Date.now(), { afterAgent = Boolean(error?.afterAgent) } = {}) {
   if (error instanceof JevUnavailableError || (error instanceof Retry && error.jev)) {
     const remind = !outage || now - Date.parse(outage.notified ?? outage.since) >= OUTAGE_REMINDER_MS;
