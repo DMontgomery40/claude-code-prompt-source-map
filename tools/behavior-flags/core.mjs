@@ -5,7 +5,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { JevUnavailableError, JEV_TEMPFAIL_EXIT, ask, openCache } from "../../codex/extract/codex/lib/jev-provider.mjs";
+import { JevRequestError, JevUnavailableError, JEV_TEMPFAIL_EXIT, ask, openCache } from "../../codex/extract/codex/lib/jev-provider.mjs";
 
 // Bump when a question, its wording or the state construction changes; cached verdicts from
 // another question version are not reused.
@@ -208,7 +208,11 @@ const round = x => Math.round(x * 1000) / 1000;
 
 // The probabilities worth keeping from one Jev answer; flags are derived from them on read, so a
 // threshold change needs no new calls.
+// A malformed answer throws instead of being cached as a "none" flag for good.
 export function verdictFrom(answers) {
+  const number = (value, what) => { if (!Number.isFinite(value)) throw new JevRequestError(`behaviour flags: ${what} is not a number`); return value; };
+  for (const id of [...Object.keys(BEHAVIORS), "wording_only"]) number(answers?.[id]?.noul, id);
+  number(answers?.impact?.score, "impact");
   return {
     behaviors: Object.fromEntries(Object.keys(BEHAVIORS).map(id => [id, round(answers[id].noul)])),
     wording_only: round(answers.wording_only.noul),
@@ -283,7 +287,8 @@ export async function flagRelease({ prevDir, newDir, outputsDir, cacheFile, conf
       const newText = source === "range" ? pair.successor : pair.successor.slice(0, Math.round(oldText.length * 1.2) + 200);
       const built = buildState(oldText, newText);
       const key = cacheKey(oldText, newText);
-      if (!cache.has(key)) cache.set(key, verdictFrom((await ask(config, { state: built.state, questions: QUESTIONS }, askOptions)).answers));
+      // Saved per answer, so a step killed by the refresh's timeout keeps what it finished.
+      if (!cache.has(key)) { cache.set(key, verdictFrom((await ask(config, { state: built.state, questions: QUESTIONS }, askOptions)).answers)); cache.save(); }
       const verdict = cache.get(key);
       const flag = flagOf(verdict);
       const confidence = pair.confidence ?? null;

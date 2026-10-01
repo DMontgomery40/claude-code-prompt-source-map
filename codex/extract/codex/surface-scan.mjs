@@ -250,7 +250,7 @@ export function jevLabeller(config, { cache = memoryCache(), fetchImpl = globalT
       if (typeof p !== "number") { state.unavailable ??= `${config.provider} answer without a probability`; return null; }
       return cache.set(cacheKey, p);
     } catch (error) {
-      state.unavailable ??= error instanceof JevUnavailableError ? error.reason : error.message;
+      state.unavailable ??= error instanceof JevUnavailableError ? error.reason : `request error: ${error.message}`;
       return null;
     }
   }

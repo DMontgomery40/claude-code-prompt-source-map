@@ -73,13 +73,13 @@ const canary='lighthouse marker phrase';
 const leaks=error=>[canary,'Neutral engineering note'].some(value=>util.inspect(error).includes(value)||String(error.stack).includes(value)||String(error.message).includes(value));
 test('an outage throws JevUnavailableError without source text or response bodies',async()=>{
  const candidates=semanticCandidates([{text:`Neutral engineering note about the ${canary} and parser event routing.`}]);
- for(const [fetcher,status] of [[async()=>reply(503,{error:canary}),'503'],[async()=>{throw new TypeError(`fetch failed near ${canary}`);},null],[async()=>reply(401,{error:canary}),'401']]){
+ for(const [fetcher,status,expectedCalls] of [[async()=>reply(503,{error:canary}),'503',quiet.attempts],[async()=>{throw new TypeError(`fetch failed near ${canary}`);},null,quiet.attempts],[async()=>reply(401,{error:canary}),'401',1]]){
   let calls=0;
   await assert.rejects(reviewSanitizedCandidates(candidates,{approvedHashes:[candidates[0].hash],localBoundaryLoader,config,askOptions:quiet,fetcher:async(...args)=>{calls++;return fetcher(...args);}}),error=>{
    assert.ok(error instanceof JevUnavailableError);assert.equal(error.cause,undefined);assert.ok(!leaks(error));
    if(status)assert.match(error.message,new RegExp(`HTTP ${status}`));return true;
   });
-  assert.ok(calls>=1&&calls<=quiet.attempts);
+  assert.equal(calls,expectedCalls,'outages are retried; rejected credentials are not');
  }
 });
 test('a rejected request or malformed answer throws a plain error without source text or response bodies',async()=>{

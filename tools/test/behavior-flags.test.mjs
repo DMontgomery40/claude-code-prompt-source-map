@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { JEV_TEMPFAIL_EXIT } from "../../codex/extract/codex/lib/jev-provider.mjs";
+import { JEV_TEMPFAIL_EXIT, JevRequestError } from "../../codex/extract/codex/lib/jev-provider.mjs";
 import { BEHAVIORS, LIMIT, QUESTIONS, QUESTION_VERSION, THRESHOLDS, UNCALIBRATED, annotation, buildState, cacheKey, decodeFragment, flagOf, flagRelease, normalizeOld, renderSection, scanLiterals, verdictFrom } from "../behavior-flags/core.mjs";
 
 const script = path.resolve(import.meta.dirname, "../../claude-code/extract/behavior-flags.mjs");
@@ -193,4 +193,12 @@ test("report: only likely and possible records, one line each, never in the area
   assert.equal(annotation(doc, "tools:tool-c"), "  - behaviour (uncalibrated): no flag (highest 0.30)");
   assert.equal(annotation(doc, "tools:missing"), "");
   assert.equal(annotation(null, "tools:tool-a"), "");
+});
+
+test("a malformed answer is refused instead of being cached as no flag", () => {
+  const answers = Object.fromEntries([...Object.keys(BEHAVIORS), "wording_only"].map(id => [id, { type: "noul", noul: 0.1 }]));
+  answers.impact = { type: "score", score: 1.2, probabilities: {} };
+  assert.equal(flagOf(verdictFrom(answers)), "none");
+  assert.throws(() => verdictFrom({ ...answers, grants_autonomy: { type: "noul" } }), JevRequestError);
+  assert.throws(() => verdictFrom({ ...answers, impact: { type: "score" } }), JevRequestError);
 });

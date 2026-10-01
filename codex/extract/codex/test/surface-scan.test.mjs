@@ -215,7 +215,7 @@ test("rate limits are retried; rejected credentials, bad requests and outages le
 
   const before = inventory(writeAsar(BUILD_A)).surfaces;
   const { surfaces, evidence } = inventory(writeAsar(BUILD_B));
-  for (const [status, reason, perWorker] of [[401, /^TypeSafe 401$/, 1], [400, /^TypeSafe 400/, 1], [503, /^TypeSafe 503 after 4 attempts$/, 4]]) {
+  for (const [status, reason, perWorker] of [[401, /^TypeSafe 401$/, 1], [400, /^request error: TypeSafe 400/, 1], [503, /^TypeSafe 503 after 4 attempts$/, 4]]) {
     const failing = fakeJev(() => status);
     const labeller = jevLabeller(typesafe, { fetchImpl: failing.fetchImpl, sleep });
     const { flagged } = await scan({ current: surfaces, evidence, previous: before, labeller });
