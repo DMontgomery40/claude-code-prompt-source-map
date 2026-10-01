@@ -13,6 +13,16 @@ import { log, notify, run } from "../lib/run.mjs";
 import { compareVersions, describedVersion, newestTracked } from "../../claude-code/extract/versions.mjs";
 
 const repo = path.resolve(import.meta.dirname, "../../claude-code");
+
+// The release the committed records describe: what the live site was built from.
+function publishedVersion() {
+  for (const [file, pick] of [["outputs/tools.json", j => j.version], ["outputs/status.json", j => j.sources?.version]]) {
+    const r = run("git", ["show", `HEAD:./${file}`], { cwd: repo, timeoutMs: 60 * 1000 });
+    if (r.status !== 0) continue;
+    try { const version = pick(JSON.parse(r.stdout)); if (version) return version; } catch { /* try the next file */ }
+  }
+  return describedVersion(repo);
+}
 const node = process.execPath;
 const npm = path.join(path.dirname(process.execPath), "npm");
 const PKG = "@anthropic-ai/claude-code-darwin-arm64";
@@ -61,8 +71,10 @@ export const cc = {
 
   async refresh({ now, dryRun, fingerprint }) {
     // The same release again, or an older one (a tag moved back, or next was ahead of latest):
-    // the records already describe it or something newer, so there is nothing to publish.
-    const described = describedVersion(repo);
+    // the published records already describe it or something newer, so there is nothing to publish.
+    // Published means committed: records carried from an unpublished attempt (lib/carry.mjs) may
+    // already name this release, and their refresh still has to finish and publish.
+    const described = publishedVersion();
     if (described && compareVersions(fingerprint.version, described) <= 0) {
       log(`cc: records describe ${described}; ${fingerprint.version} is not newer, nothing to do`);
       return { summary: { changed: [] }, publish: null, note: `records describe ${described}` };

@@ -45,8 +45,14 @@ old file is kept as `.bak-<time>`.
    agents' dirty or staged files are never committed. Push to `main` within the shared GitHub budget
    (3 pushes per 3 hours); commits over the budget go out in a later cycle.
 
-A failed refresh or gate restores the files the cycle produced (and any repair that did not get the
-gate to pass) and records the failure in `watch/state.json`; the version is never given up on
+A failed refresh or gate puts back any repair that did not get the gate to pass and carries each
+target's refreshed files to that target's next refresh (`lib/carry.mjs`): they wait in
+`watch/carried/<target>/` (gitignored) with the tree clean, so another target's publish never
+deploys them, and come back just before the target refreshes, which resumes from them. Throwing them
+away put the outputs back on the old release while `work/` stayed on the new one, so the next Claude
+Code refresh relocated from the wrong extraction and every paid review ran again. A run that was
+killed leaves its files the same way; the next run carries them instead of pausing on them. The
+failure is recorded in `watch/state.json`, and the version is never given up on
 (`lib/failure.mjs`). It is retried every hour (every 4 hours for Claude Code, whose retry reruns its
 paid review agents) until it ships. A cycle that ran paid agents without shipping counts as an
 attempt even when it ends in a retry; after four attempts in a UTC day the version waits for the

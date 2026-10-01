@@ -1,5 +1,6 @@
-# Local watcher state: run logs, the per-target fingerprints, and the run lock.
+# Local watcher state: run logs, the per-target fingerprints, the run lock, and files carried to a target's next refresh.
 logs/
 state.json
 .lock
 narrative-lint-cache.json
+carried/

@@ -8,6 +8,7 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { runAgent } from "./lib/agent.mjs";
+import { bringBack, setAside } from "./lib/carry.mjs";
 import { GATE_REPAIRS_PER_CYCLE, failureDue, migrateState, retryDecision } from "./lib/failure.mjs";
 import { applyFailure, commitPaths, deploy, dirtyPaths, failureDecision, foreignChanges, gate, producedSince, pushWithinBudget, restore, Retry, ROOT } from "./lib/publish.mjs";
 import { gateRepairTask, gateWithRepairs } from "./lib/repair.mjs";
@@ -29,6 +30,7 @@ if (forced && !targets.some(t => t.name === forced)) { console.error(`unknown ta
 // iCloud-evicted file under ~/Documents) leaves the file behind; the next run takes over
 // instead of waiting out the eight-hour window (a cycle with review agents and gate repairs can run for hours).
 const alive = pid => { try { process.kill(pid, 0); return true; } catch { return false; } };
+let killedRun = false;
 if (existsSync(lockFile)) {
   const [pid, started] = readFileSync(lockFile, "utf8").trim().split(" ").map(Number);
   if (started && Date.now() - started < 8 * 3600e3 && pid && alive(pid)) {
@@ -36,6 +38,7 @@ if (existsSync(lockFile)) {
     process.exit(0);
   }
   log(`taking over a stale lock${pid ? ` from pid ${pid}` : ""}`);
+  killedRun = Boolean(pid) && !alive(pid);
 }
 writeFileSync(lockFile, `${process.pid} ${Date.now()}`);
 const state = existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, "utf8")) : {};
@@ -45,6 +48,12 @@ const productDir = target => path.relative(ROOT, target.repo);
 
 try {
   const now = Date.now();
+  // A killed run leaves its targets' refreshed files dirty. They are that run's work, not someone
+  // else's: carry them to each target's next refresh (lib/carry.mjs) instead of pausing on them.
+  if (killedRun && !dryRun) for (const target of targets) {
+    const left = [...dirtyPaths()].filter(file => file.startsWith(`${productDir(target)}/`));
+    if (left.length) log(`${target.name}: carried ${setAside(ROOT, target.name, left, restore).length} file(s) from a run that was killed`);
+  }
   // Uncommitted work by someone else under the site's inputs would be deployed without being
   // committed. Wait for it to be committed (or dropped) instead; a dry run only warns.
   const blocked = foreignChanges();
@@ -113,6 +122,9 @@ try {
     }
     log(`${target.name}: changed ${s.fingerprint ?? "(first run)"} -> ${key}`);
     const claimed = new Set([...before, ...cycle.flatMap(c => c.produced)]);
+    // Files carried from this target's last unpublished attempt come back; the refresh resumes.
+    const back = dryRun ? [] : bringBack(ROOT, target.name);
+    if (back.length) log(`${target.name}: resuming from ${back.length} carried file(s)`);
     try {
       const result = await target.refresh({ now, dryRun, fingerprint, previous: s.fingerprint ? JSON.parse(s.fingerprint) : null });
       const produced = producedSince(claimed, productDir(target));
@@ -126,7 +138,9 @@ try {
         if (!dryRun) { s.fingerprint = key; delete s.failure; delete s.lastError; delete s.jevOutage; }
       }
     } catch (error) {
-      restore(producedSince(claimed, productDir(target)));
+      // Its files are carried to its next refresh (a dry run puts them back instead).
+      const left = producedSince(claimed, productDir(target));
+      if (dryRun) restore(left); else setAside(ROOT, target.name, left, restore);
       // A Jev outage (exit 75 or JevUnavailableError) keeps this version unfailed and due next
       // cycle, or at the next scheduled check once this refresh ran an agent; it is notified when
       // it starts and daily while it lasts (failureDecision in lib/publish.mjs).
@@ -187,8 +201,10 @@ try {
       }
     } catch (error) {
       log(`publish failed: ${error.message}`);
-      // Repairs that did not get the gate to pass are put back too; the next attempt starts clean.
-      restore([...allProduced, ...(error.repairedPaths ?? repaired)]);
+      // Repairs that did not get the gate to pass are put back; each target's refreshed files are
+      // carried to its next refresh, so paid review work is not redone (a dry run puts them back).
+      restore(error.repairedPaths ?? repaired);
+      for (const c of publishing) if (dryRun) restore(c.produced); else setAside(ROOT, c.target.name, c.produced, restore);
       // A retry is not this version's failure: the same fingerprint publishes again. A Jev outage
       // in the gate is decided per target: due next cycle, unless that target's refresh ran agents.
       const decisions = publishing.map(c => {

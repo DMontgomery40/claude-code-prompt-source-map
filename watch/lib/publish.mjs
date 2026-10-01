@@ -183,9 +183,13 @@ export function writeStatus(repo, { checked, sources, changed = true }) {
   writeFileSync(file, `${JSON.stringify({ last_changed, checked, sources }, null, 2)}\n`);
 }
 
+// A retried release (its refresh carried from an unpublished attempt) replaces its own entry
+// instead of adding a second one.
 export function appendChangelog(repo, title, body) {
   const file = path.join(repo, "CHANGELOG.md");
-  const previous = existsSync(file) ? readFileSync(file, "utf8").replace(/^# Changelog\n+/, "") : "";
+  let previous = existsSync(file) ? readFileSync(file, "utf8").replace(/^# Changelog\n+/, "") : "";
+  const top = previous.match(/^## \d{4}-\d{2}-\d{2} · (.*)\n/);
+  if (top && top[1] === title) previous = previous.replace(/^## [^\n]*\n[\s\S]*?(?=^## \d{4}-\d{2}-\d{2} · |(?![\s\S]))/m, "");
   writeFileSync(file, `# Changelog\n\n## ${new Date().toISOString().slice(0, 10)} · ${title}\n\n${body.trim()}\n\n${previous}`);
 }
 
