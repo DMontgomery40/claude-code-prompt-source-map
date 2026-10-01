@@ -5,7 +5,7 @@ import path from 'node:path';
 import os from 'node:os';
 import zlib from 'node:zlib';
 import {pathToFileURL} from 'node:url';
-import {decisionConfig,decisionFetch} from '../../codex/extract/codex/lib/jev-provider.mjs';
+import {decisionConfig,ask,JevUnavailableError} from '../../codex/extract/codex/lib/jev-provider.mjs';
 import {createSessionSanitizer,localSecretValues} from './sanitize-session.mjs';
 function localBoundary(){let envText='';try{envText=fs.readFileSync(path.join(os.homedir(),'.env'),'utf8');}catch{}return {secretValues:localSecretValues(process.env,envText),privateValues:[os.homedir(),os.userInfo().username]};}
 export const textHash=text=>crypto.createHash('sha256').update(text).digest('hex');
@@ -39,26 +39,37 @@ function neutralText(text,{secretValues=[],privateValues=[],originalIds=[],origi
  const withoutIds=text.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,'neutral-id');
  return sanitizer.text(withoutIds)===withoutIds;
 }
-export function validateSemanticAnswers(json,hashes) {
- const answers=json?.answers;if(!answers||typeof answers!=='object'||Object.keys(answers).length!==hashes.length)throw new Error('Invalid semantic review answer schema.');
- return hashes.map(hash=>{const p=answers['privacy_'+hash]?.noul;if(typeof p!=='number'||!Number.isFinite(p)||p<0||p>1)throw new Error('Invalid semantic review probability.');return {hash,privateContentProbability:p,origin:'Jev semantic review',publicationApproved:false};});
+// One answer per request: exactly the `privacy` question, a finite probability within [0,1].
+export function validateSemanticAnswer(json,hash) {
+ const answers=json?.answers;if(!answers||typeof answers!=='object'||Object.keys(answers).length!==1||!('privacy' in answers))throw new Error('Invalid semantic review answer schema.');
+ const p=answers.privacy?.noul;if(typeof p!=='number'||!Number.isFinite(p)||p<0||p>1)throw new Error('Invalid semantic review probability.');
+ return {hash,privateContentProbability:p,origin:'Jev semantic review',publicationApproved:false};
 }
-export async function reviewSanitizedCandidates(candidates,{approvedHashes=[],boundary={},config=decisionConfig(),fetcher, localBoundaryLoader=localBoundary, batchSize=8}={}) {
- if(!Number.isInteger(batchSize)||batchSize<1||batchSize>16)throw new Error('Invalid review batch size.');
+const privacyQuestion={type:'noul',instructions:'Does state.text contain personal, clinical, financial, credential, private infrastructure, private identities, or other third-party sensitive information that should not be published as a software-session example? Public author credit David Montgomery is permitted. Judge meaning, not merely presence of a redaction marker.',criteria:{true:'Contains potentially private or sensitive information.',false:'Neutral software engineering text or already safely redacted text.'}};
+// Provider errors can carry response bodies or thrown messages; rebuild them from fixed text with no cause.
+function reviewFailure(error){
+ const status=String((error instanceof JevUnavailableError?error.reason:error?.message)??'').match(/^\S+ (\d{3})\b/)?.[1];
+ const detail=status?` (HTTP ${status})`:'';
+ if(error instanceof JevUnavailableError)return new JevUnavailableError(`semantic review failed${detail}; no source content or response body printed`);
+ return new Error(`Semantic review failed${detail}; no source content or response body printed.`);
+}
+export async function reviewSanitizedCandidates(candidates,{approvedHashes=[],boundary={},config=decisionConfig(),fetcher, localBoundaryLoader=localBoundary, concurrency=4, askOptions={}}={}) {
+ if(!Number.isInteger(concurrency)||concurrency<1||concurrency>16)throw new Error('Invalid review concurrency.');
  const local=localBoundaryLoader();
  boundary={...boundary,secretValues:[...local.secretValues,...boundary.secretValues||[],config.key].filter(Boolean),privateValues:[...local.privateValues,...boundary.privateValues||[]]};
  const approved=new Set(approvedHashes),selected=candidates.filter(candidate=>approved.has(candidate.hash));
- // Validate the entire batch before any network call, including missing/stale hashes.
+ // Validate the entire selection before any network call, including missing/stale hashes.
  if(selected.length!==approved.size||selected.some(candidate=>!neutralCandidate(candidate,boundary)))throw new Error('Review boundary rejected candidate; no source content printed or sent.');
  if(!config.key)throw new Error('Semantic review credential unavailable.');
- const send=decisionFetch(config,fetcher);const results=[];
- for(let at=0;at<selected.length;at+=batchSize){
-  const batch=selected.slice(at,at+batchSize),questions={};
-  for(const candidate of batch)questions['privacy_'+candidate.hash]={type:'noul',instructions:`Does state.texts.${candidate.hash} contain personal, clinical, financial, credential, private infrastructure, private identities, or other third-party sensitive information that should not be published as a software-session example? Public author credit David Montgomery is permitted. Judge meaning, not merely presence of a redaction marker.`,criteria:{true:'Contains potentially private or sensitive information.',false:'Neutral software engineering text or already safely redacted text.'}};
-  const response=await send('https://api.typesafe.ai/v1/systemone',{method:'POST',headers:{authorization:`Bearer ${config.key}`,'content-type':'application/json'},body:JSON.stringify({model:'jev-latest',state:{texts:Object.fromEntries(batch.map(c=>[c.hash,c.text]))},questions})});
-  if(!response.ok)throw new Error(`Semantic review failed (HTTP ${response.status}); no response body printed.`);
-  results.push(...validateSemanticAnswers(await response.json(),batch.map(c=>c.hash)));
- }
+ // One text per request: packing several texts into one state skews each judgment by its position.
+ const review=async candidate=>{
+  let response;try{response=await ask(config,{state:{text:candidate.text},questions:{privacy:privacyQuestion}},{...askOptions,fetchImpl:fetcher});}catch(error){throw reviewFailure(error);}
+  return validateSemanticAnswer(response,candidate.hash);
+ };
+ const results=new Array(selected.length);let next=0,failure=null;
+ const worker=async()=>{while(!failure&&next<selected.length){const at=next++;try{results[at]=await review(selected[at]);}catch(error){failure??=error;}}};
+ await Promise.all(Array.from({length:Math.min(concurrency,selected.length)},worker));
+ if(failure)throw failure;
  return {schemaVersion:1,publicationApproved:false,reviewed:results.length,results,limitations:['Confidence is a review signal, not privacy proof. Independent human/source review remains required.']};
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href){
