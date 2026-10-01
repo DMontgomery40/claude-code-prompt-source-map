@@ -10,7 +10,7 @@
 //                         the same API roots
 //   content references    content-reference categories (`category:\`…\`,contentReferenceIndex`)
 // compared with the committed baseline (outputs/app-surfaces.json at HEAD). New families and
-// families that grew past the thresholds are flagged; Jev (TypeSafe) then labels at most
+// families that grew past the thresholds are flagged; Jev (lib/jev-provider.mjs) then labels at most
 // JEV_LIMIT flagged changes: is this a capability a reference of what the harness sends the model,
 // and what triggers model-visible behavior, should document? Writes
 //   outputs/app-surfaces.json   this build's inventory (the next baseline)
@@ -26,13 +26,12 @@
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { codexApp } from "./lib/app-layout.mjs";
 import { openAsar } from "./lib/asar.mjs";
 import { privacyScan } from "./lib/privacy.mjs";
-import { decisionConfig, decisionFetch } from "./lib/jev-provider.mjs";
+import { JevUnavailableError, ask, decisionConfig, openCache } from "./lib/jev-provider.mjs";
 
 export const THRESHOLDS = { newMin: 5, growAbs: 20, growRatio: 1.25, removedMin: 5 };
 export const JEV_LIMIT = 40;
@@ -214,6 +213,9 @@ export function compare(previous, current) {
 
 // ---------- Jev ----------
 
+// One broad question. Splitting it into atomic questions (changes what the model sees, a new user
+// capability, and cosmetic/plumbing/settings vetoes) was measured against the Dev Day coverage
+// ledger on 2026-10-01 and did worse on a held-out half, so this question stays.
 const QUESTION = {
   documentable: {
     type: "noul",
@@ -225,40 +227,32 @@ const QUESTION = {
   }
 };
 
-export function readTypesafeKey(env = process.env) {
-  if (env.TYPESAFE_API_KEY) return env.TYPESAFE_API_KEY;
-  try { return fs.readFileSync(path.join(os.homedir(), ".env"), "utf8").match(/^\s*(?:export\s+)?TYPESAFE_API_KEY\s*=\s*["']?([^"'\s]+)/m)?.[1]; } catch { return undefined; }
-}
+// What Jev sees about one flagged change. The key order is part of the verdict cache key.
+export const jevState = item => ({ kind: KIND_LABEL[item.kind], name: item.name, change: item.change, count: item.count, previous: item.previous, samples: item.evidence.samples, sample_texts: item.evidence.texts });
 
-// A labeller asks Jev about one flagged change; it returns a probability, or null with the reason
-// recorded when Jev cannot answer.
-export function jevLabeller(key, { cache = {}, fetchImpl = globalThis.fetch } = {}) {
+const memoryCache = () => {
+  const entries = new Map();
+  return { has: key => entries.has(key), get: key => entries.get(key), set: (key, value) => (entries.set(key, value), value) };
+};
+
+// A labeller asks Jev (`config` from decisionConfig()) about one flagged change; it returns a
+// probability, or null with the reason recorded when Jev cannot answer. After the first failure
+// the remaining changes are left unlabelled without another request. Verdicts are cached under
+// sha256 of the state, the key format used before the model was pinned, so those stay hits.
+export function jevLabeller(config, { cache = memoryCache(), fetchImpl = globalThis.fetch, attempts, sleep } = {}) {
   const state = { unavailable: null };
   async function label(item) {
     const cacheKey = createHash("sha256").update(JSON.stringify(item)).digest("hex");
-    if (cacheKey in cache) return cache[cacheKey];
-    if (!key) { state.unavailable ??= "no TYPESAFE_API_KEY"; return null; }
+    if (cache.has(cacheKey)) return cache.get(cacheKey);
     if (state.unavailable) return null;
-    for (let attempt = 0; attempt < 4; attempt += 1) {
-      try {
-        const response = await fetchImpl("https://api.typesafe.ai/v1/systemone", {
-          method: "POST",
-          headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-          body: JSON.stringify({ model: "jev-latest", state: item, questions: QUESTION })
-        });
-        if (response.status === 429 || response.status >= 500) { await new Promise(r => setTimeout(r, 1000 * 2 ** attempt)); continue; }
-        if (!response.ok) { state.unavailable = `TypeSafe ${response.status}`; return null; }
-        const p = (await response.json()).answers?.documentable?.noul;
-        if (typeof p !== "number") { state.unavailable = "TypeSafe answer without a probability"; return null; }
-        cache[cacheKey] = p;
-        return p;
-      } catch (error) {
-        state.unavailable = error.message;
-        return null;
-      }
+    try {
+      const p = (await ask(config, { state: item, questions: QUESTION }, { fetchImpl, attempts, sleep })).answers.documentable?.noul;
+      if (typeof p !== "number") { state.unavailable ??= `${config.provider} answer without a probability`; return null; }
+      return cache.set(cacheKey, p);
+    } catch (error) {
+      state.unavailable ??= error instanceof JevUnavailableError ? error.reason : error.message;
+      return null;
     }
-    state.unavailable = "TypeSafe retries exhausted";
-    return null;
   }
   return { label, state, cache };
 }
@@ -276,7 +270,7 @@ export async function scan({ current, evidence, previous, labeller, limit = JEV_
       const item = queue.shift();
       let p = null;
       try {
-        p = labeller ? await labeller.label({ kind: KIND_LABEL[item.kind], name: item.name, change: item.change, count: item.count, previous: item.previous, samples: item.evidence.samples, sample_texts: item.evidence.texts }) : null;
+        p = labeller ? await labeller.label(jevState(item)) : null;
       } catch {
         p = null;
       }
@@ -365,11 +359,8 @@ async function main() {
   const current = { source: { app_version: app.version, app_build: app.build, asar_sha256: asar.sha256 }, ...surfaces };
   const baseline = readBaseline(repo);
 
-  const cacheFile = path.join(repo, "work", "surface-verdicts.json");
-  let cache = {};
-  try { cache = JSON.parse(fs.readFileSync(cacheFile, "utf8")); } catch { cache = {}; }
-  const provider = decisionConfig();
-  const labeller = process.env.SURFACE_JEV === "off" ? null : jevLabeller(provider.key, { cache, fetchImpl: decisionFetch(provider) });
+  const cache = openCache(path.join(repo, "work", "surface-verdicts.json"));
+  const labeller = process.env.SURFACE_JEV === "off" ? null : jevLabeller(decisionConfig(), { cache });
   const requestedLimit = process.env.SURFACE_JEV_LIMIT;
   const limit = requestedLimit === "all" ? Number.MAX_SAFE_INTEGER : requestedLimit == null ? JEV_LIMIT : Number(requestedLimit);
   if (!Number.isSafeInteger(limit) || limit < 0) throw new Error("SURFACE_JEV_LIMIT must be all or a nonnegative integer");
@@ -389,7 +380,7 @@ async function main() {
   fs.writeFileSync(path.join(repo, "work", "surface-triage.json"), triageText);
   if (result.flagged.length) fs.writeFileSync(diffFile, renderDiff({ app, previousSource: baseline.data?.source, flagged: result.flagged, notes: result.notes, unavailable, limit: Math.min(limit, result.flagged.length) }));
   else fs.rmSync(diffFile, { force: true });
-  if (labeller) fs.writeFileSync(cacheFile, JSON.stringify(labeller.cache));
+  if (labeller) cache.save();
 
   console.log(JSON.stringify({
     baseline: baseline.from,

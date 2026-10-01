@@ -3,8 +3,10 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { createHash } from "node:crypto";
 import { openAsar } from "../lib/asar.mjs";
-import { compare, familyOf, inventory, jevLabeller, renderDiff, scan, triageRecord } from "../surface-scan.mjs";
+import { decisionConfig, openCache } from "../lib/jev-provider.mjs";
+import { compare, familyOf, inventory, jevLabeller, jevState, renderDiff, scan, triageRecord } from "../surface-scan.mjs";
 
 // A minimal asar: pickled JSON header, then the file bytes.
 function writeAsar(files) {
@@ -153,4 +155,74 @@ test("machine triage always binds the delta to source bytes and distinguishes un
  assert.deepEqual(empty.notes,[]);
  assert.equal(empty.baseline,false);
  assert.equal(empty.source.asar_sha256,'source-bytes');
+});
+
+// A fake System One endpoint: answers `documentable` with `reply(body, n)`, or returns that status code.
+const typesafe = decisionConfig({ TYPESAFE_API_KEY: "test-key" }, () => "");
+function fakeJev(reply) {
+  const requests = [];
+  const fetchImpl = async (url, options) => {
+    const body = JSON.parse(options.body);
+    requests.push({ url, auth: options.headers.authorization, ...body });
+    const out = reply(body, requests.length);
+    if (Number.isInteger(out)) return { ok: out < 400, status: out, headers: new Headers(), text: async () => "", json: async () => ({}) };
+    return { ok: true, status: 200, headers: new Headers(), json: async () => ({ model: body.model, answers: { documentable: { noul: out } } }) };
+  };
+  return { fetchImpl, requests };
+}
+const widgetState = { kind: "content-reference category", name: "widget_block", change: "new", count: 1, previous: 0, samples: ["widget_block"], sample_texts: [] };
+const sha = state => createHash("sha256").update(JSON.stringify(state)).digest("hex");
+
+test("the labeller asks the pinned model one question about the state built from the flagged change", async () => {
+  assert.deepEqual(Object.keys(jevState({ kind: "enums", name: "X_", change: "new", count: 5, previous: 0, evidence: { samples: ["X_A"], texts: ["t"] } })), ["kind", "name", "change", "count", "previous", "samples", "sample_texts"]);
+  const jev = fakeJev(() => 0.83);
+  const labeller = jevLabeller(typesafe, { fetchImpl: jev.fetchImpl });
+  assert.equal(await labeller.label(widgetState), 0.83);
+  assert.equal(await labeller.label(widgetState), 0.83);
+  assert.equal(jev.requests.length, 1, "a repeated state is answered from the cache");
+  const [sent] = jev.requests;
+  assert.equal(sent.url, "https://api.typesafe.ai/v1/systemone");
+  assert.equal(sent.model, "jev-1.13.0");
+  assert.equal(sent.auth, "Bearer test-key");
+  assert.deepEqual(sent.state, widgetState);
+  assert.deepEqual(Object.keys(sent.questions), ["documentable"]);
+  assert.equal(sent.questions.documentable.type, "noul");
+  assert.equal(labeller.state.unavailable, null);
+});
+
+test("verdict cache: pre-pinning entries stay hits, and new ones are saved with the model version", async () => {
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "surface-verdicts-")), "surface-verdicts.json");
+  fs.writeFileSync(file, JSON.stringify({ [sha(widgetState)]: 0.68 }));
+  const fresh = { ...widgetState, name: "other_block", samples: ["other_block"] };
+  const jev = fakeJev(() => 0.12);
+  const cache = openCache(file);
+  const labeller = jevLabeller(typesafe, { cache, fetchImpl: jev.fetchImpl });
+  assert.equal(await labeller.label(widgetState), 0.68);
+  assert.equal(jev.requests.length, 0, "the legacy verdict is reused without a request");
+  assert.equal(await labeller.label(fresh), 0.12);
+  cache.save();
+  assert.deepEqual(Object.keys(JSON.parse(fs.readFileSync(file, "utf8"))).sort(), [`jev-1.13:${sha(widgetState)}`, `jev-1.13:${sha(fresh)}`].sort());
+  const reopened = jevLabeller(typesafe, { cache: openCache(file), fetchImpl: jev.fetchImpl });
+  assert.equal(await reopened.label(fresh), 0.12);
+  assert.equal(jev.requests.length, 1);
+});
+
+test("rate limits are retried; rejected credentials, bad requests and outages leave the scan unlabelled with the reason", async () => {
+  const sleep = async () => {};
+  const limited = fakeJev((_, n) => (n === 1 ? 429 : 0.7));
+  assert.equal(await jevLabeller(typesafe, { fetchImpl: limited.fetchImpl, sleep }).label(widgetState), 0.7);
+  assert.equal(limited.requests.length, 2);
+
+  const before = inventory(writeAsar(BUILD_A)).surfaces;
+  const { surfaces, evidence } = inventory(writeAsar(BUILD_B));
+  for (const [status, reason, perWorker] of [[401, /^TypeSafe 401$/, 1], [400, /^TypeSafe 400/, 1], [503, /^TypeSafe 503 after 4 attempts$/, 4]]) {
+    const failing = fakeJev(() => status);
+    const labeller = jevLabeller(typesafe, { fetchImpl: failing.fetchImpl, sleep });
+    const { flagged } = await scan({ current: surfaces, evidence, previous: before, labeller });
+    assert.equal(flagged.length, 6);
+    assert.ok(flagged.every(f => f.jev === null), `HTTP ${status}: nothing is labelled`);
+    assert.match(labeller.state.unavailable, reason);
+    // Six workers may each have one change in flight; none starts another after the failure.
+    assert.ok(failing.requests.length <= 6 * perWorker, `HTTP ${status}: ${failing.requests.length} requests`);
+  }
 });
