@@ -7,7 +7,7 @@
 // so a changed height above it can't move the user the way a raw scrollTop does.
 
 const LIMIT = 120;
-const views = new Map(); // view key -> { folds: Map<fold key, boolean>, anchor, opener }
+const views = new Map(); // view key -> { folds: Map<fold key, boolean | string>, values: Map<key, string>, anchor, opener }
 let current = null;
 
 export function viewKey(v) {
@@ -23,7 +23,7 @@ export function viewKey(v) {
 function record(key) {
   let r = views.get(key);
   if (r) { views.delete(key); views.set(key, r); return r; } // most recently used last
-  views.set(key, r = { folds: new Map(), anchor: null, opener: null });
+  views.set(key, r = { folds: new Map(), values: new Map(), anchor: null, opener: null });
   while (views.size > LIMIT) views.delete(views.keys().next().value);
   return r;
 }
@@ -39,6 +39,9 @@ export function foldOpen(key, fallback = false) {
   return v == null ? (typeof fallback === "string" ? fallback : !!fallback) : v;
 }
 export function setFold(key, open) { if (current && key) current.folds.set(key, typeof open === "string" ? open : !!open); }
+// A dropdown's choice or a search box's text in the view being drawn.
+export function valueOf(key, fallback = "") { const v = current?.values.get(key); return v == null ? fallback : v; }
+export function setValue(key, value) { if (current && key) current.values.set(key, String(value ?? "")); }
 
 export function remember(key, anchor) { if (key && anchor) record(key).anchor = anchor; }
 export function anchorOf(key) { return views.get(key)?.anchor || null; }
@@ -49,12 +52,13 @@ export function openerOf(key) { return views.get(key)?.opener || null; }
 // For a history entry: the view's folds and where the user was. Plain data (structuredClone-able).
 export function snapshot(key, anchor) {
   const r = views.get(key);
-  return { key, folds: r ? [...r.folds] : [], anchor: anchor || r?.anchor || null };
+  return { key, folds: r ? [...r.folds] : [], values: r ? [...r.values] : [], anchor: anchor || r?.anchor || null };
 }
 export function load(snap) {
   if (!snap || !snap.key) return;
   const r = record(snap.key);
   r.folds = new Map(snap.folds || []);
+  r.values = new Map(snap.values || []);
   r.anchor = snap.anchor || null;
 }
 

@@ -946,6 +946,23 @@ test("network lens and On-the-wire card render for both products with nothing pl
     assert.equal(cards.length, capture.transit.credentials.length, `${file}: a card per credential`);
     assert.ok(text.includes("Credentials sent") && cards.every(c => /Server answers: (\d{3}|no answer recorded) ×/.test(c.textContent) && /Every send \(\d+\)/.test(c.textContent)), file);
     if (file === "claude.har") assert.ok(cards.some(c => /ends …\S{4}/.test(c.textContent)), "a raw key shows its last four characters");
+    // Findings lead: calls by model, one row per model, the main one first. Sections start closed, keys are unique,
+    // and nothing is a pill outside the credential cards (filters are dropdowns, names are lists and tables).
+    const cls = n => n.getAttribute("class") || "";
+    const findingsBox = lens.all(n => /\bnet-findings\b/.test(cls(n)))[0];
+    assert.ok(findingsBox, `${file}: findings come first`);
+    const modelRows = findingsBox.all(n => n.tagName === "TR" && /\bnet-(main|side)\b/.test(cls(n)));
+    assert.equal(modelRows.length, new Set(capture.calls.map(c => c.model || c.response?.model || "model not named")).size, `${file}: a row per model`);
+    assert.ok(/\bnet-main\b/.test(cls(modelRows[0])) && modelRows[0].textContent.includes("main"), `${file}: the main model first`);
+    const folds = lens.all(n => n.tagName === "DETAILS" && n.getAttribute("data-fold"));
+    assert.ok(folds.some(d => /^sec:/.test(d.getAttribute("data-fold"))) && folds.filter(d => /^sec:/.test(d.getAttribute("data-fold"))).every(d => d.getAttribute("open") == null), `${file}: sections start closed`);
+    const keys = folds.map(d => d.getAttribute("data-fold"));
+    assert.equal(new Set(keys).size, keys.length, `${file}: fold keys are unique`);
+    const pills = lens.all(n => /\bnet-(chip|rule|tool)\b/.test(cls(n))).length;
+    assert.equal(pills, cards.reduce((k, c) => k + c.all(n => /\bnet-chip\b/.test(cls(n))).length, 0), `${file}: no pills outside the credential cards`);
+    // With every fold open (and the every-event list drawn), still nothing planted.
+    for (const d of lens.all(n => n.tagName === "DETAILS")) { d.open = true; d.dispatch("toggle"); }
+    assert.deepEqual(Object.entries(PLANTED).filter(([, v]) => lens.textContent.includes(v)).map(([k]) => k), [], `${file}: every fold open shows no planted value`);
     // A call in the log opens its request; the request inspector then carries the card.
     const call = lens.all(n => n.tagName === "BUTTON" && n.className === "item" && !/not in your log/.test(n.textContent))[0];
     call.dispatch("click");
@@ -955,6 +972,9 @@ test("network lens and On-the-wire card render for both products with nothing pl
     renderPanel(req, { trace, level: 2, agent, agentId: agent.id, reqIdx: focused[1] }, A);
     const card = req.all(n => n.getAttribute("class") === "psec net-card")[0];
     assert.ok(card && card.textContent.startsWith("On the wire"), `${file}: the card is there`);
+    // Action and Custody come before the network detail.
+    const kids = req.children, at = kids.indexOf(card), action = kids.findIndex(n => n.tagName === "SECTION" && n.children[0] && n.children[0].textContent === "Action");
+    if (action >= 0) assert.ok(action < at, `${file}: Action sits above the card`);
     assert.deepEqual(Object.entries(PLANTED).filter(([, v]) => req.textContent.includes(v)).map(([k]) => k), [], `${file}: the card shows no planted value`);
     if (dir === "codex") assert.ok(card.textContent.includes("Tokens per input item") && card.textContent.includes("On the websocket handshake") && card.textContent.includes("JWT"), "the socket's bearer token shows on its calls");
     else assert.ok(card.textContent.includes("System blocks as sent") && card.textContent.includes("billing header"));

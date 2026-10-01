@@ -15,7 +15,7 @@ import { createTransport, playheadForRequest } from "./transport.js";
 import { nextShot, agentPAt, createFollowZoom } from "./director.js";
 import { createHarnessMode } from "./harness/mode.js";
 import { looksLikeHar, capturesFor } from "./network/har.js";
-import { networkLens, wireCard, NETWORK_LENS, closeWireReader } from "./network/panel.js";
+import { networkLens, wireCard, wireSummary, wireTokens, NETWORK_LENS, closeWireReader } from "./network/panel.js";
 import { sourcesLens, SOURCES_LENS } from "./sources/panel.js";
 import { EXAMPLE_ID, loadPublicExample, createLoadOwnership } from "./example-loader.js";
 import { createHelp } from "./help/help.js";
@@ -1314,6 +1314,8 @@ const A = {
   // A palette jump (S.netFocus) is revealed once; later renders keep the user's own scroll.
   networkLens: view => { const out = S.network ? networkLens({ ...view, network: S.network }, A) : []; S.netFocus = null; return out; },
   wireCard: (agent, req) => (S.network ? wireCard(S.network, agent, req, A) : null),
+  wireSummary: (agent, req) => (S.network ? wireSummary(S.network, agent, req) : null),
+  wireTokens: (agent, req) => (S.network ? wireTokens(S.network, agent, req) : null),
   networkBody,
   rerender: () => render(false, true),
   addCapture: () => netHelp(true),
@@ -1484,12 +1486,15 @@ function watchPanel(panel) {
   }, true);
 }
 
-// The reader opens above the block list: bring its top into the panel's view. (Set scrollTop rather
-// than scrollIntoView, which would also scroll the fixed app shell.)
+// A reader opens under the row that opened it (or, for a block no list shows, at the top): when its top is not
+// on screen, bring it there; when it is, leave the row where the user was reading. (Set scrollTop rather than
+// scrollIntoView, which would also scroll the fixed app shell.)
 function showReader() {
   const panel = $("#panel"), reader = panel.querySelector(".reader");
   if (!reader) return;
-  panel.scrollTop += reader.getBoundingClientRect().top - panel.getBoundingClientRect().top - 8;
+  const p = panel.getBoundingClientRect(), r = reader.getBoundingClientRect();
+  if (r.top >= p.top && r.top <= p.bottom - Math.min(160, p.height / 3)) return;
+  panel.scrollTop += r.top - p.top - 8;
 }
 
 function renderCrumbs() {

@@ -573,32 +573,44 @@ function actionPanel(agent, req, S, A) {
   ];
 }
 
+// The request's tokens with a capture attached: the log's figures beside the wire's (exact both; network/digest.js
+// wireTokenRows), and whether the context totals agree. A cell that differs is marked.
+function tokensBeside({ rows, equal, wireContext, logContext }) {
+  const cell = v => el("td", { class: "num", text: v == null ? "–" : fmtInt(v) });
+  return section("Tokens (exact: from the log · from the wire)",
+    el("table", { class: "atable tokens-table" },
+      el("thead", {}, el("tr", {}, el("th", { text: "" }), el("th", { class: "num", text: "Log" }), el("th", { class: "num", text: "Wire" }))),
+      el("tbody", {}, rows.map(([label, log, wire, note]) => el("tr", { class: log != null && wire != null && log !== wire ? "diff" : null },
+        el("td", {}, label, note ? el("span", { class: "note", text: note }) : null), cell(log), cell(wire))))),
+    el("p", { class: equal ? "note" : "warnline", text: equal ? "Against the log: the same context total."
+      : `Against the log: ${fmtInt(wireContext)} on the wire, ${logContext == null ? "none" : fmtInt(logContext)} in the log. The log's split by source is estimated; these totals are exact.` }));
+}
+
 function requestPanel(trace, agent, req, S, A, callOffered = false) {
   if (!req) return [el("p", { text: "No request selected." })];
   const t = req.tokens;
+  // On the wire (network/panel.js), when a capture holds this request's call: one line here, the log's tokens
+  // beside the wire's below, and the full card after Action and Custody.
+  const wire = A.wireCard ? A.wireCard(agent, req) : null;
+  const wireLine = wire && A.wireSummary ? A.wireSummary(agent, req) : null;
+  const wireToks = wire && A.wireTokens ? A.wireTokens(agent, req) : null;
   const out = [
     req.action?.kind === "tool" && !callOffered ? btn(`Open ${req.action.tool} call ↗`, () => A.focusAction(agent.id, req.i), "btn action-open") : null,
     el("p", { class: "kicker", text: `${agent.kind === "root" ? "Main thread" : agent.name} · request ${req.i + 1} of ${agent.requests.length}` }),
     el("h2", { text: `${fmtTok(t.context)} tokens in context` }),
     el("p", { class: "meta", text: `${fmtWhen(req.t)} · ${req.model || agent.model || ""}${req.iterations > 1 ? ` · iteration ${req.iteration} of ${req.iterations} in one response` : ""}` }),
+    // The card sits below Custody: this line jumps to it (scrollTop, not scrollIntoView).
+    wire ? btn(`On the wire${wireLine ? `: ${wireLine}` : ""} ↓`, () => { const p = wire.closest(".panel"); if (p) p.scrollTop += wire.getBoundingClientRect().top - p.getBoundingClientRect().top - 8; }, "linkbtn wire-jump") : null,
     req.strata ? section("Where the context came from (≈, split estimated; total exact)",
       strataBar(req.strata, t.context, k => A.focusStratum(agent.id, req.i, k), S.stratum),
       strataList(req.strata, t.context, k => A.focusStratum(agent.id, req.i, k), S.stratum, harnessNote(trace, agent), req.own))
       : section("Where the context came from", el("p", { class: "note", text: "The log has no blocks for this request, so its split can't be estimated. The total is exact." })),
-    section("Tokens (exact, from the log)", kv([
+    wireToks ? tokensBeside(wireToks) : section("Tokens (exact, from the log)", kv([
       ["Context", fmtInt(t.context), "input + cache read + cache write"],
       ["Cache read", fmtInt(t.cacheRead)], ["Cache write", fmtInt(t.cacheWrite)], ["Uncached input", fmtInt(t.uncached)],
       ["Output", fmtInt(t.output)], ["Reasoning output", t.reasoning ? fmtInt(t.reasoning) : "–"],
       ["Fresh", fmtInt(freshTokens(req)), "uncached + cache write + output"]]))
   ];
-  // On the wire: the request as a network capture saw it (network/panel.js), when one is attached.
-  const wire = A.wireCard ? A.wireCard(agent, req) : null;
-  if (wire) {
-    out.push(wire);
-    // The card sits below the tokens: a link near the top jumps to it (scrollTop, not scrollIntoView).
-    const jump = btn("On the wire ↓", () => { const p = wire.closest(".panel"); if (p) p.scrollTop += wire.getBoundingClientRect().top - p.getBoundingClientRect().top - 8; }, "linkbtn wire-jump");
-    out.splice(out.findIndex((n) => n && n.classList && n.classList.contains("meta")) + 1, 0, jump);
-  }
   const act = req.action;
   if (act) {
     out.push(section("Action", el("div", { class: `action ${act.class}` },
@@ -613,6 +625,7 @@ function requestPanel(trace, agent, req, S, A, callOffered = false) {
       el("ul", { class: "items" }, act.all.map(x => el("li", { class: "call" }, chip(STATUS[x.class]?.color || "#a9b4c2"), el("span", { class: "tool", text: x.tool || "tool" }), " ", el("code", { text: x.target || "" }))))) : null));
     if (act.kind === "tool" && act.class !== "internal") out.push(custodySection(trace, agent, req, S, A));
   }
+  if (wire) out.push(wire);
   if (req.reasoning) out.push(el("p", { class: "note", text: req.reasoning.encrypted ? "Reasoning happened; the log keeps it encrypted." : "Reasoning happened for this request." }));
   return out;
 }
@@ -743,10 +756,9 @@ function stratumPanel(trace, agent, req, S, A) {
     el("h2", {}, chip(s.color), ` ${s.name}: ≈ ${fmtTok(req.strata?.[s.key] || 0)}`),
     el("p", { class: "lede", text: s.long })
   ];
-  if (S.block != null) {
-    const b = agent.blocks[S.block];
-    if (b) out.push(blockReader(agent, b, A));
-  }
+  // The block reader opens under the row that opened it (blockGroups); a block no group lists reads here.
+  const claim = { done: false };
+  const top = out.length;
   if (unlogged >= 0.5) {
     const hs = trace.harnessSite && siteHref(trace.harnessSite);
     out.push(section(`Not in this log: ≈ ${fmtTok(unlogged)}`, el("p", { class: "note", text: harnessNote(trace, agent) || "" }),
@@ -755,11 +767,12 @@ function stratumPanel(trace, agent, req, S, A) {
   if (!rows.length && unlogged < 0.5) out.push(el("p", { class: "note", text: "Nothing of this kind in context at this request." }));
   const isMine = x => x.b.own && !x.wrapper;
   const mine = rows.filter(isMine), rest = rows.filter(x => !isMine(x));
-  if (mine.length) out.push(section(`From your setup: ≈ ${fmtTok(req.own?.[s.key] || 0)} in ${fmtInt(mine.length)} block${mine.length === 1 ? "" : "s"}`, blockGroups(trace, agent, mine, S, A, true)));
+  if (mine.length) out.push(section(`From your setup: ≈ ${fmtTok(req.own?.[s.key] || 0)} in ${fmtInt(mine.length)} block${mine.length === 1 ? "" : "s"}`, blockGroups(trace, agent, mine, S, A, true, claim)));
   if (rest.length) {
     const title = !mine.length ? "in context at this request" : s.key === "you" ? "typed or pasted by you" : "from the product";
-    out.push(section(`${fmtInt(rest.length)} ${title}, grouped by label`, blockGroups(trace, agent, rest, S, A, false)));
+    out.push(section(`${fmtInt(rest.length)} ${title}, grouped by label`, blockGroups(trace, agent, rest, S, A, false, claim)));
   }
+  if (S.block != null && !claim.done && agent.blocks[S.block]) out.splice(top, 0, blockReader(agent, agent.blocks[S.block], A));
   return out;
 }
 
@@ -817,7 +830,7 @@ function setupSection(trace, agent, A, ref) {
 // One row per label (count, total ≈ tokens, first–last time, site badge), largest first. A row expands
 // to its instances, most recent first; a single-instance row opens its block directly.
 const expandedGroups = new Set();
-function blockGroups(trace, agent, rows, S, A, mine) {
+function blockGroups(trace, agent, rows, S, A, mine, claim = { done: true }) {
   const long = spansDays(trace);
   const when = t => (long ? fmtWhen(t) : fmtClock(t));
   const groups = new Map();
@@ -842,11 +855,22 @@ function blockGroups(trace, agent, rows, S, A, mine) {
     const fill = () => {
       if (inner.childElementCount) return;
       const items = g.items.slice().sort((x, y) => y.b.t - x.b.t || y.b.i - x.b.i);
-      inner.append(...items.slice(0, 300).map(({ b, tok, wrapper }) => el("li", { class: S.block === b.i ? "on" : "" },
-        el("button", { class: "item", type: "button", onclick: () => { expandedGroups.add(key); A.openBlock(b.i); } },
-          el("span", { class: "tool", text: when(b.t) }),
-          el("span", { class: "meta", text: `≈ ${fmtTok(tok)}${b.carried ? " · carried" : ""}${b.resendOf != null && !wrapper ? (b.resendSame ? " · sent again, identical" : " · sent again, changed") : ""}${b.flags?.includes("instruction-like") ? " · instruction-like (heuristic)" : ""}` })))));
-      if (items.length > 300) inner.append(el("li", { class: "note", text: `Showing the latest 300 of ${fmtInt(items.length)}.` }));
+      const row = ({ b, tok, wrapper }) => {
+        const reading = S.block === b.i && !claim.done;
+        if (reading) claim.done = true;
+        return el("li", { class: S.block === b.i ? "on" : "", "data-anchor": `block:${b.i}` },
+          el("button", { class: "item", type: "button", onclick: () => { expandedGroups.add(key); A.openBlock(b.i); } },
+            el("span", { class: "tool", text: when(b.t) }),
+            el("span", { class: "meta", text: `≈ ${fmtTok(tok)}${b.carried ? " · carried" : ""}${b.resendOf != null && !wrapper ? (b.resendSame ? " · sent again, identical" : " · sent again, changed") : ""}${b.flags?.includes("instruction-like") ? " · instruction-like (heuristic)" : ""}` })),
+          reading ? blockReader(agent, b, A) : null);
+      };
+      inner.append(...items.slice(0, 300).map(row));
+      // The rest of a long group, one click away (everything in context stays reachable).
+      if (items.length > 300) {
+        const more = btn(`Show the other ${fmtInt(items.length - 300)}`, () => { setFold(`group-all:${key}`, true); more.closest("li").replaceWith(...items.slice(300).map(row)); });
+        if (foldOpen(`group-all:${key}`, false) || items.slice(300).some(x => x.b.i === S.block)) inner.append(...items.slice(300).map(row));
+        else inner.append(el("li", { class: "note" }, `Showing the latest 300 of ${fmtInt(items.length)}. `, more));
+      }
     };
     if (open) fill();
     const range = g.items.length > 1 ? `${when(g.t0)} – ${when(g.t1)}` : when(g.t0);

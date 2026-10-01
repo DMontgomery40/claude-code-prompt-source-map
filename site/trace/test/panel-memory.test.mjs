@@ -2,7 +2,7 @@
 // history, and the row at the top edge is found again by path or by key, whatever changed above it.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { viewKey, enterView, foldOpen, setFold, remember, anchorOf, snapshot, load, forgetAll, hasView,
+import { viewKey, enterView, foldOpen, setFold, valueOf, setValue, remember, anchorOf, snapshot, load, forgetAll, hasView,
   findAnchor, anchorFor, anchorDelta, setOpener, openerOf } from "../panel-memory.js";
 
 // A laid-out tree: each node has a height; children stack inside their parent after a fixed header.
@@ -53,13 +53,15 @@ test("folds remember the user's choice per view, and fall back to the renderer's
 
 test("a history snapshot carries folds and anchor and restores them", () => {
   forgetAll();
-  enterView("v1"); setFold("events", true);
+  enterView("v1"); setFold("events", true); setValue("telemetry:name", "tengu_feature_sad");
   const snap = structuredClone(snapshot("v1", { path: [2, 0], offset: -10, keyed: null }));
   forgetAll();
   assert.equal(hasView("v1"), false);
   load(snap);
   enterView("v1");
   assert.equal(foldOpen("events", false), true);
+  assert.equal(valueOf("telemetry:name", ""), "tengu_feature_sad", "a dropdown's choice comes back with the entry");
+  assert.equal(valueOf("headers:q", ""), "");
   assert.deepEqual(anchorOf("v1"), { path: [2, 0], offset: -10, keyed: null });
 });
 

@@ -96,3 +96,64 @@
 /* A credential's sends (panel.js credentialCard): time, host, request, header, answer. */
 .net-sends { margin: 4px 0 2px; padding-left: 6ch; font: 12px/1.55 var(--mono); color: var(--ink-2); max-height: 40vh; overflow: auto; }
 .net-sends li { overflow-wrap: anywhere; }
+/* The lens's layout (panel.js networkLens): findings first, then sections closed with their counts in the summary.
+   Lists are tables, dropdowns and search boxes; a marker is one word of text, not a badge. */
+.net-top { padding: 6px 12px; }
+.net-top > summary { font-size: 14px; padding: 4px 0; }
+.net-top > summary .t, .net-fold > summary .t { color: var(--ink); font-weight: 650; }
+.net-top > summary .meta, .net-fold > summary .meta { font-weight: 400; }
+.net-top[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: 8px; padding-bottom: 7px; }
+.net-fold .net-fold { background: #0d1219; }
+.net-findings > h3 { margin-bottom: 6px; }
+.net-finding-list { display: grid; gap: 6px; margin-top: 8px; }
+.net-finding { border-left: 3px solid var(--line-2); padding: 3px 0 4px 10px; }
+.net-finding.warn { border-left-color: var(--warn); }
+.net-finding-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.net-finding-head b { font-size: 13.5px; }
+.net-finding-head .linkbtn { font-size: 12.5px; flex: none; }
+.net-finding p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+.net-table { font-size: 12.5px; }
+.net-table th.num, .net-table td.num, .tokens-table th.num, .tokens-table td.num { text-align: right; white-space: nowrap; }
+.net-table td.mono { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+.net-models { table-layout: fixed; }
+.net-models caption { text-align: left; color: var(--ink-3); font-size: 12px; padding-bottom: 4px; }
+.net-models th:first-child { width: 29%; }
+.net-models th:nth-child(2), .net-models th:nth-child(3), .net-models th:nth-child(4) { width: 8.5%; }
+.net-models th, .net-models td { padding-left: 6px; padding-right: 0; }
+.net-models th:first-child, .net-models td:first-child { padding-left: 0; }
+.net-models td.model .name { display: block; font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+.net-models th { white-space: normal !important; line-height: 1.2; vertical-align: bottom; font-size: 11.5px; }
+.net-models td.num { font-size: 12px; }
+.net-models tr.net-main td.model .meta { color: #b9d6f5; }
+.net-models tr.net-side td { color: #ffc49b; }
+.net-models tr.net-side td.model { box-shadow: inset 3px 0 0 var(--warn); padding-left: 7px; }
+.net-models-box .note { margin-top: 4px; }
+.net-hosts { list-style: none; padding: 0; margin: 4px 0 8px; display: grid; gap: 6px; }
+.net-hosts li { border-left: 3px solid var(--line-2); padding: 1px 0 1px 9px; }
+.net-hosts li.warn { border-left-color: var(--warn); }
+.net-hosts .host { font-size: 12.5px; color: var(--ink); overflow-wrap: anywhere; }
+.net-tools-table tr.deferred td { color: var(--ink-2); font-style: italic; }
+.net-choose { display: flex; align-items: center; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+.net-select, .net-search {
+  font: 13px var(--sans); color: var(--ink); background: #0b0f15; border: 1px solid var(--line-2); border-radius: 7px; padding: 4px 8px; max-width: 100%;
+}
+.net-select { min-width: 0; flex: 1 1 200px; }
+.net-filterbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+.net-filterbar .net-search { flex: 1 1 180px; }
+.net-rules-inline { color: #ffc49b; cursor: help; }
+.net-delta { padding-left: 2px; margin: -2px 0 4px; }
+.net-run > summary { cursor: pointer; list-style-position: outside; }
+.net-occ { margin: 4px 0 6px; padding-left: 22px; display: grid; gap: 2px; font-size: 12.5px; color: var(--ink-2); }
+.net-occ li { overflow-wrap: anywhere; }
+.net-route { overflow-wrap: anywhere; color: var(--ink-2); }
+.net-names { columns: 2; column-gap: 18px; }
+.net-names li { break-inside: avoid; }
+.net-entries .reader { margin: 6px 0 10px; }
+.net-reader-slot:empty { display: none; }
+@media (max-width: 980px) {
+  .net-names { columns: 1; }
+}
+.net-party.third { color: #ffc49b; }
+.net-party.first { color: #b9d6f5; }
+.net-timeline .linkbtn, .net-occ .linkbtn { margin-left: 6px; font-size: 12.5px; }
+.net-mark.warn { color: #ffc49b; font-weight: 600; }

@@ -731,3 +731,11 @@ button:disabled { opacity: .4; cursor: default; }
 .example-banner{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 10px;border:1px solid #44545c;border-radius:8px;background:#131c22ec;font-size:12px;line-height:1.5;color:#cbd7dc}
 .example-banner details{flex:1;min-width:0}.example-banner summary{cursor:pointer}.example-banner p{margin:8px 0 0}.example-banner .text-control{flex:none;font-size:12px}
 @media(max-width:980px){.example-banner{margin:0 16px 6px;pointer-events:auto}.example-banner details[open] p{max-height:100px;overflow:auto}}
+/* The request's tokens with a capture attached (panels.js tokensBeside): the log's beside the wire's. */
+.tokens-table { margin: 6px 0; }
+.tokens-table td, .tokens-table th { padding-top: 3px; padding-bottom: 3px; }
+.tokens-table td .note { display: block; font-size: 11.5px; }
+.tokens-table tr.diff td.num { color: #ffc49b; }
+.linkbtn.wire-jump { display: block; text-align: left; margin: 2px 0 6px; overflow-wrap: anywhere; }
+/* A block's reader opens inside the row that opened it (panels.js blockGroups). */
+.groups .items.blocks .reader { margin: 6px 0 10px; }
