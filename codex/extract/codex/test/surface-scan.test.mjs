@@ -222,7 +222,14 @@ test("rate limits are retried; rejected credentials, bad requests and outages le
     assert.equal(flagged.length, 6);
     assert.ok(flagged.every(f => f.jev === null), `HTTP ${status}: nothing is labelled`);
     assert.match(labeller.state.unavailable, reason);
-    // Six workers may each have one change in flight; none starts another after the failure.
+    // Six workers may each have one change in flight when the first fails.
     assert.ok(failing.requests.length <= 6 * perWorker, `HTTP ${status}: ${failing.requests.length} requests`);
   }
+  // Once a failure is known, later changes are not sent and the first reason is kept.
+  const rejected = fakeJev(() => 401);
+  const labeller = jevLabeller(typesafe, { fetchImpl: rejected.fetchImpl, sleep });
+  assert.equal(await labeller.label(widgetState), null);
+  assert.equal(await labeller.label({ ...widgetState, name: "later_block" }), null);
+  assert.equal(rejected.requests.length, 1);
+  assert.equal(labeller.state.unavailable, "TypeSafe 401");
 });
