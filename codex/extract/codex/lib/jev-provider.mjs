@@ -36,20 +36,6 @@ export function decisionConfig(env = process.env, read = () => fs.readFileSync(p
   return useRouter ? { ...ROUTER, key: router, version: JEV_VERSION } : { ...DIRECT, key: direct, version: JEV_VERSION };
 }
 
-// Preserve the typed System One request/response schema for existing classifiers.
-export function decisionFetch(config, fetchImpl = globalThis.fetch) {
-  return (url, options = {}) => {
-    if (url !== DIRECT.endpoint) return fetchImpl(url, options);
-    const body = JSON.parse(options.body);
-    return fetchImpl(config.endpoint, {
-      ...options,
-      headers: { ...options.headers, authorization: `Bearer ${config.key}` },
-      body: JSON.stringify({ ...body, model: config.model }),
-      signal: options.signal ?? AbortSignal.timeout(60_000)
-    });
-  };
-}
-
 const RETRYABLE = new Set([408, 425, 429, 500, 502, 503, 504]);
 const UNAVAILABLE = new Set([401, 402, 403]);
 const sleepMs = ms => new Promise(resolve => setTimeout(resolve, ms));

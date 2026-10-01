@@ -29,9 +29,13 @@ Each page's records are also published as JSON under `/data/`.
 npm ci
 python3 extract/bun-extract.py /path/to/claude.exe   # writes work/ (gitignored)
 node extract/<area>.mjs
-TYPESAFE_API_KEY=… node extract/classify.mjs          # audience verdicts for the inventory
+node extract/classify.mjs                             # audience verdicts for the inventory (Jev; key from the env or ~/.env)
 node extract/inventory.mjs
 cd site && npm ci && npm test && npm run build
 ```
 
 The site is deployed to Cloudflare with `npx wrangler deploy` from `site/`.
+
+## Jev
+
+The refresh (`extract/refresh.mjs`) asks TypeSafe's Jev about each new build through `codex/extract/codex/lib/jev-provider.mjs`: who each prose string is written for, topic tags, which functions settle a setting, which new string replaced an edited prompt, and whether an edited prompt changes model behaviour. That last step (`extract/behavior-flags.mjs`, `tools/behavior-flags/core.mjs`) asks if the edit grants autonomy, loosens a restriction, adds a capability, changes data handling or adds persistence, and writes a "Behaviour changes for review" section into the update report; the watcher notifies when an edit is likely. Its thresholds are uncalibrated review signals for a person to check, not findings. Verdicts are cached under `work/` by the model version that produced them, so a build only pays for what changed. When Jev is unavailable a step exits 75 and the watcher retries the release instead of marking it failed.

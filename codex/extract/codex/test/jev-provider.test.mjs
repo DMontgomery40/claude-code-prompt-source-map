@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { JEV_VERSION, JevRequestError, JevUnavailableError, ask, decisionConfig, decisionFetch, openCache } from '../lib/jev-provider.mjs';
+import { JEV_VERSION, JevRequestError, JevUnavailableError, ask, decisionConfig, openCache } from '../lib/jev-provider.mjs';
 
 test('TypeSafe direct is the default when its key exists, with the pinned model', () => {
   const config = decisionConfig({ OPENROUTER_API_KEY: 'router-secret', TYPESAFE_API_KEY: 'direct-secret' }, () => '');
@@ -29,23 +29,6 @@ test('home environment fallback is parsed as data and explicit selection wins', 
   assert.equal(decisionConfig({}, read).key, 'direct-secret');
   assert.equal(decisionConfig({ JEV_PROVIDER: 'openrouter' }, read).key, 'router-secret');
   assert.equal(decisionConfig({ JEV_PROVIDER: 'typesafe' }, () => 'OPENROUTER_API_KEY=router-secret\n').key, undefined);
-});
-
-test('provider adapter preserves typed state and questions and sends the selected model and authorization', async () => {
-  const config = decisionConfig({ JEV_PROVIDER: 'openrouter', OPENROUTER_API_KEY: 'router-secret' }, () => '');
-  let seen;
-  const fetchImpl = decisionFetch(config, async (url, opts) => { seen = { url, ...opts }; return { ok: true }; });
-  const state = { item: 'bundle evidence' }, questions = { documentable: { type: 'noul' } };
-  await fetchImpl('https://api.typesafe.ai/v1/systemone', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ model: 'jev-latest', state, questions }) });
-  assert.equal(seen.url, config.endpoint);
-  assert.equal(seen.headers.authorization, 'Bearer router-secret');
-  assert.deepEqual(JSON.parse(seen.body), { model: config.model, state, questions });
-  assert.ok(seen.signal instanceof AbortSignal);
-});
-
-test('adapter does not redirect unrelated requests', async () => {
-  const fetchImpl = decisionFetch(decisionConfig({}, () => ''), async (url) => url);
-  assert.equal(await fetchImpl('https://example.org/evidence', {}), 'https://example.org/evidence');
 });
 
 const reply = (status, body, headers = {}) => ({ status, ok: status >= 200 && status < 300, headers: { get: name => headers[name.toLowerCase()] ?? null }, json: async () => body, text: async () => JSON.stringify(body) });
