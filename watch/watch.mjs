@@ -7,7 +7,7 @@
 //                                        with --dry-run the gate runs even when nothing changed
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { commitPaths, deploy, dirtyPaths, failureDecision, foreignChanges, gate, producedSince, pushWithinBudget, restore, Retry, ROOT } from "./lib/publish.mjs";
+import { applyFailure, commitPaths, deploy, dirtyPaths, failureDecision, foreignChanges, gate, producedSince, pushWithinBudget, restore, Retry, ROOT } from "./lib/publish.mjs";
 import { confirmChange } from "./lib/confirm.mjs";
 import { log, notify, run } from "./lib/run.mjs";
 import { cc } from "./targets/cc.mjs";
@@ -109,19 +109,18 @@ try {
         // Nothing to publish: files that changed only byte-wise (sources.json fetch times) go back.
         restore(produced);
         log(`${target.name}: no content change ${JSON.stringify(result.summary?.changed ?? [])}${result.note ? ` (${result.note})` : ""}`);
-        if (!dryRun) { s.fingerprint = key; delete s.failedFingerprint; delete s.lastError; delete state.jevOutage; }
+        if (!dryRun) { s.fingerprint = key; delete s.failedFingerprint; delete s.lastError; delete s.jevOutage; }
       }
     } catch (error) {
       restore(producedSince(claimed, productDir(target)));
-      // A Jev outage (exit 75 or JevUnavailableError) keeps this version unfailed, so it is tried
-      // again at the target's next check, and is notified once per outage (lib/publish.mjs).
-      const d = failureDecision(error, state.jevOutage, now);
-      log(`${target.name}: refresh ${d.retryNextCycle ? "waits for Jev, retried at the next check" : "failed"}: ${error.message}`);
-      if (!dryRun) {
-        if (d.markFailed) s.failedFingerprint = key;
-        if (d.outage) state.jevOutage = d.outage;
-      }
-      if (d.notify) notify(`${target.name} watcher`, d.retryNextCycle ? `Jev unavailable, nothing published; retrying every cycle until it answers: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
+      // A Jev outage (exit 75 or JevUnavailableError) keeps this version unfailed and due next
+      // cycle, or at the next scheduled check once this refresh ran an agent; it is notified when
+      // it starts and daily while it lasts (failureDecision in lib/publish.mjs).
+      const d = failureDecision(error, s.jevOutage, now);
+      const when = d.retryNextCycle ? "next cycle" : "at the next scheduled check, since agents already ran";
+      log(`${target.name}: refresh ${d.jev ? `waits for Jev, retried ${when}` : "failed"}: ${error.message}`);
+      if (!dryRun) applyFailure(s, key, d);
+      if (d.notify) notify(`${target.name} watcher`, d.jev ? `Jev unavailable since ${d.outage.since}, nothing published; retried ${when}: ${error.message}` : `Refresh failed, nothing published: ${error.message}`);
     }
     save();
   }
@@ -148,7 +147,7 @@ try {
         for (const c of publishing) {
           commitPaths(c.produced, `${c.result.publish.message}\n\nPublished by the watcher (watch/watch.mjs).`);
           c.result.publish.onPublished?.();
-          c.s.fingerprint = c.key; delete c.s.failedFingerprint; delete c.s.lastError; delete state.jevOutage;
+          c.s.fingerprint = c.key; delete c.s.failedFingerprint; delete c.s.lastError; delete c.s.jevOutage;
           notify(`${c.target.origin.replace("https://", "")} updated`, c.result.publish.message.split("\n")[0]);
         }
         // Deployed and committed; a failed push waits for the next cycle's sync.
@@ -157,14 +156,14 @@ try {
     } catch (error) {
       log(`publish failed: ${error.message}`);
       restore(allProduced);
-      // A retry is not this version's failure: the same fingerprint publishes at the next check.
-      // A Jev outage in the gate is notified once per outage.
-      const d = failureDecision(error, state.jevOutage, now);
-      if (!dryRun) {
-        if (d.markFailed) for (const c of publishing) c.s.failedFingerprint = c.key;
-        if (d.outage) state.jevOutage = d.outage;
-      }
-      if (d.notify) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
+      // A retry is not this version's failure: the same fingerprint publishes again. A Jev outage
+      // in the gate is decided per target: due next cycle, unless that target's refresh ran agents.
+      const decisions = publishing.map(c => {
+        const d = failureDecision(error, c.s.jevOutage, now, { afterAgent: Boolean(c.result.afterAgent) });
+        if (!dryRun) applyFailure(c.s, c.key, d);
+        return d;
+      });
+      if (!decisions.length || decisions.some(d => d.notify)) notify("harness watcher", `Nothing published: ${error.message.slice(0, 200)}`);
     }
   }
   // A dry run leaves the checkout as it found it.

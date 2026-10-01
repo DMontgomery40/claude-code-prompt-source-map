@@ -42,11 +42,14 @@ old file is kept as `.bak-<time>`.
 A failed refresh or gate restores the files the cycle produced and marks that upstream version as
 failed, so the watcher waits for a newer one instead of retrying every hour. A Jev outage is not a
 failure of that version. That covers a refresh step that exits 75 and a narrative lint that gets no
-answer. The cycle's files are restored, nothing is published, and the same version is retried at
-the target's next scheduled check. A notification goes out once, when the outage starts, not every
-hour.
-The outage is recorded as `jevOutage` in `watch/state.json` and cleared by the next successful
-refresh or publish.
+answer. The cycle's files are restored, nothing is published, and the same version is retried next
+cycle, even for a daily target: every Jev step runs before any paid agent. The exception is a
+refresh that already ran a repair or review agent. Retrying it would redo that agent work, so it
+waits for the target's next scheduled check instead. A notification goes out when the outage starts
+and again once a day while it lasts, not every hour. A missing or revoked TypeSafe key also reads as
+an outage, so that daily reminder is how it shows up. Each target records its outage as `jevOutage`
+in its entry in `watch/state.json`. That target's next successful refresh or publish clears it, and
+so does any failure that is not a Jev outage.
 
 Cadence: Codex/ChatGPT hourly through 2026-10-06 (Dev Day plus a week), then daily; Claude Code
 daily, against the newer of the npm `latest` and `next` dist-tags, never going back to an older build

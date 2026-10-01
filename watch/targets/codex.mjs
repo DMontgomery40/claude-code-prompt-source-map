@@ -31,8 +31,9 @@ const SCANS = [
 ];
 const node = process.execPath;
 // A required script that exits 75 found Jev unavailable. Its outputs are restored as for any
-// failure, but the error is an outage: watch.mjs retries the same version next cycle and notifies once.
-const outage = (script, out) => new JevUnavailableError(`${script} exited ${JEV_TEMPFAIL_EXIT}: ${(out.stderr || out.stdout).trim().split("\n").at(-1).slice(0, 200)}`);
+// failure, but the error is an outage: watch.mjs retries the same version next cycle and notifies
+// once, or at the next scheduled check once the repair agent ran (`afterAgent`).
+const outageError = (script, out) => new JevUnavailableError(`${script} exited ${JEV_TEMPFAIL_EXIT}: ${(out.stderr || out.stdout).trim().split("\n").at(-1).slice(0, 200)}`);
 
 export const codex = {
   name: "codex",
@@ -64,6 +65,8 @@ export const codex = {
     const run = runtime.run ?? defaultRun;
     const notify = runtime.notify ?? defaultNotify;
     const log = runtime.log ?? defaultLog;
+    let agents = false;
+    const outage = (script, out) => Object.assign(outageError(script, out), { afterAgent: agents });
     // The config.toml and env-var reference follows the bundled CLI and app build. It needs
     // the matching openai/codex source tag. A failed refresh stops this publication cycle.
     let cliPromptDiff = "";
@@ -91,6 +94,7 @@ export const codex = {
       log(`codex refresh needs repair: ${r.stderr.slice(-500)}`);
       if (dryRun) throw new Error("refresh needs repair (dry run: agent not started)");
       runAgent(repo, `The Codex desktop app or model catalog changed and \`node extract/codex/refresh.mjs\` could not find one of its sources:\n\n${r.stderr.slice(-3000)}\n\nRepair the extraction in extract/codex/ so it finds the same prompts by content in the current app and catalog, then run \`node extract/codex/refresh.mjs\` until it exits 0, and \`cd site && npm test\`.`);
+      agents = true;
       r = run(node, ["extract/codex/refresh.mjs"], { cwd: repo, timeoutMs: 15 * 60 * 1000 });
     }
     if (r.status === JEV_TEMPFAIL_EXIT) throw outage("extract/codex/refresh.mjs", r);
@@ -190,12 +194,12 @@ export const codex = {
     // and file names). Publish those too so provenance stays current, without moving the
     // "Updated" date. sources.json alone changes every run (fetch time) and doesn't count.
     const dirty = run("git", ["status", "--porcelain", "--", "outputs", ":(exclude)outputs/sources.json", ":(exclude)outputs/status.json"], { cwd: repo }).stdout.trim();
-    if (!diff && !labelChanged && !dirty) { promoteSnapshot(); return { summary, publish: null }; }
+    if (!diff && !labelChanged && !dirty) { promoteSnapshot(); return { summary, afterAgent: agents, publish: null }; }
     if (!dryRun) writeStatus(repo, { checked: this.checkedLabel(now), sources: summary.sources, changed: Boolean(diff) || !previousLabel });
     if (diff && !dryRun) appendChangelog(repo, `ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build}), Codex CLI ${summary.sources.cli_version}`, diff);
     const title = diff
       ? `Codex/ChatGPT refresh: ${summary.changed.length ? `${summary.changed.length} documents changed upstream` : "model settings or CLI prompts changed"}`
       : dirty ? `Codex/ChatGPT provenance: ChatGPT desktop ${summary.sources.app_version} (${summary.sources.app_build})` : `Codex/ChatGPT status: now checked ${this.checkedLabel(now)}`;
-    return { summary, publish: { message: diff ? `${title}\n\n${diff.slice(0, 3000)}` : title, onPublished: promoteSnapshot } };
+    return { summary, afterAgent: agents, publish: { message: diff ? `${title}\n\n${diff.slice(0, 3000)}` : title, onPublished: promoteSnapshot } };
   }
 };

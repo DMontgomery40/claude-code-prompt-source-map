@@ -24,17 +24,32 @@ export class Retry extends Error {
   constructor(message, { jev = false } = {}) { super(message); this.name = "Retry"; this.jev = jev; }
 }
 
-// What a failed refresh or publish does to the watcher's state. A Jev outage (a target's
+// What a failed refresh or publish does to one target's watcher state. A Jev outage (a target's
 // JevUnavailableError, which includes a script's exit 75, or the gate's Jev Retry) is not this
-// version's failure: it is tried again at the target's next scheduled check (hourly for
-// Codex/ChatGPT now, daily for Claude Code, so a release that needed paid review agents is not
-// redone every hour), and notified once, when the outage starts (`outage` is the open one from state.json, cleared by the next success). Any
-// other Retry leaves the version unfailed and notifies as before; everything else fails it.
-export function failureDecision(error, outage, now = Date.now()) {
+// version's failure. It is retried next cycle, even for a daily target, because every Jev step
+// runs before any paid agent. Once this cycle's refresh has run a repair or review agent
+// (`afterAgent`, set on the error or the publish result), a retry would redo that agent work, so it
+// waits for the target's next scheduled check instead. An outage is notified when it starts and
+// again each day it lasts, so a missing or revoked key, which also reads as unavailable, is not
+// silent. `outage` is the target's open one from state.json. Any other outcome closes it: another
+// Retry leaves the version unfailed and notifies as before; everything else fails it.
+const OUTAGE_REMINDER_MS = 86400e3;
+export function failureDecision(error, outage, now = Date.now(), { afterAgent = Boolean(error?.afterAgent) } = {}) {
   if (error instanceof JevUnavailableError || (error instanceof Retry && error.jev)) {
-    return { markFailed: false, retryNextCycle: true, notify: !outage, outage: outage ?? { since: new Date(now).toISOString(), reason: error.message.slice(0, 300) } };
+    const remind = !outage || now - Date.parse(outage.notified ?? outage.since) >= OUTAGE_REMINDER_MS;
+    const open = outage ? { ...outage } : { since: new Date(now).toISOString(), reason: error.message.slice(0, 300) };
+    if (remind) open.notified = new Date(now).toISOString();
+    return { markFailed: false, jev: true, retryNextCycle: !afterAgent, notify: remind, outage: open };
   }
-  return { markFailed: !(error instanceof Retry), retryNextCycle: false, notify: true, outage };
+  return { markFailed: !(error instanceof Retry), jev: false, retryNextCycle: false, notify: true, outage: undefined };
+}
+
+// Applies a failureDecision to a target's state (`s` in watch.mjs). Clearing lastCheck makes the
+// target due at the next hourly cycle whatever its interval.
+export function applyFailure(s, key, decision) {
+  if (decision.markFailed) s.failedFingerprint = key;
+  if (decision.retryNextCycle) delete s.lastCheck;
+  if (decision.outage) s.jevOutage = decision.outage; else delete s.jevOutage;
 }
 
 // Paths whose contents go into the deployed site or its gate. Uncommitted changes here that the
