@@ -137,6 +137,11 @@ try {
   run(node, ["--max-old-space-size=8192", "extract/successors.mjs", work, release]);
   const relocation = readJson(path.join(release, "relocation-report.json"));
   const successors = readJson(path.join(release, "successors.json"));
+  // Edits that may change model behaviour: uncalibrated Jev flags for review. The previous
+  // extraction is still current here, and the backup holds the records as they were.
+  run(node, ["extract/behavior-flags.mjs", work, release, backup]);
+  const behavior = await import("../../tools/behavior-flags/core.mjs");
+  const behaviorFlags = existsSync(path.join(release, "behavior-flags.json")) ? readJson(path.join(release, "behavior-flags.json")) : null;
 
   // 3. What the default requests look like now, and what --help says.
   run(node, ["extract/capture.mjs", binary, path.join(release, "capture")], { breakCode: 2 });
@@ -191,6 +196,8 @@ try {
   const flagged = new Set(pendingReview());
   const reviewIds = new Set(review.map(c => `${c.area}:${c.id}`).filter(key => flagged.has(key)));
   const regenerated = review.filter(c => !flagged.has(`${c.area}:${c.id}`));
+  const behaviorSection = behavior.renderSection(behaviorFlags);
+  if (behaviorSection) sections.push(behaviorSection);
   if (captureDiff.length) sections.push(`### Default requests\n\n${captureDiff.join("\n")}`);
   if (helpDiff.length) sections.push(`### claude --help\n\n~~~~~~diff\n${helpDiff.join("\n")}\n~~~~~~`);
   if (envAdded.length || envRemoved.length) sections.push(`### Environment variables\n\n${envAdded.length ? `Added: ${envAdded.map(x => `\`${x}\``).join(", ")}\n` : ""}${envRemoved.length ? `Removed: ${envRemoved.map(x => `\`${x}\``).join(", ")}` : ""}`);
@@ -199,7 +206,8 @@ try {
     const lines = [...reviewIds].map(key => {
       const c = review.find(r => `${r.area}:${r.id}` === key);
       const s = pairs.get(key);
-      return `- **${c.area}** \`${c.id}\` (${c.title ?? ""}): ${c.reason}${s ? `\n  - old: ${JSON.stringify(s.old_text.slice(0, 240))}\n  - new (Jev confidence ${s.confidence}): ${JSON.stringify(s.successor.slice(0, 240))} in \`${s.successor_file}\`` : ""}`;
+      const note = s && behavior.annotation(behaviorFlags, key);
+      return `- **${c.area}** \`${c.id}\` (${c.title ?? ""}): ${c.reason}${s ? `\n  - old: ${JSON.stringify(s.old_text.slice(0, 240))}\n  - new (Jev confidence ${s.confidence}): ${JSON.stringify(s.successor.slice(0, 240))} in \`${s.successor_file}\`${note ? `\n${note}` : ""}` : ""}`;
     });
     sections.push(`### Records whose source changed (${reviewIds.size})\n\n${lines.join("\n")}`);
   }
