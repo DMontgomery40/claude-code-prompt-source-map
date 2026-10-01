@@ -126,11 +126,12 @@ const jaccard = (a, b) => { let shared = 0; for (const x of a) if (b.has(x)) sha
 // range (or the whole range read as a fragment) shares the most word trigrams with it.
 export function normalizeOld(raw, newText) {
   const target = trigrams(newText);
-  const candidates = [...scanLiterals(raw), decodeFragment(raw)].filter(t => t.trim());
+  // Literals first, longest first, so a tie goes to a literal over the same text with code around it.
+  const candidates = [...scanLiterals(raw).sort((a, b) => b.length - a.length), decodeFragment(raw)].filter(t => t.trim());
   let best = decodeFragment(raw), bestScore = -1;
   for (const text of candidates) {
     const score = jaccard(trigrams(text), target);
-    if (score > bestScore || (score === bestScore && text.length > best.length)) { best = text; bestScore = score; }
+    if (score > bestScore) { best = text; bestScore = score; }
   }
   return best;
 }
@@ -140,12 +141,48 @@ export function normalizeOld(raw, newText) {
 const show = text => text.replaceAll("\u0000", "${…}");
 const elision = n => `[… ${n} unchanged characters …]`;
 
-// The state for one pair. Short pairs go whole. Longer ones keep the changed middle with
-// CONTEXT characters around it and mark the shared head and tail as elided; whatever still
-// exceeds `limit` is cut, and `truncated` records that the changed part itself was cut.
-export function buildState(oldText, newText, { limit = LIMIT, context = CONTEXT } = {}) {
-  let a = show(oldText), b = show(newText);
-  const elided = { old: 0, new: 0 };
+// Equal lines far from any change, elided from both sides alike. Lines common to the head and
+// tail are matched directly; the middle is aligned by longest common subsequence when small enough.
+function elideLines(a, b, contextLines) {
+  const x = a.split(/(?<=\n)/), y = b.split(/(?<=\n)/);
+  let head = 0;
+  while (head < x.length && head < y.length && x[head] === y[head]) head += 1;
+  let tail = 0;
+  while (tail < x.length - head && tail < y.length - head && x[x.length - 1 - tail] === y[y.length - 1 - tail]) tail += 1;
+  const xm = x.slice(head, x.length - tail), ym = y.slice(head, y.length - tail);
+  const ops = x.slice(0, head).map(line => ["=", line]);
+  if (xm.length * ym.length <= 4e6) {
+    const w = ym.length + 1, lcs = new Uint32Array((xm.length + 1) * w);
+    for (let i = xm.length - 1; i >= 0; i -= 1) for (let j = ym.length - 1; j >= 0; j -= 1) lcs[i * w + j] = xm[i] === ym[j] ? lcs[(i + 1) * w + j + 1] + 1 : Math.max(lcs[(i + 1) * w + j], lcs[i * w + j + 1]);
+    let i = 0, j = 0;
+    while (i < xm.length || j < ym.length) {
+      if (i < xm.length && j < ym.length && xm[i] === ym[j]) { ops.push(["=", xm[i]]); i += 1; j += 1; }
+      else if (j < ym.length && (i === xm.length || lcs[i * w + j + 1] >= lcs[(i + 1) * w + j])) { ops.push(["+", ym[j]]); j += 1; }
+      else { ops.push(["-", xm[i]]); i += 1; }
+    }
+  } else ops.push(...xm.map(line => ["-", line]), ...ym.map(line => ["+", line]));
+  ops.push(...x.slice(x.length - tail).map(line => ["=", line]));
+  const near = new Uint8Array(ops.length);
+  ops.forEach(([op], k) => { if (op !== "=") for (let d = Math.max(0, k - contextLines); d <= Math.min(ops.length - 1, k + contextLines); d += 1) near[d] = 1; });
+  let outA = "", outB = "", run = 0, elided = 0;
+  const flush = () => { if (run) { outA += `${elision(run)}\n`; outB += `${elision(run)}\n`; elided += run; run = 0; } };
+  ops.forEach(([op, line], k) => {
+    if (op === "=" && !near[k]) { run += line.length; return; }
+    flush();
+    if (op !== "+") outA += line;
+    if (op !== "-") outB += line;
+  });
+  flush();
+  return { a: outA, b: outB, elided };
+}
+
+// The state for one pair. Short pairs go whole. In longer ones, unchanged lines away from the
+// changes are elided from both sides, then the shared head and tail of what remains (a long
+// single line) down to CONTEXT characters; whatever still exceeds `limit` is cut, and
+// `truncated` records that the changed part itself was cut.
+export function buildState(oldText, newText, { limit = LIMIT, context = CONTEXT, contextLines = 4 } = {}) {
+  let a = show(oldText), b = show(newText), elided = 0;
+  if (a.length > limit || b.length > limit) ({ a, b, elided } = elideLines(a, b, contextLines));
   if (a.length > limit || b.length > limit) {
     const max = Math.min(a.length, b.length);
     let head = 0;
@@ -155,11 +192,11 @@ export function buildState(oldText, newText, { limit = LIMIT, context = CONTEXT 
     const cutHead = Math.max(0, head - context), cutTail = Math.max(0, tail - context);
     const trim = t => `${cutHead ? elision(cutHead) : ""}${t.slice(cutHead, t.length - cutTail)}${cutTail ? elision(cutTail) : ""}`;
     a = trim(a); b = trim(b);
-    elided.old = elided.new = cutHead + cutTail;
+    elided += cutHead + cutTail;
   }
   const truncated = { old: a.length > limit, new: b.length > limit };
   const cut = t => (t.length > limit ? `${t.slice(0, limit)}[… truncated …]` : t);
-  return { state: { old_text: cut(a), new_text: cut(b) }, truncated, elided };
+  return { state: { old_text: cut(a), new_text: cut(b) }, truncated, elided: { old: elided, new: elided } };
 }
 
 // Cache key: the full normalised texts (not the truncated state) plus the question version.

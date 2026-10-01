@@ -42,6 +42,8 @@ test("old ranges decode like extract/literals.mjs: the matching literal, escapes
   assert.deepEqual(scanLiterals('a("x\\ty") /* "not" */ + `b${c("}")}d`'), ["x\ty", "b\u0000d"]);
   const newText = "You are a security monitor.\n\nNever run \u0000 without asking. Ask the user `first`, always.";
   assert.equal(normalizeOld(raw, newText), "You are a security monitor.\n\nNever run \u0000 without asking. Ask the user `first`.");
+  // A range starting at the literal's own quote and running into code: the literal, not the span.
+  assert.equal(normalizeOld("`Run the parsed prompt now.\\n${a}`);x()", "Run the parsed prompt now.\n"), "Run the parsed prompt now.\n\u0000");
   // A fragment inside a literal has no quotes of its own.
   assert.equal(decodeFragment("line one\\nline ${two} three"), "line one\nline \u0000 three");
   assert.equal(normalizeOld("Read the file\\nthen edit it carefully and test it", "Read the file\nthen edit it carefully and test it twice"), "Read the file\nthen edit it carefully and test it");
@@ -59,6 +61,16 @@ test("state: short pairs go whole; long pairs elide the shared head and tail; tr
   assert.ok(long.state.new_text.endsWith("[… 18500 unchanged characters …]"));
   assert.deepEqual(long.truncated, { old: false, new: false });
   assert.deepEqual(long.elided, { old: 37_000, new: 37_000 });
+
+  // Many lines: unchanged lines away from the edits are elided alike, and both edits survive.
+  const para = n => Array.from({ length: n }, (_, i) => `Unchanged instruction line number ${i} for the agent.\n`).join("");
+  const lines = buildState(`${para(200)}Always ask first.\n${para(200)}Keep logs local.\n${para(200)}`, `${para(200)}Never ask.\n${para(200)}Upload logs.\n${para(200)}`);
+  assert.deepEqual(lines.truncated, { old: false, new: false });
+  assert.ok(lines.state.old_text.length < 3000, lines.state.old_text.length);
+  for (const text of ["Always ask first.", "Keep logs local."]) assert.ok(lines.state.old_text.includes(text));
+  for (const text of ["Never ask.", "Upload logs."]) assert.ok(lines.state.new_text.includes(text));
+  assert.equal(lines.state.old_text.match(/\[… \d+ unchanged characters …\]/g).join(), lines.state.new_text.match(/\[… \d+ unchanged characters …\]/g).join());
+  assert.ok(lines.state.new_text.includes("line number 196 ") && !lines.state.new_text.includes("line number 195 "), "four lines of context");
 
   const rewrite = buildState("a".repeat(30_000), "b".repeat(30_000));
   assert.deepEqual(rewrite.truncated, { old: true, new: true });
