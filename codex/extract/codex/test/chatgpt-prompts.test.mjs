@@ -260,6 +260,26 @@ test("feature-scoped formatjs avoids identical translated dictionary literals an
 });
 
 
+test("formatjs: a reworded message is found by its message id and marked as having a stale anchor", () => {
+  const asar = one([
+    "a=f({id:`space.use`,defaultMessage:`Use it to create a native Page in Space.`,description:`Composer text.`});",
+    "b=f({id:`space.other`,description:`Note first.`,defaultMessage:`Track a loan in Space.`});",
+    "c={\"space.gone\":`Translated text.`};"
+  ].join(""));
+  const reworded = extractFormatjsMessage(asar, { id: "r", anchor: "Use it to create a native Page in ChatGPT Space.", messageId: "space.use" });
+  assert.equal(reworded.text, "Use it to create a native Page in Space.");
+  assert.equal(reworded.note, "Composer text.");
+  assert.equal(reworded.anchorStale, true);
+  assert.equal(reworded.sha256, sha(reworded.text));
+  assert.equal(extractFormatjsMessage(asar, { id: "r2", anchor: "Track a loan by hand", messageId: "space.other" }).text, "Track a loan in Space.");
+  assert.equal(extractFormatjsMessage(asar, { id: "fresh", anchor: "Use it to create", messageId: "space.use" }).anchorStale, undefined);
+  // No fallback without one asserted id, or when the id is only a key in a dictionary.
+  assert.throws(() => extractFormatjsMessage(asar, { id: "r3", anchor: "Gone text", messageId: ["space.use", "x"] }), /anchor not found/);
+  assert.throws(() => extractFormatjsMessage(asar, { id: "r4", anchor: "Gone text" }), /anchor not found/);
+  assert.throws(() => extractFormatjsMessage(asar, { id: "r5", anchor: "Gone text", messageId: "space.gone" }), /anchor not found/);
+  assert.equal(extractFormatjsMessage(asar, { id: "r6", anchor: "Use it", messageId: "space.use", exactText: true }).anchorStale, true);
+});
+
 test("exact formatjs anchors distinguish short actions from template variants", () => {
   const asar = one("a={id:`slide`,defaultMessage:`Make slides above`};b={id:`slide.template`,defaultMessage:`Make slides above using {template}`}");
   const item = extractFormatjsMessage(asar, { id: "slides", anchor: "Make slides above", messageId: "slide", exactText: true });

@@ -66,6 +66,7 @@ function renderEntry(item) {
     `Source: \`${item.file}\`, ${item.mode === "function" ? `function \`${item.field}\`, ` : ""}offset ${item.offset}, SHA-256 \`${item.sha256}\`.`, ""];
   const facts = [labelLine(item)];
   if (item.messageId) facts.push(`Message id ${code(item.messageId)}.`);
+  if (item.anchorStale) facts.push("Found by its message id: the text no longer contains the anchor this entry was recorded with, so it was reworded.");
   if (item.occurrences > 1) facts.push(`The same text ships at ${item.occurrences} places in the bundle; the first is shown.`);
   if (item.fallback) facts.push(item.fallback);
   if (item.use) facts.push(item.use);
@@ -168,7 +169,7 @@ export function buildPages(asar, context, pages = chatgptPages, distinct = chatg
       app_version: context.version,
       app_build: context.build,
       source: { asar_sha256: context.asarSha256 },
-      items: items.map(item => ({ id: item.id, title: item.title, label: item.label, message_id: item.messageId ?? null, source_file: item.file, byte_offset: item.offset, sha256: item.sha256, text: item.text })),
+      items: items.map(item => ({ id: item.id, title: item.title, label: item.label, message_id: item.messageId ?? null, ...(item.anchorStale ? { anchor_stale: true } : {}), source_file: item.file, byte_offset: item.offset, sha256: item.sha256, text: item.text })),
       not_found: pageMissing.map(entry => ({ id: entry.id, anchor: entry.anchor, reason: entry.reason, ...(entry.absence ? { absence: entry.absence } : {}) }))
     }, null, 1)}\n`);
   }
@@ -181,6 +182,7 @@ export function buildPages(asar, context, pages = chatgptPages, distinct = chatg
       exact: published.filter(item => item.label === "exact").length,
       assembled: published.filter(item => item.label === "assembled").length,
       not_found: [...missing.keys()],
+      anchor_stale: published.filter(item => item.anchorStale).map(item => item.id),
       context_unconfirmed: unconfirmed,
       withheld
     }

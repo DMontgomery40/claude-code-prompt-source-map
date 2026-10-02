@@ -237,29 +237,55 @@ const textOf = (source, literal) => (literal.substitutions ? null : decodeLitera
 // translator note (`description`) are read from the same object when present; `spec.messageId`
 // (a string or a list) asserts the id.
 export function extractFormatjsMessage(asar, spec) {
-  const matches = occurrences(asar, spec).filter(({ entry, source, index }) =>
+  let found;
+  try { found = occurrences(asar, spec); } catch (error) { return byMessageId(asar, spec, error); }
+  const matches = found.filter(({ entry, source, index }) =>
     !spec.exactText || decodeLiteral(source, anchoredLiteral(spec, entry, source, index)) === spec.anchor);
-  if (!matches.length) throw new AnchorError(`[${spec.id}] no exact defaultMessage text matched its anchor`);
-  return settle(spec, matches.map(({ entry, source, index }) => {
-    const literal = anchoredLiteral(spec, entry, source, index);
-    if (keyBefore(source, literal) !== "defaultMessage") throw new AnchorError(`[${spec.id}] anchor literal in ${entry.path} is not a defaultMessage`);
-    if (literal.substitutions) throw new AnchorError(`[${spec.id}] defaultMessage in ${entry.path} has substitutions`);
+  if (!matches.length) return byMessageId(asar, spec, new AnchorError(`[${spec.id}] no exact defaultMessage text matched its anchor`));
+  return settle(spec, matches.map(({ entry, source, index }) => formatjsMessage(asar, spec, entry, source, anchoredLiteral(spec, entry, source, index))));
+}
+
+function formatjsMessage(asar, spec, entry, source, literal) {
+  if (keyBefore(source, literal) !== "defaultMessage") throw new AnchorError(`[${spec.id}] anchor literal in ${entry.path} is not a defaultMessage`);
+  if (literal.substitutions) throw new AnchorError(`[${spec.id}] defaultMessage in ${entry.path} has substitutions`);
+  const all = literalsOf(source);
+  const at = all.indexOf(literal);
+  const [before2, before, after] = [all[at - 2], all[at - 1], all[at + 1]];
+  let messageId = null;
+  let note = null;
+  if (before && keyBefore(source, before) === "id" && separatedBy(source, before, literal, "defaultMessage")) messageId = textOf(source, before);
+  if (before && keyBefore(source, before) === "description" && separatedBy(source, before, literal, "defaultMessage")) {
+    note = textOf(source, before);
+    if (before2 && keyBefore(source, before2) === "id" && separatedBy(source, before2, before, "description")) messageId = textOf(source, before2);
+  }
+  if (after && separatedBy(source, literal, after, "description")) note = textOf(source, after);
+  if (spec.messageId && ![spec.messageId].flat().includes(messageId)) {
+    throw new AnchorError(`[${spec.id}] message id in ${entry.path} is ${messageId ?? "absent"}, expected ${[spec.messageId].flat().join(" or ")}`);
+  }
+  return { text: decodeLiteral(source, literal), label: "exact", messageId, note, ...provenance(asar, entry, source, literal) };
+}
+
+// The anchor's text is gone, but the one message id the spec asserts still has a defaultMessage:
+// the message was reworded. Its new text is published, so the change reads as a changed text
+// rather than a removal, and `anchorStale` marks the spec's anchor for updating.
+function byMessageId(asar, spec, error) {
+  if (!(error instanceof AnchorError) || typeof spec.messageId !== "string") throw error;
+  const results = [];
+  for (const { entry } of asar.findPhrase(spec.messageId)) {
+    const source = asar.textOf(entry);
     const all = literalsOf(source);
-    const at = all.indexOf(literal);
-    const [before2, before, after] = [all[at - 2], all[at - 1], all[at + 1]];
-    let messageId = null;
-    let note = null;
-    if (before && keyBefore(source, before) === "id" && separatedBy(source, before, literal, "defaultMessage")) messageId = textOf(source, before);
-    if (before && keyBefore(source, before) === "description" && separatedBy(source, before, literal, "defaultMessage")) {
-      note = textOf(source, before);
-      if (before2 && keyBefore(source, before2) === "id" && separatedBy(source, before2, before, "description")) messageId = textOf(source, before2);
+    for (let at = source.indexOf(spec.messageId); at >= 0; at = source.indexOf(spec.messageId, at + 1)) {
+      const id = innermostLiteral(all, at);
+      if (!id || keyBefore(source, id) !== "id" || textOf(source, id) !== spec.messageId) continue;
+      const [next, after] = [all[all.indexOf(id) + 1], all[all.indexOf(id) + 2]];
+      const message = next && separatedBy(source, id, next, "defaultMessage") ? next
+        : next && after && separatedBy(source, id, next, "description") && separatedBy(source, next, after, "defaultMessage") ? after : null;
+      if (message) results.push(formatjsMessage(asar, spec, entry, source, message));
     }
-    if (after && separatedBy(source, literal, after, "description")) note = textOf(source, after);
-    if (spec.messageId && ![spec.messageId].flat().includes(messageId)) {
-      throw new AnchorError(`[${spec.id}] message id in ${entry.path} is ${messageId ?? "absent"}, expected ${[spec.messageId].flat().join(" or ")}`);
-    }
-    return { text: decodeLiteral(source, literal), label: "exact", messageId, note, ...provenance(asar, entry, source, literal) };
-  }));
+  }
+  if (!results.length) throw error;
+  const result = agree(spec, results);
+  return { ...spec, ...result, occurrences: results.length, sha256: sha256(result.text), anchorStale: true };
 }
 
 // An operand of a + chain: a literal, or any other expression, which becomes <…>.
