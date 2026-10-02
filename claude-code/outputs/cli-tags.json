@@ -10,25 +10,25 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 103
+   "count": 119
   },
   {
    "id": "hidden",
    "label": "Hidden",
    "kind": "status",
-   "count": 85
+   "count": 92
   },
   {
    "id": "command",
    "label": "Command",
    "kind": "status",
-   "count": 72
+   "count": 76
   },
   {
    "id": "flag",
    "label": "Flag",
    "kind": "status",
-   "count": 275
+   "count": 287
   }
  ],
  "items": {
@@ -361,6 +361,11 @@
    "documented",
    "flag"
   ],
+  "cli-flag-client-data-url": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
   "cli-flag-managed-settings": [
    "undocumented",
    "hidden",
@@ -377,6 +382,10 @@
   ],
   "cli-flag-ide": [
    "documented",
+   "flag"
+  ],
+  "cli-flag-desktop": [
+   "undocumented",
    "flag"
   ],
   "cli-flag-strict-mcp-config": [
@@ -660,6 +669,11 @@
    "documented",
    "flag"
   ],
+  "cli-cmd-apply-project-settings": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
   "cli-cmd-attach": [
    "documented",
    "command"
@@ -752,6 +766,15 @@
   "cli-cmd-doctor": [
    "documented",
    "command"
+  ],
+  "cli-cmd-drop-worktree-registrations": [
+   "undocumented",
+   "hidden",
+   "command"
+  ],
+  "cli-flag-drop-worktree-registrations-json": [
+   "undocumented",
+   "flag"
   ],
   "cli-cmd-edit-chrome-settings": [
    "undocumented",
@@ -1009,6 +1032,23 @@
    "documented",
    "command"
   ],
+  "cli-cmd-plugin-configure": [
+   "undocumented",
+   "command"
+  ],
+  "cli-flag-plugin-configure-json": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-configure-values-stdin": [
+   "undocumented",
+   "flag"
+  ],
+  "cli-flag-plugin-configure-cowork": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
   "cli-cmd-plugin-details": [
    "documented",
    "command"
@@ -1217,6 +1257,11 @@
    "undocumented",
    "flag"
   ],
+  "cli-flag-plugin-install-replace": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
   "cli-flag-plugin-install-json": [
    "documented",
    "flag"
@@ -1240,6 +1285,10 @@
   ],
   "cli-flag-plugin-list-available": [
    "documented",
+   "flag"
+  ],
+  "cli-flag-plugin-list-data-size": [
+   "undocumented",
    "flag"
   ],
   "cli-flag-plugin-list-cowork": [
@@ -1272,6 +1321,15 @@
    "documented",
    "flag"
   ],
+  "cli-flag-plugin-marketplace-add-resolve-only": [
+   "undocumented",
+   "hidden",
+   "flag"
+  ],
+  "cli-flag-plugin-marketplace-add-json": [
+   "undocumented",
+   "flag"
+  ],
   "cli-cmd-plugin-marketplace-list": [
    "documented",
    "command"
@@ -1293,6 +1351,10 @@
    "documented",
    "flag"
   ],
+  "cli-flag-plugin-marketplace-remove-json": [
+   "undocumented",
+   "flag"
+  ],
   "cli-flag-plugin-marketplace-remove-cowork": [
    "undocumented",
    "hidden",
@@ -1301,6 +1363,10 @@
   "cli-cmd-plugin-marketplace-update": [
    "documented",
    "command"
+  ],
+  "cli-flag-plugin-marketplace-update-json": [
+   "undocumented",
+   "flag"
   ],
   "cli-flag-plugin-marketplace-update-cowork": [
    "undocumented",
@@ -1351,6 +1417,11 @@
   "cli-flag-plugin-tag-remote": [
    "documented",
    "flag"
+  ],
+  "cli-cmd-plugin-test": [
+   "undocumented",
+   "hidden",
+   "command"
   ],
   "cli-cmd-plugin-uninstall": [
    "documented",

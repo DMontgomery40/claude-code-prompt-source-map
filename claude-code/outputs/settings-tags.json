@@ -15,7 +15,7 @@
    "label": "Security and permissions",
    "kind": "topic",
    "definition": "settings.json keys that change what Claude Code is allowed to do, or how exposed the machine and its secrets are. Counts: permission rules (allow, deny, ask), permission modes, bypass and auto mode, and the auto-mode classifier rules; the working-directory scope and reads outside it; every sandbox key, including the sandbox's network allowlists, proxy ports, TLS termination, filesystem paths, credential masking, the sandbox's custom ripgrep command, and platform escape hatches; managed-only switches that make only organization rules count (allowManagedPermissionRulesOnly, allowManagedHooksOnly, allowManagedMcpServersOnly, allowManagedDomainsOnly); approving project .mcp.json servers (also MCP); organization allowlists and denylists for MCP servers, plugins, marketplaces, channels and HTTP hook targets; blocking side-loaded extensions; shell execution inside skills; and which settings `env` entries are safe to apply before workspace trust. Applies whatever group the key is in. Does NOT include which credentials or login to use (Authentication), feedback, telemetry or transcript retention (Privacy), or Claude Code's own proxy and certificate settings (Network).",
-   "count": 97
+   "count": 98
   },
   {
    "id": "privacy-telemetry",
@@ -36,14 +36,14 @@
    "label": "Authentication and credentials",
    "kind": "topic",
    "definition": "settings.json keys that supply or control credentials for reaching Anthropic, cloud providers or MCP servers. Counts: API key helper scripts; AWS credential export and refresh scripts; GCP auth refresh commands; forcing a login method, an organization, or the Cloud gateway that login connects to (its URL and the network blocks /login accepts it in, also Providers); and identity-provider (IdP/OIDC) connections that MCP servers reuse. Applies whatever group the key is in. Does NOT include proxy authentication helpers (Network), header helpers for OpenTelemetry exporters (Observability), or sandbox credential masking (Security).",
-   "count": 12
+   "count": 13
   },
   {
    "id": "providers",
    "label": "Model providers and API endpoints",
    "kind": "topic",
    "definition": "settings.json keys that choose or configure the backend serving model requests. Counts: mapping Anthropic model IDs to provider-specific IDs or inference profiles (modelOverrides); Cloud gateway URLs and the network blocks a gateway sits in (also Authentication, since /login uses them). Applies whatever group the key is in. Does NOT include credentials, login methods or auth refresh scripts (Authentication), proxies (Network), or choosing which Claude model runs (Models).",
-   "count": 2
+   "count": 3
   },
   {
    "id": "models-context",
@@ -64,7 +64,7 @@
    "label": "MCP servers",
    "kind": "topic",
    "definition": "settings.json keys for Model Context Protocol servers and their tools. Counts: approving or rejecting project .mcp.json servers; organization-managed MCP servers; MCP server allowlists and denylists; claude.ai connectors; channel notifications that MCP servers push; per-plugin MCP server configuration; and identity-provider connections that MCP servers reuse. Applies whatever group the key is in. Does NOT include plugins, skills or hooks in general (Plugins, skills and hooks) unless the key is about the MCP servers they bring.",
-   "count": 13
+   "count": 14
   },
   {
    "id": "plugins-skills-hooks",
@@ -106,7 +106,7 @@
    "label": "Terminal UI, commands and IDE",
    "kind": "topic",
    "definition": "settings.json keys that change what the user sees or types in the terminal or IDE. Counts: the renderer (fullscreen), theme and colors; syntax highlighting; spinner tips and verbs; status lines, including the per-subagent status line; transcript and chat view modes, message timestamps and verbosity; time format and zone; keybindings and vim mode; spell check; emoji and prompt suggestions; file suggestions for @ mentions and whether the file picker respects .gitignore; the input box's ! shell commands; voice dictation; reduced motion and screen-reader output; scrolling; terminal titles and progress bars; startup announcements; the claude-cli:// deep-link handler; OS and mobile notifications about waiting prompts; the todo panel; and break reminders and quiet hours. Applies whatever group the key is in. Does NOT include logging (Observability), tools the model calls (Built-in tools), or how teammates are laid out in tmux or iTerm2 (Subagents).",
-   "count": 73
+   "count": 74
   },
   {
    "id": "managed-policy",
@@ -139,7 +139,7 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 47
+   "count": 50
   },
   {
    "id": "internal",
@@ -169,7 +169,7 @@
    "id": "invalid-value-dropped",
    "label": "Invalid value ignored",
    "kind": "status",
-   "count": 42
+   "count": 44
   },
   {
    "id": "build-gated",
@@ -1350,6 +1350,11 @@
    "models-context",
    "undocumented"
   ],
+  "setting-allow-claude-in-chrome-with-managed-mcp": [
+   "security-permissions",
+   "mcp",
+   "undocumented"
+  ],
   "setting-prepend-plugins": [
    "plugins-skills-hooks",
    "undocumented",
@@ -1368,6 +1373,17 @@
    "security-permissions",
    "plugins-skills-hooks",
    "documented"
+  ],
+  "setting-allowed-providers": [
+   "authentication",
+   "providers",
+   "undocumented",
+   "invalid-value-dropped"
+  ],
+  "setting-max-prose-width": [
+   "terminal-ui",
+   "undocumented",
+   "invalid-value-dropped"
   ],
   "setting-remote": [
    "remote-hosted",

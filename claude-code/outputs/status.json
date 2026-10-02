@@ -1,8 +1,8 @@
 {
-  "last_changed": "2026-10-01T21:42:16.653Z",
+  "last_changed": "2026-10-02T23:25:19.244Z",
   "checked": "daily",
   "sources": {
-    "version": "2.1.287",
-    "integrity": "sha512-ZQLmkEpiWd8sxUYRpQr1yZ39DyVBhrl8MUtbxe33E+z4jFPtUy+CrJXmeRRyyM+FEfvGe/2ab+E59GiSKkprRw=="
+    "version": "2.1.288",
+    "integrity": "sha512-kioqJixZJY87Dgoog1VAHxPo+5h0XrDTRFLmZzRKxfjfEGF6aKv+Zt1OqJUfeUnD3+VUr+iqemRZ5vPTg2gGeQ=="
   }
 }

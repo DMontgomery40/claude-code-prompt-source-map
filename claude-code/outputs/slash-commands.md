@@ -4,9 +4,9 @@
 
 ## Local commands
 
-### /add-dir (definition 1 of 2, `chunk-mphp7acd.js`)
+### /add-dir (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188530288 · sha256 `5cc485bc…`
+Source: `chunk-acxptg39.js` · offset 189715332 · sha256 `5cc485bc…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -22,9 +22,9 @@ isHidden: computed at runtime
 Add a new working directory
 ~~~~~~
 
-### /add-dir (definition 2 of 2, `chunk-mphp7acd.js`)
+### /add-dir (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188530551 · sha256 `5cc485bc…`
+Source: `chunk-acxptg39.js` · offset 189715595 · sha256 `5cc485bc…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -36,9 +36,9 @@ Argument hint: `<path>`
 Add a new working directory
 ~~~~~~
 
-### /advisor (definition 1 of 2, `chunk-mphp7acd.js`)
+### /advisor (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189003345 · sha256 `2b611ff8…`
+Source: `chunk-acxptg39.js` · offset 190197438 · sha256 `2b611ff8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -52,9 +52,9 @@ isHidden: computed at runtime
 Let Claude consult a stronger model at key moments
 ~~~~~~
 
-### /advisor (definition 2 of 2, `chunk-mphp7acd.js`)
+### /advisor (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189003680 · sha256 `2b611ff8…`
+Source: `chunk-acxptg39.js` · offset 190197773 · sha256 `2b611ff8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -70,7 +70,7 @@ Let Claude consult a stronger model at key moments
 
 ### /artifacts
 
-Source: `chunk-mphp7acd.js` · offset 188531798 · sha256 `8b9f20cc…`
+Source: `chunk-acxptg39.js` · offset 189716842 · sha256 `8b9f20cc…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -82,9 +82,9 @@ isEnabled: computed at runtime
 Browse your published and shared artifacts
 ~~~~~~
 
-### /auto-mode-setup (definition 1 of 2, `chunk-mphp7acd.js`)
+### /auto-mode-setup (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188531221 · sha256 `8e164cfa…`
+Source: `chunk-acxptg39.js` · offset 189716265 · sha256 `8e164cfa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -100,9 +100,9 @@ isHidden: computed at runtime
 Teach auto mode about your environment, plus optional rule tweaks
 ~~~~~~
 
-### /auto-mode-setup (definition 2 of 2, `chunk-mphp7acd.js`)
+### /auto-mode-setup (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188531597 · sha256 `8e164cfa…`
+Source: `chunk-acxptg39.js` · offset 189716641 · sha256 `8e164cfa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -114,9 +114,9 @@ isEnabled: computed at runtime
 Teach auto mode about your environment, plus optional rule tweaks
 ~~~~~~
 
-### /autocompact (definition 1 of 2, `chunk-mphp7acd.js`)
+### /autocompact (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188539336 · sha256 `2e29ad95…`
+Source: `chunk-acxptg39.js` · offset 189724380 · sha256 `2e29ad95…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -132,9 +132,9 @@ isHidden: `false`
 Set how full the context gets before auto-summarizing
 ~~~~~~
 
-### /autocompact (definition 2 of 2, `chunk-mphp7acd.js`)
+### /autocompact (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188539613 · sha256 `58d6836b…`
+Source: `chunk-acxptg39.js` · offset 189724657 · sha256 `58d6836b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -150,9 +150,9 @@ isHidden: computed at runtime
 Configure the auto-compact window size
 ~~~~~~
 
-### /autofix-pr (definition 1 of 2, `chunk-mphp7acd.js`)
+### /autofix-pr (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188532009 · sha256 `6c32fdf3…`
+Source: `chunk-acxptg39.js` · offset 189717053 · sha256 `6c32fdf3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -166,9 +166,9 @@ isHidden: computed at runtime
 Monitor and autofix any issues with the current PR
 ~~~~~~
 
-### /autofix-pr (definition 2 of 2, `chunk-mphp7acd.js`)
+### /autofix-pr (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005587 · sha256 `6c32fdf3…`
+Source: `chunk-acxptg39.js` · offset 190199680 · sha256 `6c32fdf3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -180,7 +180,7 @@ Monitor and autofix any issues with the current PR
 
 ### /background
 
-Source: `chunk-rqh2gxh6.js` · offset 200150530 · sha256 `b7f09c3b…`
+Source: `chunk-0ar6ke9g.js` · offset 201409592 · sha256 `b7f09c3b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -198,7 +198,7 @@ Send this session to the background and free the terminal
 
 ### /branch
 
-Source: `chunk-mphp7acd.js` · offset 188996615 · sha256 `5ae03e00…`
+Source: `chunk-acxptg39.js` · offset 190190708 · sha256 `5ae03e00…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -212,7 +212,7 @@ Create a branch of the current conversation at this point
 
 ### /brief
 
-Source: `chunk-tdsxsjna.js` · offset 200207695 · sha256 `52458610…`
+Source: `chunk-x74bkc38.js` · offset 201463703 · sha256 `52458610…`
 
 Status: undocumented
 
@@ -226,7 +226,7 @@ Toggle brief-only mode
 
 ### /btw
 
-Source: `chunk-mphp7acd.js` · offset 188532278 · sha256 `52bc31e3…`
+Source: `chunk-acxptg39.js` · offset 189717322 · sha256 `52bc31e3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -240,7 +240,7 @@ Ask a quick side question without interrupting the main conversation
 
 ### /bug
 
-Source: `chunk-mphp7acd.js` · offset 188532715 · sha256 `d64ca096…`
+Source: `chunk-acxptg39.js` · offset 189717759 · sha256 `d64ca096…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -256,7 +256,7 @@ Report a bug or share your conversation
 
 ### /cd
 
-Source: `chunk-mphp7acd.js` · offset 188532869 · sha256 `bedfe2a5…`
+Source: `chunk-acxptg39.js` · offset 189717913 · sha256 `bedfe2a5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -270,7 +270,7 @@ Move this session to a new working directory
 
 ### /chrome
 
-Source: `chunk-mphp7acd.js` · offset 189002797 · sha256 `57d70076…`
+Source: `chunk-acxptg39.js` · offset 190196890 · sha256 `57d70076…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -284,7 +284,7 @@ Open Claude in Chrome settings
 
 ### /clear
 
-Source: `chunk-mphp7acd.js` · offset 188532994 · sha256 `d879dc70…`
+Source: `chunk-acxptg39.js` · offset 189718038 · sha256 `d879dc70…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -300,7 +300,7 @@ Start a new session with empty context; previous session stays on disk (resumabl
 
 ### /cloud-plugins
 
-Source: `chunk-mphp7acd.js` · offset 188530746 · sha256 `9f8fa961…`
+Source: `chunk-acxptg39.js` · offset 189715790 · sha256 `9f8fa961…`
 
 Status: undocumented
 
@@ -312,9 +312,9 @@ isEnabled: gated (condition references `CLAUDE_CODE_DISABLE_PLUGIN_FORWARDING`)
 Choose whether cloud sessions use the plugins enabled on this machine
 ~~~~~~
 
-### /color (definition 1 of 2, `chunk-mphp7acd.js`)
+### /color (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188533305 · sha256 `d97f485c…`
+Source: `chunk-acxptg39.js` · offset 189718349 · sha256 `d97f485c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -322,15 +322,15 @@ Type: `local-jsx`
 
 Argument hint: `[red|blue|green|yellow|purple|orange|pink|cyan|default]`
 
-Interpolated constants (resolved from code): `wy` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
+Interpolated constants (resolved from code): `xy` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
 
 ~~~~~~text
 Set the prompt bar color for this session
 ~~~~~~
 
-### /color (definition 2 of 2, `chunk-mphp7acd.js`)
+### /color (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188533588 · sha256 `d97f485c…`
+Source: `chunk-acxptg39.js` · offset 189718632 · sha256 `d97f485c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -342,7 +342,7 @@ isEnabled: computed at runtime
 
 isHidden: computed at runtime
 
-Interpolated constants (resolved from code): `wy` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
+Interpolated constants (resolved from code): `xy` = `["red","blue","green","yellow","purple","orange","pink","cyan"]`
 
 ~~~~~~text
 Set the prompt bar color for this session
@@ -350,7 +350,7 @@ Set the prompt bar color for this session
 
 ### /compact
 
-Source: `chunk-mphp7acd.js` · offset 186880115 · sha256 `6469e86a…`
+Source: `chunk-acxptg39.js` · offset 188037505 · sha256 `6469e86a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -364,9 +364,9 @@ isEnabled: gated (condition references `DISABLE_COMPACT`)
 Free up context by summarizing the conversation so far
 ~~~~~~
 
-### /config (definition 1 of 2, `chunk-mphp7acd.js`)
+### /config (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188539913 · sha256 `f0247715…`
+Source: `chunk-acxptg39.js` · offset 189724957 · sha256 `f0247715…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -380,9 +380,9 @@ Argument hint: `[key=value]`
 Open settings
 ~~~~~~
 
-### /config (definition 2 of 2, `chunk-mphp7acd.js`)
+### /config (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188540233 · sha256 `bcf0e110…`
+Source: `chunk-acxptg39.js` · offset 189725277 · sha256 `bcf0e110…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -400,9 +400,9 @@ isHidden: computed at runtime
 Set a setting by key
 ~~~~~~
 
-### /context (definition 1 of 2, `chunk-mphp7acd.js`)
+### /context (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188541015 · sha256 `5e903685…`
+Source: `chunk-acxptg39.js` · offset 189726059 · sha256 `5e903685…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -416,9 +416,9 @@ isEnabled: computed at runtime
 Visualize current context usage as a colored grid
 ~~~~~~
 
-### /context (definition 2 of 2, `chunk-mphp7acd.js`)
+### /context (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188541242 · sha256 `bb97777d…`
+Source: `chunk-acxptg39.js` · offset 189726286 · sha256 `bb97777d…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -434,7 +434,7 @@ Show current context usage
 
 ### /copy
 
-Source: `chunk-mphp7acd.js` · offset 188533836 · sha256 `01b91a65…`
+Source: `chunk-acxptg39.js` · offset 189718880 · sha256 `01b91a65…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -446,7 +446,7 @@ Copy Claude's last response to clipboard (or /copy N for the Nth-latest)
 
 ### /daemon
 
-Source: `chunk-s3fkzx5j.js` · offset 200214202 · sha256 `e47cd881…`
+Source: `chunk-5wb71han.js` · offset 201470249 · sha256 `e47cd881…`
 
 Status: undocumented
 
@@ -458,7 +458,7 @@ Manage background services and routines
 
 ### /design-login
 
-Source: `chunk-mphp7acd.js` · offset 188569637 · sha256 `b2e3f9b8…`
+Source: `chunk-acxptg39.js` · offset 189754681 · sha256 `b2e3f9b8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -472,7 +472,7 @@ Authorize design-system access for /design-sync with your claude.ai account
 
 ### /desktop
 
-Source: `chunk-mphp7acd.js` · offset 188534066 · sha256 `c1703e0a…`
+Source: `chunk-acxptg39.js` · offset 189719110 · sha256 `c1703e0a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -490,7 +490,7 @@ Continue the current session in Claude Desktop
 
 ### /diff
 
-Source: `chunk-mphp7acd.js` · offset 188541383 · sha256 `adf55df7…`
+Source: `chunk-acxptg39.js` · offset 189726427 · sha256 `1a303428…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -500,11 +500,11 @@ isEnabled: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188541383.
+Undocumented; read at `chunk-acxptg39.js` offset 189726427.
 
-### /effort (definition 1 of 2, `chunk-mphp7acd.js`)
+### /effort (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189015456 · sha256 `e9ef028a…`
+Source: `chunk-acxptg39.js` · offset 190211807 · sha256 `e9ef028a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -514,9 +514,9 @@ Type: `local-jsx`
 Set effort level for model usage
 ~~~~~~
 
-### /effort (definition 2 of 2, `chunk-mphp7acd.js`)
+### /effort (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189015670 · sha256 `e9ef028a…`
+Source: `chunk-acxptg39.js` · offset 190212021 · sha256 `e9ef028a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -530,9 +530,9 @@ isHidden: computed at runtime
 Set effort level for model usage
 ~~~~~~
 
-### /exit (definition 1 of 2, `chunk-mphp7acd.js`)
+### /exit (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005849 · sha256 `afc2e7a9…`
+Source: `chunk-acxptg39.js` · offset 190199942 · sha256 `a04e8c8f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -542,11 +542,11 @@ Aliases: `/quit`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189005849.
+Undocumented; read at `chunk-acxptg39.js` offset 190199942.
 
-### /exit (definition 2 of 2, `chunk-mphp7acd.js`)
+### /exit (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189006019 · sha256 `0f992865…`
+Source: `chunk-acxptg39.js` · offset 190200112 · sha256 `16f35a6d…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -554,11 +554,11 @@ Type: `local`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189006019.
+Undocumented; read at `chunk-acxptg39.js` offset 190200112.
 
 ### /export
 
-Source: `chunk-mphp7acd.js` · offset 189006511 · sha256 `e7a6fef6…`
+Source: `chunk-acxptg39.js` · offset 190202862 · sha256 `e7a6fef6…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -570,9 +570,9 @@ Argument hint: `[filename]`
 Export the current conversation to a file or clipboard
 ~~~~~~
 
-### /fast (definition 1 of 2, `chunk-mphp7acd.js`)
+### /fast (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188995420 · sha256 `114149c4…`
+Source: `chunk-acxptg39.js` · offset 190189513 · sha256 `223378d0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -584,11 +584,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188995420.
+Undocumented; read at `chunk-acxptg39.js` offset 190189513.
 
-### /fast (definition 2 of 2, `chunk-mphp7acd.js`)
+### /fast (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188995629 · sha256 `a6d0fba3…`
+Source: `chunk-acxptg39.js` · offset 190189722 · sha256 `f95bf404…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -602,11 +602,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188995629.
+Undocumented; read at `chunk-acxptg39.js` offset 190189722.
 
 ### /feedback
 
-Source: `chunk-mphp7acd.js` · offset 188532539 · sha256 `48754384…`
+Source: `chunk-acxptg39.js` · offset 189717583 · sha256 `48754384…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -618,9 +618,9 @@ Argument hint: `[report]`
 Send feedback to Anthropic or report a bug
 ~~~~~~
 
-### /focus (definition 1 of 2, `chunk-mphp7acd.js`)
+### /focus (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189016121 · sha256 `6f31ffc8…`
+Source: `chunk-acxptg39.js` · offset 190212472 · sha256 `6f31ffc8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -630,9 +630,9 @@ Type: `local-jsx`
 Toggle focus view: just your prompt, summary, and response
 ~~~~~~
 
-### /focus (definition 2 of 2, `chunk-mphp7acd.js`)
+### /focus (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189017781 · sha256 `6f31ffc8…`
+Source: `chunk-acxptg39.js` · offset 190214132 · sha256 `6f31ffc8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -648,9 +648,9 @@ isHidden: computed at runtime
 Toggle focus view: just your prompt, summary, and response
 ~~~~~~
 
-### /fork (definition 1 of 2, `chunk-mphp7acd.js`)
+### /fork (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188996806 · sha256 `e0997af2…`
+Source: `chunk-acxptg39.js` · offset 190190899 · sha256 `e0997af2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -664,9 +664,9 @@ isEnabled: computed at runtime
 Spawn a background agent that inherits the full conversation
 ~~~~~~
 
-### /fork (definition 2 of 2, `chunk-mphp7acd.js`)
+### /fork (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188997017 · sha256 `641ba59c…`
+Source: `chunk-acxptg39.js` · offset 190191110 · sha256 `641ba59c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -680,9 +680,9 @@ isEnabled: computed at runtime
 Copy this conversation into a new background session and keep working here
 ~~~~~~
 
-### /goal (definition 1 of 2, `chunk-a6p097cg.js`)
+### /goal (definition 1 of 2, `chunk-aawbcyev.js`)
 
-Source: `chunk-a6p097cg.js` · offset 200193522 · sha256 `9a733d16…`
+Source: `chunk-aawbcyev.js` · offset 201449413 · sha256 `9a733d16…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -694,9 +694,9 @@ Argument hint: `[<condition> | clear]`
 Set a goal Claude checks before stopping
 ~~~~~~
 
-### /goal (definition 2 of 2, `chunk-a6p097cg.js`)
+### /goal (definition 2 of 2, `chunk-aawbcyev.js`)
 
-Source: `chunk-a6p097cg.js` · offset 200193713 · sha256 `cc53511f…`
+Source: `chunk-aawbcyev.js` · offset 201449604 · sha256 `cc53511f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -712,7 +712,7 @@ Set a goal — keep working until the condition is met
 
 ### /help
 
-Source: `chunk-mphp7acd.js` · offset 188542349 · sha256 `23e720a1…`
+Source: `chunk-acxptg39.js` · offset 189727393 · sha256 `23e720a1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -724,7 +724,7 @@ Show help and available commands
 
 ### /hooks
 
-Source: `chunk-mphp7acd.js` · offset 188996344 · sha256 `75ca739e…`
+Source: `chunk-acxptg39.js` · offset 190190437 · sha256 `75ca739e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -736,7 +736,7 @@ View hook configurations for tool events
 
 ### /ide
 
-Source: `chunk-mphp7acd.js` · offset 188542494 · sha256 `7792c72e…`
+Source: `chunk-acxptg39.js` · offset 189727538 · sha256 `7792c72e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -748,9 +748,9 @@ Argument hint: `[open]`
 Manage IDE integrations and show status
 ~~~~~~
 
-### /import (definition 1 of 2, `chunk-mphp7acd.js`)
+### /import (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188543536 · sha256 `5061f6b3…`
+Source: `chunk-acxptg39.js` · offset 189728580 · sha256 `5061f6b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -766,9 +766,9 @@ isHidden: computed at runtime
 Import config from another AI coding agent
 ~~~~~~
 
-### /import (definition 2 of 2, `chunk-mphp7acd.js`)
+### /import (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188543757 · sha256 `5061f6b3…`
+Source: `chunk-acxptg39.js` · offset 189728801 · sha256 `5061f6b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -784,7 +784,7 @@ Import config from another AI coding agent
 
 ### /install
 
-Source: `chunk-76vpn0c0.js` · offset 213850844 · sha256 `235841f2…`
+Source: `chunk-252vk2b1.js` · offset 215209271 · sha256 `235841f2…`
 
 Status: undocumented
 
@@ -798,7 +798,7 @@ Install Claude Code native build
 
 ### /install-github-app
 
-Source: `chunk-mphp7acd.js` · offset 188570274 · sha256 `0c15077b…`
+Source: `chunk-acxptg39.js` · offset 189755318 · sha256 `0c15077b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -812,7 +812,7 @@ Set up Claude GitHub Actions for a repository
 
 ### /install-slack-app
 
-Source: `chunk-mphp7acd.js` · offset 188570479 · sha256 `4e344812…`
+Source: `chunk-acxptg39.js` · offset 189755523 · sha256 `4e344812…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -824,7 +824,7 @@ Install the Claude Slack app
 
 ### /keybindings
 
-Source: `chunk-mphp7acd.js` · offset 188568939 · sha256 `cc5dbc0a…`
+Source: `chunk-acxptg39.js` · offset 189753983 · sha256 `cc5dbc0a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -838,7 +838,7 @@ Open your keyboard shortcuts file
 
 ### /list-agents
 
-Source: `chunk-ryw4gfcj.js` · offset 200149652 · sha256 `8ffbeeb0…`
+Source: `chunk-mga6xy9m.js` · offset 201448233 · sha256 `8ffbeeb0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -854,7 +854,7 @@ List subagents, teammates, and other Claude sessions you can message
 
 ### /login
 
-Source: `chunk-mphp7acd.js` · offset 188569764 · sha256 `5f19d6be…`
+Source: `chunk-acxptg39.js` · offset 189754808 · sha256 `6271bc5a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -864,11 +864,11 @@ isEnabled: gated (condition references `DISABLE_LOGIN_COMMAND`)
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188569764.
+Undocumented; read at `chunk-acxptg39.js` offset 189754808.
 
 ### /logout
 
-Source: `chunk-mphp7acd.js` · offset 188570022 · sha256 `6e6288ca…`
+Source: `chunk-acxptg39.js` · offset 189755066 · sha256 `6e6288ca…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -882,7 +882,7 @@ Sign out from your Anthropic account
 
 ### /loops
 
-Source: `chunk-mphp7acd.js` · offset 188996491 · sha256 `54168081…`
+Source: `chunk-acxptg39.js` · offset 190190584 · sha256 `54168081…`
 
 Status: undocumented
 
@@ -894,9 +894,9 @@ isEnabled: `false`
 List, create, and delete loops
 ~~~~~~
 
-### /mcp (definition 1 of 2, `chunk-mphp7acd.js`)
+### /mcp (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188570744 · sha256 `c2c551b3…`
+Source: `chunk-acxptg39.js` · offset 189755788 · sha256 `c2c551b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -912,9 +912,9 @@ isHidden: computed at runtime
 Manage MCP servers
 ~~~~~~
 
-### /mcp (definition 2 of 2, `chunk-mphp7acd.js`)
+### /mcp (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188570996 · sha256 `c2c551b3…`
+Source: `chunk-acxptg39.js` · offset 189756040 · sha256 `c2c551b3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -928,7 +928,7 @@ Manage MCP servers
 
 ### /memory
 
-Source: `chunk-mphp7acd.js` · offset 188541734 · sha256 `fb6fd517…`
+Source: `chunk-acxptg39.js` · offset 189726778 · sha256 `fb6fd517…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -940,7 +940,7 @@ Edit CLAUDE.md files and memory settings
 
 ### /mobile
 
-Source: `chunk-mphp7acd.js` · offset 188571215 · sha256 `911b1a74…`
+Source: `chunk-acxptg39.js` · offset 189756259 · sha256 `911b1a74…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -952,9 +952,9 @@ Aliases: `/ios`, `/android`
 Show QR code to download the Claude mobile app
 ~~~~~~
 
-### /model (definition 1 of 2, `chunk-mphp7acd.js`)
+### /model (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189006694 · sha256 `4ed26d50…`
+Source: `chunk-acxptg39.js` · offset 190203045 · sha256 `4ed26d50…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -970,9 +970,9 @@ isHidden: computed at runtime
 Set the AI model for Claude Code
 ~~~~~~
 
-### /model (definition 2 of 2, `chunk-mphp7acd.js`)
+### /model (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189006854 · sha256 `7b378979…`
+Source: `chunk-acxptg39.js` · offset 190203205 · sha256 `479f4620…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -982,11 +982,11 @@ Argument hint: `[model]`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189006854.
+Undocumented; read at `chunk-acxptg39.js` offset 190203205.
 
 ### /output-style
 
-Source: `chunk-mphp7acd.js` · offset 188540781 · sha256 `845433e1…`
+Source: `chunk-acxptg39.js` · offset 189725825 · sha256 `845433e1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1004,7 +1004,7 @@ List output styles or switch to one
 
 ### /passes
 
-Source: `chunk-mphp7acd.js` · offset 188995873 · sha256 `7b15dd38…`
+Source: `chunk-acxptg39.js` · offset 190189966 · sha256 `53eb6ec5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1014,11 +1014,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188995873.
+Undocumented; read at `chunk-acxptg39.js` offset 190189966.
 
 ### /pause-memory
 
-Source: `chunk-mphp7acd.js` · offset 188541945 · sha256 `d49d7b56…`
+Source: `chunk-acxptg39.js` · offset 189726989 · sha256 `d49d7b56…`
 
 Status: undocumented
 
@@ -1033,12 +1033,12 @@ isHidden: gated (condition references `IS_DEMO`)
 Description: computed (getter).
 
 ~~~~~~text
-{{expr:if MNt() …}}
+{{expr:if t1t() …}}
 ~~~~~~
 
 Conditional fragments:
 
-- `{{expr:if MNt() …}}`
+- `{{expr:if t1t() …}}`
   - if true:
 
 ~~~~~~text
@@ -1053,7 +1053,7 @@ Pause account memory and local auto-memory for this session (run again to turn b
 
 ### /permissions
 
-Source: `chunk-mphp7acd.js` · offset 188995142 · sha256 `5a68c592…`
+Source: `chunk-acxptg39.js` · offset 190189235 · sha256 `5a68c592…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1067,7 +1067,7 @@ Manage allow and deny tool permission rules
 
 ### /plan
 
-Source: `chunk-mphp7acd.js` · offset 188995297 · sha256 `5d041f82…`
+Source: `chunk-acxptg39.js` · offset 190189390 · sha256 `5d041f82…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1081,7 +1081,7 @@ Enable plan mode or view the current session plan
 
 ### /plugin
 
-Source: `chunk-mphp7acd.js` · offset 188998032 · sha256 `4ddd75bf…`
+Source: `chunk-acxptg39.js` · offset 190192125 · sha256 `4ddd75bf…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1095,7 +1095,7 @@ Manage Claude Code plugins
 
 ### /powerup
 
-Source: `chunk-mphp7acd.js` · offset 188571633 · sha256 `08c74ce2…`
+Source: `chunk-acxptg39.js` · offset 189756677 · sha256 `08c74ce2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1107,7 +1107,7 @@ Discover Claude Code features through quick interactive lessons
 
 ### /privacy-settings
 
-Source: `chunk-mphp7acd.js` · offset 188996207 · sha256 `787e5dc1…`
+Source: `chunk-acxptg39.js` · offset 190190300 · sha256 `787e5dc1…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1121,7 +1121,7 @@ View and update your privacy settings
 
 ### /radio
 
-Source: `chunk-mphp7acd.js` · offset 189003173 · sha256 `387887d0…`
+Source: `chunk-acxptg39.js` · offset 190197266 · sha256 `387887d0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1133,7 +1133,7 @@ Listen to Claude FM lo-fi radio
 
 ### /rate-limit-options
 
-Source: `chunk-mphp7acd.js` · offset 189009015 · sha256 `1b2d6d5f…`
+Source: `chunk-acxptg39.js` · offset 190205366 · sha256 `1b2d6d5f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1147,7 +1147,7 @@ Manage usage limits and upgrade options
 
 ### /recap
 
-Source: `chunk-rn3w8nt5.js` · offset 200192376 · sha256 `21ea02a9…`
+Source: `chunk-720fjj0x.js` · offset 201485336 · sha256 `21ea02a9…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1159,7 +1159,7 @@ Generate a one-line session recap now
 
 ### /release-notes
 
-Source: `chunk-mphp7acd.js` · offset 188571739 · sha256 `d3750dfd…`
+Source: `chunk-acxptg39.js` · offset 189756783 · sha256 `d3750dfd…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1171,7 +1171,7 @@ View release notes
 
 ### /reload-plugins
 
-Source: `chunk-mphp7acd.js` · offset 188998292 · sha256 `277cd7ff…`
+Source: `chunk-acxptg39.js` · offset 190192385 · sha256 `277cd7ff…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1185,7 +1185,7 @@ Activate pending plugin changes in the current session
 
 ### /reload-skills
 
-Source: `chunk-mphp7acd.js` · offset 188998571 · sha256 `3b405e96…`
+Source: `chunk-acxptg39.js` · offset 190192664 · sha256 `3b405e96…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1195,9 +1195,9 @@ Type: `local`
 Pick up skills added or changed on disk during this session
 ~~~~~~
 
-### /remote-control (definition 1 of 2, `chunk-vkbm40jn.js`)
+### /remote-control (definition 1 of 2, `chunk-thhpcs9s.js`)
 
-Source: `chunk-vkbm40jn.js` · offset 200213237 · sha256 `dd4de7ef…`
+Source: `chunk-thhpcs9s.js` · offset 201469284 · sha256 `7640a2d3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1211,11 +1211,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-vkbm40jn.js` offset 200213237.
+Undocumented; read at `chunk-thhpcs9s.js` offset 201469284.
 
-### /remote-control (definition 2 of 2, `chunk-mphp7acd.js`)
+### /remote-control (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005335 · sha256 `dc8b8572…`
+Source: `chunk-acxptg39.js` · offset 190199428 · sha256 `dc8b8572…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1229,7 +1229,7 @@ Control this session from your phone or claude.ai/code
 
 ### /remote-env
 
-Source: `chunk-mphp7acd.js` · offset 189007117 · sha256 `e4a76f28…`
+Source: `chunk-acxptg39.js` · offset 190203468 · sha256 `e4a76f28…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1243,9 +1243,9 @@ isHidden: computed at runtime
 Choose the default environment for cloud agents
 ~~~~~~
 
-### /rename (definition 1 of 2, `chunk-mphp7acd.js`)
+### /rename (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188571894 · sha256 `791d99d5…`
+Source: `chunk-acxptg39.js` · offset 189756938 · sha256 `791d99d5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1259,9 +1259,9 @@ Argument hint: `[name]`
 Rename the current conversation
 ~~~~~~
 
-### /rename (definition 2 of 2, `chunk-mphp7acd.js`)
+### /rename (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188572119 · sha256 `791d99d5…`
+Source: `chunk-acxptg39.js` · offset 189757163 · sha256 `791d99d5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1279,9 +1279,44 @@ isHidden: computed at runtime
 Rename the current conversation
 ~~~~~~
 
+### /restart
+
+Source: `chunk-acxptg39.js` · offset 190202609 · sha256 `8e88e3f1…`
+
+Status: undocumented
+
+Type: `local`
+
+Aliases: `/update`
+
+isEnabled: computed at runtime
+
+isHidden: computed at runtime
+
+Description: computed (getter).
+
+~~~~~~text
+{{expr:if (e.kind==="newer"||e.kind==="older")&&bun()===void 0 …}}
+~~~~~~
+
+Conditional fragments:
+
+- `{{expr:if (e.kind==="newer"||e.kind==="older")&&bun()===void 0 …}}`
+  - if true:
+
+~~~~~~text
+Restart on {{expr:e.version}} and keep this session
+~~~~~~
+
+  - if false:
+
+~~~~~~text
+Restart Claude Code and keep this session
+~~~~~~
+
 ### /resume
 
-Source: `chunk-mphp7acd.js` · offset 188572333 · sha256 `1dd9caf3…`
+Source: `chunk-acxptg39.js` · offset 189757377 · sha256 `1dd9caf3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1297,7 +1332,7 @@ Resume a previous conversation
 
 ### /rewind
 
-Source: `chunk-mphp7acd.js` · offset 188998770 · sha256 `b04bc5f5…`
+Source: `chunk-acxptg39.js` · offset 190192863 · sha256 `b04bc5f5…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1311,7 +1346,7 @@ Restore the code and/or conversation to a previous point
 
 ### /sandbox
 
-Source: `chunk-mphp7acd.js` · offset 189001944 · sha256 `0a2167ae…`
+Source: `chunk-acxptg39.js` · offset 190196037 · sha256 `558d7fb2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1321,11 +1356,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189001944.
+Undocumented; read at `chunk-acxptg39.js` offset 190196037.
 
-### /schedule (definition 2 of 2, `chunk-mphp7acd.js`)
+### /schedule (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005495 · sha256 `9e19563c…`
+Source: `chunk-acxptg39.js` · offset 190199588 · sha256 `9e19563c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1339,7 +1374,7 @@ Create and manage scheduled remote Claude Code agents
 
 ### /scroll-speed
 
-Source: `chunk-mphp7acd.js` · offset 188573742 · sha256 `35d4450c…`
+Source: `chunk-acxptg39.js` · offset 189758786 · sha256 `35d4450c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1353,7 +1388,7 @@ Adjust mouse wheel scroll speed
 
 ### /session
 
-Source: `chunk-mphp7acd.js` · offset 188573463 · sha256 `d22023b6…`
+Source: `chunk-acxptg39.js` · offset 189758507 · sha256 `d22023b6…`
 
 Status: undocumented
 
@@ -1371,7 +1406,7 @@ Show cloud session URL and QR code
 
 ### /setup-bedrock
 
-Source: `chunk-mphp7acd.js` · offset 188572503 · sha256 `9049309c…`
+Source: `chunk-acxptg39.js` · offset 189757547 · sha256 `9049309c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1387,7 +1422,7 @@ Reconfigure Amazon Bedrock authentication, region, or model pins
 
 ### /setup-vertex
 
-Source: `chunk-mphp7acd.js` · offset 188572715 · sha256 `f1f7ad1b…`
+Source: `chunk-acxptg39.js` · offset 189757759 · sha256 `f1f7ad1b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1401,9 +1436,9 @@ isHidden: gated (condition references `CLAUDE_CODE_USE_VERTEX`)
 Reconfigure Google Vertex AI authentication, project, region, or model pins
 ~~~~~~
 
-### /skill-doctor (definition 1 of 2, `chunk-mphp7acd.js`)
+### /skill-doctor (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188994419 · sha256 `15b184c7…`
+Source: `chunk-acxptg39.js` · offset 190188512 · sha256 `15b184c7…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1413,9 +1448,9 @@ Type: `local-jsx`
 Show which loaded skills are unused and costing context
 ~~~~~~
 
-### /skill-doctor (definition 2 of 2, `chunk-mphp7acd.js`)
+### /skill-doctor (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188994567 · sha256 `15b184c7…`
+Source: `chunk-acxptg39.js` · offset 190188660 · sha256 `15b184c7…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1431,7 +1466,7 @@ Show which loaded skills are unused and costing context
 
 ### /skills
 
-Source: `chunk-mphp7acd.js` · offset 188573949 · sha256 `f64e79c7…`
+Source: `chunk-acxptg39.js` · offset 189758994 · sha256 `f64e79c7…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1443,7 +1478,7 @@ List available skills
 
 ### /status
 
-Source: `chunk-mphp7acd.js` · offset 188574084 · sha256 `caac99e2…`
+Source: `chunk-acxptg39.js` · offset 189759129 · sha256 `caac99e2…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1455,7 +1490,7 @@ Show Claude Code status including version, model, account, API connectivity, and
 
 ### /stickers
 
-Source: `chunk-mphp7acd.js` · offset 189003012 · sha256 `8350767b…`
+Source: `chunk-acxptg39.js` · offset 190197105 · sha256 `8350767b…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1465,9 +1500,9 @@ Type: `local`
 Order Claude Code stickers
 ~~~~~~
 
-### /stop (definition 1 of 2, `chunk-h9sep61k.js`)
+### /stop (definition 1 of 2, `chunk-g1kvwm8q.js`)
 
-Source: `chunk-h9sep61k.js` · offset 200155021 · sha256 `251d8826…`
+Source: `chunk-g1kvwm8q.js` · offset 201414122 · sha256 `251d8826…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1479,9 +1514,9 @@ isEnabled: computed at runtime
 Stop this background session; transcript and worktree are kept
 ~~~~~~
 
-### /stop (definition 2 of 2, `chunk-h9sep61k.js`)
+### /stop (definition 2 of 2, `chunk-g1kvwm8q.js`)
 
-Source: `chunk-h9sep61k.js` · offset 200155179 · sha256 `251d8826…`
+Source: `chunk-g1kvwm8q.js` · offset 201414280 · sha256 `251d8826…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1495,7 +1530,7 @@ Stop this background session; transcript and worktree are kept
 
 ### /subtask
 
-Source: `chunk-mphp7acd.js` · offset 188997192 · sha256 `9b550321…`
+Source: `chunk-acxptg39.js` · offset 190191285 · sha256 `9b550321…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1511,7 +1546,7 @@ Send a subagent off with your full context; its result comes back here
 
 ### /tasks
 
-Source: `chunk-mphp7acd.js` · offset 188574291 · sha256 `765d4e9f…`
+Source: `chunk-acxptg39.js` · offset 189759336 · sha256 `765d4e9f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1523,9 +1558,9 @@ Aliases: `/bashes`
 View and manage everything running in the background
 ~~~~~~
 
-### /teleport (definition 1 of 2, `chunk-mphp7acd.js`)
+### /teleport (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188587883 · sha256 `65374137…`
+Source: `chunk-acxptg39.js` · offset 189772939 · sha256 `65374137…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1541,9 +1576,9 @@ isHidden: computed at runtime
 Send this session to the cloud, or resume one from claude.ai
 ~~~~~~
 
-### /teleport (definition 2 of 2, `chunk-mphp7acd.js`)
+### /teleport (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005217 · sha256 `65374137…`
+Source: `chunk-acxptg39.js` · offset 190199310 · sha256 `65374137…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1557,7 +1592,7 @@ Send this session to the cloud, or resume one from claude.ai
 
 ### /terminal-setup
 
-Source: `chunk-mphp7acd.js` · offset 188608139 · sha256 `06d6b3d0…`
+Source: `chunk-acxptg39.js` · offset 189793195 · sha256 `2b691cbb…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1565,11 +1600,11 @@ Type: `local-jsx`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188608139.
+Undocumented; read at `chunk-acxptg39.js` offset 189793195.
 
 ### /theme
 
-Source: `chunk-mphp7acd.js` · offset 188994831 · sha256 `54b7e334…`
+Source: `chunk-acxptg39.js` · offset 190188924 · sha256 `54b7e334…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1581,7 +1616,7 @@ Change the theme
 
 ### /tui
 
-Source: `chunk-mphp7acd.js` · offset 188994960 · sha256 `0b642684…`
+Source: `chunk-acxptg39.js` · offset 190189053 · sha256 `0b642684…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1593,9 +1628,9 @@ Argument hint: `[default|fullscreen]`
 Set the terminal UI renderer (default | fullscreen)
 ~~~~~~
 
-### /ultraplan (definition 1 of 2, `chunk-mphp7acd.js`)
+### /ultraplan (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188993597 · sha256 `502aeb75…`
+Source: `chunk-acxptg39.js` · offset 190187690 · sha256 `cf2b8af4…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1607,11 +1642,11 @@ isEnabled: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188993597.
+Undocumented; read at `chunk-acxptg39.js` offset 190187690.
 
-### /ultraplan (definition 2 of 2, `chunk-mphp7acd.js`)
+### /ultraplan (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005014 · sha256 `bc843114…`
+Source: `chunk-acxptg39.js` · offset 190199107 · sha256 `bc843114…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1621,9 +1656,9 @@ Type: `local (built by a command factory)`
 A cloud session drafts a plan you can edit and approve
 ~~~~~~
 
-### /ultrareview (definition 1 of 3, `chunk-mphp7acd.js`)
+### /ultrareview (definition 1 of 3, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188573103 · sha256 `648caf9a…`
+Source: `chunk-acxptg39.js` · offset 189758147 · sha256 `58df87f3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1633,11 +1668,11 @@ isEnabled: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188573103.
+Undocumented; read at `chunk-acxptg39.js` offset 189758147.
 
-### /ultrareview (definition 2 of 3, `chunk-mphp7acd.js`)
+### /ultrareview (definition 2 of 3, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188573196 · sha256 `70fd0c0a…`
+Source: `chunk-acxptg39.js` · offset 189758240 · sha256 `d4f5f59e…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1649,11 +1684,11 @@ isHidden: computed at runtime
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188573196.
+Undocumented; read at `chunk-acxptg39.js` offset 189758240.
 
-### /ultrareview (definition 3 of 3, `chunk-mphp7acd.js`)
+### /ultrareview (definition 3 of 3, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189005108 · sha256 `414688ad…`
+Source: `chunk-acxptg39.js` · offset 190199201 · sha256 `414688ad…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1665,7 +1700,7 @@ Find and verify bugs in your branch using a cloud session
 
 ### /upgrade
 
-Source: `chunk-mphp7acd.js` · offset 189007913 · sha256 `434669de…`
+Source: `chunk-acxptg39.js` · offset 190204264 · sha256 `434669de…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1677,9 +1712,9 @@ isEnabled: computed at runtime
 Upgrade to Max for higher rate limits and more Opus
 ~~~~~~
 
-### /usage (definition 1 of 2, `chunk-mphp7acd.js`)
+### /usage (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188993925 · sha256 `258bee07…`
+Source: `chunk-acxptg39.js` · offset 190188018 · sha256 `258bee07…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1691,9 +1726,9 @@ Aliases: `/cost`, `/stats`
 Show session cost, plan usage, and activity stats
 ~~~~~~
 
-### /usage (definition 2 of 2, `chunk-mphp7acd.js`)
+### /usage (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188994140 · sha256 `c9d6e91c…`
+Source: `chunk-acxptg39.js` · offset 190188233 · sha256 `c9d6e91c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1709,9 +1744,9 @@ isHidden: computed at runtime
 Show session cost, plan usage, and what's contributing to your limits
 ~~~~~~
 
-### /usage-credits (definition 1 of 2, `chunk-mphp7acd.js`)
+### /usage-credits (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189008092 · sha256 `1db112fa…`
+Source: `chunk-acxptg39.js` · offset 190204443 · sha256 `1db112fa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1723,9 +1758,9 @@ isEnabled: computed at runtime
 Configure usage credits or request them from your admin when you hit a limit
 ~~~~~~
 
-### /usage-credits (definition 2 of 2, `chunk-mphp7acd.js`)
+### /usage-credits (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189008293 · sha256 `1db112fa…`
+Source: `chunk-acxptg39.js` · offset 190204644 · sha256 `1db112fa…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1739,9 +1774,9 @@ isHidden: computed at runtime
 Configure usage credits or request them from your admin when you hit a limit
 ~~~~~~
 
-### /version (definition 1 of 2, `chunk-mphp7acd.js`)
+### /version (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 188999664 · sha256 `a6a03726…`
+Source: `chunk-acxptg39.js` · offset 190193757 · sha256 `a6a03726…`
 
 Status: undocumented
 
@@ -1753,9 +1788,9 @@ isEnabled: `false`
 Show this session's version (autoupdate may have a newer one)
 ~~~~~~
 
-### /version (definition 2 of 2, `chunk-mphp7acd.js`)
+### /version (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189001341 · sha256 `52d48b4d…`
+Source: `chunk-acxptg39.js` · offset 190195434 · sha256 `52d48b4d…`
 
 Status: undocumented
 
@@ -1771,7 +1806,7 @@ Print the version this session is running (not what autoupdate downloaded)
 
 ### /voice
 
-Source: `chunk-mphp7acd.js` · offset 188571389 · sha256 `bb20d74f…`
+Source: `chunk-acxptg39.js` · offset 189756433 · sha256 `bb20d74f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1787,7 +1822,7 @@ Toggle voice mode
 
 ### /web-setup
 
-Source: `chunk-hhbs19e8.js` · offset 185678330 · sha256 `23d3eee0…`
+Source: `chunk-8ztnvmee.js` · offset 186798009 · sha256 `23d3eee0…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1803,7 +1838,7 @@ Set up cloud sessions with your GitHub account
 
 ### /wellbeing
 
-Source: `chunk-mphp7acd.js` · offset 189015953 · sha256 `a76d5c4a…`
+Source: `chunk-acxptg39.js` · offset 190212304 · sha256 `a76d5c4a…`
 
 Status: undocumented
 
@@ -1819,7 +1854,7 @@ Configure optional break reminders and quiet-hours nudges
 
 ### /workflows
 
-Source: `chunk-gyrwxswa.js` · offset 200198398 · sha256 `1b3ac0ef…`
+Source: `chunk-xhnk3bn4.js` · offset 201454328 · sha256 `1b3ac0ef…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1835,7 +1870,7 @@ Browse running and completed workflows
 
 ### /init
 
-Source: `chunk-mphp7acd.js` · offset 188568514 · sha256 `750aa7bd…`
+Source: `chunk-acxptg39.js` · offset 189753558 · sha256 `a0b0447c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1843,11 +1878,11 @@ Type: `prompt`
 
 Description: computed (getter).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188568514.
+Undocumented; read at `chunk-acxptg39.js` offset 189753558.
 
-### /insights (definition 1 of 2, `chunk-q5ps74rj.js`)
+### /insights (definition 1 of 2, `chunk-5eye4ds6.js`)
 
-Source: `chunk-q5ps74rj.js` · offset 198316210 · sha256 `6a39fdb6…`
+Source: `chunk-5eye4ds6.js` · offset 199582901 · sha256 `6a39fdb6…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1857,9 +1892,9 @@ Type: `prompt`
 Generate a report analyzing your Claude Code sessions
 ~~~~~~
 
-### /insights (definition 2 of 2, `chunk-mphp7acd.js`)
+### /insights (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189019315 · sha256 `6a39fdb6…`
+Source: `chunk-acxptg39.js` · offset 190215666 · sha256 `6a39fdb6…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1871,7 +1906,7 @@ Generate a report analyzing your Claude Code sessions
 
 ### /security-review
 
-Source: `chunk-mphp7acd.js` · offset 188607063 · sha256 `61328990…`
+Source: `chunk-acxptg39.js` · offset 189792119 · sha256 `61328990…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1883,7 +1918,7 @@ Complete a security review of the pending changes on the current branch
 
 ### /statusline
 
-Source: `chunk-mphp7acd.js` · offset 189014368 · sha256 `05088293…`
+Source: `chunk-acxptg39.js` · offset 190210719 · sha256 `05088293…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1895,7 +1930,7 @@ Set up Claude Code's status line UI
 
 ### /team-onboarding
 
-Source: `chunk-mphp7acd.js` · offset 188586774 · sha256 `0afdbc6f…`
+Source: `chunk-acxptg39.js` · offset 189771828 · sha256 `0afdbc6f…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -1911,7 +1946,7 @@ Help teammates ramp on Claude Code with a guide from your usage
 
 ### /artifact-capabilities
 
-Source: `chunk-2fn6341y.js` · offset 194583957 · sha256 `38bc300a…`
+Source: `chunk-t25zfnms.js` · offset 195763494 · sha256 `a1c83115…`
 
 Status: undocumented
 
@@ -1924,12 +1959,12 @@ userInvocable: `true`
 Menu description: Runtime capabilities for published Artifacts
 
 ~~~~~~text
-Runtime capabilities a published Artifact page can be granted — behavior static HTML cannot provide on its own, such as the page reading live or connected data, remembering what people do on it (a poll, a sign-up sheet, a checklist, a document edited in place — it saves new versions of itself), keeping state shared across viewers, knowing who is viewing, asking Claude a question of its own, storing files people add, or handing the viewer a file to save. Serves this user's live capability roster and the typed call definitions. Load it whenever any such runtime behavior would make an artifact more useful, before writing the page.
+Runtime capabilities a published Artifact page can be granted — behavior static HTML cannot provide on its own, such as the page reading live or connected data, remembering what people do on it (a poll, a sign-up sheet, a checklist, a document edited in place — it saves new versions of itself), keeping state shared across viewers, knowing who is viewing, asking Claude a question of its own, storing files people add, handing the viewer a file to save, or using the viewer's camera, microphone, location, screen or device motion. Serves this user's live capability roster and the typed call definitions. Load it whenever any such runtime behavior would make an artifact more useful, before writing the page.
 ~~~~~~
 
 ### /artifact-components
 
-Source: `chunk-2fn6341y.js` · offset 194587420 · sha256 `75f8404b…`
+Source: `chunk-t25zfnms.js` · offset 195767031 · sha256 `75f8404b…`
 
 Status: undocumented
 
@@ -1947,7 +1982,7 @@ Embed reusable artifact components in any HTML artifact - first entry: the works
 
 ### /artifact-design
 
-Source: `chunk-2fn6341y.js` · offset 194588154 · sha256 `bf8ecec6…`
+Source: `chunk-t25zfnms.js` · offset 195767765 · sha256 `bf8ecec6…`
 
 Status: undocumented
 
@@ -1963,7 +1998,7 @@ Design guidance and fundamentals for Artifacts.
 
 ### /artifact-diagramming
 
-Source: `chunk-2fn6341y.js` · offset 194588912 · sha256 `12a6cbe2…`
+Source: `chunk-t25zfnms.js` · offset 195768523 · sha256 `12a6cbe2…`
 
 Status: undocumented
 
@@ -1981,7 +2016,7 @@ Diagramming know-how for Artifacts - when a picture earns its place, how to draw
 
 ### /artifact-pr-review
 
-Source: `chunk-2fn6341y.js` · offset 194759420 · sha256 `874f010b…`
+Source: `chunk-t25zfnms.js` · offset 195942222 · sha256 `874f010b…`
 
 Status: undocumented
 
@@ -1999,7 +2034,7 @@ Publish a PR review briefing Artifact from a template
 
 ### /batch
 
-Source: `chunk-2fn6341y.js` · offset 194598841 · sha256 `fb256681…`
+Source: `chunk-t25zfnms.js` · offset 195778452 · sha256 `fb256681…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2015,7 +2050,7 @@ Research and plan a large-scale change, then execute it in parallel across 5–3
 
 ### /claude-api
 
-Source: `chunk-zdgdcm9y.js` · offset 194534752 · sha256 `03b11ab9…`
+Source: `chunk-bpsvtbsr.js` · offset 195714289 · sha256 `03b11ab9…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2033,7 +2068,7 @@ Build and debug apps that use the Claude API
 
 ### /claude-code-docs
 
-Source: `chunk-kwarrhht.js` · offset 211468808 · sha256 `55107626…`
+Source: `chunk-5rqrwppn.js` · offset 212847670 · sha256 `55107626…`
 
 Status: undocumented
 
@@ -2045,7 +2080,7 @@ userInvocable: `true`
 
 Menu description: Answer questions about Claude Code features and settings
 
-Interpolated constants (resolved from code): `P` = `"Answer questions about Claude Code itself: commands, flags, settings, hooks, skills, MCP servers, subagents, IDE integrations, sandboxing, deployment, and Claude Tag (Claude in Slack). Verifies against the running build before recommending any command, flag, or setting.\n"`
+Interpolated constants (resolved from code): `A` = `"Answer questions about Claude Code itself: commands, flags, settings, hooks, skills, MCP servers, subagents, IDE integrations, sandboxing, deployment, and Claude Tag (Claude in Slack). Verifies against the running build before recommending any command, flag, or setting.\n"`
 
 ~~~~~~text
 Answer questions about Claude Code features and settings
@@ -2053,7 +2088,7 @@ Answer questions about Claude Code features and settings
 
 ### /claude-in-chrome
 
-Source: `chunk-2fn6341y.js` · offset 194612999 · sha256 `4c33a9a9…`
+Source: `chunk-t25zfnms.js` · offset 195792619 · sha256 `4c33a9a9…`
 
 Status: undocumented
 
@@ -2071,7 +2106,7 @@ Automates your Chrome browser to interact with web pages - clicking elements, fi
 
 ### /code-review
 
-Source: `chunk-2fn6341y.js` · offset 194654190 · sha256 `1f74433d…`
+Source: `chunk-t25zfnms.js` · offset 195836549 · sha256 `1f74433d…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2089,7 +2124,7 @@ Review the current diff or a PR for bugs and cleanups
 
 ### /commit
 
-Source: `chunk-2fn6341y.js` · offset 194658627 · sha256 `3aa45708…`
+Source: `chunk-t25zfnms.js` · offset 195841315 · sha256 `3aa45708…`
 
 Status: documented at https://code.claude.com/docs/en/skills
 
@@ -2107,7 +2142,7 @@ Create a git commit. Use whenever you are about to create a commit, whether the 
 
 ### /cowork-plugin
 
-Source: `chunk-2fn6341y.js` · offset 194659386 · sha256 `a4ecae0f…`
+Source: `chunk-t25zfnms.js` · offset 195842089 · sha256 `a4ecae0f…`
 
 Status: undocumented
 
@@ -2123,7 +2158,7 @@ Create a new Cowork plugin from scratch, or customize an installed plugin for a 
 
 ### /dataviz
 
-Source: `chunk-2fn6341y.js` · offset 194660136 · sha256 `c2588db3…`
+Source: `chunk-t25zfnms.js` · offset 195842839 · sha256 `c2588db3…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2139,7 +2174,7 @@ Use this skill whenever you are about to create ANY chart, graph, plot, dashboar
 
 ### /debug
 
-Source: `chunk-2fn6341y.js` · offset 194662095 · sha256 `97be86ab…`
+Source: `chunk-t25zfnms.js` · offset 195844798 · sha256 `97be86ab…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2155,7 +2190,7 @@ Enable debug logging for this session and help diagnose issues
 
 ### /design
 
-Source: `chunk-2fn6341y.js` · offset 194671270 · sha256 `a79dc6cf…`
+Source: `chunk-t25zfnms.js` · offset 195853973 · sha256 `68510aba…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2165,11 +2200,11 @@ isEnabled: computed at runtime
 
 userInvocable: `true`
 
-Undocumented; read at `chunk-2fn6341y.js` offset 194671270.
+Undocumented; read at `chunk-t25zfnms.js` offset 195853973.
 
 ### /design-sync
 
-Source: `chunk-2fn6341y.js` · offset 194671778 · sha256 `54919f73…`
+Source: `chunk-t25zfnms.js` · offset 195854481 · sha256 `54919f73…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2187,7 +2222,7 @@ Push a React design system to claude.ai/design. This runs a converter that bundl
 
 ### /doctor
 
-Source: `chunk-2fn6341y.js` · offset 194721835 · sha256 `0ccc94fb…`
+Source: `chunk-t25zfnms.js` · offset 195904538 · sha256 `0ccc94fb…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2207,7 +2242,7 @@ Health-check the user's Claude Code setup and fix issues: diagnose installation 
 
 ### /explain-usage
 
-Source: `chunk-2fn6341y.js` · offset 194725724 · sha256 `5f8f4685…`
+Source: `chunk-t25zfnms.js` · offset 195908427 · sha256 `5f8f4685…`
 
 Status: undocumented
 
@@ -2225,7 +2260,7 @@ Explain where this session's tokens went, with one simple chart in plain languag
 
 ### /fewer-permission-prompts
 
-Source: `chunk-2fn6341y.js` · offset 194738030 · sha256 `3ee36c59…`
+Source: `chunk-t25zfnms.js` · offset 195920733 · sha256 `3ee36c59…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2241,7 +2276,7 @@ Scan your transcripts for common read-only Bash and MCP tool calls, then add a p
 
 ### /keybindings-help
 
-Source: `chunk-2fn6341y.js` · offset 194745063 · sha256 `4bddaa3f…`
+Source: `chunk-t25zfnms.js` · offset 195927865 · sha256 `4bddaa3f…`
 
 Status: undocumented
 
@@ -2257,7 +2292,7 @@ Use when the user wants to customize keyboard shortcuts, rebind keys, add chord 
 
 ### /loop
 
-Source: `chunk-dqrdkxtf.js` · offset 211413252 · sha256 `72070ca8…`
+Source: `chunk-xnf290a1.js` · offset 212791997 · sha256 `72070ca8…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2277,7 +2312,7 @@ Run a prompt or slash command on a recurring interval (e.g. /loop 5m /foo). Omit
 
 ### /memory-types
 
-Source: `chunk-2fn6341y.js` · offset 194747394 · sha256 `3b444f10…`
+Source: `chunk-t25zfnms.js` · offset 195930196 · sha256 `3b444f10…`
 
 Status: undocumented
 
@@ -2293,7 +2328,7 @@ Full reference for the memory type taxonomy — what each type captures, when to
 
 ### /pr
 
-Source: `chunk-2fn6341y.js` · offset 194757471 · sha256 `5988d897…`
+Source: `chunk-t25zfnms.js` · offset 195940273 · sha256 `5988d897…`
 
 Status: undocumented
 
@@ -2311,7 +2346,7 @@ Create a GitHub pull request. Use whenever you are about to open a PR, whether t
 
 ### /prototype
 
-Source: `chunk-2fn6341y.js` · offset 194752548 · sha256 `842294d8…`
+Source: `chunk-t25zfnms.js` · offset 195935350 · sha256 `842294d8…`
 
 Status: undocumented
 
@@ -2329,7 +2364,7 @@ Turn an idea into a working proof of concept and publish it as an Artifact - a s
 
 ### /run
 
-Source: `chunk-6z96ynrf.js` · offset 211376822 · sha256 `fea68146…`
+Source: `chunk-8m7gzmny.js` · offset 212755450 · sha256 `fea68146…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2345,7 +2380,7 @@ Launch and drive this project's app to see a change working. Use when asked to r
 
 ### /run-skill-generator
 
-Source: `chunk-wad1vbsf.js` · offset 211383387 · sha256 `df8af926…`
+Source: `chunk-h74ws8r9.js` · offset 212762054 · sha256 `df8af926…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2359,9 +2394,9 @@ Menu description: Create a skill that knows how to run this project’s app
 Author or improve the run-<unit> skill - a per-project skill that tells agents how to build, launch, and drive this project's app. Use when the user asks to set up the project, get it running, write run instructions, or verify build/run steps work from a clean environment.
 ~~~~~~
 
-### /schedule (definition 1 of 2, `chunk-bcfxbfj5.js`)
+### /schedule (definition 1 of 2, `chunk-9ffnskcj.js`)
 
-Source: `chunk-bcfxbfj5.js` · offset 211446089 · sha256 `cef7f886…`
+Source: `chunk-9ffnskcj.js` · offset 212824873 · sha256 `cef7f886…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2381,7 +2416,7 @@ Create, update, list, or run scheduled cloud agents (routines) that execute on a
 
 ### /setup-claude
 
-Source: `chunk-n9fj1wcy.js` · offset 211390111 · sha256 `5342f75d…`
+Source: `chunk-e0s7zxhr.js` · offset 212768817 · sha256 `5342f75d…`
 
 Status: undocumented
 
@@ -2401,7 +2436,7 @@ Guided setup — pick a role, install a matching plugin, try a skill, connect to
 
 ### /simplify
 
-Source: `chunk-2fn6341y.js` · offset 194762942 · sha256 `ff580043…`
+Source: `chunk-t25zfnms.js` · offset 195945744 · sha256 `ff580043…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2417,7 +2452,7 @@ Review the changed code for reuse, simplification, efficiency, and altitude clea
 
 ### /update-config
 
-Source: `chunk-2fn6341y.js` · offset 194790655 · sha256 `813bb0ef…`
+Source: `chunk-t25zfnms.js` · offset 195973457 · sha256 `813bb0ef…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2433,7 +2468,7 @@ Use this skill to configure the Claude Code harness via settings.json. Automated
 
 ### /verify
 
-Source: `chunk-2fn6341y.js` · offset 194792036 · sha256 `230c901a…`
+Source: `chunk-t25zfnms.js` · offset 195974838 · sha256 `230c901a…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2447,7 +2482,7 @@ Verify that a code change actually does what it's supposed to by exercising it e
 
 ### /whiteboard
 
-Source: `chunk-2fn6341y.js` · offset 194752065 · sha256 `7d8425ff…`
+Source: `chunk-t25zfnms.js` · offset 195934867 · sha256 `7d8425ff…`
 
 Status: undocumented
 
@@ -2465,7 +2500,7 @@ Pair on a whiteboard artifact — you draw, Claude answers on it
 
 ### /workflow-authoring
 
-Source: `chunk-zbpznvsx.js` · offset 208570799 · sha256 `bfc1fc80…`
+Source: `chunk-ck0p9pab.js` · offset 209912854 · sha256 `a058179c…`
 
 Status: documented at https://code.claude.com/docs/en/commands
 
@@ -2477,7 +2512,7 @@ userInvocable: `true`
 
 Menu description: Load the reference for writing Workflow tool scripts
 
-Interpolated constants (resolved from code): `Fd` = `"Workflow"`
+Interpolated constants (resolved from code): `Ud` = `"Workflow"`
 
 ~~~~~~text
 Reference for writing a Workflow tool script (script API and gotchas, resume, quality patterns, worked examples). Load before authoring a script for a workflow the user already opted into; it does not itself authorize running one.
@@ -2485,7 +2520,7 @@ Reference for writing a Workflow tool script (script API and gotchas, resume, qu
 
 ### /workshop
 
-Source: `chunk-2fn6341y.js` · offset 194586441 · sha256 `ce7c51c9…`
+Source: `chunk-t25zfnms.js` · offset 195766052 · sha256 `ce7c51c9…`
 
 Status: undocumented
 
@@ -2505,7 +2540,7 @@ Build a design together with the user, one decision at a time - publish an evolv
 
 ### /__remote-workflow
 
-Source: `chunk-mphp7acd.js` · offset 189007319 · sha256 `d8310700…`
+Source: `chunk-acxptg39.js` · offset 190203670 · sha256 `d8310700…`
 
 Status: hidden; undocumented
 
@@ -2519,7 +2554,7 @@ Run the workflow script delivered in this session environment (server-launched s
 
 ### /agents
 
-Source: `chunk-mphp7acd.js` · offset 188997756 · sha256 `87d89e75…`
+Source: `chunk-acxptg39.js` · offset 190191849 · sha256 `87d89e75…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2533,7 +2568,7 @@ isHidden: `true`
 
 ### /design-consent
 
-Source: `chunk-mphp7acd.js` · offset 188569172 · sha256 `96319895…`
+Source: `chunk-acxptg39.js` · offset 189754216 · sha256 `96319895…`
 
 Status: hidden; undocumented
 
@@ -2549,7 +2584,7 @@ Grant Claude agent access to your Design projects
 
 ### /design-revoke
 
-Source: `chunk-mphp7acd.js` · offset 188569398 · sha256 `5ad6f04f…`
+Source: `chunk-acxptg39.js` · offset 189754442 · sha256 `5ad6f04f…`
 
 Status: hidden; undocumented
 
@@ -2563,9 +2598,9 @@ isHidden: `true`
 Revoke Claude agent access to your Design projects
 ~~~~~~
 
-### /extra-usage (definition 1 of 2, `chunk-mphp7acd.js`)
+### /extra-usage (definition 1 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189008529 · sha256 `bb0a165d…`
+Source: `chunk-acxptg39.js` · offset 190204880 · sha256 `bb0a165d…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2579,9 +2614,9 @@ isHidden: `true`
 Renamed to /usage-credits
 ~~~~~~
 
-### /extra-usage (definition 2 of 2, `chunk-mphp7acd.js`)
+### /extra-usage (definition 2 of 2, `chunk-acxptg39.js`)
 
-Source: `chunk-mphp7acd.js` · offset 189008689 · sha256 `bb0a165d…`
+Source: `chunk-acxptg39.js` · offset 190205040 · sha256 `bb0a165d…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2597,7 +2632,7 @@ Renamed to /usage-credits
 
 ### /heapdump
 
-Source: `chunk-mphp7acd.js` · offset 188999074 · sha256 `35cf05a5…`
+Source: `chunk-acxptg39.js` · offset 190193167 · sha256 `35cf05a5…`
 
 Status: hidden; documented at https://code.claude.com/docs/en/commands
 
@@ -2611,7 +2646,7 @@ Dump the JS heap to the Desktop; on Linux with no Desktop folder, the home direc
 
 ### /pro-trial-expired
 
-Source: `chunk-mphp7acd.js` · offset 189008868 · sha256 `f99c8fe6…`
+Source: `chunk-acxptg39.js` · offset 190205219 · sha256 `f99c8fe6…`
 
 Status: hidden; undocumented
 
@@ -2623,27 +2658,9 @@ isHidden: `true`
 Options shown when the Pro plan Claude Code trial has ended
 ~~~~~~
 
-### /update
-
-Source: `chunk-mphp7acd.js` · offset 189006250 · sha256 `f9869f8e…`
-
-Status: hidden; undocumented
-
-Type: `local`
-
-Aliases: `/restart`
-
-isEnabled: `false`
-
-isHidden: `true`
-
-~~~~~~text
-Switch to the latest version (conversation continues)
-~~~~~~
-
 ### /workflow-launch-exec
 
-Source: `chunk-mphp7acd.js` · offset 189007627 · sha256 `a690fa82…`
+Source: `chunk-acxptg39.js` · offset 190203978 · sha256 `a690fa82…`
 
 Status: hidden; undocumented
 

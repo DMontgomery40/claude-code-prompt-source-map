@@ -541,7 +541,17 @@
    "feeds": []
   },
   {
+   "id": "env-claude-ax-announcement-hold-ms",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-ax-prepark-ms",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-ax-rewrite-held-announcement",
    "status": "standalone",
    "feeds": []
   },
@@ -1043,7 +1053,7 @@
      "title": "Auto-compact window",
      "rung": "envWindow",
      "rank": 1,
-     "of": 10
+     "of": 12
     }
    ]
   },
@@ -1242,6 +1252,11 @@
   },
   {
    "id": "env-claude-code-config-probe",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-config-watch-events",
    "status": "pending",
    "feeds": []
   },
@@ -1535,6 +1550,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-disable-inline-shell-rm-prompt",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-disable-legacy-model-remap",
    "status": "standalone",
    "feeds": []
@@ -1665,6 +1685,11 @@
   {
    "id": "env-claude-code-disable-startup-work-gate",
    "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-disable-structured-outputs",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -2088,6 +2113,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-growthbook-kick-on-warm-cache",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-gzip-ccr-request-bodies",
    "status": "standalone",
    "feeds": []
@@ -2185,6 +2215,16 @@
   {
    "id": "env-claude-code-host-session-id",
    "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-host-worktree",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-claude-code-host-worktree-fence",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -3563,7 +3603,7 @@
   },
   {
    "id": "env-claude-internal-assistant-team-name",
-   "status": "standalone",
+   "status": "pending",
    "feeds": []
   },
   {
@@ -3760,7 +3800,7 @@
      "title": "Auto-compact window",
      "rung": "disableAutoCompact",
      "rank": 0,
-     "of": 10
+     "of": 12
     }
    ]
   },
@@ -3788,7 +3828,7 @@
      "title": "Auto-compact window",
      "rung": "disableCompact",
      "rank": 0,
-     "of": 10
+     "of": 12
     }
    ]
   },
@@ -4840,6 +4880,11 @@
    "feeds": []
   },
   {
+   "id": "env-claude-code-gzip-datadog-logs",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
    "id": "env-claude-code-otel-content-max-length",
    "status": "pending",
    "feeds": []
@@ -5102,6 +5147,11 @@
   },
   {
    "id": "env-ccr-agent-proxy-ca-cert-b64",
+   "status": "pending",
+   "feeds": []
+  },
+  {
+   "id": "env-ccr-agent-proxy-ca-watch-enabled",
    "status": "pending",
    "feeds": []
   },
@@ -6701,6 +6751,11 @@
    "feeds": []
   },
   {
+   "id": "env-set-claude-code-config-watch-events",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
    "id": "env-set-claude-code-container-id",
    "status": "set-only",
    "feeds": []
@@ -6762,6 +6817,11 @@
   },
   {
    "id": "env-set-claude-code-disable-plugin-forwarding",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-disable-structured-outputs",
    "status": "set-only",
    "feeds": []
   },
@@ -6952,6 +7012,16 @@
   },
   {
    "id": "env-set-claude-code-host-session-id",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-host-worktree",
+   "status": "set-only",
+   "feeds": []
+  },
+  {
+   "id": "env-set-claude-code-host-worktree-fence",
    "status": "set-only",
    "feeds": []
   },
@@ -9075,6 +9145,13 @@
    "status": "rung",
    "feeds": [
     {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "modelSettingWindow",
+     "rank": 3,
+     "of": 12
+    },
+    {
      "decision": "effort-level",
      "title": "Reasoning effort",
      "rung": "modelSettings",
@@ -10205,8 +10282,8 @@
      "decision": "auto-compact",
      "title": "Auto-compact window",
      "rung": "settingWindow",
-     "rank": 2,
-     "of": 10
+     "rank": 4,
+     "of": 12
     },
     {
      "decision": "settings-layers",
@@ -10298,7 +10375,7 @@
      "title": "Auto-compact window",
      "rung": "autoCompactSetting",
      "rank": 0,
-     "of": 10
+     "of": 12
     },
     {
      "decision": "settings-layers",
@@ -13585,8 +13662,16 @@
   },
   {
    "id": "cli-flag-autocompact",
-   "status": "standalone",
-   "feeds": []
+   "status": "rung",
+   "feeds": [
+    {
+     "decision": "auto-compact",
+     "title": "Auto-compact window",
+     "rung": "cli",
+     "rank": 2,
+     "of": 12
+    }
+   ]
   },
   {
    "id": "cli-flag-enable-auto-mode",
@@ -14850,6 +14935,31 @@
   },
   {
    "id": "cli-flag-project-purge-all",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-cmd-purge",
+   "status": "action",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-purge-dry-run",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-purge-yes",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-purge-interactive",
+   "status": "standalone",
+   "feeds": []
+  },
+  {
+   "id": "cli-flag-purge-all",
    "status": "standalone",
    "feeds": []
   },

@@ -1,6 +1,6 @@
 # Environment variables read by Claude Code
 
-Claude Code reads 1177 environment variables by name, plus 5 name patterns built at run time. 385 of the named variables are documented at code.claude.com and 792 are not. It also sets 467 variables for its own process, tools, hooks and other child processes; these are listed in their own section.
+Claude Code reads 1187 environment variables by name, plus 5 name patterns built at run time. 385 of the named variables are documented at code.claude.com and 802 are not. It also sets 471 variables for its own process, tools, hooks and other child processes; these are listed in their own section.
 
 A name counts as read when code reads it from `process.env`, through the typed env accessor, through a helper that takes the name, or by iterating a list of names into `process.env`. Names that only appear as strings, or are only written for child processes, are excluded. Documented means the name appears on the env-vars docs page or in a table row on another docs page.
 
@@ -27,7 +27,7 @@ Only step 5's BEDROCK variant depends on the provider. The per-model disables co
 
 ### `CLAUDE_CODE_PROMPT_CACHE_TTL`
 
-Source: `chunk-mphp7acd.js` · offset 187708673 · sha256 `ac07578b…`
+Source: `chunk-acxptg39.js` · offset 188864593 · sha256 `ac07578b…`
 
 Read as: enum (compared against fixed values). Values: `5m`, `1h`.
 
@@ -35,13 +35,13 @@ From code: Step 2 of TTL resolution, for main-conversation requests: the interac
 
 From docs: Set `5m` or `1h`, the only values Claude Code accepts, to choose the prompt cache TTL for the main conversation: your interactive, `-p`, and SDK turns, plus the helpers that run inline with them.
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBAGENT_CACHE_EVICT`
 
-Source: `chunk-mphp7acd.js` · offset 187814495 · sha256 `3f7f893f…`
+Source: `chunk-acxptg39.js` · offset 188971296 · sha256 `3f7f893f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -51,7 +51,7 @@ From code: Typed boolean. When truthy, and two internal capability checks pass, 
 
 ### `CLAUDE_CODE_SUBAGENT_PROMPT_CACHE_TTL`
 
-Source: `chunk-mphp7acd.js` · offset 187708704 · sha256 `48e6265c…`
+Source: `chunk-acxptg39.js` · offset 188864624 · sha256 `48e6265c…`
 
 Read as: enum (compared against fixed values). Values: `5m`, `1h`.
 
@@ -59,13 +59,13 @@ From code: Step 2 of TTL resolution, for every request that is not a main-conver
 
 From docs: Set `5m` or `1h`, the only values Claude Code accepts, to choose the prompt cache TTL for requests outside the main conversation, such as subagents, workflows, and background work.
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`
 
-Source: `chunk-jxy1fa30.js` · offset 198444236 · sha256 `ccab5fa7…`
+Source: `chunk-t65a4tk3.js` · offset 199711176 · sha256 `ccab5fa7…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
@@ -77,7 +77,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_PROMPT_CACHING`
 
-Source: `chunk-jxy1fa30.js` · offset 198444206 · sha256 `f7c692cd…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 188961014 · sha256 `f7c692cd…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -85,13 +85,13 @@ From code: When truthy, the check that decides whether a request gets prompt-cac
 
 From docs: Set to `1` to disable prompt caching for all models (takes precedence over per-model settings)
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_PROMPT_CACHING_FABLE`
 
-Source: `chunk-mphp7acd.js` · offset 187804888 · sha256 `68dddb81…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 188961349 · sha256 `68dddb81…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -99,13 +99,13 @@ From code: When truthy, the check that decides whether a request gets prompt-cac
 
 From docs: Set to `1` to disable prompt caching for Fable models
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_PROMPT_CACHING_HAIKU`
 
-Source: `chunk-mphp7acd.js` · offset 187804590 · sha256 `6d1a40ff…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 188961051 · sha256 `6d1a40ff…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -113,25 +113,25 @@ From code: When truthy, the check that decides whether a request gets prompt-cac
 
 From docs: Set to `1` to disable prompt caching for Haiku models
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_PROMPT_CACHING_MYTHOS`
 
-Source: `chunk-mphp7acd.js` · offset 187804949 · sha256 `def68dd6…`
+Source: `chunk-acxptg39.js` · offset 188961410 · sha256 `def68dd6…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
 From code: Typed boolean. When truthy, the check that decides whether a request gets prompt-cache markers returns false when the model ID contains "claude-mythos-". The "Prompt caching off" warning notice does not list it.
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 **Undocumented**
 
 ### `DISABLE_PROMPT_CACHING_OPUS`
 
-Source: `chunk-mphp7acd.js` · offset 187804825 · sha256 `d6bb0579…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 188961286 · sha256 `d6bb0579…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -139,13 +139,13 @@ From code: When truthy, the check that decides whether a request gets prompt-cac
 
 From docs: Set to `1` to disable prompt caching for Opus models
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_PROMPT_CACHING_SONNET`
 
-Source: `chunk-mphp7acd.js` · offset 187804760 · sha256 `4dfe1b5a…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 188961221 · sha256 `4dfe1b5a…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -153,13 +153,13 @@ From code: When truthy, the check that decides whether a request gets prompt-cac
 
 From docs: Set to `1` to disable prompt caching for Sonnet models
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ENABLE_PROMPT_CACHING_1H`
 
-Source: `chunk-mphp7acd.js` · offset 187708961 · sha256 `2c1b2543…`
+Source: `chunk-acxptg39.js` · offset 188864881 · sha256 `2c1b2543…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -167,13 +167,13 @@ From code: Step 5 of TTL resolution. When truthy, requests with no FORCE_PROMPT_
 
 From docs: Set to `1` to request a 1-hour prompt cache TTL instead of the default 5 minutes.
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ENABLE_PROMPT_CACHING_1H_BEDROCK`
 
-Source: `chunk-mphp7acd.js` · offset 187709007 · sha256 `805c531a…`
+Source: `chunk-acxptg39.js` · offset 188864927 · sha256 `805c531a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -181,13 +181,13 @@ From code: Step 5 of TTL resolution. Has the same effect as ENABLE_PROMPT_CACHIN
 
 From docs: Deprecated.
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
 ### `FORCE_PROMPT_CACHING_5M`
 
-Source: `chunk-mphp7acd.js` · offset 187708591 · sha256 `7e522f80…`
+Source: `chunk-acxptg39.js` · offset 188864511 · sha256 `7e522f80…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -195,7 +195,7 @@ From code: Step 1 of TTL resolution. When truthy, every request resolved through
 
 From docs: Set to `1` to force the 5-minute prompt cache TTL even when 1-hour TTL would otherwise apply.
 
-Evidence (offsets): caching off notice `chunk-1ypw9bby.js` @ 206230874 · cache control builder `chunk-mphp7acd.js` @ 187805010 · ttl resolver `chunk-mphp7acd.js` @ 187708565
+Evidence (offsets): cache control builder `chunk-acxptg39.js` @ 188961471 · caching off notice `chunk-scd694cx.js` @ 207544187 · ttl resolver `chunk-acxptg39.js` @ 188864485
 
 Documented: https://code.claude.com/docs/en/env-vars
 
@@ -203,29 +203,29 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `_CLAUDE_CODE_ASSUME_FIRST_PARTY_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184769473 · sha256 `141c63d2…` · 6 read sites
+Source: `chunk-721k6cws.js` · offset 181722976 · sha256 `141c63d2…` · 6 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184769473.
+Undocumented; read at `chunk-721k6cws.js` offset 181722976.
 
 **Undocumented**
 
 ### `AI_AGENT`
 
-Source: `chunk-q6t47sex.js` · offset 177849204 · sha256 `53cd51cc…` · 3 read sites
+Source: `chunk-mp724wza.js` · offset 178869446 · sha256 `53cd51cc…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`. Other sites parse it as a boolean, so the same value can mean on in one place and off in another.
 
-Undocumented; read at `chunk-q6t47sex.js` offset 177849204.
+Undocumented; read at `chunk-mp724wza.js` offset 178869446.
 
 **Undocumented**
 
 ### `ANTHROPIC_API_KEY`
 
-Source: `chunk-a6ty6v4s.js` · offset 202363161 · sha256 `15d71a5f…` · 31 read sites
+Source: `chunk-9tpza09x.js` · offset 203699475 · sha256 `15d71a5f…` · 31 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -237,7 +237,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_AUTH_TOKEN`
 
-Source: `chunk-cwq90agc.js` · offset 184023269 · sha256 `3298dcb6…` · 20 read sites
+Source: `chunk-cnrzxz4r.js` · offset 185146468 · sha256 `3298dcb6…` · 20 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -249,7 +249,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184780948 · sha256 `7e406881…` · 49 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196224648 · sha256 `7e406881…` · 49 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `https://api-staging.anthropic.com`. Default (from code): `https://api.anthropic.com`.
 
@@ -261,7 +261,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_BETAS`
 
-Source: `chunk-dgp2yyqt.js` · offset 194978325 · sha256 `7f59f23c…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196176187 · sha256 `7f59f23c…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -271,17 +271,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_CONFIG_DIR`
 
-Source: `chunk-8ptzhr8g.js` · offset 180384497 · sha256 `1bbaadf8…` · 3 read sites
+Source: `chunk-9c8h1t30.js` · offset 216121070 · sha256 `da1f3b83…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180384497.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216121070.
 
 **Undocumented**
 
 ### `ANTHROPIC_CUSTOM_HEADERS`
 
-Source: `chunk-09m4fzsj.js` · offset 184772011 · sha256 `251d5fb7…` · 5 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185924877 · sha256 `251d5fb7…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -293,7 +293,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_CUSTOM_MODEL_OPTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184735872 · sha256 `365f3ebd…` · 7 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196188190 · sha256 `365f3ebd…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -303,7 +303,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184736018 · sha256 `9a56865d…`
+Source: `chunk-j7rgjcpa.js` · offset 185888628 · sha256 `9a56865d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -313,7 +313,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_CUSTOM_MODEL_OPTION_NAME`
 
-Source: `chunk-09m4fzsj.js` · offset 184735958 · sha256 `e9d17412…`
+Source: `chunk-j7rgjcpa.js` · offset 185888568 · sha256 `e9d17412…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -323,7 +323,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_FABLE_MODEL`
 
-Source: `chunk-09m4fzsj.js` · offset 184723883 · sha256 `bab142cc…` · 9 read sites
+Source: `chunk-721k6cws.js` · offset 181751490 · sha256 `bab142cc…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -335,7 +335,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_FABLE_MODEL_DESCRIPTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184724000 · sha256 `a2a27d85…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185876610 · sha256 `a2a27d85…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `Custom Fable model`.
 
@@ -345,7 +345,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_FABLE_MODEL_NAME`
 
-Source: `chunk-09m4fzsj.js` · offset 184723963 · sha256 `c1c1562e…`
+Source: `chunk-j7rgjcpa.js` · offset 185876573 · sha256 `c1c1562e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -355,7 +355,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_HAIKU_MODEL`
 
-Source: `chunk-09m4fzsj.js` · offset 184727366 · sha256 `bcacaca2…` · 12 read sites
+Source: `chunk-721k6cws.js` · offset 181751586 · sha256 `bcacaca2…` · 12 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -365,7 +365,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_HAIKU_MODEL_DESCRIPTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184727483 · sha256 `a6617ffb…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185880093 · sha256 `a6617ffb…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `Custom Haiku model`.
 
@@ -375,7 +375,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_HAIKU_MODEL_NAME`
 
-Source: `chunk-09m4fzsj.js` · offset 184727446 · sha256 `ede3ae9d…`
+Source: `chunk-j7rgjcpa.js` · offset 185880056 · sha256 `ede3ae9d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -385,7 +385,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_MODEL`
 
-Source: `chunk-dgp2yyqt.js` · offset 194982108 · sha256 `5f40fa89…` · 4 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196179970 · sha256 `5f40fa89…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -395,7 +395,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_OPUS_MODEL`
 
-Source: `chunk-09m4fzsj.js` · offset 184725077 · sha256 `bc028f5f…` · 20 read sites
+Source: `chunk-721k6cws.js` · offset 181751522 · sha256 `bc028f5f…` · 20 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -405,7 +405,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184725203 · sha256 `3929d889…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181757716 · sha256 `3929d889…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -415,7 +415,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`
 
-Source: `chunk-09m4fzsj.js` · offset 184725167 · sha256 `d8c31deb…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181757815 · sha256 `d8c31deb…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -425,7 +425,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_SONNET_MODEL`
 
-Source: `chunk-09m4fzsj.js` · offset 184722527 · sha256 `f81df586…` · 16 read sites
+Source: `chunk-721k6cws.js` · offset 181751553 · sha256 `f81df586…` · 16 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -435,7 +435,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_SONNET_MODEL_DESCRIPTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184722661 · sha256 `061abab4…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185875271 · sha256 `061abab4…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -445,7 +445,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_SONNET_MODEL_NAME`
 
-Source: `chunk-09m4fzsj.js` · offset 184722623 · sha256 `3fb9026d…`
+Source: `chunk-j7rgjcpa.js` · offset 185875233 · sha256 `3fb9026d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -455,27 +455,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_ENVIRONMENT_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184253166 · sha256 `d14a495f…`
+Source: `chunk-j7rgjcpa.js` · offset 185379551 · sha256 `18a88cec…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184253166.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185379551.
 
 **Undocumented**
 
 ### `ANTHROPIC_ENVIRONMENT_KEY`
 
-Source: `chunk-09m4fzsj.js` · offset 184253283 · sha256 `6263a48c…`
+Source: `chunk-j7rgjcpa.js` · offset 185379668 · sha256 `ea679e4a…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184253283.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185379668.
 
 **Undocumented**
 
 ### `ANTHROPIC_FEDERATION_RULE_ID`
 
-Source: `chunk-8ptzhr8g.js` · offset 180381803 · sha256 `3c95f8b4…` · 7 read sites
+Source: `chunk-z62ps7p2.js` · offset 181254475 · sha256 `3c95f8b4…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -485,37 +485,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_IDENTITY_TOKEN`
 
-Source: `chunk-ax8nkkm1.js` · offset 183833606 · sha256 `3749035b…` · 2 read sites
+Source: `chunk-87xn6mvq.js` · offset 184960241 · sha256 `a7edd7ce…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ax8nkkm1.js` offset 183833606.
+Undocumented; read at `chunk-87xn6mvq.js` offset 184960241.
 
 **Undocumented**
 
 ### `ANTHROPIC_IDENTITY_TOKEN_FILE`
 
-Source: `chunk-ax8nkkm1.js` · offset 183825062 · sha256 `6fe07aff…` · 4 read sites
+Source: `chunk-87xn6mvq.js` · offset 184951690 · sha256 `81e5cb38…` · 4 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ax8nkkm1.js` offset 183825062.
+Undocumented; read at `chunk-87xn6mvq.js` offset 184951690.
 
 **Undocumented**
 
 ### `ANTHROPIC_LOG`
 
-Source: `chunk-09m4fzsj.js` · offset 184206228 · sha256 `4b0a58c8…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185332565 · sha256 `17e182d9…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184206228.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185332565.
 
 **Undocumented**
 
 ### `ANTHROPIC_MODEL`
 
-Source: `chunk-4gbrna1q.js` · offset 195079281 · sha256 `9effd817…` · 12 read sites
+Source: `chunk-721k6cws.js` · offset 181761033 · sha256 `9effd817…` · 12 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -527,7 +527,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_ORGANIZATION_ID`
 
-Source: `chunk-8ptzhr8g.js` · offset 180381745 · sha256 `cf9ebbc1…` · 8 read sites
+Source: `chunk-z62ps7p2.js` · offset 181254417 · sha256 `cf9ebbc1…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -537,7 +537,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_PROFILE`
 
-Source: `chunk-8ptzhr8g.js` · offset 180380879 · sha256 `f029bb2b…` · 11 read sites
+Source: `chunk-9c8h1t30.js` · offset 216121257 · sha256 `f029bb2b…` · 11 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `default`.
 
@@ -547,37 +547,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_SCOPE`
 
-Source: `chunk-ax8nkkm1.js` · offset 183825431 · sha256 `ad620519…` · 3 read sites
+Source: `chunk-87xn6mvq.js` · offset 184952059 · sha256 `86d9ad9c…` · 3 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ax8nkkm1.js` offset 183825431.
+Undocumented; read at `chunk-87xn6mvq.js` offset 184952059.
 
 **Undocumented**
 
 ### `ANTHROPIC_SERVICE_ACCOUNT_ID`
 
-Source: `chunk-ax8nkkm1.js` · offset 183825343 · sha256 `65014688…` · 3 read sites
+Source: `chunk-87xn6mvq.js` · offset 184951971 · sha256 `ecd05269…` · 3 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ax8nkkm1.js` offset 183825343.
+Undocumented; read at `chunk-87xn6mvq.js` offset 184951971.
 
 **Undocumented**
 
 ### `ANTHROPIC_SESSION_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184253213 · sha256 `ec717269…`
+Source: `chunk-j7rgjcpa.js` · offset 185379598 · sha256 `3678dff9…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184253213.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185379598.
 
 **Undocumented**
 
 ### `ANTHROPIC_SMALL_FAST_MODEL`
 
-Source: `chunk-mphp7acd.js` · offset 187715719 · sha256 `263f23ef…` · 7 read sites
+Source: `chunk-acxptg39.js` · offset 188871352 · sha256 `263f23ef…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -589,49 +589,49 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_UNIX_SOCKET`
 
-Source: `chunk-2z1m9v0n.js` · offset 183490228 · sha256 `cd7cb418…` · 38 read sites
+Source: `chunk-cnrzxz4r.js` · offset 185146736 · sha256 `cd7cb418…` · 38 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 25 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-2z1m9v0n.js` offset 183490228.
+Undocumented; read at `chunk-cnrzxz4r.js` offset 185146736.
 
 **Undocumented**
 
 ### `ANTHROPIC_WEBHOOK_SIGNING_KEY`
 
-Source: `chunk-09m4fzsj.js` · offset 184340587 · sha256 `1137f7a8…`
+Source: `chunk-j7rgjcpa.js` · offset 185468828 · sha256 `1b8e192d…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184340587.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185468828.
 
 **Undocumented**
 
 ### `ANTHROPIC_WORK_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184253122 · sha256 `e945d947…`
+Source: `chunk-j7rgjcpa.js` · offset 185379507 · sha256 `8af7c519…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184253122.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185379507.
 
 **Undocumented**
 
 ### `ANTHROPIC_WORK_SECRET`
 
-Source: `chunk-09m4fzsj.js` · offset 184253341 · sha256 `186c97eb…`
+Source: `chunk-j7rgjcpa.js` · offset 185379726 · sha256 `24c57207…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184253341.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185379726.
 
 **Undocumented**
 
 ### `ANTHROPIC_WORKSPACE_ID`
 
-Source: `chunk-8ptzhr8g.js` · offset 180381673 · sha256 `21f00b3c…` · 4 read sites
+Source: `chunk-z62ps7p2.js` · offset 181254345 · sha256 `21f00b3c…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -641,7 +641,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `API_FORCE_IDLE_TIMEOUT`
 
-Source: `chunk-wj72kvg2.js` · offset 179714597 · sha256 `a01398ac…`
+Source: `chunk-g5brps3g.js` · offset 180163183 · sha256 `a01398ac…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -651,7 +651,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `API_TIMEOUT_MS`
 
-Source: `chunk-09m4fzsj.js` · offset 184772723 · sha256 `a888de25…` · 6 read sites
+Source: `chunk-acxptg39.js` · offset 188966083 · sha256 `a888de25…` · 6 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -663,17 +663,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `AUTOMODE_DECISION_LOG`
 
-Source: `chunk-mphp7acd.js` · offset 188298334 · sha256 `1e7c0dc0…`
+Source: `chunk-acxptg39.js` · offset 189480313 · sha256 `1e7c0dc0…`
 
 Read as: enum (compared against fixed values). Values: `1`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188298334.
+Undocumented; read at `chunk-acxptg39.js` offset 189480313.
 
 **Undocumented**
 
 ### `BASH_DEFAULT_TIMEOUT_MS`
 
-Source: `chunk-t2h010j6.js` · offset 184000433 · sha256 `553fd156…`
+Source: `chunk-qs6rwaph.js` · offset 185123569 · sha256 `553fd156…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -683,7 +683,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `BASH_MAX_OUTPUT_LENGTH`
 
-Source: `chunk-r5fg485w.js` · offset 185389192 · sha256 `0e7a1c0d…`
+Source: `chunk-wka9yqdb.js` · offset 186503938 · sha256 `0e7a1c0d…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -693,7 +693,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `BASH_MAX_TIMEOUT_MS`
 
-Source: `chunk-t2h010j6.js` · offset 184000548 · sha256 `b63207f0…`
+Source: `chunk-qs6rwaph.js` · offset 185123684 · sha256 `b63207f0…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -703,41 +703,41 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `BUGHUNTER_DEV_BUNDLE_B64`
 
-Source: `chunk-1mj5vjep.js` · offset 198908479 · sha256 `9dd8b661…` · 2 read sites
+Source: `chunk-5yndqfks.js` · offset 200176855 · sha256 `9dd8b661…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-1mj5vjep.js` offset 198908479.
+Undocumented; read at `chunk-5yndqfks.js` offset 200176855.
 
 **Undocumented**
 
 ### `BUGHUNTER_FLEET_SIZE`
 
-Source: `chunk-3ywzq0xf.js` · offset 194050529 · sha256 `73c58ba3…`
+Source: `chunk-p0xmgba0.js` · offset 194961927 · sha256 `73c58ba3…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-3ywzq0xf.js` offset 194050529.
+Undocumented; read at `chunk-p0xmgba0.js` offset 194961927.
 
 **Undocumented**
 
 ### `CCR_ENABLE_BUNDLE`
 
-Source: `chunk-f2cpzzp9.js` · offset 207759282 · sha256 `19d54f8c…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 189806444 · sha256 `19d54f8c…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 207759282.
+Undocumented; read at `chunk-acxptg39.js` offset 189806444.
 
 **Undocumented**
 
 ### `CCR_FORCE_BUNDLE`
 
-Source: `chunk-mphp7acd.js` · offset 188621368 · sha256 `3071d65d…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 189806424 · sha256 `3071d65d…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -747,57 +747,57 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CCR_ON_BRANCH_DEFAULT_GUARD`
 
-Source: `chunk-mphp7acd.js` · offset 188964457 · sha256 `2763e2c9…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 190158369 · sha256 `2763e2c9…` · 2 read sites
 
 Read as: enum (compared against fixed values). Values: `enforce`, `observe`, `off`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188964457.
+Undocumented; read at `chunk-acxptg39.js` offset 190158369.
 
 **Undocumented**
 
 ### `CCR_SESSION_PROFILE`
 
-Source: `chunk-gmr92866.js` · offset 209879211 · sha256 `4ea4f741…` · 4 read sites
+Source: `chunk-721k6cws.js` · offset 181670626 · sha256 `4ea4f741…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-gmr92866.js` offset 209879211.
+Undocumented; read at `chunk-721k6cws.js` offset 181670626.
 
 **Undocumented**
 
 ### `CCR_SHR_SSE_HINTS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190628385 · sha256 `927ca514…`
+Source: `chunk-k2pjtcda.js` · offset 191839399 · sha256 `927ca514…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190628385.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191839399.
 
 **Undocumented**
 
 ### `CCR_SPAWN_TIMESTAMP_MS`
 
-Source: `chunk-5m30we7w.js` · offset 179116747 · sha256 `628d65dc…` · 5 read sites
+Source: `chunk-1rz02a15.js` · offset 181033858 · sha256 `628d65dc…` · 5 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-5m30we7w.js` offset 179116747.
+Undocumented; read at `chunk-1rz02a15.js` offset 181033858.
 
 **Undocumented**
 
 ### `CLAUBBIT`
 
-Source: `chunk-f5w4pbxy.js` · offset 201267098 · sha256 `d6342530…` · 9 read sites
+Source: `chunk-5bxd66qx.js` · offset 202538691 · sha256 `d6342530…` · 9 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f5w4pbxy.js` offset 201267098.
+Undocumented; read at `chunk-5bxd66qx.js` offset 202538691.
 
 **Undocumented**
 
 ### `CLAUDE_AFK_COUNTDOWN_MS`
 
-Source: `chunk-f2cpzzp9.js` · offset 207798546 · sha256 `2959d146…`
+Source: `chunk-mcm8e5ww.js` · offset 209122406 · sha256 `2959d146…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -807,7 +807,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AFK_TIMEOUT_MS`
 
-Source: `chunk-f2cpzzp9.js` · offset 207798500 · sha256 `3d44032d…` · 2 read sites
+Source: `chunk-mcm8e5ww.js` · offset 209122360 · sha256 `3d44032d…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -817,29 +817,29 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AFTER_LAST_COMPACT`
 
-Source: `chunk-mphp7acd.js` · offset 185804954 · sha256 `0da64453…`
+Source: `chunk-acxptg39.js` · offset 186924380 · sha256 `0da64453…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 185804954.
+Undocumented; read at `chunk-acxptg39.js` offset 186924380.
 
 **Undocumented**
 
 ### `CLAUDE_AGENT_SDK_CLIENT_APP`
 
-Source: `chunk-09m4fzsj.js` · offset 184771346 · sha256 `eab56788…` · 5 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185924212 · sha256 `eab56788…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184771346.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185924212.
 
 **Undocumented**
 
 ### `CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS`
 
-Source: `chunk-mphp7acd.js` · offset 187152629 · sha256 `763e9be8…`
+Source: `chunk-acxptg39.js` · offset 188296528 · sha256 `763e9be8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -849,17 +849,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AGENT_SDK_DISABLE_MCP_MANIFESTS`
 
-Source: `chunk-j0381q8k.js` · offset 201659973 · sha256 `1d81ae5d…`
+Source: `chunk-kmsvjk2z.js` · offset 202936717 · sha256 `66e944f3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-j0381q8k.js` offset 201659973.
+Undocumented; read at `chunk-kmsvjk2z.js` offset 202936717.
 
 **Undocumented**
 
 ### `CLAUDE_AGENT_SDK_MCP_NO_PREFIX`
 
-Source: `chunk-amg94xhm.js` · offset 213060887 · sha256 `af756a02…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214169460 · sha256 `af756a02…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -869,51 +869,51 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AGENT_SDK_VERSION`
 
-Source: `chunk-j0381q8k.js` · offset 201654220 · sha256 `8c91e3c2…` · 8 read sites
+Source: `chunk-721k6cws.js` · offset 181532382 · sha256 `8c91e3c2…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `unknown`.
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-j0381q8k.js` offset 201654220.
+Undocumented; read at `chunk-721k6cws.js` offset 181532382.
 
 **Undocumented**
 
 ### `CLAUDE_AGENTS_AUTO_RELAUNCHED_AT`
 
-Source: `chunk-9975a2ae.js` · offset 196153756 · sha256 `b90a97b9…`
+Source: `chunk-zdwxqbe3.js` · offset 197389648 · sha256 `9c7f1ce1…`
 
 Read as: number (parsed as a number).
 
-Undocumented; read at `chunk-9975a2ae.js` offset 196153756.
+Undocumented; read at `chunk-zdwxqbe3.js` offset 197389648.
 
 **Undocumented**
 
 ### `CLAUDE_AGENTS_SELECT`
 
-Source: `chunk-9975a2ae.js` · offset 196166462 · sha256 `05b80a80…` · 2 read sites
+Source: `chunk-4mmvdwwg.js` · offset 186801520 · sha256 `05b80a80…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-9975a2ae.js` offset 196166462.
+Undocumented; read at `chunk-4mmvdwwg.js` offset 186801520.
 
 **Undocumented**
 
 ### `CLAUDE_ARTIFACT_HOST_GRANT`
 
-Source: `chunk-09916wnc.js` · offset 209487362 · sha256 `bd85f0b2…` · 6 read sites
+Source: `chunk-xktn8sdm.js` · offset 193753807 · sha256 `bd85f0b2…` · 6 read sites
 
 Read as: string (used as-is (not trimmed)).
 
-Undocumented; read at `chunk-09916wnc.js` offset 209487362.
+Undocumented; read at `chunk-xktn8sdm.js` offset 193753807.
 
 **Undocumented**
 
 ### `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`
 
-Source: `chunk-5ne43w2c.js` · offset 193254958 · sha256 `159c9a8a…` · 2 read sites
+Source: `chunk-a29gkqzd.js` · offset 194446619 · sha256 `159c9a8a…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, max 2147483647, digitsOnly true.
 
@@ -923,7 +923,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AUTO_BACKGROUND_TASKS`
 
-Source: `chunk-xmc0bp9s.js` · offset 193318675 · sha256 `ddd26c0c…` · 5 read sites
+Source: `chunk-zxdv16fz.js` · offset 194511302 · sha256 `ddd26c0c…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -933,7 +933,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`
 
-Source: `chunk-mphp7acd.js` · offset 186785945 · sha256 `0e787485…`
+Source: `chunk-acxptg39.js` · offset 187941983 · sha256 `0e787485…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -941,9 +941,19 @@ From docs: Set the percentage (1-100) of the auto-compact window at which auto-c
 
 Documented: https://code.claude.com/docs/en/env-vars
 
+### `CLAUDE_AX_ANNOUNCEMENT_HOLD_MS`
+
+Source: `chunk-74872e8h.js` · offset 181223911 · sha256 `ca3d0c6f…`
+
+Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `1000`.
+
+Undocumented; read at `chunk-74872e8h.js` offset 181223911.
+
+**Undocumented**
+
 ### `CLAUDE_AX_PREPARK_MS`
 
-Source: `chunk-3bsqc8dr.js` · offset 180489729 · sha256 `7763481a…`
+Source: `chunk-74872e8h.js` · offset 181223486 · sha256 `7763481a…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `0`.
 
@@ -951,9 +961,19 @@ From docs: In screen reader mode, how many milliseconds Claude Code waits, with 
 
 Documented: https://code.claude.com/docs/en/env-vars
 
+### `CLAUDE_AX_REWRITE_HELD_ANNOUNCEMENT`
+
+Source: `chunk-74872e8h.js` · offset 181223537 · sha256 `a95eaa80…`
+
+Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
+
+Undocumented; read at `chunk-74872e8h.js` offset 181223537.
+
+**Undocumented**
+
 ### `CLAUDE_AX_SCREEN_READER`
 
-Source: `chunk-3bsqc8dr.js` · offset 180488387 · sha256 `e9ec58b6…`
+Source: `chunk-74872e8h.js` · offset 181221965 · sha256 `e9ec58b6…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -963,7 +983,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AX_STARTUP_QUIET_MS`
 
-Source: `chunk-3bsqc8dr.js` · offset 180489607 · sha256 `c9ed3776…`
+Source: `chunk-74872e8h.js` · offset 181223364 · sha256 `c9ed3776…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `3000`.
 
@@ -973,7 +993,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`
 
-Source: `chunk-brnn4zwp.js` · offset 178048155 · sha256 `5509dbb8…`
+Source: `chunk-q3se8bhm.js` · offset 179088615 · sha256 `5509dbb8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -983,263 +1003,263 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_BG_AUTH_SNAPSHOT_PATH`
 
-Source: `chunk-mnp9k227.js` · offset 180498313 · sha256 `b23ee675…` · 6 read sites
+Source: `chunk-kx3hbyfc.js` · offset 181282062 · sha256 `b23ee675…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mnp9k227.js` offset 180498313.
+Undocumented; read at `chunk-kx3hbyfc.js` offset 181282062.
 
 **Undocumented**
 
 ### `CLAUDE_BG_BACKEND`
 
-Source: `chunk-1sb33067.js` · offset 210927632 · sha256 `761beb70…` · 11 read sites
+Source: `chunk-q308nzmf.js` · offset 212381294 · sha256 `761beb70…` · 11 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `daemon`.
 
-Undocumented; read at `chunk-1sb33067.js` offset 210927632.
+Undocumented; read at `chunk-q308nzmf.js` offset 212381294.
 
 **Undocumented**
 
 ### `CLAUDE_BG_CLAIM_AUTH`
 
-Source: `chunk-tqj1w3b2.js` · offset 192272326 · sha256 `b9127893…`
+Source: `chunk-7jz8j2fc.js` · offset 193455218 · sha256 `b9127893…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-tqj1w3b2.js` offset 192272326.
+Undocumented; read at `chunk-7jz8j2fc.js` offset 193455218.
 
 **Undocumented**
 
 ### `CLAUDE_BG_DISPATCHER_RATE_LIMIT_TIER`
 
-Source: `chunk-8ptzhr8g.js` · offset 180386853 · sha256 `479c8291…`
+Source: `chunk-z62ps7p2.js` · offset 181259525 · sha256 `479c8291…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180386853.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181259525.
 
 **Undocumented**
 
 ### `CLAUDE_BG_DISPATCHER_SUBSCRIPTION_TYPE`
 
-Source: `chunk-8ptzhr8g.js` · offset 180386790 · sha256 `75c57711…`
+Source: `chunk-z62ps7p2.js` · offset 181259462 · sha256 `75c57711…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180386790.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181259462.
 
 **Undocumented**
 
 ### `CLAUDE_BG_ISOLATION`
 
-Source: `chunk-mphp7acd.js` · offset 186463158 · sha256 `4c46686e…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187617675 · sha256 `4c46686e…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `worktree`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186463158.
+Undocumented; read at `chunk-acxptg39.js` offset 187617675.
 
 **Undocumented**
 
 ### `CLAUDE_BG_MEMORY_TOGGLED_OFF`
 
-Source: `chunk-dgp2yyqt.js` · offset 194965650 · sha256 `09901b5e…`
+Source: `chunk-5g8p9x0b.js` · offset 196163477 · sha256 `09901b5e…`
 
 Read as: string (trimmed; empty is treated as unset). Values: `1`.
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 194965650.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196163477.
 
 **Undocumented**
 
 ### `CLAUDE_BG_POST_CLEAR_RESPAWN`
 
-Source: `chunk-dgp2yyqt.js` · offset 195021720 · sha256 `e616699a…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196219662 · sha256 `e616699a…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 195021720.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196219662.
 
 **Undocumented**
 
 ### `CLAUDE_BG_PTY_AUTH`
 
-Source: `chunk-aa430wh3.js` · offset 196241204 · sha256 `dbda7267…`
+Source: `chunk-4ahd91a1.js` · offset 197477559 · sha256 `dbda7267…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196241204.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197477559.
 
 **Undocumented**
 
 ### `CLAUDE_BG_RENDEZVOUS_SOCK`
 
-Source: `chunk-jx00zmk1.js` · offset 205756315 · sha256 `5cac6c16…`
+Source: `chunk-88np9eym.js` · offset 207067171 · sha256 `5cac6c16…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-jx00zmk1.js` offset 205756315.
+Undocumented; read at `chunk-88np9eym.js` offset 207067171.
 
 **Undocumented**
 
 ### `CLAUDE_BG_RV_AUTH`
 
-Source: `chunk-jx00zmk1.js` · offset 205756532 · sha256 `47f681f8…`
+Source: `chunk-88np9eym.js` · offset 207067388 · sha256 `47f681f8…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-jx00zmk1.js` offset 205756532.
+Undocumented; read at `chunk-88np9eym.js` offset 207067388.
 
 **Undocumented**
 
 ### `CLAUDE_BG_SESSION_PERMISSION_RULES`
 
-Source: `chunk-dgp2yyqt.js` · offset 194965046 · sha256 `76fa2fb1…`
+Source: `chunk-5g8p9x0b.js` · offset 196162873 · sha256 `76fa2fb1…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 194965046.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196162873.
 
 **Undocumented**
 
 ### `CLAUDE_BG_SOCKET_TOKENS_PATH`
 
-Source: `chunk-aa430wh3.js` · offset 196241279 · sha256 `1fcb7e87…` · 3 read sites
+Source: `chunk-4ahd91a1.js` · offset 197477634 · sha256 `1fcb7e87…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196241279.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197477634.
 
 **Undocumented**
 
 ### `CLAUDE_BG_SOURCE`
 
-Source: `chunk-f2cpzzp9.js` · offset 208052885 · sha256 `2c2da5b5…` · 3 read sites
+Source: `chunk-mcm8e5ww.js` · offset 209379796 · sha256 `2c2da5b5…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `spare`.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 208052885.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 209379796.
 
 **Undocumented**
 
 ### `CLAUDE_BG_STARTUP_WEDGE_MS`
 
-Source: `chunk-jx00zmk1.js` · offset 205755278 · sha256 `4fcf9acc…`
+Source: `chunk-88np9eym.js` · offset 207066134 · sha256 `4fcf9acc…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `45000`.
 
-Undocumented; read at `chunk-jx00zmk1.js` offset 205755278.
+Undocumented; read at `chunk-88np9eym.js` offset 207066134.
 
 **Undocumented**
 
 ### `CLAUDE_BG_TCC_DISCLAIMED`
 
-Source: `chunk-aa430wh3.js` · offset 196240372 · sha256 `d9c55f29…`
+Source: `chunk-4ahd91a1.js` · offset 197476727 · sha256 `d9c55f29…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196240372.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197476727.
 
 **Undocumented**
 
 ### `CLAUDE_BG_WORKSPACE_TRUSTED`
 
-Source: `chunk-f5w4pbxy.js` · offset 201270807 · sha256 `57d0e7e8…`
+Source: `chunk-5bxd66qx.js` · offset 202542400 · sha256 `57d0e7e8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f5w4pbxy.js` offset 201270807.
+Undocumented; read at `chunk-5bxd66qx.js` offset 202542400.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_BASE_URL`
 
-Source: `chunk-3sdpavrm.js` · offset 200689446 · sha256 `733dae68…`
+Source: `chunk-0sv7d752.js` · offset 201961358 · sha256 `733dae68…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-3sdpavrm.js` offset 200689446.
+Undocumented; read at `chunk-0sv7d752.js` offset 201961358.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_GROUPING`
 
-Source: `chunk-rw977e91.js` · offset 214339833 · sha256 `76f29ce6…`
+Source: `chunk-31av54vc.js` · offset 215739959 · sha256 `76f29ce6…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-rw977e91.js` offset 214339833.
+Undocumented; read at `chunk-31av54vc.js` offset 215739959.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_NO_BACKFILL`
 
-Source: `chunk-rw977e91.js` · offset 214339957 · sha256 `3d9adfbe…`
+Source: `chunk-31av54vc.js` · offset 215740083 · sha256 `3d9adfbe…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-rw977e91.js` offset 214339957.
+Undocumented; read at `chunk-31av54vc.js` offset 215740083.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_OUTBOUND_ONLY`
 
-Source: `chunk-q1842b1c.js` · offset 195321737 · sha256 `2876ad7c…`
+Source: `chunk-g6yz7gnr.js` · offset 196556892 · sha256 `2876ad7c…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-q1842b1c.js` offset 195321737.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196556892.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_OWNER_ACCT`
 
-Source: `chunk-rw977e91.js` · offset 214339880 · sha256 `03171b60…`
+Source: `chunk-31av54vc.js` · offset 215740006 · sha256 `03171b60…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-rw977e91.js` offset 214339880.
+Undocumented; read at `chunk-31av54vc.js` offset 215740006.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_OWNER_ORG`
 
-Source: `chunk-rw977e91.js` · offset 214339919 · sha256 `4103eaa4…`
+Source: `chunk-31av54vc.js` · offset 215740045 · sha256 `4103eaa4…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-rw977e91.js` offset 214339919.
+Undocumented; read at `chunk-31av54vc.js` offset 215740045.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_SEQ`
 
-Source: `chunk-rw977e91.js` · offset 214339791 · sha256 `78c12cd2…`
+Source: `chunk-31av54vc.js` · offset 215739917 · sha256 `78c12cd2…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-rw977e91.js` offset 214339791.
+Undocumented; read at `chunk-31av54vc.js` offset 215739917.
 
 **Undocumented**
 
 ### `CLAUDE_BRIDGE_REATTACH_SESSION`
 
-Source: `chunk-rw977e91.js` · offset 214339736 · sha256 `0ed49f22…` · 9 read sites
+Source: `chunk-31av54vc.js` · offset 215739862 · sha256 `0ed49f22…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 5 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-rw977e91.js` offset 214339736.
+Undocumented; read at `chunk-31av54vc.js` offset 215739862.
 
 **Undocumented**
 
 ### `CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS`
 
-Source: `chunk-09m4fzsj.js` · offset 184781954 · sha256 `08bc2317…`
+Source: `chunk-j7rgjcpa.js` · offset 185934820 · sha256 `08bc2317…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -1249,47 +1269,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CHROME_CLASSIFIER_FLOOR`
 
-Source: `chunk-4zgx6txq.js` · offset 193135027 · sha256 `115bb892…`
+Source: `chunk-hyr3xk9c.js` · offset 194326144 · sha256 `115bb892…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-4zgx6txq.js` offset 193135027.
+Undocumented; read at `chunk-hyr3xk9c.js` offset 194326144.
 
 **Undocumented**
 
 ### `CLAUDE_CHROME_PAIRED_DEVICE_ID`
 
-Source: `chunk-7eyrbz6k.js` · offset 196823108 · sha256 `9ab1f9d7…`
+Source: `chunk-er9srhy5.js` · offset 198061117 · sha256 `9ab1f9d7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196823108.
+Undocumented; read at `chunk-er9srhy5.js` offset 198061117.
 
 **Undocumented**
 
 ### `CLAUDE_CHROME_PERMISSION_MODE`
 
-Source: `chunk-7eyrbz6k.js` · offset 196822915 · sha256 `d8cf5ff5…`
+Source: `chunk-er9srhy5.js` · offset 198060924 · sha256 `d8cf5ff5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196822915.
+Undocumented; read at `chunk-er9srhy5.js` offset 198060924.
 
 **Undocumented**
 
 ### `CLAUDE_CHROME_TAB_GROUP_KEY`
 
-Source: `chunk-0a47xg8f.js` · offset 178236149 · sha256 `47225c3e…` · 2 read sites
+Source: `chunk-p614p40d.js` · offset 179266793 · sha256 `47225c3e…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178236149.
+Undocumented; read at `chunk-p614p40d.js` offset 179266793.
 
 **Undocumented**
 
 ### `CLAUDE_CLIENT_PRESENCE_FILE`
 
-Source: `chunk-7rmn6fde.js` · offset 206471429 · sha256 `ceff9aca…`
+Source: `chunk-w86h1fbn.js` · offset 207789015 · sha256 `ceff9aca…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -1299,57 +1319,57 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_3P_PROBE_WROTE_HAIKU_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180944689 · sha256 `0e705394…`
+Source: `chunk-721k6cws.js` · offset 181752739 · sha256 `0e705394…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180944689.
+Undocumented; read at `chunk-721k6cws.js` offset 181752739.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_3P_PROBE_WROTE_OPUS_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180944613 · sha256 `8ebd36d8…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181752663 · sha256 `8ebd36d8…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180944613.
+Undocumented; read at `chunk-721k6cws.js` offset 181752663.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_3P_PROBE_WROTE_SONNET_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180944525 · sha256 `303f0d24…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181752575 · sha256 `303f0d24…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180944525.
+Undocumented; read at `chunk-721k6cws.js` offset 181752575.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_3P_SEEDED_OPUS_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180944399 · sha256 `076d67b6…`
+Source: `chunk-721k6cws.js` · offset 181752449 · sha256 `076d67b6…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180944399.
+Undocumented; read at `chunk-721k6cws.js` offset 181752449.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_3P_SEEDED_SONNET_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180944244 · sha256 `df9df263…`
+Source: `chunk-721k6cws.js` · offset 181752294 · sha256 `df9df263…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180944244.
+Undocumented; read at `chunk-721k6cws.js` offset 181752294.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ACCESSIBILITY`
 
-Source: `chunk-p50qybax.js` · offset 191790078 · sha256 `78c0f256…` · 4 read sites
+Source: `chunk-xr83kgh7.js` · offset 192967242 · sha256 `78c0f256…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false). Default (from code): `0`.
 
@@ -1359,47 +1379,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ACCOUNT_TAGGED_ID`
 
-Source: `chunk-qyc5w2q1.js` · offset 183528531 · sha256 `755576cb…`
+Source: `chunk-y3fvjpjn.js` · offset 184650306 · sha256 `755576cb…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-qyc5w2q1.js` offset 183528531.
+Undocumented; read at `chunk-y3fvjpjn.js` offset 184650306.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ACCOUNT_UUID`
 
-Source: `chunk-7eyrbz6k.js` · offset 196826492 · sha256 `6e8b00aa…` · 12 read sites
+Source: `chunk-er9srhy5.js` · offset 198064501 · sha256 `6e8b00aa…` · 12 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196826492.
+Undocumented; read at `chunk-er9srhy5.js` offset 198064501.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ACT_DONT_REDERIVE`
 
-Source: `chunk-mphp7acd.js` · offset 187203187 · sha256 `61dc2948…`
+Source: `chunk-acxptg39.js` · offset 188347207 · sha256 `61dc2948…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187203187.
+Undocumented; read at `chunk-acxptg39.js` offset 188347207.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ACTION`
 
-Source: `chunk-nankzm0s.js` · offset 181083716 · sha256 `bccfb10f…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181892708 · sha256 `bccfb10f…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181083716.
+Undocumented; read at `chunk-721k6cws.js` offset 181892708.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`
 
-Source: `chunk-mphp7acd.js` · offset 186430461 · sha256 `ecdc6b1d…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187567471 · sha256 `ecdc6b1d…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -1409,47 +1429,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ADDITIONAL_PROTECTION`
 
-Source: `chunk-09m4fzsj.js` · offset 184772118 · sha256 `91464e4f…`
+Source: `chunk-j7rgjcpa.js` · offset 185924984 · sha256 `91464e4f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184772118.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185924984.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ADOPT_UNDERIVABLE_PARKED_PERMISSION`
 
-Source: `chunk-xapeakym.js` · offset 204623947 · sha256 `c893ec8f…`
+Source: `chunk-np3zq5rq.js` · offset 205944440 · sha256 `c893ec8f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204623947.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205944440.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AGENT`
 
-Source: `chunk-nankzm0s.js` · offset 181061988 · sha256 `dcf206a0…`
+Source: `chunk-721k6cws.js` · offset 181870757 · sha256 `dcf206a0…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181061988.
+Undocumented; read at `chunk-721k6cws.js` offset 181870757.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AGENT_VIEW_RELAUNCH`
 
-Source: `chunk-b60bqfbx.js` · offset 185681888 · sha256 `68046f81…`
+Source: `chunk-4mmvdwwg.js` · offset 186801567 · sha256 `42bb6ef1…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-b60bqfbx.js` offset 185681888.
+Undocumented; read at `chunk-4mmvdwwg.js` offset 186801567.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT`
 
-Source: `chunk-2t7nhzwg.js` · offset 195904886 · sha256 `2650615c…` · 3 read sites
+Source: `chunk-7m87m84t.js` · offset 196911521 · sha256 `2650615c…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -1459,17 +1479,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ALTGR_AS_TEXT`
 
-Source: `chunk-p50qybax.js` · offset 191740303 · sha256 `43919966…`
+Source: `chunk-xr83kgh7.js` · offset 192917466 · sha256 `43919966…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-p50qybax.js` offset 191740303.
+Undocumented; read at `chunk-xr83kgh7.js` offset 192917466.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT`
 
-Source: `chunk-5rsp1jx3.js` · offset 181698342 · sha256 `47ef8a02…`
+Source: `chunk-whsnxm6e.js` · offset 182840036 · sha256 `47ef8a02…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -1479,39 +1499,39 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AMBER_ASTROLABE`
 
-Source: `chunk-1b21she7.js` · offset 181768753 · sha256 `8e2e5701…`
+Source: `chunk-24wkkcbf.js` · offset 182911701 · sha256 `8e2e5701…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181768753.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182911701.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_API_BASE_URL`
 
-Source: `chunk-mphp7acd.js` · offset 188756862 · sha256 `ffa9d202…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 189949413 · sha256 `ffa9d202…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188756862.
+Undocumented; read at `chunk-acxptg39.js` offset 189949413.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_API_KEY_FILE_DESCRIPTOR`
 
-Source: `chunk-cwq90agc.js` · offset 184023387 · sha256 `571c81f2…` · 8 read sites
+Source: `chunk-cnrzxz4r.js` · offset 185146586 · sha256 `571c81f2…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-cwq90agc.js` offset 184023387.
+Undocumented; read at `chunk-cnrzxz4r.js` offset 185146586.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_API_KEY_HELPER_TTL_MS`
 
-Source: `chunk-nankzm0s.js` · offset 181239684 · sha256 `99a8a679…`
+Source: `chunk-721k6cws.js` · offset 182053852 · sha256 `99a8a679…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -1521,37 +1541,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_APPEND_PROMPT_HEAD`
 
-Source: `chunk-dgp2yyqt.js` · offset 194983576 · sha256 `bf7783f1…`
+Source: `chunk-5g8p9x0b.js` · offset 196181438 · sha256 `bf7783f1…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 194983576.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196181438.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT`
 
-Source: `chunk-p3jvcdtp.js` · offset 185534138 · sha256 `e42ef07b…` · 3 read sites
+Source: `chunk-t150dbgk.js` · offset 186649628 · sha256 `e42ef07b…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-p3jvcdtp.js` offset 185534138.
+Undocumented; read at `chunk-t150dbgk.js` offset 186649628.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_ASSETS`
 
-Source: `chunk-p3jvcdtp.js` · offset 185534486 · sha256 `f6d17a02…` · 3 read sites
+Source: `chunk-sr3v2cgy.js` · offset 195506878 · sha256 `f6d17a02…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-p3jvcdtp.js` offset 185534486.
+Undocumented; read at `chunk-sr3v2cgy.js` offset 195506878.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_AUTO_OPEN`
 
-Source: `chunk-y1ga25rr.js` · offset 208949767 · sha256 `775a16f7…`
+Source: `chunk-wy79hz60.js` · offset 210298099 · sha256 `775a16f7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -1561,37 +1581,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK`
 
-Source: `chunk-8f02nerv.js` · offset 192900383 · sha256 `745c4305…` · 2 read sites
+Source: `chunk-gsqkexe2.js` · offset 194090806 · sha256 `745c4305…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-8f02nerv.js` offset 192900383.
+Undocumented; read at `chunk-gsqkexe2.js` offset 194090806.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_COMMENT_FAST_ACK_FIXED`
 
-Source: `chunk-8f02nerv.js` · offset 192900924 · sha256 `9a7789ac…` · 2 read sites
+Source: `chunk-gsqkexe2.js` · offset 194091347 · sha256 `9a7789ac…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-8f02nerv.js` offset 192900924.
+Undocumented; read at `chunk-gsqkexe2.js` offset 194091347.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_COMMENT_RESPONDER`
 
-Source: `chunk-8f02nerv.js` · offset 192888956 · sha256 `782008f7…`
+Source: `chunk-gsqkexe2.js` · offset 194079380 · sha256 `782008f7…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-8f02nerv.js` offset 192888956.
+Undocumented; read at `chunk-gsqkexe2.js` offset 194079380.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_COMMENTS`
 
-Source: `chunk-2m3xx2mv.js` · offset 192724423 · sha256 `83d5f67c…` · 2 read sites
+Source: `chunk-chyafkej.js` · offset 193914026 · sha256 `83d5f67c…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -1601,7 +1621,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ARTIFACT_COMMENTS_AUTOREACT`
 
-Source: `chunk-8f02nerv.js` · offset 192900282 · sha256 `84cec711…`
+Source: `chunk-gsqkexe2.js` · offset 194090705 · sha256 `84cec711…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -1611,239 +1631,239 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ARTIFACT_DB`
 
-Source: `chunk-4w3wrktj.js` · offset 194233923 · sha256 `46958bfd…`
+Source: `chunk-1pk9zh8n.js` · offset 195411664 · sha256 `46958bfd…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-4w3wrktj.js` offset 194233923.
+Undocumented; read at `chunk-1pk9zh8n.js` offset 195411664.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_DB_STR_REPLACE`
 
-Source: `chunk-4w3wrktj.js` · offset 194233983 · sha256 `246859d1…`
+Source: `chunk-1pk9zh8n.js` · offset 195411724 · sha256 `246859d1…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-4w3wrktj.js` offset 194233983.
+Undocumented; read at `chunk-1pk9zh8n.js` offset 195411724.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_DELETE`
 
-Source: `chunk-3k1vzdfm.js` · offset 194434104 · sha256 `c864f413…`
+Source: `chunk-cjd7cq45.js` · offset 195612643 · sha256 `c864f413…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-3k1vzdfm.js` offset 194434104.
+Undocumented; read at `chunk-cjd7cq45.js` offset 195612643.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_FRESH_READ`
 
-Source: `chunk-09916wnc.js` · offset 209752254 · sha256 `18d08d8c…` · 3 read sites
+Source: `chunk-e65ec2n6.js` · offset 201003766 · sha256 `18d08d8c…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-09916wnc.js` offset 209752254.
+Undocumented; read at `chunk-e65ec2n6.js` offset 201003766.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_HOT`
 
-Source: `chunk-mrm8jr3y.js` · offset 192522383 · sha256 `6f57a8ce…`
+Source: `chunk-xktn8sdm.js` · offset 193711986 · sha256 `6f57a8ce…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mrm8jr3y.js` offset 192522383.
+Undocumented; read at `chunk-xktn8sdm.js` offset 193711986.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_MULTI_FILE`
 
-Source: `chunk-mrm8jr3y.js` · offset 192521964 · sha256 `2cf3d5b9…`
+Source: `chunk-xktn8sdm.js` · offset 193711567 · sha256 `2cf3d5b9…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mrm8jr3y.js` offset 192521964.
+Undocumented; read at `chunk-xktn8sdm.js` offset 193711567.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_OPEN_ACTION`
 
-Source: `chunk-3k1vzdfm.js` · offset 194449178 · sha256 `e90603dd…`
+Source: `chunk-cjd7cq45.js` · offset 195627717 · sha256 `e90603dd…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-3k1vzdfm.js` offset 194449178.
+Undocumented; read at `chunk-cjd7cq45.js` offset 195627717.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_OPENING_PREFETCH`
 
-Source: `chunk-mphp7acd.js` · offset 189122550 · sha256 `568a00a5…`
+Source: `chunk-acxptg39.js` · offset 190319119 · sha256 `568a00a5…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189122550.
+Undocumented; read at `chunk-acxptg39.js` offset 190319119.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_PATH_PIN`
 
-Source: `chunk-k2dqvf8r.js` · offset 194419632 · sha256 `9e1bd820…`
+Source: `chunk-9hhadq2v.js` · offset 195598171 · sha256 `9e1bd820…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-k2dqvf8r.js` offset 194419632.
+Undocumented; read at `chunk-9hhadq2v.js` offset 195598171.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_PIN`
 
-Source: `chunk-3k1vzdfm.js` · offset 194446098 · sha256 `2693918e…`
+Source: `chunk-cjd7cq45.js` · offset 195624637 · sha256 `2693918e…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-3k1vzdfm.js` offset 194446098.
+Undocumented; read at `chunk-cjd7cq45.js` offset 195624637.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_PRESENCE`
 
-Source: `chunk-45c66d1k.js` · offset 193014942 · sha256 `0303b2b0…`
+Source: `chunk-pzt9501f.js` · offset 194206029 · sha256 `0303b2b0…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-45c66d1k.js` offset 193014942.
+Undocumented; read at `chunk-pzt9501f.js` offset 194206029.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_PREVIEW`
 
-Source: `chunk-s1mfg8e9.js` · offset 194270783 · sha256 `713c0eb8…` · 3 read sites
+Source: `chunk-nvyqjp3n.js` · offset 195449322 · sha256 `713c0eb8…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-s1mfg8e9.js` offset 194270783.
+Undocumented; read at `chunk-nvyqjp3n.js` offset 195449322.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_QUICKSTART`
 
-Source: `chunk-dk58p4z6.js` · offset 194300530 · sha256 `2b007556…`
+Source: `chunk-ersbsf6t.js` · offset 195479069 · sha256 `2b007556…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-dk58p4z6.js` offset 194300530.
+Undocumented; read at `chunk-ersbsf6t.js` offset 195479069.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_SHARE`
 
-Source: `chunk-3k1vzdfm.js` · offset 194445981 · sha256 `297f86f7…` · 2 read sites
+Source: `chunk-cjd7cq45.js` · offset 195624520 · sha256 `297f86f7…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-3k1vzdfm.js` offset 194445981.
+Undocumented; read at `chunk-cjd7cq45.js` offset 195624520.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_START_KIT`
 
-Source: `chunk-z7fe4zqd.js` · offset 198162169 · sha256 `e7c123b9…`
+Source: `chunk-9d9wfqjk.js` · offset 199428743 · sha256 `e7c123b9…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-z7fe4zqd.js` offset 198162169.
+Undocumented; read at `chunk-9d9wfqjk.js` offset 199428743.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_TEXT_VARIANT`
 
-Source: `chunk-ep4nwhrj.js` · offset 200609962 · sha256 `85a661ad…`
+Source: `chunk-302b381m.js` · offset 201881837 · sha256 `85a661ad…`
 
 Read as: enum (compared against fixed values). Values: `v0`, `v1`, `v2`.
 
-Undocumented; read at `chunk-ep4nwhrj.js` offset 200609962.
+Undocumented; read at `chunk-302b381m.js` offset 201881837.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_TOOLSET`
 
-Source: `chunk-mrm8jr3y.js` · offset 192519732 · sha256 `9f5b8208…`
+Source: `chunk-xktn8sdm.js` · offset 193709335 · sha256 `9f5b8208…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mrm8jr3y.js` offset 192519732.
+Undocumented; read at `chunk-xktn8sdm.js` offset 193709335.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_TYPE_CATALOG`
 
-Source: `chunk-dk58p4z6.js` · offset 194300463 · sha256 `9ec5c026…`
+Source: `chunk-ersbsf6t.js` · offset 195479002 · sha256 `9ec5c026…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-dk58p4z6.js` offset 194300463.
+Undocumented; read at `chunk-ersbsf6t.js` offset 195479002.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_TYPE_CLOUD_CREATE`
 
-Source: `chunk-dk58p4z6.js` · offset 194290766 · sha256 `2ddf902e…`
+Source: `chunk-ersbsf6t.js` · offset 195469305 · sha256 `2ddf902e…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-dk58p4z6.js` offset 194290766.
+Undocumented; read at `chunk-ersbsf6t.js` offset 195469305.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_TYPES`
 
-Source: `chunk-dk58p4z6.js` · offset 194290707 · sha256 `d3757745…`
+Source: `chunk-ersbsf6t.js` · offset 195469246 · sha256 `d3757745…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-dk58p4z6.js` offset 194290707.
+Undocumented; read at `chunk-ersbsf6t.js` offset 195469246.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACT_VERIFY`
 
-Source: `chunk-dk58p4z6.js` · offset 194275009 · sha256 `835f81cd…`
+Source: `chunk-ersbsf6t.js` · offset 195453548 · sha256 `835f81cd…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-dk58p4z6.js` offset 194275009.
+Undocumented; read at `chunk-ersbsf6t.js` offset 195453548.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ARTIFACTS_API_TOKEN`
 
-Source: `chunk-7nd16342.js` · offset 192455584 · sha256 `c569a74f…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181850302 · sha256 `c569a74f…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-7nd16342.js` offset 192455584.
+Undocumented; read at `chunk-721k6cws.js` offset 181850302.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ATTRIBUTION_ANNOUNCEMENT`
 
-Source: `chunk-mphp7acd.js` · offset 186721572 · sha256 `4d5b229d…`
+Source: `chunk-acxptg39.js` · offset 187877293 · sha256 `4d5b229d…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186721572.
+Undocumented; read at `chunk-acxptg39.js` offset 187877293.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ATTRIBUTION_HEADER`
 
-Source: `chunk-b5kmgz2n.js` · offset 181644068 · sha256 `0ccadf30…`
+Source: `chunk-3jxrt71q.js` · offset 182785661 · sha256 `0ccadf30…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -1853,17 +1873,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AUTH_FAIL_EXIT_MS`
 
-Source: `chunk-nankzm0s.js` · offset 181268905 · sha256 `46d1eca9…`
+Source: `chunk-721k6cws.js` · offset 182083115 · sha256 `46d1eca9…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181268905.
+Undocumented; read at `chunk-721k6cws.js` offset 182083115.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AUTO_COMPACT_WINDOW`
 
-Source: `chunk-mphp7acd.js` · offset 186783449 · sha256 `042de733…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187939369 · sha256 `042de733…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -1875,7 +1895,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AUTO_CONNECT_IDE`
 
-Source: `chunk-mphp7acd.js` · offset 189054083 · sha256 `5bc23d1b…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 190250444 · sha256 `5bc23d1b…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -1885,7 +1905,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AUTO_MODE_SERVER`
 
-Source: `chunk-mphp7acd.js` · offset 187092029 · sha256 `a472a5b1…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 188235704 · sha256 `a472a5b1…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -1895,47 +1915,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AUTO_MODE_TIER`
 
-Source: `chunk-fkttf1dq.js` · offset 210473326 · sha256 `a979d3e4…` · 4 read sites
+Source: `chunk-6jpfwsxt.js` · offset 211830507 · sha256 `a979d3e4…` · 4 read sites
 
 Read as: string (used as-is (not trimmed)).
 
-Undocumented; read at `chunk-fkttf1dq.js` offset 210473326.
+Undocumented; read at `chunk-6jpfwsxt.js` offset 211830507.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BASALT_COVE`
 
-Source: `chunk-1b21she7.js` · offset 181767692 · sha256 `38275e32…`
+Source: `chunk-24wkkcbf.js` · offset 182910640 · sha256 `38275e32…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181767692.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182910640.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BASE_REF`
 
-Source: `chunk-w7hy7pqe.js` · offset 183749517 · sha256 `b0ab3da3…`
+Source: `chunk-h4njzy9v.js` · offset 184873049 · sha256 `b0ab3da3…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-w7hy7pqe.js` offset 183749517.
+Undocumented; read at `chunk-h4njzy9v.js` offset 184873049.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BASE_REFS`
 
-Source: `chunk-w7hy7pqe.js` · offset 183730457 · sha256 `eb4dddf9…`
+Source: `chunk-h4njzy9v.js` · offset 184853989 · sha256 `eb4dddf9…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-w7hy7pqe.js` offset 183730457.
+Undocumented; read at `chunk-h4njzy9v.js` offset 184853989.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BASH_EDIT_DIFF`
 
-Source: `chunk-mphp7acd.js` · offset 189707575 · sha256 `9d0ca4a0…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 190910085 · sha256 `9d0ca4a0…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -1945,37 +1965,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_BASH_OUTPUT_AUDIENCE_NOTE`
 
-Source: `chunk-mphp7acd.js` · offset 187161409 · sha256 `83e24132…`
+Source: `chunk-acxptg39.js` · offset 188305308 · sha256 `83e24132…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187161409.
+Undocumented; read at `chunk-acxptg39.js` offset 188305308.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BASH_SANDBOX_SHOW_INDICATOR`
 
-Source: `chunk-mphp7acd.js` · offset 189756043 · sha256 `5fd05623…`
+Source: `chunk-acxptg39.js` · offset 190958554 · sha256 `5fd05623…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189756043.
+Undocumented; read at `chunk-acxptg39.js` offset 190958554.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BENCH_LIVE_COUNTS`
 
-Source: `chunk-p50qybax.js` · offset 191858561 · sha256 `bb39fa45…`
+Source: `chunk-xr83kgh7.js` · offset 193036036 · sha256 `bb39fa45…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-p50qybax.js` offset 191858561.
+Undocumented; read at `chunk-xr83kgh7.js` offset 193036036.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BG_TASKS_REPORT_RUNNING`
 
-Source: `chunk-xapeakym.js` · offset 204466955 · sha256 `daf2d2c7…` · 2 read sites
+Source: `chunk-np3zq5rq.js` · offset 205781250 · sha256 `daf2d2c7…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -1985,127 +2005,127 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_BISON_CAIRN`
 
-Source: `chunk-1b21she7.js` · offset 181768840 · sha256 `a636f61b…` · 2 read sites
+Source: `chunk-24wkkcbf.js` · offset 182911788 · sha256 `a636f61b…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181768840.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182911788.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE`
 
-Source: `chunk-mphp7acd.js` · offset 186785991 · sha256 `deb6881a…`
+Source: `chunk-acxptg39.js` · offset 187942029 · sha256 `deb6881a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186785991.
+Undocumented; read at `chunk-acxptg39.js` offset 187942029.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BREEZY_HORIZON`
 
-Source: `chunk-1b21she7.js` · offset 181770364 · sha256 `20ed664c…`
+Source: `chunk-24wkkcbf.js` · offset 182913312 · sha256 `20ed664c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181770364.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182913312.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_CHILD_ARTIFACT`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396289 · sha256 `8e5b73c3…` · 2 read sites
+Source: `chunk-t150dbgk.js` · offset 186649713 · sha256 `8e5b73c3…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396289.
+Undocumented; read at `chunk-t150dbgk.js` offset 186649713.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_CHILD_AUTO_DEFAULT`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396248 · sha256 `30df26bd…`
+Source: `chunk-z62ps7p2.js` · offset 181268920 · sha256 `30df26bd…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396248.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181268920.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_CHILD_MACHINE_SETTINGS`
 
-Source: `chunk-09m4fzsj.js` · offset 184567515 · sha256 `07c79987…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185697406 · sha256 `07c79987…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184567515.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185697406.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_MCP_CARRIER`
 
-Source: `chunk-758hjhx1.js` · offset 180368948 · sha256 `4dc7d695…`
+Source: `chunk-v25a6kgz.js` · offset 181241599 · sha256 `4dc7d695…`
 
 Read as: enum (compared against fixed values). Values: `1`, `spent`.
 
-Undocumented; read at `chunk-758hjhx1.js` offset 180368948.
+Undocumented; read at `chunk-v25a6kgz.js` offset 181241599.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_OWNER_ACCOUNT_UUID`
 
-Source: `chunk-xapeakym.js` · offset 204973648 · sha256 `6bc37768…`
+Source: `chunk-np3zq5rq.js` · offset 206300139 · sha256 `6bc37768…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204973648.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206300139.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_OWNER_ORG_UUID`
 
-Source: `chunk-xapeakym.js` · offset 204973804 · sha256 `c1baf9db…`
+Source: `chunk-np3zq5rq.js` · offset 206300295 · sha256 `c1baf9db…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204973804.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206300295.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIDGE_PROMPT_SHA256`
 
-Source: `chunk-mphp7acd.js` · offset 186260354 · sha256 `a0321c61…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187389667 · sha256 `a0321c61…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186260354.
+Undocumented; read at `chunk-acxptg39.js` offset 187389667.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIEF`
 
-Source: `chunk-5s6b4r7q.js` · offset 205997498 · sha256 `dfd2bbc1…` · 5 read sites
+Source: `chunk-1vj68st5.js` · offset 205352468 · sha256 `dfd2bbc1…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-5s6b4r7q.js` offset 205997498.
+Undocumented; read at `chunk-1vj68st5.js` offset 205352468.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BRIEF_UPLOAD`
 
-Source: `chunk-mxax1w86.js` · offset 193472444 · sha256 `fbf235f3…`
+Source: `chunk-cv8g9q75.js` · offset 194665354 · sha256 `fbf235f3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mxax1w86.js` offset 193472444.
+Undocumented; read at `chunk-cv8g9q75.js` offset 194665354.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_BS_AS_CTRL_BACKSPACE`
 
-Source: `chunk-p50qybax.js` · offset 191739960 · sha256 `91a7fceb…`
+Source: `chunk-xr83kgh7.js` · offset 192917123 · sha256 `91a7fceb…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -2115,87 +2135,87 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_BUBBLEWRAP`
 
-Source: `chunk-1sb33067.js` · offset 210932811 · sha256 `cebdad4c…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181668253 · sha256 `cebdad4c…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1sb33067.js` offset 210932811.
+Undocumented; read at `chunk-721k6cws.js` offset 181668253.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_EARLY_HYDRATE_PREFETCH`
 
-Source: `chunk-dgp2yyqt.js` · offset 195039547 · sha256 `74fe0821…`
+Source: `chunk-5g8p9x0b.js` · offset 196237491 · sha256 `74fe0821…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 195039547.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196237491.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_EARLY_PLUGINS_SYNC`
 
-Source: `chunk-mphp7acd.js` · offset 186051541 · sha256 `ea69ab05…`
+Source: `chunk-acxptg39.js` · offset 187178947 · sha256 `ea69ab05…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186051541.
+Undocumented; read at `chunk-acxptg39.js` offset 187178947.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_EARLY_REMOTE_CONNECT`
 
-Source: `chunk-dgp2yyqt.js` · offset 195039596 · sha256 `4e6f2f91…`
+Source: `chunk-5g8p9x0b.js` · offset 196237540 · sha256 `4e6f2f91…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 195039596.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196237540.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_EARLY_SKILLS_SYNC`
 
-Source: `chunk-105zfxe3.js` · offset 194873717 · sha256 `7f0e515e…`
+Source: `chunk-9msj151q.js` · offset 196070198 · sha256 `7f0e515e…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-105zfxe3.js` offset 194873717.
+Undocumented; read at `chunk-9msj151q.js` offset 196070198.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_FOLD_FIRST_TURN_RESCAN`
 
-Source: `chunk-xapeakym.js` · offset 204524521 · sha256 `5a1b7fc3…`
+Source: `chunk-np3zq5rq.js` · offset 205841271 · sha256 `5a1b7fc3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204524521.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205841271.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_SKIP_FRESH_MIGRATIONS`
 
-Source: `chunk-q1842b1c.js` · offset 195277062 · sha256 `1c78f196…`
+Source: `chunk-g6yz7gnr.js` · offset 196512082 · sha256 `1c78f196…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-q1842b1c.js` offset 195277062.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196512082.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CCR_SURFACE`
 
-Source: `chunk-ay2zhh0a.js` · offset 200451549 · sha256 `54105beb…` · 2 read sites
+Source: `chunk-aee57t4a.js` · offset 201723090 · sha256 `54105beb…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `tag`.
 
-Undocumented; read at `chunk-ay2zhh0a.js` offset 200451549.
+Undocumented; read at `chunk-aee57t4a.js` offset 201723090.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CHILD_SESSION`
 
-Source: `chunk-09m4fzsj.js` · offset 184517260 · sha256 `0bb57284…` · 8 read sites
+Source: `chunk-9c8h1t30.js` · offset 216288765 · sha256 `0bb57284…` · 8 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2205,161 +2225,171 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_CHROME_MCP_ORG_DENIED`
 
-Source: `chunk-7eyrbz6k.js` · offset 196828170 · sha256 `a2951440…`
+Source: `chunk-er9srhy5.js` · offset 198066179 · sha256 `a2951440…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196828170.
+Undocumented; read at `chunk-er9srhy5.js` offset 198066179.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CLASSIFIER_SUMMARY`
 
-Source: `chunk-3ywzq0xf.js` · offset 194051410 · sha256 `20834deb…` · 2 read sites
+Source: `chunk-p0xmgba0.js` · offset 194962808 · sha256 `20834deb…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-3ywzq0xf.js` offset 194051410.
+Undocumented; read at `chunk-p0xmgba0.js` offset 194962808.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CLIENT_DATA_URL`
 
-Source: `chunk-cvfe0dkq.js` · offset 193675768 · sha256 `a2db3c38…`
+Source: `chunk-377n8dy5.js` · offset 194863744 · sha256 `a2db3c38…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cvfe0dkq.js` offset 193675768.
+Undocumented; read at `chunk-377n8dy5.js` offset 194863744.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COLD_COMPACT`
 
-Source: `chunk-mphp7acd.js` · offset 187660007 · sha256 `f38286b5…`
+Source: `chunk-acxptg39.js` · offset 188810560 · sha256 `f38286b5…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187660007.
+Undocumented; read at `chunk-acxptg39.js` offset 188810560.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CONFIG_PROBE`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396373 · sha256 `55826c3c…` · 5 read sites
+Source: `chunk-721k6cws.js` · offset 182057632 · sha256 `55826c3c…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396373.
+Undocumented; read at `chunk-721k6cws.js` offset 182057632.
+
+**Undocumented**
+
+### `CLAUDE_CODE_CONFIG_WATCH_EVENTS`
+
+Source: `chunk-721k6cws.js` · offset 181968956 · sha256 `47ee2f6a…`
+
+Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
+
+Undocumented; read at `chunk-721k6cws.js` offset 181968956.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CONTAINER_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184771263 · sha256 `31dd4973…` · 5 read sites
+Source: `chunk-721k6cws.js` · offset 181892356 · sha256 `31dd4973…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184771263.
+Undocumented; read at `chunk-721k6cws.js` offset 181892356.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COORDINATOR_EXTRA_TOOLS`
 
-Source: `chunk-kny5qk1k.js` · offset 204082467 · sha256 `689a77c0…`
+Source: `chunk-1vj68st5.js` · offset 205352229 · sha256 `689a77c0…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-kny5qk1k.js` offset 204082467.
+Undocumented; read at `chunk-1vj68st5.js` offset 205352229.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COORDINATOR_FORCE_WORKER_INHERIT_MODEL`
 
-Source: `chunk-ebcyvbxn.js` · offset 185549228 · sha256 `072440a5…` · 3 read sites
+Source: `chunk-n1w9epc0.js` · offset 186664745 · sha256 `072440a5…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-ebcyvbxn.js` offset 185549228.
+Undocumented; read at `chunk-n1w9epc0.js` offset 186664745.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COORDINATOR_MODE`
 
-Source: `chunk-ke6n6sdy.js` · offset 185541746 · sha256 `0483ada0…`
+Source: `chunk-3zjk4qre.js` · offset 186657236 · sha256 `0483ada0…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-ke6n6sdy.js` offset 185541746.
+Undocumented; read at `chunk-3zjk4qre.js` offset 186657236.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COORDINATOR_SKILL_GUIDANCE`
 
-Source: `chunk-ebcyvbxn.js` · offset 185544119 · sha256 `bfb980c1…`
+Source: `chunk-n1w9epc0.js` · offset 186659612 · sha256 `bfb980c1…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-ebcyvbxn.js` offset 185544119.
+Undocumented; read at `chunk-n1w9epc0.js` offset 186659612.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COWORK_FRAME_ARTIFACTS`
 
-Source: `chunk-0a47xg8f.js` · offset 178236000 · sha256 `61849089…`
+Source: `chunk-p614p40d.js` · offset 179266644 · sha256 `61849089…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178236000.
+Undocumented; read at `chunk-p614p40d.js` offset 179266644.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_COZY_TEAPOT`
 
-Source: `chunk-1b21she7.js` · offset 181768330 · sha256 `227ab582…`
+Source: `chunk-24wkkcbf.js` · offset 182911278 · sha256 `227ab582…`
 
 Read as: enum (compared against fixed values). Values: `strict`, `relaxed`.
 
-Undocumented; read at `chunk-1b21she7.js` offset 181768330.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182911278.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CUSTOM_OAUTH_URL`
 
-Source: `chunk-a5b8yq96.js` · offset 178157786 · sha256 `fd19aaca…` · 6 read sites
+Source: `chunk-ttd93ar9.js` · offset 179187777 · sha256 `fd19aaca…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-a5b8yq96.js` offset 178157786.
+Undocumented; read at `chunk-ttd93ar9.js` offset 179187777.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DAEMON_COLD_START`
 
-Source: `chunk-b60bqfbx.js` · offset 185681320 · sha256 `920d06cc…`
+Source: `chunk-4mmvdwwg.js` · offset 186800999 · sha256 `920d06cc…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-b60bqfbx.js` offset 185681320.
+Undocumented; read at `chunk-4mmvdwwg.js` offset 186800999.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DD_ERROR_TRACKING_FLUSH_INTERVAL_MS`
 
-Source: `chunk-gqxajafc.js` · offset 185178803 · sha256 `edc9c0e2…`
+Source: `chunk-364ytsyn.js` · offset 186294223 · sha256 `edc9c0e2…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `30000`.
 
-Undocumented; read at `chunk-gqxajafc.js` offset 185178803.
+Undocumented; read at `chunk-364ytsyn.js` offset 186294223.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DEBUG_LOG_LEVEL`
 
-Source: `chunk-q80zaav8.js` · offset 178103013 · sha256 `38902a64…`
+Source: `chunk-dnvvymm5.js` · offset 179132663 · sha256 `38902a64…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -2369,7 +2399,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DEBUG_LOGS_DIR`
 
-Source: `chunk-q80zaav8.js` · offset 178104145 · sha256 `55275582…` · 4 read sites
+Source: `chunk-dnvvymm5.js` · offset 179133795 · sha256 `55275582…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -2379,59 +2409,59 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DEBUG_REPAINTS`
 
-Source: `chunk-p50qybax.js` · offset 191860252 · sha256 `8e87d2bc…`
+Source: `chunk-xr83kgh7.js` · offset 193037727 · sha256 `8e87d2bc…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-p50qybax.js` offset 191860252.
+Undocumented; read at `chunk-xr83kgh7.js` offset 193037727.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DECSTBM`
 
-Source: `chunk-p50qybax.js` · offset 191906413 · sha256 `a88756b2…`
+Source: `chunk-xr83kgh7.js` · offset 193085247 · sha256 `a88756b2…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-p50qybax.js` offset 191906413.
+Undocumented; read at `chunk-xr83kgh7.js` offset 193085247.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DESIGN_OAUTH_CLIENT_ID`
 
-Source: `chunk-grs0b3f2.js` · offset 199169169 · sha256 `27ea3afb…`
+Source: `chunk-80y5qrcq.js` · offset 200437866 · sha256 `27ea3afb…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-grs0b3f2.js` offset 199169169.
+Undocumented; read at `chunk-80y5qrcq.js` offset 200437866.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DESKTOP_APP_VERSION`
 
-Source: `chunk-0a47xg8f.js` · offset 178231200 · sha256 `d9749d38…`
+Source: `chunk-p614p40d.js` · offset 179261790 · sha256 `d9749d38…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178231200.
+Undocumented; read at `chunk-p614p40d.js` offset 179261790.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DIAGNOSTICS_FILE`
 
-Source: `chunk-bvq78v2j.js` · offset 200902640 · sha256 `b7d882f2…` · 4 read sites
+Source: `chunk-4rp0h2vb.js` · offset 179316683 · sha256 `b7d882f2…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-bvq78v2j.js` offset 200902640.
+Undocumented; read at `chunk-4rp0h2vb.js` offset 179316683.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_1M_CONTEXT`
 
-Source: `chunk-nankzm0s.js` · offset 180988708 · sha256 `22034a03…`
+Source: `chunk-721k6cws.js` · offset 181797003 · sha256 `22034a03…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2441,7 +2471,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING`
 
-Source: `chunk-nankzm0s.js` · offset 180996265 · sha256 `d1bbe95e…`
+Source: `chunk-721k6cws.js` · offset 181804560 · sha256 `d1bbe95e…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2451,7 +2481,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_ADMIN_ENV_UNION`
 
-Source: `chunk-hrhfcbdv.js` · offset 178849096 · sha256 `7409366c…` · 2 read sites
+Source: `chunk-6qv1jea6.js` · offset 179875418 · sha256 `7409366c…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2461,7 +2491,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_ADVISOR_TOOL`
 
-Source: `chunk-09m4fzsj.js` · offset 184704581 · sha256 `31f9f385…`
+Source: `chunk-j7rgjcpa.js` · offset 185836346 · sha256 `31f9f385…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2471,7 +2501,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_AGENT_VIEW`
 
-Source: `chunk-b60bqfbx.js` · offset 185680602 · sha256 `94319e32…`
+Source: `chunk-4mmvdwwg.js` · offset 186800281 · sha256 `94319e32…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2481,7 +2511,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN`
 
-Source: `chunk-qravq5t1.js` · offset 185191344 · sha256 `52146969…`
+Source: `chunk-y4wvcfrd.js` · offset 186306762 · sha256 `52146969…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2491,7 +2521,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_ATTACHMENTS`
 
-Source: `chunk-09m4fzsj.js` · offset 185003831 · sha256 `2730825f…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 188354327 · sha256 `2730825f…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2501,17 +2531,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_AUTH_REFRESH_LOCK`
 
-Source: `chunk-nankzm0s.js` · offset 181204733 · sha256 `77d224ae…`
+Source: `chunk-721k6cws.js` · offset 182018587 · sha256 `77d224ae…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181204733.
+Undocumented; read at `chunk-721k6cws.js` offset 182018587.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_AUTO_MEMORY`
 
-Source: `chunk-nankzm0s.js` · offset 181126874 · sha256 `e9ae94aa…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181937864 · sha256 `e9ae94aa…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2521,17 +2551,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_AWAITING_USER_IDLE`
 
-Source: `chunk-35ny7gy3.js` · offset 184037276 · sha256 `17da4fb8…` · 2 read sites
+Source: `chunk-z55ejpjt.js` · offset 185160866 · sha256 `17da4fb8…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-35ny7gy3.js` offset 184037276.
+Undocumented; read at `chunk-z55ejpjt.js` offset 185160866.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`
 
-Source: `chunk-mgkghrc5.js` · offset 184038707 · sha256 `8e9ee151…` · 2 read sites
+Source: `chunk-40xy1v3x.js` · offset 185162365 · sha256 `8e9ee151…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2541,7 +2571,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_BG_EXIT_HANDOFF`
 
-Source: `chunk-1rsf5e19.js` · offset 194129021 · sha256 `e35978cf…` · 2 read sites
+Source: `chunk-7c571t9j.js` · offset 195282949 · sha256 `e35978cf…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2551,7 +2581,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`
 
-Source: `chunk-mphp7acd.js` · offset 189687237 · sha256 `c60d8030…`
+Source: `chunk-acxptg39.js` · offset 190889747 · sha256 `c60d8030…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2561,7 +2591,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS`
 
-Source: `chunk-j5dkfwxp.js` · offset 179419801 · sha256 `53652e84…`
+Source: `chunk-9zqew8tk.js` · offset 182291091 · sha256 `53652e84…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2571,7 +2601,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_CFC_PROMPT`
 
-Source: `chunk-09m4fzsj.js` · offset 184581197 · sha256 `6abbe374…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185711087 · sha256 `6abbe374…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2581,27 +2611,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_CLAUDE_API_SKILL`
 
-Source: `chunk-2fn6341y.js` · offset 194793565 · sha256 `e1894d50…`
+Source: `chunk-t25zfnms.js` · offset 195976372 · sha256 `e1894d50…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-2fn6341y.js` offset 194793565.
+Undocumented; read at `chunk-t25zfnms.js` offset 195976372.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_CLAUDE_CODE_SKILL`
 
-Source: `chunk-2fn6341y.js` · offset 194793708 · sha256 `caa69eea…`
+Source: `chunk-t25zfnms.js` · offset 195976515 · sha256 `caa69eea…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-2fn6341y.js` offset 194793708.
+Undocumented; read at `chunk-t25zfnms.js` offset 195976515.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_CLAUDE_MDS`
 
-Source: `chunk-frqev2ay.js` · offset 183556948 · sha256 `a80ab294…` · 7 read sites
+Source: `chunk-67zn6kf2.js` · offset 184679781 · sha256 `a80ab294…` · 7 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2611,7 +2641,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_CRON`
 
-Source: `chunk-tbjyszen.js` · offset 185441237 · sha256 `d2e34e85…`
+Source: `chunk-px0nbncc.js` · offset 186556001 · sha256 `d2e34e85…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2621,17 +2651,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_DANGEROUS_RM_TIMEOUT`
 
-Source: `chunk-mphp7acd.js` · offset 187327383 · sha256 `b0a7f033…`
+Source: `chunk-acxptg39.js` · offset 188473428 · sha256 `b0a7f033…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187327383.
+Undocumented; read at `chunk-acxptg39.js` offset 188473428.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`
 
-Source: `chunk-mphp7acd.js` · offset 187091836 · sha256 `47a42445…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 188235511 · sha256 `47a42445…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2641,17 +2671,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_EXPLORE_INHERIT_CAP`
 
-Source: `chunk-mphp7acd.js` · offset 185968336 · sha256 `f82982b0…`
+Source: `chunk-acxptg39.js` · offset 187094799 · sha256 `f82982b0…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 185968336.
+Undocumented; read at `chunk-acxptg39.js` offset 187094799.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS`
 
-Source: `chunk-mphp7acd.js` · offset 185911535 · sha256 `25884f10…`
+Source: `chunk-acxptg39.js` · offset 187037975 · sha256 `25884f10…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2661,7 +2691,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_FAST_MODE`
 
-Source: `chunk-nankzm0s.js` · offset 180872049 · sha256 `8b097ca8…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181680078 · sha256 `8b097ca8…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2671,7 +2701,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY`
 
-Source: `chunk-f2cpzzp9.js` · offset 207594665 · sha256 `eceb5df5…` · 8 read sites
+Source: `chunk-mcm8e5ww.js` · offset 208916963 · sha256 `eceb5df5…` · 8 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2681,7 +2711,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING`
 
-Source: `chunk-4app56pf.js` · offset 215241787 · sha256 `1bb2cf49…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 191349110 · sha256 `1bb2cf49…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2691,7 +2721,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS`
 
-Source: `chunk-mphp7acd.js` · offset 186443405 · sha256 `af2da406…`
+Source: `chunk-acxptg39.js` · offset 187580537 · sha256 `af2da406…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -2701,17 +2731,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_HOOK_FORWARDING`
 
-Source: `chunk-r7jk65a3.js` · offset 204039735 · sha256 `854713d6…` · 3 read sites
+Source: `chunk-4vezmnxh.js` · offset 206599208 · sha256 `854713d6…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-r7jk65a3.js` offset 204039735.
+Undocumented; read at `chunk-4vezmnxh.js` offset 206599208.
+
+**Undocumented**
+
+### `CLAUDE_CODE_DISABLE_INLINE_SHELL_RM_PROMPT`
+
+Source: `chunk-acxptg39.js` · offset 189439356 · sha256 `d8d1d00c…`
+
+Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
+
+Undocumented; read at `chunk-acxptg39.js` offset 189439356.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_LEGACY_MODEL_REMAP`
 
-Source: `chunk-nankzm0s.js` · offset 180984145 · sha256 `1434b3f7…`
+Source: `chunk-721k6cws.js` · offset 181792440 · sha256 `1434b3f7…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2721,77 +2761,77 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND`
 
-Source: `chunk-x0bfz90y.js` · offset 185738192 · sha256 `997d0063…`
+Source: `chunk-1cm3113f.js` · offset 186858915 · sha256 `997d0063…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-x0bfz90y.js` offset 185738192.
+Undocumented; read at `chunk-1cm3113f.js` offset 186858915.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MEMORY_BULK_INFLATE`
 
-Source: `chunk-09m4fzsj.js` · offset 184411782 · sha256 `57a2e9bf…`
+Source: `chunk-j7rgjcpa.js` · offset 185540945 · sha256 `57a2e9bf…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184411782.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185540945.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MEMORY_MASS_DELETE_HOLD`
 
-Source: `chunk-09m4fzsj.js` · offset 184374896 · sha256 `c98731a8…`
+Source: `chunk-j7rgjcpa.js` · offset 185503136 · sha256 `c98731a8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184374896.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185503136.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MEMORY_PERIODIC_RESYNC`
 
-Source: `chunk-09m4fzsj.js` · offset 184434544 · sha256 `a88b554a…`
+Source: `chunk-j7rgjcpa.js` · offset 185563728 · sha256 `a88b554a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184434544.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185563728.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MEMORY_RO_UNSAVED_NOTICE`
 
-Source: `chunk-09m4fzsj.js` · offset 184425686 · sha256 `b8e2136b…`
+Source: `chunk-j7rgjcpa.js` · offset 185554894 · sha256 `b8e2136b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184425686.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185554894.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MEMORY_STREAM_LIST`
 
-Source: `chunk-09m4fzsj.js` · offset 184402068 · sha256 `e80a215c…`
+Source: `chunk-j7rgjcpa.js` · offset 185530620 · sha256 `e80a215c…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184402068.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185530620.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MODEL_ACCESS_FALLBACK`
 
-Source: `chunk-nankzm0s.js` · offset 180945119 · sha256 `4080303c…`
+Source: `chunk-721k6cws.js` · offset 181753169 · sha256 `4080303c…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180945119.
+Undocumented; read at `chunk-721k6cws.js` offset 181753169.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_MOUSE`
 
-Source: `chunk-qravq5t1.js` · offset 185194048 · sha256 `8824ecb6…` · 2 read sites
+Source: `chunk-y4wvcfrd.js` · offset 186309466 · sha256 `8824ecb6…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -2801,7 +2841,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_MOUSE_CLICKS`
 
-Source: `chunk-qravq5t1.js` · offset 185194136 · sha256 `5298f3d5…` · 2 read sites
+Source: `chunk-y4wvcfrd.js` · offset 186309554 · sha256 `5298f3d5…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -2811,27 +2851,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_NESTED_CHAIN_IDLE`
 
-Source: `chunk-dndmrt2q.js` · offset 185686457 · sha256 `49b1d93e…`
+Source: `chunk-y7wm8tf1.js` · offset 186806197 · sha256 `49b1d93e…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dndmrt2q.js` offset 185686457.
+Undocumented; read at `chunk-y7wm8tf1.js` offset 186806197.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_NESTED_USER_REPAIR`
 
-Source: `chunk-64z3xwk8.js` · offset 203985154 · sha256 `0a5b4502…`
+Source: `chunk-ept4s9w5.js` · offset 205243061 · sha256 `0a5b4502…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-64z3xwk8.js` offset 203985154.
+Undocumented; read at `chunk-ept4s9w5.js` offset 205243061.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
 
-Source: `chunk-8xhw5h9f.js` · offset 190500050 · sha256 `b476ef4e…` · 4 read sites
+Source: `chunk-k2pjtcda.js` · offset 191710924 · sha256 `b476ef4e…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2843,7 +2883,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK`
 
-Source: `chunk-mphp7acd.js` · offset 187917124 · sha256 `c72546fc…`
+Source: `chunk-acxptg39.js` · offset 189075905 · sha256 `c72546fc…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2853,7 +2893,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_NOTIFICATION_PRESENCE_CHECK`
 
-Source: `chunk-7qn997q6.js` · offset 210170373 · sha256 `4e0eb81d…`
+Source: `chunk-ayvhxd0j.js` · offset 211526797 · sha256 `4e0eb81d…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2863,7 +2903,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL`
 
-Source: `chunk-f2cpzzp9.js` · offset 208206572 · sha256 `effc4341…`
+Source: `chunk-mcm8e5ww.js` · offset 209534445 · sha256 `effc4341…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2873,17 +2913,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_ORG_MEMORY`
 
-Source: `chunk-6xrs6gmd.js` · offset 182188531 · sha256 `a35b3841…`
+Source: `chunk-0s5f053y.js` · offset 183333872 · sha256 `a35b3841…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182188531.
+Undocumented; read at `chunk-0s5f053y.js` offset 183333872.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_PERMISSION_PROMPT_NOTIFY_HOOKS`
 
-Source: `chunk-64z3xwk8.js` · offset 203957060 · sha256 `6e09c748…`
+Source: `chunk-ept4s9w5.js` · offset 205213264 · sha256 `6e09c748…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2893,17 +2933,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_PLUGIN_FORWARDING`
 
-Source: `chunk-82ndkh08.js` · offset 205525461 · sha256 `bc51a94c…` · 5 read sites
+Source: `chunk-2ba5q06j.js` · offset 206727187 · sha256 `bc51a94c…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-82ndkh08.js` offset 205525461.
+Undocumented; read at `chunk-2ba5q06j.js` offset 206727187.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_POLICY_SKILLS`
 
-Source: `chunk-mphp7acd.js` · offset 188508379 · sha256 `557b868b…`
+Source: `chunk-acxptg39.js` · offset 189693341 · sha256 `557b868b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2913,67 +2953,77 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_POWERSHELL_CMD_RM_DENY`
 
-Source: `chunk-98tn1pps.js` · offset 200323948 · sha256 `eb5d87df…`
+Source: `chunk-dd4zws47.js` · offset 201606655 · sha256 `eb5d87df…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-98tn1pps.js` offset 200323948.
+Undocumented; read at `chunk-dd4zws47.js` offset 201606655.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP`
 
-Source: `chunk-mphp7acd.js` · offset 190105221 · sha256 `f4d7781e…`
+Source: `chunk-acxptg39.js` · offset 191312558 · sha256 `f4d7781e…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 190105221.
+Undocumented; read at `chunk-acxptg39.js` offset 191312558.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_REFUSAL_FALLBACK`
 
-Source: `chunk-09m4fzsj.js` · offset 184748470 · sha256 `b7e1638f…`
+Source: `chunk-j7rgjcpa.js` · offset 185901079 · sha256 `b7e1638f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184748470.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185901079.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_REFUSAL_RETRY`
 
-Source: `chunk-w8a1w7ad.js` · offset 193863903 · sha256 `22579745…`
+Source: `chunk-pphn9kby.js` · offset 195074798 · sha256 `22579745…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-w8a1w7ad.js` offset 193863903.
+Undocumented; read at `chunk-pphn9kby.js` offset 195074798.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_STARTUP_WORK_GATE`
 
-Source: `chunk-dgp2yyqt.js` · offset 194933102 · sha256 `6db62d41…`
+Source: `chunk-5g8p9x0b.js` · offset 196130905 · sha256 `6db62d41…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 194933102.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196130905.
+
+**Undocumented**
+
+### `CLAUDE_CODE_DISABLE_STRUCTURED_OUTPUTS`
+
+Source: `chunk-721k6cws.js` · offset 181806370 · sha256 `7298c207…` · 2 read sites
+
+Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
+
+Undocumented; read at `chunk-721k6cws.js` offset 181806370.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_SUBSTITUTION_RM_PROMPT`
 
-Source: `chunk-mphp7acd.js` · offset 188262348 · sha256 `f3c2c677…`
+Source: `chunk-acxptg39.js` · offset 189427230 · sha256 `f3c2c677…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188262348.
+Undocumented; read at `chunk-acxptg39.js` offset 189427230.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_TERMINAL_TITLE`
 
-Source: `chunk-9975a2ae.js` · offset 196157681 · sha256 `c9848df5…` · 7 read sites
+Source: `chunk-7m87m84t.js` · offset 196892067 · sha256 `c9848df5…` · 7 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2983,7 +3033,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_THINKING`
 
-Source: `chunk-mphp7acd.js` · offset 187851975 · sha256 `25755513…`
+Source: `chunk-acxptg39.js` · offset 189009273 · sha256 `25755513…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -2993,17 +3043,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_TURN_HANDOFF`
 
-Source: `chunk-r7jk65a3.js` · offset 204049380 · sha256 `bab299da…` · 2 read sites
+Source: `chunk-ft4qs0da.js` · offset 205318287 · sha256 `bab299da…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-r7jk65a3.js` offset 204049380.
+Undocumented; read at `chunk-ft4qs0da.js` offset 205318287.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT`
 
-Source: `chunk-mphp7acd.js` · offset 186784420 · sha256 `e2af1b0f…`
+Source: `chunk-acxptg39.js` · offset 187940458 · sha256 `e2af1b0f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3013,7 +3063,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_VIRTUAL_SCROLL`
 
-Source: `chunk-1ypw9bby.js` · offset 206297058 · sha256 `778468f5…` · 2 read sites
+Source: `chunk-mcm8e5ww.js` · offset 209602357 · sha256 `778468f5…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3023,27 +3073,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_VITALS_EMITTER`
 
-Source: `chunk-mxgb9rkv.js` · offset 190362027 · sha256 `b123889b…`
+Source: `chunk-qkt5evp3.js` · offset 191572752 · sha256 `b123889b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mxgb9rkv.js` offset 190362027.
+Undocumented; read at `chunk-qkt5evp3.js` offset 191572752.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_WEB_FETCH`
 
-Source: `chunk-djhbc0y7.js` · offset 193524195 · sha256 `38c13913…` · 4 read sites
+Source: `chunk-7n2w7emx.js` · offset 194717709 · sha256 `38c13913…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-djhbc0y7.js` offset 193524195.
+Undocumented; read at `chunk-7n2w7emx.js` offset 194717709.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DISABLE_WINDOWS_SHELL_LAUNCHER`
 
-Source: `chunk-mphp7acd.js` · offset 186623581 · sha256 `d36766ec…`
+Source: `chunk-acxptg39.js` · offset 187779177 · sha256 `d36766ec…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3053,7 +3103,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_WORKFLOWS`
 
-Source: `chunk-980njedm.js` · offset 181691542 · sha256 `6a39bb51…` · 3 read sites
+Source: `chunk-sm075fbc.js` · offset 182833135 · sha256 `6a39bb51…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3063,59 +3113,59 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_WORKING_SYNC`
 
-Source: `chunk-xapeakym.js` · offset 204767252 · sha256 `e937cc38…`
+Source: `chunk-np3zq5rq.js` · offset 206092800 · sha256 `e937cc38…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204767252.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206092800.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DONT_INHERIT_ENV`
 
-Source: `chunk-mphp7acd.js` · offset 186611420 · sha256 `6394fbc6…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187766839 · sha256 `6394fbc6…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`. Other sites parse it as a boolean, so the same value can mean on in one place and off in another.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186611420.
+Undocumented; read at `chunk-acxptg39.js` offset 187766839.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DOWNLOAD_DEADLINE_MS_FOR_TESTING`
 
-Source: `chunk-qr1pdq5r.js` · offset 190229956 · sha256 `1f00549c…`
+Source: `chunk-d9rg2fcs.js` · offset 191440650 · sha256 `1f00549c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-qr1pdq5r.js` offset 190229956.
+Undocumented; read at `chunk-d9rg2fcs.js` offset 191440650.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EAGER_FLUSH`
 
-Source: `chunk-xapeakym.js` · offset 204665716 · sha256 `099e9537…`
+Source: `chunk-np3zq5rq.js` · offset 205987569 · sha256 `099e9537…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204665716.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205987569.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EDITOR_CODELIVERY`
 
-Source: `chunk-xapeakym.js` · offset 204560495 · sha256 `7931744b…`
+Source: `chunk-np3zq5rq.js` · offset 205877945 · sha256 `7931744b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204560495.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205877945.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EFFORT_LEVEL`
 
-Source: `chunk-5rsp1jx3.js` · offset 181702775 · sha256 `a1418c04…` · 3 read sites
+Source: `chunk-tkc05gkf.js` · offset 199878694 · sha256 `a1418c04…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -3125,57 +3175,57 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ELEGANT_MEADOW`
 
-Source: `chunk-mphp7acd.js` · offset 185796271 · sha256 `4e9da92b…`
+Source: `chunk-acxptg39.js` · offset 186915697 · sha256 `4e9da92b…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 185796271.
+Undocumented; read at `chunk-acxptg39.js` offset 186915697.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS`
 
-Source: `chunk-dndmrt2q.js` · offset 185687838 · sha256 `87d54f3a…`
+Source: `chunk-y7wm8tf1.js` · offset 186807578 · sha256 `87d54f3a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dndmrt2q.js` offset 185687838.
+Undocumented; read at `chunk-y7wm8tf1.js` offset 186807578.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EMIT_STARTUP_TIMING`
 
-Source: `chunk-mphp7acd.js` · offset 187688606 · sha256 `0c59bb0a…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 188842815 · sha256 `0c59bb0a…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187688606.
+Undocumented; read at `chunk-acxptg39.js` offset 188842815.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES`
 
-Source: `chunk-w8a1w7ad.js` · offset 193883739 · sha256 `845bada0…`
+Source: `chunk-pphn9kby.js` · offset 195094597 · sha256 `845bada0…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-w8a1w7ad.js` offset 193883739.
+Undocumented; read at `chunk-pphn9kby.js` offset 195094597.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT`
 
-Source: `chunk-5ne43w2c.js` · offset 193274580 · sha256 `f57deca3…`
+Source: `chunk-a29gkqzd.js` · offset 194466234 · sha256 `f57deca3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-5ne43w2c.js` offset 193274580.
+Undocumented; read at `chunk-a29gkqzd.js` offset 194466234.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_AWAY_SUMMARY`
 
-Source: `chunk-hne3gr68.js` · offset 194053926 · sha256 `5fd6ac1f…`
+Source: `chunk-4xf394j9.js` · offset 194965533 · sha256 `5fd6ac1f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3185,7 +3235,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_BACKGROUND_PLUGIN_REFRESH`
 
-Source: `chunk-xapeakym.js` · offset 204525492 · sha256 `73d4e338…`
+Source: `chunk-np3zq5rq.js` · offset 205842242 · sha256 `73d4e338…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3195,27 +3245,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_CFC`
 
-Source: `chunk-09m4fzsj.js` · offset 184579705 · sha256 `e1810825…` · 9 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196230639 · sha256 `e1810825…` · 9 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184579705.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196230639.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_EXPERIMENTAL_ADVISOR_TOOL`
 
-Source: `chunk-09m4fzsj.js` · offset 184704700 · sha256 `ef13d50a…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185836465 · sha256 `ef13d50a…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184704700.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185836465.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_FINE_GRAINED_TOOL_STREAMING`
 
-Source: `chunk-mphp7acd.js` · offset 186744767 · sha256 `9635eb53…`
+Source: `chunk-acxptg39.js` · offset 187900488 · sha256 `9635eb53…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -3225,17 +3275,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_MENU_KIND_LANES`
 
-Source: `chunk-f2cpzzp9.js` · offset 207176518 · sha256 `a005df94…`
+Source: `chunk-mcm8e5ww.js` · offset 208498114 · sha256 `a005df94…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 207176518.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208498114.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION`
 
-Source: `chunk-w8a1w7ad.js` · offset 193844866 · sha256 `abb8b4cc…` · 6 read sites
+Source: `chunk-pphn9kby.js` · offset 195055761 · sha256 `abb8b4cc…` · 6 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -3245,37 +3295,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_REFRESH_MCP_TOOLS`
 
-Source: `chunk-djhbc0y7.js` · offset 193628084 · sha256 `47eef022…`
+Source: `chunk-7n2w7emx.js` · offset 194821598 · sha256 `47eef022…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-djhbc0y7.js` offset 193628084.
+Undocumented; read at `chunk-7n2w7emx.js` offset 194821598.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_REMOTE_RECAP`
 
-Source: `chunk-hne3gr68.js` · offset 194054093 · sha256 `93e0e7e0…`
+Source: `chunk-4xf394j9.js` · offset 194965700 · sha256 `93e0e7e0…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-hne3gr68.js` offset 194054093.
+Undocumented; read at `chunk-4xf394j9.js` offset 194965700.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING`
 
-Source: `chunk-mphp7acd.js` · offset 190141808 · sha256 `162e231d…`
+Source: `chunk-acxptg39.js` · offset 191349173 · sha256 `162e231d…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 190141808.
+Undocumented; read at `chunk-acxptg39.js` offset 191349173.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_TASKS`
 
-Source: `chunk-rgd7eyd0.js` · offset 185341748 · sha256 `789e280c…`
+Source: `chunk-vmcwgvfa.js` · offset 186456494 · sha256 `789e280c…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -3285,7 +3335,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_TODO_TOOLS`
 
-Source: `chunk-mphp7acd.js` · offset 189050481 · sha256 `9e897733…`
+Source: `chunk-acxptg39.js` · offset 190246842 · sha256 `9e897733…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3295,89 +3345,89 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_TOKEN_USAGE_ATTACHMENT`
 
-Source: `chunk-mphp7acd.js` · offset 189162018 · sha256 `211e4580…`
+Source: `chunk-acxptg39.js` · offset 190359411 · sha256 `211e4580…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189162018.
+Undocumented; read at `chunk-acxptg39.js` offset 190359411.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_XAA`
 
-Source: `chunk-hrhfcbdv.js` · offset 178637405 · sha256 `a32876ef…` · 2 read sites
+Source: `chunk-6qv1jea6.js` · offset 179662449 · sha256 `a32876ef…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-hrhfcbdv.js` offset 178637405.
+Undocumented; read at `chunk-6qv1jea6.js` offset 179662449.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENTRYPOINT`
 
-Source: `chunk-1b21she7.js` · offset 181829359 · sha256 `7c476da1…` · 79 read sites
+Source: `chunk-24wkkcbf.js` · offset 182972946 · sha256 `7c476da1…` · 79 read sites
 
-Read as: string (trimmed; empty is treated as unset). Values: `remote_cowork`, `claude-in-teams`, `local_agent`, `cli`, `claude-desktop`, `local-agent`, `ssh-remote`, `sdk-ts`, `sdk-py`, `sdk-cli`, `bench`, `claude-desktop-3p`, `claude-vscode`, `remote`, `remote_baku`, `remote_desktop`, `remote_mobile`, `remote_projects`, `mcp`, `claude-code-github-action`, `claude_in_slack`, `claude-in-slack`.
+Read as: string (trimmed; empty is treated as unset). Values: `claude-desktop`, `local-agent`, `claude-desktop-3p`, `ssh-remote`, `sdk-ts`, `sdk-py`, `sdk-cli`, `bench`, `claude-vscode`, `remote`, `remote_baku`, `remote_cowork`, `remote_desktop`, `remote_mobile`, `remote_projects`, `claude-in-teams`, `mcp`, `claude-code-github-action`, `claude_in_slack`, `claude-in-slack`, `cli`, `local_agent`.
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181829359.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182972946.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENVIRONMENT_KIND`
 
-Source: `chunk-2z1m9v0n.js` · offset 183490558 · sha256 `86b4d664…` · 30 read sites
+Source: `chunk-ft4qs0da.js` · offset 205318949 · sha256 `86b4d664…` · 30 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `byoc`, `bridge`.
 
-Undocumented; read at `chunk-2z1m9v0n.js` offset 183490558.
+Undocumented; read at `chunk-ft4qs0da.js` offset 205318949.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION`
 
-Source: `chunk-r7jk65a3.js` · offset 204050704 · sha256 `e1654a9a…` · 2 read sites
+Source: `chunk-ft4qs0da.js` · offset 205319606 · sha256 `e1654a9a…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-r7jk65a3.js` offset 204050704.
+Undocumented; read at `chunk-ft4qs0da.js` offset 205319606.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EVAL_CONFINED`
 
-Source: `chunk-09916wnc.js` · offset 209562497 · sha256 `fa5f0a3f…` · 27 read sites
+Source: `chunk-0s5f053y.js` · offset 183389282 · sha256 `fa5f0a3f…` · 28 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09916wnc.js` offset 209562497.
+Undocumented; read at `chunk-0s5f053y.js` offset 183389282.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EVAL_INTERVIEW_SESSION`
 
-Source: `chunk-e2javxcw.js` · offset 215020096 · sha256 `ee624a73…`
+Source: `chunk-9c8h1t30.js` · offset 216283651 · sha256 `ee624a73…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-e2javxcw.js` offset 215020096.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216283651.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER`
 
-Source: `chunk-1sb33067.js` · offset 210932416 · sha256 `3f1dcc43…` · 4 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196215127 · sha256 `3f1dcc43…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1sb33067.js` offset 210932416.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196215127.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EXIT_AFTER_STOP_DELAY`
 
-Source: `chunk-xapeakym.js` · offset 204683191 · sha256 `72bb31e0…`
+Source: `chunk-np3zq5rq.js` · offset 206005224 · sha256 `72bb31e0…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -3387,7 +3437,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`
 
-Source: `chunk-zrq7rc23.js` · offset 185252516 · sha256 `25d9e31b…`
+Source: `chunk-dt545sgj.js` · offset 186367936 · sha256 `25d9e31b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3397,17 +3447,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_EXPERIMENTAL_OBSERVER_AGENTS`
 
-Source: `chunk-by5kes8x.js` · offset 193098345 · sha256 `6b66f048…`
+Source: `chunk-way3bepz.js` · offset 194289432 · sha256 `6b66f048…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-by5kes8x.js` offset 193098345.
+Undocumented; read at `chunk-way3bepz.js` offset 194289432.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_EXTRA_BODY`
 
-Source: `chunk-mphp7acd.js` · offset 187803301 · sha256 `c34fb80c…` · 5 read sites
+Source: `chunk-acxptg39.js` · offset 188959762 · sha256 `c34fb80c…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -3419,27 +3469,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_EXTRA_METADATA`
 
-Source: `chunk-09m4fzsj.js` · offset 184901236 · sha256 `1e7f6a5b…`
+Source: `chunk-j7rgjcpa.js` · offset 186028734 · sha256 `1e7f6a5b…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184901236.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186028734.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FEDERATION_CACHE_DIR`
 
-Source: `chunk-8ptzhr8g.js` · offset 180386063 · sha256 `c06c4761…`
+Source: `chunk-z62ps7p2.js` · offset 181258735 · sha256 `c06c4761…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180386063.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181258735.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS`
 
-Source: `chunk-09grka97.js` · offset 181323375 · sha256 `1dca00c6…`
+Source: `chunk-g3eea2rf.js` · offset 182368482 · sha256 `1dca00c6…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -3449,57 +3499,57 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FLAG_FETCH_WAIT_MS`
 
-Source: `chunk-3xjx5251.js` · offset 185742315 · sha256 `19b816d5…`
+Source: `chunk-145m7htd.js` · offset 186687187 · sha256 `19b816d5…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `3000`.
 
-Undocumented; read at `chunk-3xjx5251.js` offset 185742315.
+Undocumented; read at `chunk-145m7htd.js` offset 186687187.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FLEETVIEW_SIMPLE`
 
-Source: `chunk-9975a2ae.js` · offset 196147613 · sha256 `fec9df94…`
+Source: `chunk-zdwxqbe3.js` · offset 197383473 · sha256 `fec9df94…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9975a2ae.js` offset 196147613.
+Undocumented; read at `chunk-zdwxqbe3.js` offset 197383473.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FOOTER_INDICATOR`
 
-Source: `chunk-904yhcr0.js` · offset 193633516 · sha256 `85294805…` · 2 read sites
+Source: `chunk-mcm8e5ww.js` · offset 208737400 · sha256 `85294805…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-904yhcr0.js` offset 193633516.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208737400.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FORCE_FULLSCREEN_UPSELL`
 
-Source: `chunk-f2cpzzp9.js` · offset 206838362 · sha256 `1a35ec20…`
+Source: `chunk-mcm8e5ww.js` · offset 208156924 · sha256 `1a35ec20…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206838362.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208156924.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FORCE_MID_CONVERSATION_SYSTEM`
 
-Source: `chunk-mphp7acd.js` · offset 187743046 · sha256 `4374665e…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181806795 · sha256 `4374665e…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187743046.
+Undocumented; read at `chunk-721k6cws.js` offset 181806795.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FORCE_SESSION_PERSISTENCE`
 
-Source: `chunk-yzr5hfaq.js` · offset 180403496 · sha256 `fd59f454…`
+Source: `chunk-aq8h78w9.js` · offset 181306383 · sha256 `fd59f454…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3509,7 +3559,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FORCE_STRIKETHROUGH`
 
-Source: `chunk-ms2jsjnm.js` · offset 191423143 · sha256 `a62ccdc5…`
+Source: `chunk-j4at3hdr.js` · offset 192600190 · sha256 `a62ccdc5…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3519,7 +3569,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FORCE_SYNC_OUTPUT`
 
-Source: `chunk-ckcph1xh.js` · offset 191510376 · sha256 `c543d0ff…` · 2 read sites
+Source: `chunk-f4tdx2y5.js` · offset 192687508 · sha256 `c543d0ff…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3529,27 +3579,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FORCE_TERMINAL_IMAGES`
 
-Source: `chunk-ckcph1xh.js` · offset 191508999 · sha256 `0a85c469…` · 2 read sites
+Source: `chunk-f4tdx2y5.js` · offset 192686131 · sha256 `0a85c469…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-ckcph1xh.js` offset 191508999.
+Undocumented; read at `chunk-f4tdx2y5.js` offset 192686131.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FORCE_WINDOWS_CREDMAN`
 
-Source: `chunk-wgt53hn2.js` · offset 180473181 · sha256 `3f0763ed…`
+Source: `chunk-gr5bn7tt.js` · offset 181195371 · sha256 `3f0763ed…`
 
 Read as: string (trimmed; empty is treated as unset). Values: `1`.
 
-Undocumented; read at `chunk-wgt53hn2.js` offset 180473181.
+Undocumented; read at `chunk-gr5bn7tt.js` offset 181195371.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FORK_SUBAGENT`
 
-Source: `chunk-mphp7acd.js` · offset 187172095 · sha256 `1a7edc8d…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 188316115 · sha256 `1a7edc8d…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -3559,7 +3609,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FORWARD_SUBAGENT_TEXT`
 
-Source: `chunk-dgp2yyqt.js` · offset 195023584 · sha256 `a50b2622…`
+Source: `chunk-5g8p9x0b.js` · offset 196221503 · sha256 `a50b2622…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3569,37 +3619,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FORWARD_USER_INTENT`
 
-Source: `chunk-nankzm0s.js` · offset 180747622 · sha256 `72bec8cd…`
+Source: `chunk-721k6cws.js` · offset 181554280 · sha256 `72bec8cd…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180747622.
+Undocumented; read at `chunk-721k6cws.js` offset 181554280.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FRAME_TIMING_LOG`
 
-Source: `chunk-f5w4pbxy.js` · offset 201281285 · sha256 `2e0a430f…`
+Source: `chunk-5bxd66qx.js` · offset 202552878 · sha256 `2e0a430f…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-f5w4pbxy.js` offset 201281285.
+Undocumented; read at `chunk-5bxd66qx.js` offset 202552878.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_FRAME_TIMING_SAMPLE_EVERY`
 
-Source: `chunk-f5w4pbxy.js` · offset 201281338 · sha256 `8acc24f1…`
+Source: `chunk-5bxd66qx.js` · offset 202552931 · sha256 `8acc24f1…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `1`.
 
-Undocumented; read at `chunk-f5w4pbxy.js` offset 201281338.
+Undocumented; read at `chunk-5bxd66qx.js` offset 202552931.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_GIT_BASH_PATH`
 
-Source: `chunk-2ejbgdvw.js` · offset 178894009 · sha256 `f6c95e4d…` · 5 read sites
+Source: `chunk-t525z4nt.js` · offset 180875899 · sha256 `f6c95e4d…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -3611,7 +3661,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GLOB_HIDDEN`
 
-Source: `chunk-mphp7acd.js` · offset 186684281 · sha256 `7fef3404…`
+Source: `chunk-acxptg39.js` · offset 187839997 · sha256 `7fef3404…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false). Default (from code): `true`.
 
@@ -3621,7 +3671,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GLOB_NO_IGNORE`
 
-Source: `chunk-mphp7acd.js` · offset 186684228 · sha256 `f396df60…`
+Source: `chunk-acxptg39.js` · offset 187839944 · sha256 `f396df60…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false). Default (from code): `true`.
 
@@ -3631,7 +3681,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GLOB_TIMEOUT_SECONDS`
 
-Source: `chunk-5vadtxaa.js` · offset 183307156 · sha256 `3c89eebb…`
+Source: `chunk-hnd61wvn.js` · offset 184455358 · sha256 `3c89eebb…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `0`.
 
@@ -3641,7 +3691,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GOAL_CHECKIN_MINUTES`
 
-Source: `chunk-w8a1w7ad.js` · offset 193834666 · sha256 `421e5a4b…`
+Source: `chunk-pphn9kby.js` · offset 195044600 · sha256 `421e5a4b…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, max 10080, digitsOnly true. Default (from code): `30`.
 
@@ -3651,97 +3701,107 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GORSE_PLOVER`
 
-Source: `chunk-1b21she7.js` · offset 181768648 · sha256 `5946ea79…`
+Source: `chunk-24wkkcbf.js` · offset 182911596 · sha256 `5946ea79…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181768648.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182911596.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_GROWTHBOOK_KICK_FROM_INIT`
 
-Source: `chunk-dgp2yyqt.js` · offset 195044736 · sha256 `e4e27859…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196242753 · sha256 `e4e27859…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 195044736.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196242753.
+
+**Undocumented**
+
+### `CLAUDE_CODE_GROWTHBOOK_KICK_ON_WARM_CACHE`
+
+Source: `chunk-5g8p9x0b.js` · offset 196217118 · sha256 `e97bdd53…` · 2 read sites
+
+Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
+
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196217118.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_GZIP_CCR_REQUEST_BODIES`
 
-Source: `chunk-s74nkhgm.js` · offset 183811245 · sha256 `8dc68f1f…`
+Source: `chunk-kqz4ze2y.js` · offset 184937872 · sha256 `8dc68f1f…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-s74nkhgm.js` offset 183811245.
+Undocumented; read at `chunk-kqz4ze2y.js` offset 184937872.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_GZIP_REQUEST_BODIES`
 
-Source: `chunk-s74nkhgm.js` · offset 183811283 · sha256 `bc05e45c…`
+Source: `chunk-kqz4ze2y.js` · offset 184937910 · sha256 `bc05e45c…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-s74nkhgm.js` offset 183811283.
+Undocumented; read at `chunk-kqz4ze2y.js` offset 184937910.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_GZIP_REQUEST_BODY_BLOCKS`
 
-Source: `chunk-09m4fzsj.js` · offset 184761878 · sha256 `6b269752…`
+Source: `chunk-j7rgjcpa.js` · offset 185914487 · sha256 `6b269752…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, max 2, digitsOnly true.
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184761878.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185914487.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_GZIP_REQUEST_BODY_LEVEL`
 
-Source: `chunk-s74nkhgm.js` · offset 183811113 · sha256 `55a893ae…`
+Source: `chunk-kqz4ze2y.js` · offset 184937740 · sha256 `55a893ae…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, max 9, digitsOnly true.
 
-Undocumented; read at `chunk-s74nkhgm.js` offset 183811113.
+Undocumented; read at `chunk-kqz4ze2y.js` offset 184937740.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HARBOR_KITE`
 
-Source: `chunk-6jc3yf5g.js` · offset 185124813 · sha256 `df6ae3c8…`
+Source: `chunk-9xcwygxa.js` · offset 186253499 · sha256 `df6ae3c8…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-6jc3yf5g.js` offset 185124813.
+Undocumented; read at `chunk-9xcwygxa.js` offset 186253499.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HARBOR_KITE_CLOUD`
 
-Source: `chunk-w0hep6xp.js` · offset 200765296 · sha256 `40c7c424…`
+Source: `chunk-gr5j97kv.js` · offset 202019939 · sha256 `40c7c424…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-w0hep6xp.js` offset 200765296.
+Undocumented; read at `chunk-gr5j97kv.js` offset 202019939.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HARBOR_KITE_PACING_OFF`
 
-Source: `chunk-b5mvcpdr.js` · offset 185142770 · sha256 `a6b5fd40…`
+Source: `chunk-946tbhpp.js` · offset 186271457 · sha256 `a6b5fd40…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-b5mvcpdr.js` offset 185142770.
+Undocumented; read at `chunk-946tbhpp.js` offset 186271457.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HIDE_CWD`
 
-Source: `chunk-v6xcaj6r.js` · offset 195840661 · sha256 `ab916658…`
+Source: `chunk-7reb38ay.js` · offset 197071685 · sha256 `ab916658…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3751,151 +3811,171 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_HIDE_SETTINGS_HINT`
 
-Source: `chunk-0a47xg8f.js` · offset 178233474 · sha256 `1e801477…`
+Source: `chunk-p614p40d.js` · offset 179264064 · sha256 `1e801477…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178233474.
+Undocumented; read at `chunk-p614p40d.js` offset 179264064.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOLD_REPORT_PARK_AT_INIT`
 
-Source: `chunk-r7jk65a3.js` · offset 204050236 · sha256 `65424d2e…`
+Source: `chunk-ft4qs0da.js` · offset 205319138 · sha256 `65424d2e…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-r7jk65a3.js` offset 204050236.
+Undocumented; read at `chunk-ft4qs0da.js` offset 205319138.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOME_SEED_HOLD_TIMEOUT_MS`
 
-Source: `chunk-93nd79wx.js` · offset 214197682 · sha256 `7cba2278…`
+Source: `chunk-emhrcjff.js` · offset 215668724 · sha256 `7cba2278…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `300000`.
 
-Undocumented; read at `chunk-93nd79wx.js` offset 214197682.
+Undocumented; read at `chunk-emhrcjff.js` offset 215668724.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOME_SEED_VERDICT_TIMEOUT_MS`
 
-Source: `chunk-93nd79wx.js` · offset 214197756 · sha256 `356fd56e…`
+Source: `chunk-emhrcjff.js` · offset 215668798 · sha256 `356fd56e…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `60000`.
 
-Undocumented; read at `chunk-93nd79wx.js` offset 214197756.
+Undocumented; read at `chunk-emhrcjff.js` offset 215668798.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOOKS_SAME_THREAD`
 
-Source: `chunk-mphp7acd.js` · offset 187474650 · sha256 `7c5f9747…`
+Source: `chunk-acxptg39.js` · offset 188622645 · sha256 `7c5f9747…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187474650.
+Undocumented; read at `chunk-acxptg39.js` offset 188622645.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_AUTH_ENV_VAR`
 
-Source: `chunk-2z1m9v0n.js` · offset 183490625 · sha256 `9866d220…` · 6 read sites
+Source: `chunk-vkvz9hhq.js` · offset 182646824 · sha256 `9866d220…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `ANTHROPIC_AUTH_TOKEN`.
 
 **Truthiness gotcha:** 4 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-2z1m9v0n.js` offset 183490625.
+Undocumented; read at `chunk-vkvz9hhq.js` offset 182646824.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_AUTH_REFRESH_TIMEOUT_MS`
 
-Source: `chunk-xapeakym.js` · offset 204769479 · sha256 `e2898b0c…`
+Source: `chunk-np3zq5rq.js` · offset 206095027 · sha256 `e2898b0c…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-xapeakym.js` offset 204769479.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206095027.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_CREDS_FILE`
 
-Source: `chunk-09m4fzsj.js` · offset 184505517 · sha256 `c51d4504…` · 15 read sites
+Source: `chunk-0s5f053y.js` · offset 183536415 · sha256 `c51d4504…` · 15 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 5 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184505517.
+Undocumented; read at `chunk-0s5f053y.js` offset 183536415.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_PLATFORM`
 
-Source: `chunk-mbfze585.js` · offset 178176256 · sha256 `1727d409…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181891833 · sha256 `1727d409…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `darwin`.
 
-Undocumented; read at `chunk-mbfze585.js` offset 178176256.
+Undocumented; read at `chunk-721k6cws.js` offset 181891833.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_PROMPT_SUPERSEDES_RECORD`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396563 · sha256 `593bfac5…` · 2 read sites
+Source: `chunk-np3zq5rq.js` · offset 206125259 · sha256 `593bfac5…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396563.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206125259.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_SCHEDULED_RUN`
 
-Source: `chunk-0a47xg8f.js` · offset 178236060 · sha256 `b89666ec…`
+Source: `chunk-p614p40d.js` · offset 179266704 · sha256 `b89666ec…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178236060.
+Undocumented; read at `chunk-p614p40d.js` offset 179266704.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_SESSION_ID`
 
-Source: `chunk-nankzm0s.js` · offset 181064374 · sha256 `5970cab5…`
+Source: `chunk-721k6cws.js` · offset 181873143 · sha256 `5970cab5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181064374.
+Undocumented; read at `chunk-721k6cws.js` offset 181873143.
+
+**Undocumented**
+
+### `CLAUDE_CODE_HOST_WORKTREE`
+
+Source: `chunk-acxptg39.js` · offset 187599459 · sha256 `23de3ec4…`
+
+Read as: string (trimmed; empty is treated as unset).
+
+Undocumented; read at `chunk-acxptg39.js` offset 187599459.
+
+**Undocumented**
+
+### `CLAUDE_CODE_HOST_WORKTREE_FENCE`
+
+Source: `chunk-acxptg39.js` · offset 187599489 · sha256 `96d34f90…`
+
+Read as: string (trimmed; empty is treated as unset).
+
+Undocumented; read at `chunk-acxptg39.js` offset 187599489.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOVER_REST`
 
-Source: `chunk-727wt0xp.js` · offset 190740803 · sha256 `f2f700a5…` · 2 read sites
+Source: `chunk-e5z7r72b.js` · offset 182628013 · sha256 `f2f700a5…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-727wt0xp.js` offset 190740803.
+Undocumented; read at `chunk-e5z7r72b.js` offset 182628013.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HUMBLE_HAMMOCK`
 
-Source: `chunk-mphp7acd.js` · offset 186761011 · sha256 `7bac3d99…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187916764 · sha256 `7bac3d99…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186761011.
+Undocumented; read at `chunk-acxptg39.js` offset 187916764.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_IDE_HOST_OVERRIDE`
 
-Source: `chunk-mphp7acd.js` · offset 189065469 · sha256 `13c70d6f…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 190261830 · sha256 `13c70d6f…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -3907,7 +3987,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL`
 
-Source: `chunk-mphp7acd.js` · offset 189064969 · sha256 `67709670…`
+Source: `chunk-acxptg39.js` · offset 190261330 · sha256 `67709670…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3917,7 +3997,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_IDE_SKIP_VALID_CHECK`
 
-Source: `chunk-mphp7acd.js` · offset 189058041 · sha256 `f07ea290…`
+Source: `chunk-acxptg39.js` · offset 190254402 · sha256 `f07ea290…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -3927,137 +4007,137 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_IDLE_THRESHOLD_MINUTES`
 
-Source: `chunk-f2cpzzp9.js` · offset 206781208 · sha256 `c369462a…`
+Source: `chunk-mcm8e5ww.js` · offset 208100546 · sha256 `c369462a…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `75`.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206781208.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208100546.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_IDLE_TOKEN_THRESHOLD`
 
-Source: `chunk-f2cpzzp9.js` · offset 206781101 · sha256 `4cb11ebe…`
+Source: `chunk-mcm8e5ww.js` · offset 208100439 · sha256 `4cb11ebe…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `100000`.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206781101.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208100439.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_INCLUDE_PARTIAL_MESSAGES`
 
-Source: `chunk-dgp2yyqt.js` · offset 195023538 · sha256 `2ec5d90f…`
+Source: `chunk-5g8p9x0b.js` · offset 196221457 · sha256 `2ec5d90f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 195023538.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196221457.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_INLINE_TOOLS`
 
-Source: `chunk-nankzm0s.js` · offset 180862738 · sha256 `6c18992e…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181670664 · sha256 `6c18992e…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180862738.
+Undocumented; read at `chunk-721k6cws.js` offset 181670664.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_INTRO_FRAME`
 
-Source: `chunk-mphp7acd.js` · offset 187187128 · sha256 `698839a2…`
+Source: `chunk-acxptg39.js` · offset 188331148 · sha256 `698839a2…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187187128.
+Undocumented; read at `chunk-acxptg39.js` offset 188331148.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_IS_COWORK`
 
-Source: `chunk-1b21she7.js` · offset 181830406 · sha256 `0de12944…` · 10 read sites
+Source: `chunk-0ah5ddr7.js` · offset 182901510 · sha256 `0de12944…` · 10 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181830406.
+Undocumented; read at `chunk-0ah5ddr7.js` offset 182901510.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_JUNIPER_SUNDIAL`
 
-Source: `chunk-mphp7acd.js` · offset 189107524 · sha256 `7f21b654…`
+Source: `chunk-acxptg39.js` · offset 190303849 · sha256 `7f21b654…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189107524.
+Undocumented; read at `chunk-acxptg39.js` offset 190303849.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_KB_COHESION_FIXES`
 
-Source: `chunk-7a44pk20.js` · offset 201095274 · sha256 `8ed256d2…`
+Source: `chunk-ytjpd8rh.js` · offset 202366820 · sha256 `8ed256d2…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-7a44pk20.js` offset 201095274.
+Undocumented; read at `chunk-ytjpd8rh.js` offset 202366820.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_LANTERN_PRISM`
 
-Source: `chunk-mzhck5rt.js` · offset 185724941 · sha256 `318044d2…`
+Source: `chunk-q01s00ax.js` · offset 186845573 · sha256 `318044d2…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mzhck5rt.js` offset 185724941.
+Undocumented; read at `chunk-q01s00ax.js` offset 186845573.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_LARCH_CISTERN`
 
-Source: `chunk-1b21she7.js` · offset 181768917 · sha256 `5502383a…`
+Source: `chunk-24wkkcbf.js` · offset 182911865 · sha256 `5502383a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181768917.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182911865.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_LEGACY_BUNDLE`
 
-Source: `chunk-mphp7acd.js` · offset 188875013 · sha256 `c3a383e3…`
+Source: `chunk-acxptg39.js` · offset 190067925 · sha256 `c3a383e3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188875013.
+Undocumented; read at `chunk-acxptg39.js` offset 190067925.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_LOOP_KEEPALIVE`
 
-Source: `chunk-wbwgaybe.js` · offset 193416768 · sha256 `0cb997e5…`
+Source: `chunk-6p461qz5.js` · offset 194609671 · sha256 `0cb997e5…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-wbwgaybe.js` offset 193416768.
+Undocumented; read at `chunk-6p461qz5.js` offset 194609671.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_LOOP_PERSISTENT`
 
-Source: `chunk-gx44aetg.js` · offset 210527547 · sha256 `e2921932…`
+Source: `chunk-x127h07e.js` · offset 211884913 · sha256 `e2921932…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-gx44aetg.js` offset 210527547.
+Undocumented; read at `chunk-x127h07e.js` offset 211884913.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`
 
-Source: `chunk-mphp7acd.js` · offset 187061556 · sha256 `482fa868…`
+Source: `chunk-acxptg39.js` · offset 188204872 · sha256 `482fa868…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true. Default (from code): `20`.
 
@@ -4067,7 +4147,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_CONTEXT_TOKENS`
 
-Source: `chunk-dgp2yyqt.js` · offset 194978725 · sha256 `3237e39a…` · 3 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196176587 · sha256 `3237e39a…` · 3 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -4077,17 +4157,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_EFFORT_REMINDER`
 
-Source: `chunk-5rsp1jx3.js` · offset 181697942 · sha256 `cf1ec291…`
+Source: `chunk-whsnxm6e.js` · offset 182839636 · sha256 `cf1ec291…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-5rsp1jx3.js` offset 181697942.
+Undocumented; read at `chunk-whsnxm6e.js` offset 182839636.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH`
 
-Source: `chunk-mphp7acd.js` · offset 187312963 · sha256 `bc6c35a8…`
+Source: `chunk-acxptg39.js` · offset 188457746 · sha256 `bc6c35a8…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true.
 
@@ -4097,7 +4177,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_OUTPUT_TOKENS`
 
-Source: `chunk-nankzm0s.js` · offset 180991805 · sha256 `bf917afe…`
+Source: `chunk-721k6cws.js` · offset 181800100 · sha256 `bf917afe…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -4107,7 +4187,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_RETRIES`
 
-Source: `chunk-mphp7acd.js` · offset 187796017 · sha256 `7979c44b…`
+Source: `chunk-acxptg39.js` · offset 188952184 · sha256 `7979c44b…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -4117,7 +4197,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`
 
-Source: `chunk-m2a25zx1.js` · offset 185473900 · sha256 `6fc57800…`
+Source: `chunk-v3va86yg.js` · offset 186588659 · sha256 `6fc57800…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true.
 
@@ -4127,7 +4207,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY`
 
-Source: `chunk-5ne43w2c.js` · offset 193173061 · sha256 `984edcae…`
+Source: `chunk-a29gkqzd.js` · offset 194364193 · sha256 `984edcae…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `10`.
 
@@ -4137,7 +4217,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_TURNS`
 
-Source: `chunk-brnn4zwp.js` · offset 178046796 · sha256 `a023beee…`
+Source: `chunk-q3se8bhm.js` · offset 179087256 · sha256 `a023beee…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4147,7 +4227,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`
 
-Source: `chunk-710jgjjk.js` · offset 185463693 · sha256 `c068574d…`
+Source: `chunk-sbk5rjqa.js` · offset 186578452 · sha256 `c068574d…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true. Default (from code): `200`.
 
@@ -4157,7 +4237,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_ALLOWLIST_ENV`
 
-Source: `chunk-8ptzhr8g.js` · offset 180398502 · sha256 `f9e0beea…`
+Source: `chunk-z62ps7p2.js` · offset 181271174 · sha256 `f9e0beea…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4167,17 +4247,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_APPS_HOST`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396449 · sha256 `ac766569…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187344435 · sha256 `ac766569…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396449.
+Undocumented; read at `chunk-acxptg39.js` offset 187344435.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`
 
-Source: `chunk-amg94xhm.js` · offset 213070085 · sha256 `92c1abd0…` · 2 read sites
+Source: `chunk-nvewdhpx.js` · offset 220003939 · sha256 `92c1abd0…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -4187,47 +4267,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_CONNECTOR_PREWAIT_MS`
 
-Source: `chunk-xapeakym.js` · offset 204505014 · sha256 `47172fe3…`
+Source: `chunk-np3zq5rq.js` · offset 205821083 · sha256 `47172fe3…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-xapeakym.js` offset 204505014.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205821083.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MCP_MEMORY_CGROUP`
 
-Source: `chunk-1nayt2j6.js` · offset 178970590 · sha256 `e5f05822…`
+Source: `chunk-f6y3mr7n.js` · offset 180120335 · sha256 `e5f05822…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1nayt2j6.js` offset 178970590.
+Undocumented; read at `chunk-f6y3mr7n.js` offset 180120335.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MCP_PREWAIT_SERVERS`
 
-Source: `chunk-xapeakym.js` · offset 204505476 · sha256 `8e971ba2…`
+Source: `chunk-np3zq5rq.js` · offset 205821545 · sha256 `8e971ba2…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204505476.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205821545.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MCP_PREWAIT_SERVERS_MS`
 
-Source: `chunk-xapeakym.js` · offset 204505510 · sha256 `6b981cd9…`
+Source: `chunk-np3zq5rq.js` · offset 205821579 · sha256 `6b981cd9…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, digitsOnly true.
 
-Undocumented; read at `chunk-xapeakym.js` offset 204505510.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205821579.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MCP_STARTUP_WAIT_MS`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396403 · sha256 `63fb2b7c…` · 2 read sites
+Source: `chunk-np3zq5rq.js` · offset 205821254 · sha256 `63fb2b7c…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
@@ -4237,7 +4317,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
-Source: `chunk-amg94xhm.js` · offset 212988754 · sha256 `cc6c8538…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214116331 · sha256 `cc6c8538…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -4247,27 +4327,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MEMORY_PUSH_DELETE_MODE`
 
-Source: `chunk-09m4fzsj.js` · offset 184374582 · sha256 `d1dd7dc7…`
+Source: `chunk-j7rgjcpa.js` · offset 185502822 · sha256 `d1dd7dc7…`
 
 Read as: enum (compared against fixed values). Values: `corroborate`, `immediate`, `never`.
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184374582.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185502822.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MEMORY_SUBAGENT_APPEND`
 
-Source: `chunk-5ne43w2c.js` · offset 193274755 · sha256 `024704bf…`
+Source: `chunk-a29gkqzd.js` · offset 194466409 · sha256 `024704bf…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-5ne43w2c.js` offset 193274755.
+Undocumented; read at `chunk-a29gkqzd.js` offset 194466409.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MESSAGING_SOCKET`
 
-Source: `chunk-7ryepg60.js` · offset 214443498 · sha256 `c04052cf…` · 7 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196241763 · sha256 `2d9663d2…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4279,47 +4359,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MODEL_CAPABILITIES`
 
-Source: `chunk-wz6xag6e.js` · offset 179147708 · sha256 `a04a0c59…`
+Source: `chunk-gtjt0jrt.js` · offset 180066516 · sha256 `a04a0c59…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-wz6xag6e.js` offset 179147708.
+Undocumented; read at `chunk-gtjt0jrt.js` offset 180066516.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MODEL_CATALOG`
 
-Source: `chunk-11kg23zt.js` · offset 194230223 · sha256 `dce6abf9…`
+Source: `chunk-58jvv1qy.js` · offset 195407913 · sha256 `dce6abf9…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-11kg23zt.js` offset 194230223.
+Undocumented; read at `chunk-58jvv1qy.js` offset 195407913.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_MODEL_CATALOG_URL`
 
-Source: `chunk-cvjq66rn.js` · offset 193661035 · sha256 `0a1f4188…`
+Source: `chunk-aj95r0n7.js` · offset 194848674 · sha256 `0a1f4188…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cvjq66rn.js` offset 193661035.
+Undocumented; read at `chunk-aj95r0n7.js` offset 194848674.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_NANKEEN_KESTREL`
 
-Source: `chunk-5vadtxaa.js` · offset 183293963 · sha256 `62f600b1…`
+Source: `chunk-hnd61wvn.js` · offset 184442167 · sha256 `62f600b1…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-5vadtxaa.js` offset 183293963.
+Undocumented; read at `chunk-hnd61wvn.js` offset 184442167.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_NATIVE_CURSOR`
 
-Source: `chunk-p50qybax.js` · offset 191906872 · sha256 `9973481d…`
+Source: `chunk-xr83kgh7.js` · offset 193085697 · sha256 `9973481d…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4329,7 +4409,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_NEW_INIT`
 
-Source: `chunk-mphp7acd.js` · offset 188544764 · sha256 `3988e65d…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 189729808 · sha256 `3988e65d…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4339,7 +4419,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_NO_FLICKER`
 
-Source: `chunk-qravq5t1.js` · offset 185191313 · sha256 `ffde9f68…` · 6 read sites
+Source: `chunk-y4wvcfrd.js` · offset 186306731 · sha256 `ffde9f68…` · 6 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -4349,17 +4429,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_NO_MODEL_FALLBACK`
 
-Source: `chunk-nankzm0s.js` · offset 180945081 · sha256 `9a948e34…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181753131 · sha256 `9a948e34…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180945081.
+Undocumented; read at `chunk-721k6cws.js` offset 181753131.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_NONBLOCKING_STDOUT`
 
-Source: `chunk-p50qybax.js` · offset 191858970 · sha256 `7e045e30…`
+Source: `chunk-xr83kgh7.js` · offset 193036445 · sha256 `7e045e30…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -4369,37 +4449,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES`
 
-Source: `chunk-mphp7acd.js` · offset 187782770 · sha256 `1698c2a3…`
+Source: `chunk-acxptg39.js` · offset 188938865 · sha256 `1698c2a3…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, digitsOnly true.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187782770.
+Undocumented; read at `chunk-acxptg39.js` offset 188938865.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_OAUTH_401_WAIT_MS`
 
-Source: `chunk-nankzm0s.js` · offset 181268581 · sha256 `adf8c842…`
+Source: `chunk-721k6cws.js` · offset 182082791 · sha256 `adf8c842…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181268581.
+Undocumented; read at `chunk-721k6cws.js` offset 182082791.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_OAUTH_CLIENT_ID`
 
-Source: `chunk-a5b8yq96.js` · offset 178161616 · sha256 `bd32389e…` · 2 read sites
+Source: `chunk-9tpza09x.js` · offset 203697068 · sha256 `bd32389e…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-a5b8yq96.js` offset 178161616.
+Undocumented; read at `chunk-9tpza09x.js` offset 203697068.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_OAUTH_REFRESH_TOKEN`
 
-Source: `chunk-a6ty6v4s.js` · offset 202360376 · sha256 `546b7627…`
+Source: `chunk-9tpza09x.js` · offset 203696545 · sha256 `546b7627…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4409,7 +4489,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OAUTH_SCOPES`
 
-Source: `chunk-a6ty6v4s.js` · offset 202360432 · sha256 `f3d74416…` · 2 read sites
+Source: `chunk-9tpza09x.js` · offset 203696601 · sha256 `f3d74416…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4419,7 +4499,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OAUTH_TOKEN`
 
-Source: `chunk-8j1q755t.js` · offset 202120543 · sha256 `12619147…` · 41 read sites
+Source: `chunk-721k6cws.js` · offset 182084777 · sha256 `12619147…` · 41 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4431,31 +4511,31 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR`
 
-Source: `chunk-mphp7acd.js` · offset 188952334 · sha256 `e23b3439…` · 7 read sites
+Source: `chunk-721k6cws.js` · offset 182052407 · sha256 `e23b3439…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188952334.
+Undocumented; read at `chunk-721k6cws.js` offset 182052407.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ORGANIZATION_UUID`
 
-Source: `chunk-mnp9k227.js` · offset 180503020 · sha256 `2ece2065…` · 18 read sites
+Source: `chunk-kx3hbyfc.js` · offset 181286770 · sha256 `2ece2065…` · 18 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mnp9k227.js` offset 180503020.
+Undocumented; read at `chunk-kx3hbyfc.js` offset 181286770.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`
 
-Source: `chunk-2t7nhzwg.js` · offset 195936658 · sha256 `66dea6e8…`
+Source: `chunk-nfqe1amr.js` · offset 197169399 · sha256 `66dea6e8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4465,47 +4545,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PARKED_PERMISSION_WAIT_MS`
 
-Source: `chunk-xapeakym.js` · offset 204623803 · sha256 `580b35b6…`
+Source: `chunk-np3zq5rq.js` · offset 205944296 · sha256 `580b35b6…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `2000`.
 
-Undocumented; read at `chunk-xapeakym.js` offset 204623803.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205944296.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PARKED_RUN_BEFORE_CLEAR`
 
-Source: `chunk-xapeakym.js` · offset 204624065 · sha256 `6cf05dad…`
+Source: `chunk-np3zq5rq.js` · offset 205944558 · sha256 `6cf05dad…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204624065.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205944558.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PARKED_STOP_RETIRES`
 
-Source: `chunk-xapeakym.js` · offset 204624015 · sha256 `2c52ce2b…`
+Source: `chunk-np3zq5rq.js` · offset 205944508 · sha256 `2c52ce2b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204624015.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205944508.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PARSED_WILLOW`
 
-Source: `chunk-mphp7acd.js` · offset 189811605 · sha256 `3f4b28da…`
+Source: `chunk-acxptg39.js` · offset 191014205 · sha256 `3f4b28da…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189811605.
+Undocumented; read at `chunk-acxptg39.js` offset 191014205.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PERFORCE_MODE`
 
-Source: `chunk-0pprbvtw.js` · offset 178905260 · sha256 `2c8ec14a…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187581999 · sha256 `2c8ec14a…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4515,77 +4595,77 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PEWTER_OWL`
 
-Source: `chunk-9cag78h2.js` · offset 185566438 · sha256 `5eab3bfa…` · 2 read sites
+Source: `chunk-abwzfj5h.js` · offset 186681955 · sha256 `5eab3bfa…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-9cag78h2.js` offset 185566438.
+Undocumented; read at `chunk-abwzfj5h.js` offset 186681955.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PEWTER_OWL_TOOL`
 
-Source: `chunk-9cag78h2.js` · offset 185566633 · sha256 `c8b4a783…` · 2 read sites
+Source: `chunk-abwzfj5h.js` · offset 186682150 · sha256 `c8b4a783…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-9cag78h2.js` offset 185566633.
+Undocumented; read at `chunk-abwzfj5h.js` offset 186682150.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLAN_MODE_REQUIRED`
 
-Source: `chunk-yzr5hfaq.js` · offset 180404808 · sha256 `446af310…`
+Source: `chunk-aq8h78w9.js` · offset 181307695 · sha256 `446af310…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-yzr5hfaq.js` offset 180404808.
+Undocumented; read at `chunk-aq8h78w9.js` offset 181307695.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLAN_V2_AGENT_COUNT`
 
-Source: `chunk-mphp7acd.js` · offset 189778405 · sha256 `145ff368…`
+Source: `chunk-acxptg39.js` · offset 190980916 · sha256 `145ff368…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189778405.
+Undocumented; read at `chunk-acxptg39.js` offset 190980916.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLAN_V2_EXPLORE_AGENT_COUNT`
 
-Source: `chunk-mphp7acd.js` · offset 189778615 · sha256 `c08f81b3…`
+Source: `chunk-acxptg39.js` · offset 190981126 · sha256 `c08f81b3…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189778615.
+Undocumented; read at `chunk-acxptg39.js` offset 190981126.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLUGIN_ATTRIBUTION`
 
-Source: `chunk-5e581hrd.js` · offset 181941433 · sha256 `77a1c90e…` · 2 read sites
+Source: `chunk-qte47mjm.js` · offset 183085303 · sha256 `77a1c90e…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-5e581hrd.js` offset 181941433.
+Undocumented; read at `chunk-qte47mjm.js` offset 183085303.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLUGIN_BINARY_ASSETS`
 
-Source: `chunk-mphp7acd.js` · offset 189330452 · sha256 `c60f17b1…`
+Source: `chunk-acxptg39.js` · offset 190529738 · sha256 `c60f17b1…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189330452.
+Undocumented; read at `chunk-acxptg39.js` offset 190529738.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLUGIN_CACHE_DIR`
 
-Source: `chunk-5fjw5n4x.js` · offset 181953426 · sha256 `59ec7dd9…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 187159087 · sha256 `59ec7dd9…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4597,17 +4677,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_DIR_WATCH`
 
-Source: `chunk-09m4fzsj.js` · offset 184644259 · sha256 `08a1ca6e…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185775286 · sha256 `08a1ca6e…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184644259.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185775286.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PLUGIN_DIRS`
 
-Source: `chunk-2qkrgkcd.js` · offset 192182912 · sha256 `be0843c0…` · 4 read sites
+Source: `chunk-cqbt8tx8.js` · offset 193364188 · sha256 `be0843c0…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4619,7 +4699,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`
 
-Source: `chunk-mphp7acd.js` · offset 189219521 · sha256 `443f2a02…`
+Source: `chunk-acxptg39.js` · offset 190418959 · sha256 `443f2a02…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -4629,7 +4709,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE`
 
-Source: `chunk-mphp7acd.js` · offset 189224352 · sha256 `9144e4f9…`
+Source: `chunk-acxptg39.js` · offset 190423710 · sha256 `9144e4f9…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4639,7 +4719,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_PREFER_HTTPS`
 
-Source: `chunk-fmv8bhm3.js` · offset 178986502 · sha256 `6ede7fcb…`
+Source: `chunk-grwmq3qs.js` · offset 180930474 · sha256 `6ede7fcb…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4649,7 +4729,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_SEED_DIR`
 
-Source: `chunk-5fjw5n4x.js` · offset 181953595 · sha256 `dd28fbd5…`
+Source: `chunk-vfq24b5v.js` · offset 183097466 · sha256 `dd28fbd5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4659,67 +4739,67 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_USE_ZIP_CACHE`
 
-Source: `chunk-mphp7acd.js` · offset 186031609 · sha256 `a6a39434…`
+Source: `chunk-acxptg39.js` · offset 187159015 · sha256 `a6a39434…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186031609.
+Undocumented; read at `chunk-acxptg39.js` offset 187159015.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_POLISHED_DEWDROP`
 
-Source: `chunk-mphp7acd.js` · offset 187739575 · sha256 `b3bc3546…`
+Source: `chunk-acxptg39.js` · offset 188895663 · sha256 `b3bc3546…`
 
 Read as: enum (compared against fixed values). Values: `drop`, `block`, `off`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187739575.
+Undocumented; read at `chunk-acxptg39.js` offset 188895663.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_POLL_EVENTS`
 
-Source: `chunk-t2h010j6.js` · offset 183995798 · sha256 `481b54c4…`
+Source: `chunk-qs6rwaph.js` · offset 185118840 · sha256 `481b54c4…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-t2h010j6.js` offset 183995798.
+Undocumented; read at `chunk-qs6rwaph.js` offset 185118840.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_POST_TURN_MEMORY`
 
-Source: `chunk-nankzm0s.js` · offset 181123609 · sha256 `9cf5c70a…` · 2 read sites
+Source: `chunk-0zp02gec.js` · offset 194928420 · sha256 `9cf5c70a…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181123609.
+Undocumented; read at `chunk-0zp02gec.js` offset 194928420.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_POST_TURN_MEMORY_CONFIG`
 
-Source: `chunk-nankzm0s.js` · offset 181123749 · sha256 `d68b016f…`
+Source: `chunk-721k6cws.js` · offset 181934665 · sha256 `d68b016f…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181123749.
+Undocumented; read at `chunk-721k6cws.js` offset 181934665.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_POST_TURN_MEMORY_SYNC`
 
-Source: `chunk-nankzm0s.js` · offset 181123824 · sha256 `fc4fcde6…`
+Source: `chunk-721k6cws.js` · offset 181934740 · sha256 `fc4fcde6…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181123824.
+Undocumented; read at `chunk-721k6cws.js` offset 181934740.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY`
 
-Source: `chunk-mphp7acd.js` · offset 186345656 · sha256 `605a0977…`
+Source: `chunk-acxptg39.js` · offset 187475796 · sha256 `605a0977…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4729,17 +4809,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_POWERUP_ONBOARDING`
 
-Source: `chunk-f5w4pbxy.js` · offset 201272031 · sha256 `55266f2b…` · 3 read sites
+Source: `chunk-153bwgfn.js` · offset 207432347 · sha256 `55266f2b…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `banner`, `step`.
 
-Undocumented; read at `chunk-f5w4pbxy.js` offset 201272031.
+Undocumented; read at `chunk-153bwgfn.js` offset 207432347.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS`
 
-Source: `chunk-xapeakym.js` · offset 204468534 · sha256 `d5315498…`
+Source: `chunk-np3zq5rq.js` · offset 205782829 · sha256 `d5315498…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
@@ -4749,17 +4829,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PROACTIVE`
 
-Source: `chunk-f2cpzzp9.js` · offset 208298568 · sha256 `b4a14159…`
+Source: `chunk-mcm8e5ww.js` · offset 209626573 · sha256 `b4a14159…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 208298568.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 209626573.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PROCESS_WRAPPER`
 
-Source: `chunk-jt6dkanj.js` · offset 183481547 · sha256 `761cc09b…`
+Source: `chunk-hg948yxv.js` · offset 182637748 · sha256 `eb63ba84…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -4769,17 +4849,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PROFILE_STARTUP`
 
-Source: `chunk-5m30we7w.js` · offset 179117250 · sha256 `48090143…` · 2 read sites
+Source: `chunk-1rz02a15.js` · offset 181034362 · sha256 `48090143…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-5m30we7w.js` offset 179117250.
+Undocumented; read at `chunk-1rz02a15.js` offset 181034362.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PROJECT_DIR_NAME`
 
-Source: `chunk-brnn4zwp.js` · offset 178046181 · sha256 `46ee95ac…`
+Source: `chunk-q3se8bhm.js` · offset 179086641 · sha256 `46ee95ac…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -4789,17 +4869,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PROJECTS_SESSION`
 
-Source: `chunk-6xrs6gmd.js` · offset 182372753 · sha256 `109b7ab5…` · 2 read sites
+Source: `chunk-0s5f053y.js` · offset 183517795 · sha256 `109b7ab5…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182372753.
+Undocumented; read at `chunk-0s5f053y.js` offset 183517795.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PROPAGATE_TRACEPARENT`
 
-Source: `chunk-mphp7acd.js` · offset 187810024 · sha256 `9c27f60b…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 188966471 · sha256 `9c27f60b…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4809,7 +4889,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`
 
-Source: `chunk-2z1m9v0n.js` · offset 183490499 · sha256 `55abb6ea…` · 25 read sites
+Source: `chunk-vkvz9hhq.js` · offset 182646698 · sha256 `55abb6ea…` · 25 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4819,87 +4899,87 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS`
 
-Source: `chunk-mphp7acd.js` · offset 186323077 · sha256 `941d165a…`
+Source: `chunk-acxptg39.js` · offset 187453217 · sha256 `941d165a…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186323077.
+Undocumented; read at `chunk-acxptg39.js` offset 187453217.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_QUESTION_EXTENDED`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396079 · sha256 `431f146e…` · 2 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196502586 · sha256 `431f146e…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396079.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196502586.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_QUESTION_OPTIONAL_DESCRIPTIONS`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396112 · sha256 `b41183a0…` · 2 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196502632 · sha256 `b41183a0…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396112.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196502632.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_QUESTION_PREVIEW_FORMAT`
 
-Source: `chunk-q1842b1c.js` · offset 195267300 · sha256 `b0ac376e…`
+Source: `chunk-g6yz7gnr.js` · offset 196502320 · sha256 `b0ac376e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-q1842b1c.js` offset 195267300.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196502320.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RATE_LIMIT_TIER`
 
-Source: `chunk-8ptzhr8g.js` · offset 180395705 · sha256 `ecac5ea0…` · 3 read sites
+Source: `chunk-z62ps7p2.js` · offset 181268377 · sha256 `ecac5ea0…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180395705.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181268377.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REFUSAL_FALLBACK_CATCH_ALL`
 
-Source: `chunk-09m4fzsj.js` · offset 184747110 · sha256 `864b4300…`
+Source: `chunk-j7rgjcpa.js` · offset 185899719 · sha256 `864b4300…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184747110.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185899719.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RELAUNCH_HOME_TRUST`
 
-Source: `chunk-zvxr1qd8.js` · offset 192043138 · sha256 `e23e7482…`
+Source: `chunk-bmegdagv.js` · offset 193223267 · sha256 `e23e7482…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-zvxr1qd8.js` offset 192043138.
+Undocumented; read at `chunk-bmegdagv.js` offset 193223267.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RELAUNCH_TERMINAL_SIZE`
 
-Source: `chunk-j3y05f4x.js` · offset 192044203 · sha256 `d2231367…`
+Source: `chunk-84wh0q6p.js` · offset 193225141 · sha256 `d2231367…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-j3y05f4x.js` offset 192044203.
+Undocumented; read at `chunk-84wh0q6p.js` offset 193225141.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE`
 
-Source: `chunk-3svn1vf6.js` · offset 194194243 · sha256 `9bf28f96…` · 181 read sites
+Source: `chunk-721k6cws.js` · offset 181892095 · sha256 `9bf28f96…` · 182 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -4909,55 +4989,55 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_REMOTE_ENVIRONMENT_TYPE`
 
-Source: `chunk-nankzm0s.js` · offset 181083234 · sha256 `36b0bea4…` · 10 read sites
+Source: `chunk-721k6cws.js` · offset 181892226 · sha256 `36b0bea4…` · 10 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `self_hosted`.
 
 **Truthiness gotcha:** 8 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181083234.
+Undocumented; read at `chunk-721k6cws.js` offset 181892226.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE_HERMETIC_MODE`
 
-Source: `chunk-vhpv944z.js` · offset 183486103 · sha256 `3d74f7c1…`
+Source: `chunk-3zygpz8p.js` · offset 182642303 · sha256 `3d74f7c1…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-vhpv944z.js` offset 183486103.
+Undocumented; read at `chunk-3zygpz8p.js` offset 182642303.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE_MEMORY_DIR`
 
-Source: `chunk-6xrs6gmd.js` · offset 182322759 · sha256 `e165e4bd…` · 8 read sites
+Source: `chunk-0s5f053y.js` · offset 183467801 · sha256 `e165e4bd…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 4 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182322759.
+Undocumented; read at `chunk-0s5f053y.js` offset 183467801.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE_SEND_KEEPALIVES`
 
-Source: `chunk-35ny7gy3.js` · offset 184034999 · sha256 `26e703b9…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 189122375 · sha256 `26e703b9…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-35ny7gy3.js` offset 184034999.
+Undocumented; read at `chunk-acxptg39.js` offset 189122375.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE_SESSION_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184771302 · sha256 `66c81362…` · 54 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196224561 · sha256 `66c81362…` · 55 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-**Truthiness gotcha:** 16 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
+**Truthiness gotcha:** 17 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
 From docs: Set automatically in cloud sessions to the current session's ID.
 
@@ -4965,59 +5045,59 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_REMOTE_SESSION_ORIGIN`
 
-Source: `chunk-mnp9k227.js` · offset 180493880 · sha256 `bb0ef760…`
+Source: `chunk-kx3hbyfc.js` · offset 181277629 · sha256 `bb0ef760…`
 
 Read as: string (trimmed; empty is treated as unset). Values: `review`.
 
-Undocumented; read at `chunk-mnp9k227.js` offset 180493880.
+Undocumented; read at `chunk-kx3hbyfc.js` offset 181277629.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE_TOOLS_FORWARD`
 
-Source: `chunk-29dtdp8q.js` · offset 181730032 · sha256 `403d6cb2…`
+Source: `chunk-xz4d5t1k.js` · offset 182872967 · sha256 `403d6cb2…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-29dtdp8q.js` offset 181730032.
+Undocumented; read at `chunk-xz4d5t1k.js` offset 182872967.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REMOTE_TOOLS_PIN_STORED_LOGIN`
 
-Source: `chunk-f1vb7bx7.js` · offset 179167528 · sha256 `4a5b8e49…`
+Source: `chunk-gqegtvbg.js` · offset 181053854 · sha256 `4a5b8e49…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f1vb7bx7.js` offset 179167528.
+Undocumented; read at `chunk-gqegtvbg.js` offset 181053854.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REPO_CHECKOUTS`
 
-Source: `chunk-2xynv749.js` · offset 214006752 · sha256 `ed0db984…` · 3 read sites
+Source: `chunk-5857ntzn.js` · offset 215432606 · sha256 `ed0db984…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-2xynv749.js` offset 214006752.
+Undocumented; read at `chunk-5857ntzn.js` offset 215432606.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_REPORT_FINDINGS`
 
-Source: `chunk-2fn6341y.js` · offset 194642959 · sha256 `83bab3f4…`
+Source: `chunk-t25zfnms.js` · offset 195823095 · sha256 `83bab3f4…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-2fn6341y.js` offset 194642959.
+Undocumented; read at `chunk-t25zfnms.js` offset 195823095.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESTRICTED`
 
-Source: `chunk-brnn4zwp.js` · offset 178047322 · sha256 `34ebe303…`
+Source: `chunk-q3se8bhm.js` · offset 179087782 · sha256 `34ebe303…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5027,27 +5107,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESULT_NONCE`
 
-Source: `chunk-5ka0mc07.js` · offset 205665803 · sha256 `ce70514c…`
+Source: `chunk-gwc1wn1e.js` · offset 206976334 · sha256 `ce70514c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-5ka0mc07.js` offset 205665803.
+Undocumented; read at `chunk-gwc1wn1e.js` offset 206976334.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESUME_FROM_SESSION`
 
-Source: `chunk-xapeakym.js` · offset 204967256 · sha256 `8de15ab6…`
+Source: `chunk-np3zq5rq.js` · offset 206293713 · sha256 `8de15ab6…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204967256.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206293713.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESUME_INTERRUPTED_TURN`
 
-Source: `chunk-8tppeqgy.js` · offset 193719191 · sha256 `51a22bee…` · 6 read sites
+Source: `chunk-acxptg39.js` · offset 189867859 · sha256 `51a22bee…` · 6 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5057,7 +5137,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESUME_INTERRUPTED_TURN_MAX_AGE_MS`
 
-Source: `chunk-mphp7acd.js` · offset 188679858 · sha256 `368abfd7…`
+Source: `chunk-acxptg39.js` · offset 189864934 · sha256 `368abfd7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5067,7 +5147,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESUME_PROMPT`
 
-Source: `chunk-mphp7acd.js` · offset 188679477 · sha256 `6d26b33b…`
+Source: `chunk-acxptg39.js` · offset 189864553 · sha256 `6d26b33b…`
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `Continue from where you left off.`.
 
@@ -5077,57 +5157,57 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESUME_REASON`
 
-Source: `chunk-mphp7acd.js` · offset 188679579 · sha256 `86742cd5…`
+Source: `chunk-acxptg39.js` · offset 189864655 · sha256 `86742cd5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188679579.
+Undocumented; read at `chunk-acxptg39.js` offset 189864655.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESUME_SOURCE_ALIVE`
 
-Source: `chunk-9hy804jg.js` · offset 208613728 · sha256 `18c89164…` · 4 read sites
+Source: `chunk-88np9eym.js` · offset 207065202 · sha256 `18c89164…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9hy804jg.js` offset 208613728.
+Undocumented; read at `chunk-88np9eym.js` offset 207065202.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESUME_THRESHOLD_MINUTES`
 
-Source: `chunk-f2cpzzp9.js` · offset 206980923 · sha256 `560978fe…`
+Source: `chunk-mcm8e5ww.js` · offset 208300384 · sha256 `560978fe…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `70`.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206980923.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208300384.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESUME_TOKEN_THRESHOLD`
 
-Source: `chunk-f2cpzzp9.js` · offset 206980968 · sha256 `4856fb83…`
+Source: `chunk-mcm8e5ww.js` · offset 208300429 · sha256 `4856fb83…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `100000`.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206980968.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208300429.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RESUME_TOLERATES_CONTEXT_APPENDS`
 
-Source: `chunk-mphp7acd.js` · offset 188682073 · sha256 `07bb30dc…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 189867149 · sha256 `07bb30dc…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188682073.
+Undocumented; read at `chunk-acxptg39.js` offset 189867149.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_RETRY_WATCHDOG`
 
-Source: `chunk-mphp7acd.js` · offset 187777273 · sha256 `cfbe7798…`
+Source: `chunk-acxptg39.js` · offset 188933366 · sha256 `cfbe7798…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5137,17 +5217,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RUSTLING_PIXEL`
 
-Source: `chunk-mphp7acd.js` · offset 187742361 · sha256 `bd7707c3…`
+Source: `chunk-acxptg39.js` · offset 188898449 · sha256 `bd7707c3…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187742361.
+Undocumented; read at `chunk-acxptg39.js` offset 188898449.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SAFE_MODE`
 
-Source: `chunk-brnn4zwp.js` · offset 178047245 · sha256 `470f14bb…`
+Source: `chunk-q3se8bhm.js` · offset 179087705 · sha256 `470f14bb…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5157,17 +5237,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SANDBOXED`
 
-Source: `chunk-6xrs6gmd.js` · offset 182246702 · sha256 `1891ad2e…` · 5 read sites
+Source: `chunk-0s5f053y.js` · offset 183391744 · sha256 `1891ad2e…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182246702.
+Undocumented; read at `chunk-0s5f053y.js` offset 183391744.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SCRIPT_CAPS`
 
-Source: `chunk-8ptzhr8g.js` · offset 180392556 · sha256 `271d8941…`
+Source: `chunk-z62ps7p2.js` · offset 181265228 · sha256 `271d8941…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -5177,7 +5257,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SCROLL_SPEED`
 
-Source: `chunk-bysrnexw.js` · offset 216014365 · sha256 `7ff1728b…` · 3 read sites
+Source: `chunk-5645472e.js` · offset 217469938 · sha256 `7ff1728b…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `unset`.
 
@@ -5187,37 +5267,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH`
 
-Source: `chunk-xapeakym.js` · offset 204769422 · sha256 `44e72a15…`
+Source: `chunk-np3zq5rq.js` · offset 206094970 · sha256 `44e72a15…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204769422.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206094970.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SDK_HAS_OAUTH_REFRESH`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396160 · sha256 `3d742d83…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 182046929 · sha256 `3d742d83…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396160.
+Undocumented; read at `chunk-721k6cws.js` offset 182046929.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SDK_READS_SESSION_STATE`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396199 · sha256 `4fad3b24…` · 2 read sites
+Source: `chunk-y7wm8tf1.js` · offset 186807686 · sha256 `4fad3b24…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396199.
+Undocumented; read at `chunk-y7wm8tf1.js` offset 186807686.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SEND_FEEDBACK`
 
-Source: `chunk-099w45zp.js` · offset 193467261 · sha256 `95ea5704…`
+Source: `chunk-znt9v3js.js` · offset 194660164 · sha256 `95ea5704…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -5227,7 +5307,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SESSION_ACCESS_TOKEN`
 
-Source: `chunk-8xhw5h9f.js` · offset 190528567 · sha256 `ba44bc9b…` · 11 read sites
+Source: `chunk-k2pjtcda.js` · offset 191739441 · sha256 `ba44bc9b…` · 11 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5239,17 +5319,17 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_CODE_SESSION_ATTENDED`
 
-Source: `chunk-0a47xg8f.js` · offset 178235805 · sha256 `5f1f30e9…`
+Source: `chunk-p614p40d.js` · offset 179266449 · sha256 `5f1f30e9…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178235805.
+Undocumented; read at `chunk-p614p40d.js` offset 179266449.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SESSION_ID`
 
-Source: `chunk-758hjhx1.js` · offset 180369258 · sha256 `3b2d1fe0…` · 3 read sites
+Source: `chunk-v25a6kgz.js` · offset 181241909 · sha256 `3b2d1fe0…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5259,59 +5339,59 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SESSION_KIND`
 
-Source: `chunk-ky674g9x.js` · offset 177839437 · sha256 `ca22b404…` · 43 read sites
+Source: `chunk-64d1d15q.js` · offset 178859469 · sha256 `ca22b404…` · 44 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `bg`.
 
-Undocumented; read at `chunk-ky674g9x.js` offset 177839437.
+Undocumented; read at `chunk-64d1d15q.js` offset 178859469.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SESSION_LOG`
 
-Source: `chunk-nankzm0s.js` · offset 181061956 · sha256 `0a5415fc…`
+Source: `chunk-721k6cws.js` · offset 181870725 · sha256 `0a5415fc…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181061956.
+Undocumented; read at `chunk-721k6cws.js` offset 181870725.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SESSION_NAME`
 
-Source: `chunk-nankzm0s.js` · offset 181060683 · sha256 `25e3352a…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181869452 · sha256 `25e3352a…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181060683.
+Undocumented; read at `chunk-721k6cws.js` offset 181869452.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SESSION_ORIGIN`
 
-Source: `chunk-0a47xg8f.js` · offset 178232599 · sha256 `89e071e5…` · 3 read sites
+Source: `chunk-302b381m.js` · offset 201881875 · sha256 `89e071e5…` · 4 read sites
 
 Read as: enum (compared against fixed values). Values: `claude_ai_chat`.
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178232599.
+Undocumented; read at `chunk-302b381m.js` offset 201881875.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SESSION_START_ANNOUNCEMENTS_BEFORE_PROMPT`
 
-Source: `chunk-xapeakym.js` · offset 204655675 · sha256 `bea79228…`
+Source: `chunk-np3zq5rq.js` · offset 205977225 · sha256 `bea79228…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204655675.
+Undocumented; read at `chunk-np3zq5rq.js` offset 205977225.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS`
 
-Source: `chunk-mphp7acd.js` · offset 187995503 · sha256 `adf97071…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 189155051 · sha256 `adf97071…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `1500`.
 
@@ -5321,7 +5401,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SHELL`
 
-Source: `chunk-mphp7acd.js` · offset 189763438 · sha256 `31413206…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 190965949 · sha256 `31413206…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5333,7 +5413,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SHELL_PREFIX`
 
-Source: `chunk-amg94xhm.js` · offset 213019293 · sha256 `2d9e653f…` · 8 read sites
+Source: `chunk-acxptg39.js` · offset 187772896 · sha256 `2d9e653f…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5345,37 +5425,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SILENT_TURN_REMINDER`
 
-Source: `chunk-mphp7acd.js` · offset 189099147 · sha256 `4d7a230e…`
+Source: `chunk-acxptg39.js` · offset 190295472 · sha256 `4d7a230e…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189099147.
+Undocumented; read at `chunk-acxptg39.js` offset 190295472.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SILENT_TURN_REMINDER_TEXT`
 
-Source: `chunk-mphp7acd.js` · offset 189098933 · sha256 `bfa469d4…`
+Source: `chunk-acxptg39.js` · offset 190295258 · sha256 `bfa469d4…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189098933.
+Undocumented; read at `chunk-acxptg39.js` offset 190295258.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SILENT_TURN_REMINDER_TURNS`
 
-Source: `chunk-mphp7acd.js` · offset 189099297 · sha256 `3bfef62d…`
+Source: `chunk-acxptg39.js` · offset 190295622 · sha256 `3bfef62d…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189099297.
+Undocumented; read at `chunk-acxptg39.js` offset 190295622.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SIMPLE`
 
-Source: `chunk-brnn4zwp.js` · offset 178047176 · sha256 `e7139545…` · 17 read sites
+Source: `chunk-q3se8bhm.js` · offset 179087636 · sha256 `e7139545…` · 17 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5385,7 +5465,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT`
 
-Source: `chunk-1b21she7.js` · offset 181769939 · sha256 `cf484739…` · 2 read sites
+Source: `chunk-24wkkcbf.js` · offset 182912887 · sha256 `cf484739…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5395,27 +5475,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKILL_ATTRIBUTION`
 
-Source: `chunk-8ptzhr8g.js` · offset 180396035 · sha256 `ae0e1afb…` · 2 read sites
+Source: `chunk-sq6jke15.js` · offset 184758496 · sha256 `ae0e1afb…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180396035.
+Undocumented; read at `chunk-sq6jke15.js` offset 184758496.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SKILL_PROPOSALS`
 
-Source: `chunk-mphp7acd.js` · offset 186455560 · sha256 `0b60af6f…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 187593281 · sha256 `0b60af6f…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186455560.
+Undocumented; read at `chunk-acxptg39.js` offset 187593281.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SKIP_FAST_MODE_NETWORK_ERRORS`
 
-Source: `chunk-nankzm0s.js` · offset 180873809 · sha256 `9bd83e99…`
+Source: `chunk-721k6cws.js` · offset 181681838 · sha256 `9bd83e99…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5425,7 +5505,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_FAST_MODE_ORG_CHECK`
 
-Source: `chunk-nankzm0s.js` · offset 180872136 · sha256 `51819982…`
+Source: `chunk-721k6cws.js` · offset 181680165 · sha256 `51819982…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5435,37 +5515,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_MODEL_ACCESS_MEMORY`
 
-Source: `chunk-azf8jmbk.js` · offset 195428171 · sha256 `63bfb7b9…`
+Source: `chunk-an6xhrk3.js` · offset 196658249 · sha256 `63bfb7b9…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-azf8jmbk.js` offset 195428171.
+Undocumented; read at `chunk-an6xhrk3.js` offset 196658249.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS`
 
-Source: `chunk-mphp7acd.js` · offset 186205596 · sha256 `322d3de0…`
+Source: `chunk-acxptg39.js` · offset 187334907 · sha256 `322d3de0…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186205596.
+Undocumented; read at `chunk-acxptg39.js` offset 187334907.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SKIP_PLUGIN_MCP_SERVERS_EXCEPT`
 
-Source: `chunk-mphp7acd.js` · offset 186205306 · sha256 `ac1ed8d9…`
+Source: `chunk-acxptg39.js` · offset 187334617 · sha256 `ac1ed8d9…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186205306.
+Undocumented; read at `chunk-acxptg39.js` offset 187334617.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SKIP_PROMPT_HISTORY`
 
-Source: `chunk-09m4fzsj.js` · offset 184697366 · sha256 `dfa39084…` · 5 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185829123 · sha256 `dfa39084…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5475,57 +5555,57 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SLOW_OPERATION_THRESHOLD_MS`
 
-Source: `chunk-q80zaav8.js` · offset 178112845 · sha256 `2d40a3a5…`
+Source: `chunk-dnvvymm5.js` · offset 179142495 · sha256 `2d40a3a5…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-q80zaav8.js` offset 178112845.
+Undocumented; read at `chunk-dnvvymm5.js` offset 179142495.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SPAWN_TIMESTAMP_MS`
 
-Source: `chunk-5m30we7w.js` · offset 179116782 · sha256 `484bfa9f…`
+Source: `chunk-1rz02a15.js` · offset 181033893 · sha256 `484bfa9f…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-5m30we7w.js` offset 179116782.
+Undocumented; read at `chunk-1rz02a15.js` offset 181033893.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SQUISHY_NEWT`
 
-Source: `chunk-mphp7acd.js` · offset 189811685 · sha256 `593678e1…`
+Source: `chunk-acxptg39.js` · offset 191014285 · sha256 `593678e1…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189811685.
+Undocumented; read at `chunk-acxptg39.js` offset 191014285.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SSE_PORT`
 
-Source: `chunk-mphp7acd.js` · offset 189054190 · sha256 `3c3064ab…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 190250551 · sha256 `3c3064ab…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189054190.
+Undocumented; read at `chunk-acxptg39.js` offset 190250551.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING`
 
-Source: `chunk-qr1pdq5r.js` · offset 190229880 · sha256 `d1de753e…`
+Source: `chunk-d9rg2fcs.js` · offset 191440574 · sha256 `d1de753e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-qr1pdq5r.js` offset 190229880.
+Undocumented; read at `chunk-d9rg2fcs.js` offset 191440574.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_STARTUP_FAILURE_RESULTS`
 
-Source: `chunk-y0dbfrgj.js` · offset 185123385 · sha256 `829fede0…`
+Source: `chunk-6rv85g0t.js` · offset 186252071 · sha256 `829fede0…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5535,17 +5615,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_STELLAR_DRIFT`
 
-Source: `chunk-mphp7acd.js` · offset 186753527 · sha256 `fd80c4e2…`
+Source: `chunk-acxptg39.js` · offset 187909280 · sha256 `fd80c4e2…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186753527.
+Undocumented; read at `chunk-acxptg39.js` offset 187909280.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`
 
-Source: `chunk-w8a1w7ad.js` · offset 193957046 · sha256 `679999c7…`
+Source: `chunk-pphn9kby.js` · offset 195168572 · sha256 `679999c7…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `8`.
 
@@ -5555,7 +5635,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBAGENT_MODEL`
 
-Source: `chunk-5ne43w2c.js` · offset 193217392 · sha256 `a4e439aa…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181783486 · sha256 `a4e439aa…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5565,7 +5645,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBAGENT_MODEL_FORCE`
 
-Source: `chunk-5ne43w2c.js` · offset 193219164 · sha256 `1f181030…` · 8 read sites
+Source: `chunk-52a14049.js` · offset 209894079 · sha256 `1f181030…` · 8 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5575,7 +5655,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`
 
-Source: `chunk-8ptzhr8g.js` · offset 180391200 · sha256 `32d88409…` · 3 read sites
+Source: `chunk-gqegtvbg.js` · offset 181073943 · sha256 `32d88409…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -5585,37 +5665,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBSCRIPTION_TYPE`
 
-Source: `chunk-8ptzhr8g.js` · offset 180395653 · sha256 `3bac6f02…` · 3 read sites
+Source: `chunk-z62ps7p2.js` · offset 181268325 · sha256 `3bac6f02…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180395653.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181268325.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SUPERVISED`
 
-Source: `chunk-brnn4zwp.js` · offset 178047567 · sha256 `ca2a97fc…`
+Source: `chunk-q3se8bhm.js` · offset 179088027 · sha256 `ca2a97fc…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-brnn4zwp.js` offset 178047567.
+Undocumented; read at `chunk-q3se8bhm.js` offset 179088027.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SUPPRESS_SESSION_ATTRIBUTION`
 
-Source: `chunk-mphp7acd.js` · offset 186711144 · sha256 `5d00e83b…`
+Source: `chunk-acxptg39.js` · offset 187866865 · sha256 `5d00e83b…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186711144.
+Undocumented; read at `chunk-acxptg39.js` offset 187866865.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_PLUGIN_INSTALL`
 
-Source: `chunk-1sb33067.js` · offset 210924000 · sha256 `65428678…` · 9 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196165755 · sha256 `65428678…` · 10 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5625,7 +5705,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS`
 
-Source: `chunk-xapeakym.js` · offset 204825750 · sha256 `289123bc…`
+Source: `chunk-np3zq5rq.js` · offset 206151967 · sha256 `289123bc…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `0`.
 
@@ -5635,77 +5715,77 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNC_PLUGINS`
 
-Source: `chunk-fwf64yxz.js` · offset 183765628 · sha256 `0d015816…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187178524 · sha256 `0d015816…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-fwf64yxz.js` offset 183765628.
+Undocumented; read at `chunk-acxptg39.js` offset 187178524.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_BUFFERED_DOWNLOAD`
 
-Source: `chunk-fwf64yxz.js` · offset 183802041 · sha256 `9f9c61c9…`
+Source: `chunk-hjjz8p0n.js` · offset 184925902 · sha256 `9f9c61c9…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-fwf64yxz.js` offset 183802041.
+Undocumented; read at `chunk-hjjz8p0n.js` offset 184925902.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_DOWNLOAD_STALL_MS`
 
-Source: `chunk-fwf64yxz.js` · offset 183800178 · sha256 `7bb68b87…`
+Source: `chunk-hjjz8p0n.js` · offset 184924039 · sha256 `7bb68b87…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `60000`.
 
-Undocumented; read at `chunk-fwf64yxz.js` offset 183800178.
+Undocumented; read at `chunk-hjjz8p0n.js` offset 184924039.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_INSTALL_TIMEOUT_MS`
 
-Source: `chunk-mphp7acd.js` · offset 186051211 · sha256 `52621edc…`
+Source: `chunk-acxptg39.js` · offset 187178617 · sha256 `52621edc…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `30000`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186051211.
+Undocumented; read at `chunk-acxptg39.js` offset 187178617.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_MCP_TIMEOUT_MS`
 
-Source: `chunk-mphp7acd.js` · offset 186051286 · sha256 `ee1187e2…`
+Source: `chunk-acxptg39.js` · offset 187178692 · sha256 `ee1187e2…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0. Default (from code): `10000`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186051286.
+Undocumented; read at `chunk-acxptg39.js` offset 187178692.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_REUSE_WITHIN_MS`
 
-Source: `chunk-mphp7acd.js` · offset 186048490 · sha256 `10976ffa…`
+Source: `chunk-acxptg39.js` · offset 187175896 · sha256 `10976ffa…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, max 86400000.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186048490.
+Undocumented; read at `chunk-acxptg39.js` offset 187175896.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_SESSION_REFS`
 
-Source: `chunk-fwf64yxz.js` · offset 183765656 · sha256 `ffd902d2…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187289584 · sha256 `ffd902d2…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-fwf64yxz.js` offset 183765656.
+Undocumented; read at `chunk-acxptg39.js` offset 187289584.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SYNC_SKILLS`
 
-Source: `chunk-105zfxe3.js` · offset 194884824 · sha256 `86fc5960…` · 5 read sites
+Source: `chunk-9msj151q.js` · offset 196081305 · sha256 `86fc5960…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -5715,7 +5795,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNC_SKILLS_INSTALL_TIMEOUT_MS`
 
-Source: `chunk-105zfxe3.js` · offset 194873398 · sha256 `6b53f454…`
+Source: `chunk-9msj151q.js` · offset 196069879 · sha256 `6b53f454…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -5725,7 +5805,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNC_SKILLS_WAIT_TIMEOUT_MS`
 
-Source: `chunk-105zfxe3.js` · offset 194873314 · sha256 `de00dd5e…`
+Source: `chunk-9msj151q.js` · offset 196069795 · sha256 `de00dd5e…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -5735,7 +5815,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNTAX_HIGHLIGHT`
 
-Source: `chunk-782963cg.js` · offset 213519982 · sha256 `ef3cce71…` · 2 read sites
+Source: `chunk-7cm7q4s2.js` · offset 214835788 · sha256 `ef3cce71…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5745,29 +5825,29 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYSTEM_PROMPT_GB_FEATURE`
 
-Source: `chunk-xapeakym.js` · offset 204815614 · sha256 `5ca80899…`
+Source: `chunk-np3zq5rq.js` · offset 206141691 · sha256 `5ca80899…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204815614.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206141691.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TAGS`
 
-Source: `chunk-nankzm0s.js` · offset 181083582 · sha256 `aa86fbdc…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181892574 · sha256 `aa86fbdc…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181083582.
+Undocumented; read at `chunk-721k6cws.js` offset 181892574.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TASK_LIST_ID`
 
-Source: `chunk-f2cpzzp9.js` · offset 206789417 · sha256 `8ea2a4a3…` · 3 read sites
+Source: `chunk-mcm8e5ww.js` · offset 208108755 · sha256 `8ea2a4a3…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5779,7 +5859,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TEAM_TEARDOWN_PARK_TIMEOUT_MS`
 
-Source: `chunk-xapeakym.js` · offset 204759881 · sha256 `701641f9…`
+Source: `chunk-np3zq5rq.js` · offset 206085374 · sha256 `701641f9…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1000, max 60000. Default (from code): `10000`.
 
@@ -5789,77 +5869,77 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TEE_SDK_STDOUT`
 
-Source: `chunk-r7jk65a3.js` · offset 204031360 · sha256 `3b7d3d72…`
+Source: `chunk-ft4qs0da.js` · offset 205299085 · sha256 `3b7d3d72…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-r7jk65a3.js` offset 204031360.
+Undocumented; read at `chunk-ft4qs0da.js` offset 205299085.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TERMINAL_MCP_TOOLS`
 
-Source: `chunk-9hy804jg.js` · offset 208597926 · sha256 `eb007c40…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 189853943 · sha256 `eb007c40…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9hy804jg.js` offset 208597926.
+Undocumented; read at `chunk-acxptg39.js` offset 189853943.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TEST_ALLOW_REAL_NETWORK`
 
-Source: `chunk-wrxh9xyj.js` · offset 180514959 · sha256 `32d7e817…`
+Source: `chunk-8mhzeynw.js` · offset 181298713 · sha256 `32d7e817…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-wrxh9xyj.js` offset 180514959.
+Undocumented; read at `chunk-8mhzeynw.js` offset 181298713.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TEST_FIXTURES_ROOT`
 
-Source: `chunk-mphp7acd.js` · offset 186502532 · sha256 `e061786e…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187657671 · sha256 `e061786e…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186502532.
+Undocumented; read at `chunk-acxptg39.js` offset 187657671.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_THINKING_DISPLAY_UPDATES`
 
-Source: `chunk-mphp7acd.js` · offset 187684603 · sha256 `6c6cabb4…`
+Source: `chunk-acxptg39.js` · offset 188838809 · sha256 `6c6cabb4…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187684603.
+Undocumented; read at `chunk-acxptg39.js` offset 188838809.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_THISTLE_GREBE`
 
-Source: `chunk-nankzm0s.js` · offset 180730378 · sha256 `da23ea8a…`
+Source: `chunk-721k6cws.js` · offset 181537034 · sha256 `da23ea8a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180730378.
+Undocumented; read at `chunk-721k6cws.js` offset 181537034.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_THRIFTY_SONIC`
 
-Source: `chunk-1b21she7.js` · offset 181768065 · sha256 `ea9dc2ed…` · 2 read sites
+Source: `chunk-24wkkcbf.js` · offset 182911013 · sha256 `ea9dc2ed…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181768065.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182911013.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TMPDIR`
 
-Source: `chunk-7qgnq1jf.js` · offset 182448001 · sha256 `299a7e96…` · 6 read sites
+Source: `chunk-75pwjp0k.js` · offset 183593596 · sha256 `299a7e96…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5871,39 +5951,39 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TMUX_PREFIX`
 
-Source: `chunk-1ypw9bby.js` · offset 206228517 · sha256 `f3917ec9…` · 4 read sites
+Source: `chunk-scd694cx.js` · offset 207541830 · sha256 `f3917ec9…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1ypw9bby.js` offset 206228517.
+Undocumented; read at `chunk-scd694cx.js` offset 207541830.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TMUX_PREFIX_CONFLICTS`
 
-Source: `chunk-1ypw9bby.js` · offset 206228478 · sha256 `d3dc1e92…`
+Source: `chunk-scd694cx.js` · offset 207541791 · sha256 `d3dc1e92…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1ypw9bby.js` offset 206228478.
+Undocumented; read at `chunk-scd694cx.js` offset 207541791.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TMUX_SESSION`
 
-Source: `chunk-1sb33067.js` · offset 210932273 · sha256 `c0a56997…` · 6 read sites
+Source: `chunk-mcm8e5ww.js` · offset 209481236 · sha256 `c0a56997…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-1sb33067.js` offset 210932273.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 209481236.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TMUX_TRUECOLOR`
 
-Source: `chunk-2q133q3v.js` · offset 180435149 · sha256 `1caa1ae1…`
+Source: `chunk-qxyxqdkg.js` · offset 180008367 · sha256 `1caa1ae1…`
 
 Read as: string (used as-is (not trimmed)).
 
@@ -5915,17 +5995,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TODO_REMINDER_MODE`
 
-Source: `chunk-mphp7acd.js` · offset 189107167 · sha256 `5abe0e33…`
+Source: `chunk-acxptg39.js` · offset 190303492 · sha256 `5abe0e33…`
 
 Read as: enum (compared against fixed values). Values: `baseline`, `off`.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189107167.
+Undocumented; read at `chunk-acxptg39.js` offset 190303492.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TOOL_MEMORY_CGROUP_EXCLUDE`
 
-Source: `chunk-1nayt2j6.js` · offset 178970298 · sha256 `5b70bef7…`
+Source: `chunk-f6y3mr7n.js` · offset 180120043 · sha256 `5b70bef7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5935,7 +6015,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TOOL_MEMORY_LIMIT`
 
-Source: `chunk-1nayt2j6.js` · offset 178968549 · sha256 `1f539dfd…`
+Source: `chunk-f6y3mr7n.js` · offset 180118294 · sha256 `1f539dfd…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -5945,117 +6025,117 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TOTAL_TOKENS_REMINDER`
 
-Source: `chunk-mphp7acd.js` · offset 187167325 · sha256 `ffe6d7ce…`
+Source: `chunk-acxptg39.js` · offset 188311345 · sha256 `ffe6d7ce…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187167325.
+Undocumented; read at `chunk-acxptg39.js` offset 188311345.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TOTAL_TOKENS_REMINDER_AFTER_USER_TURN`
 
-Source: `chunk-mphp7acd.js` · offset 187168152 · sha256 `ddd4b616…`
+Source: `chunk-acxptg39.js` · offset 188312172 · sha256 `ddd4b616…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187168152.
+Undocumented; read at `chunk-acxptg39.js` offset 188312172.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TOTAL_TOKENS_REMINDER_BUDGET`
 
-Source: `chunk-mphp7acd.js` · offset 187167717 · sha256 `606df25d…`
+Source: `chunk-acxptg39.js` · offset 188311737 · sha256 `606df25d…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187167717.
+Undocumented; read at `chunk-acxptg39.js` offset 188311737.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TRANSCRIPT_LOCAL_GC`
 
-Source: `chunk-dgp2yyqt.js` · offset 194966988 · sha256 `3ecaf12b…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196164815 · sha256 `3ecaf12b…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 194966988.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196164815.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TRIGGER_ID`
 
-Source: `chunk-1sb33067.js` · offset 210932194 · sha256 `e89ecb6e…`
+Source: `chunk-q308nzmf.js` · offset 212385856 · sha256 `e89ecb6e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1sb33067.js` offset 210932194.
+Undocumented; read at `chunk-q308nzmf.js` offset 212385856.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TUI_JUST_SWITCHED`
 
-Source: `chunk-1ypw9bby.js` · offset 206191102 · sha256 `4aa0a028…` · 3 read sites
+Source: `chunk-mcm8e5ww.js` · offset 208089703 · sha256 `4aa0a028…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `fullscreen`, `default`.
 
-Undocumented; read at `chunk-1ypw9bby.js` offset 206191102.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208089703.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TUI_TRIAL`
 
-Source: `chunk-qravq5t1.js` · offset 185190507 · sha256 `f52b2d89…`
+Source: `chunk-y4wvcfrd.js` · offset 186305925 · sha256 `f52b2d89…`
 
 Read as: string (trimmed; empty is treated as unset). Values: `fullscreen`.
 
-Undocumented; read at `chunk-qravq5t1.js` offset 185190507.
+Undocumented; read at `chunk-y4wvcfrd.js` offset 186305925.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_TURN_UPDATES`
 
-Source: `chunk-mphp7acd.js` · offset 187175435 · sha256 `924dab76…`
+Source: `chunk-acxptg39.js` · offset 188319455 · sha256 `924dab76…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187175435.
+Undocumented; read at `chunk-acxptg39.js` offset 188319455.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ULTRAREVIEW_PREFLIGHT_FIXTURE`
 
-Source: `chunk-1mj5vjep.js` · offset 198884545 · sha256 `d80da839…`
+Source: `chunk-5yndqfks.js` · offset 200152760 · sha256 `d80da839…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1mj5vjep.js` offset 198884545.
+Undocumented; read at `chunk-5yndqfks.js` offset 200152760.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ULTRAREVIEW_QUOTA_FIXTURE`
 
-Source: `chunk-arcwjf3z.js` · offset 194527610 · sha256 `4abb04e7…`
+Source: `chunk-t55hg3rb.js` · offset 195707147 · sha256 `4abb04e7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-arcwjf3z.js` offset 194527610.
+Undocumented; read at `chunk-t55hg3rb.js` offset 195707147.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_USE_COWORK_PLUGINS`
 
-Source: `chunk-5fjw5n4x.js` · offset 181953341 · sha256 `225ab54c…` · 2 read sites
+Source: `chunk-6qv1jea6.js` · offset 179852316 · sha256 `225ab54c…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-5fjw5n4x.js` offset 181953341.
+Undocumented; read at `chunk-6qv1jea6.js` offset 179852316.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_USE_POWERSHELL_TOOL`
 
-Source: `chunk-2a2022xc.js` · offset 211000855 · sha256 `0bf9df8a…` · 3 read sites
+Source: `chunk-q933vkqs.js` · offset 212346085 · sha256 `0bf9df8a…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -6065,7 +6145,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`
 
-Source: `chunk-09m4fzsj.js` · offset 184743259 · sha256 `46d08d18…`
+Source: `chunk-j7rgjcpa.js` · offset 185895868 · sha256 `46d08d18…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -6075,47 +6155,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USER_EMAIL`
 
-Source: `chunk-nankzm0s.js` · offset 181312635 · sha256 `2347c88b…`
+Source: `chunk-721k6cws.js` · offset 182126898 · sha256 `2347c88b…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181312635.
+Undocumented; read at `chunk-721k6cws.js` offset 182126898.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_VOICE_FORWARD_INTERIMS_TYPED`
 
-Source: `chunk-vnsj0eyq.js` · offset 211819212 · sha256 `b4c3c91f…`
+Source: `chunk-xpwj991w.js` · offset 213202134 · sha256 `b4c3c91f…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-vnsj0eyq.js` offset 211819212.
+Undocumented; read at `chunk-xpwj991w.js` offset 213202134.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WEB_FETCH_AGENT`
 
-Source: `chunk-mphp7acd.js` · offset 187152892 · sha256 `cbf3526c…`
+Source: `chunk-acxptg39.js` · offset 188296791 · sha256 `cbf3526c…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187152892.
+Undocumented; read at `chunk-acxptg39.js` offset 188296791.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WEB_SEARCH_FAST_ARG`
 
-Source: `chunk-a6fqs976.js` · offset 182161369 · sha256 `3c325b89…` · 2 read sites
+Source: `chunk-v7f5d3nf.js` · offset 183306569 · sha256 `3c325b89…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-a6fqs976.js` offset 182161369.
+Undocumented; read at `chunk-v7f5d3nf.js` offset 183306569.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS`
 
-Source: `chunk-1b21she7.js` · offset 181866931 · sha256 `8d500e83…`
+Source: `chunk-24wkkcbf.js` · offset 183010551 · sha256 `8d500e83…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true. Default (from code): `900000`.
 
@@ -6125,7 +6205,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_WEBFETCH_DEADLINE_MS`
 
-Source: `chunk-mphp7acd.js` · offset 187121454 · sha256 `79263864…`
+Source: `chunk-acxptg39.js` · offset 188265392 · sha256 `79263864…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, digitsOnly true.
 
@@ -6135,69 +6215,69 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_WEBSOCKET_AUTH_FILE_DESCRIPTOR`
 
-Source: `chunk-85cakz9j.js` · offset 192203508 · sha256 `3df5ab6a…` · 4 read sites
+Source: `chunk-1sh8by1p.js` · offset 193386342 · sha256 `3df5ab6a…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-85cakz9j.js` offset 192203508.
+Undocumented; read at `chunk-1sh8by1p.js` offset 193386342.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WHIMSICAL_ELEPHANT`
 
-Source: `chunk-nankzm0s.js` · offset 180745397 · sha256 `ae4e690c…`
+Source: `chunk-721k6cws.js` · offset 181552055 · sha256 `ae4e690c…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180745397.
+Undocumented; read at `chunk-721k6cws.js` offset 181552055.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WILLOW_TERN`
 
-Source: `chunk-1b21she7.js` · offset 181769220 · sha256 `4be21696…`
+Source: `chunk-24wkkcbf.js` · offset 182912168 · sha256 `4be21696…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-1b21she7.js` offset 181769220.
+Undocumented; read at `chunk-24wkkcbf.js` offset 182912168.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WISE_COMET`
 
-Source: `chunk-mphp7acd.js` · offset 186780549 · sha256 `05978c0d…`
+Source: `chunk-acxptg39.js` · offset 187936469 · sha256 `05978c0d…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186780549.
+Undocumented; read at `chunk-acxptg39.js` offset 187936469.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WORKER_CHECKIN_SCHEDULE`
 
-Source: `chunk-mphp7acd.js` · offset 189644665 · sha256 `9723da95…`
+Source: `chunk-acxptg39.js` · offset 190847042 · sha256 `9723da95…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189644665.
+Undocumented; read at `chunk-acxptg39.js` offset 190847042.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WORKER_EPOCH`
 
-Source: `chunk-xapeakym.js` · offset 204865945 · sha256 `325e02bb…` · 13 read sites
+Source: `chunk-np3zq5rq.js` · offset 206191189 · sha256 `325e02bb…` · 13 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-xapeakym.js` offset 204865945.
+Undocumented; read at `chunk-np3zq5rq.js` offset 206191189.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`
 
-Source: `chunk-jxy1fa30.js` · offset 198452562 · sha256 `74e013c4…` · 2 read sites
+Source: `chunk-t65a4tk3.js` · offset 199719661 · sha256 `74e013c4…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, max 256, digitsOnly true.
 
@@ -6207,47 +6287,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_WORKFLOW_SIZE_WARNING_AGENTS`
 
-Source: `chunk-f2cpzzp9.js` · offset 207078556 · sha256 `27d03ba3…`
+Source: `chunk-mcm8e5ww.js` · offset 208399680 · sha256 `27d03ba3…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 207078556.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208399680.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WORKFLOW_SIZE_WARNING_TOKENS`
 
-Source: `chunk-f2cpzzp9.js` · offset 207078636 · sha256 `cb3ff7f8…`
+Source: `chunk-mcm8e5ww.js` · offset 208399760 · sha256 `cb3ff7f8…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 207078636.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208399760.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WORKFLOWS`
 
-Source: `chunk-980njedm.js` · offset 181692529 · sha256 `9f543338…` · 3 read sites
+Source: `chunk-sm075fbc.js` · offset 182834122 · sha256 `9f543338…` · 3 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-980njedm.js` offset 181692529.
+Undocumented; read at `chunk-sm075fbc.js` offset 182834122.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WORKSPACE_HOST_PATHS`
 
-Source: `chunk-qyc5w2q1.js` · offset 183531547 · sha256 `30722e3d…`
+Source: `chunk-y3fvjpjn.js` · offset 184653370 · sha256 `30722e3d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-qyc5w2q1.js` offset 183531547.
+Undocumented; read at `chunk-y3fvjpjn.js` offset 184653370.
 
 **Undocumented**
 
 ### `CLAUDE_CONFIG_DIR`
 
-Source: `chunk-8ptzhr8g.js` · offset 180392249 · sha256 `8c4b69f4…` · 20 read sites
+Source: `chunk-7jz8j2fc.js` · offset 193405977 · sha256 `8c4b69f4…` · 20 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6259,61 +6339,61 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES`
 
-Source: `chunk-6xrs6gmd.js` · offset 182325798 · sha256 `4ad6dc1e…` · 3 read sites
+Source: `chunk-0s5f053y.js` · offset 183470840 · sha256 `4ad6dc1e…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182325798.
+Undocumented; read at `chunk-0s5f053y.js` offset 183470840.
 
 **Undocumented**
 
 ### `CLAUDE_COWORK_MEMORY_GUIDELINES`
 
-Source: `chunk-6xrs6gmd.js` · offset 182249847 · sha256 `3ca2d6e8…` · 5 read sites
+Source: `chunk-0s5f053y.js` · offset 183394889 · sha256 `3ca2d6e8…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182249847.
+Undocumented; read at `chunk-0s5f053y.js` offset 183394889.
 
 **Undocumented**
 
 ### `CLAUDE_COWORK_MEMORY_INDEX_CONTENT`
 
-Source: `chunk-mphp7acd.js` · offset 186423614 · sha256 `d01657be…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187560620 · sha256 `d01657be…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: ``.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186423614.
+Undocumented; read at `chunk-acxptg39.js` offset 187560620.
 
 **Undocumented**
 
 ### `CLAUDE_COWORK_MEMORY_PATH_OVERRIDE`
 
-Source: `chunk-nankzm0s.js` · offset 181127122 · sha256 `7bd86655…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181938112 · sha256 `7bd86655…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181127122.
+Undocumented; read at `chunk-721k6cws.js` offset 181938112.
 
 **Undocumented**
 
 ### `CLAUDE_DEBUG`
 
-Source: `chunk-q1842b1c.js` · offset 195265870 · sha256 `96be69e5…`
+Source: `chunk-g6yz7gnr.js` · offset 196500889 · sha256 `96be69e5…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-q1842b1c.js` offset 195265870.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196500889.
 
 **Undocumented**
 
 ### `CLAUDE_DISABLE_ADOPT`
 
-Source: `chunk-f10wcx31.js` · offset 194080978 · sha256 `d04f1eb4…`
+Source: `chunk-7c571t9j.js` · offset 195280916 · sha256 `d04f1eb4…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6323,7 +6403,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_ENABLE_BYTE_WATCHDOG`
 
-Source: `chunk-09m4fzsj.js` · offset 184786870 · sha256 `1824e7c2…`
+Source: `chunk-j7rgjcpa.js` · offset 185939736 · sha256 `1824e7c2…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -6333,7 +6413,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_ENABLE_STREAM_WATCHDOG`
 
-Source: `chunk-5ne43w2c.js` · offset 193255046 · sha256 `806c8256…` · 2 read sites
+Source: `chunk-a29gkqzd.js` · offset 194446707 · sha256 `806c8256…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -6343,7 +6423,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_ENV_FILE`
 
-Source: `chunk-mphp7acd.js` · offset 186315257 · sha256 `2b00ca24…`
+Source: `chunk-acxptg39.js` · offset 187445397 · sha256 `2b00ca24…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6353,47 +6433,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_FORCE_DISPLAY_SURVEY`
 
-Source: `chunk-f2cpzzp9.js` · offset 207594777 · sha256 `7b164eac…`
+Source: `chunk-mcm8e5ww.js` · offset 208917075 · sha256 `7b164eac…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 207594777.
+Undocumented; read at `chunk-mcm8e5ww.js` offset 208917075.
 
 **Undocumented**
 
 ### `CLAUDE_IMPORT_CONVERSATIONS`
 
-Source: `chunk-0j3tbvt6.js` · offset 202327868 · sha256 `1f18d8e8…`
+Source: `chunk-kbmhwfzc.js` · offset 203663963 · sha256 `1f18d8e8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-0j3tbvt6.js` offset 202327868.
+Undocumented; read at `chunk-kbmhwfzc.js` offset 203663963.
 
 **Undocumented**
 
 ### `CLAUDE_INTERNAL_ASSISTANT_TEAM_NAME`
 
-Source: `chunk-h595p29c.js` · offset 210946921 · sha256 `9739119e…`
+Source: `chunk-cyzbzgkb.js` · offset 212289867 · sha256 `9739119e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-h595p29c.js` offset 210946921.
+Undocumented; read at `chunk-cyzbzgkb.js` offset 212289867.
 
 **Undocumented**
 
 ### `CLAUDE_INTERNAL_FC_OVERRIDES`
 
-Source: `chunk-nankzm0s.js` · offset 181111427 · sha256 `12927d55…`
+Source: `chunk-721k6cws.js` · offset 181921705 · sha256 `12927d55…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181111427.
+Undocumented; read at `chunk-721k6cws.js` offset 181921705.
 
 **Undocumented**
 
 ### `CLAUDE_JOB_DIR`
 
-Source: `chunk-6xrs6gmd.js` · offset 182393391 · sha256 `153cf60a…` · 33 read sites
+Source: `chunk-0s5f053y.js` · offset 183538949 · sha256 `153cf60a…` · 33 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6405,111 +6485,111 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_LOCAL_OAUTH_API_BASE`
 
-Source: `chunk-a5b8yq96.js` · offset 178159658 · sha256 `25070d02…` · 2 read sites
+Source: `chunk-ttd93ar9.js` · offset 179189695 · sha256 `25070d02…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-a5b8yq96.js` offset 178159658.
+Undocumented; read at `chunk-ttd93ar9.js` offset 179189695.
 
 **Undocumented**
 
 ### `CLAUDE_LOCAL_OAUTH_APPS_BASE`
 
-Source: `chunk-a5b8yq96.js` · offset 178159744 · sha256 `92a2b48d…`
+Source: `chunk-ttd93ar9.js` · offset 179189781 · sha256 `92a2b48d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-a5b8yq96.js` offset 178159744.
+Undocumented; read at `chunk-ttd93ar9.js` offset 179189781.
 
 **Undocumented**
 
 ### `CLAUDE_LOCAL_OAUTH_CONSOLE_BASE`
 
-Source: `chunk-a5b8yq96.js` · offset 178159831 · sha256 `dd40e55a…`
+Source: `chunk-ttd93ar9.js` · offset 179189868 · sha256 `dd40e55a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-a5b8yq96.js` offset 178159831.
+Undocumented; read at `chunk-ttd93ar9.js` offset 179189868.
 
 **Undocumented**
 
 ### `CLAUDE_MEMORY_STORES`
 
-Source: `chunk-6xrs6gmd.js` · offset 182188631 · sha256 `69001abe…` · 12 read sites
+Source: `chunk-0s5f053y.js` · offset 183333972 · sha256 `69001abe…` · 12 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 8 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-6xrs6gmd.js` offset 182188631.
+Undocumented; read at `chunk-0s5f053y.js` offset 183333972.
 
 **Undocumented**
 
 ### `CLAUDE_PROJECT_UUID`
 
-Source: `chunk-y1t8adhj.js` · offset 200730493 · sha256 `fac36c80…` · 3 read sites
+Source: `chunk-46e4t4pb.js` · offset 211282172 · sha256 `fac36c80…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-y1t8adhj.js` offset 200730493.
+Undocumented; read at `chunk-46e4t4pb.js` offset 211282172.
 
 **Undocumented**
 
 ### `CLAUDE_PTY_HEARTBEAT_MS`
 
-Source: `chunk-aa430wh3.js` · offset 196244586 · sha256 `104db100…`
+Source: `chunk-4ahd91a1.js` · offset 197480941 · sha256 `104db100…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196244586.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197480941.
 
 **Undocumented**
 
 ### `CLAUDE_PTY_HOST_EXEC`
 
-Source: `chunk-aa430wh3.js` · offset 196241119 · sha256 `da907461…`
+Source: `chunk-4ahd91a1.js` · offset 197477474 · sha256 `da907461…`
 
 Read as: string (trimmed; empty is treated as unset). Values: `1`.
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196241119.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197477474.
 
 **Undocumented**
 
 ### `CLAUDE_PTY_ORPHAN_CHECK_MS`
 
-Source: `chunk-aa430wh3.js` · offset 196244817 · sha256 `58aef346…`
+Source: `chunk-4ahd91a1.js` · offset 197481172 · sha256 `58aef346…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196244817.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197481172.
 
 **Undocumented**
 
 ### `CLAUDE_PTY_RECORD`
 
-Source: `chunk-aa430wh3.js` · offset 196241686 · sha256 `7b0a5f6f…`
+Source: `chunk-4ahd91a1.js` · offset 197478041 · sha256 `7b0a5f6f…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-aa430wh3.js` offset 196241686.
+Undocumented; read at `chunk-4ahd91a1.js` offset 197478041.
 
 **Undocumented**
 
 ### `CLAUDE_RELAUNCH_SESSION_ADD_DIRS`
 
-Source: `chunk-dgp2yyqt.js` · offset 194965401 · sha256 `77664f78…`
+Source: `chunk-5g8p9x0b.js` · offset 196163228 · sha256 `77664f78…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 194965401.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196163228.
 
 **Undocumented**
 
 ### `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX`
 
-Source: `chunk-9ezdz1gg.js` · offset 185593536 · sha256 `2067b8e5…`
+Source: `chunk-32qa6het.js` · offset 186713215 · sha256 `2067b8e5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6519,37 +6599,37 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_REMOTE_WORKFLOW_ARGS`
 
-Source: `chunk-bv1f34vz.js` · offset 198524591 · sha256 `679ff90d…`
+Source: `chunk-4y82bpnn.js` · offset 199791777 · sha256 `679ff90d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-bv1f34vz.js` offset 198524591.
+Undocumented; read at `chunk-4y82bpnn.js` offset 199791777.
 
 **Undocumented**
 
 ### `CLAUDE_REMOTE_WORKFLOW_SCRIPT`
 
-Source: `chunk-bv1f34vz.js` · offset 198524299 · sha256 `f5aa6e96…`
+Source: `chunk-4y82bpnn.js` · offset 199791485 · sha256 `f5aa6e96…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-bv1f34vz.js` offset 198524299.
+Undocumented; read at `chunk-4y82bpnn.js` offset 199791485.
 
 **Undocumented**
 
 ### `CLAUDE_RUNNER_ACTIVITY_FD`
 
-Source: `chunk-r7jk65a3.js` · offset 204031406 · sha256 `4d11426e…`
+Source: `chunk-ft4qs0da.js` · offset 205299132 · sha256 `4d11426e…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 3.
 
-Undocumented; read at `chunk-r7jk65a3.js` offset 204031406.
+Undocumented; read at `chunk-ft4qs0da.js` offset 205299132.
 
 **Undocumented**
 
 ### `CLAUDE_RUNNER_API_BASE_URL`
 
-Source: `chunk-b8x67cyv.js` · offset 181580016 · sha256 `bed6faf5…`
+Source: `chunk-5j718pvy.js` · offset 182726616 · sha256 `bed6faf5…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -6559,17 +6639,17 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_DISABLE_AWAITING_ACTION_OVERRIDE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190508828 · sha256 `ea910ff4…`
+Source: `chunk-k2pjtcda.js` · offset 191719702 · sha256 `ea910ff4…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190508828.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191719702.
 
 **Undocumented**
 
 ### `CLAUDE_RUNNER_FETCH_DEPTH`
 
-Source: `chunk-sk0av50v.js` · offset 190331470 · sha256 `9d2ceeca…`
+Source: `chunk-1k1qsm5t.js` · offset 191542195 · sha256 `9d2ceeca…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6579,7 +6659,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `CLAUDE_RUNNER_SESSION_ID`
 
-Source: `chunk-b8x67cyv.js` · offset 181579859 · sha256 `b7ce016c…`
+Source: `chunk-5j718pvy.js` · offset 182726459 · sha256 `b7ce016c…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -6589,7 +6669,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_SKIP_GIT_VERIFY`
 
-Source: `chunk-bv2dmc76.js` · offset 190282520 · sha256 `21df957f…`
+Source: `chunk-qyn5bdge.js` · offset 191493214 · sha256 `21df957f…`
 
 Read as: enum (compared against fixed values). Values: `1`.
 
@@ -6599,17 +6679,17 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `CLAUDE_SECURESTORAGE_CONFIG_DIR`
 
-Source: `chunk-fge68w3a.js` · offset 180460217 · sha256 `d7b49142…` · 3 read sites
+Source: `chunk-6jpfwsxt.js` · offset 211830390 · sha256 `d7b49142…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-fge68w3a.js` offset 180460217.
+Undocumented; read at `chunk-6jpfwsxt.js` offset 211830390.
 
 **Undocumented**
 
 ### `CLAUDE_SESSION_INGRESS_TOKEN_FILE`
 
-Source: `chunk-mnp9k227.js` · offset 180502309 · sha256 `5fa5ddd7…` · 5 read sites
+Source: `chunk-kx3hbyfc.js` · offset 181286059 · sha256 `5fa5ddd7…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6619,29 +6699,29 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_SLOW_FIRST_BYTE_MS`
 
-Source: `chunk-mphp7acd.js` · offset 187887816 · sha256 `cc4e40d3…`
+Source: `chunk-acxptg39.js` · offset 189046503 · sha256 `cc4e40d3…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187887816.
+Undocumented; read at `chunk-acxptg39.js` offset 189046503.
 
 **Undocumented**
 
 ### `CLAUDE_STAGE_FILE_ROOT`
 
-Source: `chunk-09m4fzsj.js` · offset 184356157 · sha256 `37979d75…` · 7 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185484398 · sha256 `37979d75…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184356157.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185484398.
 
 **Undocumented**
 
 ### `CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS`
 
-Source: `chunk-09m4fzsj.js` · offset 184782296 · sha256 `74df571c…`
+Source: `chunk-j7rgjcpa.js` · offset 185935162 · sha256 `74df571c…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -6651,7 +6731,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_STREAM_IDLE_TIMEOUT_MS`
 
-Source: `chunk-09m4fzsj.js` · offset 184781808 · sha256 `590260fd…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185934674 · sha256 `590260fd…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -6661,41 +6741,41 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_TMPDIR`
 
-Source: `chunk-7qgnq1jf.js` · offset 182448033 · sha256 `3b749fcd…` · 2 read sites
+Source: `chunk-75pwjp0k.js` · offset 183593628 · sha256 `3b749fcd…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-7qgnq1jf.js` offset 182448033.
+Undocumented; read at `chunk-75pwjp0k.js` offset 183593628.
 
 **Undocumented**
 
 ### `CLAUDE_TRUSTED_DEVICE_TOKEN`
 
-Source: `chunk-s5hxszmb.js` · offset 184082500 · sha256 `e362b7c4…` · 4 read sites
+Source: `chunk-ekz0crj3.js` · offset 185206891 · sha256 `e362b7c4…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-s5hxszmb.js` offset 184082500.
+Undocumented; read at `chunk-ekz0crj3.js` offset 185206891.
 
 **Undocumented**
 
 ### `CLAUDE_WORKFLOW_NAME_ONLY`
 
-Source: `chunk-57ewcm63.js` · offset 198403936 · sha256 `b910c419…`
+Source: `chunk-e2mgdryp.js` · offset 199670876 · sha256 `b910c419…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-57ewcm63.js` offset 198403936.
+Undocumented; read at `chunk-e2mgdryp.js` offset 199670876.
 
 **Undocumented**
 
 ### `CLAUDECODE`
 
-Source: `chunk-09m4fzsj.js` · offset 184517289 · sha256 `a9cd3cb6…` · 4 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196184695 · sha256 `a9cd3cb6…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6705,71 +6785,71 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLIPBOARD_NAPI_NODE_PATH`
 
-Source: `chunk-1y575bx8.js` · offset 185202737 · sha256 `08bacc2c…` · 2 read sites
+Source: `chunk-v4er1c8e.js` · offset 186318156 · sha256 `08bacc2c…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-1y575bx8.js` offset 185202737.
+Undocumented; read at `chunk-v4er1c8e.js` offset 186318156.
 
 **Undocumented**
 
 ### `COMPUTERNAME`
 
-Source: `chunk-2mfrvb6c.js` · offset 196410178 · sha256 `79054786…`
+Source: `chunk-1exv0s4x.js` · offset 197647285 · sha256 `79054786…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-2mfrvb6c.js` offset 196410178.
+Undocumented; read at `chunk-1exv0s4x.js` offset 197647285.
 
 **Undocumented**
 
 ### `CONTAINER_SANDBOX_MOUNT_POINT`
 
-Source: `chunk-nankzm0s.js` · offset 181058300 · sha256 `9f0f77c0…`
+Source: `chunk-721k6cws.js` · offset 181867069 · sha256 `9f0f77c0…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181058300.
+Undocumented; read at `chunk-721k6cws.js` offset 181867069.
 
 **Undocumented**
 
 ### `DEBUG_CLAUDE_AGENT_SDK`
 
-Source: `chunk-j0381q8k.js` · offset 201593495 · sha256 `54b512f4…`
+Source: `chunk-kmsvjk2z.js` · offset 202869913 · sha256 `f041f5dc…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-j0381q8k.js` offset 201593495.
+Undocumented; read at `chunk-kmsvjk2z.js` offset 202869913.
 
 **Undocumented**
 
 ### `DEBUG_SDK`
 
-Source: `chunk-q80zaav8.js` · offset 178103476 · sha256 `4c7983f1…`
+Source: `chunk-dnvvymm5.js` · offset 179133126 · sha256 `4c7983f1…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-q80zaav8.js` offset 178103476.
+Undocumented; read at `chunk-dnvvymm5.js` offset 179133126.
 
 **Undocumented**
 
 ### `DEMO_VERSION`
 
-Source: `chunk-1ypw9bby.js` · offset 206198444 · sha256 `aa2ade84…` · 3 read sites
+Source: `chunk-7reb38ay.js` · offset 197071072 · sha256 `aa2ade84…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-1ypw9bby.js` offset 206198444.
+Undocumented; read at `chunk-7reb38ay.js` offset 197071072.
 
 **Undocumented**
 
 ### `DISABLE_AUTO_COMPACT`
 
-Source: `chunk-mphp7acd.js` · offset 186779883 · sha256 `958ef69a…`
+Source: `chunk-acxptg39.js` · offset 187935803 · sha256 `958ef69a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6779,7 +6859,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_AUTOUPDATER`
 
-Source: `chunk-nankzm0s.js` · offset 181185670 · sha256 `5ab2aa30…`
+Source: `chunk-721k6cws.js` · offset 181999378 · sha256 `5ab2aa30…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6789,17 +6869,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_BRIEF_MODE_STOP_HOOK`
 
-Source: `chunk-w8a1w7ad.js` · offset 193845412 · sha256 `f348af56…`
+Source: `chunk-pphn9kby.js` · offset 195056307 · sha256 `f348af56…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-w8a1w7ad.js` offset 193845412.
+Undocumented; read at `chunk-pphn9kby.js` offset 195056307.
 
 **Undocumented**
 
 ### `DISABLE_BUG_COMMAND`
 
-Source: `chunk-09m4fzsj.js` · offset 184719377 · sha256 `f52f9937…`
+Source: `chunk-j7rgjcpa.js` · offset 185871987 · sha256 `f52f9937…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6809,7 +6889,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_COMPACT`
 
-Source: `chunk-2zfzkhkv.js` · offset 216979233 · sha256 `6c34486b…` · 12 read sites
+Source: `chunk-721k6cws.js` · offset 181797362 · sha256 `6c34486b…` · 12 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6819,7 +6899,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_COST_WARNINGS`
 
-Source: `chunk-09m4fzsj.js` · offset 184719697 · sha256 `8ac37cb3…`
+Source: `chunk-j7rgjcpa.js` · offset 185872307 · sha256 `8ac37cb3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6829,7 +6909,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_DOCTOR_COMMAND`
 
-Source: `chunk-2fn6341y.js` · offset 194721565 · sha256 `ee7207c3…`
+Source: `chunk-t25zfnms.js` · offset 195904268 · sha256 `ee7207c3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6839,7 +6919,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_ERROR_REPORTING`
 
-Source: `chunk-8xhw5h9f.js` · offset 190500127 · sha256 `1aa9728e…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191711001 · sha256 `1aa9728e…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6851,7 +6931,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_EXTRA_USAGE_COMMAND`
 
-Source: `chunk-nankzm0s.js` · offset 181283161 · sha256 `b9b14308…`
+Source: `chunk-721k6cws.js` · offset 182097425 · sha256 `b9b14308…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6861,7 +6941,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_FEEDBACK_COMMAND`
 
-Source: `chunk-09m4fzsj.js` · offset 184719262 · sha256 `5e33f8be…`
+Source: `chunk-j7rgjcpa.js` · offset 185871872 · sha256 `5e33f8be…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6871,7 +6951,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_GROWTHBOOK`
 
-Source: `chunk-8xhw5h9f.js` · offset 190500182 · sha256 `a0cfeb1e…` · 7 read sites
+Source: `chunk-cnrzxz4r.js` · offset 185147054 · sha256 `a0cfeb1e…` · 7 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6881,7 +6961,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_INSTALL_GITHUB_APP_COMMAND`
 
-Source: `chunk-mphp7acd.js` · offset 188570374 · sha256 `3316960d…`
+Source: `chunk-acxptg39.js` · offset 189755418 · sha256 `3316960d…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6891,7 +6971,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_INSTALLATION_CHECKS`
 
-Source: `chunk-2t7nhzwg.js` · offset 195920050 · sha256 `4c27a2dd…` · 4 read sites
+Source: `chunk-d9rg2fcs.js` · offset 191471021 · sha256 `4c27a2dd…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6901,7 +6981,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_INTERLEAVED_THINKING`
 
-Source: `chunk-nankzm0s.js` · offset 181000548 · sha256 `e341ccff…`
+Source: `chunk-721k6cws.js` · offset 181808969 · sha256 `e341ccff…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6911,7 +6991,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_LOGIN_COMMAND`
 
-Source: `chunk-mphp7acd.js` · offset 188569908 · sha256 `9de9e197…`
+Source: `chunk-acxptg39.js` · offset 189754952 · sha256 `9de9e197…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6921,7 +7001,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_LOGOUT_COMMAND`
 
-Source: `chunk-mphp7acd.js` · offset 188570076 · sha256 `ddc0075c…`
+Source: `chunk-acxptg39.js` · offset 189755120 · sha256 `ddc0075c…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6931,7 +7011,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_UPDATES`
 
-Source: `chunk-nankzm0s.js` · offset 181185602 · sha256 `3a3c9989…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181999310 · sha256 `3a3c9989…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6941,7 +7021,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_UPGRADE_COMMAND`
 
-Source: `chunk-09m4fzsj.js` · offset 184700073 · sha256 `4885b0e3…`
+Source: `chunk-j7rgjcpa.js` · offset 185831838 · sha256 `4885b0e3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -6951,7 +7031,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ENABLE_CLAUDEAI_MCP_SERVERS`
 
-Source: `chunk-mphp7acd.js` · offset 186217967 · sha256 `a8b4022d…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187347278 · sha256 `a8b4022d…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -6961,17 +7041,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ENABLE_MCP_LARGE_OUTPUT_FILES`
 
-Source: `chunk-amg94xhm.js` · offset 213092060 · sha256 `9b7436ef…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214198751 · sha256 `9b7436ef…` · 2 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
-Undocumented; read at `chunk-amg94xhm.js` offset 213092060.
+Undocumented; read at `chunk-tgymbs42.js` offset 214198751.
 
 **Undocumented**
 
 ### `ENABLE_TOOL_SEARCH`
 
-Source: `chunk-7qtw821h.js` · offset 182172183 · sha256 `7f68bf8d…` · 5 read sites
+Source: `chunk-acxptg39.js` · offset 188441656 · sha256 `7f68bf8d…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6983,7 +7063,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `FALLBACK_FOR_ALL_PRIMARY_MODELS`
 
-Source: `chunk-mphp7acd.js` · offset 187786144 · sha256 `78f6ad2c…`
+Source: `chunk-acxptg39.js` · offset 188942311 · sha256 `78f6ad2c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -6993,7 +7073,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `FORCE_AUTOUPDATE_PLUGINS`
 
-Source: `chunk-nankzm0s.js` · offset 181185411 · sha256 `531c9c29…`
+Source: `chunk-721k6cws.js` · offset 181999119 · sha256 `531c9c29…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -7003,17 +7083,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `HOMESHARE`
 
-Source: `chunk-09m4fzsj.js` · offset 184497925 · sha256 `fcfa8c3d…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185627583 · sha256 `5c738ec6…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184497925.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185627583.
 
 **Undocumented**
 
 ### `IS_DEMO`
 
-Source: `chunk-1ypw9bby.js` · offset 206208936 · sha256 `98b8eb2b…` · 15 read sites
+Source: `chunk-5bxd66qx.js` · offset 202543067 · sha256 `98b8eb2b…` · 15 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7025,29 +7105,29 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `IS_SANDBOX`
 
-Source: `chunk-1sb33067.js` · offset 210932780 · sha256 `56348ca3…` · 5 read sites
+Source: `chunk-721k6cws.js` · offset 181668298 · sha256 `56348ca3…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `1`.
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset). Other sites parse it as a boolean, so the same value can mean on in one place and off in another.
 
-Undocumented; read at `chunk-1sb33067.js` offset 210932780.
+Undocumented; read at `chunk-721k6cws.js` offset 181668298.
 
 **Undocumented**
 
 ### `LOCAL_BRIDGE`
 
-Source: `chunk-7eyrbz6k.js` · offset 196822457 · sha256 `357e1b70…` · 2 read sites
+Source: `chunk-er9srhy5.js` · offset 198060466 · sha256 `357e1b70…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196822457.
+Undocumented; read at `chunk-er9srhy5.js` offset 198060466.
 
 **Undocumented**
 
 ### `MAX_MCP_OUTPUT_TOKENS`
 
-Source: `chunk-s409a3pp.js` · offset 205827302 · sha256 `8c5ef5cd…`
+Source: `chunk-5nbqwjzh.js` · offset 207138160 · sha256 `8c5ef5cd…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -7057,7 +7137,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MAX_STRUCTURED_OUTPUT_RETRIES`
 
-Source: `chunk-jxy1fa30.js` · offset 198472245 · sha256 `d2c05d1d…` · 2 read sites
+Source: `chunk-np3zq5rq.js` · offset 205999845 · sha256 `d2c05d1d…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -7067,7 +7147,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MAX_THINKING_TOKENS`
 
-Source: `chunk-dgp2yyqt.js` · offset 195054821 · sha256 `25a11b54…` · 4 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196252952 · sha256 `25a11b54…` · 4 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -7079,7 +7159,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_CLIENT_SECRET`
 
-Source: `chunk-frz39n89.js` · offset 212918045 · sha256 `38093413…` · 2 read sites
+Source: `chunk-arrfm839.js` · offset 214064509 · sha256 `38093413…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7089,7 +7169,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_CONNECT_TIMEOUT_MS`
 
-Source: `chunk-sbndfme5.js` · offset 185670531 · sha256 `49ffbd08…`
+Source: `chunk-9cjpbspa.js` · offset 186790210 · sha256 `49ffbd08…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -7099,7 +7179,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_CONNECTION_NONBLOCKING`
 
-Source: `chunk-r3f1sg3c.js` · offset 195212421 · sha256 `55b6fd6e…`
+Source: `chunk-rnb0cvy1.js` · offset 196446267 · sha256 `55b6fd6e…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -7109,7 +7189,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE`
 
-Source: `chunk-mphp7acd.js` · offset 187217783 · sha256 `f3c1c20e…` · 4 read sites
+Source: `chunk-0h76702z.js` · offset 196417503 · sha256 `f3c1c20e…` · 4 read sites
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -7119,7 +7199,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE_MAX_STALE_S`
 
-Source: `chunk-z6w3579x.js` · offset 195182606 · sha256 `6075690d…`
+Source: `chunk-0h76702z.js` · offset 196416452 · sha256 `6075690d…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -7129,7 +7209,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE_STRIKES`
 
-Source: `chunk-z6w3579x.js` · offset 195181969 · sha256 `d71a3eb9…`
+Source: `chunk-0h76702z.js` · offset 196415815 · sha256 `d71a3eb9…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -7139,7 +7219,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE_TTL_S`
 
-Source: `chunk-z6w3579x.js` · offset 195182517 · sha256 `ebb2b99a…`
+Source: `chunk-0h76702z.js` · offset 196416363 · sha256 `ebb2b99a…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -7149,7 +7229,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_OAUTH_CALLBACK_PORT`
 
-Source: `chunk-9xxnd3gn.js` · offset 212507028 · sha256 `63af4c00…`
+Source: `chunk-2j98bz13.js` · offset 213558405 · sha256 `63af4c00…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -7159,17 +7239,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_OAUTH_CLIENT_METADATA_URL`
 
-Source: `chunk-frz39n89.js` · offset 212874114 · sha256 `801a0e59…` · 2 read sites
+Source: `chunk-arrfm839.js` · offset 214024127 · sha256 `801a0e59…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-frz39n89.js` offset 212874114.
+Undocumented; read at `chunk-arrfm839.js` offset 214024127.
 
 **Undocumented**
 
 ### `MCP_PROTOCOL_NEGOTIATION`
 
-Source: `chunk-amg94xhm.js` · offset 213007740 · sha256 `536099b7…`
+Source: `chunk-zx23jytz.js` · offset 214411037 · sha256 `536099b7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7179,7 +7259,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_REMOTE_SERVER_CONNECTION_BATCH_SIZE`
 
-Source: `chunk-amg94xhm.js` · offset 213004164 · sha256 `153f3a1d…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214131333 · sha256 `153f3a1d…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `20`.
 
@@ -7189,7 +7269,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_SDK_GENERATION`
 
-Source: `chunk-1et752h9.js` · offset 185272503 · sha256 `231a32e2…`
+Source: `chunk-jk8zgkka.js` · offset 186387923 · sha256 `231a32e2…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7199,7 +7279,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_SERVER_CONNECTION_BATCH_SIZE`
 
-Source: `chunk-amg94xhm.js` · offset 213004105 · sha256 `7d6d913c…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214131274 · sha256 `7d6d913c…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `3`.
 
@@ -7209,7 +7289,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_TIMEOUT`
 
-Source: `chunk-sbndfme5.js` · offset 185670453 · sha256 `b9a49083…`
+Source: `chunk-9cjpbspa.js` · offset 186790132 · sha256 `b9a49083…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -7219,7 +7299,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_TOOL_TIMEOUT`
 
-Source: `chunk-amg94xhm.js` · offset 212988564 · sha256 `4002a2b8…` · 4 read sites
+Source: `chunk-tgymbs42.js` · offset 214116141 · sha256 `4002a2b8…` · 4 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -7229,97 +7309,97 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_TRUNCATION_PROMPT_OVERRIDE`
 
-Source: `chunk-mphp7acd.js` · offset 187109492 · sha256 `f467df82…`
+Source: `chunk-acxptg39.js` · offset 188256642 · sha256 `f467df82…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187109492.
+Undocumented; read at `chunk-acxptg39.js` offset 188256642.
 
 **Undocumented**
 
 ### `MCP_XAA_IDP_CLIENT_SECRET`
 
-Source: `chunk-cyh6zh14.js` · offset 205738353 · sha256 `f2acd65a…`
+Source: `chunk-p7vnfmqa.js` · offset 207049163 · sha256 `f2acd65a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cyh6zh14.js` offset 205738353.
+Undocumented; read at `chunk-p7vnfmqa.js` offset 207049163.
 
 **Undocumented**
 
 ### `PLAYWRIGHT_BROWSERS_PATH`
 
-Source: `chunk-s1mfg8e9.js` · offset 194271379 · sha256 `2f5fd224…`
+Source: `chunk-nvyqjp3n.js` · offset 195449918 · sha256 `2f5fd224…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-s1mfg8e9.js` offset 194271379.
+Undocumented; read at `chunk-nvyqjp3n.js` offset 195449918.
 
 **Undocumented**
 
 ### `RUNNER_ENVIRONMENT`
 
-Source: `chunk-nankzm0s.js` · offset 181084910 · sha256 `1c7f10fd…`
+Source: `chunk-721k6cws.js` · offset 181893902 · sha256 `1c7f10fd…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181084910.
+Undocumented; read at `chunk-721k6cws.js` offset 181893902.
 
 **Undocumented**
 
 ### `RUNNER_OS`
 
-Source: `chunk-nankzm0s.js` · offset 181084963 · sha256 `4febb421…`
+Source: `chunk-721k6cws.js` · offset 181893955 · sha256 `4febb421…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181084963.
+Undocumented; read at `chunk-721k6cws.js` offset 181893955.
 
 **Undocumented**
 
 ### `RUNNER_RELEASE_IDLE_SESSION_MIN`
 
-Source: `chunk-8xhw5h9f.js` · offset 190609485 · sha256 `7cd461dd…`
+Source: `chunk-k2pjtcda.js` · offset 191820361 · sha256 `7cd461dd…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190609485.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191820361.
 
 **Undocumented**
 
 ### `SAFEUSER`
 
-Source: `chunk-mphp7acd.js` · offset 188535309 · sha256 `7cf0f156…`
+Source: `chunk-acxptg39.js` · offset 189720353 · sha256 `7cf0f156…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188535309.
+Undocumented; read at `chunk-acxptg39.js` offset 189720353.
 
 **Undocumented**
 
 ### `SDK_NATIVE_BIN`
 
-Source: `chunk-j0381q8k.js` · offset 201612222 · sha256 `74660f53…`
+Source: `chunk-kmsvjk2z.js` · offset 202888640 · sha256 `74660f53…`
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `claude`.
 
-Undocumented; read at `chunk-j0381q8k.js` offset 201612222.
+Undocumented; read at `chunk-kmsvjk2z.js` offset 202888640.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_BASE_DIR`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576151 · sha256 `b4772425…`
+Source: `chunk-k2pjtcda.js` · offset 191787027 · sha256 `b4772425…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576151.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787027.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_BG_RESULT_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190504512 · sha256 `27b1b8d2…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191715386 · sha256 `27b1b8d2…` · 2 read sites
 
 Read as: number (parsed as a number). Default (from code): `30000`.
 
@@ -7329,149 +7409,149 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `SELF_HOSTED_RUNNER_CLIENT_LABEL`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576602 · sha256 `177e08fb…`
+Source: `chunk-k2pjtcda.js` · offset 191787478 · sha256 `177e08fb…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576602.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787478.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_CONFIGURE_GIT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576784 · sha256 `452ab2bb…`
+Source: `chunk-k2pjtcda.js` · offset 191787660 · sha256 `452ab2bb…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576784.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787660.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_CONFINE_REPO_SETTINGS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190577159 · sha256 `77b9796c…`
+Source: `chunk-k2pjtcda.js` · offset 191788035 · sha256 `77b9796c…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190577159.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191788035.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DEBUG_DIR`
 
-Source: `chunk-nmm61j3j.js` · offset 190709808 · sha256 `b1e11b3a…`
+Source: `chunk-ajk93az7.js` · offset 191925424 · sha256 `b1e11b3a…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nmm61j3j.js` offset 190709808.
+Undocumented; read at `chunk-ajk93az7.js` offset 191925424.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DEBUG_TOKEN_DIR`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576480 · sha256 `15e6ba3b…`
+Source: `chunk-k2pjtcda.js` · offset 191787356 · sha256 `15e6ba3b…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576480.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787356.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DEFER_SHUTDOWN_MAX_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190610587 · sha256 `fd93c224…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191821463 · sha256 `fd93c224…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190610587.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191821463.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DRAIN_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190530889 · sha256 `e01cdfc2…` · 4 read sites
+Source: `chunk-k2pjtcda.js` · offset 191741763 · sha256 `e01cdfc2…` · 4 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190530889.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191741763.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DRAIN_MARKER_FILE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190574246 · sha256 `4808daa9…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191785122 · sha256 `4808daa9…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced). Default (from code): `unset`.
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190574246.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191785122.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DRAIN_WAIT_BG_TASKS_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190573983 · sha256 `fbebf33a…`
+Source: `chunk-k2pjtcda.js` · offset 191784859 · sha256 `fbebf33a…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190573983.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191784859.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190573873 · sha256 `9a8c3728…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191784749 · sha256 `9a8c3728…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190573873.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191784749.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET`
 
-Source: `chunk-8xhw5h9f.js` · offset 190586019 · sha256 `13476adc…` · 2 read sites
+Source: `chunk-ajk93az7.js` · offset 191950355 · sha256 `13476adc…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190586019.
+Undocumented; read at `chunk-ajk93az7.js` offset 191950355.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_EXEC_PATH`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576292 · sha256 `c75ae78f…`
+Source: `chunk-k2pjtcda.js` · offset 191787168 · sha256 `c75ae78f…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576292.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787168.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_HEALTH_PORT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576419 · sha256 `114335bb…` · 2 read sites
+Source: `chunk-ajk93az7.js` · offset 191925265 · sha256 `114335bb…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576419.
+Undocumented; read at `chunk-ajk93az7.js` offset 191925265.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_HOOKS_DIR`
 
-Source: `chunk-8xhw5h9f.js` · offset 190452696 · sha256 `b0459dbf…` · 7 read sites
+Source: `chunk-ajk93az7.js` · offset 191925158 · sha256 `b0459dbf…` · 7 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190452696.
+Undocumented; read at `chunk-ajk93az7.js` offset 191925158.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR`
 
-Source: `chunk-8xhw5h9f.js` · offset 190391503 · sha256 `6bdd2e04…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191602272 · sha256 `6bdd2e04…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
@@ -7481,47 +7561,47 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `SELF_HOSTED_RUNNER_HOST_CONFIG_SNAPSHOT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190577235 · sha256 `41e1b2bc…`
+Source: `chunk-k2pjtcda.js` · offset 191788111 · sha256 `41e1b2bc…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190577235.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191788111.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_IDLE_SHUTDOWN_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190612628 · sha256 `72e91d87…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191823504 · sha256 `72e91d87…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190612628.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191823504.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_LOCK_TO_ACCOUNT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576543 · sha256 `f387d2ff…`
+Source: `chunk-k2pjtcda.js` · offset 191787419 · sha256 `f387d2ff…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576543.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787419.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_LOG_FILE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576357 · sha256 `bed345b6…`
+Source: `chunk-k2pjtcda.js` · offset 191787233 · sha256 `bed345b6…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576357.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787233.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_MAX_LIFETIME_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190503682 · sha256 `21be6599…`
+Source: `chunk-k2pjtcda.js` · offset 191714556 · sha256 `21be6599…`
 
 Read as: number (parsed as a number). Default (from code): `900000`.
 
@@ -7531,37 +7611,37 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `SELF_HOSTED_RUNNER_MAX_LIFETIME_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190503622 · sha256 `1f6f8814…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191714496 · sha256 `1f6f8814…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190503622.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191714496.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_POOL_SECRET`
 
-Source: `chunk-8xhw5h9f.js` · offset 190586096 · sha256 `fc39e472…` · 2 read sites
+Source: `chunk-ajk93az7.js` · offset 191950432 · sha256 `fc39e472…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190586096.
+Undocumented; read at `chunk-ajk93az7.js` offset 191950432.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_POST_SESSION_HOOK_TIMEOUT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190609983 · sha256 `906272d2…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191820859 · sha256 `906272d2…` · 2 read sites
 
 Read as: number (parsed as a number). Default (from code): `60000`.
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190609983.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191820859.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_POST_TURN_SETTLE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190504563 · sha256 `939f4db3…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191715437 · sha256 `939f4db3…` · 2 read sites
 
 Read as: number (parsed as a number). Default (from code): `7000`.
 
@@ -7571,87 +7651,87 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `SELF_HOSTED_RUNNER_PUSH_OUTCOME_ON_RELEASE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576854 · sha256 `ab9e00d5…`
+Source: `chunk-k2pjtcda.js` · offset 191787730 · sha256 `ab9e00d5…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576854.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787730.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_RELEASE_IDLE_SESSION_MIN`
 
-Source: `chunk-8xhw5h9f.js` · offset 190609519 · sha256 `854a99a1…`
+Source: `chunk-k2pjtcda.js` · offset 191820395 · sha256 `854a99a1…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190609519.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191820395.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_REMOVE_SESSION_STATE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190577080 · sha256 `804b6083…`
+Source: `chunk-k2pjtcda.js` · offset 191787956 · sha256 `804b6083…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190577080.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787956.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_RETIRE_AT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190574051 · sha256 `b92e6ac9…`
+Source: `chunk-k2pjtcda.js` · offset 191784927 · sha256 `b92e6ac9…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190574051.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191784927.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_SESSION_IDLE_MIN`
 
-Source: `chunk-8xhw5h9f.js` · offset 190609565 · sha256 `d0b6f6af…`
+Source: `chunk-k2pjtcda.js` · offset 191820441 · sha256 `d0b6f6af…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190609565.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191820441.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_SESSION_IDLE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190610636 · sha256 `1c987ddd…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191821512 · sha256 `1c987ddd…` · 3 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190610636.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191821512.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_SESSION_IDLE_SEC`
 
-Source: `chunk-8xhw5h9f.js` · offset 190609603 · sha256 `d5c3bc87…`
+Source: `chunk-k2pjtcda.js` · offset 191820479 · sha256 `d5c3bc87…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190609603.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191820479.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190503905 · sha256 `b315d588…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191714779 · sha256 `b315d588…` · 3 read sites
 
 Read as: number (parsed as a number). Default (from code): `5000`.
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190503905.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191714779.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_SIGKILL_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190503766 · sha256 `bd834a06…`
+Source: `chunk-k2pjtcda.js` · offset 191714640 · sha256 `bd834a06…`
 
 Read as: number (parsed as a number). Default (from code): `30000`.
 
@@ -7661,47 +7741,47 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `SELF_HOSTED_RUNNER_SIGKILL_TIMEOUT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190609118 · sha256 `79e46d6b…`
+Source: `chunk-k2pjtcda.js` · offset 191819994 · sha256 `79e46d6b…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190609118.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191819994.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_STARTUP_TIMEOUT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190511381 · sha256 `8252795b…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191722255 · sha256 `8252795b…` · 3 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190511381.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191722255.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_TRUST_WORKSPACE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576965 · sha256 `6405b7e1…`
+Source: `chunk-k2pjtcda.js` · offset 191787841 · sha256 `6405b7e1…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576965.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787841.
 
 **Undocumented**
 
 ### `SESSION_INGRESS_URL`
 
-Source: `chunk-758hjhx1.js` · offset 180368865 · sha256 `37709674…` · 9 read sites
+Source: `chunk-acxptg39.js` · offset 189834420 · sha256 `37709674…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-758hjhx1.js` offset 180368865.
+Undocumented; read at `chunk-acxptg39.js` offset 189834420.
 
 **Undocumented**
 
 ### `SLASH_COMMAND_TOOL_CHAR_BUDGET`
 
-Source: `chunk-mphp7acd.js` · offset 187226523 · sha256 `d34c78d3…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 188370791 · sha256 `d34c78d3…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1.
 
@@ -7711,79 +7791,79 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `SRT_DEBUG`
 
-Source: `chunk-7qgnq1jf.js` · offset 182443614 · sha256 `a3a90306…`
+Source: `chunk-75pwjp0k.js` · offset 183589209 · sha256 `a3a90306…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-7qgnq1jf.js` offset 182443614.
+Undocumented; read at `chunk-75pwjp0k.js` offset 183589209.
 
 **Undocumented**
 
 ### `SWE_BENCH_INSTANCE_ID`
 
-Source: `chunk-nankzm0s.js` · offset 181086865 · sha256 `92750357…`
+Source: `chunk-721k6cws.js` · offset 181895857 · sha256 `92750357…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181086865.
+Undocumented; read at `chunk-721k6cws.js` offset 181895857.
 
 **Undocumented**
 
 ### `SWE_BENCH_RUN_ID`
 
-Source: `chunk-nankzm0s.js` · offset 181086813 · sha256 `b371b98c…`
+Source: `chunk-721k6cws.js` · offset 181895805 · sha256 `b371b98c…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181086813.
+Undocumented; read at `chunk-721k6cws.js` offset 181895805.
 
 **Undocumented**
 
 ### `SWE_BENCH_TASK_ID`
 
-Source: `chunk-nankzm0s.js` · offset 181086918 · sha256 `1acfb392…`
+Source: `chunk-721k6cws.js` · offset 181895910 · sha256 `1acfb392…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181086918.
+Undocumented; read at `chunk-721k6cws.js` offset 181895910.
 
 **Undocumented**
 
 ### `SYSTEM_REMINDER_MEMORY_CONTEXT`
 
-Source: `chunk-09m4fzsj.js` · offset 184797529 · sha256 `0fd4c0b3…`
+Source: `chunk-j7rgjcpa.js` · offset 185844474 · sha256 `0fd4c0b3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184797529.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185844474.
 
 **Undocumented**
 
 ### `TEST_ENABLE_SESSION_PERSISTENCE`
 
-Source: `chunk-mphp7acd.js` · offset 189962599 · sha256 `80869434…`
+Source: `chunk-acxptg39.js` · offset 191168600 · sha256 `80869434…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189962599.
+Undocumented; read at `chunk-acxptg39.js` offset 191168600.
 
 **Undocumented**
 
 ### `USE_API_CONTEXT_MANAGEMENT`
 
-Source: `chunk-nankzm0s.js` · offset 181000880 · sha256 `1cdd37f8…`
+Source: `chunk-721k6cws.js` · offset 181809290 · sha256 `1cdd37f8…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181000880.
+Undocumented; read at `chunk-721k6cws.js` offset 181809290.
 
 **Undocumented**
 
 ### `USE_BUILTIN_RIPGREP`
 
-Source: `chunk-5vadtxaa.js` · offset 183295953 · sha256 `b64426c9…`
+Source: `chunk-hnd61wvn.js` · offset 184444157 · sha256 `b64426c9…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7793,43 +7873,43 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `USE_LOCAL_OAUTH`
 
-Source: `chunk-7eyrbz6k.js` · offset 196822438 · sha256 `859f5930…` · 3 read sites
+Source: `chunk-er9srhy5.js` · offset 198060447 · sha256 `859f5930…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196822438.
+Undocumented; read at `chunk-er9srhy5.js` offset 198060447.
 
 **Undocumented**
 
 ### `USE_STAGING_OAUTH`
 
-Source: `chunk-7eyrbz6k.js` · offset 196822503 · sha256 `474ca94d…` · 2 read sites
+Source: `chunk-er9srhy5.js` · offset 198060512 · sha256 `474ca94d…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-7eyrbz6k.js` offset 196822503.
+Undocumented; read at `chunk-er9srhy5.js` offset 198060512.
 
 **Undocumented**
 
 ### `VITALS_EMITTER_BIN`
 
-Source: `chunk-mxgb9rkv.js` · offset 190362384 · sha256 `173e4cd4…`
+Source: `chunk-qkt5evp3.js` · offset 191573109 · sha256 `173e4cd4…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mxgb9rkv.js` offset 190362384.
+Undocumented; read at `chunk-qkt5evp3.js` offset 191573109.
 
 **Undocumented**
 
 ### `VOICE_STREAM_BASE_URL`
 
-Source: `chunk-vnsj0eyq.js` · offset 211819836 · sha256 `20d7f7cb…` · 3 read sites
+Source: `chunk-xpwj991w.js` · offset 213202758 · sha256 `20d7f7cb…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-vnsj0eyq.js` offset 211819836.
+Undocumented; read at `chunk-xpwj991w.js` offset 213202758.
 
 **Undocumented**
 
@@ -7837,7 +7917,7 @@ Undocumented; read at `chunk-vnsj0eyq.js` offset 211819836.
 
 ### `ANTHROPIC_AWS_API_KEY`
 
-Source: `chunk-09m4fzsj.js` · offset 184776126 · sha256 `e97fa437…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185928992 · sha256 `e97fa437…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7849,7 +7929,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_AWS_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184780609 · sha256 `0a7a75f0…` · 7 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185933475 · sha256 `0a7a75f0…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7861,7 +7941,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_AWS_WORKSPACE_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184775840 · sha256 `6cf298c7…` · 3 read sites
+Source: `chunk-d002c5rj.js` · offset 203677696 · sha256 `6cf298c7…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7871,7 +7951,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_BEDROCK_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184780381 · sha256 `befad766…` · 15 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185933247 · sha256 `befad766…` · 15 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7883,7 +7963,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184780492 · sha256 `bfdce098…` · 7 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185933358 · sha256 `bfdce098…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7893,7 +7973,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_BEDROCK_REGION_PREFIX`
 
-Source: `chunk-nankzm0s.js` · offset 180628430 · sha256 `6e9f466d…`
+Source: `chunk-721k6cws.js` · offset 181435086 · sha256 `6e9f466d…`
 
 Read as: enum (compared against fixed values). Values: `us`, `eu`, `apac`, `jp`, `au`, `global`.
 
@@ -7903,7 +7983,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_BEDROCK_SERVICE_TIER`
 
-Source: `chunk-09m4fzsj.js` · offset 184773607 · sha256 `b387382a…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185926473 · sha256 `b387382a…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7915,7 +7995,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_SMALL_FAST_MODEL_AWS_REGION`
 
-Source: `chunk-09m4fzsj.js` · offset 184781025 · sha256 `5c5cdacf…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 189097801 · sha256 `5c5cdacf…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7925,19 +8005,19 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `AWS_ACCESS_KEY_ID`
 
-Source: `chunk-ekz7hy24.js` · offset 197436322 · sha256 `0734f87e…` · 7 read sites
+Source: `chunk-f72fzxpc.js` · offset 198648678 · sha256 `0734f87e…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197436322.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198648678.
 
 **Undocumented**
 
 ### `AWS_BEARER_TOKEN_BEDROCK`
 
-Source: `chunk-09m4fzsj.js` · offset 184773730 · sha256 `4790d6c3…` · 13 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185926596 · sha256 `4790d6c3…` · 13 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -7949,181 +8029,181 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `AWS_CONFIG_FILE`
 
-Source: `chunk-5nrgqzmg.js` · offset 196918323 · sha256 `1d954014…` · 7 read sites
+Source: `chunk-8rnmsc7r.js` · offset 198183768 · sha256 `1d954014…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-5nrgqzmg.js` offset 196918323.
+Undocumented; read at `chunk-8rnmsc7r.js` offset 198183768.
 
 **Undocumented**
 
 ### `AWS_CONTAINER_CREDENTIALS_FULL_URI`
 
-Source: `chunk-ar7e1323.js` · offset 211925039 · sha256 `56d7cc2f…` · 4 read sites
+Source: `chunk-bj4yez1w.js` · offset 213317891 · sha256 `8a04c787…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ar7e1323.js` offset 211925039.
+Undocumented; read at `chunk-bj4yez1w.js` offset 213317891.
 
 **Undocumented**
 
 ### `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI`
 
-Source: `chunk-ar7e1323.js` · offset 211924981 · sha256 `757201c8…` · 4 read sites
+Source: `chunk-bj4yez1w.js` · offset 213317840 · sha256 `cb4cf687…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ar7e1323.js` offset 211924981.
+Undocumented; read at `chunk-bj4yez1w.js` offset 213317840.
 
 **Undocumented**
 
 ### `AWS_DEFAULT_REGION`
 
-Source: `chunk-ekz7hy24.js` · offset 197436274 · sha256 `20ee042a…` · 7 read sites
+Source: `chunk-f72fzxpc.js` · offset 198648630 · sha256 `20ee042a…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197436274.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198648630.
 
 **Undocumented**
 
 ### `AWS_ENDPOINT_URL`
 
-Source: `chunk-wj72kvg2.js` · offset 179715872 · sha256 `1a0caa05…`
+Source: `chunk-g5brps3g.js` · offset 180164458 · sha256 `1a0caa05…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-wj72kvg2.js` offset 179715872.
+Undocumented; read at `chunk-g5brps3g.js` offset 180164458.
 
 **Undocumented**
 
 ### `AWS_ENDPOINT_URL_STS`
 
-Source: `chunk-wj72kvg2.js` · offset 179715848 · sha256 `31d2a84c…`
+Source: `chunk-g5brps3g.js` · offset 180164434 · sha256 `31d2a84c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-wj72kvg2.js` offset 179715848.
+Undocumented; read at `chunk-g5brps3g.js` offset 180164434.
 
 **Undocumented**
 
 ### `AWS_EXECUTION_ENV`
 
-Source: `chunk-jxvcdtxk.js` · offset 197199581 · sha256 `1d96876d…` · 3 read sites
+Source: `chunk-p8hvn3xb.js` · offset 198464342 · sha256 `1d96876d…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `AWS_ECS_FARGATE`, `AWS_ECS_EC2`.
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197199581.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198464342.
 
 **Undocumented**
 
 ### `AWS_LAMBDA_FUNCTION_NAME`
 
-Source: `chunk-jxvcdtxk.js` · offset 197065077 · sha256 `6ca7392d…` · 2 read sites
+Source: `chunk-p8hvn3xb.js` · offset 198329838 · sha256 `6ca7392d…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197065077.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198329838.
 
 **Undocumented**
 
 ### `AWS_PROFILE`
 
-Source: `chunk-5nrgqzmg.js` · offset 196917968 · sha256 `53e60fe7…` · 11 read sites
+Source: `chunk-8rnmsc7r.js` · offset 198183413 · sha256 `53e60fe7…` · 11 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `default`.
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-5nrgqzmg.js` offset 196917968.
+Undocumented; read at `chunk-8rnmsc7r.js` offset 198183413.
 
 **Undocumented**
 
 ### `AWS_REGION`
 
-Source: `chunk-ekz7hy24.js` · offset 197436250 · sha256 `ccf42d2f…` · 9 read sites
+Source: `chunk-f72fzxpc.js` · offset 198648606 · sha256 `ccf42d2f…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `us-east-1`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197436250.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198648606.
 
 **Undocumented**
 
 ### `AWS_ROLE_ARN`
 
-Source: `chunk-ghgder2z.js` · offset 211921105 · sha256 `91a608bc…` · 2 read sites
+Source: `chunk-dws5mazw.js` · offset 213305507 · sha256 `91a608bc…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ghgder2z.js` offset 211921105.
+Undocumented; read at `chunk-dws5mazw.js` offset 213305507.
 
 **Undocumented**
 
 ### `AWS_SECRET_ACCESS_KEY`
 
-Source: `chunk-ekz7hy24.js` · offset 197436353 · sha256 `71df3a7a…` · 5 read sites
+Source: `chunk-f72fzxpc.js` · offset 198648709 · sha256 `71df3a7a…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197436353.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198648709.
 
 **Undocumented**
 
 ### `AWS_SESSION_TOKEN`
 
-Source: `chunk-ekz7hy24.js` · offset 197436492 · sha256 `5cdde123…` · 3 read sites
+Source: `chunk-f72fzxpc.js` · offset 198648848 · sha256 `5cdde123…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197436492.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198648848.
 
 **Undocumented**
 
 ### `AWS_SHARED_CREDENTIALS_FILE`
 
-Source: `chunk-5nrgqzmg.js` · offset 196918419 · sha256 `aab2cfbd…` · 7 read sites
+Source: `chunk-8rnmsc7r.js` · offset 198183864 · sha256 `aab2cfbd…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-5nrgqzmg.js` offset 196918419.
+Undocumented; read at `chunk-8rnmsc7r.js` offset 198183864.
 
 **Undocumented**
 
 ### `AWS_USE_FIPS_ENDPOINT`
 
-Source: `chunk-64smfct9.js` · offset 203741769 · sha256 `76b4ea55…`
+Source: `chunk-v1s2t7sq.js` · offset 204917019 · sha256 `76b4ea55…`
 
 Read as: string (trimmed; empty is treated as unset). Values: `true`.
 
-Undocumented; read at `chunk-64smfct9.js` offset 203741769.
+Undocumented; read at `chunk-v1s2t7sq.js` offset 204917019.
 
 **Undocumented**
 
 ### `AWS_WEB_IDENTITY_TOKEN_FILE`
 
-Source: `chunk-ghgder2z.js` · offset 211921076 · sha256 `651dbdfb…` · 3 read sites
+Source: `chunk-dws5mazw.js` · offset 213305478 · sha256 `651dbdfb…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ghgder2z.js` offset 211921076.
+Undocumented; read at `chunk-dws5mazw.js` offset 213305478.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AWS_CHAIN_RESOLVE_TIMEOUT_MS`
 
-Source: `chunk-nankzm0s.js` · offset 181249895 · sha256 `17165e62…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 182064063 · sha256 `17165e62…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, max 2147483647. Default (from code): `60000`.
 
@@ -8133,7 +8213,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_BEDROCK_CONTENT_TYPE_DEFAULT`
 
-Source: `chunk-09m4fzsj.js` · offset 184788981 · sha256 `d0d6c187…`
+Source: `chunk-j7rgjcpa.js` · offset 185941847 · sha256 `d0d6c187…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8143,7 +8223,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_BEDROCK_CONTENT_TYPE_GUARD`
 
-Source: `chunk-09m4fzsj.js` · offset 184789230 · sha256 `21e859a3…`
+Source: `chunk-j7rgjcpa.js` · offset 185942096 · sha256 `21e859a3…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8153,7 +8233,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_ANTHROPIC_AWS_AUTH`
 
-Source: `chunk-09m4fzsj.js` · offset 184775617 · sha256 `9bdd4f8f…` · 3 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196215373 · sha256 `9bdd4f8f…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8163,7 +8243,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_AWS_CRED_CACHE`
 
-Source: `chunk-64smfct9.js` · offset 203742146 · sha256 `bb5f5050…` · 6 read sites
+Source: `chunk-721k6cws.js` · offset 181432517 · sha256 `bb5f5050…` · 6 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8173,7 +8253,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_BEDROCK_AUTH`
 
-Source: `chunk-09m4fzsj.js` · offset 184773406 · sha256 `92a4d50a…` · 9 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196215298 · sha256 `92a4d50a…` · 9 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8183,7 +8263,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_MANTLE_AUTH`
 
-Source: `chunk-09m4fzsj.js` · offset 184777355 · sha256 `f79d4f5c…` · 6 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196215447 · sha256 `f79d4f5c…` · 6 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8193,7 +8273,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USE_ANTHROPIC_AWS`
 
-Source: `chunk-amhtwhch.js` · offset 178151295 · sha256 `c6be261e…` · 5 read sites
+Source: `chunk-w3s0xmfk.js` · offset 179181285 · sha256 `c6be261e…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8203,7 +8283,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USE_BEDROCK`
 
-Source: `chunk-amhtwhch.js` · offset 178151173 · sha256 `fd5e84a3…` · 7 read sites
+Source: `chunk-w3s0xmfk.js` · offset 179181163 · sha256 `fd5e84a3…` · 7 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8213,7 +8293,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USE_MANTLE`
 
-Source: `chunk-amhtwhch.js` · offset 178151398 · sha256 `7718029e…` · 6 read sites
+Source: `chunk-w3s0xmfk.js` · offset 179181388 · sha256 `7718029e…` · 6 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8223,7 +8303,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_ENABLE_BYTE_WATCHDOG_BEDROCK`
 
-Source: `chunk-09m4fzsj.js` · offset 184787205 · sha256 `679d9258…`
+Source: `chunk-j7rgjcpa.js` · offset 185940071 · sha256 `679d9258…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8235,47 +8315,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_GOOGLE_CLOUD_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184780729 · sha256 `99675c8d…` · 5 read sites
+Source: `chunk-acxptg39.js` · offset 187952643 · sha256 `99675c8d…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `https://claude.googleapis.com`.
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184780729.
+Undocumented; read at `chunk-acxptg39.js` offset 187952643.
 
 **Undocumented**
 
 ### `ANTHROPIC_GOOGLE_CLOUD_LOCATION`
 
-Source: `chunk-09m4fzsj.js` · offset 184776583 · sha256 `50d42c5b…` · 3 read sites
+Source: `chunk-d002c5rj.js` · offset 203678288 · sha256 `50d42c5b…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `global`.
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184776583.
+Undocumented; read at `chunk-d002c5rj.js` offset 203678288.
 
 **Undocumented**
 
 ### `ANTHROPIC_GOOGLE_CLOUD_PROJECT`
 
-Source: `chunk-09m4fzsj.js` · offset 184776512 · sha256 `b0231252…` · 5 read sites
+Source: `chunk-721k6cws.js` · offset 182066350 · sha256 `b0231252…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184776512.
+Undocumented; read at `chunk-721k6cws.js` offset 182066350.
 
 **Undocumented**
 
 ### `ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184776659 · sha256 `719be76f…` · 3 read sites
+Source: `chunk-d002c5rj.js` · offset 203678062 · sha256 `719be76f…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184776659.
+Undocumented; read at `chunk-d002c5rj.js` offset 203678062.
 
 **Undocumented**
 
 ### `ANTHROPIC_VERTEX_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184780816 · sha256 `b34e6459…` · 9 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185933682 · sha256 `b34e6459…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8287,7 +8367,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_VERTEX_PROJECT_ID`
 
-Source: `chunk-hdqx8ske.js` · offset 197601298 · sha256 `7d0f0ea1…` · 5 read sites
+Source: `chunk-721k6cws.js` · offset 182066177 · sha256 `7d0f0ea1…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8297,17 +8377,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKIP_ANTHROPIC_GOOGLE_CLOUD_AUTH`
 
-Source: `chunk-09m4fzsj.js` · offset 184776881 · sha256 `9beecc05…` · 4 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196215597 · sha256 `9beecc05…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184776881.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196215597.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_SKIP_VERTEX_AUTH`
 
-Source: `chunk-09m4fzsj.js` · offset 184778255 · sha256 `3897a5fc…` · 8 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196215514 · sha256 `3897a5fc…` · 8 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8317,17 +8397,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USE_ANTHROPIC_GOOGLE_CLOUD`
 
-Source: `chunk-amhtwhch.js` · offset 178151342 · sha256 `95ef3a64…` · 5 read sites
+Source: `chunk-w3s0xmfk.js` · offset 179181332 · sha256 `95ef3a64…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-amhtwhch.js` offset 178151342.
+Undocumented; read at `chunk-w3s0xmfk.js` offset 179181332.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_USE_VERTEX`
 
-Source: `chunk-amhtwhch.js` · offset 178151214 · sha256 `9d4aaeb0…` · 8 read sites
+Source: `chunk-w3s0xmfk.js` · offset 179181204 · sha256 `9d4aaeb0…` · 8 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8337,125 +8417,125 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLOUD_ML_REGION`
 
-Source: `chunk-brnn4zwp.js` · offset 178047875 · sha256 `d14e27f0…` · 2 read sites
+Source: `chunk-q3se8bhm.js` · offset 179088335 · sha256 `d14e27f0…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-brnn4zwp.js` offset 178047875.
+Undocumented; read at `chunk-q3se8bhm.js` offset 179088335.
 
 **Undocumented**
 
 ### `CLOUDSDK_ACTIVE_CONFIG_NAME`
 
-Source: `chunk-azf8jmbk.js` · offset 195426101 · sha256 `00daa6d2…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 182013327 · sha256 `00daa6d2…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-azf8jmbk.js` offset 195426101.
+Undocumented; read at `chunk-721k6cws.js` offset 182013327.
 
 **Undocumented**
 
 ### `CLOUDSDK_AUTH_ACCESS_TOKEN`
 
-Source: `chunk-azf8jmbk.js` · offset 195427322 · sha256 `aa35dfcd…`
+Source: `chunk-an6xhrk3.js` · offset 196657400 · sha256 `aa35dfcd…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-azf8jmbk.js` offset 195427322.
+Undocumented; read at `chunk-an6xhrk3.js` offset 196657400.
 
 **Undocumented**
 
 ### `CLOUDSDK_CONFIG`
 
-Source: `chunk-ekz7hy24.js` · offset 197372524 · sha256 `a53236c8…` · 4 read sites
+Source: `chunk-f72fzxpc.js` · offset 198584880 · sha256 `a53236c8…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197372524.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198584880.
 
 **Undocumented**
 
 ### `gcloud_project`
 
-Source: `chunk-ekz7hy24.js` · offset 197458347 · sha256 `232389f7…` · 3 read sites
+Source: `chunk-f72fzxpc.js` · offset 198670703 · sha256 `232389f7…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197458347.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198670703.
 
 **Undocumented**
 
 ### `GCLOUD_PROJECT`
 
-Source: `chunk-ekz7hy24.js` · offset 197458285 · sha256 `3d9c3b37…` · 3 read sites
+Source: `chunk-f72fzxpc.js` · offset 198670641 · sha256 `3d9c3b37…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197458285.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198670641.
 
 **Undocumented**
 
 ### `google_application_credentials`
 
-Source: `chunk-ekz7hy24.js` · offset 197454453 · sha256 `b73615be…` · 4 read sites
+Source: `chunk-f72fzxpc.js` · offset 198666809 · sha256 `b73615be…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197454453.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198666809.
 
 **Undocumented**
 
 ### `GOOGLE_APPLICATION_CREDENTIALS`
 
-Source: `chunk-ekz7hy24.js` · offset 197454409 · sha256 `c2e78809…` · 6 read sites
+Source: `chunk-f72fzxpc.js` · offset 198666765 · sha256 `c2e78809…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197454409.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198666765.
 
 **Undocumented**
 
 ### `google_cloud_project`
 
-Source: `chunk-ekz7hy24.js` · offset 197458375 · sha256 `b763364f…` · 3 read sites
+Source: `chunk-f72fzxpc.js` · offset 198670731 · sha256 `b763364f…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197458375.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198670731.
 
 **Undocumented**
 
 ### `GOOGLE_CLOUD_PROJECT`
 
-Source: `chunk-ekz7hy24.js` · offset 197458313 · sha256 `17e9b022…` · 6 read sites
+Source: `chunk-f72fzxpc.js` · offset 198670669 · sha256 `17e9b022…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197458313.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198670669.
 
 **Undocumented**
 
 ### `GOOGLE_CLOUD_WORKSTATIONS`
 
-Source: `chunk-mbfze585.js` · offset 178173914 · sha256 `05ba04cc…`
+Source: `chunk-w397p0p5.js` · offset 179203957 · sha256 `05ba04cc…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173914.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203957.
 
 **Undocumented**
 
 ### `VERTEX_REGION_CLAUDE_3_5_HAIKU`
 
-Source: `chunk-brnn4zwp.js` · offset 178045099 · sha256 `f4a42187…`
+Source: `chunk-q3se8bhm.js` · offset 179085559 · sha256 `f4a42187…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8465,7 +8545,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_3_5_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178044820 · sha256 `b0163304…`
+Source: `chunk-q3se8bhm.js` · offset 179085280 · sha256 `b0163304…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8475,7 +8555,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_3_7_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178044876 · sha256 `9058fadb…`
+Source: `chunk-q3se8bhm.js` · offset 179085336 · sha256 `9058fadb…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8485,7 +8565,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_0_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045726 · sha256 `1f4dbfd4…`
+Source: `chunk-q3se8bhm.js` · offset 179086186 · sha256 `1f4dbfd4…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8495,7 +8575,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_0_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178045572 · sha256 `17ff2060…`
+Source: `chunk-q3se8bhm.js` · offset 179086032 · sha256 `17ff2060…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8505,7 +8585,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_1_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045260 · sha256 `26ffeba1…`
+Source: `chunk-q3se8bhm.js` · offset 179085720 · sha256 `26ffeba1…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8515,7 +8595,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_5_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045312 · sha256 `ba882f91…`
+Source: `chunk-q3se8bhm.js` · offset 179085772 · sha256 `ba882f91…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8525,7 +8605,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_5_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178044932 · sha256 `7fe0e77c…`
+Source: `chunk-q3se8bhm.js` · offset 179085392 · sha256 `7fe0e77c…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8535,7 +8615,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_6_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045364 · sha256 `73a23bda…`
+Source: `chunk-q3se8bhm.js` · offset 179085824 · sha256 `73a23bda…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8545,7 +8625,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_6_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178044988 · sha256 `120c2066…`
+Source: `chunk-q3se8bhm.js` · offset 179085448 · sha256 `120c2066…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8555,7 +8635,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_7_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045416 · sha256 `364310a0…`
+Source: `chunk-q3se8bhm.js` · offset 179085876 · sha256 `364310a0…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8565,7 +8645,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_4_8_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045468 · sha256 `3b69250d…`
+Source: `chunk-q3se8bhm.js` · offset 179085928 · sha256 `3b69250d…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8575,7 +8655,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_5_5_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045520 · sha256 `58a45cb7…`
+Source: `chunk-q3se8bhm.js` · offset 179085980 · sha256 `58a45cb7…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8585,17 +8665,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_5_5_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178045044 · sha256 `07076092…`
+Source: `chunk-q3se8bhm.js` · offset 179085504 · sha256 `07076092…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-brnn4zwp.js` offset 178045044.
+Undocumented; read at `chunk-q3se8bhm.js` offset 179085504.
 
 **Undocumented**
 
 ### `VERTEX_REGION_CLAUDE_5_OPUS`
 
-Source: `chunk-brnn4zwp.js` · offset 178045776 · sha256 `8e8c2421…`
+Source: `chunk-q3se8bhm.js` · offset 179086236 · sha256 `8e8c2421…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8605,7 +8685,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_5_SONNET`
 
-Source: `chunk-brnn4zwp.js` · offset 178045626 · sha256 `1a6f9b02…`
+Source: `chunk-q3se8bhm.js` · offset 179086086 · sha256 `1a6f9b02…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8615,7 +8695,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_FABLE_5`
 
-Source: `chunk-brnn4zwp.js` · offset 178045677 · sha256 `ef732c7f…`
+Source: `chunk-q3se8bhm.js` · offset 179086137 · sha256 `ef732c7f…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8625,7 +8705,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_FABLE_5_1`
 
-Source: `chunk-brnn4zwp.js` · offset 178045153 · sha256 `0e9c5375…`
+Source: `chunk-q3se8bhm.js` · offset 179085613 · sha256 `0e9c5375…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8635,7 +8715,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `VERTEX_REGION_CLAUDE_HAIKU_4_5`
 
-Source: `chunk-brnn4zwp.js` · offset 178045207 · sha256 `bdaa3937…`
+Source: `chunk-q3se8bhm.js` · offset 179085667 · sha256 `bdaa3937…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8647,7 +8727,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_FOUNDRY_API_KEY`
 
-Source: `chunk-09m4fzsj.js` · offset 184774526 · sha256 `6edea27f…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185927392 · sha256 `6edea27f…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8659,7 +8739,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_FOUNDRY_AUTH_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 184774439 · sha256 `072afdc4…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185927305 · sha256 `072afdc4…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8671,7 +8751,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_FOUNDRY_BASE_URL`
 
-Source: `chunk-09m4fzsj.js` · offset 184766526 · sha256 `42cda74f…` · 6 read sites
+Source: `chunk-acxptg39.js` · offset 187952746 · sha256 `42cda74f…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8681,7 +8761,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_FOUNDRY_RESOURCE`
 
-Source: `chunk-09m4fzsj.js` · offset 184766489 · sha256 `3630aefc…` · 5 read sites
+Source: `chunk-d002c5rj.js` · offset 203677394 · sha256 `3630aefc…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8691,7 +8771,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `AZURE_CLIENT_ID`
 
-Source: `chunk-mh05fezn.js` · offset 197948087 · sha256 `be8e8739…` · 5 read sites
+Source: `chunk-4v4n4srf.js` · offset 199219711 · sha256 `be8e8739…` · 5 read sites
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8701,19 +8781,19 @@ Documented: https://code.claude.com/docs/en/github-actions-cloud-providers
 
 ### `AZURE_FUNCTIONS_ENVIRONMENT`
 
-Source: `chunk-mbfze585.js` · offset 178175015 · sha256 `0fa1ac42…`
+Source: `chunk-w397p0p5.js` · offset 179205058 · sha256 `0fa1ac42…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175015.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205058.
 
 **Undocumented**
 
 ### `AZURE_TENANT_ID`
 
-Source: `chunk-mh05fezn.js` · offset 197948045 · sha256 `b705b6d3…` · 6 read sites
+Source: `chunk-4v4n4srf.js` · offset 199219669 · sha256 `b705b6d3…` · 6 read sites
 
 Read as: string (raw value; further parsing not traced).
 
@@ -8723,7 +8803,7 @@ Documented: https://code.claude.com/docs/en/github-actions-cloud-providers
 
 ### `CLAUDE_CODE_SKIP_FOUNDRY_AUTH`
 
-Source: `chunk-09m4fzsj.js` · offset 184774567 · sha256 `42d8ec8b…` · 2 read sites
+Source: `chunk-d002c5rj.js` · offset 203677484 · sha256 `42d8ec8b…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8733,7 +8813,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_USE_FOUNDRY`
 
-Source: `chunk-amhtwhch.js` · offset 178151254 · sha256 `d289ae80…` · 3 read sites
+Source: `chunk-w3s0xmfk.js` · offset 179181244 · sha256 `d289ae80…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8745,7 +8825,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY`
 
-Source: `chunk-k9q4wymh.js` · offset 193683624 · sha256 `e51b98ea…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181721430 · sha256 `e51b98ea…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8755,7 +8835,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GATEWAY_HINT_HEADERS`
 
-Source: `chunk-09m4fzsj.js` · offset 184768614 · sha256 `e72abd56…`
+Source: `chunk-j7rgjcpa.js` · offset 185921113 · sha256 `e72abd56…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -8765,7 +8845,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GATEWAY_MODEL_DISCOVERY_TIMEOUT_MS`
 
-Source: `chunk-nankzm0s.js` · offset 180915129 · sha256 `07d66406…`
+Source: `chunk-721k6cws.js` · offset 181723179 · sha256 `07d66406…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, max 2147483647, digitsOnly true. Default (from code): `3000`.
 
@@ -8775,73 +8855,73 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GATEWAY_TOKEN_FILE_DESCRIPTOR`
 
-Source: `chunk-mnp9k227.js` · offset 180501383 · sha256 `c4cff902…` · 2 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196501480 · sha256 `c4cff902…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mnp9k227.js` offset 180501383.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196501480.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HOST_GATEWAY_LINEAGE`
 
-Source: `chunk-0a47xg8f.js` · offset 178232051 · sha256 `8d70ffb2…`
+Source: `chunk-p614p40d.js` · offset 179262641 · sha256 `8d70ffb2…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178232051.
+Undocumented; read at `chunk-p614p40d.js` offset 179262641.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_USE_GATEWAY`
 
-Source: `chunk-0a47xg8f.js` · offset 178231933 · sha256 `3c6159ee…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 182032547 · sha256 `3c6159ee…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-0a47xg8f.js` offset 178231933.
+Undocumented; read at `chunk-721k6cws.js` offset 182032547.
 
 **Undocumented**
 
 ### `CLAUDE_GATEWAY_ALLOW_LOOPBACK`
 
-Source: `chunk-64smfct9.js` · offset 203718639 · sha256 `e63dfe37…` · 3 read sites
+Source: `chunk-v1s2t7sq.js` · offset 204893889 · sha256 `e63dfe37…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-64smfct9.js` offset 203718639.
+Undocumented; read at `chunk-v1s2t7sq.js` offset 204893889.
 
 **Undocumented**
 
 ### `CLAUDE_GATEWAY_DRAIN_TIMEOUT_MS`
 
-Source: `chunk-rkgc6r4t.js` · offset 203936960 · sha256 `4cc46a4b…`
+Source: `chunk-rp526nmc.js` · offset 205112499 · sha256 `4cc46a4b…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, max 2147000000, digitsOnly true. Default (from code): `25000`.
 
-Undocumented; read at `chunk-rkgc6r4t.js` offset 203936960.
+Undocumented; read at `chunk-rp526nmc.js` offset 205112499.
 
 **Undocumented**
 
 ### `CLAUDE_GATEWAY_LOG_LEVEL`
 
-Source: `chunk-3xs6dk88.js` · offset 202610290 · sha256 `de2a0fcd…`
+Source: `chunk-ex7vkkqh.js` · offset 203785501 · sha256 `de2a0fcd…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-3xs6dk88.js` offset 202610290.
+Undocumented; read at `chunk-ex7vkkqh.js` offset 203785501.
 
 **Undocumented**
 
 ### `CLAUDE_GATEWAY_PROXY_IS_EGRESS_BOUNDARY`
 
-Source: `chunk-64smfct9.js` · offset 203718330 · sha256 `8ab0e5da…`
+Source: `chunk-v1s2t7sq.js` · offset 204893580 · sha256 `8ab0e5da…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-64smfct9.js` offset 203718330.
+Undocumented; read at `chunk-v1s2t7sq.js` offset 204893580.
 
 **Undocumented**
 
@@ -8849,7 +8929,7 @@ Undocumented; read at `chunk-64smfct9.js` offset 203718330.
 
 ### `BETA_TRACING_ENDPOINT`
 
-Source: `chunk-91c8r0ee.js` · offset 183536125 · sha256 `0b8e0086…` · 2 read sites
+Source: `chunk-5qkmjxyd.js` · offset 184658070 · sha256 `0b8e0086…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -8861,27 +8941,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_BYOC_ENABLE_DATADOG`
 
-Source: `chunk-8xhw5h9f.js` · offset 190499879 · sha256 `9657eb08…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191710753 · sha256 `9657eb08…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190499879.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191710753.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_DATADOG_FLUSH_INTERVAL_MS`
 
-Source: `chunk-hznndn51.js` · offset 185177590 · sha256 `f59cfbdd…`
+Source: `chunk-js2dzzhq.js` · offset 182625357 · sha256 `f59cfbdd…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1. Default (from code): `15000`.
 
-Undocumented; read at `chunk-hznndn51.js` offset 185177590.
+Undocumented; read at `chunk-js2dzzhq.js` offset 182625357.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`
 
-Source: `chunk-3pvpzycx.js` · offset 179273111 · sha256 `12bbf696…`
+Source: `chunk-cfmwnndq.js` · offset 181334638 · sha256 `12bbf696…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8891,7 +8971,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_TELEMETRY`
 
-Source: `chunk-3svn1vf6.js` · offset 194197442 · sha256 `3b331164…` · 6 read sites
+Source: `chunk-b42f9ayq.js` · offset 212260299 · sha256 `3b331164…` · 6 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8901,7 +8981,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA`
 
-Source: `chunk-91c8r0ee.js` · offset 183542541 · sha256 `76f8b26a…`
+Source: `chunk-5qkmjxyd.js` · offset 184665232 · sha256 `76f8b26a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8911,17 +8991,27 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `CLAUDE_CODE_GB_DISK_CACHE_WHEN_TELEMETRY_OFF`
 
-Source: `chunk-nankzm0s.js` · offset 181112539 · sha256 `a3ff8f93…`
+Source: `chunk-721k6cws.js` · offset 181922865 · sha256 `a3ff8f93…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181112539.
+Undocumented; read at `chunk-721k6cws.js` offset 181922865.
+
+**Undocumented**
+
+### `CLAUDE_CODE_GZIP_DATADOG_LOGS`
+
+Source: `chunk-js2dzzhq.js` · offset 182622163 · sha256 `6414c572…`
+
+Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
+
+Undocumented; read at `chunk-js2dzzhq.js` offset 182622163.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`
 
-Source: `chunk-91c8r0ee.js` · offset 183535324 · sha256 `58cae1fa…`
+Source: `chunk-5qkmjxyd.js` · offset 184657269 · sha256 `58cae1fa…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 1, digitsOnly true. Default (from code): `61440`.
 
@@ -8931,7 +9021,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OTEL_DIAG_STDERR`
 
-Source: `chunk-523ax4jh.js` · offset 190370785 · sha256 `bc37fcc6…`
+Source: `chunk-vh9v6s05.js` · offset 191581510 · sha256 `bc37fcc6…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8941,7 +9031,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OTEL_FLUSH_TIMEOUT_MS`
 
-Source: `chunk-pc840nxb.js` · offset 210886336 · sha256 `5a408a7f…`
+Source: `chunk-b42f9ayq.js` · offset 212265042 · sha256 `5a408a7f…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `5000`.
 
@@ -8951,7 +9041,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OTEL_HEADERS_HELPER_DEBOUNCE_MS`
 
-Source: `chunk-nankzm0s.js` · offset 181286295 · sha256 `240e3e9d…`
+Source: `chunk-721k6cws.js` · offset 182100559 · sha256 `240e3e9d…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
@@ -8961,7 +9051,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OTEL_SHUTDOWN_TIMEOUT_MS`
 
-Source: `chunk-pc840nxb.js` · offset 210866231 · sha256 `c8cd5ac8…` · 3 read sites
+Source: `chunk-b42f9ayq.js` · offset 212244937 · sha256 `c8cd5ac8…` · 3 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `2000`.
 
@@ -8971,17 +9061,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PERFETTO_TRACE`
 
-Source: `chunk-91c8r0ee.js` · offset 183541295 · sha256 `17ecb006…`
+Source: `chunk-5qkmjxyd.js` · offset 184663986 · sha256 `17ecb006…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-91c8r0ee.js` offset 183541295.
+Undocumented; read at `chunk-5qkmjxyd.js` offset 184663986.
 
 **Undocumented**
 
 ### `DISABLE_TELEMETRY`
 
-Source: `chunk-8xhw5h9f.js` · offset 190499941 · sha256 `33ea0227…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191710815 · sha256 `33ea0227…` · 3 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -8993,7 +9083,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DO_NOT_TRACK`
 
-Source: `chunk-8xhw5h9f.js` · offset 190499984 · sha256 `91dfe981…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191710858 · sha256 `91dfe981…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9003,7 +9093,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ENABLE_BETA_TRACING_DETAILED`
 
-Source: `chunk-91c8r0ee.js` · offset 183536085 · sha256 `f081d785…`
+Source: `chunk-5qkmjxyd.js` · offset 184658030 · sha256 `f081d785…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9013,17 +9103,17 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ENABLE_ENHANCED_TELEMETRY_BETA`
 
-Source: `chunk-91c8r0ee.js` · offset 183542590 · sha256 `7a82f69c…`
+Source: `chunk-5qkmjxyd.js` · offset 184665281 · sha256 `7a82f69c…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-91c8r0ee.js` offset 183542590.
+Undocumented; read at `chunk-5qkmjxyd.js` offset 184665281.
 
 **Undocumented**
 
 ### `OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`
 
-Source: `chunk-91c8r0ee.js` · offset 183535366 · sha256 `d5f795ab…`
+Source: `chunk-5qkmjxyd.js` · offset 184657311 · sha256 `d5f795ab…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
@@ -9033,7 +9123,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_EXPORTER_OTLP_*_ENDPOINT`
 
-Source: `chunk-nphjt8ea.js` · offset 218414645 · sha256 `a26b6f13…` · 4 read sites
+Source: `chunk-b42f9ayq.js` · offset 212266502 · sha256 `b4d67e9b…` · 4 read sites
 
 Read as: string (raw value; further parsing not traced).
 
@@ -9045,7 +9135,7 @@ Name pattern (not counted as documented or undocumented)
 
 ### `OTEL_EXPORTER_OTLP_*_HEADERS`
 
-Source: `chunk-nphjt8ea.js` · offset 218414228 · sha256 `9d834cf7…` · 2 read sites
+Source: `chunk-b42f9ayq.js` · offset 212268752 · sha256 `ae4c183e…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
@@ -9057,7 +9147,7 @@ Name pattern (not counted as documented or undocumented)
 
 ### `OTEL_EXPORTER_OTLP_*_INSECURE`
 
-Source: `chunk-nphjt8ea.js` · offset 218414787 · sha256 `9c1196e8…`
+Source: `chunk-ym43qfss.js` · offset 219823155 · sha256 `9c1196e8…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -9067,7 +9157,7 @@ Name pattern (not counted as documented or undocumented)
 
 ### `OTEL_EXPORTER_OTLP_ENDPOINT`
 
-Source: `chunk-nphjt8ea.js` · offset 218414703 · sha256 `807d3ae4…` · 5 read sites
+Source: `chunk-ym43qfss.js` · offset 219823071 · sha256 `807d3ae4…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9077,7 +9167,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_HEADERS`
 
-Source: `chunk-nphjt8ea.js` · offset 218414285 · sha256 `bba3c17d…` · 3 read sites
+Source: `chunk-ym43qfss.js` · offset 219822653 · sha256 `bba3c17d…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9089,7 +9179,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`
 
-Source: `chunk-pc840nxb.js` · offset 210879804 · sha256 `a97eb978…`
+Source: `chunk-b42f9ayq.js` · offset 212258510 · sha256 `a97eb978…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9099,7 +9189,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_METRICS_PROTOCOL`
 
-Source: `chunk-pc840nxb.js` · offset 210878750 · sha256 `87f5ee3b…`
+Source: `chunk-b42f9ayq.js` · offset 212257456 · sha256 `87f5ee3b…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9109,7 +9199,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE`
 
-Source: `chunk-pc840nxb.js` · offset 210874941 · sha256 `d703ee47…`
+Source: `chunk-b42f9ayq.js` · offset 212253647 · sha256 `d703ee47…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9121,7 +9211,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_PROTOCOL`
 
-Source: `chunk-pc840nxb.js` · offset 210878376 · sha256 `c0b54b69…` · 4 read sites
+Source: `chunk-b42f9ayq.js` · offset 212257082 · sha256 `c0b54b69…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9131,7 +9221,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`
 
-Source: `chunk-91c8r0ee.js` · offset 183540467 · sha256 `e359194f…` · 2 read sites
+Source: `chunk-5qkmjxyd.js` · offset 184663158 · sha256 `e359194f…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9141,7 +9231,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_EXPORTER_OTLP_TRACES_PROTOCOL`
 
-Source: `chunk-pc840nxb.js` · offset 210880854 · sha256 `2ec5a16b…`
+Source: `chunk-b42f9ayq.js` · offset 212259560 · sha256 `2ec5a16b…`
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9151,7 +9241,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_LOG_ASSISTANT_RESPONSES`
 
-Source: `chunk-qyc5w2q1.js` · offset 183531043 · sha256 `0c8aef2c…`
+Source: `chunk-y3fvjpjn.js` · offset 184652864 · sha256 `0c8aef2c…`
 
 Read as: tri-state boolean (1/true/yes/on is true, 0/false/no/off is false (trimmed, case-insensitive); anything else is unset).
 
@@ -9161,7 +9251,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOG_MANAGED_SETTINGS`
 
-Source: `chunk-dgp2yyqt.js` · offset 195010626 · sha256 `05fbc9d5…`
+Source: `chunk-5g8p9x0b.js` · offset 196208488 · sha256 `05fbc9d5…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9171,7 +9261,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOG_RAW_API_BODIES`
 
-Source: `chunk-mphp7acd.js` · offset 187700730 · sha256 `c83da780…`
+Source: `chunk-acxptg39.js` · offset 188856362 · sha256 `c83da780…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9181,7 +9271,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOG_TOOL_CONTENT`
 
-Source: `chunk-nankzm0s.js` · offset 181074763 · sha256 `0697bef6…`
+Source: `chunk-721k6cws.js` · offset 181883755 · sha256 `0697bef6…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9191,7 +9281,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOG_TOOL_DETAILS`
 
-Source: `chunk-nankzm0s.js` · offset 181073661 · sha256 `499d0933…`
+Source: `chunk-721k6cws.js` · offset 181882455 · sha256 `499d0933…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9201,7 +9291,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOG_USER_PROMPTS`
 
-Source: `chunk-91c8r0ee.js` · offset 183535844 · sha256 `55cbaa16…` · 4 read sites
+Source: `chunk-5qkmjxyd.js` · offset 184657789 · sha256 `55cbaa16…` · 4 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9211,7 +9301,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOGRECORD_ATTRIBUTE_VALUE_LENGTH_LIMIT`
 
-Source: `chunk-91c8r0ee.js` · offset 183535407 · sha256 `ead31d61…`
+Source: `chunk-5qkmjxyd.js` · offset 184657352 · sha256 `ead31d61…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
@@ -9221,7 +9311,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_LOGS_EXPORT_INTERVAL`
 
-Source: `chunk-nankzm0s.js` · offset 181108349 · sha256 `cc3fa137…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181917341 · sha256 `cc3fa137…` · 2 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `5000`.
 
@@ -9231,7 +9321,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_LOGS_EXPORTER`
 
-Source: `chunk-3svn1vf6.js` · offset 194197487 · sha256 `0ab3e676…` · 4 read sites
+Source: `chunk-b42f9ayq.js` · offset 212258486 · sha256 `0ab3e676…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9241,7 +9331,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_METRIC_EXPORT_INTERVAL`
 
-Source: `chunk-pc840nxb.js` · offset 210878267 · sha256 `3b7d7cea…`
+Source: `chunk-b42f9ayq.js` · offset 212256973 · sha256 `3b7d7cea…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `60000`.
 
@@ -9251,7 +9341,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_METRICS_EXPORTER`
 
-Source: `chunk-8xhw5h9f.js` · offset 190498843 · sha256 `55fadc06…` · 3 read sites
+Source: `chunk-b42f9ayq.js` · offset 212261096 · sha256 `55fadc06…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `prometheus`.
 
@@ -9261,7 +9351,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_METRICS_INCLUDE_ACCOUNT_UUID`
 
-Source: `chunk-qyc5w2q1.js` · offset 183528460 · sha256 `8e5a0ffe…`
+Source: `chunk-y3fvjpjn.js` · offset 184650235 · sha256 `3ca51dc4…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -9271,7 +9361,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_METRICS_INCLUDE_ENTRYPOINT`
 
-Source: `chunk-qyc5w2q1.js` · offset 183528111 · sha256 `e147cc8c…`
+Source: `chunk-y3fvjpjn.js` · offset 184649885 · sha256 `69f3a49b…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
@@ -9281,7 +9371,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_METRICS_INCLUDE_REPOSITORY`
 
-Source: `chunk-qyc5w2q1.js` · offset 183528190 · sha256 `a48d8fff…` · 2 read sites
+Source: `chunk-y3fvjpjn.js` · offset 184649964 · sha256 `3cac1c82…` · 2 read sites
 
 Read as: presence (only whether it is set (or truthy) matters).
 
@@ -9291,7 +9381,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES`
 
-Source: `chunk-qyc5w2q1.js` · offset 183527262 · sha256 `3ec269dd…`
+Source: `chunk-y3fvjpjn.js` · offset 184649036 · sha256 `4f40998f…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
@@ -9301,7 +9391,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_METRICS_INCLUDE_SESSION_ID`
 
-Source: `chunk-qyc5w2q1.js` · offset 183527433 · sha256 `c90d0a44…`
+Source: `chunk-y3fvjpjn.js` · offset 184649207 · sha256 `e23b1eb6…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -9311,7 +9401,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_METRICS_INCLUDE_VERSION`
 
-Source: `chunk-qyc5w2q1.js` · offset 183527579 · sha256 `ef5c92ef…`
+Source: `chunk-y3fvjpjn.js` · offset 184649353 · sha256 `f2288c03…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
@@ -9321,7 +9411,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_RESOURCE_ATTRIBUTES`
 
-Source: `chunk-8xhw5h9f.js` · offset 190498791 · sha256 `3949d66e…` · 3 read sites
+Source: `chunk-k2pjtcda.js` · offset 191709665 · sha256 `3949d66e…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9331,7 +9421,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT`
 
-Source: `chunk-91c8r0ee.js` · offset 183535458 · sha256 `b73a7c57…`
+Source: `chunk-5qkmjxyd.js` · offset 184657403 · sha256 `b73a7c57…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0.
 
@@ -9341,7 +9431,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `OTEL_TRACES_EXPORT_INTERVAL`
 
-Source: `chunk-pc840nxb.js` · offset 210884776 · sha256 `3104fb4b…`
+Source: `chunk-b42f9ayq.js` · offset 212263482 · sha256 `3104fb4b…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Default (from code): `5000`.
 
@@ -9351,7 +9441,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `OTEL_TRACES_EXPORTER`
 
-Source: `chunk-pc840nxb.js` · offset 210880721 · sha256 `947cd0a5…` · 2 read sites
+Source: `chunk-b42f9ayq.js` · offset 212259427 · sha256 `947cd0a5…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9361,7 +9451,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `TRACEPARENT`
 
-Source: `chunk-91c8r0ee.js` · offset 183545778 · sha256 `13183cc6…` · 4 read sites
+Source: `chunk-5qkmjxyd.js` · offset 184668441 · sha256 `13183cc6…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9371,11 +9461,11 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `TRACESTATE`
 
-Source: `chunk-91c8r0ee.js` · offset 183545854 · sha256 `d8947714…` · 2 read sites
+Source: `chunk-5qkmjxyd.js` · offset 184668517 · sha256 `d8947714…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-91c8r0ee.js` offset 183545854.
+Undocumented; read at `chunk-5qkmjxyd.js` offset 184668517.
 
 **Undocumented**
 
@@ -9383,157 +9473,167 @@ Undocumented; read at `chunk-91c8r0ee.js` offset 183545854.
 
 ### `AGENT_PROXY_AUTH_TOKEN`
 
-Source: `chunk-9yd2evp3.js` · offset 210729464 · sha256 `df0eedcf…`
+Source: `chunk-n9nj0gvt.js` · offset 212102516 · sha256 `df0eedcf…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729464.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102516.
 
 **Undocumented**
 
 ### `AGENT_PROXY_URL`
 
-Source: `chunk-9yd2evp3.js` · offset 210729434 · sha256 `798ebf6e…`
+Source: `chunk-n9nj0gvt.js` · offset 212102486 · sha256 `798ebf6e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729434.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102486.
 
 **Undocumented**
 
 ### `all_proxy`
 
-Source: `chunk-8xhw5h9f.js` · offset 190558119 · sha256 `9fcdc466…` · 2 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191561765 · sha256 `9fcdc466…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190558119.
+Undocumented; read at `chunk-1k1qsm5t.js` offset 191561765.
 
 **Undocumented**
 
 ### `ALL_PROXY`
 
-Source: `chunk-8xhw5h9f.js` · offset 190558096 · sha256 `728ff8d8…` · 2 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191561742 · sha256 `728ff8d8…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190558096.
+Undocumented; read at `chunk-1k1qsm5t.js` offset 191561742.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_CA_CERT_B64`
 
-Source: `chunk-9yd2evp3.js` · offset 210729754 · sha256 `952592db…`
+Source: `chunk-n9nj0gvt.js` · offset 212102843 · sha256 `952592db…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729754.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102843.
+
+**Undocumented**
+
+### `CCR_AGENT_PROXY_CA_WATCH_ENABLED`
+
+Source: `chunk-n9nj0gvt.js` · offset 212102806 · sha256 `c1504a35…`
+
+Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
+
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102806.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_ENABLED`
 
-Source: `chunk-9yd2evp3.js` · offset 210730057 · sha256 `04bb26ab…`
+Source: `chunk-n9nj0gvt.js` · offset 212103146 · sha256 `04bb26ab…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210730057.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212103146.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_FRAME_HOSTS`
 
-Source: `chunk-7nd16342.js` · offset 192448086 · sha256 `6f52e4fb…`
+Source: `chunk-za8m7n4q.js` · offset 193637689 · sha256 `6f52e4fb…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-7nd16342.js` offset 192448086.
+Undocumented; read at `chunk-za8m7n4q.js` offset 193637689.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_INCLUDE_HOSTS`
 
-Source: `chunk-9yd2evp3.js` · offset 210729597 · sha256 `80a96f80…`
+Source: `chunk-n9nj0gvt.js` · offset 212102649 · sha256 `80a96f80…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729597.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102649.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_NO_PROXY_LOCAL_ONLY`
 
-Source: `chunk-9yd2evp3.js` · offset 210729714 · sha256 `ff80511a…`
+Source: `chunk-n9nj0gvt.js` · offset 212102766 · sha256 `ff80511a…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729714.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102766.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_RECEIVE_GATE_DISABLED`
 
-Source: `chunk-9yd2evp3.js` · offset 210729631 · sha256 `8d75b539…`
+Source: `chunk-n9nj0gvt.js` · offset 212102683 · sha256 `8d75b539…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729631.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102683.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_RELAY_MODE`
 
-Source: `chunk-9yd2evp3.js` · offset 210729566 · sha256 `f05f27c7…`
+Source: `chunk-n9nj0gvt.js` · offset 212102618 · sha256 `f05f27c7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729566.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102618.
 
 **Undocumented**
 
 ### `CCR_AGENT_PROXY_UPLOAD_GATE_DISABLED`
 
-Source: `chunk-9yd2evp3.js` · offset 210729673 · sha256 `32e23461…`
+Source: `chunk-n9nj0gvt.js` · offset 212102725 · sha256 `32e23461…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210729673.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212102725.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AGENT_PROXY_GH_SHIM`
 
-Source: `chunk-9yd2evp3.js` · offset 210734883 · sha256 `6ddbb857…` · 2 read sites
+Source: `chunk-n9nj0gvt.js` · offset 212108006 · sha256 `6ddbb857…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210734883.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212108006.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AGENT_PROXY_GIT_CONFIG`
 
-Source: `chunk-9yd2evp3.js` · offset 210734673 · sha256 `15597b8e…` · 2 read sites
+Source: `chunk-n9nj0gvt.js` · offset 212107796 · sha256 `15597b8e…` · 2 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210734673.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212107796.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_AGENT_PROXY_GIT_HOSTS`
 
-Source: `chunk-9yd2evp3.js` · offset 210739744 · sha256 `86f791d4…`
+Source: `chunk-n9nj0gvt.js` · offset 212113961 · sha256 `86f791d4…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210739744.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212113961.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_CERT_STORE`
 
-Source: `chunk-2z1m9v0n.js` · offset 183510281 · sha256 `5cf53913…` · 6 read sites
+Source: `chunk-g5brps3g.js` · offset 180148742 · sha256 `5cf53913…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9545,7 +9645,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_CLIENT_CERT`
 
-Source: `chunk-2z1m9v0n.js` · offset 183510325 · sha256 `cc37bcd5…` · 12 read sites
+Source: `chunk-acxptg39.js` · offset 187951861 · sha256 `cc37bcd5…` · 12 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9557,7 +9657,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_CLIENT_KEY`
 
-Source: `chunk-2z1m9v0n.js` · offset 183510353 · sha256 `d552242d…` · 9 read sites
+Source: `chunk-d002c5rj.js` · offset 203679261 · sha256 `d552242d…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9567,7 +9667,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_CLIENT_KEY_PASSPHRASE`
 
-Source: `chunk-wj72kvg2.js` · offset 179703215 · sha256 `0357f9e0…` · 4 read sites
+Source: `chunk-g5brps3g.js` · offset 180151831 · sha256 `0357f9e0…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -9579,7 +9679,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_MTLS_RELOAD_ON_STALE_CONNECTION`
 
-Source: `chunk-mphp7acd.js` · offset 187778451 · sha256 `3a589ab6…`
+Source: `chunk-acxptg39.js` · offset 188934545 · sha256 `3a589ab6…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9589,47 +9689,47 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ENABLE_PROXY_AUTH_HELPER`
 
-Source: `chunk-bv2dmc76.js` · offset 190322934 · sha256 `bba7fbe6…` · 5 read sites
+Source: `chunk-qyn5bdge.js` · offset 191533659 · sha256 `bba7fbe6…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-bv2dmc76.js` offset 190322934.
+Undocumented; read at `chunk-qyn5bdge.js` offset 191533659.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HTTP_PROXY`
 
-Source: `chunk-8ptzhr8g.js` · offset 180387597 · sha256 `5dbec935…`
+Source: `chunk-z62ps7p2.js` · offset 181260269 · sha256 `5dbec935…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180387597.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181260269.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_HTTPS_PROXY`
 
-Source: `chunk-8ptzhr8g.js` · offset 180387654 · sha256 `48b35a6e…`
+Source: `chunk-z62ps7p2.js` · offset 181260326 · sha256 `48b35a6e…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180387654.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181260326.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PROXY_AUTH_HELPER_TTL_MS`
 
-Source: `chunk-wj72kvg2.js` · offset 179713237 · sha256 `eab3e77a…`
+Source: `chunk-g5brps3g.js` · offset 180161823 · sha256 `eab3e77a…`
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset).
 
-Undocumented; read at `chunk-wj72kvg2.js` offset 179713237.
+Undocumented; read at `chunk-g5brps3g.js` offset 180161823.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_PROXY_RESOLVES_HOSTS`
 
-Source: `chunk-wj72kvg2.js` · offset 179712422 · sha256 `15350379…`
+Source: `chunk-g5brps3g.js` · offset 180161008 · sha256 `15350379…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
@@ -9639,79 +9739,79 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SIMULATE_PROXY_USAGE`
 
-Source: `chunk-mphp7acd.js` · offset 187763553 · sha256 `8836efb4…` · 5 read sites
+Source: `chunk-acxptg39.js` · offset 188919641 · sha256 `8836efb4…` · 5 read sites
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187763553.
+Undocumented; read at `chunk-acxptg39.js` offset 188919641.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WEBFETCH_USE_CCR_PROXY`
 
-Source: `chunk-mphp7acd.js` · offset 187114784 · sha256 `808a7134…`
+Source: `chunk-acxptg39.js` · offset 188250631 · sha256 `808a7134…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187114784.
+Undocumented; read at `chunk-acxptg39.js` offset 188250631.
 
 **Undocumented**
 
 ### `CLAUDE_CODE_WEBSEARCH_USE_CCR_PROXY`
 
-Source: `chunk-djhbc0y7.js` · offset 193524097 · sha256 `9aacb5ad…`
+Source: `chunk-7n2w7emx.js` · offset 194717611 · sha256 `9aacb5ad…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-djhbc0y7.js` offset 193524097.
+Undocumented; read at `chunk-7n2w7emx.js` offset 194717611.
 
 **Undocumented**
 
 ### `CLAUDE_RUNNER_USE_GIT_PROXY`
 
-Source: `chunk-8xhw5h9f.js` · offset 190576727 · sha256 `6dfb3f71…`
+Source: `chunk-k2pjtcda.js` · offset 191787603 · sha256 `6dfb3f71…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190576727.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191787603.
 
 **Undocumented**
 
 ### `GRPC_DEFAULT_SSL_ROOTS_FILE_PATH`
 
-Source: `chunk-nphjt8ea.js` · offset 218035512 · sha256 `af68cb3b…`
+Source: `chunk-ym43qfss.js` · offset 219443880 · sha256 `af68cb3b…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218035512.
+Undocumented; read at `chunk-ym43qfss.js` offset 219443880.
 
 **Undocumented**
 
 ### `HOSTALIASES`
 
-Source: `chunk-mphp7acd.js` · offset 187959930 · sha256 `ebc96d96…`
+Source: `chunk-acxptg39.js` · offset 189119454 · sha256 `ebc96d96…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187959930.
+Undocumented; read at `chunk-acxptg39.js` offset 189119454.
 
 **Undocumented**
 
 ### `http_proxy`
 
-Source: `chunk-7qgnq1jf.js` · offset 182458380 · sha256 `846b41df…` · 8 read sites
+Source: `chunk-75pwjp0k.js` · offset 183603975 · sha256 `846b41df…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-7qgnq1jf.js` offset 182458380.
+Undocumented; read at `chunk-75pwjp0k.js` offset 183603975.
 
 **Undocumented**
 
 ### `HTTP_PROXY`
 
-Source: `chunk-7qgnq1jf.js` · offset 182458356 · sha256 `aa98c1d0…` · 8 read sites
+Source: `chunk-75pwjp0k.js` · offset 183603951 · sha256 `aa98c1d0…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `not set`.
 
@@ -9721,19 +9821,19 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `https_proxy`
 
-Source: `chunk-7qgnq1jf.js` · offset 182458448 · sha256 `33d51f7d…` · 10 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191561717 · sha256 `33d51f7d…` · 10 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-7qgnq1jf.js` offset 182458448.
+Undocumented; read at `chunk-1k1qsm5t.js` offset 191561717.
 
 **Undocumented**
 
 ### `HTTPS_PROXY`
 
-Source: `chunk-7qgnq1jf.js` · offset 182458423 · sha256 `3ac3671f…` · 11 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191561692 · sha256 `3ac3671f…` · 11 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `not set`.
 
@@ -9745,27 +9845,27 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `LOCALDOMAIN`
 
-Source: `chunk-mphp7acd.js` · offset 187959916 · sha256 `4df19f9d…`
+Source: `chunk-acxptg39.js` · offset 189119440 · sha256 `4df19f9d…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187959916.
+Undocumented; read at `chunk-acxptg39.js` offset 189119440.
 
 **Undocumented**
 
 ### `no_proxy`
 
-Source: `chunk-64smfct9.js` · offset 203718269 · sha256 `da21c898…` · 9 read sites
+Source: `chunk-75pwjp0k.js` · offset 183604106 · sha256 `da21c898…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `*`.
 
-Undocumented; read at `chunk-64smfct9.js` offset 203718269.
+Undocumented; read at `chunk-75pwjp0k.js` offset 183604106.
 
 **Undocumented**
 
 ### `NO_PROXY`
 
-Source: `chunk-64smfct9.js` · offset 203718247 · sha256 `516bafd4…` · 10 read sites
+Source: `chunk-75pwjp0k.js` · offset 183604084 · sha256 `516bafd4…` · 10 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `*`. Default (from code): `not set`.
 
@@ -9775,63 +9875,63 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `NODE_EXTRA_CA_CERTS`
 
-Source: `chunk-5vadtxaa.js` · offset 183149254 · sha256 `c69b8df7…` · 14 read sites
+Source: `chunk-hnd61wvn.js` · offset 184297458 · sha256 `c69b8df7…` · 14 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 6 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-5vadtxaa.js` offset 183149254.
+Undocumented; read at `chunk-hnd61wvn.js` offset 184297458.
 
 **Undocumented**
 
 ### `NODE_TLS_REJECT_UNAUTHORIZED`
 
-Source: `chunk-mphp7acd.js` · offset 187959885 · sha256 `1ec3d3d6…`
+Source: `chunk-acxptg39.js` · offset 189119409 · sha256 `1ec3d3d6…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187959885.
+Undocumented; read at `chunk-acxptg39.js` offset 189119409.
 
 **Undocumented**
 
 ### `RES_OPTIONS`
 
-Source: `chunk-mphp7acd.js` · offset 187959944 · sha256 `3e93abd5…`
+Source: `chunk-acxptg39.js` · offset 189119468 · sha256 `3e93abd5…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 187959944.
+Undocumented; read at `chunk-acxptg39.js` offset 189119468.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_PROXY_AUTHORIZATION_COMMAND`
 
-Source: `chunk-bv2dmc76.js` · offset 190321284 · sha256 `24222dec…`
+Source: `chunk-qyn5bdge.js` · offset 191532009 · sha256 `fda13608…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-bv2dmc76.js` offset 190321284.
+Undocumented; read at `chunk-qyn5bdge.js` offset 191532009.
 
 **Undocumented**
 
 ### `SELF_HOSTED_RUNNER_PROXY_AUTHORIZATION_FILE`
 
-Source: `chunk-bv2dmc76.js` · offset 190321311 · sha256 `0d707ffb…`
+Source: `chunk-qyn5bdge.js` · offset 191532036 · sha256 `81e66882…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-bv2dmc76.js` offset 190321311.
+Undocumented; read at `chunk-qyn5bdge.js` offset 191532036.
 
 **Undocumented**
 
 ### `SSL_CERT_FILE`
 
-Source: `chunk-9yd2evp3.js` · offset 210738140 · sha256 `36128327…` · 2 read sites
+Source: `chunk-n9nj0gvt.js` · offset 212112289 · sha256 `36128327…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210738140.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212112289.
 
 **Undocumented**
 
@@ -9839,303 +9939,303 @@ Undocumented; read at `chunk-9yd2evp3.js` offset 210738140.
 
 ### `__CFBundleIdentifier`
 
-Source: `chunk-mbfze585.js` · offset 178169749 · sha256 `a8824fe9…` · 7 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196561511 · sha256 `a8824fe9…` · 7 read sites
 
-Read as: string (trimmed; empty is treated as unset). Values: `com.googlecode.iterm2`, `com.conductor.app`, `com.anthropic.claude-code-url-handler`.
+Read as: string (trimmed; empty is treated as unset). Values: `com.googlecode.iterm2`, `com.anthropic.claude-code-url-handler`, `com.conductor.app`.
 
-Undocumented; read at `chunk-mbfze585.js` offset 178169749.
+Undocumented; read at `chunk-g6yz7gnr.js` offset 196561511.
 
 **Undocumented**
 
 ### `ALACRITTY_LOG`
 
-Source: `chunk-mbfze585.js` · offset 178171434 · sha256 `bfe1befc…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179201477 · sha256 `bfe1befc…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171434.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201477.
 
 **Undocumented**
 
 ### `ALLUSERSPROFILE`
 
-Source: `chunk-09m4fzsj.js` · offset 184490429 · sha256 `7a933001…`
+Source: `chunk-j7rgjcpa.js` · offset 185620087 · sha256 `e227995c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184490429.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185620087.
 
 **Undocumented**
 
 ### `ANDROID_HOME`
 
-Source: `chunk-cn81459s.js` · offset 201344543 · sha256 `309f9171…`
+Source: `chunk-c8ab5n0g.js` · offset 202616448 · sha256 `309f9171…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cn81459s.js` offset 201344543.
+Undocumented; read at `chunk-c8ab5n0g.js` offset 202616448.
 
 **Undocumented**
 
 ### `ANDROID_SDK_ROOT`
 
-Source: `chunk-cn81459s.js` · offset 201344559 · sha256 `58d982c5…`
+Source: `chunk-c8ab5n0g.js` · offset 202616464 · sha256 `58d982c5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cn81459s.js` offset 201344559.
+Undocumented; read at `chunk-c8ab5n0g.js` offset 202616464.
 
 **Undocumented**
 
 ### `APP_URL`
 
-Source: `chunk-mbfze585.js` · offset 178175082 · sha256 `883dc61c…`
+Source: `chunk-w397p0p5.js` · offset 179205125 · sha256 `883dc61c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175082.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205125.
 
 **Undocumented**
 
 ### `APPDATA`
 
-Source: `chunk-e2javxcw.js` · offset 214915068 · sha256 `da8ef702…` · 13 read sites
+Source: `chunk-9c8h1t30.js` · offset 216178623 · sha256 `da8ef702…` · 13 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-e2javxcw.js` offset 214915068.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216178623.
 
 **Undocumented**
 
 ### `BROWSER`
 
-Source: `chunk-dfef8g3c.js` · offset 192162836 · sha256 `ad8a905e…` · 5 read sites
+Source: `chunk-88np9eym.js` · offset 207067234 · sha256 `ad8a905e…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `true`.
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-dfef8g3c.js` offset 192162836.
+Undocumented; read at `chunk-88np9eym.js` offset 207067234.
 
 **Undocumented**
 
 ### `BUILDKITE`
 
-Source: `chunk-mbfze585.js` · offset 178175380 · sha256 `9466bfb7…`
+Source: `chunk-w397p0p5.js` · offset 179205423 · sha256 `9466bfb7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175380.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205423.
 
 **Undocumented**
 
 ### `BUN_CHROME_PATH`
 
-Source: `chunk-s1mfg8e9.js` · offset 194271107 · sha256 `497892ba…` · 3 read sites
+Source: `chunk-nvyqjp3n.js` · offset 195449646 · sha256 `497892ba…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-s1mfg8e9.js` offset 194271107.
+Undocumented; read at `chunk-nvyqjp3n.js` offset 195449646.
 
 **Undocumented**
 
 ### `BUN_INSTALL`
 
-Source: `chunk-7njsxy23.js` · offset 190184565 · sha256 `c3315b28…`
+Source: `chunk-j6572xt4.js` · offset 191393036 · sha256 `c3315b28…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-7njsxy23.js` offset 190184565.
+Undocumented; read at `chunk-j6572xt4.js` offset 191393036.
 
 **Undocumented**
 
 ### `C9_PID`
 
-Source: `chunk-mbfze585.js` · offset 178173987 · sha256 `e4c27b8d…`
+Source: `chunk-w397p0p5.js` · offset 179204030 · sha256 `e4c27b8d…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173987.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204030.
 
 **Undocumented**
 
 ### `C9_USER`
 
-Source: `chunk-mbfze585.js` · offset 178174007 · sha256 `97e055e6…`
+Source: `chunk-w397p0p5.js` · offset 179204050 · sha256 `97e055e6…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174007.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204050.
 
 **Undocumented**
 
 ### `CF_PAGES`
 
-Source: `chunk-mbfze585.js` · offset 178174479 · sha256 `d2788c90…`
+Source: `chunk-w397p0p5.js` · offset 179204522 · sha256 `d2788c90…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174479.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204522.
 
 **Undocumented**
 
 ### `CI`
 
-Source: `chunk-88zs4xb0.js` · offset 191417552 · sha256 `2883b550…`
+Source: `chunk-8vmasb0d.js` · offset 192594599 · sha256 `2883b550…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-88zs4xb0.js` offset 191417552.
+Undocumented; read at `chunk-8vmasb0d.js` offset 192594599.
 
 **Undocumented**
 
 ### `CIRCLECI`
 
-Source: `chunk-mbfze585.js` · offset 178175339 · sha256 `032d464c…`
+Source: `chunk-w397p0p5.js` · offset 179205382 · sha256 `032d464c…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175339.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205382.
 
 **Undocumented**
 
 ### `CODER`
 
-Source: `chunk-mbfze585.js` · offset 178173721 · sha256 `dbd0f0f9…`
+Source: `chunk-w397p0p5.js` · offset 179203764 · sha256 `dbd0f0f9…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173721.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203764.
 
 **Undocumented**
 
 ### `CODER_WORKSPACE_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178173741 · sha256 `d922a1cc…`
+Source: `chunk-w397p0p5.js` · offset 179203784 · sha256 `d922a1cc…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173741.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203784.
 
 **Undocumented**
 
 ### `CODESPACES`
 
-Source: `chunk-mbfze585.js` · offset 178173622 · sha256 `d78687e1…`
+Source: `chunk-w397p0p5.js` · offset 179203665 · sha256 `d78687e1…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173622.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203665.
 
 **Undocumented**
 
 ### `COLORFGBG`
 
-Source: `chunk-2q2qd3a1.js` · offset 191909882 · sha256 `4bab16fa…`
+Source: `chunk-0mj9k44e.js` · offset 193088707 · sha256 `4bab16fa…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-2q2qd3a1.js` offset 191909882.
+Undocumented; read at `chunk-0mj9k44e.js` offset 193088707.
 
 **Undocumented**
 
 ### `COLORTERM`
 
-Source: `chunk-2a2022xc.js` · offset 211000630 · sha256 `f280844a…`
+Source: `chunk-q933vkqs.js` · offset 212345860 · sha256 `f280844a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-2a2022xc.js` offset 211000630.
+Undocumented; read at `chunk-q933vkqs.js` offset 212345860.
 
 **Undocumented**
 
 ### `ComSpec`
 
-Source: `chunk-8wcg99nb.js` · offset 202535369 · sha256 `d367c10d…`
+Source: `chunk-32f7exm7.js` · offset 205169583 · sha256 `d367c10d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8wcg99nb.js` offset 202535369.
+Undocumented; read at `chunk-32f7exm7.js` offset 205169583.
 
 **Undocumented**
 
 ### `COMSPEC`
 
-Source: `chunk-mbfze585.js` · offset 178176682 · sha256 `99cafcff…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179206725 · sha256 `99cafcff…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `cmd.exe`.
 
-Undocumented; read at `chunk-mbfze585.js` offset 178176682.
+Undocumented; read at `chunk-w397p0p5.js` offset 179206725.
 
 **Undocumented**
 
 ### `ConEmuANSI`
 
-Source: `chunk-mbfze585.js` · offset 178171705 · sha256 `c8777282…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179201748 · sha256 `c8777282…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171705.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201748.
 
 **Undocumented**
 
 ### `ConEmuPID`
 
-Source: `chunk-mbfze585.js` · offset 178171729 · sha256 `c4505517…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179201772 · sha256 `c4505517…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171729.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201772.
 
 **Undocumented**
 
 ### `ConEmuTask`
 
-Source: `chunk-mbfze585.js` · offset 178171752 · sha256 `6160aec6…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179201795 · sha256 `6160aec6…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171752.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201795.
 
 **Undocumented**
 
 ### `CURSOR_TRACE_ID`
 
-Source: `chunk-bysrnexw.js` · offset 216019683 · sha256 `a240f1a4…` · 4 read sites
+Source: `chunk-5645472e.js` · offset 217475256 · sha256 `a240f1a4…` · 4 read sites
 
 Read as: string (used as-is (not trimmed)).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-bysrnexw.js` offset 216019683.
+Undocumented; read at `chunk-5645472e.js` offset 217475256.
 
 **Undocumented**
 
 ### `DAYTONA_WS_ID`
 
-Source: `chunk-mbfze585.js` · offset 178173866 · sha256 `d76f1c62…`
+Source: `chunk-w397p0p5.js` · offset 179203909 · sha256 `d76f1c62…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173866.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203909.
 
 **Undocumented**
 
 ### `DEBUG`
 
-Source: `chunk-e6m248dn.js` · offset 179601906 · sha256 `3f2fec78…` · 6 read sites
+Source: `chunk-4v4n4srf.js` · offset 198940783 · sha256 `3f2fec78…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
@@ -10147,117 +10247,117 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DENO_DEPLOYMENT_ID`
 
-Source: `chunk-mbfze585.js` · offset 178174529 · sha256 `a0569b4e…`
+Source: `chunk-w397p0p5.js` · offset 179204572 · sha256 `a0569b4e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174529.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204572.
 
 **Undocumented**
 
 ### `DEVPOD`
 
-Source: `chunk-mbfze585.js` · offset 178173794 · sha256 `a0e21599…`
+Source: `chunk-w397p0p5.js` · offset 179203837 · sha256 `a0e21599…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173794.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203837.
 
 **Undocumented**
 
 ### `DEVPOD_WORKSPACE_UID`
 
-Source: `chunk-mbfze585.js` · offset 178173815 · sha256 `7941e754…`
+Source: `chunk-w397p0p5.js` · offset 179203858 · sha256 `7941e754…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173815.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203858.
 
 **Undocumented**
 
 ### `DISPLAY`
 
-Source: `chunk-1y575bx8.js` · offset 185205567 · sha256 `4dcc9e06…` · 2 read sites
+Source: `chunk-v4er1c8e.js` · offset 186320987 · sha256 `4dcc9e06…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-1y575bx8.js` offset 185205567.
+Undocumented; read at `chunk-v4er1c8e.js` offset 186320987.
 
 **Undocumented**
 
 ### `DYNO`
 
-Source: `chunk-mbfze585.js` · offset 178174370 · sha256 `5bfcb51f…`
+Source: `chunk-w397p0p5.js` · offset 179204413 · sha256 `5bfcb51f…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174370.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204413.
 
 **Undocumented**
 
 ### `EDITOR`
 
-Source: `chunk-m42kzzy0.js` · offset 216395863 · sha256 `e2aba24c…` · 5 read sites
+Source: `chunk-2q0edvsh.js` · offset 217812657 · sha256 `e2aba24c…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-m42kzzy0.js` offset 216395863.
+Undocumented; read at `chunk-2q0edvsh.js` offset 217812657.
 
 **Undocumented**
 
 ### `FLY_APP_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178174405 · sha256 `e98aa307…`
+Source: `chunk-w397p0p5.js` · offset 179204448 · sha256 `e98aa307…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174405.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204448.
 
 **Undocumented**
 
 ### `FLY_MACHINE_ID`
 
-Source: `chunk-mbfze585.js` · offset 178174431 · sha256 `eb90c0ce…`
+Source: `chunk-w397p0p5.js` · offset 179204474 · sha256 `eb90c0ce…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174431.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204474.
 
 **Undocumented**
 
 ### `FORCE_CODE_TERMINAL`
 
-Source: `chunk-mphp7acd.js` · offset 189053947 · sha256 `6d127f08…`
+Source: `chunk-acxptg39.js` · offset 190250308 · sha256 `6d127f08…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`. Other sites parse it as a boolean, so the same value can mean on in one place and off in another.
 
-Undocumented; read at `chunk-mphp7acd.js` offset 189053947.
+Undocumented; read at `chunk-acxptg39.js` offset 190250308.
 
 **Undocumented**
 
 ### `FORCE_COLOR`
 
-Source: `chunk-mphp7acd.js` · offset 186347654 · sha256 `15ab5bb8…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187477794 · sha256 `15ab5bb8…` · 3 read sites
 
 Read as: string (used as-is (not trimmed)).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186347654.
+Undocumented; read at `chunk-acxptg39.js` offset 187477794.
 
 **Undocumented**
 
 ### `FORCE_HYPERLINK`
 
-Source: `chunk-88zs4xb0.js` · offset 191417557 · sha256 `dbf93b31…`
+Source: `chunk-8vmasb0d.js` · offset 192594604 · sha256 `dbf93b31…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -10267,89 +10367,89 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `GCM_INTERACTIVE`
 
-Source: `chunk-9yd2evp3.js` · offset 210739033 · sha256 `6bbeb3c8…`
+Source: `chunk-n9nj0gvt.js` · offset 212113182 · sha256 `6bbeb3c8…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210739033.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212113182.
 
 **Undocumented**
 
 ### `GH_ENTERPRISE_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023581 · sha256 `9c5226ea…`
+Source: `chunk-j7rgjcpa.js` · offset 186151515 · sha256 `9c5226ea…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 185023581.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186151515.
 
 **Undocumented**
 
 ### `GH_HOST`
 
-Source: `chunk-09m4fzsj.js` · offset 185023558 · sha256 `95d3efd7…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 186151492 · sha256 `95d3efd7…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 185023558.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186151492.
 
 **Undocumented**
 
 ### `GH_REPO`
 
-Source: `chunk-1dn0zqp9.js` · offset 196859875 · sha256 `f70912ef…`
+Source: `chunk-mj17gyf8.js` · offset 198103028 · sha256 `f70912ef…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1dn0zqp9.js` offset 196859875.
+Undocumented; read at `chunk-mj17gyf8.js` offset 198103028.
 
 **Undocumented**
 
 ### `GH_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023508 · sha256 `4d29d2e5…`
+Source: `chunk-j7rgjcpa.js` · offset 186151441 · sha256 `4d29d2e5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 185023508.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186151441.
 
 **Undocumented**
 
 ### `GIT_ASKPASS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190455550 · sha256 `77c0011a…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191666424 · sha256 `77c0011a…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190455550.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191666424.
 
 **Undocumented**
 
 ### `GIT_CONFIG_COUNT`
 
-Source: `chunk-7qgnq1jf.js` · offset 182450275 · sha256 `ada3e46b…` · 8 read sites
+Source: `chunk-75pwjp0k.js` · offset 183595870 · sha256 `ada3e46b…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `0`.
 
-Undocumented; read at `chunk-7qgnq1jf.js` offset 182450275.
+Undocumented; read at `chunk-75pwjp0k.js` offset 183595870.
 
 **Undocumented**
 
 ### `GIT_CONFIG_GLOBAL`
 
-Source: `chunk-8xhw5h9f.js` · offset 190440470 · sha256 `c6d7625a…` · 5 read sites
+Source: `chunk-k2pjtcda.js` · offset 191651344 · sha256 `c6d7625a…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190440470.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191651344.
 
 **Undocumented**
 
 ### `GIT_CONFIG_KEY_*`
 
-Source: `chunk-ywmxa060.js` · offset 183848627 · sha256 `b912f85a…`
+Source: `chunk-r7d018vr.js` · offset 184971622 · sha256 `b912f85a…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -10359,37 +10459,37 @@ Name pattern (not counted as documented or undocumented)
 
 ### `GIT_CONFIG_NOSYSTEM`
 
-Source: `chunk-09m4fzsj.js` · offset 184910897 · sha256 `440ce77b…`
+Source: `chunk-j7rgjcpa.js` · offset 186038395 · sha256 `0cef416f…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184910897.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186038395.
 
 **Undocumented**
 
 ### `GIT_CONFIG_PARAMETERS`
 
-Source: `chunk-ywmxa060.js` · offset 183848737 · sha256 `56a8e5d7…` · 2 read sites
+Source: `chunk-r7d018vr.js` · offset 184971732 · sha256 `56a8e5d7…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ywmxa060.js` offset 183848737.
+Undocumented; read at `chunk-r7d018vr.js` offset 184971732.
 
 **Undocumented**
 
 ### `GIT_CONFIG_SYSTEM`
 
-Source: `chunk-09m4fzsj.js` · offset 184910840 · sha256 `639af322…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 186038338 · sha256 `2580da38…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184910840.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186038338.
 
 **Undocumented**
 
 ### `GIT_CONFIG_VALUE_*`
 
-Source: `chunk-ywmxa060.js` · offset 183848654 · sha256 `8dc48ba5…`
+Source: `chunk-r7d018vr.js` · offset 184971649 · sha256 `8dc48ba5…`
 
 Read as: string (raw value; further parsing not traced).
 
@@ -10399,515 +10499,515 @@ Name pattern (not counted as documented or undocumented)
 
 ### `GIT_NO_LAZY_FETCH`
 
-Source: `chunk-w7hy7pqe.js` · offset 183724850 · sha256 `dc10a06c…`
+Source: `chunk-h4njzy9v.js` · offset 184848382 · sha256 `414fb533…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-w7hy7pqe.js` offset 183724850.
+Undocumented; read at `chunk-h4njzy9v.js` offset 184848382.
 
 **Undocumented**
 
 ### `GIT_SSH_COMMAND`
 
-Source: `chunk-8xhw5h9f.js` · offset 190558750 · sha256 `58764ff1…` · 6 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562932 · sha256 `58764ff1…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `ssh`.
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190558750.
+Undocumented; read at `chunk-1k1qsm5t.js` offset 191562932.
 
 **Undocumented**
 
 ### `GIT_SSH_VARIANT`
 
-Source: `chunk-mphp7acd.js` · offset 186147370 · sha256 `9944df81…`
+Source: `chunk-acxptg39.js` · offset 187274780 · sha256 `c09659c3…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 186147370.
+Undocumented; read at `chunk-acxptg39.js` offset 187274780.
 
 **Undocumented**
 
 ### `GIT_TERMINAL_PROMPT`
 
-Source: `chunk-9yd2evp3.js` · offset 210738899 · sha256 `e65f8626…`
+Source: `chunk-n9nj0gvt.js` · offset 212113048 · sha256 `e65f8626…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210738899.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212113048.
 
 **Undocumented**
 
 ### `GITHUB_ACTION_INPUTS`
 
-Source: `chunk-dgp2yyqt.js` · offset 195056511 · sha256 `872d29c8…`
+Source: `chunk-5g8p9x0b.js` · offset 196254642 · sha256 `872d29c8…`
 
 Read as: string (used as-is (not trimmed)).
 
-Undocumented; read at `chunk-dgp2yyqt.js` offset 195056511.
+Undocumented; read at `chunk-5g8p9x0b.js` offset 196254642.
 
 **Undocumented**
 
 ### `GITHUB_ACTION_PATH`
 
-Source: `chunk-8ptzhr8g.js` · offset 180392393 · sha256 `63872dc2…` · 4 read sites
+Source: `chunk-721k6cws.js` · offset 181893993 · sha256 `63872dc2…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180392393.
+Undocumented; read at `chunk-721k6cws.js` offset 181893993.
 
 **Undocumented**
 
 ### `GITHUB_ACTIONS`
 
-Source: `chunk-f1vb7bx7.js` · offset 179187677 · sha256 `5cc8b904…` · 6 read sites
+Source: `chunk-721k6cws.js` · offset 181892658 · sha256 `5cc8b904…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-f1vb7bx7.js` offset 179187677.
+Undocumented; read at `chunk-721k6cws.js` offset 181892658.
 
 **Undocumented**
 
 ### `GITHUB_ACTOR`
 
-Source: `chunk-mphp7acd.js` · offset 188318149 · sha256 `bdbdbc09…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181568107 · sha256 `bdbdbc09…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mphp7acd.js` offset 188318149.
+Undocumented; read at `chunk-721k6cws.js` offset 181568107.
 
 **Undocumented**
 
 ### `GITHUB_ACTOR_ID`
 
-Source: `chunk-nankzm0s.js` · offset 180761472 · sha256 `efc90f87…`
+Source: `chunk-721k6cws.js` · offset 181568130 · sha256 `efc90f87…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180761472.
+Undocumented; read at `chunk-721k6cws.js` offset 181568130.
 
 **Undocumented**
 
 ### `GITHUB_ENTERPRISE_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023614 · sha256 `80d49428…`
+Source: `chunk-j7rgjcpa.js` · offset 186151548 · sha256 `80d49428…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 185023614.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186151548.
 
 **Undocumented**
 
 ### `GITHUB_ENV`
 
-Source: `chunk-8ptzhr8g.js` · offset 180391923 · sha256 `85a6c474…` · 4 read sites
+Source: `chunk-z62ps7p2.js` · offset 181264595 · sha256 `85a6c474…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180391923.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181264595.
 
 **Undocumented**
 
 ### `GITHUB_EVENT_NAME`
 
-Source: `chunk-nankzm0s.js` · offset 181084849 · sha256 `002d2186…`
+Source: `chunk-721k6cws.js` · offset 181893841 · sha256 `002d2186…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181084849.
+Undocumented; read at `chunk-721k6cws.js` offset 181893841.
 
 **Undocumented**
 
 ### `GITHUB_EVENT_PATH`
 
-Source: `chunk-8ptzhr8g.js` · offset 180392442 · sha256 `4d6b1a09…` · 2 read sites
+Source: `chunk-z62ps7p2.js` · offset 181265114 · sha256 `4d6b1a09…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180392442.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181265114.
 
 **Undocumented**
 
 ### `GITHUB_REPOSITORY`
 
-Source: `chunk-nankzm0s.js` · offset 180761501 · sha256 `98dca9d0…`
+Source: `chunk-721k6cws.js` · offset 181568159 · sha256 `98dca9d0…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180761501.
+Undocumented; read at `chunk-721k6cws.js` offset 181568159.
 
 **Undocumented**
 
 ### `GITHUB_REPOSITORY_ID`
 
-Source: `chunk-nankzm0s.js` · offset 180761534 · sha256 `0a9247c9…`
+Source: `chunk-721k6cws.js` · offset 181568192 · sha256 `0a9247c9…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180761534.
+Undocumented; read at `chunk-721k6cws.js` offset 181568192.
 
 **Undocumented**
 
 ### `GITHUB_REPOSITORY_OWNER`
 
-Source: `chunk-nankzm0s.js` · offset 180761573 · sha256 `4bf7a1f3…`
+Source: `chunk-721k6cws.js` · offset 181568231 · sha256 `4bf7a1f3…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180761573.
+Undocumented; read at `chunk-721k6cws.js` offset 181568231.
 
 **Undocumented**
 
 ### `GITHUB_REPOSITORY_OWNER_ID`
 
-Source: `chunk-nankzm0s.js` · offset 180761617 · sha256 `11aaad60…`
+Source: `chunk-721k6cws.js` · offset 181568275 · sha256 `11aaad60…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 180761617.
+Undocumented; read at `chunk-721k6cws.js` offset 181568275.
 
 **Undocumented**
 
 ### `GITHUB_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023530 · sha256 `d84c66c7…`
+Source: `chunk-j7rgjcpa.js` · offset 186151463 · sha256 `d84c66c7…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 185023530.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 186151463.
 
 **Undocumented**
 
 ### `GITHUB_WORKSPACE`
 
-Source: `chunk-8ptzhr8g.js` · offset 180391981 · sha256 `c45e337f…` · 2 read sites
+Source: `chunk-z62ps7p2.js` · offset 181264653 · sha256 `c45e337f…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180391981.
+Undocumented; read at `chunk-z62ps7p2.js` offset 181264653.
 
 **Undocumented**
 
 ### `GITLAB_CI`
 
-Source: `chunk-mbfze585.js` · offset 178175295 · sha256 `3ee25c25…`
+Source: `chunk-w397p0p5.js` · offset 179205338 · sha256 `3ee25c25…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175295.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205338.
 
 **Undocumented**
 
 ### `GITPOD_WORKSPACE_ID`
 
-Source: `chunk-mbfze585.js` · offset 178173668 · sha256 `0bd1a41d…`
+Source: `chunk-w397p0p5.js` · offset 179203711 · sha256 `0bd1a41d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178173668.
+Undocumented; read at `chunk-w397p0p5.js` offset 179203711.
 
 **Undocumented**
 
 ### `GNOME_TERMINAL_SERVICE`
 
-Source: `chunk-mbfze585.js` · offset 178171190 · sha256 `8fcf299d…`
+Source: `chunk-w397p0p5.js` · offset 179201233 · sha256 `8fcf299d…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171190.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201233.
 
 **Undocumented**
 
 ### `HISTFILE`
 
-Source: `chunk-cnrmsnz4.js` · offset 199483441 · sha256 `e5c41ee2…`
+Source: `chunk-8p0q5f5t.js` · offset 200753306 · sha256 `e5c41ee2…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cnrmsnz4.js` offset 199483441.
+Undocumented; read at `chunk-8p0q5f5t.js` offset 200753306.
 
 **Undocumented**
 
 ### `HOME`
 
-Source: `chunk-8ptzhr8g.js` · offset 180384650 · sha256 `8b7d8232…` · 11 read sites
+Source: `chunk-f72fzxpc.js` · offset 198584959 · sha256 `dc770fd4…` · 11 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180384650.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198584959.
 
 **Undocumented**
 
 ### `HOMEDRIVE`
 
-Source: `chunk-09m4fzsj.js` · offset 184497951 · sha256 `b6e63404…` · 4 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185627609 · sha256 `ae601c26…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184497951.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185627609.
 
 **Undocumented**
 
 ### `HOMEPATH`
 
-Source: `chunk-09m4fzsj.js` · offset 184497976 · sha256 `4c16c490…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185627634 · sha256 `65099cdc…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184497976.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185627634.
 
 **Undocumented**
 
 ### `HOSTNAME`
 
-Source: `chunk-09m4fzsj.js` · offset 184239502 · sha256 `5c1b2b57…`
+Source: `chunk-j7rgjcpa.js` · offset 185365887 · sha256 `5c1b2b57…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184239502.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185365887.
 
 **Undocumented**
 
 ### `INK_SCREEN_READER`
 
-Source: `chunk-p50qybax.js` · offset 191858667 · sha256 `064450f6…`
+Source: `chunk-xr83kgh7.js` · offset 193036142 · sha256 `064450f6…`
 
 Read as: boolean (true when the value, trimmed and lowercased, is 1, true, yes or on; anything else is false).
 
-Undocumented; read at `chunk-p50qybax.js` offset 191858667.
+Undocumented; read at `chunk-xr83kgh7.js` offset 193036142.
 
 **Undocumented**
 
 ### `INTELLIJ_TERMINAL_COMMAND_BLOCKS`
 
-Source: `chunk-nzck9a32.js` · offset 191522626 · sha256 `1054b8d6…`
+Source: `chunk-gk22bggm.js` · offset 192699762 · sha256 `1054b8d6…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nzck9a32.js` offset 191522626.
+Undocumented; read at `chunk-gk22bggm.js` offset 192699762.
 
 **Undocumented**
 
 ### `INTELLIJ_TERMINAL_COMMAND_BLOCKS_REWORKED`
 
-Source: `chunk-nzck9a32.js` · offset 191522562 · sha256 `d49c5da5…`
+Source: `chunk-gk22bggm.js` · offset 192699698 · sha256 `d49c5da5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nzck9a32.js` offset 191522562.
+Undocumented; read at `chunk-gk22bggm.js` offset 192699698.
 
 **Undocumented**
 
 ### `ITERM_SESSION_ID`
 
-Source: `chunk-h2b0wn8m.js` · offset 212031989 · sha256 `038ed3ab…` · 2 read sites
+Source: `chunk-7r0n3sca.js` · offset 213421505 · sha256 `038ed3ab…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-h2b0wn8m.js` offset 212031989.
+Undocumented; read at `chunk-7r0n3sca.js` offset 213421505.
 
 **Undocumented**
 
 ### `JAVA_HOME`
 
-Source: `chunk-9yd2evp3.js` · offset 210720921 · sha256 `e32930cc…` · 2 read sites
+Source: `chunk-n9nj0gvt.js` · offset 212094387 · sha256 `e32930cc…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210720921.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212094387.
 
 **Undocumented**
 
 ### `JAVA_TOOL_OPTIONS`
 
-Source: `chunk-5vadtxaa.js` · offset 183229168 · sha256 `eb2a2297…` · 4 read sites
+Source: `chunk-hnd61wvn.js` · offset 184377372 · sha256 `eb2a2297…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-5vadtxaa.js` offset 183229168.
+Undocumented; read at `chunk-hnd61wvn.js` offset 184377372.
 
 **Undocumented**
 
 ### `K_SERVICE`
 
-Source: `chunk-ekz7hy24.js` · offset 197354589 · sha256 `a48f12e6…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198566945 · sha256 `a48f12e6…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197354589.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198566945.
 
 **Undocumented**
 
 ### `KITTY_WINDOW_ID`
 
-Source: `chunk-mbfze585.js` · offset 178171389 · sha256 `19815f12…` · 3 read sites
+Source: `chunk-w397p0p5.js` · offset 179201432 · sha256 `19815f12…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171389.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201432.
 
 **Undocumented**
 
 ### `KONSOLE_VERSION`
 
-Source: `chunk-mbfze585.js` · offset 178171143 · sha256 `3f5c80d0…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179201186 · sha256 `3f5c80d0…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171143.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201186.
 
 **Undocumented**
 
 ### `KUBERNETES_SERVICE_HOST`
 
-Source: `chunk-mbfze585.js` · offset 178175444 · sha256 `d81719da…`
+Source: `chunk-w397p0p5.js` · offset 179205487 · sha256 `d81719da…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175444.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205487.
 
 **Undocumented**
 
 ### `LANG`
 
-Source: `chunk-pmr9x25s.js` · offset 199258572 · sha256 `7a38024b…`
+Source: `chunk-27q0zmd7.js` · offset 200527795 · sha256 `7a38024b…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-pmr9x25s.js` offset 199258572.
+Undocumented; read at `chunk-27q0zmd7.js` offset 200527795.
 
 **Undocumented**
 
 ### `LC_ALL`
 
-Source: `chunk-pmr9x25s.js` · offset 199258551 · sha256 `bc2e1a24…`
+Source: `chunk-27q0zmd7.js` · offset 200527774 · sha256 `bc2e1a24…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-pmr9x25s.js` offset 199258551.
+Undocumented; read at `chunk-27q0zmd7.js` offset 200527774.
 
 **Undocumented**
 
 ### `LC_TERMINAL`
 
-Source: `chunk-069hbd8x.js` · offset 195778114 · sha256 `0ed931d5…` · 5 read sites
+Source: `chunk-4shbtpv2.js` · offset 197008885 · sha256 `0ed931d5…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `iTerm2`. Default (from code): `unset`.
 
-Undocumented; read at `chunk-069hbd8x.js` offset 195778114.
+Undocumented; read at `chunk-4shbtpv2.js` offset 197008885.
 
 **Undocumented**
 
 ### `LC_TIME`
 
-Source: `chunk-pmr9x25s.js` · offset 199258561 · sha256 `65eda90a…`
+Source: `chunk-27q0zmd7.js` · offset 200527784 · sha256 `65eda90a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-pmr9x25s.js` offset 199258561.
+Undocumented; read at `chunk-27q0zmd7.js` offset 200527784.
 
 **Undocumented**
 
 ### `LOCALAPPDATA`
 
-Source: `chunk-2t7nhzwg.js` · offset 195932893 · sha256 `b38fddba…` · 9 read sites
+Source: `chunk-ke432dc0.js` · offset 178950068 · sha256 `b38fddba…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-2t7nhzwg.js` offset 195932893.
+Undocumented; read at `chunk-ke432dc0.js` offset 178950068.
 
 **Undocumented**
 
 ### `MSYSTEM`
 
-Source: `chunk-mbfze585.js` · offset 178171641 · sha256 `11f36523…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179201684 · sha256 `11f36523…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171641.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201684.
 
 **Undocumented**
 
 ### `NETLIFY`
 
-Source: `chunk-mbfze585.js` · offset 178174330 · sha256 `c4d87109…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179204373 · sha256 `c4d87109…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174330.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204373.
 
 **Undocumented**
 
 ### `NO_COLOR`
 
-Source: `chunk-2q133q3v.js` · offset 180434703 · sha256 `48ee5637…` · 2 read sites
+Source: `chunk-qxyxqdkg.js` · offset 180007921 · sha256 `48ee5637…` · 2 read sites
 
 Read as: string (used as-is (not trimmed)).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-2q133q3v.js` offset 180434703.
+Undocumented; read at `chunk-qxyxqdkg.js` offset 180007921.
 
 **Undocumented**
 
 ### `NODE_DEBUG`
 
-Source: `chunk-py9z7ygk.js` · offset 180443236 · sha256 `7d3efaa5…` · 4 read sites
+Source: `chunk-7w2qptvr.js` · offset 181165426 · sha256 `7d3efaa5…` · 4 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-py9z7ygk.js` offset 180443236.
+Undocumented; read at `chunk-7w2qptvr.js` offset 181165426.
 
 **Undocumented**
 
 ### `NODE_OPTIONS`
 
-Source: `chunk-brnn4zwp.js` · offset 178046597 · sha256 `914747b7…` · 7 read sites
+Source: `chunk-q3se8bhm.js` · offset 179087057 · sha256 `914747b7…` · 7 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `not set`.
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-brnn4zwp.js` offset 178046597.
+Undocumented; read at `chunk-q3se8bhm.js` offset 179087057.
 
 **Undocumented**
 
 ### `P4PORT`
 
-Source: `chunk-amhtwhch.js` · offset 178155237 · sha256 `0e8d8e90…`
+Source: `chunk-w3s0xmfk.js` · offset 179185227 · sha256 `0e8d8e90…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-amhtwhch.js` offset 178155237.
+Undocumented; read at `chunk-w3s0xmfk.js` offset 179185227.
 
 **Undocumented**
 
 ### `PATH`
 
-Source: `chunk-14tr5h02.js` · offset 198025279 · sha256 `69e3a9e0…` · 19 read sites
+Source: `chunk-f6y3mr7n.js` · offset 180088829 · sha256 `69e3a9e0…` · 21 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `/usr/local/bin:/usr/bin:/bin`.
 
@@ -10919,279 +11019,279 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `PATHEXT`
 
-Source: `chunk-1nayt2j6.js` · offset 178937371 · sha256 `a603895c…` · 6 read sites
+Source: `chunk-f6y3mr7n.js` · offset 180087116 · sha256 `a603895c…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-1nayt2j6.js` offset 178937371.
+Undocumented; read at `chunk-f6y3mr7n.js` offset 180087116.
 
 **Undocumented**
 
 ### `PREFIX`
 
-Source: `chunk-9xzh0a1e.js` · offset 206559399 · sha256 `b830d9ab…` · 5 read sites
+Source: `chunk-r1zezp01.js` · offset 207877116 · sha256 `b830d9ab…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9xzh0a1e.js` offset 206559399.
+Undocumented; read at `chunk-r1zezp01.js` offset 207877116.
 
 **Undocumented**
 
 ### `ProgramData`
 
-Source: `chunk-5vadtxaa.js` · offset 183259047 · sha256 `f0de69b2…` · 2 read sites
+Source: `chunk-4v4n4srf.js` · offset 199190195 · sha256 `f0de69b2…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-5vadtxaa.js` offset 183259047.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199190195.
 
 **Undocumented**
 
 ### `PROGRAMDATA`
 
-Source: `chunk-09m4fzsj.js` · offset 184490410 · sha256 `3cba69cf…` · 2 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185620068 · sha256 `4679eb4b…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184490410.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185620068.
 
 **Undocumented**
 
 ### `ProgramFiles`
 
-Source: `chunk-mh05fezn.js` · offset 197918684 · sha256 `ae3c9ab2…` · 2 read sites
+Source: `chunk-4v4n4srf.js` · offset 199190308 · sha256 `ae3c9ab2…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197918684.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199190308.
 
 **Undocumented**
 
 ### `PROJECT_DOMAIN`
 
-Source: `chunk-mbfze585.js` · offset 178174110 · sha256 `87e9f9c2…`
+Source: `chunk-w397p0p5.js` · offset 179204153 · sha256 `87e9f9c2…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174110.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204153.
 
 **Undocumented**
 
 ### `PWD`
 
-Source: `chunk-4zgx6txq.js` · offset 193133076 · sha256 `55d0de17…`
+Source: `chunk-hyr3xk9c.js` · offset 194324193 · sha256 `55d0de17…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-4zgx6txq.js` offset 193133076.
+Undocumented; read at `chunk-hyr3xk9c.js` offset 194324193.
 
 **Undocumented**
 
 ### `RAILWAY_ENVIRONMENT_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178174196 · sha256 `46ffdcd9…`
+Source: `chunk-w397p0p5.js` · offset 179204239 · sha256 `46ffdcd9…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174196.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204239.
 
 **Undocumented**
 
 ### `RAILWAY_SERVICE_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178174234 · sha256 `ff14b856…`
+Source: `chunk-w397p0p5.js` · offset 179204277 · sha256 `ff14b856…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174234.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204277.
 
 **Undocumented**
 
 ### `RENDER`
 
-Source: `chunk-mbfze585.js` · offset 178174289 · sha256 `85af1892…`
+Source: `chunk-w397p0p5.js` · offset 179204332 · sha256 `85af1892…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174289.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204332.
 
 **Undocumented**
 
 ### `REPL_ID`
 
-Source: `chunk-mbfze585.js` · offset 178174049 · sha256 `da03a20e…`
+Source: `chunk-w397p0p5.js` · offset 179204092 · sha256 `da03a20e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174049.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204092.
 
 **Undocumented**
 
 ### `REPL_SLUG`
 
-Source: `chunk-mbfze585.js` · offset 178174070 · sha256 `7ae40c11…`
+Source: `chunk-w397p0p5.js` · offset 179204113 · sha256 `7ae40c11…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174070.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204113.
 
 **Undocumented**
 
 ### `SESSIONNAME`
 
-Source: `chunk-mbfze585.js` · offset 178171570 · sha256 `52edc75e…`
+Source: `chunk-w397p0p5.js` · offset 179201613 · sha256 `52edc75e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171570.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201613.
 
 **Undocumented**
 
 ### `SHELL`
 
-Source: `chunk-mbfze585.js` · offset 178176663 · sha256 `d9d57ee3…` · 8 read sites
+Source: `chunk-w397p0p5.js` · offset 179206706 · sha256 `d9d57ee3…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178176663.
+Undocumented; read at `chunk-w397p0p5.js` offset 179206706.
 
 **Undocumented**
 
 ### `SPACE_CREATOR_USER_ID`
 
-Source: `chunk-mbfze585.js` · offset 178175171 · sha256 `57bb1750…`
+Source: `chunk-w397p0p5.js` · offset 179205214 · sha256 `57bb1750…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175171.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205214.
 
 **Undocumented**
 
 ### `SSH_AUTH_SOCK`
 
-Source: `chunk-9yd2evp3.js` · offset 210744250 · sha256 `45e4e696…`
+Source: `chunk-n9nj0gvt.js` · offset 212120078 · sha256 `45e4e696…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-9yd2evp3.js` offset 210744250.
+Undocumented; read at `chunk-n9nj0gvt.js` offset 212120078.
 
 **Undocumented**
 
 ### `SSH_CLIENT`
 
-Source: `chunk-mbfze585.js` · offset 178175746 · sha256 `23b2cf08…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179205789 · sha256 `23b2cf08…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175746.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205789.
 
 **Undocumented**
 
 ### `SSH_CONNECTION`
 
-Source: `chunk-mbfze585.js` · offset 178175718 · sha256 `c840a5cf…` · 4 read sites
+Source: `chunk-w397p0p5.js` · offset 179205761 · sha256 `c840a5cf…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175718.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205761.
 
 **Undocumented**
 
 ### `SSH_TTY`
 
-Source: `chunk-mbfze585.js` · offset 178175770 · sha256 `2607570d…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179205813 · sha256 `2607570d…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178175770.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205813.
 
 **Undocumented**
 
 ### `STY`
 
-Source: `chunk-mbfze585.js` · offset 178171109 · sha256 `335a859b…` · 8 read sites
+Source: `chunk-w397p0p5.js` · offset 179201152 · sha256 `335a859b…` · 8 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 6 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171109.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201152.
 
 **Undocumented**
 
 ### `SUDO_GID`
 
-Source: `chunk-e2javxcw.js` · offset 214793993 · sha256 `403e35b1…` · 4 read sites
+Source: `chunk-9c8h1t30.js` · offset 216057476 · sha256 `403e35b1…` · 4 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, digitsOnly true.
 
-Undocumented; read at `chunk-e2javxcw.js` offset 214793993.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216057476.
 
 **Undocumented**
 
 ### `SUDO_UID`
 
-Source: `chunk-e2javxcw.js` · offset 214793980 · sha256 `8b3a2dac…` · 5 read sites
+Source: `chunk-9c8h1t30.js` · offset 216057463 · sha256 `8b3a2dac…` · 5 read sites
 
 Read as: integer (parsed base 10 (also accepts 1e3 and 1,000 or 1_000 forms); non-numbers are treated as unset). Bounds: min 0, digitsOnly true.
 
-Undocumented; read at `chunk-e2javxcw.js` offset 214793980.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216057463.
 
 **Undocumented**
 
 ### `SUDO_USER`
 
-Source: `chunk-e2javxcw.js` · offset 214794006 · sha256 `68f43961…` · 5 read sites
+Source: `chunk-9c8h1t30.js` · offset 216057489 · sha256 `68f43961…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-e2javxcw.js` offset 214794006.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216057489.
 
 **Undocumented**
 
 ### `SystemRoot`
 
-Source: `chunk-5vadtxaa.js` · offset 183252221 · sha256 `793aedf5…` · 3 read sites
+Source: `chunk-hnd61wvn.js` · offset 184400425 · sha256 `793aedf5…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `C:\Windows`.
 
-Undocumented; read at `chunk-5vadtxaa.js` offset 183252221.
+Undocumented; read at `chunk-hnd61wvn.js` offset 184400425.
 
 **Undocumented**
 
 ### `SYSTEMROOT`
 
-Source: `chunk-09m4fzsj.js` · offset 184473386 · sha256 `b421cf1e…` · 6 read sites
+Source: `chunk-721k6cws.js` · offset 182011794 · sha256 `b421cf1e…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `C:\Windows`.
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184473386.
+Undocumented; read at `chunk-721k6cws.js` offset 182011794.
 
 **Undocumented**
 
 ### `TEAMCITY_VERSION`
 
-Source: `chunk-88zs4xb0.js` · offset 191417585 · sha256 `61989b74…`
+Source: `chunk-8vmasb0d.js` · offset 192594632 · sha256 `61989b74…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-88zs4xb0.js` offset 191417585.
+Undocumented; read at `chunk-8vmasb0d.js` offset 192594632.
 
 **Undocumented**
 
 ### `TERM`
 
-Source: `chunk-mbfze585.js` · offset 178170832 · sha256 `cd581ed8…` · 17 read sites
+Source: `chunk-w397p0p5.js` · offset 179200875 · sha256 `cd581ed8…` · 17 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `xterm-ghostty`, `cygwin`. Default (from code): `unset`.
 
@@ -11203,7 +11303,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `TERM_PROGRAM`
 
-Source: `chunk-mbfze585.js` · offset 178170939 · sha256 `75da1de5…` · 27 read sites
+Source: `chunk-w397p0p5.js` · offset 179200982 · sha256 `75da1de5…` · 27 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `vscode`, `iTerm.app`, `Apple_Terminal`, `ghostty`, `WezTerm`, `tmux`, `mintty`. Default (from code): `unset`.
 
@@ -11215,363 +11315,363 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `TERM_PROGRAM_VERSION`
 
-Source: `chunk-f2cpzzp9.js` · offset 206881837 · sha256 `0dc37e73…` · 5 read sites
+Source: `chunk-gk22bggm.js` · offset 192692786 · sha256 `0dc37e73…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `unset`.
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206881837.
+Undocumented; read at `chunk-gk22bggm.js` offset 192692786.
 
 **Undocumented**
 
 ### `TERMINAL`
 
-Source: `chunk-8wcg99nb.js` · offset 202534867 · sha256 `541785d4…`
+Source: `chunk-32f7exm7.js` · offset 205169081 · sha256 `541785d4…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-8wcg99nb.js` offset 202534867.
+Undocumented; read at `chunk-32f7exm7.js` offset 205169081.
 
 **Undocumented**
 
 ### `TERMINAL_EMULATOR`
 
-Source: `chunk-mbfze585.js` · offset 178170760 · sha256 `cf45b3e1…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179200803 · sha256 `cf45b3e1…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `JetBrains-JediTerm`.
 
-Undocumented; read at `chunk-mbfze585.js` offset 178170760.
+Undocumented; read at `chunk-w397p0p5.js` offset 179200803.
 
 **Undocumented**
 
 ### `TERMINATOR_UUID`
 
-Source: `chunk-mbfze585.js` · offset 178171339 · sha256 `c7a22da2…`
+Source: `chunk-w397p0p5.js` · offset 179201382 · sha256 `c7a22da2…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171339.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201382.
 
 **Undocumented**
 
 ### `TERMUX_VERSION`
 
-Source: `chunk-9xzh0a1e.js` · offset 206559382 · sha256 `b7fed4d0…` · 3 read sites
+Source: `chunk-r1zezp01.js` · offset 207877099 · sha256 `b7fed4d0…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 3 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-9xzh0a1e.js` offset 206559382.
+Undocumented; read at `chunk-r1zezp01.js` offset 207877099.
 
 **Undocumented**
 
 ### `TILIX_ID`
 
-Source: `chunk-mbfze585.js` · offset 178171481 · sha256 `5765a66f…`
+Source: `chunk-w397p0p5.js` · offset 179201524 · sha256 `5765a66f…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171481.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201524.
 
 **Undocumented**
 
 ### `TMPDIR`
 
-Source: `chunk-09m4fzsj.js` · offset 184505551 · sha256 `3d1885bc…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185635209 · sha256 `3d1885bc…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184505551.
+Undocumented; read at `chunk-j7rgjcpa.js` offset 185635209.
 
 **Undocumented**
 
 ### `TMUX`
 
-Source: `chunk-mbfze585.js` · offset 178171076 · sha256 `173755d8…` · 30 read sites
+Source: `chunk-w397p0p5.js` · offset 179201119 · sha256 `173755d8…` · 30 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 24 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171076.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201119.
 
 **Undocumented**
 
 ### `TMUX_PANE`
 
-Source: `chunk-nankzm0s.js` · offset 181070072 · sha256 `72526b2f…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181878841 · sha256 `72526b2f…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-nankzm0s.js` offset 181070072.
+Undocumented; read at `chunk-721k6cws.js` offset 181878841.
 
 **Undocumented**
 
 ### `USER`
 
-Source: `chunk-fge68w3a.js` · offset 180460653 · sha256 `877808d9…` · 4 read sites
+Source: `chunk-edamysx7.js` · offset 181182843 · sha256 `877808d9…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-fge68w3a.js` offset 180460653.
+Undocumented; read at `chunk-edamysx7.js` offset 181182843.
 
 **Undocumented**
 
 ### `USERNAME`
 
-Source: `chunk-df0597gf.js` · offset 183569946 · sha256 `5a380695…` · 5 read sites
+Source: `chunk-721k6cws.js` · offset 181867111 · sha256 `5a380695…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset). Values: `ContainerAdministrator`, `ContainerUser`.
 
-Undocumented; read at `chunk-df0597gf.js` offset 183569946.
+Undocumented; read at `chunk-721k6cws.js` offset 181867111.
 
 **Undocumented**
 
 ### `USERPROFILE`
 
-Source: `chunk-09m4fzsj.js` · offset 184473006 · sha256 `09f71f7e…` · 10 read sites
+Source: `chunk-acxptg39.js` · offset 190252153 · sha256 `09f71f7e…` · 10 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 4 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-09m4fzsj.js` offset 184473006.
+Undocumented; read at `chunk-acxptg39.js` offset 190252153.
 
 **Undocumented**
 
 ### `UV_THREADPOOL_SIZE`
 
-Source: `chunk-amg94xhm.js` · offset 213015564 · sha256 `6e9baec2…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214137084 · sha256 `6e9baec2…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset). Default (from code): `default`.
 
-Undocumented; read at `chunk-amg94xhm.js` offset 213015564.
+Undocumented; read at `chunk-tgymbs42.js` offset 214137084.
 
 **Undocumented**
 
 ### `VERCEL`
 
-Source: `chunk-mbfze585.js` · offset 178174158 · sha256 `6ae3215a…`
+Source: `chunk-w397p0p5.js` · offset 179204201 · sha256 `6ae3215a…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174158.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204201.
 
 **Undocumented**
 
 ### `VISUAL`
 
-Source: `chunk-m42kzzy0.js` · offset 216395823 · sha256 `797f4100…` · 5 read sites
+Source: `chunk-2q0edvsh.js` · offset 217812617 · sha256 `797f4100…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-m42kzzy0.js` offset 216395823.
+Undocumented; read at `chunk-2q0edvsh.js` offset 217812617.
 
 **Undocumented**
 
 ### `VisualStudioVersion`
 
-Source: `chunk-mbfze585.js` · offset 178170704 · sha256 `c05a1490…`
+Source: `chunk-w397p0p5.js` · offset 179200747 · sha256 `c05a1490…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-mbfze585.js` offset 178170704.
+Undocumented; read at `chunk-w397p0p5.js` offset 179200747.
 
 **Undocumented**
 
 ### `VSCODE_GIT_ASKPASS_MAIN`
 
-Source: `chunk-mbfze585.js` · offset 178170255 · sha256 `c0a2e4f9…` · 4 read sites
+Source: `chunk-w397p0p5.js` · offset 179200297 · sha256 `c0a2e4f9…` · 4 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178170255.
+Undocumented; read at `chunk-w397p0p5.js` offset 179200297.
 
 **Undocumented**
 
 ### `VTE_VERSION`
 
-Source: `chunk-mbfze585.js` · offset 178171294 · sha256 `28245ba2…` · 6 read sites
+Source: `chunk-w397p0p5.js` · offset 179201337 · sha256 `28245ba2…` · 6 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171294.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201337.
 
 **Undocumented**
 
 ### `WAYLAND_DISPLAY`
 
-Source: `chunk-1y575bx8.js` · offset 185205602 · sha256 `71497285…` · 2 read sites
+Source: `chunk-v4er1c8e.js` · offset 186321022 · sha256 `71497285…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-1y575bx8.js` offset 185205602.
+Undocumented; read at `chunk-v4er1c8e.js` offset 186321022.
 
 **Undocumented**
 
 ### `WEBSITE_SITE_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178174931 · sha256 `861142fb…`
+Source: `chunk-w397p0p5.js` · offset 179204974 · sha256 `861142fb…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174931.
+Undocumented; read at `chunk-w397p0p5.js` offset 179204974.
 
 **Undocumented**
 
 ### `WEBSITE_SKU`
 
-Source: `chunk-mbfze585.js` · offset 178174962 · sha256 `4e4acf04…`
+Source: `chunk-w397p0p5.js` · offset 179205005 · sha256 `4e4acf04…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178174962.
+Undocumented; read at `chunk-w397p0p5.js` offset 179205005.
 
 **Undocumented**
 
 ### `WINDIR`
 
-Source: `chunk-c8t4wb5r.js` · offset 196528124 · sha256 `9be0888a…` · 2 read sites
+Source: `chunk-y1yh8mjf.js` · offset 197765754 · sha256 `9be0888a…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-c8t4wb5r.js` offset 196528124.
+Undocumented; read at `chunk-y1yh8mjf.js` offset 197765754.
 
 **Undocumented**
 
 ### `WSL_DISTRO_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178171793 · sha256 `d98afa7f…` · 9 read sites
+Source: `chunk-w397p0p5.js` · offset 179201836 · sha256 `d98afa7f…` · 9 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171793.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201836.
 
 **Undocumented**
 
 ### `WSL_INTEROP`
 
-Source: `chunk-amhtwhch.js` · offset 178152885 · sha256 `69779847…`
+Source: `chunk-w3s0xmfk.js` · offset 179182875 · sha256 `69779847…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-amhtwhch.js` offset 178152885.
+Undocumented; read at `chunk-w3s0xmfk.js` offset 179182875.
 
 **Undocumented**
 
 ### `WT_SESSION`
 
-Source: `chunk-jkt292h5.js` · offset 195664116 · sha256 `dff34227…` · 13 read sites
+Source: `chunk-7m87m84t.js` · offset 196894683 · sha256 `dff34227…` · 13 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 8 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-jkt292h5.js` offset 195664116.
+Undocumented; read at `chunk-7m87m84t.js` offset 196894683.
 
 **Undocumented**
 
 ### `XDG_CACHE_HOME`
 
-Source: `chunk-e2javxcw.js` · offset 214855748 · sha256 `fc06c22e…`
+Source: `chunk-9c8h1t30.js` · offset 216119232 · sha256 `fc06c22e…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-e2javxcw.js` offset 214855748.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216119232.
 
 **Undocumented**
 
 ### `XDG_CONFIG_HOME`
 
-Source: `chunk-8ptzhr8g.js` · offset 180384571 · sha256 `25bf23b7…` · 15 read sites
+Source: `chunk-9c8h1t30.js` · offset 216159909 · sha256 `7d8f5e18…` · 15 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-8ptzhr8g.js` offset 180384571.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216159909.
 
 **Undocumented**
 
 ### `XDG_DATA_HOME`
 
-Source: `chunk-cnrmsnz4.js` · offset 199483416 · sha256 `b4814b29…` · 2 read sites
+Source: `chunk-8p0q5f5t.js` · offset 200753281 · sha256 `b4814b29…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-cnrmsnz4.js` offset 199483416.
+Undocumented; read at `chunk-8p0q5f5t.js` offset 200753281.
 
 **Undocumented**
 
 ### `XDG_RUNTIME_DIR`
 
-Source: `chunk-5rsq52t8.js` · offset 200598020 · sha256 `d94ed14d…` · 3 read sites
+Source: `chunk-9c8h1t30.js` · offset 216119003 · sha256 `d94ed14d…` · 3 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-5rsq52t8.js` offset 200598020.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216119003.
 
 **Undocumented**
 
 ### `XDG_STATE_HOME`
 
-Source: `chunk-e2javxcw.js` · offset 214855769 · sha256 `6042ebf5…`
+Source: `chunk-9c8h1t30.js` · offset 216119253 · sha256 `6042ebf5…`
 
 Read as: string (trimmed; empty is treated as unset).
 
-Undocumented; read at `chunk-e2javxcw.js` offset 214855769.
+Undocumented; read at `chunk-9c8h1t30.js` offset 216119253.
 
 **Undocumented**
 
 ### `XTERM_VERSION`
 
-Source: `chunk-mbfze585.js` · offset 178171251 · sha256 `1f33c166…`
+Source: `chunk-w397p0p5.js` · offset 179201294 · sha256 `1f33c166…`
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-mbfze585.js` offset 178171251.
+Undocumented; read at `chunk-w397p0p5.js` offset 179201294.
 
 **Undocumented**
 
 ### `ZED_TERM`
 
-Source: `chunk-ckcph1xh.js` · offset 191511116 · sha256 `059fcfab…` · 2 read sites
+Source: `chunk-f4tdx2y5.js` · offset 192688248 · sha256 `059fcfab…` · 2 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-ckcph1xh.js` offset 191511116.
+Undocumented; read at `chunk-f4tdx2y5.js` offset 192688248.
 
 **Undocumented**
 
 ### `ZELLIJ`
 
-Source: `chunk-f2cpzzp9.js` · offset 206881560 · sha256 `87944217…` · 5 read sites
+Source: `chunk-avk2gknj.js` · offset 193116376 · sha256 `87944217…` · 5 read sites
 
 Read as: string (trimmed; empty is treated as unset).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false` (the value is trimmed first, so whitespace-only counts as unset).
 
-Undocumented; read at `chunk-f2cpzzp9.js` offset 206881560.
+Undocumented; read at `chunk-avk2gknj.js` offset 193116376.
 
 **Undocumented**
 
@@ -11581,7 +11681,7 @@ These are variables Claude Code sets. It either writes them into its own process
 
 ### `AGENT_PROXY_AUTH_TOKEN`
 
-Source: `chunk-9yd2evp3.js` · offset 210729526 · sha256 `941c0b00…`
+Source: `chunk-n9nj0gvt.js` · offset 212102578 · sha256 `941c0b00…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11593,7 +11693,7 @@ Also read by Claude Code; see its read entry.
 
 ### `AGENT_PROXY_URL`
 
-Source: `chunk-9yd2evp3.js` · offset 210729499 · sha256 `d62c59d0…`
+Source: `chunk-n9nj0gvt.js` · offset 212102551 · sha256 `d62c59d0…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11605,7 +11705,7 @@ Also read by Claude Code; see its read entry.
 
 ### `AI_AGENT`
 
-Source: `chunk-09m4fzsj.js` · offset 184516997 · sha256 `2812c5b5…` · 3 read sites
+Source: `chunk-j7rgjcpa.js` · offset 185646655 · sha256 `2ec8f9fa…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it); Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -11617,7 +11717,7 @@ Also read by Claude Code; see its read entry.
 
 ### `ALLOW_ANT_COMPUTER_USE_MCP`
 
-Source: `chunk-mbfze585.js` · offset 178205019 · sha256 `99f0ac98…`
+Source: `chunk-w397p0p5.js` · offset 179235358 · sha256 `183204c2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11629,7 +11729,7 @@ No read site found by this scan.
 
 ### `ANTHROPIC_API_KEY`
 
-Source: `chunk-y191025q.js` · offset 192207737 · sha256 `c4906342…`
+Source: `chunk-m8qgxh76.js` · offset 193390575 · sha256 `c4906342…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11643,7 +11743,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_AUTH_TOKEN`
 
-Source: `chunk-y191025q.js` · offset 192207697 · sha256 `62c1d0de…`
+Source: `chunk-m8qgxh76.js` · offset 193390535 · sha256 `62c1d0de…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11657,7 +11757,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_AWS_API_KEY`
 
-Source: `chunk-64smfct9.js` · offset 203756691 · sha256 `c0bd2dc3…` · 2 read sites
+Source: `chunk-v1s2t7sq.js` · offset 204931941 · sha256 `c0bd2dc3…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11671,7 +11771,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_CONFIG_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178205053 · sha256 `7dfba6f1…`
+Source: `chunk-w397p0p5.js` · offset 179235392 · sha256 `f2acf977…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11683,7 +11783,7 @@ Also read by Claude Code; see its read entry.
 
 ### `ANTHROPIC_DEFAULT_HAIKU_MODEL`
 
-Source: `chunk-2gyndh7q.js` · offset 194201880 · sha256 `50834b45…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181758779 · sha256 `afb015bf…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11697,7 +11797,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_OPUS_MODEL`
 
-Source: `chunk-2gyndh7q.js` · offset 194200645 · sha256 `05bfc132…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181758697 · sha256 `47f2f248…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11711,7 +11811,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_OPUS_MODEL_DESCRIPTION`
 
-Source: `chunk-2gyndh7q.js` · offset 194202018 · sha256 `fe95d446…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181757923 · sha256 `8ab48aa2…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11725,7 +11825,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_OPUS_MODEL_NAME`
 
-Source: `chunk-2gyndh7q.js` · offset 194201957 · sha256 `a74fbf1a…` · 3 read sites
+Source: `chunk-721k6cws.js` · offset 181757873 · sha256 `9fabc0e1…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11739,7 +11839,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ANTHROPIC_DEFAULT_SONNET_MODEL`
 
-Source: `chunk-2gyndh7q.js` · offset 194200562 · sha256 `4e81029a…` · 2 read sites
+Source: `chunk-721k6cws.js` · offset 181758614 · sha256 `c46b40fb…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11753,7 +11853,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `AWS_BEARER_TOKEN_BEDROCK`
 
-Source: `chunk-64smfct9.js` · offset 203755738 · sha256 `e2478441…` · 2 read sites
+Source: `chunk-v1s2t7sq.js` · offset 204930988 · sha256 `e2478441…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11767,7 +11867,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `BASH_MAX_OUTPUT_LENGTH`
 
-Source: `chunk-mbfze585.js` · offset 178205081 · sha256 `dc67c87b…`
+Source: `chunk-w397p0p5.js` · offset 179235420 · sha256 `11c36b3b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11781,7 +11881,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `BROWSER`
 
-Source: `chunk-jx00zmk1.js` · offset 205752809 · sha256 `a304f7a4…` · 4 read sites
+Source: `chunk-88np9eym.js` · offset 207063665 · sha256 `a304f7a4…` · 4 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11793,7 +11893,7 @@ Also read by Claude Code; see its read entry.
 
 ### `BUN_INSTALL_CACHE_DIR`
 
-Source: `chunk-mphp7acd.js` · offset 189370896 · sha256 `7cb82960…`
+Source: `chunk-acxptg39.js` · offset 190570380 · sha256 `cca8c754…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11805,7 +11905,7 @@ No read site found by this scan.
 
 ### `BUN_OPTIONS`
 
-Source: `chunk-mphp7acd.js` · offset 186599853 · sha256 `1af89f3d…`
+Source: `chunk-acxptg39.js` · offset 187755257 · sha256 `1af89f3d…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -11817,7 +11917,7 @@ No read site found by this scan.
 
 ### `CCR_AGENT_PROXY_CA_CERT_B64`
 
-Source: `chunk-9yd2evp3.js` · offset 210729963 · sha256 `af759b13…`
+Source: `chunk-n9nj0gvt.js` · offset 212103052 · sha256 `af759b13…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11829,7 +11929,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CCR_AGENT_PROXY_INCLUDE_HOSTS`
 
-Source: `chunk-9yd2evp3.js` · offset 210729825 · sha256 `46dce939…`
+Source: `chunk-n9nj0gvt.js` · offset 212102914 · sha256 `46dce939…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11841,7 +11941,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CCR_AGENT_PROXY_RECEIVE_GATE_DISABLED`
 
-Source: `chunk-9yd2evp3.js` · offset 210729866 · sha256 `43aec7c7…`
+Source: `chunk-n9nj0gvt.js` · offset 212102955 · sha256 `43aec7c7…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11853,7 +11953,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CCR_AGENT_PROXY_RELAY_MODE`
 
-Source: `chunk-9yd2evp3.js` · offset 210729787 · sha256 `e570d58a…`
+Source: `chunk-n9nj0gvt.js` · offset 212102876 · sha256 `e570d58a…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11865,7 +11965,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CCR_AGENT_PROXY_UPLOAD_GATE_DISABLED`
 
-Source: `chunk-9yd2evp3.js` · offset 210729915 · sha256 `66a00414…`
+Source: `chunk-n9nj0gvt.js` · offset 212103004 · sha256 `66a00414…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -11877,7 +11977,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CCR_SESSION_PROFILE`
 
-Source: `chunk-mbfze585.js` · offset 178205111 · sha256 `7fa6ed02…`
+Source: `chunk-w397p0p5.js` · offset 179235450 · sha256 `07cce1a7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11889,7 +11989,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUBBIT`
 
-Source: `chunk-mbfze585.js` · offset 178205138 · sha256 `d6e11091…`
+Source: `chunk-w397p0p5.js` · offset 179235477 · sha256 `a82614be…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11901,7 +12001,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_AFK_COUNTDOWN_MS`
 
-Source: `chunk-mbfze585.js` · offset 178205172 · sha256 `791e5f41…`
+Source: `chunk-w397p0p5.js` · offset 179235511 · sha256 `5be78e78…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11915,7 +12015,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AFK_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178205203 · sha256 `b5825b3f…`
+Source: `chunk-w397p0p5.js` · offset 179235542 · sha256 `a1ecd017…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11929,7 +12029,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AFTER_LAST_COMPACT`
 
-Source: `chunk-mbfze585.js` · offset 178205232 · sha256 `431a14c2…`
+Source: `chunk-w397p0p5.js` · offset 179235571 · sha256 `d167b7ef…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11941,7 +12041,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_AGENT_SDK_CLIENT_APP`
 
-Source: `chunk-mbfze585.js` · offset 178205293 · sha256 `a6298536…`
+Source: `chunk-w397p0p5.js` · offset 179235632 · sha256 `e34dec72…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11953,7 +12053,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_AGENT_SDK_DISABLE_BUILTIN_AGENTS`
 
-Source: `chunk-mbfze585.js` · offset 178205328 · sha256 `fa80dede…`
+Source: `chunk-w397p0p5.js` · offset 179235667 · sha256 `c5b53e4f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11967,7 +12067,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AGENT_SDK_DISABLE_MCP_MANIFESTS`
 
-Source: `chunk-mbfze585.js` · offset 178205375 · sha256 `7149cbaa…`
+Source: `chunk-w397p0p5.js` · offset 179235714 · sha256 `c3336b61…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11979,7 +12079,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_AGENT_SDK_MCP_NO_PREFIX`
 
-Source: `chunk-mbfze585.js` · offset 178205421 · sha256 `c1f7d373…`
+Source: `chunk-w397p0p5.js` · offset 179235760 · sha256 `aa26fa32…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -11993,7 +12093,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AGENT_SDK_VERSION`
 
-Source: `chunk-j0381q8k.js` · offset 201654183 · sha256 `f060c8d9…` · 2 read sites
+Source: `chunk-kmsvjk2z.js` · offset 202930927 · sha256 `f060c8d9…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12005,7 +12105,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_AGENTS_SELECT`
 
-Source: `chunk-9975a2ae.js` · offset 196166680 · sha256 `fac71fa9…` · 6 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196589428 · sha256 `00378fe9…` · 6 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12017,7 +12117,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_ARTIFACT_HOST_GRANT`
 
-Source: `chunk-mbfze585.js` · offset 178205491 · sha256 `1769a223…`
+Source: `chunk-w397p0p5.js` · offset 179235830 · sha256 `d88f2a67…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12029,7 +12129,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_ASYNC_AGENT_STALL_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178205525 · sha256 `57bc84ef…`
+Source: `chunk-w397p0p5.js` · offset 179235864 · sha256 `471dbf29…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12043,7 +12143,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AUTO_BACKGROUND_TASKS`
 
-Source: `chunk-mbfze585.js` · offset 178205607 · sha256 `857902f0…`
+Source: `chunk-w397p0p5.js` · offset 179235946 · sha256 `dcf029e6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12057,7 +12157,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`
 
-Source: `chunk-mbfze585.js` · offset 178205568 · sha256 `0c9a7c66…`
+Source: `chunk-w397p0p5.js` · offset 179235907 · sha256 `0cd83f12…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12071,7 +12171,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178205643 · sha256 `7d721a6e…`
+Source: `chunk-w397p0p5.js` · offset 179235982 · sha256 `b7e94f8a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12085,7 +12185,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_BG_AUTH_SNAPSHOT_PATH`
 
-Source: `chunk-e2javxcw.js` · offset 214912717 · sha256 `87bff846…` · 6 read sites
+Source: `chunk-9c8h1t30.js` · offset 216176272 · sha256 `87bff846…` · 6 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12097,7 +12197,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_AUTO_MEMORY_OFF`
 
-Source: `chunk-mbfze585.js` · offset 178205727 · sha256 `af4067c5…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179236066 · sha256 `cf02f509…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12109,7 +12209,7 @@ No read site found by this scan.
 
 ### `CLAUDE_BG_BACKEND`
 
-Source: `chunk-mbfze585.js` · offset 178205760 · sha256 `3b2d23eb…`
+Source: `chunk-w397p0p5.js` · offset 179236099 · sha256 `b5aef623…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12121,7 +12221,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_CLAIM_AUTH`
 
-Source: `chunk-mbfze585.js` · offset 178205785 · sha256 `a9152038…` · 2 read sites
+Source: `chunk-7jz8j2fc.js` · offset 193455241 · sha256 `16c0cd82…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12133,7 +12233,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_DISPATCHER_RATE_LIMIT_TIER`
 
-Source: `chunk-mbfze585.js` · offset 178205813 · sha256 `913c82c8…`
+Source: `chunk-w397p0p5.js` · offset 179236152 · sha256 `d9b7aec7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12145,7 +12245,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_DISPATCHER_SUBSCRIPTION_TYPE`
 
-Source: `chunk-mbfze585.js` · offset 178205857 · sha256 `2367b935…`
+Source: `chunk-w397p0p5.js` · offset 179236196 · sha256 `da913f4b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12157,7 +12257,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_ISOLATION`
 
-Source: `chunk-mbfze585.js` · offset 178205903 · sha256 `25c3bc9b…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179236242 · sha256 `19101185…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12169,7 +12269,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_MEMORY_TOGGLED_OFF`
 
-Source: `chunk-mbfze585.js` · offset 178205930 · sha256 `497d8e4c…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179236269 · sha256 `79d92601…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12181,7 +12281,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_POST_CLEAR_RESPAWN`
 
-Source: `chunk-mbfze585.js` · offset 178205966 · sha256 `0b6b1025…`
+Source: `chunk-w397p0p5.js` · offset 179236305 · sha256 `d60067c6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12193,7 +12293,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_PTY_AUTH`
 
-Source: `chunk-aa430wh3.js` · offset 196241235 · sha256 `7d7017df…` · 2 read sites
+Source: `chunk-4ahd91a1.js` · offset 197477590 · sha256 `7d7017df…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12205,7 +12305,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_RENDEZVOUS_SOCK`
 
-Source: `chunk-jx00zmk1.js` · offset 205756481 · sha256 `503dc6b9…` · 2 read sites
+Source: `chunk-88np9eym.js` · offset 207067337 · sha256 `503dc6b9…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12217,7 +12317,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_RV_AUTH`
 
-Source: `chunk-jx00zmk1.js` · offset 205756552 · sha256 `a04d6c36…` · 2 read sites
+Source: `chunk-88np9eym.js` · offset 207067408 · sha256 `a04d6c36…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12229,7 +12329,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_SESSION_PERMISSION_RULES`
 
-Source: `chunk-mbfze585.js` · offset 178206086 · sha256 `e424e5fc…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179236425 · sha256 `6d8dbfb6…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12241,7 +12341,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_SOCKET_TOKENS_PATH`
 
-Source: `chunk-aa430wh3.js` · offset 196241444 · sha256 `083017bf…` · 4 read sites
+Source: `chunk-4ahd91a1.js` · offset 197477799 · sha256 `083017bf…` · 4 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12253,7 +12353,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_SOURCE`
 
-Source: `chunk-mbfze585.js` · offset 178206164 · sha256 `0b874b51…`
+Source: `chunk-w397p0p5.js` · offset 179236503 · sha256 `8eb3b637…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12265,7 +12365,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_STARTUP_WEDGE_MS`
 
-Source: `chunk-mbfze585.js` · offset 178206188 · sha256 `42db3f37…`
+Source: `chunk-w397p0p5.js` · offset 179236527 · sha256 `b4aca2cf…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12277,7 +12377,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_TCC_DISCLAIMED`
 
-Source: `chunk-aa430wh3.js` · offset 196240400 · sha256 `22bfd5ab…` · 2 read sites
+Source: `chunk-4ahd91a1.js` · offset 197476755 · sha256 `22bfd5ab…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12289,7 +12389,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BG_WORKSPACE_TRUSTED`
 
-Source: `chunk-mbfze585.js` · offset 178206254 · sha256 `ee841635…`
+Source: `chunk-w397p0p5.js` · offset 179236593 · sha256 `a7a96a03…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12301,7 +12401,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178206289 · sha256 `f2cead74…`
+Source: `chunk-w397p0p5.js` · offset 179236628 · sha256 `b711dcf4…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12313,7 +12413,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_OAUTH_TOKEN`
 
-Source: `chunk-mbfze585.js` · offset 178206319 · sha256 `a0197c79…`
+Source: `chunk-w397p0p5.js` · offset 179236658 · sha256 `9f08d911…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12325,7 +12425,7 @@ No read site found by this scan.
 
 ### `CLAUDE_BRIDGE_REATTACH_GROUPING`
 
-Source: `chunk-mbfze585.js` · offset 178206352 · sha256 `44f53b82…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740278 · sha256 `a9bd88e5…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12337,7 +12437,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_REATTACH_NO_BACKFILL`
 
-Source: `chunk-mbfze585.js` · offset 178206391 · sha256 `9781c6ca…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740434 · sha256 `82ef3b77…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12349,7 +12449,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_REATTACH_OUTBOUND_ONLY`
 
-Source: `chunk-mbfze585.js` · offset 178206433 · sha256 `b371e19d…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740222 · sha256 `7e737ccb…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12361,7 +12461,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_REATTACH_OWNER_ACCT`
 
-Source: `chunk-mbfze585.js` · offset 178206477 · sha256 `7f6724be…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740329 · sha256 `0fc6ce2a…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12373,7 +12473,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_REATTACH_OWNER_ORG`
 
-Source: `chunk-mbfze585.js` · offset 178206518 · sha256 `9d5ed0da…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740382 · sha256 `71e8aac8…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12385,7 +12485,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_REATTACH_SEQ`
 
-Source: `chunk-mbfze585.js` · offset 178206558 · sha256 `d676ae84…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740176 · sha256 `f1248945…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12397,7 +12497,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_REATTACH_SESSION`
 
-Source: `chunk-mbfze585.js` · offset 178206592 · sha256 `3ce766de…` · 2 read sites
+Source: `chunk-31av54vc.js` · offset 215740126 · sha256 `96f8d3f0…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12409,7 +12509,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_BRIDGE_SESSION_INGRESS_URL`
 
-Source: `chunk-mbfze585.js` · offset 178206630 · sha256 `3120ce1e…`
+Source: `chunk-w397p0p5.js` · offset 179236969 · sha256 `845bfc42…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12421,7 +12521,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CHROME_PAIRED_DEVICE_ID`
 
-Source: `chunk-mbfze585.js` · offset 178206671 · sha256 `0e49e0e2…`
+Source: `chunk-w397p0p5.js` · offset 179237010 · sha256 `bc9b4383…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12433,7 +12533,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CHROME_PERMISSION_MODE`
 
-Source: `chunk-mbfze585.js` · offset 178206709 · sha256 `f9d1acdb…`
+Source: `chunk-w397p0p5.js` · offset 179237048 · sha256 `b6327059…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12445,7 +12545,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CHROME_TAB_GROUP_KEY`
 
-Source: `chunk-0a47xg8f.js` · offset 178236187 · sha256 `e8684ede…` · 2 read sites
+Source: `chunk-p614p40d.js` · offset 179266831 · sha256 `e8684ede…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12457,7 +12557,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CLIENT_PRESENCE_FILE`
 
-Source: `chunk-mbfze585.js` · offset 178206781 · sha256 `f240b3b8…`
+Source: `chunk-w397p0p5.js` · offset 179237120 · sha256 `62cd9576…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12471,7 +12571,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_3P_PROBE_WROTE_HAIKU_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180943849 · sha256 `2d39b985…`
+Source: `chunk-721k6cws.js` · offset 181751899 · sha256 `2d39b985…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12483,7 +12583,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_3P_PROBE_WROTE_OPUS_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180943754 · sha256 `4cf5a5d3…`
+Source: `chunk-721k6cws.js` · offset 181751804 · sha256 `4cf5a5d3…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12495,7 +12595,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_3P_PROBE_WROTE_SONNET_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180943658 · sha256 `b02f4a80…`
+Source: `chunk-721k6cws.js` · offset 181751708 · sha256 `b02f4a80…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12507,7 +12607,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_3P_SEEDED_OPUS_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180944050 · sha256 `5189181f…`
+Source: `chunk-721k6cws.js` · offset 181752100 · sha256 `5189181f…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12519,7 +12619,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_3P_SEEDED_SONNET_DEFAULT`
 
-Source: `chunk-nankzm0s.js` · offset 180943959 · sha256 `7fae7197…`
+Source: `chunk-721k6cws.js` · offset 181752009 · sha256 `7fae7197…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12531,7 +12631,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ACTION`
 
-Source: `chunk-mbfze585.js` · offset 178206816 · sha256 `03e09a19…`
+Source: `chunk-w397p0p5.js` · offset 179237155 · sha256 `f01d7a16…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12543,7 +12643,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD`
 
-Source: `chunk-mbfze585.js` · offset 178206842 · sha256 `e3ec3072…`
+Source: `chunk-w397p0p5.js` · offset 179237181 · sha256 `5a976b24…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12557,7 +12657,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ADDITIONAL_PROTECTION`
 
-Source: `chunk-mbfze585.js` · offset 178206894 · sha256 `945d75a6…`
+Source: `chunk-w397p0p5.js` · offset 179237233 · sha256 `96484fc1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12569,7 +12669,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ADOPT_UNDERIVABLE_PARKED_PERMISSION`
 
-Source: `chunk-mbfze585.js` · offset 178206935 · sha256 `58b1c002…`
+Source: `chunk-w397p0p5.js` · offset 179237274 · sha256 `bafdfbdd…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12581,7 +12681,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_AGENT`
 
-Source: `chunk-dgp2yyqt.js` · offset 195022145 · sha256 `7b925f03…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196220087 · sha256 `7b925f03…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12593,7 +12693,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_AGENT_VIEW_RELAUNCH`
 
-Source: `chunk-b60bqfbx.js` · offset 185681913 · sha256 `5aa4148a…`
+Source: `chunk-4mmvdwwg.js` · offset 186801592 · sha256 `babb87d9…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12605,7 +12705,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ALT_SCREEN_FULL_REPAINT`
 
-Source: `chunk-van5my03.js` · offset 195650768 · sha256 `7afedd7f…`
+Source: `chunk-w02x2qbg.js` · offset 196881294 · sha256 `7afedd7f…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12619,7 +12719,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_APPEND_PROMPT_HEAD`
 
-Source: `chunk-dgp2yyqt.js` · offset 194983796 · sha256 `9f46488c…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196181658 · sha256 `9f46488c…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12631,7 +12731,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ARTIFACT`
 
-Source: `chunk-mbfze585.js` · offset 178207053 · sha256 `7e158589…`
+Source: `chunk-w397p0p5.js` · offset 179237392 · sha256 `4bfc7248…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12643,7 +12743,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ARTIFACT_ASSET_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178207162 · sha256 `353fd152…`
+Source: `chunk-w397p0p5.js` · offset 179237501 · sha256 `e035193d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12655,7 +12755,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_ARTIFACT_AUTO_OPEN`
 
-Source: `chunk-mbfze585.js` · offset 178207205 · sha256 `b92ee5e6…`
+Source: `chunk-w397p0p5.js` · offset 179237544 · sha256 `de61fd76…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12669,7 +12769,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_ARTIFACT_LIVE_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178207243 · sha256 `d6d7d50b…`
+Source: `chunk-w397p0p5.js` · offset 179237582 · sha256 `2bc603a9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12681,7 +12781,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_ARTIFACT_SYNC_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178207285 · sha256 `d165c4c0…`
+Source: `chunk-w397p0p5.js` · offset 179237624 · sha256 `d20a56ec…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12693,7 +12793,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_ARTIFACT_VIEWER_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178207327 · sha256 `6977fb71…`
+Source: `chunk-w397p0p5.js` · offset 179237666 · sha256 `16a98341…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12705,7 +12805,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_ARTIFACTS_API_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178207081 · sha256 `a8697850…`
+Source: `chunk-w397p0p5.js` · offset 179237420 · sha256 `a0ac3456…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12717,7 +12817,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_ARTIFACTS_API_TOKEN`
 
-Source: `chunk-mbfze585.js` · offset 178207123 · sha256 `4b48fde8…`
+Source: `chunk-w397p0p5.js` · offset 179237462 · sha256 `4c77fd91…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12729,7 +12829,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ATTRIBUTION_STATUS_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178207371 · sha256 `83a24424…`
+Source: `chunk-w397p0p5.js` · offset 179237710 · sha256 `eb36c6c9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12741,7 +12841,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_AUTO_COMPACT_WINDOW`
 
-Source: `chunk-mbfze585.js` · offset 178207420 · sha256 `c5af87df…`
+Source: `chunk-w397p0p5.js` · offset 179237759 · sha256 `3a4a59bb…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12755,7 +12855,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AUTO_MODE_EXTERNAL_PERMISSIONS`
 
-Source: `chunk-mbfze585.js` · offset 178207459 · sha256 `be2ef116…`
+Source: `chunk-w397p0p5.js` · offset 179237798 · sha256 `7c0978d9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12767,7 +12867,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_AUTO_MODE_SERVER`
 
-Source: `chunk-z75es3hd.js` · offset 192114587 · sha256 `d3bfcb14…`
+Source: `chunk-zndbphx7.js` · offset 193295692 · sha256 `d3bfcb14…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12781,7 +12881,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_AUTO_MODE_TIER`
 
-Source: `chunk-mbfze585.js` · offset 178207509 · sha256 `e78a7e84…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179237848 · sha256 `075c5bf6…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12793,7 +12893,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BASE_REF`
 
-Source: `chunk-mbfze585.js` · offset 178207543 · sha256 `e42ea399…`
+Source: `chunk-w397p0p5.js` · offset 179237882 · sha256 `b36742bb…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12805,7 +12905,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BASE_REFS`
 
-Source: `chunk-mbfze585.js` · offset 178207571 · sha256 `98e7bd15…`
+Source: `chunk-w397p0p5.js` · offset 179237910 · sha256 `4d403bbb…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12817,7 +12917,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE`
 
-Source: `chunk-mbfze585.js` · offset 178207600 · sha256 `2e6f428c…`
+Source: `chunk-w397p0p5.js` · offset 179237939 · sha256 `0ef2efde…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12829,7 +12929,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_CHILD_ARTIFACT`
 
-Source: `chunk-mbfze585.js` · offset 178207643 · sha256 `291e6832…` · 3 read sites
+Source: `chunk-582bmdee.js` · offset 215387783 · sha256 `bc8da8e6…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12841,7 +12941,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_CHILD_AUTO_DEFAULT`
 
-Source: `chunk-mbfze585.js` · offset 178207684 · sha256 `8527c8c9…`
+Source: `chunk-w397p0p5.js` · offset 179238023 · sha256 `98b23e56…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12853,7 +12953,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_CHILD_MACHINE_SETTINGS`
 
-Source: `chunk-mbfze585.js` · offset 178207729 · sha256 `e4196573…`
+Source: `chunk-w397p0p5.js` · offset 179238068 · sha256 `45724059…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12865,7 +12965,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_MCP_CARRIER`
 
-Source: `chunk-758hjhx1.js` · offset 180369120 · sha256 `53dd4137…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187389601 · sha256 `6a80d30e…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12877,7 +12977,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_OWNER_ACCOUNT_UUID`
 
-Source: `chunk-mbfze585.js` · offset 178207816 · sha256 `bd63fea2…`
+Source: `chunk-w397p0p5.js` · offset 179238155 · sha256 `fed0c24c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12889,7 +12989,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_OWNER_ORG_UUID`
 
-Source: `chunk-mbfze585.js` · offset 178207861 · sha256 `10170efa…`
+Source: `chunk-w397p0p5.js` · offset 179238200 · sha256 `5b8816d9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12901,7 +13001,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_PROMPT_SHA256`
 
-Source: `chunk-mbfze585.js` · offset 178207902 · sha256 `33c792a8…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187389804 · sha256 `df1f185a…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12913,7 +13013,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIDGE_SESSION_ID`
 
-Source: `chunk-6jn8dvb3.js` · offset 185275333 · sha256 `8549f3ec…` · 3 read sites
+Source: `chunk-vxzk07xv.js` · offset 186390753 · sha256 `8549f3ec…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -12927,7 +13027,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_BRIDGE_SOURCE_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178207979 · sha256 `e167aeb1…`
+Source: `chunk-w397p0p5.js` · offset 179238318 · sha256 `290f3aa5…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12939,7 +13039,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_BRIEF`
 
-Source: `chunk-mbfze585.js` · offset 178208016 · sha256 `9a93b458…`
+Source: `chunk-w397p0p5.js` · offset 179238355 · sha256 `18dfc4dc…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12951,7 +13051,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_BRIEF_UPLOAD`
 
-Source: `chunk-mbfze585.js` · offset 178208041 · sha256 `3f54dc5b…`
+Source: `chunk-w397p0p5.js` · offset 179238380 · sha256 `ea48c412…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12963,7 +13063,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_CCR_SURFACE`
 
-Source: `chunk-mbfze585.js` · offset 178208073 · sha256 `c9f10067…`
+Source: `chunk-w397p0p5.js` · offset 179238412 · sha256 `190ab3b2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -12975,7 +13075,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_CHILD_SESSION`
 
-Source: `chunk-09m4fzsj.js` · offset 184516871 · sha256 `5ca39f62…`
+Source: `chunk-j7rgjcpa.js` · offset 185646529 · sha256 `5ca39f62…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -12989,7 +13089,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_CHROME_MCP_ORG_DENIED`
 
-Source: `chunk-amg94xhm.js` · offset 213019784 · sha256 `f90629e3…` · 2 read sites
+Source: `chunk-tgymbs42.js` · offset 214141104 · sha256 `f90629e3…` · 2 read sites
 
 Set for: stdio MCP servers.
 
@@ -13001,7 +13101,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_CLASSIFIER_SUMMARY`
 
-Source: `chunk-mbfze585.js` · offset 178208104 · sha256 `ab333f18…`
+Source: `chunk-w397p0p5.js` · offset 179238443 · sha256 `b0f3d903…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13013,7 +13113,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_CLIENT_DATA_URL`
 
-Source: `chunk-dgp2yyqt.js` · offset 195048368 · sha256 `5553bf4b…`
+Source: `chunk-5g8p9x0b.js` · offset 196246474 · sha256 `5553bf4b…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13025,7 +13125,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_CONFIG_PROBE`
 
-Source: `chunk-mbfze585.js` · offset 178208142 · sha256 `964c3294…`
+Source: `chunk-w397p0p5.js` · offset 179238481 · sha256 `835fa9d9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13035,9 +13135,21 @@ Also read by Claude Code; see its read entry.
 
 **Undocumented**
 
+### `CLAUDE_CODE_CONFIG_WATCH_EVENTS`
+
+Source: `chunk-m8qgxh76.js` · offset 193390655 · sha256 `e1ce0d4e…` · 2 read sites
+
+Set for: Claude Code's own process environment (inherited by children that receive it).
+
+Value: a runtime value; removed (set to undefined or deleted).
+
+Also read by Claude Code; see its read entry.
+
+**Undocumented**
+
 ### `CLAUDE_CODE_CONTAINER_ID`
 
-Source: `chunk-mbfze585.js` · offset 178208174 · sha256 `dd0f18f8…`
+Source: `chunk-w397p0p5.js` · offset 179238552 · sha256 `db65c0d0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13049,7 +13161,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_COORDINATOR_MODE`
 
-Source: `chunk-ebcyvbxn.js` · offset 185545240 · sha256 `deebb752…` · 3 read sites
+Source: `chunk-n1w9epc0.js` · offset 186660733 · sha256 `deebb752…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13061,7 +13173,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_COORDINATOR_SKILL_GUIDANCE`
 
-Source: `chunk-mbfze585.js` · offset 178208206 · sha256 `8797ed73…`
+Source: `chunk-w397p0p5.js` · offset 179238584 · sha256 `af7e919f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13073,7 +13185,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DAEMON_COLD_START`
 
-Source: `chunk-mbfze585.js` · offset 178208252 · sha256 `56a11cf0…`
+Source: `chunk-w397p0p5.js` · offset 179238630 · sha256 `f47a446e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13085,7 +13197,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DECSTBM`
 
-Source: `chunk-mbfze585.js` · offset 178208289 · sha256 `6ba6941b…`
+Source: `chunk-w397p0p5.js` · offset 179238667 · sha256 `8b476d18…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13097,7 +13209,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DESKTOP_APP_VERSION`
 
-Source: `chunk-mbfze585.js` · offset 178208316 · sha256 `3f654218…`
+Source: `chunk-w397p0p5.js` · offset 179238694 · sha256 `2e49e9e3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13109,7 +13221,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DEV_RAW_CHANGELOG_URL`
 
-Source: `chunk-mbfze585.js` · offset 178208355 · sha256 `d569aa59…`
+Source: `chunk-w397p0p5.js` · offset 179238733 · sha256 `272b8fc8…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13121,7 +13233,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_DISABLE_ATTRIBUTION_BASELINE_REUSE`
 
-Source: `chunk-mbfze585.js` · offset 178208396 · sha256 `cc649bb1…`
+Source: `chunk-w397p0p5.js` · offset 179238774 · sha256 `43ef2f4d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13133,7 +13245,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`
 
-Source: `chunk-mbfze585.js` · offset 178208450 · sha256 `4a94753a…`
+Source: `chunk-w397p0p5.js` · offset 179238828 · sha256 `d8123ca1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13147,7 +13259,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_CLAUDE_MDS`
 
-Source: `chunk-dgp2yyqt.js` · offset 195020550 · sha256 `1d80e502…`
+Source: `chunk-5g8p9x0b.js` · offset 196218492 · sha256 `1d80e502…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13161,7 +13273,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS`
 
-Source: `chunk-z75es3hd.js` · offset 192114694 · sha256 `547fd99f…`
+Source: `chunk-zndbphx7.js` · offset 193295799 · sha256 `547fd99f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13175,7 +13287,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_DISABLE_HOOK_FORWARDING`
 
-Source: `chunk-mbfze585.js` · offset 178208500 · sha256 `e486ae2c…`
+Source: `chunk-w397p0p5.js` · offset 179238878 · sha256 `db21a928…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13187,7 +13299,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DISABLE_PLUGIN_FORWARDING`
 
-Source: `chunk-mbfze585.js` · offset 178208543 · sha256 `07a9570a…`
+Source: `chunk-w397p0p5.js` · offset 179238921 · sha256 `b7213013…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13197,9 +13309,21 @@ Also read by Claude Code; see its read entry.
 
 **Undocumented**
 
+### `CLAUDE_CODE_DISABLE_STRUCTURED_OUTPUTS`
+
+Source: `chunk-zndbphx7.js` · offset 193295889 · sha256 `815be972…`
+
+Set for: an environment object Claude Code builds; the receiving process is not traced.
+
+Value: `1` (set only under a condition).
+
+Also read by Claude Code; see its read entry.
+
+**Undocumented**
+
 ### `CLAUDE_CODE_DISABLE_TURN_HANDOFF`
 
-Source: `chunk-mbfze585.js` · offset 178208588 · sha256 `a835d626…`
+Source: `chunk-w397p0p5.js` · offset 179238966 · sha256 `84c61046…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13211,7 +13335,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DISABLE_VITALS_EMITTER`
 
-Source: `chunk-mbfze585.js` · offset 178208628 · sha256 `a7b9915e…`
+Source: `chunk-w397p0p5.js` · offset 179239006 · sha256 `d595f244…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13223,7 +13347,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DISABLE_WORKING_SYNC`
 
-Source: `chunk-mbfze585.js` · offset 178208670 · sha256 `b04e28d3…`
+Source: `chunk-w397p0p5.js` · offset 179239048 · sha256 `2970e7c0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13235,7 +13359,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DONT_INHERIT_ENV`
 
-Source: `chunk-mbfze585.js` · offset 178208710 · sha256 `d33e53d1…`
+Source: `chunk-w397p0p5.js` · offset 179239088 · sha256 `423247f2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13247,7 +13371,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_DOWNLOAD_DEADLINE_MS_FOR_TESTING`
 
-Source: `chunk-mbfze585.js` · offset 178208746 · sha256 `6993ffe4…`
+Source: `chunk-w397p0p5.js` · offset 179239124 · sha256 `b713be3d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13259,7 +13383,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS`
 
-Source: `chunk-mbfze585.js` · offset 178208798 · sha256 `79af481a…`
+Source: `chunk-w397p0p5.js` · offset 179239176 · sha256 `dc8a1eb0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13271,7 +13395,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EMIT_STARTUP_TIMING`
 
-Source: `chunk-mbfze585.js` · offset 178208843 · sha256 `5d4a3c57…`
+Source: `chunk-w397p0p5.js` · offset 179239221 · sha256 `4b708589…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13283,7 +13407,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES`
 
-Source: `chunk-mbfze585.js` · offset 178208882 · sha256 `147671cd…`
+Source: `chunk-w397p0p5.js` · offset 179239260 · sha256 `37f0e318…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13295,7 +13419,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT`
 
-Source: `chunk-dgp2yyqt.js` · offset 194968320 · sha256 `b9040413…`
+Source: `chunk-5g8p9x0b.js` · offset 196166147 · sha256 `b9040413…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13307,7 +13431,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ENTRYPOINT`
 
-Source: `chunk-0a47xg8f.js` · offset 178236313 · sha256 `446a0dfc…` · 6 read sites
+Source: `chunk-p614p40d.js` · offset 179266957 · sha256 `446a0dfc…` · 6 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13319,7 +13443,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ENVIRONMENT_KIND`
 
-Source: `chunk-mbfze585.js` · offset 178208955 · sha256 `2831eb16…`
+Source: `chunk-w397p0p5.js` · offset 179239333 · sha256 `f491edc4…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13331,7 +13455,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ENVIRONMENT_RUNNER_VERSION`
 
-Source: `chunk-mbfze585.js` · offset 178208991 · sha256 `2aba8c98…`
+Source: `chunk-w397p0p5.js` · offset 179239369 · sha256 `0f661788…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13343,7 +13467,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EVAL_CONFINED`
 
-Source: `chunk-mbfze585.js` · offset 178209037 · sha256 `d6a1ba5e…`
+Source: `chunk-w397p0p5.js` · offset 179239415 · sha256 `9415de4d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13355,7 +13479,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EVAL_INTERVIEW_SESSION`
 
-Source: `chunk-e2javxcw.js` · offset 215028937 · sha256 `02ae815b…`
+Source: `chunk-9c8h1t30.js` · offset 216292492 · sha256 `02ae815b…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13367,7 +13491,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EXECPATH`
 
-Source: `chunk-mphp7acd.js` · offset 186599781 · sha256 `a4da5322…`
+Source: `chunk-acxptg39.js` · offset 187755185 · sha256 `a4da5322…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -13379,7 +13503,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_EXIT_AFTER_FIRST_RENDER`
 
-Source: `chunk-mbfze585.js` · offset 178209070 · sha256 `89e84f24…`
+Source: `chunk-w397p0p5.js` · offset 179239448 · sha256 `42599a08…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13391,7 +13515,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_EXIT_AFTER_STOP_DELAY`
 
-Source: `chunk-mbfze585.js` · offset 178209113 · sha256 `351ba814…`
+Source: `chunk-w397p0p5.js` · offset 179239491 · sha256 `d5387d15…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13405,7 +13529,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_EXTRA_BODY`
 
-Source: `chunk-z75es3hd.js` · offset 192114487 · sha256 `f495f99b…`
+Source: `chunk-zndbphx7.js` · offset 193295592 · sha256 `f495f99b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13419,7 +13543,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_FLAG_FETCH_WAIT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178209154 · sha256 `00757978…`
+Source: `chunk-w397p0p5.js` · offset 179239532 · sha256 `67f3b82e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13431,7 +13555,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_FOOTER_INDICATOR`
 
-Source: `chunk-mbfze585.js` · offset 178209192 · sha256 `10e8df3c…`
+Source: `chunk-w397p0p5.js` · offset 179239570 · sha256 `670e0d3b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13443,7 +13567,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_FORCE_BRIDGE`
 
-Source: `chunk-mbfze585.js` · offset 178209228 · sha256 `e4eea4aa…`
+Source: `chunk-w397p0p5.js` · offset 179239606 · sha256 `9441fab1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13455,7 +13579,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_FORCE_EVALUATE_MEMORY`
 
-Source: `chunk-mbfze585.js` · offset 178209260 · sha256 `24933701…`
+Source: `chunk-w397p0p5.js` · offset 179239638 · sha256 `f12cf632…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13467,7 +13591,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_FORCE_FULLSCREEN_UPSELL`
 
-Source: `chunk-mbfze585.js` · offset 178209301 · sha256 `fa504a3e…`
+Source: `chunk-w397p0p5.js` · offset 179239679 · sha256 `b3760376…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13479,7 +13603,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_FORCE_MEMORY_SURVEY`
 
-Source: `chunk-mbfze585.js` · offset 178209344 · sha256 `8814e64c…`
+Source: `chunk-w397p0p5.js` · offset 179239722 · sha256 `d80fbbfc…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13491,7 +13615,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_FORCE_TIP_ID`
 
-Source: `chunk-mbfze585.js` · offset 178209383 · sha256 `962226bb…`
+Source: `chunk-w397p0p5.js` · offset 179239761 · sha256 `46aca4bf…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13503,7 +13627,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_GATEWAY_TOKEN_FILE_DESCRIPTOR`
 
-Source: `chunk-mnp9k227.js` · offset 180501580 · sha256 `3b31760f…`
+Source: `chunk-kx3hbyfc.js` · offset 181285329 · sha256 `3b31760f…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13515,7 +13639,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_GIT_BASH_PATH`
 
-Source: `chunk-mbfze585.js` · offset 178209415 · sha256 `0e78d6f2…`
+Source: `chunk-w397p0p5.js` · offset 179239793 · sha256 `5dce8e92…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13529,7 +13653,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GLOB_TIMEOUT_SECONDS`
 
-Source: `chunk-mbfze585.js` · offset 178209448 · sha256 `9e69aeac…`
+Source: `chunk-w397p0p5.js` · offset 179239826 · sha256 `a3961d40…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13543,7 +13667,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_GOAL_CHECKIN_MINUTES`
 
-Source: `chunk-mbfze585.js` · offset 178209488 · sha256 `e2599632…`
+Source: `chunk-w397p0p5.js` · offset 179239866 · sha256 `52f839eb…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13557,7 +13681,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_HIDE_SETTINGS_HINT`
 
-Source: `chunk-mbfze585.js` · offset 178209528 · sha256 `d81b1b4e…`
+Source: `chunk-w397p0p5.js` · offset 179239906 · sha256 `d624f14f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13569,7 +13693,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOLD_REPORT_PARK_AT_INIT`
 
-Source: `chunk-mbfze585.js` · offset 178209566 · sha256 `2df73bdc…`
+Source: `chunk-w397p0p5.js` · offset 179239944 · sha256 `0e450bda…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13581,7 +13705,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOME_SEED_HOLD_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178209610 · sha256 `a4dd3534…`
+Source: `chunk-w397p0p5.js` · offset 179239988 · sha256 `91a2b78b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13593,7 +13717,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOME_SEED_VERDICT_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178209655 · sha256 `49b7e8be…`
+Source: `chunk-w397p0p5.js` · offset 179240033 · sha256 `67d2ae3c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13605,7 +13729,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOOKS_SAME_THREAD`
 
-Source: `chunk-01653fey.js` · offset 196320299 · sha256 `38d892b2…`
+Source: `chunk-k0apyej9.js` · offset 197557403 · sha256 `38d892b2…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -13617,7 +13741,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOST_CREDS_FILE`
 
-Source: `chunk-z75es3hd.js` · offset 192114398 · sha256 `00e86f7e…`
+Source: `chunk-zndbphx7.js` · offset 193295503 · sha256 `00e86f7e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13629,7 +13753,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOST_PLATFORM`
 
-Source: `chunk-mbfze585.js` · offset 178209703 · sha256 `5196b51b…`
+Source: `chunk-w397p0p5.js` · offset 179240081 · sha256 `83f3d35c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13641,7 +13765,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOST_PROMPT_SUPERSEDES_RECORD`
 
-Source: `chunk-mbfze585.js` · offset 178209736 · sha256 `78462a09…`
+Source: `chunk-w397p0p5.js` · offset 179240114 · sha256 `2a0aa73f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13653,7 +13777,31 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_HOST_SESSION_ID`
 
-Source: `chunk-mbfze585.js` · offset 178209785 · sha256 `94e410ce…`
+Source: `chunk-w397p0p5.js` · offset 179240163 · sha256 `2309448a…`
+
+Set for: an environment object Claude Code builds; the receiving process is not traced.
+
+Value: a runtime value.
+
+Also read by Claude Code; see its read entry.
+
+**Undocumented**
+
+### `CLAUDE_CODE_HOST_WORKTREE`
+
+Source: `chunk-w397p0p5.js` · offset 179240198 · sha256 `80534c96…`
+
+Set for: an environment object Claude Code builds; the receiving process is not traced.
+
+Value: a runtime value.
+
+Also read by Claude Code; see its read entry.
+
+**Undocumented**
+
+### `CLAUDE_CODE_HOST_WORKTREE_FENCE`
+
+Source: `chunk-w397p0p5.js` · offset 179240231 · sha256 `f900563b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13665,7 +13813,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_IDE_HOST_OVERRIDE`
 
-Source: `chunk-mbfze585.js` · offset 178209820 · sha256 `5db44d47…`
+Source: `chunk-w397p0p5.js` · offset 179240270 · sha256 `bae1cafb…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13679,7 +13827,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_IDLE_THRESHOLD_MINUTES`
 
-Source: `chunk-mbfze585.js` · offset 178209857 · sha256 `0d14f5d3…`
+Source: `chunk-w397p0p5.js` · offset 179240307 · sha256 `1661ebd6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13691,7 +13839,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_IDLE_TOKEN_THRESHOLD`
 
-Source: `chunk-mbfze585.js` · offset 178209899 · sha256 `1d523eae…`
+Source: `chunk-w397p0p5.js` · offset 179240349 · sha256 `980172a3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13703,7 +13851,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_INVOKED_SKILLS`
 
-Source: `chunk-mphp7acd.js` · offset 186599920 · sha256 `de042d2a…`
+Source: `chunk-acxptg39.js` · offset 187755324 · sha256 `de042d2a…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -13715,7 +13863,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_IS_COWORK`
 
-Source: `chunk-mbfze585.js` · offset 178209939 · sha256 `4741bf17…`
+Source: `chunk-w397p0p5.js` · offset 179240389 · sha256 `c0bdcd2b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13727,7 +13875,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_LEGACY_BUNDLE`
 
-Source: `chunk-mbfze585.js` · offset 178209968 · sha256 `93acfd26…`
+Source: `chunk-w397p0p5.js` · offset 179240418 · sha256 `5f161bac…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13739,7 +13887,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_LOOP_KEEPALIVE`
 
-Source: `chunk-mbfze585.js` · offset 178210001 · sha256 `cb450c61…`
+Source: `chunk-w397p0p5.js` · offset 179240451 · sha256 `6fca0da0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13751,7 +13899,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_LOOP_PERSISTENT`
 
-Source: `chunk-mbfze585.js` · offset 178210035 · sha256 `d9159a70…`
+Source: `chunk-w397p0p5.js` · offset 179240485 · sha256 `18f76a41…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13763,7 +13911,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MANAGED_SETTINGS_PATH`
 
-Source: `chunk-mbfze585.js` · offset 178210070 · sha256 `cd6c8772…`
+Source: `chunk-w397p0p5.js` · offset 179240520 · sha256 `c69479a3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13775,7 +13923,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_MARKETPLACE_NAME`
 
-Source: `chunk-fwf64yxz.js` · offset 183792101 · sha256 `8df357a4…`
+Source: `chunk-hjjz8p0n.js` · offset 184915962 · sha256 `8df357a4…`
 
 Set for: marketplace headersHelper command.
 
@@ -13787,7 +13935,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_MARKETPLACE_URL`
 
-Source: `chunk-fwf64yxz.js` · offset 183792055 · sha256 `b176eb5e…`
+Source: `chunk-hjjz8p0n.js` · offset 184915916 · sha256 `b176eb5e…`
 
 Set for: marketplace headersHelper command.
 
@@ -13799,7 +13947,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`
 
-Source: `chunk-mbfze585.js` · offset 178210111 · sha256 `a5de23ff…`
+Source: `chunk-w397p0p5.js` · offset 179240561 · sha256 `ffa8c0ff…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13813,7 +13961,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH`
 
-Source: `chunk-mbfze585.js` · offset 178210155 · sha256 `6d2427e9…`
+Source: `chunk-w397p0p5.js` · offset 179240605 · sha256 `f7abe66d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13827,7 +13975,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`
 
-Source: `chunk-mbfze585.js` · offset 178210201 · sha256 `58b75540…`
+Source: `chunk-w397p0p5.js` · offset 179240651 · sha256 `d6daa685…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13841,7 +13989,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`
 
-Source: `chunk-mbfze585.js` · offset 178210245 · sha256 `d54272ab…`
+Source: `chunk-w397p0p5.js` · offset 179240695 · sha256 `040c7800…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13855,7 +14003,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_ALLOWLIST_ENV`
 
-Source: `chunk-mbfze585.js` · offset 178210293 · sha256 `7e273fc6…`
+Source: `chunk-w397p0p5.js` · offset 179240743 · sha256 `e27e75f5…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13869,7 +14017,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_APPS_HOST`
 
-Source: `chunk-mbfze585.js` · offset 178210330 · sha256 `14af877b…`
+Source: `chunk-w397p0p5.js` · offset 179240780 · sha256 `bc10f890…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13881,7 +14029,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`
 
-Source: `chunk-mbfze585.js` · offset 178210363 · sha256 `826145cd…`
+Source: `chunk-w397p0p5.js` · offset 179240813 · sha256 `d6a03aa6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13895,7 +14043,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_CONNECTOR_PREWAIT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178210405 · sha256 `9b3ff028…`
+Source: `chunk-w397p0p5.js` · offset 179240855 · sha256 `b62d8265…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13907,7 +14055,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MCP_MEMORY_CGROUP`
 
-Source: `chunk-mbfze585.js` · offset 178210449 · sha256 `821cfdb4…`
+Source: `chunk-w397p0p5.js` · offset 179240899 · sha256 `2b6a5599…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13919,7 +14067,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MCP_PREWAIT_SERVERS`
 
-Source: `chunk-mbfze585.js` · offset 178210486 · sha256 `8a609d3f…`
+Source: `chunk-w397p0p5.js` · offset 179240936 · sha256 `08f10de6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13931,7 +14079,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MCP_PREWAIT_SERVERS_MS`
 
-Source: `chunk-mbfze585.js` · offset 178210525 · sha256 `411cd225…`
+Source: `chunk-w397p0p5.js` · offset 179240975 · sha256 `68bb0eb9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13943,7 +14091,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MCP_SERVER_NAME`
 
-Source: `chunk-8f36gf8z.js` · offset 212639793 · sha256 `0a578ed5…`
+Source: `chunk-71hm04bz.js` · offset 214002697 · sha256 `0a578ed5…`
 
 Set for: MCP server headersHelper command.
 
@@ -13955,7 +14103,7 @@ Documented: https://code.claude.com/docs/en/mcp
 
 ### `CLAUDE_CODE_MCP_SERVER_URL`
 
-Source: `chunk-8f36gf8z.js` · offset 212639823 · sha256 `024bb5f5…`
+Source: `chunk-71hm04bz.js` · offset 214002727 · sha256 `024bb5f5…`
 
 Set for: MCP server headersHelper command.
 
@@ -13967,7 +14115,7 @@ Documented: https://code.claude.com/docs/en/mcp
 
 ### `CLAUDE_CODE_MCP_STARTUP_WAIT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178210567 · sha256 `4bd4bce8…`
+Source: `chunk-w397p0p5.js` · offset 179241017 · sha256 `d215ab17…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13981,7 +14129,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 
-Source: `chunk-mbfze585.js` · offset 178210606 · sha256 `c8b8dfa0…`
+Source: `chunk-w397p0p5.js` · offset 179241056 · sha256 `7c45648f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -13995,7 +14143,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MEMORY_SUBAGENT_APPEND`
 
-Source: `chunk-mbfze585.js` · offset 178210647 · sha256 `b0c76e59…`
+Source: `chunk-w397p0p5.js` · offset 179241097 · sha256 `c8e714c1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14007,7 +14155,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_MESSAGING_SOCKET`
 
-Source: `chunk-1sb33067.js` · offset 210926574 · sha256 `0303406e…` · 4 read sites
+Source: `chunk-q308nzmf.js` · offset 212380236 · sha256 `ec872ff9…` · 4 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14021,7 +14169,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MESSAGING_TOKEN`
 
-Source: `chunk-1sb33067.js` · offset 210926615 · sha256 `038194ec…` · 4 read sites
+Source: `chunk-q308nzmf.js` · offset 212380277 · sha256 `6ac46f5c…` · 4 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14035,7 +14183,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_MOCK_REMOTE_SETTINGS`
 
-Source: `chunk-mbfze585.js` · offset 178210689 · sha256 `05b67802…`
+Source: `chunk-w397p0p5.js` · offset 179241139 · sha256 `42f7aff8…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14047,7 +14195,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_MOCK_TRIAL`
 
-Source: `chunk-mbfze585.js` · offset 178210729 · sha256 `417aa0b2…`
+Source: `chunk-w397p0p5.js` · offset 179241179 · sha256 `7dc2d00a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14059,11 +14207,11 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_OAUTH_TOKEN`
 
-Source: `chunk-8j1q755t.js` · offset 202120592 · sha256 `6c5df5de…` · 7 read sites
+Source: `chunk-721k6cws.js` · offset 182083531 · sha256 `888dadab…` · 7 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
-Value: removed (set to undefined or deleted); a runtime value.
+Value: a runtime value; removed (set to undefined or deleted).
 
 From docs: OAuth access token for claude.ai authentication.
 
@@ -14073,7 +14221,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_OVERRIDE_DATE`
 
-Source: `chunk-mbfze585.js` · offset 178210759 · sha256 `2fd5d270…`
+Source: `chunk-w397p0p5.js` · offset 179241209 · sha256 `45328ae7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14085,7 +14233,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_PARKED_PERMISSION_WAIT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178210792 · sha256 `5ced52e0…`
+Source: `chunk-w397p0p5.js` · offset 179241242 · sha256 `e2d898d8…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14097,7 +14245,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PARKED_RUN_BEFORE_CLEAR`
 
-Source: `chunk-mbfze585.js` · offset 178210837 · sha256 `fe501dc7…`
+Source: `chunk-w397p0p5.js` · offset 179241287 · sha256 `61bf42ec…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14109,7 +14257,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PARKED_STOP_RETIRES`
 
-Source: `chunk-mbfze585.js` · offset 178210880 · sha256 `5d6b5cdc…`
+Source: `chunk-w397p0p5.js` · offset 179241330 · sha256 `51bce392…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14121,7 +14269,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PERFORCE_MODE`
 
-Source: `chunk-mbfze585.js` · offset 178210919 · sha256 `acd5da96…`
+Source: `chunk-w397p0p5.js` · offset 179241369 · sha256 `f699025a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14135,7 +14283,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLAN_V2_AGENT_COUNT`
 
-Source: `chunk-mbfze585.js` · offset 178210952 · sha256 `679a4dea…`
+Source: `chunk-w397p0p5.js` · offset 179241402 · sha256 `05e574c5…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14147,7 +14295,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PLAN_V2_EXPLORE_AGENT_COUNT`
 
-Source: `chunk-mbfze585.js` · offset 178210991 · sha256 `2d04518c…`
+Source: `chunk-w397p0p5.js` · offset 179241441 · sha256 `42e8d906…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14159,7 +14307,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PLUGIN_ARCHIVE_URL`
 
-Source: `chunk-fwf64yxz.js` · offset 183792729 · sha256 `c4405f96…`
+Source: `chunk-hjjz8p0n.js` · offset 184916590 · sha256 `c4405f96…`
 
 Set for: plugin headersHelper command.
 
@@ -14171,7 +14319,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_PLUGIN_ATTRIBUTION`
 
-Source: `chunk-mbfze585.js` · offset 178211038 · sha256 `855e9a57…`
+Source: `chunk-w397p0p5.js` · offset 179241488 · sha256 `8995af34…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14183,7 +14331,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PLUGIN_CACHE_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178211076 · sha256 `927159b2…`
+Source: `chunk-w397p0p5.js` · offset 179241526 · sha256 `77f72bda…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14197,7 +14345,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_DIRS`
 
-Source: `chunk-2qkrgkcd.js` · offset 192183248 · sha256 `e866bde0…` · 2 read sites
+Source: `chunk-cqbt8tx8.js` · offset 193364524 · sha256 `e866bde0…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14211,7 +14359,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178211112 · sha256 `e6fe86b3…`
+Source: `chunk-w397p0p5.js` · offset 179241562 · sha256 `4409da08…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14225,7 +14373,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PLUGIN_NAME`
 
-Source: `chunk-fwf64yxz.js` · offset 183792692 · sha256 `60d6a445…`
+Source: `chunk-hjjz8p0n.js` · offset 184916553 · sha256 `60d6a445…`
 
 Set for: plugin headersHelper command.
 
@@ -14237,7 +14385,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_PLUGIN_SEED_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178211153 · sha256 `8279f285…`
+Source: `chunk-w397p0p5.js` · offset 179241603 · sha256 `88aa0e98…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14251,7 +14399,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_POST_TURN_MEMORY`
 
-Source: `chunk-mbfze585.js` · offset 178211188 · sha256 `a09a8e7c…`
+Source: `chunk-w397p0p5.js` · offset 179241638 · sha256 `b7279ec8…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14263,7 +14411,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_POST_TURN_MEMORY_CONFIG`
 
-Source: `chunk-mbfze585.js` · offset 178211224 · sha256 `eb010882…`
+Source: `chunk-w397p0p5.js` · offset 179241674 · sha256 `5d899bad…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14275,7 +14423,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_POST_TURN_MEMORY_SYNC`
 
-Source: `chunk-mbfze585.js` · offset 178211267 · sha256 `6bf4575c…`
+Source: `chunk-w397p0p5.js` · offset 179241717 · sha256 `8581f61a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14287,7 +14435,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_POWERUP_ONBOARDING`
 
-Source: `chunk-mbfze585.js` · offset 178211308 · sha256 `944e2be8…`
+Source: `chunk-w397p0p5.js` · offset 179241758 · sha256 `bac42c23…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14299,7 +14447,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_PROJECT_DIR_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178211346 · sha256 `347319bc…`
+Source: `chunk-w397p0p5.js` · offset 179241796 · sha256 `bd8c9c98…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14313,7 +14461,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_PROXY_AUTHENTICATE`
 
-Source: `chunk-bv2dmc76.js` · offset 190308346 · sha256 `3233d74f…` · 2 read sites
+Source: `chunk-g5brps3g.js` · offset 180162574 · sha256 `1dac61b0…` · 2 read sites
 
 Set for: proxy authorization command.
 
@@ -14325,7 +14473,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_PROXY_HOST`
 
-Source: `chunk-bv2dmc76.js` · offset 190308313 · sha256 `e651775d…` · 2 read sites
+Source: `chunk-g5brps3g.js` · offset 180162541 · sha256 `2607374e…` · 2 read sites
 
 Set for: proxy authorization command.
 
@@ -14337,7 +14485,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_PROXY_URL`
 
-Source: `chunk-bv2dmc76.js` · offset 190308265 · sha256 `a68a4b7d…` · 2 read sites
+Source: `chunk-g5brps3g.js` · offset 180162509 · sha256 `bf82ec43…` · 2 read sites
 
 Set for: proxy authorization command.
 
@@ -14349,7 +14497,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178211382 · sha256 `f086d312…`
+Source: `chunk-w397p0p5.js` · offset 179241832 · sha256 `3c821fe5…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14361,7 +14509,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_QUESTION_EXTENDED`
 
-Source: `chunk-mbfze585.js` · offset 178211423 · sha256 `9b8cd076…`
+Source: `chunk-w397p0p5.js` · offset 179241873 · sha256 `de6f1690…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14373,7 +14521,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_QUESTION_OPTIONAL_DESCRIPTIONS`
 
-Source: `chunk-mbfze585.js` · offset 178211460 · sha256 `cf695f0e…`
+Source: `chunk-w397p0p5.js` · offset 179241910 · sha256 `8401afc5…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14385,7 +14533,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_QUESTION_PREVIEW_FORMAT`
 
-Source: `chunk-mbfze585.js` · offset 178211510 · sha256 `95c080a8…`
+Source: `chunk-w397p0p5.js` · offset 179241960 · sha256 `10d391a2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14397,7 +14545,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RATE_LIMIT_TIER`
 
-Source: `chunk-mnp9k227.js` · offset 180499280 · sha256 `cce5dc89…` · 2 read sites
+Source: `chunk-kx3hbyfc.js` · offset 181283029 · sha256 `cce5dc89…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14409,7 +14557,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RELAUNCH_HOME_TRUST`
 
-Source: `chunk-mbfze585.js` · offset 178211553 · sha256 `ee1e5b00…`
+Source: `chunk-w397p0p5.js` · offset 179242003 · sha256 `1ef588b8…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14421,7 +14569,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RELAUNCH_TERMINAL_SIZE`
 
-Source: `chunk-j3y05f4x.js` · offset 192044243 · sha256 `855e6b83…` · 2 read sites
+Source: `chunk-84wh0q6p.js` · offset 193225181 · sha256 `f73f513a…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14433,7 +14581,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_REMOTE`
 
-Source: `chunk-mbfze585.js` · offset 178211634 · sha256 `357413c3…`
+Source: `chunk-w397p0p5.js` · offset 179242084 · sha256 `ac14008f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14447,7 +14595,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_REMOTE_ENVIRONMENT_TYPE`
 
-Source: `chunk-mbfze585.js` · offset 178211660 · sha256 `f36511fb…`
+Source: `chunk-w397p0p5.js` · offset 179242110 · sha256 `2ea79214…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14459,7 +14607,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_REMOTE_HERMETIC_MODE`
 
-Source: `chunk-mbfze585.js` · offset 178211703 · sha256 `9f387483…`
+Source: `chunk-w397p0p5.js` · offset 179242153 · sha256 `f19302f1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14471,7 +14619,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_REMOTE_MEMORY_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178211743 · sha256 `9e7f35f9…`
+Source: `chunk-w397p0p5.js` · offset 179242193 · sha256 `1177631f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14483,7 +14631,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_REMOTE_RAW_EVENTS_FILE`
 
-Source: `chunk-mbfze585.js` · offset 178211780 · sha256 `d016c59a…`
+Source: `chunk-w397p0p5.js` · offset 179242230 · sha256 `046df032…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14495,7 +14643,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_REMOTE_SEND_KEEPALIVES`
 
-Source: `chunk-mbfze585.js` · offset 178211822 · sha256 `6d25194e…`
+Source: `chunk-w397p0p5.js` · offset 179242272 · sha256 `4a62b663…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14507,7 +14655,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_REMOTE_SESSION_ID`
 
-Source: `chunk-mbfze585.js` · offset 178211864 · sha256 `078276cf…`
+Source: `chunk-w397p0p5.js` · offset 179242314 · sha256 `3d79de64…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14521,7 +14669,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_REMOTE_SESSION_ORIGIN`
 
-Source: `chunk-mbfze585.js` · offset 178211901 · sha256 `79738897…`
+Source: `chunk-w397p0p5.js` · offset 179242351 · sha256 `bf966f80…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14533,7 +14681,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_REMOTE_SETTINGS_PATH`
 
-Source: `chunk-mbfze585.js` · offset 178211942 · sha256 `ea7adee4…`
+Source: `chunk-w397p0p5.js` · offset 179242392 · sha256 `0bd0b204…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14545,7 +14693,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_REMOTE_SETTINGS_POLL_MS`
 
-Source: `chunk-mbfze585.js` · offset 178211982 · sha256 `44f34959…`
+Source: `chunk-w397p0p5.js` · offset 179242432 · sha256 `1ef24bfa…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14557,7 +14705,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_REPL`
 
-Source: `chunk-mbfze585.js` · offset 178212025 · sha256 `de2e994e…`
+Source: `chunk-w397p0p5.js` · offset 179242475 · sha256 `be72d457…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14569,7 +14717,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_REPO_CHECKOUTS`
 
-Source: `chunk-mbfze585.js` · offset 178212049 · sha256 `ca6ee439…`
+Source: `chunk-w397p0p5.js` · offset 179242499 · sha256 `3f65bc41…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14581,7 +14729,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESTRICTED`
 
-Source: `chunk-f2cpzzp9.js` · offset 206796518 · sha256 `b52ac6d1…` · 2 read sites
+Source: `chunk-mcm8e5ww.js` · offset 208115856 · sha256 `b52ac6d1…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14595,7 +14743,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESULT_NONCE`
 
-Source: `chunk-5ka0mc07.js` · offset 205665838 · sha256 `b1fbd25a…` · 2 read sites
+Source: `chunk-gwc1wn1e.js` · offset 206976369 · sha256 `b1fbd25a…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14607,7 +14755,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESUME_FROM_SESSION`
 
-Source: `chunk-mbfze585.js` · offset 178212145 · sha256 `ef812a01…`
+Source: `chunk-w397p0p5.js` · offset 179242595 · sha256 `cd5df840…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14619,7 +14767,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESUME_INTERRUPTED_TURN`
 
-Source: `chunk-mbfze585.js` · offset 178212184 · sha256 `5810206c…`
+Source: `chunk-w397p0p5.js` · offset 179242634 · sha256 `b919789d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14633,7 +14781,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESUME_INTERRUPTED_TURN_MAX_AGE_MS`
 
-Source: `chunk-mbfze585.js` · offset 178212227 · sha256 `8eb0cafc…`
+Source: `chunk-w397p0p5.js` · offset 179242677 · sha256 `ee118203…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14647,7 +14795,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESUME_PROMPT`
 
-Source: `chunk-mbfze585.js` · offset 178212281 · sha256 `81aeb7e8…`
+Source: `chunk-w397p0p5.js` · offset 179242731 · sha256 `63f3e2e0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14661,7 +14809,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_RESUME_REASON`
 
-Source: `chunk-mbfze585.js` · offset 178212314 · sha256 `48276cd4…`
+Source: `chunk-w397p0p5.js` · offset 179242764 · sha256 `e8f064ef…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14673,7 +14821,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESUME_SOURCE_ALIVE`
 
-Source: `chunk-mbfze585.js` · offset 178212347 · sha256 `3bd94d96…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179242797 · sha256 `e7fe71f5…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14685,7 +14833,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESUME_THRESHOLD_MINUTES`
 
-Source: `chunk-mbfze585.js` · offset 178212386 · sha256 `215a267b…`
+Source: `chunk-w397p0p5.js` · offset 179242836 · sha256 `0f722e00…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14697,7 +14845,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESUME_TOKEN_THRESHOLD`
 
-Source: `chunk-mbfze585.js` · offset 178212430 · sha256 `ff57c53b…`
+Source: `chunk-w397p0p5.js` · offset 179242880 · sha256 `0b0c224b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14709,7 +14857,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_RESUME_TOLERATES_CONTEXT_APPENDS`
 
-Source: `chunk-mbfze585.js` · offset 178212472 · sha256 `8eed9531…`
+Source: `chunk-w397p0p5.js` · offset 179242922 · sha256 `b09a66b0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14721,7 +14869,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SAFE_MODE`
 
-Source: `chunk-dgp2yyqt.js` · offset 195020512 · sha256 `e2d01209…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196218454 · sha256 `e2d01209…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14735,7 +14883,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SANDBOXED`
 
-Source: `chunk-mbfze585.js` · offset 178212553 · sha256 `77ef6b0d…`
+Source: `chunk-w397p0p5.js` · offset 179243003 · sha256 `a476a37d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14747,7 +14895,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SCRIPT_CAPS`
 
-Source: `chunk-mbfze585.js` · offset 178212582 · sha256 `153cb348…`
+Source: `chunk-w397p0p5.js` · offset 179243032 · sha256 `e913df18…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14761,7 +14909,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SCROLL_SPEED`
 
-Source: `chunk-bysrnexw.js` · offset 216014545 · sha256 `6af06b37…` · 5 read sites
+Source: `chunk-5645472e.js` · offset 217470118 · sha256 `6af06b37…` · 5 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14775,7 +14923,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SDK_READS_SESSION_STATE`
 
-Source: `chunk-mbfze585.js` · offset 178212645 · sha256 `37b7b5aa…`
+Source: `chunk-w397p0p5.js` · offset 179243095 · sha256 `d3620a56…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14787,7 +14935,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SESSION_ACCESS_TOKEN`
 
-Source: `chunk-8xhw5h9f.js` · offset 190453359 · sha256 `fa932452…` · 8 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562639 · sha256 `f1c9d9f3…` · 8 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14801,7 +14949,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_CODE_SESSION_ATTENDED`
 
-Source: `chunk-09m4fzsj.js` · offset 184516901 · sha256 `9bad861a…`
+Source: `chunk-j7rgjcpa.js` · offset 185646559 · sha256 `6e023ea6…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -14813,7 +14961,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SESSION_ID`
 
-Source: `chunk-09m4fzsj.js` · offset 184516836 · sha256 `475db269…` · 5 read sites
+Source: `chunk-15akp9yh.js` · offset 200665840 · sha256 `7ac7c553…` · 5 read sites
 
 Set for: stdio MCP servers; Claude Code's own process environment (inherited by children that receive it); Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -14827,7 +14975,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SESSION_KIND`
 
-Source: `chunk-mbfze585.js` · offset 178212765 · sha256 `0d638613…`
+Source: `chunk-w397p0p5.js` · offset 179243215 · sha256 `40e08781…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14839,7 +14987,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SESSION_NAME`
 
-Source: `chunk-mbfze585.js` · offset 178212797 · sha256 `30578ba8…`
+Source: `chunk-w397p0p5.js` · offset 179243247 · sha256 `44ad7f8c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14851,7 +14999,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SESSION_ORIGIN`
 
-Source: `chunk-mbfze585.js` · offset 178212829 · sha256 `d1fb4580…`
+Source: `chunk-w397p0p5.js` · offset 179243279 · sha256 `916772f6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14863,7 +15011,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SESSION_START_ANNOUNCEMENTS_BEFORE_PROMPT`
 
-Source: `chunk-mbfze585.js` · offset 178212863 · sha256 `7ee7a1d1…`
+Source: `chunk-w397p0p5.js` · offset 179243313 · sha256 `c9f2b1d0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14875,7 +15023,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178212688 · sha256 `2f554dd5…`
+Source: `chunk-w397p0p5.js` · offset 179243138 · sha256 `c8998f5e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14889,7 +15037,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SHELL`
 
-Source: `chunk-mbfze585.js` · offset 178212924 · sha256 `21007174…`
+Source: `chunk-w397p0p5.js` · offset 179243374 · sha256 `10bbb4d3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14903,7 +15051,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SHELL_PREFIX`
 
-Source: `chunk-mbfze585.js` · offset 178212949 · sha256 `2ff1e5a2…`
+Source: `chunk-w397p0p5.js` · offset 179243399 · sha256 `a302a6aa…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14917,7 +15065,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SIMPLE`
 
-Source: `chunk-dgp2yyqt.js` · offset 195020469 · sha256 `1cc8c889…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196218411 · sha256 `1cc8c889…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -14931,7 +15079,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SIMPLE_SYSTEM_PROMPT`
 
-Source: `chunk-mbfze585.js` · offset 178213007 · sha256 `cb76c312…`
+Source: `chunk-w397p0p5.js` · offset 179243457 · sha256 `a1e4d385…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14945,7 +15093,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SKILL_ATTRIBUTION`
 
-Source: `chunk-mbfze585.js` · offset 178213047 · sha256 `5330f743…`
+Source: `chunk-w397p0p5.js` · offset 179243497 · sha256 `d8372b06…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14957,7 +15105,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SPAWN_TIMESTAMP_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213084 · sha256 `a4f49836…`
+Source: `chunk-w397p0p5.js` · offset 179243534 · sha256 `efbf9463…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14969,7 +15117,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SSE_PORT`
 
-Source: `chunk-mbfze585.js` · offset 178213122 · sha256 `647bf0a7…`
+Source: `chunk-w397p0p5.js` · offset 179243572 · sha256 `5b7e2889…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14981,7 +15129,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING`
 
-Source: `chunk-mbfze585.js` · offset 178213150 · sha256 `f801584b…`
+Source: `chunk-w397p0p5.js` · offset 179243600 · sha256 `ee8d9785…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -14993,7 +15141,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_STARTUP_FAILURE_RESULTS`
 
-Source: `chunk-mbfze585.js` · offset 178213198 · sha256 `9b37c916…`
+Source: `chunk-w397p0p5.js` · offset 179243648 · sha256 `80659920…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15007,7 +15155,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`
 
-Source: `chunk-mbfze585.js` · offset 178213241 · sha256 `14bbf21b…`
+Source: `chunk-w397p0p5.js` · offset 179243691 · sha256 `fd51c474…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15021,7 +15169,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB`
 
-Source: `chunk-4zgx6txq.js` · offset 193131378 · sha256 `b0db2d18…` · 2 read sites
+Source: `chunk-hyr3xk9c.js` · offset 194322495 · sha256 `b0db2d18…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15035,7 +15183,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SUBSCRIPTION_TYPE`
 
-Source: `chunk-mnp9k227.js` · offset 180499200 · sha256 `2815a03c…` · 2 read sites
+Source: `chunk-kx3hbyfc.js` · offset 181282949 · sha256 `2815a03c…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -15047,7 +15195,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SUPERVISED`
 
-Source: `chunk-mbfze585.js` · offset 178213320 · sha256 `559f3f00…`
+Source: `chunk-w397p0p5.js` · offset 179243770 · sha256 `c7721a92…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15059,7 +15207,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_PLUGIN_INSTALL_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213548 · sha256 `cc616c4e…`
+Source: `chunk-w397p0p5.js` · offset 179243998 · sha256 `48774226…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15073,7 +15221,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_BUFFERED_DOWNLOAD`
 
-Source: `chunk-mbfze585.js` · offset 178213350 · sha256 `21972090…`
+Source: `chunk-w397p0p5.js` · offset 179243800 · sha256 `32a6f874…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15085,7 +15233,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_DOWNLOAD_STALL_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213400 · sha256 `ba051584…`
+Source: `chunk-w397p0p5.js` · offset 179243850 · sha256 `2ca0b3f3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15097,7 +15245,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_INSTALL_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213450 · sha256 `599002be…`
+Source: `chunk-w397p0p5.js` · offset 179243900 · sha256 `244605a7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15109,7 +15257,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_PLUGINS_MCP_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213501 · sha256 `272ba8ce…`
+Source: `chunk-w397p0p5.js` · offset 179243951 · sha256 `10164472…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15121,7 +15269,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_REUSE_WITHIN_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213598 · sha256 `0e32bed7…`
+Source: `chunk-w397p0p5.js` · offset 179244048 · sha256 `182d97f1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15133,7 +15281,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_SESSION_REFS`
 
-Source: `chunk-mbfze585.js` · offset 178213638 · sha256 `a22a49a6…`
+Source: `chunk-w397p0p5.js` · offset 179244088 · sha256 `ba3bbb96…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15145,7 +15293,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_SYNC_SKILLS_INSTALL_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213675 · sha256 `10b645f4…`
+Source: `chunk-w397p0p5.js` · offset 179244125 · sha256 `7bdca28f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15159,7 +15307,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNC_SKILLS_WAIT_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213725 · sha256 `000d90dd…`
+Source: `chunk-w397p0p5.js` · offset 179244175 · sha256 `efe73432…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15173,7 +15321,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYNTAX_HIGHLIGHT`
 
-Source: `chunk-mbfze585.js` · offset 178213772 · sha256 `f46f2cde…`
+Source: `chunk-w397p0p5.js` · offset 179244222 · sha256 `fddeacc7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15187,7 +15335,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_SYSTEM_PROMPT_GB_FEATURE`
 
-Source: `chunk-mbfze585.js` · offset 178213808 · sha256 `c878d7c5…`
+Source: `chunk-w397p0p5.js` · offset 179244258 · sha256 `5e30475f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15199,7 +15347,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TAGS`
 
-Source: `chunk-mbfze585.js` · offset 178213852 · sha256 `8ee37c4c…`
+Source: `chunk-w397p0p5.js` · offset 179244302 · sha256 `fccab4cc…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15211,7 +15359,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TASK_LIST_ID`
 
-Source: `chunk-mbfze585.js` · offset 178213876 · sha256 `f792174a…`
+Source: `chunk-w397p0p5.js` · offset 179244326 · sha256 `e8cc1e42…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15225,7 +15373,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TEAM_TEARDOWN_PARK_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178213908 · sha256 `2761ff9e…`
+Source: `chunk-w397p0p5.js` · offset 179244358 · sha256 `96e4c043…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15239,7 +15387,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TERMINAL_MCP_TOOLS`
 
-Source: `chunk-mbfze585.js` · offset 178213957 · sha256 `d788d244…`
+Source: `chunk-w397p0p5.js` · offset 179244407 · sha256 `f83d8d1d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15251,7 +15399,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TEST_ALLOW_REAL_NETWORK`
 
-Source: `chunk-mbfze585.js` · offset 178213995 · sha256 `0fb5d7d0…`
+Source: `chunk-w397p0p5.js` · offset 179244445 · sha256 `297d1de1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15263,7 +15411,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TEST_FIXTURES_ROOT`
 
-Source: `chunk-mbfze585.js` · offset 178214038 · sha256 `c3bd3c51…`
+Source: `chunk-w397p0p5.js` · offset 179244488 · sha256 `de6def10…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15275,7 +15423,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TEST_FORCE_DENY`
 
-Source: `chunk-mbfze585.js` · offset 178214076 · sha256 `76ebf428…`
+Source: `chunk-w397p0p5.js` · offset 179244526 · sha256 `92bc7dc3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15287,7 +15435,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_TEST_NO_GIT_BASH`
 
-Source: `chunk-mbfze585.js` · offset 178214111 · sha256 `e51972e1…`
+Source: `chunk-w397p0p5.js` · offset 179244561 · sha256 `727a2a28…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15299,7 +15447,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_TEST_NO_PWSH`
 
-Source: `chunk-mbfze585.js` · offset 178214147 · sha256 `45297c20…`
+Source: `chunk-w397p0p5.js` · offset 179244597 · sha256 `4eb53d1b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15311,7 +15459,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_TMPDIR`
 
-Source: `chunk-mbfze585.js` · offset 178214179 · sha256 `cb58cd47…`
+Source: `chunk-w397p0p5.js` · offset 179244629 · sha256 `c52586e8…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -15325,7 +15473,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TMUX_PREFIX`
 
-Source: `chunk-mbfze585.js` · offset 178214205 · sha256 `675447cd…`
+Source: `chunk-w397p0p5.js` · offset 179244655 · sha256 `f077bf88…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15337,7 +15485,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TMUX_PREFIX_CONFLICTS`
 
-Source: `chunk-mbfze585.js` · offset 178214236 · sha256 `6946af65…`
+Source: `chunk-w397p0p5.js` · offset 179244686 · sha256 `ebb9797e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15349,7 +15497,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TMUX_SESSION`
 
-Source: `chunk-mbfze585.js` · offset 178214277 · sha256 `02aa1fc4…`
+Source: `chunk-w397p0p5.js` · offset 179244727 · sha256 `4ab4f1ce…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15361,7 +15509,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TMUX_TRUECOLOR`
 
-Source: `chunk-mbfze585.js` · offset 178214309 · sha256 `6ae692e8…`
+Source: `chunk-w397p0p5.js` · offset 179244759 · sha256 `e641c2f2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15375,7 +15523,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TOOL_MEMORY_CGROUP_EXCLUDE`
 
-Source: `chunk-mbfze585.js` · offset 178214343 · sha256 `6818544c…`
+Source: `chunk-w397p0p5.js` · offset 179244793 · sha256 `a17e223c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15389,7 +15537,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TOOL_MEMORY_LIMIT`
 
-Source: `chunk-mbfze585.js` · offset 178214389 · sha256 `050cb0d1…`
+Source: `chunk-w397p0p5.js` · offset 179244839 · sha256 `4d26c508…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15403,7 +15551,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_TRIGGER_ID`
 
-Source: `chunk-mbfze585.js` · offset 178214426 · sha256 `5409b5fe…`
+Source: `chunk-w397p0p5.js` · offset 179244876 · sha256 `15b41de2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15415,7 +15563,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TUI_JUST_SWITCHED`
 
-Source: `chunk-f2cpzzp9.js` · offset 206767044 · sha256 `48b906bb…` · 2 read sites
+Source: `chunk-mcm8e5ww.js` · offset 208086192 · sha256 `48b906bb…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15427,7 +15575,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_TUI_TRIAL`
 
-Source: `chunk-mbfze585.js` · offset 178214493 · sha256 `a7ea246a…` · 2 read sites
+Source: `chunk-w397p0p5.js` · offset 179244943 · sha256 `f64c964a…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -15439,7 +15587,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ULTRAREVIEW_PREFLIGHT_FIXTURE`
 
-Source: `chunk-mbfze585.js` · offset 178214522 · sha256 `f0726bdf…`
+Source: `chunk-w397p0p5.js` · offset 179244972 · sha256 `97fe3060…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15451,7 +15599,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_ULTRAREVIEW_QUOTA_FIXTURE`
 
-Source: `chunk-mbfze585.js` · offset 178214571 · sha256 `39c8b0f8…`
+Source: `chunk-w397p0p5.js` · offset 179245021 · sha256 `0ae362e5…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15463,7 +15611,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_USER_DIALOG_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178214616 · sha256 `3034df94…`
+Source: `chunk-w397p0p5.js` · offset 179245066 · sha256 `04c56e0e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15477,7 +15625,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_CODE_VERSION`
 
-Source: `chunk-f1vb7bx7.js` · offset 179240488 · sha256 `8b03a206…`
+Source: `chunk-gqegtvbg.js` · offset 181126813 · sha256 `195a905a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15489,7 +15637,7 @@ No read site found by this scan.
 
 ### `CLAUDE_CODE_VOICE_FORWARD_INTERIMS_TYPED`
 
-Source: `chunk-mbfze585.js` · offset 178214658 · sha256 `1269b347…`
+Source: `chunk-w397p0p5.js` · offset 179245108 · sha256 `6f761192…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15501,7 +15649,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_WORKER_CHECKIN_SCHEDULE`
 
-Source: `chunk-mbfze585.js` · offset 178214706 · sha256 `c04d4ce8…`
+Source: `chunk-w397p0p5.js` · offset 179245156 · sha256 `7c4f29b4…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15513,7 +15661,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_WORKER_EPOCH`
 
-Source: `chunk-mbfze585.js` · offset 178214749 · sha256 `59dae6bf…`
+Source: `chunk-w397p0p5.js` · offset 179245199 · sha256 `c43d37e2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15525,7 +15673,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CODE_WORKSPACE_HOST_PATHS`
 
-Source: `chunk-mbfze585.js` · offset 178214781 · sha256 `82ee462e…`
+Source: `chunk-w397p0p5.js` · offset 179245231 · sha256 `5c9f0d3f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15537,7 +15685,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_CONFIG_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178214821 · sha256 `49336f4c…`
+Source: `chunk-w397p0p5.js` · offset 179245271 · sha256 `a8ac9caa…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15551,7 +15699,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_COWORK_MEMORY_EXTRA_GUIDELINES`
 
-Source: `chunk-mbfze585.js` · offset 178214846 · sha256 `3998e12f…`
+Source: `chunk-w397p0p5.js` · offset 179245296 · sha256 `ddeaf9d6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15563,7 +15711,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_COWORK_MEMORY_GUIDELINES`
 
-Source: `chunk-mbfze585.js` · offset 178214891 · sha256 `0b3d9b1b…`
+Source: `chunk-w397p0p5.js` · offset 179245341 · sha256 `8d8d2863…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15575,7 +15723,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_COWORK_MEMORY_INDEX_CONTENT`
 
-Source: `chunk-mbfze585.js` · offset 178214930 · sha256 `850f384d…`
+Source: `chunk-w397p0p5.js` · offset 179245380 · sha256 `a60b38d7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15587,7 +15735,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_COWORK_MEMORY_PATH_OVERRIDE`
 
-Source: `chunk-mbfze585.js` · offset 178214972 · sha256 `10d3136f…`
+Source: `chunk-w397p0p5.js` · offset 179245422 · sha256 `43dec00d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15599,7 +15747,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_EFFORT`
 
-Source: `chunk-09m4fzsj.js` · offset 184517047 · sha256 `79c852b9…`
+Source: `chunk-j7rgjcpa.js` · offset 185646705 · sha256 `79c852b9…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -15613,7 +15761,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_ENV_FILE`
 
-Source: `chunk-mbfze585.js` · offset 178215014 · sha256 `95b36f7f…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 189172257 · sha256 `c3e129af…` · 2 read sites
 
 Set for: hook commands.
 
@@ -15627,7 +15775,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_FORCE_DISPLAY_SURVEY`
 
-Source: `chunk-mbfze585.js` · offset 178215037 · sha256 `ef6cf9cd…`
+Source: `chunk-w397p0p5.js` · offset 179245487 · sha256 `ab77a0a7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15639,7 +15787,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_INTERNAL_ASSISTANT_TEAM_NAME`
 
-Source: `chunk-h595p29c.js` · offset 210946975 · sha256 `23a7a3fc…` · 2 read sites
+Source: `chunk-cyzbzgkb.js` · offset 212289921 · sha256 `23a7a3fc…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -15651,7 +15799,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_INTERNAL_FC_OVERRIDES`
 
-Source: `chunk-mbfze585.js` · offset 178215115 · sha256 `83ed306d…`
+Source: `chunk-w397p0p5.js` · offset 179245565 · sha256 `485fba0e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15663,7 +15811,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_JOB_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178215151 · sha256 `be91ff29…`
+Source: `chunk-w397p0p5.js` · offset 179245601 · sha256 `63edea9d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15677,7 +15825,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_MEMORY_STORES`
 
-Source: `chunk-mbfze585.js` · offset 178215173 · sha256 `68b83d9a…`
+Source: `chunk-w397p0p5.js` · offset 179245623 · sha256 `a83def39…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15689,7 +15837,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_PID`
 
-Source: `chunk-09m4fzsj.js` · offset 184516943 · sha256 `51f03cbe…`
+Source: `chunk-j7rgjcpa.js` · offset 185646601 · sha256 `51f03cbe…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -15703,7 +15851,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_PLUGIN_DATA`
 
-Source: `chunk-mphp7acd.js` · offset 186027903 · sha256 `ebf148bc…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187154781 · sha256 `c46603e0…` · 3 read sites
 
 Set for: plugin-provided stdio MCP servers; hook commands.
 
@@ -15715,7 +15863,7 @@ No read site found by this scan.
 
 ### `CLAUDE_PLUGIN_OPTION_*`
 
-Source: `chunk-mphp7acd.js` · offset 188012349 · sha256 `584850f7…`
+Source: `chunk-acxptg39.js` · offset 189172087 · sha256 `cb6825f2…`
 
 Set for: hook commands.
 
@@ -15727,7 +15875,7 @@ No read site found by this scan.
 
 ### `CLAUDE_PLUGIN_ROOT`
 
-Source: `chunk-8f36gf8z.js` · offset 212639863 · sha256 `8c52d608…` · 5 read sites
+Source: `chunk-71hm04bz.js` · offset 214002767 · sha256 `8c52d608…` · 5 read sites
 
 Set for: MCP server headersHelper command; plugin-provided stdio MCP servers; hook commands.
 
@@ -15739,9 +15887,9 @@ Documented: https://code.claude.com/docs/en/mcp
 
 ### `CLAUDE_PROJECT_DIR`
 
-Source: `chunk-amg94xhm.js` · offset 213019662 · sha256 `890d6e62…` · 6 read sites
+Source: `chunk-acxptg39.js` · offset 187154814 · sha256 `6d2b2862…` · 6 read sites
 
-Set for: stdio MCP servers; hook commands.
+Set for: hook commands; stdio MCP servers.
 
 Value: a runtime value.
 
@@ -15751,7 +15899,7 @@ No read site found by this scan.
 
 ### `CLAUDE_PROJECT_UUID`
 
-Source: `chunk-mbfze585.js` · offset 178215201 · sha256 `a036e87e…`
+Source: `chunk-w397p0p5.js` · offset 179245651 · sha256 `50376201…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15763,7 +15911,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_PTY_HEARTBEAT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178215228 · sha256 `f51a9466…`
+Source: `chunk-w397p0p5.js` · offset 179245678 · sha256 `96710fb7…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15775,7 +15923,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_PTY_HOST_EXEC`
 
-Source: `chunk-aa430wh3.js` · offset 196241158 · sha256 `b735c221…` · 2 read sites
+Source: `chunk-4ahd91a1.js` · offset 197477513 · sha256 `b735c221…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -15787,7 +15935,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_PTY_ORPHAN_CHECK_MS`
 
-Source: `chunk-mbfze585.js` · offset 178215287 · sha256 `0cd0f658…`
+Source: `chunk-w397p0p5.js` · offset 179245737 · sha256 `27514052…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15799,7 +15947,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_RELAUNCH_SESSION_ADD_DIRS`
 
-Source: `chunk-dgp2yyqt.js` · offset 194965457 · sha256 `71c63b4c…` · 2 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196163284 · sha256 `71c63b4c…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -15811,7 +15959,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX`
 
-Source: `chunk-dgp2yyqt.js` · offset 195026085 · sha256 `14bd408c…` · 3 read sites
+Source: `chunk-5g8p9x0b.js` · offset 196224015 · sha256 `14bd408c…` · 3 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -15825,7 +15973,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `CLAUDE_REMOTE_WORKFLOW_ARGS`
 
-Source: `chunk-mbfze585.js` · offset 178215410 · sha256 `afaa63fc…`
+Source: `chunk-w397p0p5.js` · offset 179245860 · sha256 `67d0baca…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15837,7 +15985,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_REMOTE_WORKFLOW_SCRIPT`
 
-Source: `chunk-mbfze585.js` · offset 178215445 · sha256 `77dd994e…`
+Source: `chunk-w397p0p5.js` · offset 179245895 · sha256 `8f230f31…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15849,7 +15997,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_RUNNER_ACCOUNT_EMAIL`
 
-Source: `chunk-nmm61j3j.js` · offset 190698773 · sha256 `7d21deed…`
+Source: `chunk-ajk93az7.js` · offset 191914389 · sha256 `7d21deed…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15863,7 +16011,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_ACCOUNT_ID`
 
-Source: `chunk-nmm61j3j.js` · offset 190698824 · sha256 `8c6c4c78…`
+Source: `chunk-ajk93az7.js` · offset 191914440 · sha256 `8c6c4c78…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15877,7 +16025,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_ACTIVITY_FD`
 
-Source: `chunk-mbfze585.js` · offset 178215482 · sha256 `778a62ae…`
+Source: `chunk-w397p0p5.js` · offset 179245932 · sha256 `ae27a1b1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15889,7 +16037,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_RUNNER_ATTEMPT`
 
-Source: `chunk-nmm61j3j.js` · offset 190698687 · sha256 `918c8041…`
+Source: `chunk-ajk93az7.js` · offset 191914303 · sha256 `918c8041…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15903,7 +16051,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_CLIENT_PLATFORM`
 
-Source: `chunk-nmm61j3j.js` · offset 190699185 · sha256 `25dd9f8d…`
+Source: `chunk-ajk93az7.js` · offset 191914801 · sha256 `25dd9f8d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15917,7 +16065,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_CORRELATION_ID`
 
-Source: `chunk-nmm61j3j.js` · offset 190699132 · sha256 `428b1c25…`
+Source: `chunk-ajk93az7.js` · offset 191914748 · sha256 `428b1c25…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15931,7 +16079,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_FETCH_DEPTH`
 
-Source: `chunk-mbfze585.js` · offset 178215515 · sha256 `a774db47…`
+Source: `chunk-w397p0p5.js` · offset 179245965 · sha256 `0b8f6441…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15945,7 +16093,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `CLAUDE_RUNNER_ORDER_ID`
 
-Source: `chunk-nmm61j3j.js` · offset 190698523 · sha256 `f9fe867a…`
+Source: `chunk-ajk93az7.js` · offset 191914139 · sha256 `f9fe867a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15959,7 +16107,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_ORDER_SERVER_TIME`
 
-Source: `chunk-nmm61j3j.js` · offset 190698869 · sha256 `d03989a3…`
+Source: `chunk-ajk93az7.js` · offset 191914485 · sha256 `d03989a3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15973,7 +16121,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_POOL_ID`
 
-Source: `chunk-nmm61j3j.js` · offset 190698734 · sha256 `da2ebaa1…`
+Source: `chunk-ajk93az7.js` · offset 191914350 · sha256 `da2ebaa1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -15987,7 +16135,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_PRIMARY_REPO_REVISION`
 
-Source: `chunk-nmm61j3j.js` · offset 190698979 · sha256 `292d83d6…`
+Source: `chunk-ajk93az7.js` · offset 191914595 · sha256 `292d83d6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16001,7 +16149,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_PRIMARY_REPO_URL`
 
-Source: `chunk-nmm61j3j.js` · offset 190698922 · sha256 `3be603cd…`
+Source: `chunk-ajk93az7.js` · offset 191914538 · sha256 `3be603cd…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16015,7 +16163,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_REPO_SOURCES`
 
-Source: `chunk-nmm61j3j.js` · offset 190699046 · sha256 `165f653f…`
+Source: `chunk-ajk93az7.js` · offset 191914662 · sha256 `e2622d49…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16029,7 +16177,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_SESSION_ID`
 
-Source: `chunk-nmm61j3j.js` · offset 190698559 · sha256 `c997f82b…`
+Source: `chunk-ajk93az7.js` · offset 191914175 · sha256 `7c502b5b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16043,7 +16191,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_SESSION_UUID`
 
-Source: `chunk-nmm61j3j.js` · offset 190698640 · sha256 `2c8246b3…`
+Source: `chunk-ajk93az7.js` · offset 191914256 · sha256 `2c8246b3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16057,7 +16205,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_RUNNER_WORK_ORDER_FILE`
 
-Source: `chunk-nmm61j3j.js` · offset 190698491 · sha256 `48f0b1f6…`
+Source: `chunk-ajk93az7.js` · offset 191914107 · sha256 `48f0b1f6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16071,7 +16219,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-configurati
 
 ### `CLAUDE_SECURESTORAGE_CONFIG_DIR`
 
-Source: `chunk-mbfze585.js` · offset 178215548 · sha256 `c799f235…`
+Source: `chunk-w397p0p5.js` · offset 179245998 · sha256 `02ba75d2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16083,7 +16231,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_SERVE_DRAIN_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178215587 · sha256 `40ac4459…`
+Source: `chunk-w397p0p5.js` · offset 179246037 · sha256 `f735ec28…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16095,7 +16243,7 @@ No read site found by this scan.
 
 ### `CLAUDE_SNIP`
 
-Source: `chunk-mbfze585.js` · offset 178215624 · sha256 `a6cf9cf2…`
+Source: `chunk-w397p0p5.js` · offset 179246074 · sha256 `a5c38447…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16107,7 +16255,7 @@ No read site found by this scan.
 
 ### `CLAUDE_SSH_LOCAL_BINARY`
 
-Source: `chunk-mbfze585.js` · offset 178215643 · sha256 `a3756972…`
+Source: `chunk-w397p0p5.js` · offset 179246093 · sha256 `68b80592…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16119,7 +16267,7 @@ No read site found by this scan.
 
 ### `CLAUDE_SSH_VERSION`
 
-Source: `chunk-mbfze585.js` · offset 178215674 · sha256 `f73782ea…`
+Source: `chunk-w397p0p5.js` · offset 179246124 · sha256 `525d642e…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16131,7 +16279,7 @@ No read site found by this scan.
 
 ### `CLAUDE_STAGE_FILE_ROOT`
 
-Source: `chunk-mbfze585.js` · offset 178215700 · sha256 `4f8894fd…`
+Source: `chunk-w397p0p5.js` · offset 179246150 · sha256 `eb50dcdd…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16143,7 +16291,7 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDE_TEST_PROJECT_DIR`
 
-Source: `chunk-pc2yga7y.js` · offset 211044865 · sha256 `38ee8375…`
+Source: `chunk-090qn1cb.js` · offset 212416431 · sha256 `38ee8375…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16155,7 +16303,7 @@ No read site found by this scan.
 
 ### `CLAUDE_TMPDIR`
 
-Source: `chunk-mbfze585.js` · offset 178215730 · sha256 `18483433…` · 2 read sites
+Source: `chunk-acxptg39.js` · offset 187789049 · sha256 `02783bc4…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16167,9 +16315,9 @@ Also read by Claude Code; see its read entry.
 
 ### `CLAUDECODE`
 
-Source: `chunk-09m4fzsj.js` · offset 184516821 · sha256 `8eeb7c77…` · 6 read sites
+Source: `chunk-acxptg39.js` · offset 187766914 · sha256 `8eeb7c77…` · 6 read sites
 
-Set for: stdio MCP servers; the shell that builds the Bash tool's shell snapshot, and the shell environment probe; Bash tool commands (the name is in the Bash tool's spawn-environment key list).
+Set for: the shell that builds the Bash tool's shell snapshot, and the shell environment probe; stdio MCP servers; Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
 Value: `1`; a runtime value.
 
@@ -16181,7 +16329,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `COLUMNS`
 
-Source: `chunk-mphp7acd.js` · offset 188012107 · sha256 `c75b3fe7…`
+Source: `chunk-acxptg39.js` · offset 189171845 · sha256 `a61a3639…`
 
 Set for: hook commands.
 
@@ -16193,7 +16341,7 @@ No read site found by this scan.
 
 ### `DEBUG`
 
-Source: `chunk-e6m248dn.js` · offset 179605461 · sha256 `0c351e1e…` · 2 read sites
+Source: `chunk-dvyksg7w.js` · offset 179923185 · sha256 `0c351e1e…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16207,7 +16355,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISABLE_AUTOUPDATER`
 
-Source: `chunk-q1842b1c.js` · offset 195270377 · sha256 `f6740586…` · 2 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196505397 · sha256 `f6740586…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16221,7 +16369,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `DISPLAY`
 
-Source: `chunk-mphp7acd.js` · offset 189059998 · sha256 `7e8467cf…`
+Source: `chunk-acxptg39.js` · offset 190256359 · sha256 `7e8467cf…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16233,7 +16381,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GCM_INTERACTIVE`
 
-Source: `chunk-sk0av50v.js` · offset 190352022 · sha256 `1fbc6f02…`
+Source: `chunk-1k1qsm5t.js` · offset 191562747 · sha256 `e8bb08ed…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16245,7 +16393,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GH_ENTERPRISE_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023883 · sha256 `0eb60ad6…`
+Source: `chunk-j7rgjcpa.js` · offset 186151817 · sha256 `0eb60ad6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16257,7 +16405,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GH_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023855 · sha256 `db7e4b41…`
+Source: `chunk-j7rgjcpa.js` · offset 186151789 · sha256 `db7e4b41…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16269,11 +16417,11 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_ALLOW_PROTOCOL`
 
-Source: `chunk-1mj5vjep.js` · offset 198904830 · sha256 `978ef170…` · 6 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562860 · sha256 `3845844c…` · 6 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
-Value: `https:http:ssh`; a runtime value; `none` (set only under a condition).
+Value: a runtime value; `none`; `https:http:ssh` (set only under a condition).
 
 No read site found by this scan.
 
@@ -16281,7 +16429,7 @@ No read site found by this scan.
 
 ### `GIT_ASKPASS`
 
-Source: `chunk-w7hy7pqe.js` · offset 183726667 · sha256 `75863e95…`
+Source: `chunk-h4njzy9v.js` · offset 184850199 · sha256 `0d6255b2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16293,7 +16441,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_AUTHOR_DATE`
 
-Source: `chunk-mphp7acd.js` · offset 189720393 · sha256 `0913b870…`
+Source: `chunk-acxptg39.js` · offset 190922903 · sha256 `0913b870…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16305,7 +16453,7 @@ No read site found by this scan.
 
 ### `GIT_AUTHOR_EMAIL`
 
-Source: `chunk-mphp7acd.js` · offset 189720349 · sha256 `a0a27899…`
+Source: `chunk-acxptg39.js` · offset 190922859 · sha256 `a0a27899…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16317,7 +16465,7 @@ No read site found by this scan.
 
 ### `GIT_AUTHOR_NAME`
 
-Source: `chunk-mphp7acd.js` · offset 189720316 · sha256 `6536e127…`
+Source: `chunk-acxptg39.js` · offset 190922826 · sha256 `6536e127…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16329,7 +16477,7 @@ No read site found by this scan.
 
 ### `GIT_CEILING_DIRECTORIES`
 
-Source: `chunk-09m4fzsj.js` · offset 184932698 · sha256 `824a5ab2…` · 3 read sites
+Source: `chunk-grwmq3qs.js` · offset 180936699 · sha256 `7c90bcd3…` · 3 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16341,7 +16489,7 @@ No read site found by this scan.
 
 ### `GIT_COMMITTER_DATE`
 
-Source: `chunk-mphp7acd.js` · offset 189720511 · sha256 `3b626dd6…`
+Source: `chunk-acxptg39.js` · offset 190923021 · sha256 `3b626dd6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16353,7 +16501,7 @@ No read site found by this scan.
 
 ### `GIT_COMMITTER_EMAIL`
 
-Source: `chunk-mphp7acd.js` · offset 189720464 · sha256 `1588ebba…`
+Source: `chunk-acxptg39.js` · offset 190922974 · sha256 `1588ebba…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16365,7 +16513,7 @@ No read site found by this scan.
 
 ### `GIT_COMMITTER_NAME`
 
-Source: `chunk-mphp7acd.js` · offset 189720428 · sha256 `bebb3b59…`
+Source: `chunk-acxptg39.js` · offset 190922938 · sha256 `bebb3b59…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16377,7 +16525,7 @@ No read site found by this scan.
 
 ### `GIT_CONFIG_GLOBAL`
 
-Source: `chunk-8xhw5h9f.js` · offset 190442568 · sha256 `ef00c0bc…` · 6 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562685 · sha256 `ef00c0bc…` · 6 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16389,7 +16537,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_CONFIG_NOSYSTEM`
 
-Source: `chunk-e2javxcw.js` · offset 215000292 · sha256 `c41b4f9a…`
+Source: `chunk-9c8h1t30.js` · offset 216263847 · sha256 `c41b4f9a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16401,7 +16549,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_CONFIG_PARAMETERS`
 
-Source: `chunk-mphp7acd.js` · offset 186599880 · sha256 `5bc3d02d…`
+Source: `chunk-acxptg39.js` · offset 187755284 · sha256 `5bc3d02d…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -16413,7 +16561,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_CONFIG_SYSTEM`
 
-Source: `chunk-8xhw5h9f.js` · offset 190442598 · sha256 `c6cdecc9…`
+Source: `chunk-k2pjtcda.js` · offset 191653472 · sha256 `c6cdecc9…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16425,7 +16573,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_EDITOR`
 
-Source: `chunk-mphp7acd.js` · offset 186611477 · sha256 `d8fae42f…` · 3 read sites
+Source: `chunk-acxptg39.js` · offset 187766896 · sha256 `d8fae42f…` · 3 read sites
 
 Set for: the shell that builds the Bash tool's shell snapshot, and the shell environment probe; Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -16437,7 +16585,7 @@ No read site found by this scan.
 
 ### `GIT_INDEX_FILE`
 
-Source: `chunk-09m4fzsj.js` · offset 184953778 · sha256 `c27d7089…` · 3 read sites
+Source: `chunk-5857ntzn.js` · offset 215428798 · sha256 `1e336980…` · 3 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16449,7 +16597,7 @@ No read site found by this scan.
 
 ### `GIT_NO_LAZY_FETCH`
 
-Source: `chunk-mphp7acd.js` · offset 188836629 · sha256 `51d9fbb1…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 190029541 · sha256 `51d9fbb1…` · 4 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16461,7 +16609,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_OBJECT_DIRECTORY`
 
-Source: `chunk-2xynv749.js` · offset 214002908 · sha256 `f4c79723…`
+Source: `chunk-5857ntzn.js` · offset 215428762 · sha256 `f4c79723…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16473,7 +16621,7 @@ No read site found by this scan.
 
 ### `GIT_OPTIONAL_LOCKS`
 
-Source: `chunk-mphp7acd.js` · offset 189716742 · sha256 `671e967a…`
+Source: `chunk-acxptg39.js` · offset 190919252 · sha256 `671e967a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16485,7 +16633,7 @@ No read site found by this scan.
 
 ### `GIT_PROGRESS_DELAY`
 
-Source: `chunk-sk0av50v.js` · offset 190352068 · sha256 `f07c9246…`
+Source: `chunk-1k1qsm5t.js` · offset 191562793 · sha256 `f07c9246…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16497,7 +16645,7 @@ No read site found by this scan.
 
 ### `GIT_PROXY_COMMAND`
 
-Source: `chunk-fmv8bhm3.js` · offset 178987684 · sha256 `bc2d54c4…`
+Source: `chunk-grwmq3qs.js` · offset 180931656 · sha256 `bc2d54c4…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16509,7 +16657,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_SSH_COMMAND`
 
-Source: `chunk-1mj5vjep.js` · offset 198904738 · sha256 `77cda1e9…` · 6 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562913 · sha256 `642ec4ba…` · 6 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16521,7 +16669,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_SSH_VARIANT`
 
-Source: `chunk-w7hy7pqe.js` · offset 183726632 · sha256 `b8f50626…`
+Source: `chunk-h4njzy9v.js` · offset 184850164 · sha256 `0aa40a3b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16533,7 +16681,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GIT_TERMINAL_PROMPT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190557090 · sha256 `ebaa1d2e…` · 3 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562723 · sha256 `ebaa1d2e…` · 3 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16545,7 +16693,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GITHUB_ENTERPRISE_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023906 · sha256 `4dd424ee…`
+Source: `chunk-j7rgjcpa.js` · offset 186151840 · sha256 `4dd424ee…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16557,7 +16705,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GITHUB_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185023867 · sha256 `588127ed…`
+Source: `chunk-j7rgjcpa.js` · offset 186151801 · sha256 `588127ed…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16569,7 +16717,7 @@ Also read by Claude Code; see its read entry.
 
 ### `GITLAB_ACCESS_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185036149 · sha256 `ed5747c3…`
+Source: `chunk-j7rgjcpa.js` · offset 186164228 · sha256 `ed5747c3…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16581,7 +16729,7 @@ No read site found by this scan.
 
 ### `GITLAB_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185036129 · sha256 `fa287e78…`
+Source: `chunk-j7rgjcpa.js` · offset 186164208 · sha256 `fa287e78…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16593,7 +16741,7 @@ No read site found by this scan.
 
 ### `HOME`
 
-Source: `chunk-e2javxcw.js` · offset 215000206 · sha256 `6926099c…`
+Source: `chunk-9c8h1t30.js` · offset 216263761 · sha256 `6926099c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16605,7 +16753,7 @@ Also read by Claude Code; see its read entry.
 
 ### `HOMEBREW_NO_AUTO_UPDATE`
 
-Source: `chunk-2t7nhzwg.js` · offset 195936997 · sha256 `7a329310…`
+Source: `chunk-nfqe1amr.js` · offset 197169739 · sha256 `7a329310…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16617,7 +16765,7 @@ No read site found by this scan.
 
 ### `LANGUAGE`
 
-Source: `chunk-wm8f7gyy.js` · offset 211127051 · sha256 `c56805bc…`
+Source: `chunk-kc4k2aby.js` · offset 212521069 · sha256 `c56805bc…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16629,7 +16777,7 @@ No read site found by this scan.
 
 ### `LC_ALL`
 
-Source: `chunk-4ftr5ny9.js` · offset 180547296 · sha256 `d93853ac…` · 7 read sites
+Source: `chunk-1k1qsm5t.js` · offset 191562782 · sha256 `d93853ac…` · 7 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16641,7 +16789,7 @@ Also read by Claude Code; see its read entry.
 
 ### `LINES`
 
-Source: `chunk-mphp7acd.js` · offset 188012135 · sha256 `8ef4975f…`
+Source: `chunk-acxptg39.js` · offset 189171873 · sha256 `a49d5596…`
 
 Set for: hook commands.
 
@@ -16653,7 +16801,7 @@ No read site found by this scan.
 
 ### `LOCAL_BRIDGE`
 
-Source: `chunk-mbfze585.js` · offset 178215751 · sha256 `db965028…`
+Source: `chunk-w397p0p5.js` · offset 179246201 · sha256 `0849f931…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16665,7 +16813,7 @@ Also read by Claude Code; see its read entry.
 
 ### `MCP_CONNECT_TIMEOUT_MS`
 
-Source: `chunk-mbfze585.js` · offset 178215805 · sha256 `fe11ff9d…`
+Source: `chunk-w397p0p5.js` · offset 179246255 · sha256 `c4dc4677…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16679,7 +16827,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_CONNECTION_NONBLOCKING`
 
-Source: `chunk-mbfze585.js` · offset 178215771 · sha256 `42c7f337…`
+Source: `chunk-w397p0p5.js` · offset 179246221 · sha256 `ad376bde…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16693,7 +16841,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE`
 
-Source: `chunk-mbfze585.js` · offset 178215835 · sha256 `33518161…`
+Source: `chunk-w397p0p5.js` · offset 179246285 · sha256 `7f45eaa2…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16707,7 +16855,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE_MAX_STALE_S`
 
-Source: `chunk-mbfze585.js` · offset 178215862 · sha256 `30cc9b79…`
+Source: `chunk-w397p0p5.js` · offset 179246312 · sha256 `21770aa1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16721,7 +16869,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE_STRIKES`
 
-Source: `chunk-mbfze585.js` · offset 178215901 · sha256 `f814ea03…`
+Source: `chunk-w397p0p5.js` · offset 179246351 · sha256 `0bb907ad…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16735,7 +16883,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_DISCOVERY_CACHE_TTL_S`
 
-Source: `chunk-mbfze585.js` · offset 178215936 · sha256 `342d2be3…`
+Source: `chunk-w397p0p5.js` · offset 179246386 · sha256 `11a3ce85…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16749,7 +16897,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_OAUTH_CALLBACK_PORT`
 
-Source: `chunk-mbfze585.js` · offset 178215969 · sha256 `60e8bfa4…`
+Source: `chunk-w397p0p5.js` · offset 179246419 · sha256 `1e45bb4c…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16763,7 +16911,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_OAUTH_CLIENT_METADATA_URL`
 
-Source: `chunk-mbfze585.js` · offset 178216000 · sha256 `b2095bc8…`
+Source: `chunk-w397p0p5.js` · offset 179246450 · sha256 `7129bd85…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16775,7 +16923,7 @@ Also read by Claude Code; see its read entry.
 
 ### `MCP_PROTOCOL_NEGOTIATION`
 
-Source: `chunk-mbfze585.js` · offset 178216037 · sha256 `d2a3fbc0…`
+Source: `chunk-w397p0p5.js` · offset 179246487 · sha256 `cef911f1…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16789,7 +16937,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_REMOTE_SERVER_CONNECTION_BATCH_SIZE`
 
-Source: `chunk-mbfze585.js` · offset 178216069 · sha256 `47204cf1…`
+Source: `chunk-w397p0p5.js` · offset 179246519 · sha256 `dd56b377…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16803,7 +16951,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_SDK_GENERATION`
 
-Source: `chunk-mbfze585.js` · offset 178216116 · sha256 `80de992f…`
+Source: `chunk-w397p0p5.js` · offset 179246566 · sha256 `426d198f…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16817,7 +16965,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_SERVER_CONNECTION_BATCH_SIZE`
 
-Source: `chunk-mbfze585.js` · offset 178216142 · sha256 `85451193…`
+Source: `chunk-w397p0p5.js` · offset 179246592 · sha256 `f0d4eeac…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16831,7 +16979,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_TIMEOUT`
 
-Source: `chunk-mbfze585.js` · offset 178216182 · sha256 `53c1a6aa…`
+Source: `chunk-w397p0p5.js` · offset 179246632 · sha256 `b8c33a56…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16845,7 +16993,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_TOOL_TIMEOUT`
 
-Source: `chunk-mbfze585.js` · offset 178216201 · sha256 `48e641e9…`
+Source: `chunk-w397p0p5.js` · offset 179246651 · sha256 `b6c12141…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16859,7 +17007,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `MCP_TRUNCATION_PROMPT_OVERRIDE`
 
-Source: `chunk-mbfze585.js` · offset 178216225 · sha256 `cd0de528…`
+Source: `chunk-w397p0p5.js` · offset 179246675 · sha256 `a527a5ef…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16871,7 +17019,7 @@ Also read by Claude Code; see its read entry.
 
 ### `NODE_ENV`
 
-Source: `chunk-4ftr5ny9.js` · offset 180547274 · sha256 `6541f2a8…` · 4 read sites
+Source: `chunk-9c8h1t30.js` · offset 216059889 · sha256 `6541f2a8…` · 4 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16883,7 +17031,7 @@ No read site found by this scan.
 
 ### `NODE_EXTRA_CA_CERTS`
 
-Source: `chunk-5nvfqwef.js` · offset 194186746 · sha256 `92a4b4bf…`
+Source: `chunk-h693t8dj.js` · offset 193367468 · sha256 `92a4b4bf…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16895,7 +17043,7 @@ Also read by Claude Code; see its read entry.
 
 ### `NoDefaultCurrentDirectoryInExePath`
 
-Source: `chunk-j0381q8k.js` · offset 201650654 · sha256 `91bf70a2…` · 2 read sites
+Source: `chunk-g6yz7gnr.js` · offset 196557754 · sha256 `91bf70a2…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16907,7 +17055,7 @@ No read site found by this scan.
 
 ### `OAUTH_TOKEN`
 
-Source: `chunk-09m4fzsj.js` · offset 185036176 · sha256 `4c09c85b…`
+Source: `chunk-j7rgjcpa.js` · offset 186164255 · sha256 `4c09c85b…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16919,7 +17067,7 @@ No read site found by this scan.
 
 ### `OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE`
 
-Source: `chunk-pc840nxb.js` · offset 210874993 · sha256 `c023412c…`
+Source: `chunk-b42f9ayq.js` · offset 212253699 · sha256 `c023412c…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16933,7 +17081,7 @@ Documented: https://code.claude.com/docs/en/monitoring-usage
 
 ### `PATH`
 
-Source: `chunk-e2javxcw.js` · offset 214796353 · sha256 `5ed8d9f7…` · 3 read sites
+Source: `chunk-9c8h1t30.js` · offset 216059836 · sha256 `5ed8d9f7…` · 3 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16945,7 +17093,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `PS1`
 
-Source: `chunk-14tr5h02.js` · offset 198013686 · sha256 `c1e1ae25…`
+Source: `chunk-sj771y2q.js` · offset 199291830 · sha256 `c1e1ae25…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16957,7 +17105,7 @@ No read site found by this scan.
 
 ### `PS2`
 
-Source: `chunk-14tr5h02.js` · offset 198013693 · sha256 `462b4728…`
+Source: `chunk-sj771y2q.js` · offset 199291837 · sha256 `462b4728…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16969,7 +17117,7 @@ No read site found by this scan.
 
 ### `SDK_NATIVE_BIN`
 
-Source: `chunk-mbfze585.js` · offset 178216263 · sha256 `1a24b3e1…`
+Source: `chunk-w397p0p5.js` · offset 179246713 · sha256 `040c2e2d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -16981,7 +17129,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_DEFER_SHUTDOWN_MAX_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190583306 · sha256 `a4a3bf3e…`
+Source: `chunk-k2pjtcda.js` · offset 191794182 · sha256 `1f9b70ec…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -16993,7 +17141,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_DRAIN_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190582345 · sha256 `b4d8a2cd…`
+Source: `chunk-k2pjtcda.js` · offset 191793221 · sha256 `4e65393b…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17005,7 +17153,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_DRAIN_MARKER_FILE`
 
-Source: `chunk-8xhw5h9f.js` · offset 190582091 · sha256 `137420cd…`
+Source: `chunk-k2pjtcda.js` · offset 191792967 · sha256 `f0f77ff9…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17017,7 +17165,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_DRAIN_WAIT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190581801 · sha256 `32f3aac1…`
+Source: `chunk-k2pjtcda.js` · offset 191792677 · sha256 `25b6ed37…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17029,7 +17177,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_ENVIRONMENT_SECRET`
 
-Source: `chunk-bv2dmc76.js` · offset 190276121 · sha256 `a4acc82d…` · 2 read sites
+Source: `chunk-ajk93az7.js` · offset 191914062 · sha256 `a4acc82d…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17041,7 +17189,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_HOOKS_DIR`
 
-Source: `chunk-8xhw5h9f.js` · offset 190577354 · sha256 `b823b44a…` · 2 read sites
+Source: `chunk-k2pjtcda.js` · offset 191788230 · sha256 `0ca0b831…` · 2 read sites
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17053,7 +17201,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_HOST_CONFIG_DIR`
 
-Source: `chunk-8xhw5h9f.js` · offset 190558825 · sha256 `334958a4…`
+Source: `chunk-k2pjtcda.js` · offset 191769699 · sha256 `334958a4…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17067,7 +17215,7 @@ Documented: https://code.claude.com/docs/en/self-hosted-environments-reference
 
 ### `SELF_HOSTED_RUNNER_IDLE_SHUTDOWN_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190580468 · sha256 `cd2ffa47…`
+Source: `chunk-k2pjtcda.js` · offset 191791344 · sha256 `1ad3dbaf…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17079,7 +17227,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_MAX_LIFETIME_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190580140 · sha256 `ed5602f5…`
+Source: `chunk-k2pjtcda.js` · offset 191791016 · sha256 `435d0926…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17091,7 +17239,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_POOL_SECRET`
 
-Source: `chunk-bv2dmc76.js` · offset 190276083 · sha256 `68243b99…` · 2 read sites
+Source: `chunk-ajk93az7.js` · offset 191914024 · sha256 `68243b99…` · 2 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17103,7 +17251,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_POST_SESSION_HOOK_TIMEOUT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190581306 · sha256 `263c3395…`
+Source: `chunk-k2pjtcda.js` · offset 191792182 · sha256 `0aa1c514…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17115,7 +17263,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_PROXY_AUTHORIZATION_COMMAND`
 
-Source: `chunk-bv2dmc76.js` · offset 190276166 · sha256 `2bd21780…`
+Source: `chunk-qyn5bdge.js` · offset 191486860 · sha256 `2bd21780…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17127,7 +17275,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_PROXY_AUTHORIZATION_FILE`
 
-Source: `chunk-bv2dmc76.js` · offset 190276220 · sha256 `ef192279…`
+Source: `chunk-qyn5bdge.js` · offset 191486914 · sha256 `ef192279…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17139,7 +17287,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_RETIRE_AT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190583732 · sha256 `956d5462…`
+Source: `chunk-k2pjtcda.js` · offset 191794608 · sha256 `d857648e…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17151,7 +17299,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_SESSION_IDLE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190582624 · sha256 `539370ee…`
+Source: `chunk-k2pjtcda.js` · offset 191793500 · sha256 `7d40ac61…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17163,7 +17311,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_SESSION_STOP_GRACE_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190580780 · sha256 `e15bb9a7…`
+Source: `chunk-k2pjtcda.js` · offset 191791656 · sha256 `65c34884…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17175,7 +17323,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SELF_HOSTED_RUNNER_STARTUP_TIMEOUT_MS`
 
-Source: `chunk-8xhw5h9f.js` · offset 190582954 · sha256 `96c946da…`
+Source: `chunk-k2pjtcda.js` · offset 191793830 · sha256 `ee45ce70…`
 
 Set for: Claude Code's own process environment (inherited by children that receive it).
 
@@ -17187,7 +17335,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SESSION_INGRESS_URL`
 
-Source: `chunk-mbfze585.js` · offset 178216285 · sha256 `a8e1c1a2…`
+Source: `chunk-w397p0p5.js` · offset 179246735 · sha256 `281172de…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17199,7 +17347,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SHELL`
 
-Source: `chunk-2ejbgdvw.js` · offset 178893770 · sha256 `d0ad950e…` · 4 read sites
+Source: `chunk-acxptg39.js` · offset 187766888 · sha256 `51127eb3…` · 4 read sites
 
 Set for: the shell that builds the Bash tool's shell snapshot, and the shell environment probe; Claude Code's own process environment (inherited by children that receive it); Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17211,7 +17359,7 @@ Also read by Claude Code; see its read entry.
 
 ### `SLASH_COMMAND_TOOL_CHAR_BUDGET`
 
-Source: `chunk-mbfze585.js` · offset 178216312 · sha256 `d9958753…`
+Source: `chunk-w397p0p5.js` · offset 179246762 · sha256 `6a48f5fb…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17225,7 +17373,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `SSH_ASKPASS`
 
-Source: `chunk-w7hy7pqe.js` · offset 183726718 · sha256 `b5b0f80f…`
+Source: `chunk-h4njzy9v.js` · offset 184850250 · sha256 `33cfec4d…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17237,7 +17385,7 @@ No read site found by this scan.
 
 ### `SYSTEM_REMINDER_MEMORY_CONTEXT`
 
-Source: `chunk-mbfze585.js` · offset 178216350 · sha256 `d7cca943…`
+Source: `chunk-w397p0p5.js` · offset 179246800 · sha256 `42e42619…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17249,7 +17397,7 @@ Also read by Claude Code; see its read entry.
 
 ### `TEMP`
 
-Source: `chunk-e2javxcw.js` · offset 215000266 · sha256 `abe2607f…`
+Source: `chunk-9c8h1t30.js` · offset 216263821 · sha256 `abe2607f…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17261,11 +17409,11 @@ No read site found by this scan.
 
 ### `TERM`
 
-Source: `chunk-14tr5h02.js` · offset 198013700 · sha256 `841346ef…` · 3 read sites
+Source: `chunk-4ahd91a1.js` · offset 197478399 · sha256 `ab8da757…` · 3 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
-Value: `dumb`; `xterm-256color`.
+Value: `xterm-256color`; `dumb`.
 
 Also read by Claude Code; see its read entry.
 
@@ -17273,7 +17421,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `TEST_ENABLE_SESSION_PERSISTENCE`
 
-Source: `chunk-mbfze585.js` · offset 178216388 · sha256 `08d8ea9a…`
+Source: `chunk-w397p0p5.js` · offset 179246838 · sha256 `8938dce8…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17285,7 +17433,7 @@ Also read by Claude Code; see its read entry.
 
 ### `TMP`
 
-Source: `chunk-e2javxcw.js` · offset 215000253 · sha256 `7e51b28f…`
+Source: `chunk-9c8h1t30.js` · offset 216263808 · sha256 `7e51b28f…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17297,7 +17445,7 @@ No read site found by this scan.
 
 ### `TMPDIR`
 
-Source: `chunk-e2javxcw.js` · offset 215000237 · sha256 `904359e8…`
+Source: `chunk-9c8h1t30.js` · offset 216263792 · sha256 `904359e8…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17309,7 +17457,7 @@ Also read by Claude Code; see its read entry.
 
 ### `TMPPREFIX`
 
-Source: `chunk-mphp7acd.js` · offset 186599841 · sha256 `47a8d8f7…`
+Source: `chunk-acxptg39.js` · offset 187755245 · sha256 `47a8d8f7…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17321,7 +17469,7 @@ No read site found by this scan.
 
 ### `TMUX`
 
-Source: `chunk-mphp7acd.js` · offset 186599804 · sha256 `db982b13…`
+Source: `chunk-acxptg39.js` · offset 187755208 · sha256 `db982b13…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17333,7 +17481,7 @@ Also read by Claude Code; see its read entry.
 
 ### `TRACEPARENT`
 
-Source: `chunk-09m4fzsj.js` · offset 184517113 · sha256 `aab96fde…`
+Source: `chunk-j7rgjcpa.js` · offset 185646771 · sha256 `aab96fde…`
 
 Set for: Bash tool commands (the name is in the Bash tool's spawn-environment key list).
 
@@ -17345,7 +17493,7 @@ Documented: https://code.claude.com/docs/en/env-vars
 
 ### `ULTRAPLAN_PROMPT_FILE`
 
-Source: `chunk-mbfze585.js` · offset 178216427 · sha256 `4d60f011…`
+Source: `chunk-w397p0p5.js` · offset 179246877 · sha256 `96f8192a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17357,7 +17505,7 @@ No read site found by this scan.
 
 ### `USER_TYPE`
 
-Source: `chunk-4ftr5ny9.js` · offset 180547253 · sha256 `63ec52da…` · 4 read sites
+Source: `chunk-9c8h1t30.js` · offset 216059868 · sha256 `63ec52da…` · 4 read sites
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17369,7 +17517,7 @@ No read site found by this scan.
 
 ### `USERPROFILE`
 
-Source: `chunk-e2javxcw.js` · offset 215000218 · sha256 `3a88058a…`
+Source: `chunk-9c8h1t30.js` · offset 216263773 · sha256 `3a88058a…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17381,7 +17529,7 @@ Also read by Claude Code; see its read entry.
 
 ### `VCR_RECORD`
 
-Source: `chunk-mbfze585.js` · offset 178216456 · sha256 `b2477c38…`
+Source: `chunk-w397p0p5.js` · offset 179246906 · sha256 `0a42d6e6…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17393,7 +17541,7 @@ No read site found by this scan.
 
 ### `VITALS_EMITTER_BIN`
 
-Source: `chunk-mbfze585.js` · offset 178216474 · sha256 `f1b319d8…`
+Source: `chunk-w397p0p5.js` · offset 179246924 · sha256 `af1b4b79…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17405,7 +17553,7 @@ Also read by Claude Code; see its read entry.
 
 ### `VOICE_STREAM_BASE_URL`
 
-Source: `chunk-mbfze585.js` · offset 178216500 · sha256 `7d3a94d2…`
+Source: `chunk-w397p0p5.js` · offset 179246950 · sha256 `594bdcd0…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17417,7 +17565,7 @@ Also read by Claude Code; see its read entry.
 
 ### `WAYLAND_DISPLAY`
 
-Source: `chunk-mphp7acd.js` · offset 189060009 · sha256 `bbd32953…`
+Source: `chunk-acxptg39.js` · offset 190256370 · sha256 `bbd32953…`
 
 Set for: an environment object Claude Code builds; the receiving process is not traced.
 
@@ -17433,674 +17581,674 @@ These names are read only by code with no Claude Code evidence: no typed-schema 
 
 ### `_X_AMZN_TRACE_ID`
 
-Source: `chunk-jxvcdtxk.js` · offset 197065095 · sha256 `17f869aa…`
+Source: `chunk-p8hvn3xb.js` · offset 198329856 · sha256 `17f869aa…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197065095.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198329856.
 
 **Undocumented**
 
 ### `AWS_ACCOUNT_ID`
 
-Source: `chunk-pe7q82cy.js` · offset 196927452 · sha256 `757201c8…`
+Source: `chunk-rw98dxms.js` · offset 198192897 · sha256 `757201c8…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-pe7q82cy.js` offset 196927452.
+Undocumented; read at `chunk-rw98dxms.js` offset 198192897.
 
 **Undocumented**
 
 ### `AWS_CONTAINER_AUTHORIZATION_TOKEN`
 
-Source: `chunk-ar7e1323.js` · offset 211924815 · sha256 `4144f535…` · 3 read sites
+Source: `chunk-bj4yez1w.js` · offset 213317942 · sha256 `4144f535…` · 3 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-ar7e1323.js` offset 211924815.
+Undocumented; read at `chunk-bj4yez1w.js` offset 213317942.
 
 **Undocumented**
 
 ### `AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE`
 
-Source: `chunk-jw8e5w4q.js` · offset 211933595 · sha256 `858c3edf…`
+Source: `chunk-bj4yez1w.js` · offset 213317997 · sha256 `858c3edf…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-jw8e5w4q.js` offset 211933595.
+Undocumented; read at `chunk-bj4yez1w.js` offset 213317997.
 
 **Undocumented**
 
 ### `AWS_CREDENTIAL_EXPIRATION`
 
-Source: `chunk-pe7q82cy.js` · offset 196927418 · sha256 `ec172743…`
+Source: `chunk-rw98dxms.js` · offset 198192863 · sha256 `ec172743…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-pe7q82cy.js` offset 196927418.
+Undocumented; read at `chunk-rw98dxms.js` offset 198192863.
 
 **Undocumented**
 
 ### `AWS_CREDENTIAL_SCOPE`
 
-Source: `chunk-pe7q82cy.js` · offset 196927435 · sha256 `471e850e…`
+Source: `chunk-rw98dxms.js` · offset 198192880 · sha256 `471e850e…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-pe7q82cy.js` offset 196927435.
+Undocumented; read at `chunk-rw98dxms.js` offset 198192880.
 
 **Undocumented**
 
 ### `AWS_EC2_METADATA_DISABLED`
 
-Source: `chunk-jxvcdtxk.js` · offset 197199677 · sha256 `1c8da441…` · 3 read sites
+Source: `chunk-p8hvn3xb.js` · offset 198464438 · sha256 `1c8da441…` · 3 read sites
 
 Read as: enum (compared against fixed values). Values: `false`.
 
 **Truthiness gotcha:** 2 read sites test the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197199677.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198464438.
 
 **Undocumented**
 
 ### `AWS_LAMBDA_BENCHMARK_MODE`
 
-Source: `chunk-jxvcdtxk.js` · offset 197064420 · sha256 `11d880c2…`
+Source: `chunk-p8hvn3xb.js` · offset 198329181 · sha256 `11d880c2…`
 
 Read as: enum (compared against fixed values). Values: `1`.
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197064420.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198329181.
 
 **Undocumented**
 
 ### `AWS_LAMBDA_MAX_CONCURRENCY`
 
-Source: `chunk-jxvcdtxk.js` · offset 197064133 · sha256 `441ec1d5…`
+Source: `chunk-p8hvn3xb.js` · offset 198328894 · sha256 `441ec1d5…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197064133.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198328894.
 
 **Undocumented**
 
 ### `AWS_LAMBDA_NODEJS_NO_GLOBAL_AWSLAMBDA`
 
-Source: `chunk-jxvcdtxk.js` · offset 197062798 · sha256 `55d05854…`
+Source: `chunk-p8hvn3xb.js` · offset 198327559 · sha256 `55d05854…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-jxvcdtxk.js` offset 197062798.
+Undocumented; read at `chunk-p8hvn3xb.js` offset 198327559.
 
 **Undocumented**
 
 ### `AWS_LOGIN_CACHE_DIRECTORY`
 
-Source: `chunk-wa8nq2w5.js` · offset 196939352 · sha256 `304b902c…`
+Source: `chunk-jtnzqfvn.js` · offset 198204797 · sha256 `304b902c…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-wa8nq2w5.js` offset 196939352.
+Undocumented; read at `chunk-jtnzqfvn.js` offset 198204797.
 
 **Undocumented**
 
 ### `AWS_ROLE_SESSION_NAME`
 
-Source: `chunk-ghgder2z.js` · offset 211921142 · sha256 `df2e4a0a…`
+Source: `chunk-dws5mazw.js` · offset 213305544 · sha256 `df2e4a0a…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ghgder2z.js` offset 211921142.
+Undocumented; read at `chunk-dws5mazw.js` offset 213305544.
 
 **Undocumented**
 
 ### `AZURE_ADDITIONALLY_ALLOWED_TENANTS`
 
-Source: `chunk-mh05fezn.js` · offset 197971559 · sha256 `ed848eaa…`
+Source: `chunk-4v4n4srf.js` · offset 199243183 · sha256 `ed848eaa…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197971559.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199243183.
 
 **Undocumented**
 
 ### `AZURE_AUTHORITY_HOST`
 
-Source: `chunk-mh05fezn.js` · offset 197728302 · sha256 `104f8a52…` · 2 read sites
+Source: `chunk-4v4n4srf.js` · offset 198999926 · sha256 `104f8a52…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197728302.
+Undocumented; read at `chunk-4v4n4srf.js` offset 198999926.
 
 **Undocumented**
 
 ### `AZURE_CLIENT_CERTIFICATE_PASSWORD`
 
-Source: `chunk-mh05fezn.js` · offset 197972532 · sha256 `72a5ed2a…`
+Source: `chunk-4v4n4srf.js` · offset 199244156 · sha256 `72a5ed2a…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197972532.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199244156.
 
 **Undocumented**
 
 ### `AZURE_CLIENT_CERTIFICATE_PATH`
 
-Source: `chunk-mh05fezn.js` · offset 197972488 · sha256 `62b280d9…`
+Source: `chunk-4v4n4srf.js` · offset 199244112 · sha256 `62b280d9…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197972488.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199244112.
 
 **Undocumented**
 
 ### `AZURE_CLIENT_SECRET`
 
-Source: `chunk-mh05fezn.js` · offset 197972168 · sha256 `e3d785a5…`
+Source: `chunk-4v4n4srf.js` · offset 199243792 · sha256 `e3d785a5…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197972168.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199243792.
 
 **Undocumented**
 
 ### `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`
 
-Source: `chunk-mh05fezn.js` · offset 197971713 · sha256 `cedfa2bc…` · 2 read sites
+Source: `chunk-4v4n4srf.js` · offset 199243337 · sha256 `cedfa2bc…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197971713.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199243337.
 
 **Undocumented**
 
 ### `AZURE_FEDERATED_TOKEN_FILE`
 
-Source: `chunk-mh05fezn.js` · offset 197948163 · sha256 `5affa54c…` · 5 read sites
+Source: `chunk-4v4n4srf.js` · offset 199219787 · sha256 `5affa54c…` · 5 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197948163.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199219787.
 
 **Undocumented**
 
 ### `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH`
 
-Source: `chunk-mh05fezn.js` · offset 197674034 · sha256 `4815de9a…`
+Source: `chunk-4v4n4srf.js` · offset 198945658 · sha256 `4815de9a…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197674034.
+Undocumented; read at `chunk-4v4n4srf.js` offset 198945658.
 
 **Undocumented**
 
 ### `AZURE_PASSWORD`
 
-Source: `chunk-mh05fezn.js` · offset 197972816 · sha256 `7c19281e…`
+Source: `chunk-4v4n4srf.js` · offset 199244440 · sha256 `7c19281e…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197972816.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199244440.
 
 **Undocumented**
 
 ### `AZURE_POD_IDENTITY_AUTHORITY_HOST`
 
-Source: `chunk-mh05fezn.js` · offset 197933965 · sha256 `a8c1f5b5…` · 2 read sites
+Source: `chunk-4v4n4srf.js` · offset 199205589 · sha256 `a8c1f5b5…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197933965.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199205589.
 
 **Undocumented**
 
 ### `AZURE_REGIONAL_AUTHORITY_NAME`
 
-Source: `chunk-mh05fezn.js` · offset 197936950 · sha256 `5f710949…`
+Source: `chunk-4v4n4srf.js` · offset 199208574 · sha256 `5f710949…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197936950.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199208574.
 
 **Undocumented**
 
 ### `AZURE_TOKEN_CREDENTIALS`
 
-Source: `chunk-mh05fezn.js` · offset 197975837 · sha256 `91cb3c34…` · 3 read sites
+Source: `chunk-4v4n4srf.js` · offset 199247461 · sha256 `91cb3c34…` · 3 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197975837.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199247461.
 
 **Undocumented**
 
 ### `AZURE_USERNAME`
 
-Source: `chunk-mh05fezn.js` · offset 197972787 · sha256 `9de4ee24…`
+Source: `chunk-4v4n4srf.js` · offset 199244411 · sha256 `9de4ee24…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197972787.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199244411.
 
 **Undocumented**
 
 ### `BUF_BIGINT_DISABLE`
 
-Source: `chunk-5vadtxaa.js` · offset 182835424 · sha256 `31674c1d…`
+Source: `chunk-hnd61wvn.js` · offset 183983628 · sha256 `31674c1d…`
 
 Read as: enum (compared against fixed values). Values: `1`.
 
-Undocumented; read at `chunk-5vadtxaa.js` offset 182835424.
+Undocumented; read at `chunk-hnd61wvn.js` offset 183983628.
 
 **Undocumented**
 
 ### `CHOKIDAR_INTERVAL`
 
-Source: `chunk-3pxceyrc.js` · offset 181914930 · sha256 `4c2baee7…`
+Source: `chunk-m84kn6gp.js` · offset 183058800 · sha256 `4c2baee7…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-3pxceyrc.js` offset 181914930.
+Undocumented; read at `chunk-m84kn6gp.js` offset 183058800.
 
 **Undocumented**
 
 ### `CHOKIDAR_USEPOLLING`
 
-Source: `chunk-3pxceyrc.js` · offset 181914749 · sha256 `809a7001…`
+Source: `chunk-m84kn6gp.js` · offset 183058619 · sha256 `809a7001…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-3pxceyrc.js` offset 181914749.
+Undocumented; read at `chunk-m84kn6gp.js` offset 183058619.
 
 **Undocumented**
 
 ### `CLOUD_RUN_JOB`
 
-Source: `chunk-ekz7hy24.js` · offset 197354535 · sha256 `c94bcd46…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198566891 · sha256 `c94bcd46…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197354535.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198566891.
 
 **Undocumented**
 
 ### `DEBUG_AUTH`
 
-Source: `chunk-ekz7hy24.js` · offset 197365452 · sha256 `a9d539c6…`
+Source: `chunk-f72fzxpc.js` · offset 198577808 · sha256 `a9d539c6…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197365452.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198577808.
 
 **Undocumented**
 
 ### `DETECT_GCP_RETRIES`
 
-Source: `chunk-ekz7hy24.js` · offset 197364771 · sha256 `bef4b628…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198577127 · sha256 `bef4b628…` · 2 read sites
 
 Read as: number (parsed as a number).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197364771.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198577127.
 
 **Undocumented**
 
 ### `FUNCTION_NAME`
 
-Source: `chunk-ekz7hy24.js` · offset 197354562 · sha256 `16cc5003…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198566918 · sha256 `16cc5003…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197354562.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198566918.
 
 **Undocumented**
 
 ### `FUNCTION_TARGET`
 
-Source: `chunk-ekz7hy24.js` · offset 197396208 · sha256 `be8aa066…`
+Source: `chunk-f72fzxpc.js` · offset 198608564 · sha256 `be8aa066…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197396208.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198608564.
 
 **Undocumented**
 
 ### `GAE_MODULE_NAME`
 
-Source: `chunk-ekz7hy24.js` · offset 197396129 · sha256 `3aec2dd6…`
+Source: `chunk-f72fzxpc.js` · offset 198608485 · sha256 `3aec2dd6…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197396129.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198608485.
 
 **Undocumented**
 
 ### `GAE_SERVICE`
 
-Source: `chunk-ekz7hy24.js` · offset 197396104 · sha256 `3c32fa81…`
+Source: `chunk-f72fzxpc.js` · offset 198608460 · sha256 `3c32fa81…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197396104.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198608460.
 
 **Undocumented**
 
 ### `GCE_METADATA_HOST`
 
-Source: `chunk-ekz7hy24.js` · offset 197363069 · sha256 `489ed04c…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198575425 · sha256 `489ed04c…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197363069.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198575425.
 
 **Undocumented**
 
 ### `GCE_METADATA_IP`
 
-Source: `chunk-ekz7hy24.js` · offset 197363040 · sha256 `63485255…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198575396 · sha256 `63485255…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197363040.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198575396.
 
 **Undocumented**
 
 ### `GIT_PROXY_COMMAND`
 
-Source: `chunk-fmv8bhm3.js` · offset 178987702 · sha256 `917eba16…`
+Source: `chunk-grwmq3qs.js` · offset 180931674 · sha256 `917eba16…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-fmv8bhm3.js` offset 178987702.
+Undocumented; read at `chunk-grwmq3qs.js` offset 180931674.
 
 **Undocumented**
 
 ### `GIT_SSL_CERT`
 
-Source: `chunk-8xhw5h9f.js` · offset 190458827 · sha256 `6c42388d…`
+Source: `chunk-k2pjtcda.js` · offset 191669701 · sha256 `6c42388d…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190458827.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191669701.
 
 **Undocumented**
 
 ### `GIT_SSL_KEY`
 
-Source: `chunk-8xhw5h9f.js` · offset 190458842 · sha256 `01ad4f7e…`
+Source: `chunk-k2pjtcda.js` · offset 191669716 · sha256 `01ad4f7e…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
-Undocumented; read at `chunk-8xhw5h9f.js` offset 190458842.
+Undocumented; read at `chunk-k2pjtcda.js` offset 191669716.
 
 **Undocumented**
 
 ### `GOOGLE_CLOUD_QUOTA_PROJECT`
 
-Source: `chunk-ekz7hy24.js` · offset 197454041 · sha256 `006ef59e…`
+Source: `chunk-f72fzxpc.js` · offset 198666397 · sha256 `006ef59e…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197454041.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198666397.
 
 **Undocumented**
 
 ### `GOOGLE_EXTERNAL_ACCOUNT_ALLOW_EXECUTABLES`
 
-Source: `chunk-ekz7hy24.js` · offset 197444663 · sha256 `d60e4754…`
+Source: `chunk-f72fzxpc.js` · offset 198657019 · sha256 `d60e4754…`
 
 Read as: enum (compared against fixed values). Values: `1`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197444663.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198657019.
 
 **Undocumented**
 
 ### `GRACEFUL_FS_PLATFORM`
 
-Source: `chunk-py9z7ygk.js` · offset 180437006 · sha256 `1c96518e…`
+Source: `chunk-7w2qptvr.js` · offset 181159196 · sha256 `1c96518e…`
 
 Read as: string (raw value; further parsing not traced). Default (from code): `darwin`.
 
-Undocumented; read at `chunk-py9z7ygk.js` offset 180437006.
+Undocumented; read at `chunk-7w2qptvr.js` offset 181159196.
 
 **Undocumented**
 
 ### `GRPC_EXPERIMENTAL_ENABLE_OUTLIER_DETECTION`
 
-Source: `chunk-nphjt8ea.js` · offset 218385340 · sha256 `2a9c164a…`
+Source: `chunk-ym43qfss.js` · offset 219793708 · sha256 `2a9c164a…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218385340.
+Undocumented; read at `chunk-ym43qfss.js` offset 219793708.
 
 **Undocumented**
 
 ### `GRPC_NODE_TRACE`
 
-Source: `chunk-nphjt8ea.js` · offset 218030537 · sha256 `bd88e67e…`
+Source: `chunk-ym43qfss.js` · offset 219438905 · sha256 `bd88e67e…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218030537.
+Undocumented; read at `chunk-ym43qfss.js` offset 219438905.
 
 **Undocumented**
 
 ### `GRPC_NODE_USE_ALTERNATIVE_RESOLVER`
 
-Source: `chunk-nphjt8ea.js` · offset 218230219 · sha256 `213d12c1…`
+Source: `chunk-ym43qfss.js` · offset 219638587 · sha256 `213d12c1…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218230219.
+Undocumented; read at `chunk-ym43qfss.js` offset 219638587.
 
 **Undocumented**
 
 ### `GRPC_NODE_VERBOSITY`
 
-Source: `chunk-nphjt8ea.js` · offset 218029876 · sha256 `90d938ec…`
+Source: `chunk-ym43qfss.js` · offset 219438244 · sha256 `90d938ec…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218029876.
+Undocumented; read at `chunk-ym43qfss.js` offset 219438244.
 
 **Undocumented**
 
 ### `grpc_proxy`
 
-Source: `chunk-nphjt8ea.js` · offset 218236807 · sha256 `984ce2dd…` · 2 read sites
+Source: `chunk-ym43qfss.js` · offset 219645175 · sha256 `984ce2dd…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218236807.
+Undocumented; read at `chunk-ym43qfss.js` offset 219645175.
 
 **Undocumented**
 
 ### `GRPC_SSL_CIPHER_SUITES`
 
-Source: `chunk-nphjt8ea.js` · offset 218035470 · sha256 `6737f6e2…`
+Source: `chunk-ym43qfss.js` · offset 219443838 · sha256 `6737f6e2…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218035470.
+Undocumented; read at `chunk-ym43qfss.js` offset 219443838.
 
 **Undocumented**
 
 ### `GRPC_TRACE`
 
-Source: `chunk-nphjt8ea.js` · offset 218030589 · sha256 `c891fd36…`
+Source: `chunk-ym43qfss.js` · offset 219438957 · sha256 `c891fd36…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218030589.
+Undocumented; read at `chunk-ym43qfss.js` offset 219438957.
 
 **Undocumented**
 
 ### `GRPC_VERBOSITY`
 
-Source: `chunk-nphjt8ea.js` · offset 218029932 · sha256 `03141409…`
+Source: `chunk-ym43qfss.js` · offset 219438300 · sha256 `03141409…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218029932.
+Undocumented; read at `chunk-ym43qfss.js` offset 219438300.
 
 **Undocumented**
 
 ### `K_CONFIGURATION`
 
-Source: `chunk-ekz7hy24.js` · offset 197396259 · sha256 `8915965f…`
+Source: `chunk-f72fzxpc.js` · offset 198608615 · sha256 `8915965f…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197396259.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198608615.
 
 **Undocumented**
 
 ### `LRU_CACHE_IGNORE_AC_WARNING`
 
-Source: `chunk-nc9hhjpp.js` · offset 178241949 · sha256 `08e28927…`
+Source: `chunk-v9n98466.js` · offset 179272622 · sha256 `08e28927…`
 
 Read as: enum (compared against fixed values). Values: `1`.
 
-Undocumented; read at `chunk-nc9hhjpp.js` offset 178241949.
+Undocumented; read at `chunk-v9n98466.js` offset 179272622.
 
 **Undocumented**
 
 ### `METADATA_SERVER_DETECTION`
 
-Source: `chunk-ekz7hy24.js` · offset 197364873 · sha256 `567b2c13…` · 2 read sites
+Source: `chunk-f72fzxpc.js` · offset 198577229 · sha256 `567b2c13…` · 2 read sites
 
 Read as: string (raw value; further parsing not traced).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-ekz7hy24.js` offset 197364873.
+Undocumented; read at `chunk-f72fzxpc.js` offset 198577229.
 
 **Undocumented**
 
 ### `MSAL_FORCE_REGION`
 
-Source: `chunk-mh05fezn.js` · offset 197910643 · sha256 `a5881060…`
+Source: `chunk-4v4n4srf.js` · offset 199182267 · sha256 `95f9a19b…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197910643.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199182267.
 
 **Undocumented**
 
 ### `no_grpc_proxy`
 
-Source: `chunk-nphjt8ea.js` · offset 218237606 · sha256 `3e43f776…`
+Source: `chunk-ym43qfss.js` · offset 219645974 · sha256 `3e43f776…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218237606.
+Undocumented; read at `chunk-ym43qfss.js` offset 219645974.
 
 **Undocumented**
 
 ### `OSTYPE`
 
-Source: `chunk-1nayt2j6.js` · offset 178938822 · sha256 `e7feb6ad…` · 2 read sites
+Source: `chunk-f6y3mr7n.js` · offset 180088567 · sha256 `e7feb6ad…` · 2 read sites
 
 Read as: enum (compared against fixed values). Values: `cygwin`, `msys`.
 
-Undocumented; read at `chunk-1nayt2j6.js` offset 178938822.
+Undocumented; read at `chunk-f6y3mr7n.js` offset 180088567.
 
 **Undocumented**
 
 ### `OTEL_EXPORTER_OTLP_CERTIFICATE`
 
-Source: `chunk-nphjt8ea.js` · offset 218415464 · sha256 `3f3cfacf…`
+Source: `chunk-ym43qfss.js` · offset 219823832 · sha256 `3f3cfacf…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218415464.
+Undocumented; read at `chunk-ym43qfss.js` offset 219823832.
 
 **Undocumented**
 
 ### `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`
 
-Source: `chunk-nphjt8ea.js` · offset 218415158 · sha256 `32e387c2…`
+Source: `chunk-ym43qfss.js` · offset 219823526 · sha256 `32e387c2…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218415158.
+Undocumented; read at `chunk-ym43qfss.js` offset 219823526.
 
 **Undocumented**
 
 ### `OTEL_EXPORTER_OTLP_CLIENT_KEY`
 
-Source: `chunk-nphjt8ea.js` · offset 218415316 · sha256 `fc5f98a1…`
+Source: `chunk-ym43qfss.js` · offset 219823684 · sha256 `fc5f98a1…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218415316.
+Undocumented; read at `chunk-ym43qfss.js` offset 219823684.
 
 **Undocumented**
 
 ### `OTEL_EXPORTER_OTLP_INSECURE`
 
-Source: `chunk-nphjt8ea.js` · offset 218414859 · sha256 `8ce73eb5…`
+Source: `chunk-ym43qfss.js` · offset 219823227 · sha256 `8ce73eb5…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-nphjt8ea.js` offset 218414859.
+Undocumented; read at `chunk-ym43qfss.js` offset 219823227.
 
 **Undocumented**
 
 ### `OTEL_EXPORTER_PROMETHEUS_HOST`
 
-Source: `chunk-kvfs97jp.js` · offset 218438358 · sha256 `61eafb33…`
+Source: `chunk-4yvj3zp6.js` · offset 219846726 · sha256 `61eafb33…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-kvfs97jp.js` offset 218438358.
+Undocumented; read at `chunk-4yvj3zp6.js` offset 219846726.
 
 **Undocumented**
 
 ### `OTEL_EXPORTER_PROMETHEUS_PORT`
 
-Source: `chunk-kvfs97jp.js` · offset 218438450 · sha256 `ccf61175…`
+Source: `chunk-4yvj3zp6.js` · offset 219846818 · sha256 `ccf61175…`
 
 Read as: number (parsed as a number).
 
-Undocumented; read at `chunk-kvfs97jp.js` offset 218438450.
+Undocumented; read at `chunk-4yvj3zp6.js` offset 219846818.
 
 **Undocumented**
 
 ### `REGION_NAME`
 
-Source: `chunk-mh05fezn.js` · offset 197910790 · sha256 `28204796…`
+Source: `chunk-4v4n4srf.js` · offset 199182414 · sha256 `a5881060…`
 
 Read as: string (raw value; further parsing not traced).
 
-Undocumented; read at `chunk-mh05fezn.js` offset 197910790.
+Undocumented; read at `chunk-4v4n4srf.js` offset 199182414.
 
 **Undocumented**
 
 ### `TEST_GRACEFUL_FS_GLOBAL_PATCH`
 
-Source: `chunk-py9z7ygk.js` · offset 180443900 · sha256 `d12bfc7e…`
+Source: `chunk-7w2qptvr.js` · offset 181166090 · sha256 `d12bfc7e…`
 
 Read as: presence (only whether it is set (or truthy) matters).
 
 **Truthiness gotcha:** 1 read site tests the raw string for truthiness, so any non-empty value enables that path, including `0` and `false`.
 
-Undocumented; read at `chunk-py9z7ygk.js` offset 180443900.
+Undocumented; read at `chunk-7w2qptvr.js` offset 181166090.
 
 **Undocumented**

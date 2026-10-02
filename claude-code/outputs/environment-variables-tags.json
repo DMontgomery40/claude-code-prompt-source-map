@@ -8,7 +8,7 @@
    "kind": "topic",
    "definition": "Environment variables that change Anthropic prompt caching on Claude Code's model requests. Counts: the cache TTL each request gets (5-minute or 1-hour, for the main conversation or for subagents and background work); whether requests carry cache_control markers at all, for every model or for one model family (DISABLE_PROMPT_CACHING*); cache eviction and cache-scope betas; cached mid-conversation system blocks; and timing that lets parallel agents reuse a warm cached prefix. Also counts switches that the prompt-caching docs say change what stays cached, such as stripping pre-release anthropic-beta headers or turning MCP tool search off. Applies whatever group the variable is in, including undocumented variables and records of Claude Code setting the same variable for a child process. Does NOT include other caches that only share the word: the WebFetch response cache, the MCP discovery cache, plugin or zip caches, credential caches, feature-flag disk caches, XDG_CACHE_HOME, or library LRU caches. Also excludes settings fixed for the whole session that only feed the request, such as effort level or model choice, and auto-update controls.",
    "feature": true,
-   "count": 24
+   "count": 25
   },
   {
    "id": "security-permissions",
@@ -29,21 +29,21 @@
    "label": "Logging, tracing and diagnostics",
    "kind": "topic",
    "definition": "Environment variables for the logs, metrics and traces that the user collects about Claude Code. Counts: enabling OpenTelemetry; OTEL_* exporter endpoints, headers, protocols, intervals, temporality and attribute limits; trace-context propagation (TRACEPARENT); Datadog and beta tracing; debug log files and levels; diagnostics files; startup profiling and performance traces. Switches that add prompts, responses, tool content or raw API bodies to exports count here and also under Privacy. Applies whatever group the variable is in. Does NOT include Anthropic telemetry opt-outs (Privacy), network timeouts (Network), or debug-logging variables read only by bundled third-party libraries (GRPC_TRACE, NODE_DEBUG).",
-   "count": 65
+   "count": 66
   },
   {
    "id": "authentication",
    "label": "Authentication and credentials",
    "kind": "topic",
    "definition": "Environment variables that supply or control credentials for reaching Anthropic, cloud providers, gateways or MCP servers. Counts: API keys; bearer, OAuth access and refresh tokens; OAuth scopes, client IDs and client secrets; apiKeyHelper refresh; token file descriptors and token files; session JWTs; workload identity federation IDs; cloud credentials (AWS keys and profiles, Google application credentials, Azure identities); mTLS client certificates and keys; credential caches; and switches that skip a provider's own authentication. Applies whatever group the variable is in. Does NOT include which provider, region or endpoint is used (Providers), or scrubbing credentials out of subprocess environments (Security).",
-   "count": 114
+   "count": 115
   },
   {
    "id": "providers",
    "label": "Model providers and API endpoints",
    "kind": "topic",
    "definition": "Environment variables that choose or configure the backend serving model requests. Counts: switches for Amazon Bedrock, Mantle, Google Cloud Agent Platform (Vertex), Microsoft Foundry, Anthropic on AWS or Google Cloud, and LLM gateways; base URLs and endpoint overrides; regions, projects, resource and workspace names, and per-model region overrides; gateway model discovery and hint headers; and extra beta headers, custom headers or extra body fields sent with API requests. Applies whatever group the variable is in. Does NOT include credentials or skip-auth switches (Authentication); generic HTTP proxies, certificates and timeouts (Network); or choosing which Claude model runs and how it thinks, including thinking-related beta headers (Models).",
-   "count": 81
+   "count": 82
   },
   {
    "id": "models-context",
@@ -57,7 +57,7 @@
    "label": "Prompt, instructions and memory",
    "kind": "topic",
    "definition": "Environment variables that replace, shorten, add or remove text that Claude Code puts in the model's context. Counts: system prompt variants (simple or minimal prompts); built-in git or browser-tool instructions; CLAUDE.md and memory-file loading; auto memory and memory guidelines; system reminders and their text; resume or continuation prompts; skill-listing budgets; MCP description length limits; and prompt override files. Applies whatever group the variable is in. Does NOT include model choice or compaction (Models), or settings that change behavior without changing the prompt text.",
-   "count": 51
+   "count": 52
   },
   {
    "id": "mcp",
@@ -71,42 +71,42 @@
    "label": "Plugins, skills and hooks",
    "kind": "topic",
    "definition": "Environment variables for user- or organization-supplied extensions other than MCP. Counts: plugins and plugin marketplaces (directories, seeds, caches, sync, auto-update, git cloning); skills, including bundled and managed skills; and lifecycle hooks (hook timeouts, Stop-hook block caps, hook forwarding, function hooks, Notification hooks). Applies whatever group the variable is in. Does NOT include MCP server settings (MCP) or tools that ship with Claude Code (Built-in tools).",
-   "count": 55
+   "count": 56
   },
   {
    "id": "agents-background",
    "label": "Subagents, teams and background work",
    "kind": "topic",
    "definition": "Environment variables for work that runs beside or beyond the main conversation. Counts: subagents and their spawn depth, concurrency and stall timeouts; built-in Explore and Plan agents; forked subagents; agent teams and teammates; workflows; coordinator mode; background tasks and background sessions (CLAUDE_BG_*); agent view; scheduled or cron tasks; goals, auto-continue and away summaries. A subagent-specific model setting counts here and also under Models. Applies whatever group the variable is in. Does NOT include cloud-hosted or self-hosted sessions (Cloud, remote and hosted sessions), or hook settings that merely mention subagent events such as SubagentStop (Plugins, skills and hooks).",
-   "count": 90
+   "count": 89
   },
   {
    "id": "built-in-tools",
    "label": "Built-in tools",
    "kind": "topic",
    "definition": "Environment variables that change tools shipped with Claude Code that the model calls. Counts: Bash and PowerShell (shell choice, timeouts, output limits, working directory, prefixes, memory caps); Glob, Grep and ripgrep; file reads and file checkpointing; WebFetch and WebSearch; task and todo tools; AskUserQuestion; the advisor tool; Claude in Chrome browser tools; artifacts (CLAUDE_CODE_ARTIFACT_*); attachments; and push notifications. Applies whatever group the variable is in. Does NOT include MCP tools (MCP), plugin or skill tools (Plugins, skills and hooks), subagent spawning (Subagents), or plain OS shell variables such as SHELL.",
-   "count": 99
+   "count": 102
   },
   {
    "id": "remote-hosted",
    "label": "Cloud, remote and hosted sessions",
    "kind": "topic",
    "definition": "Environment variables for Claude Code running somewhere other than a local terminal, or embedded by a host. Counts: cloud sessions (claude --cloud, CCR_*); Remote Control and bridge reattachment (CLAUDE_BRIDGE_*); self-hosted runners (SELF_HOSTED_RUNNER_*, CLAUDE_RUNNER_*); session ingress tokens and URLs; host platforms, desktop apps and SDKs that embed Claude Code (CLAUDE_CODE_HOST_*, Cowork); and remote environment identifiers. Applies whatever group the variable is in. Does NOT include local background sessions (Subagents) or ordinary provider endpoints (Providers).",
-   "count": 194
+   "count": 198
   },
   {
    "id": "network",
    "label": "Network, proxies and timeouts",
    "kind": "topic",
    "definition": "Environment variables for how Claude Code's network connections behave. Counts: HTTP, HTTPS and SOCKS proxies and NO_PROXY; proxy authentication helpers; CA certificate stores and extra CA files; TLS settings; DNS resolution; API request timeouts; retry counts; streaming idle and first-byte watchdogs; non-streaming fallback; and request compression. Applies whatever group the variable is in. Does NOT include which model provider or base URL is used (Providers), or tool-specific timeouts such as Bash or MCP timeouts (those belong to their tool's topic).",
-   "count": 84
+   "count": 86
   },
   {
    "id": "terminal-ui",
    "label": "Terminal UI, commands and IDE",
    "kind": "topic",
    "definition": "Environment variables that change what the user sees or types in the terminal or IDE. Counts: fullscreen and alternate-screen rendering; mouse, cursor and scrolling; colors and truecolor; syntax highlighting; accessibility and screen-reader mode; terminal titles; startup logo and hints; prompt suggestions; keyboard handling; hiding slash commands; and IDE extension connection. OS variables count only when they force or disable a display feature (FORCE_COLOR, NO_COLOR, FORCE_HYPERLINK). Applies whatever group the variable is in. Does NOT include plain OS, shell or CI variables that Claude Code merely reads (TERM, HOME, PATH, CI), or logging (Observability).",
-   "count": 46
+   "count": 47
   },
   {
    "id": "documented",
@@ -118,19 +118,19 @@
    "id": "undocumented",
    "label": "Undocumented",
    "kind": "status",
-   "count": 1136
+   "count": 1150
   },
   {
    "id": "read",
    "label": "Read by Claude Code",
    "kind": "status",
-   "count": 1182
+   "count": 1192
   },
   {
    "id": "set",
    "label": "Set by Claude Code",
    "kind": "status",
-   "count": 467
+   "count": 471
   },
   {
    "id": "any-value",
@@ -142,13 +142,13 @@
    "id": "removed-for-children",
    "label": "Removed from child environments",
    "kind": "status",
-   "count": 57
+   "count": 58
   },
   {
    "id": "passed-to-children",
    "label": "Passed to tools, hooks or MCP servers",
    "kind": "status",
-   "count": 127
+   "count": 128
   },
   {
    "id": "fixed-values",
@@ -404,7 +404,6 @@
    "read"
   ],
   "env-anthropic-service-account-id": [
-   "authentication",
    "undocumented",
    "read"
   ],
@@ -584,9 +583,17 @@
    "documented",
    "read"
   ],
+  "env-claude-ax-announcement-hold-ms": [
+   "undocumented",
+   "read"
+  ],
   "env-claude-ax-prepark-ms": [
    "terminal-ui",
    "documented",
+   "read"
+  ],
+  "env-claude-ax-rewrite-held-announcement": [
+   "undocumented",
    "read"
   ],
   "env-claude-ax-screen-reader": [
@@ -748,6 +755,7 @@
    "read"
   ],
   "env-claude-chrome-paired-device-id": [
+   "privacy-telemetry",
    "built-in-tools",
    "undocumented",
    "read"
@@ -1003,7 +1011,6 @@
   ],
   "env-claude-code-artifact-type-cloud-create": [
    "built-in-tools",
-   "remote-hosted",
    "undocumented",
    "read"
   ],
@@ -1102,7 +1109,6 @@
    "read"
   ],
   "env-claude-code-bridge-child-artifact": [
-   "remote-hosted",
    "undocumented",
    "read"
   ],
@@ -1134,6 +1140,7 @@
    "read"
   ],
   "env-claude-code-bridge-prompt-sha256": [
+   "remote-hosted",
    "undocumented",
    "read"
   ],
@@ -1217,6 +1224,10 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-config-watch-events": [
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-container-id": [
    "undocumented",
    "read"
@@ -1235,12 +1246,12 @@
    "read"
   ],
   "env-claude-code-coordinator-skill-guidance": [
-   "plugins-skills-hooks",
    "agents-background",
    "undocumented",
    "read"
   ],
   "env-claude-code-cowork-frame-artifacts": [
+   "built-in-tools",
    "remote-hosted",
    "undocumented",
    "read"
@@ -1437,6 +1448,12 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-disable-inline-shell-rm-prompt": [
+   "security-permissions",
+   "built-in-tools",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-disable-legacy-model-remap": [
    "models-context",
    "documented",
@@ -1457,6 +1474,7 @@
    "read"
   ],
   "env-claude-code-disable-memory-periodic-resync": [
+   "prompt-instructions",
    "undocumented",
    "read"
   ],
@@ -1555,6 +1573,10 @@
    "read"
   ],
   "env-claude-code-disable-startup-work-gate": [
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-disable-structured-outputs": [
    "undocumented",
    "read"
   ],
@@ -1882,6 +1904,12 @@
    "undocumented",
    "read"
   ],
+  "env-claude-code-growthbook-kick-on-warm-cache": [
+   "prompt-caching",
+   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
   "env-claude-code-gzip-ccr-request-bodies": [
    "remote-hosted",
    "network",
@@ -1937,6 +1965,7 @@
    "read"
   ],
   "env-claude-code-hooks-same-thread": [
+   "plugins-skills-hooks",
    "undocumented",
    "read"
   ],
@@ -1977,6 +2006,16 @@
   ],
   "env-claude-code-host-session-id": [
    "privacy-telemetry",
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-worktree": [
+   "remote-hosted",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-host-worktree-fence": [
    "remote-hosted",
    "undocumented",
    "read"
@@ -2892,6 +2931,8 @@
    "read"
   ],
   "env-claude-code-tmux-prefix-conflicts": [
+   "built-in-tools",
+   "terminal-ui",
    "undocumented",
    "read"
   ],
@@ -3035,7 +3076,6 @@
    "read"
   ],
   "env-claude-code-workflow-size-warning-agents": [
-   "agents-background",
    "undocumented",
    "read"
   ],
@@ -3299,6 +3339,7 @@
    "read"
   ],
   "env-disable-brief-mode-stop-hook": [
+   "plugins-skills-hooks",
    "undocumented",
    "read"
   ],
@@ -4221,6 +4262,7 @@
    "read"
   ],
   "env-azure-functions-environment": [
+   "providers",
    "undocumented",
    "read"
   ],
@@ -4322,7 +4364,11 @@
    "read"
   ],
   "env-claude-code-gb-disk-cache-when-telemetry-off": [
-   "privacy-telemetry",
+   "undocumented",
+   "read"
+  ],
+  "env-claude-code-gzip-datadog-logs": [
+   "observability",
    "undocumented",
    "read"
   ],
@@ -4374,7 +4420,6 @@
    "read"
   ],
   "env-enable-enhanced-telemetry-beta": [
-   "privacy-telemetry",
    "observability",
    "undocumented",
    "read"
@@ -4591,6 +4636,12 @@
    "undocumented",
    "read"
   ],
+  "env-ccr-agent-proxy-ca-watch-enabled": [
+   "remote-hosted",
+   "network",
+   "undocumented",
+   "read"
+  ],
   "env-ccr-agent-proxy-enabled": [
    "remote-hosted",
    "network",
@@ -4692,6 +4743,7 @@
    "read"
   ],
   "env-claude-code-proxy-auth-helper-ttl-ms": [
+   "authentication",
    "network",
    "undocumented",
    "read"
@@ -6271,6 +6323,12 @@
    "undocumented",
    "set"
   ],
+  "env-set-claude-code-config-watch-events": [
+   "undocumented",
+   "set",
+   "removed-for-children",
+   "passed-to-children"
+  ],
   "env-set-claude-code-container-id": [
    "undocumented",
    "set"
@@ -6331,6 +6389,10 @@
   ],
   "env-set-claude-code-disable-plugin-forwarding": [
    "plugins-skills-hooks",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-disable-structured-outputs": [
    "undocumented",
    "set"
   ],
@@ -6506,6 +6568,16 @@
    "set"
   ],
   "env-set-claude-code-host-session-id": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-host-worktree": [
+   "remote-hosted",
+   "undocumented",
+   "set"
+  ],
+  "env-set-claude-code-host-worktree-fence": [
    "remote-hosted",
    "undocumented",
    "set"
@@ -7493,7 +7565,6 @@
    "set"
   ],
   "env-set-git-allow-protocol": [
-   "security-permissions",
    "undocumented",
    "set"
   ],
@@ -8050,6 +8121,7 @@
   ],
   "env-azure-client-send-certificate-chain": [
    "authentication",
+   "network",
    "undocumented",
    "read",
    "third-party"
@@ -8178,6 +8250,7 @@
    "third-party"
   ],
   "env-google-external-account-allow-executables": [
+   "authentication",
    "undocumented",
    "read",
    "fixed-values",

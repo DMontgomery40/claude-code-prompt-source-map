@@ -1,5 +1,5 @@
 {
- "version": "2.1.287",
+ "version": "2.1.288",
  "cli": {
   "entrypoint": "cli",
   "identity": "You are Claude Code, Anthropic's official CLI for Claude.",
@@ -40,7 +40,7 @@
   "system_blocks": 3,
   "main_prompt_chars": 6066,
   "trailing_role": "system",
-  "trailing_chars": 9831,
+  "trailing_chars": 9980,
   "betas": [
    "claude-code-20250219",
    "interleaved-thinking-2025-05-14",
@@ -104,7 +104,7 @@
   "system_blocks": 3,
   "main_prompt_chars": 5807,
   "trailing_role": "system",
-  "trailing_chars": 7879,
+  "trailing_chars": 8028,
   "betas": [
    "claude-code-20250219",
    "interleaved-thinking-2025-05-14",
