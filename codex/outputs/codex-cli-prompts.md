@@ -1,6 +1,6 @@
 # Codex CLI prompts
 
-Source: openai/codex `rust-v0.159.2` (commit `ff6aec96948b`), matching the bundled `codex-cli 0.159.2`.
+Source: openai/codex `rust-v0.159.0-alpha.12.1` (commit `180d8caaac22`), matching the bundled `codex-cli 0.159.0-alpha.12.1`.
 
 Prompt templates and prompt text compiled into the Codex CLI that ships inside the ChatGPT desktop app. Each one is read from the open-source openai/codex repository at the release tag that matches the bundled CLI, and appears here only when its exact bytes are found in the shipped executable. Placeholders such as `{{ extra_policy }}` are filled in at run time.
 

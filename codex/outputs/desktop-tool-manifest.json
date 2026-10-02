@@ -1,8 +1,8 @@
 {
   "page": "desktop-tool-manifest.md",
-  "app_version": "26.928.21956",
-  "app_build": "12404",
-  "source_file_sha256": "3bda98f2265ad23677dfe0163d1cc7855beade6bef11d27f830f6663d7658406",
+  "app_version": "26.930.21537",
+  "app_build": "12776",
+  "source_file_sha256": "c662897ab25e819cd97a7981cf34d10eefcb9243095d527d27adff71bc18af0a",
   "capture": "outputs/current-host-tool-manifest-2026-09-24.json",
   "tools": [
     {
@@ -31,8 +31,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9401561
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9432222
     },
     {
       "id": "codex_app/attach_artifact",
@@ -60,8 +60,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9397568
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9427326
     },
     {
       "id": "codex_app/automation_update",
@@ -73,8 +73,8 @@
       "sha256": "4104ff96ebac0eedc7dc54f34b9771b3ec60e9bbd278ea24342c89f361552974",
       "parameters": null,
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 3846194
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 3850846
     },
     {
       "id": "codex_app/check_app_update",
@@ -89,8 +89,8 @@
         "rows": []
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9396727
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9426485
     },
     {
       "id": "codex_app/compile_latex_document",
@@ -102,8 +102,8 @@
       "sha256": "08a45c39bd42ea6519b2e5aaf1d485a58ffd004206095af06299c64cda05237e",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 2825317
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 2828543
     },
     {
       "id": "codex_app/complete_conversational_onboarding_task",
@@ -118,8 +118,8 @@
         "rows": []
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9396180
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9425938
     },
     {
       "id": "codex_app/complete_sidebar_onboarding_checklist_task",
@@ -134,8 +134,8 @@
         "rows": []
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9405574
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9436235
     },
     {
       "id": "codex_app/consume_usage_reset",
@@ -157,8 +157,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9432839
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9463500
     },
     {
       "id": "codex_app/create_project",
@@ -241,8 +241,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9414761
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9445422
     },
     {
       "id": "codex_app/create_sidebar_section",
@@ -264,8 +264,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9409408
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9440069
     },
     {
       "id": "codex_app/create_thread",
@@ -467,8 +467,8 @@
         "model"
       ],
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9416853
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9447514
     },
     {
       "id": "codex_app/create_worktree",
@@ -476,8 +476,8 @@
       "group": "codex_app",
       "name": "create_worktree",
       "label": "exact",
-      "text": "Create and attach a managed Git worktree on this chat's host. Follow applicable user, repository, and skill instructions when deciding whether and how to create a worktree. Unless the user requests a new worktree, inspect list_artifacts and prefer reusing a suitable active worktree. Use archive_worktree to clean up worktrees created with this tool. Defaults to the repository's remote default branch, not the current branch; specify ref if the default cannot be determined. The chat stays in its existing checkout; use the returned workspace directory. Uncommitted changes are not copied. Returns paths when complete or an operationId to check with get_worktree_creation_status. If registration fails, use the returned paths rather than creating another worktree.",
-      "sha256": "250afd6bc68e8d14ba8967ebe47770e10755bafab721ec790d89a5a439e18fc9",
+      "text": "Create and attach a managed Git worktree on this chat's host. Subagent worktrees attach to the top-level parent chat. If registration fails, call attach_worktree with its returned workspace directory as path to retry attachment. Follow applicable user, repository, and skill instructions when deciding whether and how to create a worktree. Unless the user requests a new worktree, inspect list_artifacts and prefer reusing a suitable active worktree. Use archive_worktree to clean up worktrees created with this tool. Defaults to the repository's remote default branch, not the current branch; specify ref if the default cannot be determined. The chat stays in its existing checkout; use the returned workspace directory. Uncommitted changes are not copied. Returns paths when complete or an operationId to check with get_worktree_creation_status.",
+      "sha256": "0512cc5c23cdd1134332b8c4d6ed34fcb9b22c0b44f3d1cd13a4d8fb84e50831",
       "parameters": {
         "label": "approximate",
         "rows": [
@@ -502,8 +502,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9399537
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9429306
     },
     {
       "id": "codex_app/delete_sidebar_section",
@@ -525,8 +525,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9409590
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9440251
     },
     {
       "id": "codex_app/finalize_environment",
@@ -538,8 +538,8 @@
       "sha256": "4f26a3eef3131ad6625e595212f30272ef185edcffa2554687be0797a1c3ca8c",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 2462062
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 2464393
     },
     {
       "id": "codex_app/fire_confetti",
@@ -561,8 +561,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 5453711
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 5360943
     },
     {
       "id": "codex_app/fork_thread",
@@ -621,8 +621,8 @@
         }
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9420131
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9450792
     },
     {
       "id": "codex_app/get_handoff_status",
@@ -657,8 +657,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9428813
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9459474
     },
     {
       "id": "codex_app/get_thread_emoji",
@@ -680,8 +680,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9411121
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9441782
     },
     {
       "id": "codex_app/get_usage_limits",
@@ -696,8 +696,8 @@
         "rows": []
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9431840
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9462501
     },
     {
       "id": "codex_app/get_worktree_creation_status",
@@ -705,8 +705,8 @@
       "group": "codex_app",
       "name": "get_worktree_creation_status",
       "label": "exact",
-      "text": "Check a pending create_worktree operation: preparing validates the request, creating builds the checkout, and registering attaches it to the chat, followed by completed or failed. During creation, returns named Git phases such as receiving objects or updating files, with a phase percentage when available. Use these to explain what is happening; they do not provide an overall percentage or reliable ETA. Returns immediately. Continue independent work between checks and space checks farther apart when progress is unchanged. Status is retained for one hour after completion, while this app session remains open.",
-      "sha256": "42a9a48acaf6b7795963ec5bf2f24111c5c2d31a6c4fe61beba7ecd74d4a2a41",
+      "text": "Check a pending create_worktree or attach_worktree operation: preparing validates the request, creating builds the checkout, and registering attaches it to the chat, followed by completed or failed. During creation, returns named Git phases such as receiving objects or updating files, with a phase percentage when available. Use these to explain what is happening; they do not provide an overall percentage or reliable ETA. Returns immediately. Continue independent work between checks and space checks farther apart when progress is unchanged. Status is retained for one hour after completion, while this app session remains open.",
+      "sha256": "98105790c4e8e351578d89fecc94631865db085379bc2da642ca40c50b32a154",
       "parameters": {
         "label": "approximate",
         "rows": [
@@ -719,8 +719,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9400525
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9431167
     },
     {
       "id": "codex_app/handoff_thread",
@@ -754,8 +754,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9427461
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9458122
     },
     {
       "id": "codex_app/list_archived_threads",
@@ -797,8 +797,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9422399
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9453060
     },
     {
       "id": "codex_app/list_artifacts",
@@ -806,15 +806,15 @@
       "group": "codex_app",
       "name": "list_artifacts",
       "label": "exact",
-      "text": "List this chat's attached pull requests, active worktrees, archived worktrees, and other saved attachments. Returns each supported attachment's type, identity, payload, and creation time; older hosts may only return pull requests. Items merely mentioned in messages or attached to another chat are not included.",
-      "sha256": "e0f0faa7dc2f0980903c1c7fbaff98b1827eeaa8988ae7c156b4a33a98c3b832",
+      "text": "List this chat's attached pull requests, active worktrees, archived worktrees, and other saved attachments. Returns each supported attachment's type, identity, payload, and creation time; older hosts may only return pull requests. Items merely mentioned in messages or attached to unrelated chats are not included.",
+      "sha256": "b09e2dc7c5ff28c7fff64a55b1aca52581e1d3e61f13560a66c037b683ab0422",
       "parameters": {
         "label": "approximate",
         "rows": []
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9398085
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9427843
     },
     {
       "id": "codex_app/list_hosts",
@@ -829,8 +829,8 @@
         "rows": []
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9402761
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9433422
     },
     {
       "id": "codex_app/list_projects",
@@ -849,8 +849,8 @@
         }
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9416591
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9447252
     },
     {
       "id": "codex_app/list_threads",
@@ -876,8 +876,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9421398
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9452059
     },
     {
       "id": "codex_app/load_workspace_dependencies",
@@ -896,8 +896,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 3853302
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 3857954
     },
     {
       "id": "codex_app/move_project_to_sidebar_section",
@@ -925,8 +925,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9409720
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9440381
     },
     {
       "id": "codex_app/move_thread_to_sidebar_section",
@@ -966,8 +966,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9409940
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9440601
     },
     {
       "id": "codex_app/navigate_to_codex_page",
@@ -989,8 +989,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 5469796
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 5377028
     },
     {
       "id": "codex_app/open_in_codex",
@@ -1024,8 +1024,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 5467161
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 5374393
     },
     {
       "id": "codex_app/read_settings",
@@ -1057,8 +1057,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9403082
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9433743
     },
     {
       "id": "codex_app/read_thread",
@@ -1109,8 +1109,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9423464
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9454125
     },
     {
       "id": "codex_app/read_thread_terminal",
@@ -1129,8 +1129,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9437306
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9467967
     },
     {
       "id": "codex_app/remove_artifact",
@@ -1158,8 +1158,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9398458
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9428219
     },
     {
       "id": "codex_app/rename_sidebar_section",
@@ -1187,8 +1187,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9409511
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9440172
     },
     {
       "id": "codex_app/reorder_section",
@@ -1216,8 +1216,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9410272
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9440933
     },
     {
       "id": "codex_app/reorder_sidebar_projects",
@@ -1239,8 +1239,8 @@
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9410458
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9441119
     },
     {
       "id": "codex_app/reorder_sidebar_sections",
@@ -1257,13 +1257,13 @@
             "name": "sectionIds",
             "required": true,
             "type": "array of string",
-            "description": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub xie]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions."
+            "description": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub HWe]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions."
           }
         ]
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9410627
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9441288
     },
     {
       "id": "codex_app/request_environment_input",
@@ -1275,8 +1275,8 @@
       "sha256": "1a8ec64f36284abc012fba9d9732a169dc6f11278d30bbc412345f03e9dc4eb5",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 2461682
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 2464013
     },
     {
       "id": "codex_app/restore_worktree",
@@ -1298,8 +1298,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9402179
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9432840
     },
     {
       "id": "codex_app/send_message_to_thread",
@@ -1356,8 +1356,8 @@
         "model"
       ],
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9418899
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9449560
     },
     {
       "id": "codex_app/set_thread_archived",
@@ -1402,8 +1402,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9425957
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9456618
     },
     {
       "id": "codex_app/set_thread_emoji",
@@ -1431,8 +1431,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9411280
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9441941
     },
     {
       "id": "codex_app/set_thread_pinned",
@@ -1472,8 +1472,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9425609
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9456270
     },
     {
       "id": "codex_app/set_thread_read_state",
@@ -1519,8 +1519,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9426864
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9457525
     },
     {
       "id": "codex_app/set_thread_title",
@@ -1559,8 +1559,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9426526
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9457187
     },
     {
       "id": "codex_app/share_thread",
@@ -1588,8 +1588,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9431292
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9461953
     },
     {
       "id": "codex_app/uninstall_plugin",
@@ -1616,8 +1616,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9441052
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9471732
     },
     {
       "id": "codex_app/update_running_summary",
@@ -1645,8 +1645,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 2826745
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 2829971
     },
     {
       "id": "codex_app/update_sidebar_preferences",
@@ -1674,8 +1674,8 @@
         ]
       },
       "capture": "changed",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9406845
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9437506
     },
     {
       "id": "codex_app/wait_threads",
@@ -1734,8 +1734,8 @@
         }
       },
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9424297
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9454958
     },
     {
       "id": "codex_app/write_settings",
@@ -1827,8 +1827,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9403706
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9434367
     },
     {
       "id": "codex_app/capture_screen_context",
@@ -1840,8 +1840,8 @@
       "sha256": "6884d374d0e5528e618156d21385350b50d933149682135611568e1bf8197baf",
       "parameters": null,
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 5460108
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 5469694
     },
     {
       "id": "codex_app/end_realtime_voice_call",
@@ -1853,8 +1853,8 @@
       "sha256": "5d043919dfc827388f61f30983708dafd66461df77800e3d0e44375a2284233a",
       "parameters": null,
       "capture": "unchanged",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 5459444
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 5469030
     },
     {
       "id": "codex_app/transfer_voice_call",
@@ -1866,8 +1866,8 @@
       "sha256": "8c5468c28460eea5d0d73d630a72cb0c181ca596771a38d07278bccbe58ecc6a",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 5459778
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 5469364
     },
     {
       "id": "onboarding/request_onboarding_input",
@@ -1934,8 +1934,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 1649549
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 1651214
     },
     {
       "id": "onboarding/request_option_picker",
@@ -1989,8 +1989,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 1649096
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 1650761
     },
     {
       "id": "onboarding/setup_codex_step",
@@ -2021,8 +2021,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 1648871
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 1650536
     },
     {
       "id": "tab/getTabContext",
@@ -2049,8 +2049,8 @@
         }
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 3505677
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 3511843
     },
     {
       "id": "node_repl/js",
@@ -2131,6 +2131,29 @@
       "byte_offset": null
     },
     {
+      "id": "other/attach_worktree",
+      "namespace": null,
+      "group": "Other tools defined in the app bundle",
+      "name": "attach_worktree",
+      "label": "exact",
+      "text": "Attach an existing managed Git worktree to this chat, including after create_worktree registration failed. Subagent worktrees attach to the top-level parent chat. Reuses the checkout without resetting files or running setup scripts. Already-attached worktrees can be attached again safely. An ownerless checkout must have an attachment on this task or have been recently created for it in the current app session. Worktrees owned by unrelated chats cannot be attached. Use restore_worktree for archived worktrees. Returns paths when complete or an operationId to check with get_worktree_creation_status.",
+      "sha256": "3b5f759e2c687d1d67ecd968a6c6d89792bc71dd1c1c5a53efff9269621ecb8a",
+      "parameters": {
+        "label": "approximate",
+        "rows": [
+          {
+            "name": "path",
+            "required": true,
+            "type": "string",
+            "description": "Absolute path to an existing managed worktree or its workspace directory."
+          }
+        ]
+      },
+      "capture": "not in capture",
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9430367
+    },
+    {
       "id": "other/connect_spaces_artifact",
       "namespace": null,
       "group": "Other tools defined in the app bundle",
@@ -2150,8 +2173,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9434088
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9464749
     },
     {
       "id": "other/create_spaces_artifact",
@@ -2191,8 +2214,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9434822
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9465483
     },
     {
       "id": "other/read_page_reference",
@@ -2220,8 +2243,8 @@
         ]
       },
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-initial-135a4ef2552c.js",
-      "byte_offset": 9435909
+      "source_file": "app.asar › webview/assets/app-initial-60d038a052d7.js",
+      "byte_offset": 9466570
     },
     {
       "id": "other/record_private_review",
@@ -2233,8 +2256,8 @@
       "sha256": "178ddc71468f0aaabf7aee2ddd2d5ab6f4a7aaf30d5b73b860b2b1a9019f59c3",
       "parameters": null,
       "capture": "not in capture",
-      "source_file": "app.asar › webview/assets/app-shared-eececb2d2eb0.js",
-      "byte_offset": 3480931
+      "source_file": "app.asar › webview/assets/app-shared-59042e7300f7.js",
+      "byte_offset": 3487022
     }
   ],
   "parameter_texts": [
@@ -2500,8 +2523,8 @@
     },
     {
       "id": "codex_app/reorder_sidebar_sections#sectionIds",
-      "text": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub xie]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions.",
-      "sha256": "3495a5f58af3f64294dc4e61131dae87f1e263d8990343cdf6cc55ca447d24f5"
+      "text": "Every custom section id, plus any built-in headings to move: \"pinned\" (Pinned), \"orbit\" (Your dot), \"[stub HWe]\" (Agents), \"chats\" (Tasks), or \"projects\" (Projects). List them in the desired order; omitted built-in headings keep their positions.",
+      "sha256": "7917c579e636e82c24ebdc0b5022fe6ce7bc308879bc700429bb368b5c708693"
     },
     {
       "id": "codex_app/restore_worktree#root",
@@ -2657,6 +2680,11 @@
       "id": "tab/getTabContext#tabId",
       "text": "Chrome tab ID to inspect.",
       "sha256": "a511fec57d9a4b35cd59b5415a8a47e099c7f98e1c48041f10fd99437887a545"
+    },
+    {
+      "id": "other/attach_worktree#path",
+      "text": "Absolute path to an existing managed worktree or its workspace directory.",
+      "sha256": "e2efe2dd4486a205ae26cf3bb856b82f46b238054a36a331843bde7b7d7426b4"
     },
     {
       "id": "other/read_page_reference#reference",

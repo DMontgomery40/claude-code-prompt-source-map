@@ -1,6 +1,6 @@
 # ChatGPT bundled plugins and skills
 
-Source: `ChatGPT.app` 26.928.21956 (build 12404). Paths are relative to `ChatGPT.app/Contents/Resources`.
+Source: `ChatGPT.app` 26.930.21537 (build 12776). Paths are relative to `ChatGPT.app/Contents/Resources`.
 
 Plugin guidance, skills, reference files, MCP launch settings and Computer Use docs that the ChatGPT desktop app ships as text files outside `app.asar`. Each file is shown with its exact bytes. For `plugin.json` only the top-level `description` value is shown, since the rest is interface copy, author details and hooks. A file that is byte-identical at several paths appears once, with the other paths on its source line.
 
@@ -8,7 +8,7 @@ Plugin guidance, skills, reference files, MCP launch settings and Computer Use d
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json` (file SHA-256 `3566bdf964ac66e8fe5d707e7db751b3290f689309fb73ce03156a4feda0d865`), `description` value SHA-256 `5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24`.
+Source: `plugins/openai-bundled/plugins/browser/.codex-plugin/plugin.json` (file SHA-256 `29fd1db2f50a732bb13c9ff870aa23b774f1517e50a543a99306056c7d16db45`), `description` value SHA-256 `5eb11d9d3d5acd7f7ce000055aa8955a7304df38d3e93e2d129bcd2249461b24`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3520,7 +3520,7 @@ interface:
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json` (file SHA-256 `3d24894fa69bcfeaa2c5c61ad4bf33e5e93475f899eb8d5c3aac56e1d3862d29`), `description` value SHA-256 `0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7`.
+Source: `plugins/openai-bundled/plugins/chrome/.codex-plugin/plugin.json` (file SHA-256 `bd95d49712f9b75e1f7b6dcfd30ccb479b73863a44908c98d0863e75a661ed3e`), `description` value SHA-256 `0df917a4baf66070f2df7a908b3631c221dcc5fca22c7e15e238c98e23092cf7`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3691,7 +3691,7 @@ Only the Node REPL `js` tool (`mcp__node_repl__js`) can be used to control the s
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/code-review/.codex-plugin/plugin.json` (file SHA-256 `61a7f4e9d14d5d6ae655a95cd353715e132431cd4280ab750e7a86684c9c06a8`), `description` value SHA-256 `690549bb4ed4a33bf50b754c18bf933c31d99f402d2ea9bcb66f66342e9ee6a8`.
+Source: `plugins/openai-bundled/plugins/code-review/.codex-plugin/plugin.json` (file SHA-256 `22f3677bfb5848904d7d66c3332561a15807d31df7361caad03c7ca78071823c`), `description` value SHA-256 `690549bb4ed4a33bf50b754c18bf933c31d99f402d2ea9bcb66f66342e9ee6a8`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3818,7 +3818,7 @@ Exact file contents.
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/computer-history/.codex-plugin/plugin.json` (file SHA-256 `d98696b31ede737c776fcaa3aa226852687c68e894fc17d5815115e72ec67513`), `description` value SHA-256 `a94cf012f3cfba666fe59f9cb45b314938e035222ca1dbd27928d5c551924d04`.
+Source: `plugins/openai-bundled/plugins/computer-history/.codex-plugin/plugin.json` (file SHA-256 `31b9bebc0a6a55809827a8c85a34466b96106c1400139e0db0cd9064ae09b1b4`), `description` value SHA-256 `a94cf012f3cfba666fe59f9cb45b314938e035222ca1dbd27928d5c551924d04`.
 
 Exact: the decoded JSON `description` value.
 
@@ -3917,7 +3917,7 @@ Computer History has two primary outputs: rolling event stream segments and memo
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/computer-use/.codex-plugin/plugin.json` (file SHA-256 `d8611146dfe50737a239387b400372319ae8ae4296c41902aaeea9d0a316a5f7`), `description` value SHA-256 `f03335b75ba7ad80f3fd0939f44cccf804196c9438e7403c43bc397bd2a27eeb`.
+Source: `plugins/openai-bundled/plugins/computer-use/.codex-plugin/plugin.json` (file SHA-256 `12971e82cc5dc55ccbb26d99a50a869792fbcd7db7dff6d4951f2f3be61e0b0c`), `description` value SHA-256 `f03335b75ba7ad80f3fd0939f44cccf804196c9438e7403c43bc397bd2a27eeb`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4567,7 +4567,7 @@ Running `--install-managed-full` downloads and runs the upstream TeX Live instal
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/messages/.codex-plugin/plugin.json` (file SHA-256 `d936a59ca58dfba397723e125200e7325ac22f7a526e60b660e1a710466c3864`), `description` value SHA-256 `4e13c254b01f98db065ccd5b6088e7c1d0e0c9b182e292abfe6ba92caaad3573`.
+Source: `plugins/openai-bundled/plugins/messages/.codex-plugin/plugin.json` (file SHA-256 `ddd52d921a65ac46185549df9c55d6c842a721a305396b227c5a8aac1db053c8`), `description` value SHA-256 `4e13c254b01f98db065ccd5b6088e7c1d0e0c9b182e292abfe6ba92caaad3573`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4598,7 +4598,7 @@ Exact file contents.
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/record-and-replay/.codex-plugin/plugin.json` (file SHA-256 `87d5e26a488c898ac820306a5a073dd8f4652d060773beacb8bf0cd508ad5fa9`), `description` value SHA-256 `01aa1e50368759bf3bad6f628fd5e58d6a51c11ba186af2489d59169e4064310`.
+Source: `plugins/openai-bundled/plugins/record-and-replay/.codex-plugin/plugin.json` (file SHA-256 `595215018f81d1b12e1da19182ae419e89d9e4db9a2daef8c312311858f353fe`), `description` value SHA-256 `01aa1e50368759bf3bad6f628fd5e58d6a51c11ba186af2489d59169e4064310`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4681,7 +4681,7 @@ After creating or refining the skill, give the user a concise plain-language sum
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json`, `cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json` (file SHA-256 `8f7cd292bd3ca8b735447226712edea5ba6a16d92b355fe3bb94de1985b5dad5`), `description` value SHA-256 `d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea`.
+Source: `plugins/openai-bundled/plugins/unified-computer-use/.codex-plugin/plugin.json`, `cua_node/lib/node_modules/@oai/cua-repl/plugin/.codex-plugin/plugin.json` (file SHA-256 `1eff3b358ca15cb9a4865bd028cf9ea2988d17780d02f849cd7763e21999eb15`), `description` value SHA-256 `d958081605e29f773377bdadc1f3ddfd8432211a75aadf5e562f24eec814c9ea`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4719,7 +4719,7 @@ Exact file contents.
 
 ### .codex-plugin/plugin.json description
 
-Source: `plugins/openai-bundled/plugins/visualize/.codex-plugin/plugin.json` (file SHA-256 `c136a08743a0c61282a44fc375d05296284db47563b64b2434cb9519b31577b8`), `description` value SHA-256 `4403d6d96913a2d3a6d8d87dd749d4536a423862838154a3802ab8cfee9739b9`.
+Source: `plugins/openai-bundled/plugins/visualize/.codex-plugin/plugin.json` (file SHA-256 `ae741a18d00cdf0e4d7fe60566228608046b0a66db6ea9a43563b691caa7b59e`), `description` value SHA-256 `4403d6d96913a2d3a6d8d87dd749d4536a423862838154a3802ab8cfee9739b9`.
 
 Exact: the decoded JSON `description` value.
 
@@ -4729,7 +4729,7 @@ Create interactive charts, maps, diagrams, simulations, 3D models, data explorer
 
 ### skills/visualize/SKILL.md
 
-Source: `plugins/openai-bundled/plugins/visualize/skills/visualize/SKILL.md`, SHA-256 `9bd8ba716832380c4967e9857b9c84f32010e72b0a5c8876daec6596d377e910`.
+Source: `plugins/openai-bundled/plugins/visualize/skills/visualize/SKILL.md`, SHA-256 `37a648f231b3716956e5b534bff1eef36195b5f7261ccd78e913a9ad5c961f0f`.
 
 Exact file contents.
 
@@ -4911,6 +4911,7 @@ Choose the smallest composition that fits.
 - Keep browser or utility focus styles; never override them.
 - On coarse pointers, provide non-overlapping effective targets about 44px by 44px without breaking 320px layouts; visible icons and marks may stay small. Keep fine-pointer controls compact, and let shared utilities own touch sizing and at least 16px editable-field text.
 - Keep essential content and actions available without hover.
+- Try to keep 90×50px clear for host controls (top-right in LTR hosts, top-left in RTL hosts).
 
 ## Design system
 

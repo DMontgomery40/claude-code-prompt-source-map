@@ -1,6 +1,6 @@
 # Codex/ChatGPT `config.toml` reference
 
-This reference covers every `config.toml` key accepted by the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.928.21956; `codex-cli 0.159.2`, binary sha256 `50ac633af6485151…`). Keys come from the generated `ConfigToml` JSON Schema and config structs in openai/codex at tag `rust-v0.159.2` (the exact release tag for this binary), the feature registry, and probes of the shipped binary with a throwaway `CODEX_HOME`. It lists 977 `config.toml` entries. 502 appear in the official Codex docs, and 475 are undocumented. The entries include 152 feature flags (58 under development, 47 stable, 40 removed, 4 deprecated, 3 experimental), 12 hidden, legacy, or alias keys that the generated schema leaves out, and 6 keys that the official reference lists but this build rejects. The last section lists 171 `requirements.toml` keys for admin-managed policy. Labels: **documented** means the key is in the official config reference or another Codex docs page; **undocumented** means it is only in source and the binary; **hidden** means the schema generator skips it, but the deserializer still recognizes it (sometimes only to raise a targeted error). Descriptions quote the docs where they exist, and the Rust doc comment otherwise. Defaults are shown only where a source states them.
+This reference covers every `config.toml` key accepted by the Codex CLI bundled in the ChatGPT desktop app (com.openai.codex 26.930.21537; `codex-cli 0.159.0-alpha.12.1`, binary sha256 `1180e2d56ea06ec5…`). Keys come from the generated `ConfigToml` JSON Schema and config structs in openai/codex at tag `rust-v0.159.0-alpha.12.1` (the exact release tag for this binary), the feature registry, and probes of the shipped binary with a throwaway `CODEX_HOME`. It lists 977 `config.toml` entries. 502 appear in the official Codex docs, and 475 are undocumented. The entries include 152 feature flags (58 under development, 47 stable, 40 removed, 4 deprecated, 3 experimental), 12 hidden, legacy, or alias keys that the generated schema leaves out, and 6 keys that the official reference lists but this build rejects. The last section lists 171 `requirements.toml` keys for admin-managed policy. Labels: **documented** means the key is in the official config reference or another Codex docs page; **undocumented** means it is only in source and the binary; **hidden** means the schema generator skips it, but the deserializer still recognizes it (sometimes only to raise a targeted error). Descriptions quote the docs where they exist, and the Rust doc comment otherwise. Defaults are shown only where a source states them.
 
 Placeholders: `<id>`, `<name>`, `<key>` and similar stand for any table key you choose; `[]` marks an array of tables. Profiles (`profiles.<name>`) accept a subset of the top-level keys, listed under that entry rather than repeated.
 
@@ -129,7 +129,7 @@ Type: `table` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:156`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:155`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
 
 ### `model_providers.<id>.auth.args`
 
@@ -187,9 +187,9 @@ Type: `table` · Status: undocumented
 
 > AWS SigV4 auth configuration for this provider.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:160`
+> — `codex-rs/model-provider-info/src/lib.rs:159`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:160`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:159`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
 
 ### `model_providers.<id>.aws.auth_refresh`
 
@@ -197,9 +197,9 @@ Type: `table` · Status: undocumented
 
 > Optional command used to reauthenticate after a refreshable AWS auth failure.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:214`
+> — `codex-rs/model-provider-info/src/lib.rs:213`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:214`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:213`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.aws.auth_refresh.args`
 
@@ -207,9 +207,9 @@ Type: `array<string>` · Default: `[]` · Status: undocumented
 
 > Arguments passed to the refresh command.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:252`
+> — `codex-rs/model-provider-info/src/lib.rs:251`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:252`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:251`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
 
 ### `model_providers.<id>.aws.auth_refresh.command`
 
@@ -217,9 +217,9 @@ Type: `string` · Status: undocumented
 
 > Executable to invoke directly, without a shell.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:249`
+> — `codex-rs/model-provider-info/src/lib.rs:248`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:249`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:248`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
 
 ### `model_providers.<id>.aws.auth_refresh.timeout_ms`
 
@@ -227,9 +227,9 @@ Type: `integer (uint64)` · Default: `300000` · Status: undocumented
 
 > Maximum time to wait for the refresh command to complete.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:255`
+> — `codex-rs/model-provider-info/src/lib.rs:254`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:255`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:254`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.aws.credential_export`
 
@@ -237,9 +237,9 @@ Type: `table` · Status: undocumented
 
 > Optional command whose exported credentials replace the AWS SDK credential chain.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:212`
+> — `codex-rs/model-provider-info/src/lib.rs:211`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:212`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:211`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.aws.credential_export.args`
 
@@ -247,9 +247,9 @@ Type: `array<string>` · Default: `[]` · Status: undocumented
 
 > Arguments passed to the credential export command.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:225`
+> — `codex-rs/model-provider-info/src/lib.rs:224`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:225`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:224`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
 
 ### `model_providers.<id>.aws.credential_export.command`
 
@@ -257,9 +257,9 @@ Type: `string` · Status: undocumented
 
 > Executable to invoke directly, without a shell.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:222`
+> — `codex-rs/model-provider-info/src/lib.rs:221`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:222`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:221`, `codex-rs/core/config.schema.json` · In binary: yes (generic match)
 
 ### `model_providers.<id>.aws.credential_export.timeout_ms`
 
@@ -267,9 +267,9 @@ Type: `integer (uint64)` · Default: `30000` · Status: undocumented
 
 > Maximum time to wait for the credential export command to complete.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:228`
+> — `codex-rs/model-provider-info/src/lib.rs:227`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:228`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:227`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.aws.profile`
 
@@ -279,7 +279,7 @@ Type: `string` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:208`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:207`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
 
 ### `model_providers.<id>.aws.region`
 
@@ -289,7 +289,7 @@ Type: `string` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:210`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:209`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
 
 ### `model_providers.<id>.base_url`
 
@@ -299,7 +299,7 @@ Type: `string` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:141`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:140`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.env_http_headers`
 
@@ -309,13 +309,13 @@ Type: `map<string, string>` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:173`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:172`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.env_http_headers.<header>`
 
 Type: `string` · Status: undocumented
 
-Source: `codex-rs/model-provider-info/src/lib.rs:136`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:135`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.env_key`
 
@@ -325,7 +325,7 @@ Type: `string` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:146`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:145`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
 
 ### `model_providers.<id>.env_key_instructions`
 
@@ -335,7 +335,7 @@ Type: `string` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:150`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:149`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.experimental_bearer_token`
 
@@ -345,7 +345,7 @@ Type: `string` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:154`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:153`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.gateway_oauth`
 
@@ -353,9 +353,9 @@ Type: `table` · Status: undocumented
 
 > Secondary OAuth credentials required by the provider's gateway.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:158`
+> — `codex-rs/model-provider-info/src/lib.rs:157`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:158`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:157`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.gateway_oauth.authorization_url`
 
@@ -427,13 +427,13 @@ Type: `map<string, string>` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:168`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:167`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.http_headers.<header>`
 
 Type: `string` · Status: undocumented
 
-Source: `codex-rs/model-provider-info/src/lib.rs:136`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:135`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.model_catalog_url`
 
@@ -441,9 +441,9 @@ Type: `string` · Status: undocumented
 
 > Optional full URL for a Codex-native model catalog. When unset, OpenAI discovery uses the Codex backend unless `base_url` overrides the inference endpoint.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:144`
+> — `codex-rs/model-provider-info/src/lib.rs:143`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:144`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:143`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.name`
 
@@ -453,7 +453,7 @@ Type: `string` · Default: `""` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:139`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
+Source: `codex-rs/model-provider-info/src/lib.rs:138`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (generic match)
 
 ### `model_providers.<id>.query_params`
 
@@ -463,13 +463,13 @@ Type: `map<string, string>` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:165`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:164`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.query_params.<key>`
 
 Type: `string` · Status: undocumented
 
-Source: `codex-rs/model-provider-info/src/lib.rs:136`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:135`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.request_max_retries`
 
@@ -479,7 +479,7 @@ Type: `integer (uint64)` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:175`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:174`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.requires_openai_auth`
 
@@ -489,7 +489,7 @@ Type: `boolean` · Default: `false` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:189`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:188`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.stream_idle_timeout_ms`
 
@@ -499,7 +499,7 @@ Type: `integer (uint64)` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:180`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:179`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.stream_max_retries`
 
@@ -509,7 +509,7 @@ Type: `integer (uint64)` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:177`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:176`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.supports_standalone_web_search`
 
@@ -519,7 +519,7 @@ Type: `boolean` · Default: `false` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:195`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:194`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.supports_websockets`
 
@@ -529,7 +529,7 @@ Type: `boolean` · Default: `false` · Status: documented
 >
 > — [docs](https://developers.openai.com/codex/config-file/config-reference)
 
-Source: `codex-rs/model-provider-info/src/lib.rs:192`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:191`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.websocket_connect_timeout_ms`
 
@@ -537,9 +537,9 @@ Type: `integer (uint64)` · Status: undocumented
 
 > Maximum time (in milliseconds) to wait for a websocket connection attempt before treating it as failed.
 >
-> — `codex-rs/model-provider-info/src/lib.rs:183`
+> — `codex-rs/model-provider-info/src/lib.rs:182`
 
-Source: `codex-rs/model-provider-info/src/lib.rs:183`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:182`, `codex-rs/core/config.schema.json` · In binary: yes (distinctive match)
 
 ### `model_providers.<id>.wire_api`
 
@@ -552,7 +552,7 @@ Type: `"responses"` · Default: `"responses"` · Status: documented
 Values:
 - `responses`: The Responses API exposed by OpenAI at `/v1/responses`.
 
-Source: `codex-rs/model-provider-info/src/lib.rs:163`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
+Source: `codex-rs/model-provider-info/src/lib.rs:162`, `codex-rs/core/config.schema.json` · Docs: [config-file/config-reference](https://developers.openai.com/codex/config-file/config-reference) · In binary: yes (distinctive match)
 
 ### `model_reasoning_effort`
 

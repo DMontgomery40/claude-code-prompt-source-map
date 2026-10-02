@@ -1,5 +1,15717 @@
 # Changelog
 
+## 2026-10-02 · ChatGPT desktop 26.930.21537 (12776), Codex CLI codex-cli 0.159.0-alpha.12.1
+
+# ChatGPT prompts
+
+## Changed documents
+
+- `outputs/chatgpt-sites-artifacts-prompts.md`: changed (changed: Space and templates › Space introduction request; added: Not found in this build; removed: Space and templates › Use template as native Space Page)
+
+### chatgpt-sites-artifacts-prompts.md
+
+#### changed: Space and templates › Space introduction request
+
+````diff
+  Exact text from the bundle. Message id `codex.space.creation.overview.helpPrompt`. Shipped action or context text. UI activation, account availability and live model delivery have not been verified.
+  
+- Translator note: Editable prompt in a new Space's starter Page. The user explicitly activates it to start a chat about the current Page; ChatGPT should ask a question before writing the introduction.
++ Translator note: Editable prompt in a new Space's starter Page. The user explicitly activates it to start a chat about the current Page; ChatGPT should ask a question before writing the introduction. Translate Space/Spaces as a common noun for an area or collection of Pages and files, not a proper name or outer space. Keep the term consistent with navigation.
+  
+  ```text
+  …
+````
+
+#### added: Not found in this build
+
+```text
+These entries' anchors did not resolve in this build.
+
+- `app-space-templates-useTemplate-pagePrompt` (Use template as native Space Page), anchor `Use the {templateName} template to create a native Page in ChatGPT Space. Adapt its content and structure to Page blocks, not a Word document, Google Doc…
+```
+
+#### removed: Space and templates › Use template as native Space Page
+
+```text
+Exact text from the bundle. Message id `space.templates.useTemplate.pagePrompt`. Shipped action or context text. UI activation, account availability and live model delivery have not been verified.
+
+Translator note: Editable chat prompt after selecting a document template in Space. Requests a native …
+```
+
+# Bundled plugin and Computer Use prompt changes (26.930.21537 build 12776)
+
+## Changed documents
+
+- `outputs/chatgpt-bundled-plugins.md`: changed (changed: Plugin: visualize › skills/visualize/SKILL.md)
+- `outputs/computer-use-prompts.md`: changed (changed: Messages › Result: read not approved; changed: Messages › Result: some not approved, some blocked; added: Messages › Messages returned an invalid read response. No content was returned…; added: Computer Use › read access was not approved. If the task's current approval_policy…; added: Computer Use › The read approval response was invalid. No content was returned. Do…; added: Calendar; added: Calendar › Stores Calendars Items Participants Locations; added: Calendar › ChatGPT uses Calendar to read and manage your events.; added: Calendar › If omitted, uses the user's default calendar.; added: Calendar › End of the requested range as an ISO-8601 date-time. Must not prece…; added: Calendar › The next_cursor returned by the preceding list_events response. Use…; added: Calendar › Tools for working with calendars and events in the macOS Calendar app.; added: Calendar › List calendars. Returns each calendar's id for reuse with list_even…; added: Calendar › List events in a date range, optionally filtered by calendar. This…; added: Calendar › Optional calendar IDs. When nonempty, returns only events from thos…; added: Calendar › Create an event. Unless the user requests a specific calendar, omit…; added: Calendar › Event end as an ISO-8601 date-time. If omitted or earlier than star…; added: Calendar › Calendar permissions are not granted; added: Calendar › calendar ON calendar.id = item.calendar_id; added: Calendar › store ON store.id = calendar.store_id; added: Calendar › Can't edit event as the calendar the event belongs to (; added: Calendar › events match this request. No partial results were returned. Try a…; added: Calendar › No default calendar is available; added: Calendar › Could not determine the calendar day for the requested date.; changed: In the code, not shipped: Calendar; added: Not found in this build; added: Not found in this build › messages-result-denied-tail; added: Not found in this build › calendar-placeholder; added: Not found in this build › calendar-symbol-ComputerUseIPCCalendarPlaceholderRequest; added: Not found in this build › calendar-symbol-ComputerUseIPCCalendarPlaceholderResponse; added: Not found in this build › calendar-symbol-not_implemented; removed: Messages › Result: read not approved (lowercase); removed: In the code, not shipped: Calendar › Placeholder tool description; removed: In the code, not shipped: Calendar › ComputerUseIPCCalendarPlaceholderRequest; removed: In the code, not shipped: Calendar › ComputerUseIPCCalendarPlaceholderResponse; removed: In the code, not shipped: Calendar › not_implemented)
+
+### chatgpt-bundled-plugins.md
+
+#### changed: Plugin: visualize › skills/visualize/SKILL.md
+
+```diff
+  - On coarse pointers, provide non-overlapping effective targets about 44px by 44px without breaking 320px layouts; visible icons and marks may stay small. Keep fine-pointer controls compact, and let shared utilities own touch sizing and at least 16px editable-field text.
+  - Keep essential content and actions available without hover.
++ - Try to keep 90×50px clear for host controls (top-right in LTR hosts, top-left in RTL hosts).
+  
+  ## Design system
+  …
+```
+
+
+### computer-use-prompts.md
+
+#### changed: Messages › Result: read not approved
+
+````diff
+  
+  ```text
+- Read access was not approved. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.
++ Read access was not approved. No content was returned. If the task's current approval_policy is confirmed to be never, explain, without naming the internal policy value, that the task's approval settings may have blocked the read confirmation, and suggest switching the task to Ask for approval or Approve for me before retrying. Otherwise, do not suggest changing approval settings or ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.
+  ```
+````
+
+#### changed: Messages › Result: some not approved, some blocked
+
+````diff
+  
+  ```text
+- read access was not approved for some chats and was blocked by “Never allow” settings for others. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.
++ read access was not approved for some chats and was blocked by “Never allow” settings for others. If the task's current approval_policy is confirmed to be never, explain, without naming the internal policy value, that the task's approval settings may have blocked the read confirmation, and suggest switching the task to Ask for approval or Approve for me before retrying. Otherwise, do not suggest changing approval settings or ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.
+  ```
+````
+
+#### added: Messages › Messages returned an invalid read response. No content was returned…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Messages returned an invalid read response. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withh…
+````
+
+#### added: Computer Use › read access was not approved. If the task's current approval_policy…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+read access was not approved. If the task's current approval_policy is confirmed to be never, explain, without naming the internal policy value, that the task's approval settings may h…
+````
+
+#### added: Computer Use › The read approval response was invalid. No content was returned. Do…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+The read approval response was invalid. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld …
+````
+
+#### added: Calendar
+
+```text
+
+```
+
+#### added: Calendar › Stores Calendars Items Participants Locations
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Stores Calendars Items Participants Locations
+```
+````
+
+#### added: Calendar › ChatGPT uses Calendar to read and manage your events.
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+ChatGPT uses Calendar to read and manage your events.
+```
+````
+
+#### added: Calendar › If omitted, uses the user's default calendar.
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+If omitted, uses the user's default calendar.
+```
+````
+
+#### added: Calendar › End of the requested range as an ISO-8601 date-time. Must not prece…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+End of the requested range as an ISO-8601 date-time. Must not precede start_date or be more than 31 calendar days later. Equal dates query that day in the Mac's local timezone.
+```
+````
+
+#### added: Calendar › The next_cursor returned by the preceding list_events response. Use…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+The next_cursor returned by the preceding list_events response. Use it unchanged to retrieve the next page, with the same start_date, end_date, and calendar_ids values.
+```
+````
+
+#### added: Calendar › Tools for working with calendars and events in the macOS Calendar app.
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Tools for working with calendars and events in the macOS Calendar app.
+```
+````
+
+#### added: Calendar › List calendars. Returns each calendar's id for reuse with list_even…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+List calendars. Returns each calendar's id for reuse with list_events, create_event, and update_event.
+```
+````
+
+#### added: Calendar › List events in a date range, optionally filtered by calendar. This…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+List events in a date range, optionally filtered by calendar. This tool returns one page of events at a time. When more events are available, the response includes next_cursor; pass th…
+````
+
+#### added: Calendar › Optional calendar IDs. When nonempty, returns only events from thos…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Optional calendar IDs. When nonempty, returns only events from those calendars.
+```
+````
+
+#### added: Calendar › Create an event. Unless the user requests a specific calendar, omit…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Create an event. Unless the user requests a specific calendar, omit calendar_id to use their default calendar. Returns the created event. Including attendees may send invitations.
+```
+````
+
+#### added: Calendar › Event end as an ISO-8601 date-time. If omitted or earlier than star…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Event end as an ISO-8601 date-time. If omitted or earlier than start_date, uses the Calendar app's default event duration.
+```
+````
+
+#### added: Calendar › Calendar permissions are not granted
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Calendar permissions are not granted
+```
+````
+
+#### added: Calendar › calendar ON calendar.id = item.calendar_id
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed. The string begins or ends with whitespace, which the block cannot show exactly; the JSON file has the exact text.
+
+```text
+ calendar ON calendar.id = item.calendar_id
+LEFT JOIN 
+```
+````
+
+#### added: Calendar › store ON store.id = calendar.store_id
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed. The string begins or ends with whitespace, which the block cannot show exactly; the JSON file has the exact text.
+
+```text
+ store ON store.id = calendar.store_id
+WHERE item.unique_id = 
+```
+````
+
+#### added: Calendar › Can't edit event as the calendar the event belongs to (
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Can't edit event as the calendar the event belongs to (
+```
+````
+
+#### added: Calendar › events match this request. No partial results were returned. Try a…
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed. The string begins or ends with whitespace, which the block cannot show exactly; the JSON file has the exact text.
+
+```text
+ events match this request. No partial results were returned. Try a sh…
+````
+
+#### added: Calendar › No default calendar is available
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+No default calendar is available
+```
+````
+
+#### added: Calendar › Could not determine the calendar day for the requested date.
+
+````text
+Exact: the whole NUL-terminated string at that offset, found by the vocabulary sweep and not yet reviewed.
+
+```text
+Could not determine the calendar day for the requested date.
+```
+````
+
+#### changed: In the code, not shipped: Calendar
+
+```diff
+- - The Computer Use programs contain a Calendar tool placeholder. Its description, quoted below, says it returns `not_implemented` without accessing or changing calendar data.
++ - The Calendar placeholder tool description is not in this build.
+  - No folder under `plugins/openai-bundled/plugins` has "calendar" in its name.
+  - Inference: it would use macOS Calendar access, going by the permission type names below.
+  …
+```
+
+#### added: Not found in this build
+
+```text
+
+```
+
+#### added: Not found in this build › messages-result-denied-tail
+
+````text
+```text
+read access was not approved. Do not ask
+```
+````
+
+#### added: Not found in this build › calendar-placeholder
+
+````text
+```text
+Placeholder for the planned Calendar plugin.
+```
+````
+
+#### added: Not found in this build › calendar-symbol-ComputerUseIPCCalendarPlaceholderRequest
+
+````text
+```text
+ComputerUseIPCCalendarPlaceholderRequest
+```
+````
+
+#### added: Not found in this build › calendar-symbol-ComputerUseIPCCalendarPlaceholderResponse
+
+````text
+```text
+ComputerUseIPCCalendarPlaceholderResponse
+```
+````
+
+#### added: Not found in this build › calendar-symbol-not_implemented
+
+````text
+```text
+not_implemented
+```
+````
+
+#### removed: Messages › Result: read not approved (lowercase)
+
+````text
+Exact: the whole NUL-terminated string at that offset, decoded as UTF-8. It is a fragment that the program joins with other text at run time. Kind: tool result text.
+
+```text
+read access was not approved. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools…
+````
+
+#### removed: In the code, not shipped: Calendar › Placeholder tool description
+
+````text
+Exact: the whole NUL-terminated string at that offset, decoded as UTF-8. Kind: tool description.
+
+```text
+Placeholder for the planned Calendar plugin. Returns not_implemented without accessing or changing calendar data.
+```
+````
+
+#### removed: In the code, not shipped: Calendar › ComputerUseIPCCalendarPlaceholderRequest
+
+````text
+Exact: these bytes occur at the listed offsets. Only the name is shown, not the metadata bytes around it.
+
+```text
+ComputerUseIPCCalendarPlaceholderRequest
+```
+````
+
+#### removed: In the code, not shipped: Calendar › ComputerUseIPCCalendarPlaceholderResponse
+
+````text
+Exact: these bytes occur at the listed offsets. Only the name is shown, not the metadata bytes around it.
+
+```text
+ComputerUseIPCCalendarPlaceholderResponse
+```
+````
+
+#### removed: In the code, not shipped: Calendar › not_implemented
+
+````text
+Exact: these bytes occur at the listed offsets. Only the name is shown, not the metadata bytes around it.
+
+```text
+not_implemented
+```
+````
+
+# Tool manifest changes (ChatGPT desktop 26.930.21537, build 12776)
+
+## Changed documents
+
+- `outputs/desktop-tool-manifest.md`: changed (changed: codex_app › create_worktree; changed: codex_app › get_worktree_creation_status; changed: codex_app › list_artifacts; changed: codex_app › reorder_sidebar_sections; added: Other tools defined in the app bundle › attach_worktree)
+
+### desktop-tool-manifest.md
+
+#### changed: codex_app › create_worktree
+
+````diff
+  
+  ```text
+- Create and attach a managed Git worktree on this chat's host. Follow applicable user, repository, and skill instructions when deciding whether and how to create a worktree. Unless the user requests a new worktree, inspect list_artifacts and prefer reusing a suitable active worktree. Use archive_worktree to clean up worktrees created with this tool. Defaults to the repository's remote default branch, not the current branch; specify ref if the default cannot be determined. The chat stays in its existing checkout; use the returned workspace directory. Uncommitted changes are not copied. Returns paths when complete or an operationId to check with get_worktree_creation_status. If registration fails, use the returned paths rather than creating another worktree.
++ Create and attach a managed Git worktree on this chat's host. Subagent worktrees attach to the top-level parent chat. If registration fails, call attach_worktree with its returned workspace directory as path to retry attachment. Follow applicable user, repository, and skill instructions when deciding whether and how to create a worktree. Unless the user requests a new worktree, inspect list_artifacts and prefer reusing a suitable active worktree. Use archive_worktree to clean up worktrees created with this tool. Defaults to the repository's remote default branch, not the current branch; specify ref if the default cannot be determined. The chat stays in its existing checkout; use the returned workspace directory. Uncommitted changes are not copied. Returns paths when complete or an operationId to check with get_worktree_creation_status.
+  ```
+  
+  …
+  - Omit name for a random ID.
+  + Create and attach a managed Git worktree on this chat's host.
++ + Subagent worktrees attach to the top-level parent chat.
++ + If registration fails, call attach_worktree with its returned workspace directory as path to retry attachment.
+  + Follow applicable user, repository, and skill instructions when deciding whether and how to create a worktree.
+  + Unless the user requests a new worktree, inspect list_artifacts and prefer reusing a suitable active worktree.
+  …
+  - If registration fails after creation, keep using the returned worktree; do not create another as a retry.
+  + Returns paths when complete or an operationId to check with get_worktree_creation_status.
+- + If registration fails, use the returned paths rather than creating another worktree.
+  + parameter allowAsync
+  ```
+````
+
+#### changed: codex_app › get_worktree_creation_status
+
+````diff
+  
+  ```text
+- Check a pending create_worktree operation: preparing validates the request, creating builds the checkout, and registering attaches it to the chat, followed by completed or failed. During creation, returns named Git phases such as receiving objects or updating files, with a phase percentage when available. Use these to explain what is happening; they do not provide an overall percentage or reliable ETA. Returns immediately. Continue independent work between checks and space checks farther apart when progress is unchanged. Status is retained for one hour after completion, while this app session remains open.
++ Check a pending create_worktree or attach_worktree operation: preparing validates the request, creating builds the checkout, and registering attaches it to the chat, followed by completed or failed. During creation, returns named Git phases such as receiving objects or updating files, with a phase percentage when available. Use these to explain what is happening; they do not provide an overall percentage or reliable ETA. Returns immediately. Continue independent work between checks and space checks farther apart when progress is unchanged. Status is retained for one hour after completion, while this app session remains open.
+  ```
+  
+  …
+````
+
+#### changed: codex_app › list_artifacts
+
+````diff
+  
+  ```text
+- List this chat's attached pull requests, active worktrees, archived worktrees, and other saved attachments. Returns each supported attachment's type, identity, payload, and creation time; older hosts may only return pull requests. Items merely mentioned in messages or attached to another chat are not included.
++ List this chat's attached pull requests, active worktrees, archived worktrees, and other saved attachments. Returns each supported attachment's type, identity, payload, and creation time; older hosts may only return pull requests. Items merely mentioned in messages or attached to unrelated chats are not included.
+  ```
+  
+  …
+  + List this chat's attached pull requests, active worktrees, archived worktrees, and other saved attachments.
+  + Returns each supported attachment's type, identity, payload, and creation time; older hosts may only return pull requests.
+- + Items merely mentioned in messages or attached to another chat are not included.
++ + Items merely mentioned in messages or attached to unrelated chats are not included.
+  ```
+````
+
+#### changed: codex_app › reorder_sidebar_sections
+
+```diff
+  | Name | Required | Type | Description |
+  |---|---|---|---|
+- | `sectionIds` | required | array of string | Every custom section id, plus any built-in headings to move: "pinned" (Pinned), "orbit" (Your dot), "[stub xie]" (Agents), "chats" (Tasks), or "projects" (Projects). List them in the desired order; omitted built-in headings keep their positions. |
++ | `sectionIds` | required | array of string | Every custom section id, plus any built-in headings to move: "pinned" (Pinned), "orbit" (Your dot), "[stub HWe]" (Agents), "chats" (Tasks), or "projects" (Projects). List them in the desired order; omitted built-in headings keep their positions. |
+  
+  Unchanged since the 2026-09-24 capture.
+```
+
+#### added: Other tools defined in the app bundle › attach_worktree
+
+````text
+Description: exact.
+
+```text
+Attach an existing managed Git worktree to this chat, including after create_worktree registration failed. Subagent worktrees attach to the top-level parent chat. Reuses the checkout without resetting files or running setup scripts. Already-attached worktrees can be atta…
+````
+
+# Learning blocks
+
+## Changed documents
+
+- `outputs/chatgpt-learning-blocks.md`: changed (changed: three.js 3D scenes (22) › Column space: `A\mathbf{x}\in\operatorname{span}(A)`; changed: three.js 3D scenes (22) › Cylindrical coordinates: `\int_{a_z}^{b_z}\int_{a_{\theta}}^{b_{\theta}}\int_{a_r}^{b_r}r\,dr\,d\theta\,dz`; changed: three.js 3D scenes (22) › Divergence theorem flux: `\iint_{\partial V}\mathbf F\cdot\mathbf n\,dS=\iiint_V\nabla\cdot\mathbf F\,dV`; changed: three.js 3D scenes (22) › Double integral cartesian; changed: three.js 3D scenes (22) › Gradient directional derivative: `D_{\mathbf u}f=\nabla f\cdot\mathbf u`; changed: three.js 3D scenes (22) › Jacobian grid transformation: `dA=\left|\det J\right|\,du\,dv`; changed: three.js 3D scenes (22) › Lagrange gradient parallelism: `\nabla f=\lambda\nabla g`; changed: three.js 3D scenes (22) › Line integral work; changed: three.js 3D scenes (22) › Multivariable limit paths: `f(x,y)=\frac{x^2-y^2}{x^2+y^2}`; changed: three.js 3D scenes (22) › Null space: `A\mathbf{x}=\mathbf{0}`; changed: three.js 3D scenes (22) › Parametrized line 2d; changed: three.js 3D scenes (22) › Parametrized line 3d; changed: three.js 3D scenes (22) › Parametrized surfaces; changed: three.js 3D scenes (22) › Power iteration; changed: three.js 3D scenes (22) › Shifted inverse iteration: `\mathbf{x}_{k+1}=\frac{B\mathbf{x}_k}{\lVert B\mathbf{x}_k\rVert}`; changed: three.js 3D scenes (22) › Solar system; changed: three.js 3D scenes (22) › Spherical coordinates: `\int_{a_p}^{b_p}\int_{a_{\phi}}^{b_{\phi}}\int_{a_{\theta}}^{b_{\theta}}p^2\sin\phi\,d\theta\,d\phi\,dp`; changed: three.js 3D scenes (22) › Surface level curves; changed: three.js 3D scenes (22) › Tangent plane linearization: `\small f(x_0,y_0)+\nabla f(x_0,y_0)\cdot{\langle x-x_0,y-y_0\rangle}`; changed: three.js 3D scenes (22) › Triple integral cartesian; changed: three.js 3D scenes (22) › Vector field curl divergence: `\begin{aligned}\operatorname{div}\mathbf F&=\nabla\cdot\mathbf F\\\operatorname{curl}\mathbf F&=\nabla\times\mathbf F\end{aligned}`; changed: three.js 3D scenes (22) › Vsepr geometry; changed: Lottie animations (761) › A and B antigen products expressed together on one AB red blood cell; changed: Lottie animations (761) › A basal body anchors one motile cilium across the plasma membrane; changed: Lottie animations (761) › A biological stain reveals the same previously faint cell nucleus; changed: Lottie animations (761) › A competitive inhibitor occupies the substrate's own active site; changed: Lottie animations (761) › A complementary microRNA binds an existing mature mRNA, suppresses translation or promotes RNA degradation, and reduces protein output after transcription.; changed: Lottie animations (761) › A complementary substrate fits an enzyme's specific active site; changed: Lottie animations (761) › A confined tumor stays above an intact boundary while invasive cells cross it; changed: Lottie animations (761) › A fixed recessive pp tester distinguishes PP from Pp dominant-phenotype parents; changed: Lottie animations (761) › A lac-operon example aligns a CAP activator site, promoter, operator, and three structural genes that share one polycistronic mRNA.; changed: Lottie animations (761) › A local developmental signal induces neighboring-cell gene expression and fate; changed: Lottie animations (761) › A local regulator reaches a nearby receptor-bearing cell; changed: Lottie animations (761) › A migratory bird follows seasonal photoperiod and resource cues; changed: Lottie animations (761) › A pancreas senses high glucose and a distinct effector lowers it; changed: Lottie animations (761) › A recognizable common precursor differentiates into nerve and muscle cells; changed: Lottie animations (761) › A rooted shoot bends toward directional light through growth; changed: Lottie animations (761) › A separate allosteric inhibitor reduces catalytic capacity without occupying the active site; changed: Lottie animations (761) › A short-day plant flowers after a sufficiently long uninterrupted night; changed: Lottie animations (761) › A surface receptor responds while its water-soluble ligand stays outside; changed: Lottie animations (761) › A traveling peristaltic muscle wave propels one food bolus; changed: Lottie animations (761) › ABA versus gibberellin seed dormancy; changed: Lottie animations (761) › Abundant tryptophan binds an inactive trp repressor, enabling the complex to occupy the operator and stop tryptophan-biosynthesis transcription.; changed: Lottie animations (761) › Acid strength versus concentration; changed: Lottie animations (761) › Acidic lysosomal digestion remains separate from near-neutral cytosol; changed: Lottie animations (761) › Acoelomate, pseudocoelomate, and coelomate; changed: Lottie animations (761) › Actin filament polymerization; changed: Lottie animations (761) › Actin treadmilling preserves filament length during subunit turnover; changed: Lottie animations (761) › Actin-driven cell migration; changed: Lottie animations (761) › Action-potential depolarization and repolarization; changed: Lottie animations (761) › Activated oncogene growth signal compared with lost tumor-suppressor brake; changed: Lottie animations (761) › active-habitat-restoration-population-recovery; changed: Lottie animations (761) › Acute inflammation and neutrophil recruitment; changed: Lottie animations (761) › Adaptation and environmental fitness; changed: Lottie animations (761) › Adenylyl cyclase converts ATP into intracellular cAMP that activates protein kinase A; changed: Lottie animations (761) › ADH osmoregulation neuroendocrine loop; changed: Lottie animations (761) › ADH water balance negative feedback; changed: Lottie animations (761) › Adjacent plant membranes, cellulose walls, and middle lamella; changed: Lottie animations (761) › Aerobic, facultative, and anaerobic bacteria share one oxygen gradient; changed: Lottie animations (761) › agricultural-nutrient-management-runoff-tradeoffs; changed: Lottie animations (761) › Aldehyde versus ketone carbonyl placement; changed: Lottie animations (761) › Algal photosynthesis and oxygen production; changed: Lottie animations (761) › All four DNA-template-to-RNA complementary transcription pairs; changed: Lottie animations (761) › All-or-none action-potential threshold; changed: Lottie animations (761) › Allolactose inactivates the operator-bound LacI repressor, allowing RNA polymerase to transcribe the lac structural genes.; changed: Lottie animations (761) › Allopatric geographic separation versus sympatric shared habitat; changed: Lottie animations (761) › Alpha helices and beta sheets; changed: Lottie animations (761) › Alternative RNA-splicing isoforms; changed: Lottie animations (761) › Amino-acid carboxyl, amino, and zwitterion states; changed: Lottie animations (761) › Amino-acid charge states across pH; changed: Lottie animations (761) › Amino-acid molecular structure; changed: Lottie animations (761) › Amniotic egg and extraembryonic membranes; changed: Lottie animations (761) › Amniotic egg structure; changed: Lottie animations (761) › Amoeba phagocytosis; changed: Lottie animations (761) › An affected aa child proves both unaffected pedigree parents are Aa carriers; changed: Lottie animations (761) › An affected X-linked dominant father transmits his affected X to every daughter and no son; changed: Lottie animations (761) › An ectotherm cools by choosing a shaded environmental microhabitat; changed: Lottie animations (761) › An enhancer-bound transcriptional activator loops one continuous DNA molecule toward a promoter, recruits RNA polymerase, and increases mRNA output.; changed: Lottie animations (761) › Angiosperm double fertilization; changed: Lottie animations (761) › Angiosperm flowers, fruit, and enclosed seeds; changed: Lottie animations (761) › Animal body axes and cephalization; changed: Lottie animations (761) › Animal cell structure and function; changed: Lottie animations (761) › Animal digestive tract organ sequence; changed: Lottie animations (761) › Animal diversity and body plans; changed: Lottie animations (761) › Animal excretion and osmoregulation; changed: Lottie animations (761) › Animal extracellular-matrix components and integrin attachment; changed: Lottie animations (761) › Animal respiration uses food and oxygen and releases energy and waste; changed: Lottie animations (761) › Animal tight junctions seal, desmosomes anchor, and gap junctions connect; changed: Lottie animations (761) › Animal tissues, integument, and barrier repair; changed: Lottie animations (761) › Animal-cell cytokinesis divides cytoplasm after nuclear division; changed: Lottie animations (761) › Animal-cell swelling, balance, and shrinking across three tonicities; changed: Lottie animations (761) › Annelid peristaltic locomotion; changed: Lottie animations (761) › Ant pheromone trail and food recruitment; changed: Lottie animations (761) › Antagonistic elbow flexion and extension; changed: Lottie animations (761) › Antibiotic selection of resistant bacteria; changed: Lottie animations (761) › Antibody heavy chains, light chains, Fab, and Fc; changed: Lottie animations (761) › Antibody specificity and neutralization; changed: Lottie animations (761) › Antigen presentation pathways; changed: Lottie animations (761) › Antigen-specific clonal selection and expansion; changed: Lottie animations (761) › Antiparallel AUG codon and UAC tRNA anticodon pairing; changed: Lottie animations (761) › Antiparallel DNA strands; changed: Lottie animations (761) › Antiparallel template and daughter polarity; changed: Lottie animations (761) › Apical dominance auxin and cytokinin; changed: Lottie animations (761) › Artery, vein, and capillary structure comparison; changed: Lottie animations (761) › Arthropod body plan and jointed appendages; changed: Lottie animations (761) › Artificial selection and selective breeding; changed: Lottie animations (761) › Asexual plant propagation by runners; changed: Lottie animations (761) › Asymmetric stem-cell division renews one stem cell and differentiates its sibling; changed: Lottie animations (761) › Atmospheric nitrogen, root-nodule bacteria, soil nitrogen, and feeding; changed: Lottie animations (761) › ATP and ADP preserve adenosine while one phosphate changes attachment; changed: Lottie animations (761) › ATP hydrolysis transfers one phosphate and metabolic energy regenerates ATP; changed: Lottie animations (761) › ATP phosphorylation activates a substrate and enables a new chemical bond; changed: Lottie animations (761) › ATP synthase chemiosmosis; changed: Lottie animations (761) › ATP-dependent cross-bridge cycle; changed: Lottie animations (761) › ATP-derived phosphate activates a membrane pump before against-gradient ion transport; changed: Lottie animations (761) › Auditory hair-cell sensory transduction; changed: Lottie animations (761) › Autophagy encloses damaged cargo for lysosomal recycling; changed: Lottie animations (761) › Autosomal dominant vertical transmission contrasted with recessive transmission through an unaffected carrier generation; changed: Lottie animations (761) › Autosomal father-to-son transmission contrasted with paternal X-to-daughter transmission; changed: Lottie animations (761) › Auxin acid-growth cell elongation; changed: Lottie animations (761) › B-cell plasma-cell antibody secretion; changed: Lottie animations (761) › Bacterial and animal cells share core structures but differ in nuclear organization; changed: Lottie animations (761) › Bacterial batch-culture growth phases; changed: Lottie animations (761) › Bacterial binary fission; changed: Lottie animations (761) › Bacterial cell envelope and accessory structures; changed: Lottie animations (761) › Bacterial cell shapes and arrangements; changed: Lottie animations (761) › Bacterial conjugation and plasmid transfer; changed: Lottie animations (761) › Bacterial horizontal gene transfer routes; changed: Lottie animations (761) › Bacterial operons and eukaryotic chromatin, transcription, and RNA processing regulate the unchanged pathway from DNA to RNA to protein.; changed: Lottie animations (761) › Bacterial population density triggers a shared quorum-sensing response; changed: Lottie animations (761) › Bacterial prophage induction; changed: Lottie animations (761) › Bacterial transformation and antibiotic selection; changed: Lottie animations (761) › Bacterial transformation and free DNA uptake; changed: Lottie animations (761) › Bacteriophage attachment and genome injection; changed: Lottie animations (761) › Bacteriophage lysogeny and prophage inheritance; changed: Lottie animations (761) › Bacteriophage lytic replication and lysis; changed: Lottie animations (761) › Bacteriophage lytic versus lysogenic pathways; changed: Lottie animations (761) › Bacteriophage structure and host recognition; changed: Lottie animations (761) › Bacteriophage transduction of bacterial genes; changed: Lottie animations (761) › Basal melanocytes transfer protective melanin; changed: Lottie animations (761) › Bidirectional replication forks; changed: Lottie animations (761) › Bile emulsifies fat before lipase digests exposed droplet surfaces; changed: Lottie animations (761) › Biological acid-base proton transfer; changed: Lottie animations (761) › Biological bicarbonate buffer equilibrium; changed: Lottie animations (761) › Biological buffer capacity and exhaustion; changed: Lottie animations (761) › Biological buffer conjugate pair; changed: Lottie animations (761) › Biological buffer response to added acid; changed: Lottie animations (761) › Biological buffer response to added base; changed: Lottie animations (761) › Biological calibration curve and unknown concentration; changed: Lottie animations (761) › Biological pH scale and tenfold proton changes; changed: Lottie animations (761) › Biological pH, pKa, and protonation states; changed: Lottie animations (761) › Biological serial dilution and concentration; changed: Lottie animations (761) › Biotechnology methods; changed: Lottie animations (761) › Birds nested within reptiles; changed: Lottie animations (761) › Births, deaths, immigration, and emigration; changed: Lottie animations (761) › Blastocyst implantation and cell lineages; changed: Lottie animations (761) › Both plants and animals use food and oxygen for respiration; changed: Lottie animations (761) › Branching timeline of major biological transitions; changed: Lottie animations (761) › Bread mold sporangium spore release; changed: Lottie animations (761) › Brightfield versus phase-contrast imaging of one unstained live cell; changed: Lottie animations (761) › Butterfly complete metamorphosis; changed: Lottie animations (761) › Calcium, troponin, and tropomyosin; changed: Lottie animations (761) › Calvin cycle: carbon dioxide, RuBP, G3P, and regenerated RuBP; changed: Lottie animations (761) › Cambrian animal body-plan diversification; changed: Lottie animations (761) › Carbohydrate structure and function; changed: Lottie animations (761) › Carbohydrates overview; changed: Lottie animations (761) › Carbon dioxide right-shifts the hemoglobin oxygen affinity curve; changed: Lottie animations (761) › Carbon dioxide, bicarbonate transport, and blood pH; changed: Lottie animations (761) › Carbon from air becomes plant sugar and new leaf tissue; changed: Lottie animations (761) › Carbon reservoirs and fluxes; changed: Lottie animations (761) › carbon-budget-emission-reduction-and-sink-restoration; changed: Lottie animations (761) › carbon-cycle-anthropogenic-imbalance; changed: Lottie animations (761) › Carrier mother and unaffected father produce one affected X-linked son; changed: Lottie animations (761) › Cell specialization: same genome, different cellular identities; changed: Lottie animations (761) › Cell theory: living things, cellular units, and existing-cell lineage; changed: Lottie animations (761) › Cell-cycle phases and regulation overview; changed: Lottie animations (761) › Cell-size surface area, volume, and SA:V comparison; changed: Lottie animations (761) › Cell-specific transcription factors activate matching genes in the same genome; changed: Lottie animations (761) › Cell-surface movement and cytoskeleton; changed: Lottie animations (761) › Cellular respiration pathway overview; changed: Lottie animations (761) › Cellular structure and functions; changed: Lottie animations (761) › Central and peripheral nervous-system organization; changed: Lottie animations (761) › Checkpoint failure inherits DNA damage through repeated cell division; changed: Lottie animations (761) › Chemical-synapse neurotransmitter release; changed: Lottie animations (761) › Chloroplast structure and photosynthesis; changed: Lottie animations (761) › Cholesterol buffers cool packing and warm membrane motion; changed: Lottie animations (761) › Chromosome-21 nondisjunction produces a 24-chromosome gamete; fertilization by a normal 23-chromosome gamete produces trisomy 21; changed: Lottie animations (761) › Cilia versus microvilli; changed: Lottie animations (761) › Ciliary power and recovery stroke; changed: Lottie animations (761) › Circadian melatonin neuroendocrine pathway; changed: Lottie animations (761) › Citric acid cycle carbon and carriers; changed: Lottie animations (761) › climate-disruption-coral-bleaching; changed: Lottie animations (761) › climate-disruption-species-range-shift; changed: Lottie animations (761) › Cnidarian nematocyst discharge; changed: Lottie animations (761) › Cnidarian polyp versus medusa; changed: Lottie animations (761) › Cochlear tonotopic pitch mapping; changed: Lottie animations (761) › Coding and template DNA strands determine transcription direction; changed: Lottie animations (761) › Coding strand template strand and RNA comparison; changed: Lottie animations (761) › Commensalism nesting partnership; changed: Lottie animations (761) › Comparative vertebrate embryology; changed: Lottie animations (761) › Compare internal metabolic heat and external environmental heat; changed: Lottie animations (761) › Compare oriented taxis with nondirectional kinesis; changed: Lottie animations (761) › Compare phylogenetic relatedness; changed: Lottie animations (761) › Competitive and pure noncompetitive inhibition have distinct rate limits; changed: Lottie animations (761) › Complement opsonization; changed: Lottie animations (761) › Complementary base pairing; changed: Lottie animations (761) › Complementary cell-surface recognition produces physical adhesion; changed: Lottie animations (761) › Complete phosphorus reservoirs and return pathways; changed: Lottie animations (761) › Complete versus incomplete metamorphosis; changed: Lottie animations (761) › Complete water reservoirs and branching return pathways; changed: Lottie animations (761) › Compound microscope anatomy; changed: Lottie animations (761) › Concentration gradient and dynamic equilibrium; changed: Lottie animations (761) › Connective tissue cells, fibers, and matrix; changed: Lottie animations (761) › Connective tissue matrix comparison; changed: Lottie animations (761) › Conservation population size, inherited diversity, and habitat connectivity; changed: Lottie animations (761) › Contained apoptotic bodies compared with accidental necrotic rupture; changed: Lottie animations (761) › Continuous leading-strand synthesis; changed: Lottie animations (761) › Conventional pedigree symbols, connected generations, and carrier states; changed: Lottie animations (761) › Convergent aquatic vertebrate body shapes; changed: Lottie animations (761) › Corneocytes and lipids limit epidermal water loss; changed: Lottie animations (761) › Cortical versus juxtamedullary nephron; changed: Lottie animations (761) › CRISPR DNA repair outcomes; changed: Lottie animations (761) › CRISPR guide-directed DNA cleavage; changed: Lottie animations (761) › CRISPR-Cas9 target recognition; changed: Lottie animations (761) › Cytokinin divides an attached lateral bud into a leafy side shoot; changed: Lottie animations (761) › Cytoskeletal filament comparison; changed: Lottie animations (761) › Cytotoxic T-cell infected-cell killing; changed: Lottie animations (761) › Damaged cell undergoes contained apoptosis while its healthy neighbor survives; changed: Lottie animations (761) › Damaged DNA arrests G1 until repair permits S-phase entry; changed: Lottie animations (761) › Daylight entrains an approximately daily organismal activity rhythm; changed: Lottie animations (761) › Decomposer nutrient recycling; changed: Lottie animations (761) › Deep time and the Precambrian–Phanerozoic scale; changed: Lottie animations (761) › Dendritic-cell antigen presentation; changed: Lottie animations (761) › Density-dependent population limiting factors; changed: Lottie animations (761) › Desmosomal cadherins and intermediate filaments resist tensile stress; changed: Lottie animations (761) › Diaphragm-driven inhalation and quiet exhalation; changed: Lottie animations (761) › Diploblastic versus triploblastic organization; changed: Lottie animations (761) › Diploid population allele-frequency bookkeeping; changed: Lottie animations (761) › Direct animal-cell communication through aligned gap junctions; changed: Lottie animations (761) › Direct insect tracheal oxygen delivery; changed: Lottie animations (761) › Direct membrane-stretch osmotic negative feedback; changed: Lottie animations (761) › Direct olfactory cortical pathway; changed: Lottie animations (761) › Direct plant-cell communication through a plasmodesma; changed: Lottie animations (761) › Direct versus indirect development; changed: Lottie animations (761) › Direct-contact, local, and long-distance cell communication; changed: Lottie animations (761) › Directed isopod taxis toward a favorable moisture stimulus; changed: Lottie animations (761) › Discontinuous Okazaki-fragment synthesis; changed: Lottie animations (761) › Diversity of life overview; changed: Lottie animations (761) › DNA and RNA nucleotide comparison; changed: Lottie animations (761) › DNA gene structure produces an aligned complementary RNA message; changed: Lottie animations (761) › DNA polymerase proofreading; changed: Lottie animations (761) › DNA replication overview; changed: Lottie animations (761) › Dominant Golgi stack receives at cis and ships at trans; changed: Lottie animations (761) › Doubling model-cell width lowers its surface-area-to-volume ratio; changed: Lottie animations (761) › Early-Earth prebiotic environments; changed: Lottie animations (761) › Echinoderm larval-to-adult symmetry; changed: Lottie animations (761) › Echinoderm water vascular tube feet; changed: Lottie animations (761) › Ecological population density and habitat area; changed: Lottie animations (761) › ecological-disturbance-secondary-succession; changed: Lottie animations (761) › Ecosystem energy flow versus matter cycling; changed: Lottie animations (761) › Ecosystem food web energy pathways; changed: Lottie animations (761) › Ecosystem primary productivity GPP and NPP; changed: Lottie animations (761) › Ecosystem trophic energy pyramid; changed: Lottie animations (761) › Ecosystem trophic level hierarchy; changed: Lottie animations (761) › ecosystem-disturbance-food-web-cascade; changed: Lottie animations (761) › Effective buffer range around pKa; changed: Lottie animations (761) › Electron transport chain proton pumping; changed: Lottie animations (761) › Embryo gibberellin activates aleurone enzymes and germination; changed: Lottie animations (761) › Embryonic cleavage and blastula formation; changed: Lottie animations (761) › Embryonic development stage sequence; changed: Lottie animations (761) › Endocytosis and vesicle uptake; changed: Lottie animations (761) › Endosymbiotic origin of chloroplasts; changed: Lottie animations (761) › Endosymbiotic origin of mitochondria; changed: Lottie animations (761) › Endothermy versus ectothermy; changed: Lottie animations (761) › Environmental change shifts carrying capacity; changed: Lottie animations (761) › Environmental selection pressure; changed: Lottie animations (761) › Enzyme activity rises to a temperature optimum before denaturation; changed: Lottie animations (761) › Enzyme structure, active site, substrate, and products; changed: Lottie animations (761) › Enzymes lower activation energy without changing reaction free energy; changed: Lottie animations (761) › Epidermal renewal and shedding; changed: Lottie animations (761) › Epithelial apical-basal polarity; changed: Lottie animations (761) › Epithelial cell migration closes a wound; changed: Lottie animations (761) › Equal-time nutrient diffusion into small and large cells; changed: Lottie animations (761) › Equal-volume compact and flattened cell surface comparison; changed: Lottie animations (761) › Ethylene fruit ripening feedback; changed: Lottie animations (761) › Ethylene leaf abscission; changed: Lottie animations (761) › Eukaryotic flagellum propulsion; changed: Lottie animations (761) › Eusocial colony division of labor; changed: Lottie animations (761) › eutrophication-decomposition-oxygen-depletion; changed: Lottie animations (761) › eutrophication-nutrient-runoff-algal-bloom; changed: Lottie animations (761) › Evidence for evolution; changed: Lottie animations (761) › Evolutionary time, fossils, and major transitions; changed: Lottie animations (761) › Excitation-contraction coupling; changed: Lottie animations (761) › Excitatory versus inhibitory synapses; changed: Lottie animations (761) › Exocytosis and vesicle secretion; changed: Lottie animations (761) › Exponential population growth with abundant resources; changed: Lottie animations (761) › Exponential versus logistic population-growth models; changed: Lottie animations (761) › Exposed gymnosperm seeds versus enclosed angiosperm seeds; changed: Lottie animations (761) › Facilitated diffusion through a carrier; changed: Lottie animations (761) › Facilitated diffusion through a channel; changed: Lottie animations (761) › Female reproductive anatomy; changed: Lottie animations (761) › Fermentation NAD regeneration; changed: Lottie animations (761) › Fern sori, sporangia, and spores; changed: Lottie animations (761) › Fern sporophyte and gametophyte life cycle; changed: Lottie animations (761) › Fertilization and the block to polyspermy; changed: Lottie animations (761) › Fish operculum and gill ventilation; changed: Lottie animations (761) › Fish-gill countercurrent oxygen exchange; changed: Lottie animations (761) › Five major mass extinctions in geologic time; changed: Lottie animations (761) › Five-prime-to-three-prime DNA synthesis; changed: Lottie animations (761) › Flatworm branched gastrovascular distribution; changed: Lottie animations (761) › Florigen leaf to shoot apex; changed: Lottie animations (761) › Flower reproductive anatomy; changed: Lottie animations (761) › Flower-to-fruit and ovule-to-seed development; changed: Lottie animations (761) › Flowering plant structure, transport, and reproduction; changed: Lottie animations (761) › Flowering-plant life cycle; changed: Lottie animations (761) › Flowering-plant life cycle #2; changed: Lottie animations (761) › Focus and microscope depth of field; changed: Lottie animations (761) › Folded mitochondrial inner membranes localize many ATP-forming complexes; changed: Lottie animations (761) › Food separates into nutrients that become growing body tissue; changed: Lottie animations (761) › Fossil strata and relative age; changed: Lottie animations (761) › Fossil-age bracketing with volcanic ash; changed: Lottie animations (761) › Fossil-record preservation and sampling bias; changed: Lottie animations (761) › Fossilization through burial, mineralization, and exposure; changed: Lottie animations (761) › Founder effect and a newly established population; changed: Lottie animations (761) › Four abnormal meiosis-I gametes contrast with two abnormal and two normal meiosis-II gametes; changed: Lottie animations (761) › Four animal tissue types; changed: Lottie animations (761) › Four cells crossing a calibrated 320-micrometer microscope field; changed: Lottie animations (761) › Four Pp by Pp transmission paths become 1:2:1 genotypes and 3:1 phenotypes; changed: Lottie animations (761) › Four stages of skin wound repair; changed: Lottie animations (761) › Fracture healing and callus formation; changed: Lottie animations (761) › Frameshift versus in-frame insertion; changed: Lottie animations (761) › Free bacterial cells attach and develop a protective biofilm matrix; changed: Lottie animations (761) › Freshwater fish osmoregulation; changed: Lottie animations (761) › Freshwater protist contractile-vacuole osmoregulation; changed: Lottie animations (761) › Freshwater versus marine fish osmoregulation; changed: Lottie animations (761) › Frog metamorphosis; changed: Lottie animations (761) › Functional redundancy preserves a represented pollination role; changed: Lottie animations (761) › Functional-group polarity and water interactions; changed: Lottie animations (761) › Fungal decomposition and matter cycling; changed: Lottie animations (761) › Fungal extracellular digestion; changed: Lottie animations (761) › Fungal hyphae and mycelium; changed: Lottie animations (761) › Fungal septate and coenocytic hyphae; changed: Lottie animations (761) › Fungal spore dispersal and germination; changed: Lottie animations (761) › G1/S, G2/M, and spindle checkpoint prerequisites; changed: Lottie animations (761) › Gametophyte versus sporophyte dominance; changed: Lottie animations (761) › Gastrulation and three germ layers; changed: Lottie animations (761) › Gel electrophoresis apparatus; changed: Lottie animations (761) › Gel electrophoresis size separation; changed: Lottie animations (761) › Gene flow between existing populations; changed: Lottie animations (761) › Gibberellin stem internode elongation; changed: Lottie animations (761) › Glycolysis carbon and energy flow; changed: Lottie animations (761) › Glycosidic bond formation and hydrolysis; changed: Lottie animations (761) › Gradual versus punctuated fossil change; changed: Lottie animations (761) › Gram-positive versus Gram-negative envelopes; changed: Lottie animations (761) › Great Oxygenation and the rise of atmospheric oxygen; changed: Lottie animations (761) › Guard-cell turgor and stomatal opening; changed: Lottie animations (761) › Gymnosperm cones, pollen, and exposed seeds; changed: Lottie animations (761) › habitat-fragmentation-population-isolation; changed: Lottie animations (761) › Hardy–Weinberg expected genotype frequencies; changed: Lottie animations (761) › Helper T-cell coordination; changed: Lottie animations (761) › Hemoglobin loads oxygen at lungs and unloads it at tissues; changed: Lottie animations (761) › Heritable trait variation in a population; changed: Lottie animations (761) › Hinge versus ball-and-socket motion; changed: Lottie animations (761) › Histone acetylation is associated with more open chromatin, increased promoter accessibility, RNA-polymerase recruitment, and visible mRNA production.; changed: Lottie animations (761) › Homologous vertebrate forelimbs; changed: Lottie animations (761) › HPA axis cortisol stress response; changed: Lottie animations (761) › HPT axis thyroid hormone regulation; changed: Lottie animations (761) › human-land-use-biodiversity-loss; changed: Lottie animations (761) › Humoral versus cell-mediated immunity; changed: Lottie animations (761) › Hydrostatic skeleton, exoskeleton, and endoskeleton; changed: Lottie animations (761) › Immersion oil retains light lost at a glass-to-air interface; changed: Lottie animations (761) › In-frame insertion and deletion; changed: Lottie animations (761) › Incomplete DNA replication blocks G2 until a complete chromosome can enter mitosis; changed: Lottie animations (761) › Incomplete dominance heterozygote cross and one-to-two-to-one ratio; changed: Lottie animations (761) › Incomplete versus complete digestive tract; changed: Lottie animations (761) › Independent chromosome-set and DNA-content accounting through S phase and both meiotic divisions; changed: Lottie animations (761) › Index-fossil correlation across rock layers; changed: Lottie animations (761) › Induced-fit binding, catalysis, product release, and enzyme reuse; changed: Lottie animations (761) › Inherited diversity within one species; changed: Lottie animations (761) › Innate versus adaptive immune response timing; changed: Lottie animations (761) › Integrin mechanically attaches extracellular matrix to actin; changed: Lottie animations (761) › Interferon antiviral signaling between cells; changed: Lottie animations (761) › Internal versus external fertilization; changed: Lottie animations (761) › Interphase growth, DNA replication, and preparation; changed: Lottie animations (761) › Intestinal nutrient delivery through the hepatic portal vein; changed: Lottie animations (761) › invasive-species-competitive-displacement; changed: Lottie animations (761) › Inverted microscope image and opposite stage movement; changed: Lottie animations (761) › IP3 opens an ER channel and previously stored calcium ions activate a response; changed: Lottie animations (761) › Island colonization and evolutionary biogeography; changed: Lottie animations (761) › Jawless versus jawed fish; changed: Lottie animations (761) › Kinesin and dynein vesicle transport; changed: Lottie animations (761) › Lateral fluidity of the plasma membrane; changed: Lottie animations (761) › Leading-versus-lagging synthesis comparison; changed: Lottie animations (761) › Leaf tissue and stomatal anatomy; changed: Lottie animations (761) › Lichen fungal-algal symbiosis; changed: Lottie animations (761) › Life-history tradeoffs in offspring number and care; changed: Lottie animations (761) › Ligand dissociation and phosphatase-mediated phosphate removal terminate a cellular response; changed: Lottie animations (761) › Linked chromosome loci favor parental over recombinant allele combinations; changed: Lottie animations (761) › Lipid classes overview; changed: Lottie animations (761) › Lipid hydrophobicity in water; changed: Lottie animations (761) › Lipid tail saturation and packing; changed: Lottie animations (761) › Living seed: protective coat, stored food, and embryo; changed: Lottie animations (761) › Lobe-fin to tetrapod limb homology; changed: Lottie animations (761) › Logistic population growth and carrying capacity; changed: Lottie animations (761) › Long-bone growth at the growth plate; changed: Lottie animations (761) › Long-bone structure and function; changed: Lottie animations (761) › Loop of Henle countercurrent concentration; changed: Lottie animations (761) › Lophotrochozoan versus ecdysozoan lineages; changed: Lottie animations (761) › Lymphocyte development and recirculation; changed: Lottie animations (761) › Magnification versus resolving power; changed: Lottie animations (761) › Major animal phyla and representative body plans; changed: Lottie animations (761) › Male reproductive anatomy and sperm route; changed: Lottie animations (761) › Mammalian airway, lungs, and alveolar exchange anatomy; changed: Lottie animations (761) › Mammalian pulmonary and systemic double circulation; changed: Lottie animations (761) › Mammalian urinary system anatomy; changed: Lottie animations (761) › Marine fish osmoregulation; changed: Lottie animations (761) › Mass-extinction survival and adaptive radiation; changed: Lottie animations (761) › Matched heterozygotes distinguish uniform blending from codominance; changed: Lottie animations (761) › Maternal allele silencing makes the same nuclear variant depend on its parent of origin; changed: Lottie animations (761) › Maternal mitochondrial transmission compared with no paternal transmission; changed: Lottie animations (761) › Matter cycles while energy flows; changed: Lottie animations (761) › Mature mRNA structure; changed: Lottie animations (761) › Measured image size, actual specimen size, and magnification; changed: Lottie animations (761) › Measurement accuracy and precision; changed: Lottie animations (761) › Meiosis I separates intact replicated homologs and reduces diploid cells to haploid; changed: Lottie animations (761) › Meiosis II separates sister chromatids while preserving one haploid chromosome set; changed: Lottie animations (761) › Meiosis-I nondisjunction sends both homologs together and produces four abnormal gametes; changed: Lottie animations (761) › Meiosis-II nondisjunction in one branch leaves two normal and two abnormal gametes; changed: Lottie animations (761) › Membrane bilayer polarity; changed: Lottie animations (761) › Membrane-bound compartments within one eukaryotic cell; changed: Lottie animations (761) › Membrane-bound ligand signals a touching neighboring cell; changed: Lottie animations (761) › Mendelian garden-pea P, F1, and F2 inheritance overview; changed: Lottie animations (761) › Metamorphosis from larva to adult; changed: Lottie animations (761) › Microscope illumination and image path; changed: Lottie animations (761) › Microscopy scale bar cell measurement; changed: Lottie animations (761) › Microtubule polarity and growth; changed: Lottie animations (761) › Missense amino-acid substitution; changed: Lottie animations (761) › Mitochondrion structure and ATP production; changed: Lottie animations (761) › Molecular sequence similarity; changed: Lottie animations (761) › Mollusk foot modifications; changed: Lottie animations (761) › Mollusk mantle, foot, and visceral mass; changed: Lottie animations (761) › Monophyletic clade membership; changed: Lottie animations (761) › Moss gametophyte and sporophyte life cycle; changed: Lottie animations (761) › Motile cilium axoneme structure; changed: Lottie animations (761) › Motor-unit recruitment and force; changed: Lottie animations (761) › mRNA matches coding DNA except for thymine-to-uracil substitution; changed: Lottie animations (761) › Multicellular cell, tissue, and organ hierarchy; changed: Lottie animations (761) › Multiple tissues build a functional organ; changed: Lottie animations (761) › Mutation codon reading frame; changed: Lottie animations (761) › Mutation DNA to cellular phenotype; changed: Lottie animations (761) › Mutualism cleaning partnership; changed: Lottie animations (761) › Mycorrhizal mutualism; changed: Lottie animations (761) › Myelinated versus unmyelinated conduction; changed: Lottie animations (761) › Natural killer cell missing-self recognition; changed: Lottie animations (761) › Natural selection and differential reproduction; changed: Lottie animations (761) › Natural selection and differential survival; changed: Lottie animations (761) › Natural selection through differential reproduction; changed: Lottie animations (761) › Nephron anatomy across cortex and medulla; changed: Lottie animations (761) › Nervous, muscular, and skeletal systems coordinate movement; changed: Lottie animations (761) › Nested intestinal folds, villi, and epithelial microvilli; changed: Lottie animations (761) › Neuroendocrine negative feedback; changed: Lottie animations (761) › Neuromuscular junction transmission; changed: Lottie animations (761) › Neuron anatomy and signal direction; changed: Lottie animations (761) › Neuronal resting potential and ion gradients; changed: Lottie animations (761) › Neurons and muscle cells express different genes from the same genome; changed: Lottie animations (761) › Neurons, synapses, and neural circuits; changed: Lottie animations (761) › Neurotransmitter reuptake and synaptic clearance; changed: Lottie animations (761) › Nitrification and denitrification; changed: Lottie animations (761) › Nitrogen ammonification and decomposition; changed: Lottie animations (761) › Nitrogen reservoirs and transformations; changed: Lottie animations (761) › Nonsense mutation premature stop; changed: Lottie animations (761) › Nonvascular epithelium and connective blood supply; changed: Lottie animations (761) › Nonvascular versus vascular plants; changed: Lottie animations (761) › Normal cell contact stops growth while contact-insensitive cells keep piling up; changed: Lottie animations (761) › Nucleic acids; changed: Lottie animations (761) › Nucleic-acid polymerization; changed: Lottie animations (761) › Nucleotide structure; changed: Lottie animations (761) › Nucleus and ribosome functions; changed: Lottie animations (761) › Nutrient runoff and eutrophication; changed: Lottie animations (761) › Objective power and field of view; changed: Lottie animations (761) › Ocean-atmosphere carbon exchange; changed: Lottie animations (761) › Okazaki-fragment maturation and joining; changed: Lottie animations (761) › Oldest fossil and an unsampled ghost lineage; changed: Lottie animations (761) › One affected X allele passes from a grandfather through his carrier daughter to an affected grandson without father-to-son transmission; changed: Lottie animations (761) › One aligned four-chromatid meiotic tetrad preserves maternal and paternal loci; changed: Lottie animations (761) › One bacterial cell compared with many cooperating animal cells; changed: Lottie animations (761) › One bacterium biases run-and-tumble movement toward an attractant; changed: Lottie animations (761) › One biological outlier shifts the mean but not the median; changed: Lottie animations (761) › One cell secretes and receives its own extracellular signal; changed: Lottie animations (761) › One chromosome before and after sister-chromatid duplication; changed: Lottie animations (761) › One diploid germ cell divides into four genetically distinguishable haploid gametes; changed: Lottie animations (761) › One DNA sequence substitution changes the corresponding RNA message; changed: Lottie animations (761) › One enclosed secretory protein travels from rough ER through Golgi to outside; changed: Lottie animations (761) › One endocrine hormone travels through blood to a distant target; changed: Lottie animations (761) › One existing animal cell divides into two daughter cells; changed: Lottie animations (761) › One extracellular ligand drives ordered reception, transduction, and response; changed: Lottie animations (761) › One genotype responds phenotypically after environmental water increases; changed: Lottie animations (761) › One lipid-soluble hormone crosses the membrane and binds inside the cell; changed: Lottie animations (761) › One morphogen concentration gradient specifies three genome-matched cell fates; changed: Lottie animations (761) › One neurotransmitter crosses a short extracellular synaptic cleft; changed: Lottie animations (761) › One Pp homologous allele pair segregates into separate haploid gametes; changed: Lottie animations (761) › One pre-mRNA containing three identifiable exons is alternatively spliced into two mature RNA exon combinations that encode different protein isoforms.; changed: Lottie animations (761) › One receptor input becomes two, four, and eight countable activated downstream targets; changed: Lottie animations (761) › One reciprocal prophase-I crossover changes only two non-sister chromatids; changed: Lottie animations (761) › One typical XY germ cell separates X and Y in meiosis I and produces two X-bearing and two Y-bearing gametes after meiosis II; changed: Lottie animations (761) › One-base deletion frameshift; changed: Lottie animations (761) › One-base insertion frameshift; changed: Lottie animations (761) › Only the receptor-bearing cell responds to a shared extracellular signal; changed: Lottie animations (761) › Open insect circulation versus closed fish circulation; changed: Lottie animations (761) › Ordered AUG GCU ACC UAA mRNA codons produce Met Ala Thr and stop; changed: Lottie animations (761) › Ordered chromosome alignment, attachment, separation, and nuclear reformation; changed: Lottie animations (761) › Organic-carbon burial and long-term geological storage; changed: Lottie animations (761) › Origin of life; changed: Lottie animations (761) › Osmoregulator versus osmoconformer; changed: Lottie animations (761) › Osmosis across a selectively permeable membrane; changed: Lottie animations (761) › Outgroup and rooted ingroup; changed: Lottie animations (761) › Oviparous versus viviparous development; changed: Lottie animations (761) › Ovulation, fertilization, and implantation; changed: Lottie animations (761) › Paramecium cell structure; changed: Lottie animations (761) › Paramecium ciliary feeding; changed: Lottie animations (761) › Paramecium conjugation genetic exchange; changed: Lottie animations (761) › Parasitism host exploitation; changed: Lottie animations (761) › Passive versus active membrane transport; changed: Lottie animations (761) › Pasteur swan-neck control compared with airborne contamination; changed: Lottie animations (761) › Pathogen types; changed: Lottie animations (761) › PCR exponential DNA amplification; changed: Lottie animations (761) › PCR primer-directed extension; changed: Lottie animations (761) › PCR temperature cycle; changed: Lottie animations (761) › Pepsin and trypsin have different pH activity optima; changed: Lottie animations (761) › Peptide-bond formation; changed: Lottie animations (761) › Peroxisome catalase compartmentalizes hydrogen peroxide detoxification; changed: Lottie animations (761) › pH and enzyme active-site charge; changed: Lottie animations (761) › Phagocytosis and phagolysosome digestion; changed: Lottie animations (761) › Phanerozoic Paleozoic, Mesozoic, and Cenozoic eras; changed: Lottie animations (761) › Phloem source-to-sink sugar transport; changed: Lottie animations (761) › Phosphate functional-group structure and negative charge; changed: Lottie animations (761) › Phospholipid bilayer self-assembly; changed: Lottie animations (761) › Phospholipid structure and polarity; changed: Lottie animations (761) › Phosphorus from rock to the food web; changed: Lottie animations (761) › Phosphorus has no major atmospheric reservoir; changed: Lottie animations (761) › Phosphorus sedimentation and uplift; changed: Lottie animations (761) › Photosynthesis and respiration carbon exchange; changed: Lottie animations (761) › Photosynthesis Calvin-cycle carbon accounting; changed: Lottie animations (761) › Photosynthesis chemiosmosis and ATP production; changed: Lottie animations (761) › Photosynthesis chloroplast organization; changed: Lottie animations (761) › Photosynthesis light and carbon-dioxide limitation; changed: Lottie animations (761) › Photosynthesis light reaction and Calvin-cycle coupling; changed: Lottie animations (761) › Photosynthesis matter and energy inputs and outputs; changed: Lottie animations (761) › Photosynthesis stomatal water and carbon tradeoff; changed: Lottie animations (761) › Photosynthesis thylakoid proton gradient; changed: Lottie animations (761) › Photosynthesis water splitting and oxygen release; changed: Lottie animations (761) › Photosynthesis: water to NADPH through PSII, ETC, and PSI; changed: Lottie animations (761) › Photosynthetic producers and consuming organisms; changed: Lottie animations (761) › Phototropism auxin redistribution; changed: Lottie animations (761) › Phylogenetic branch rotation invariance; changed: Lottie animations (761) › Phylogeny and common ancestry overview; changed: Lottie animations (761) › Phytochrome night interruption; changed: Lottie animations (761) › Placental maternal-fetal exchange; changed: Lottie animations (761) › Plant cell structure and function; changed: Lottie animations (761) › Plant cell wall and animal extracellular-matrix overview; changed: Lottie animations (761) › Plant cell wall, membrane, and vacuole; changed: Lottie animations (761) › Plant diversity and life cycles; changed: Lottie animations (761) › Plant evolution: vascular tissue, seeds, and flowers; changed: Lottie animations (761) › Plant photosynthesis inputs are sunlight, carbon dioxide, and water; changed: Lottie animations (761) › Plant respiration continues as daytime photosynthesis gives way to night; changed: Lottie animations (761) › Plant root and shoot system interdependence; changed: Lottie animations (761) › Plant root-water uptake and leaf transpiration; changed: Lottie animations (761) › Plant spores versus seeds; changed: Lottie animations (761) › Plant statolith gravity sensing; changed: Lottie animations (761) › Plant-cell turgidity, flaccidity, and plasmolysis across three tonicities; changed: Lottie animations (761) › Plant-made sugar moves into root storage and supports new growth; changed: Lottie animations (761) › Plant, fungal, and animal cell structures; changed: Lottie animations (761) › Plants and animals exchange matter while energy enters and leaves; changed: Lottie animations (761) › Plasma membrane as a cell boundary; changed: Lottie animations (761) › Plasma membrane fluid-mosaic architecture; changed: Lottie animations (761) › Plasmid sticky-end ligation; changed: Lottie animations (761) › Platelet recruitment amplifies until the same vessel wound is sealed; changed: Lottie animations (761) › Pollen fertilization without standing water; changed: Lottie animations (761) › Pollen transfer during pollination; changed: Lottie animations (761) › Pollen-tube growth and fertilization; changed: Lottie animations (761) › Pollination, fertilization, and seed formation; changed: Lottie animations (761) › Population adaptation across generations; changed: Lottie animations (761) › Population bottleneck and persistent variation loss; changed: Lottie animations (761) › Population ecology and environmental limits; changed: Lottie animations (761) › Population genetics and evolutionary mechanisms; changed: Lottie animations (761) › Population size and genetic-drift magnitude; changed: Lottie animations (761) › Posterior pituitary neurohormone release; changed: Lottie animations (761) › Postsynaptic potential summation; changed: Lottie animations (761) › PP and Pp are purple while only pp expresses the white recessive phenotype; changed: Lottie animations (761) › PP, Pp, and pp parental genotypes predict distinct one-allele gametes; changed: Lottie animations (761) › Pre-existing genetic variation and environmental disturbance; changed: Lottie animations (761) › Pre-mRNA exon and intron structure; changed: Lottie animations (761) › Pre-mRNA intron splicing; changed: Lottie animations (761) › Pre-mRNA processing; changed: Lottie animations (761) › Prebiotic organic-molecule synthesis; changed: Lottie animations (761) › Predation energy and population effects; changed: Lottie animations (761) › Predator reintroduction trophic recovery; changed: Lottie animations (761) › Predator removal trophic cascade; changed: Lottie animations (761) › Prepare a wet-mount microscope slide; changed: Lottie animations (761) › Primary amino-acid sequence determines protein fold; changed: Lottie animations (761) › Primary and secondary immune response; changed: Lottie animations (761) › Primary sensory cilium compared with multiple motile cilia; changed: Lottie animations (761) › Primary succession community assembly; changed: Lottie animations (761) › Producer to consumer energy transfer; changed: Lottie animations (761) › Programmed interdigital cell death separates a recognizable developing hand; changed: Lottie animations (761) › Prokaryotic cell organization; changed: Lottie animations (761) › Promoter and RNA polymerase initiation; changed: Lottie animations (761) › Promoter-associated DNA methylation accumulates on an unchanged DNA sequence, reduces transcriptional access, and silences mRNA production.; changed: Lottie animations (761) › Prophase, metaphase, anaphase, and telophase comparison; changed: Lottie animations (761) › Proteins: four levels of structure and functional shape; changed: Lottie animations (761) › Protist binary fission; changed: Lottie animations (761) › Protist diversity and nutrition; changed: Lottie animations (761) › Protist locomotion mechanisms; changed: Lottie animations (761) › Protocell membrane self-assembly; changed: Lottie animations (761) › Protostome versus deuterostome development; changed: Lottie animations (761) › Pyruvate oxidation carbon transfer; changed: Lottie animations (761) › Quaternary protein subunit assembly; changed: Lottie animations (761) › Radial versus bilateral animal symmetry; changed: Lottie animations (761) › Random biological sampling and selection bias; changed: Lottie animations (761) › Random genetic drift through chance sampling; changed: Lottie animations (761) › Reception, intracellular transduction, and response in one target cell; changed: Lottie animations (761) › Reciprocal crossover preserves parental and recombinant chromatid products; changed: Lottie animations (761) › Recognizable blood, nerve, and muscle cells perform complementary jobs; changed: Lottie animations (761) › Recognizable DNA and RNA polymerases make two DNA duplexes or one RNA strand from the same DNA; changed: Lottie animations (761) › Recognizable fish single circulation versus mammalian double circulation; changed: Lottie animations (761) › Recognizable pea pollen and ovule fuse into a Pp zygote before a subordinate purple-flower phenotype appears; changed: Lottie animations (761) › Recombinant DNA plasmid workflow; changed: Lottie animations (761) › Reductional meiosis I separates homologs while equational meiosis II separates sisters; changed: Lottie animations (761) › Reflex-arc neural-circuit wiring; changed: Lottie animations (761) › Relative versus radiometric fossil dating; changed: Lottie animations (761) › Repairable DNA damage permits survival while irreparable damage triggers apoptosis; changed: Lottie animations (761) › Replication-fork architecture; changed: Lottie animations (761) › Representative bacterial, animal, and plant cells on a logarithmic scale; changed: Lottie animations (761) › Resource partitioning habitat zones; changed: Lottie animations (761) › Restriction digest gel band patterns; changed: Lottie animations (761) › Restriction enzyme recognition sites; changed: Lottie animations (761) › Restriction enzyme sticky-end cleavage; changed: Lottie animations (761) › Retinal phototransduction and hyperpolarization; changed: Lottie animations (761) › Reversible macromolecule dehydration synthesis and hydrolysis; changed: Lottie animations (761) › Ribosome E exit, P peptidyl, and A aminoacyl sites; changed: Lottie animations (761) › RNA polymerase reads a DNA template and extends RNA five to three prime; changed: Lottie animations (761) › RNA polymerase template-strand reading; changed: Lottie animations (761) › RNA primer initiates DNA synthesis; changed: Lottie animations (761) › RNA template-directed replication; changed: Lottie animations (761) › RNA-world information and catalysis; changed: Lottie animations (761) › Rod and cone visual sensitivity; changed: Lottie animations (761) › Root cross-section tissue systems; changed: Lottie animations (761) › Root gravitropism auxin reorientation; changed: Lottie animations (761) › Root hydrotropism and moisture gradients; changed: Lottie animations (761) › Root-hair mineral-ion uptake; changed: Lottie animations (761) › Root-hair water absorption; changed: Lottie animations (761) › Rooted phylogenetic tree anatomy; changed: Lottie animations (761) › Rough versus smooth endoplasmic reticulum; changed: Lottie animations (761) › Saturating biological dose-response relationship; changed: Lottie animations (761) › Seasonal food scarcity induces hibernation and reduced metabolism; changed: Lottie animations (761) › Secondary active cotransport; changed: Lottie animations (761) › Secondary succession ecosystem recovery; changed: Lottie animations (761) › Seed dispersal adaptations: wings and hooks; changed: Lottie animations (761) › Seed dispersal and the next generation; changed: Lottie animations (761) › Seed germination and seedling growth; changed: Lottie animations (761) › Seed germination: root before shoot; changed: Lottie animations (761) › Selective channel and carrier proteins; changed: Lottie animations (761) › Selective permeability of the plasma membrane; changed: Lottie animations (761) › Semiconservative DNA replication; changed: Lottie animations (761) › Sensory adaptation in phasic and tonic receptors; changed: Lottie animations (761) › Sensory population recruitment and stimulus intensity; changed: Lottie animations (761) › Sensory receptor potential and firing threshold; changed: Lottie animations (761) › Sensory stimulus intensity frequency coding; changed: Lottie animations (761) › Separate meiotic cells compare two equally likely independent-assortment orientations; changed: Lottie animations (761) › Sequential colonization of land by life; changed: Lottie animations (761) › Sexual versus asexual animal reproduction; changed: Lottie animations (761) › Shade avoidance red/far-red signaling; changed: Lottie animations (761) › Shape-dependent protein function is lost during denaturation; changed: Lottie animations (761) › Shared derived character inheritance; changed: Lottie animations (761) › Shared derived characters define nested clades; changed: Lottie animations (761) › Shared signal transduction can alter a cytoplasmic enzyme or nuclear gene expression; changed: Lottie animations (761) › Short-wavelength excitation causes longer-wavelength fluorescence; changed: Lottie animations (761) › Sigmoidal hemoglobin oxygen saturation at tissues and lungs; changed: Lottie animations (761) › Silent missense and nonsense outcomes; changed: Lottie animations (761) › Silent synonymous substitution; changed: Lottie animations (761) › Simple diffusion across a plasma membrane; changed: Lottie animations (761) › Simple versus stratified epithelium; changed: Lottie animations (761) › Single-base substitution; changed: Lottie animations (761) › Sinoatrial initiation, atrioventricular delay, and ventricular conduction; changed: Lottie animations (761) › Sister taxa and their exclusive ancestor; changed: Lottie animations (761) › Skeletal-muscle structural organization; changed: Lottie animations (761) › Skin and mucosal barrier defense; changed: Lottie animations (761) › Skin layers and accessory structures; changed: Lottie animations (761) › Small-scale DNA mutations; changed: Lottie animations (761) › Smooth and folded membranes with the same projected cell width; changed: Lottie animations (761) › Sodium-potassium pump active transport; changed: Lottie animations (761) › Somatic versus autonomic motor pathways; changed: Lottie animations (761) › Somatotopic sensory cortical representation; changed: Lottie animations (761) › Specialized nerve, muscle, and secretory structures support different functions; changed: Lottie animations (761) › Sperm versus egg specialization; changed: Lottie animations (761) › Spermatogenesis versus oogenesis; changed: Lottie animations (761) › Spindle checkpoint requires bipolar attachment before anaphase; changed: Lottie animations (761) › Sponge filter feeding; changed: Lottie animations (761) › Squamous, cuboidal, and columnar epithelial cells; changed: Lottie animations (761) › Stable allele frequencies across generations; changed: Lottie animations (761) › Stem vascular-bundle cross section; changed: Lottie animations (761) › Stem-cell differentiation: neuronal gene expression precedes specialized structure; changed: Lottie animations (761) › Stem-cell potency narrows from totipotent to a restricted neuronal lineage; changed: Lottie animations (761) › Stored fossil carbon, human combustion, and atmospheric accumulation; changed: Lottie animations (761) › Stored seed food supports growth until first true leaves develop; changed: Lottie animations (761) › Substrate concentration raises enzyme activity until active sites saturate; changed: Lottie animations (761) › Sugar-phosphate backbone; changed: Lottie animations (761) › Sulfhydryl groups forming a disulfide bond; changed: Lottie animations (761) › Sunlight energy travels through food to animal activity and heat; changed: Lottie animations (761) › Superficial skin regeneration versus deeper collagen scarring; changed: Lottie animations (761) › sustainable-fisheries-harvest-population-recovery; changed: Lottie animations (761) › Sweat and sebaceous glands use different secretion routes; changed: Lottie animations (761) › Sweating and evaporative cooling; changed: Lottie animations (761) › Symbiosis outcome comparison; changed: Lottie animations (761) › Sympathetic adrenal medulla response; changed: Lottie animations (761) › Synovial-joint structure; changed: Lottie animations (761) › Systemic blood pressure falls most steeply across resistance arterioles; changed: Lottie animations (761) › Systemic capillary exchange at body tissues; changed: Lottie animations (761) › Temporal versus spatial summation; changed: Lottie animations (761) › Ten and twenty percent recombination correspond to unequal linked chromosome intervals; changed: Lottie animations (761) › Tendril thigmotropism and touch coiling; changed: Lottie animations (761) › The same DNA sequence is compared in tightly packed inaccessible chromatin and open accessible chromatin with RNA polymerase and transcript output.; changed: Lottie animations (761) › The same food and oxygen atoms rearrange as separate energy is released; changed: Lottie animations (761) › The same neuronal gene is accessible in a neuron and compact in a muscle cell; changed: Lottie animations (761) › The same received signal activates different intracellular pathways in two target cells; changed: Lottie animations (761) › Three additive genes create seven dosage classes and a symmetric 1:6:15:20:15:6:1 distribution; changed: Lottie animations (761) › Three AP Biology amino-acid R-group categories; changed: Lottie animations (761) › Three domains and common ancestry; changed: Lottie animations (761) › Three generations of connected autosomal dominant Aa-to-child transmission; changed: Lottie animations (761) › Three levels of biodiversity; changed: Lottie animations (761) › Three ordered protein kinases use separate ATP phosphates and reversible phosphatase activity; changed: Lottie animations (761) › Three population-level ABO alleles and four two-allele blood phenotypes; changed: Lottie animations (761) › Three separate ATP-derived phosphates sequentially activate a protein-kinase cascade; changed: Lottie animations (761) › Three-prime poly-A tail addition; changed: Lottie animations (761) › Tight junction blocks the route between adjacent animal cells; changed: Lottie animations (761) › Tight-junction epithelial barrier; changed: Lottie animations (761) › Tip order versus evolutionary relatedness; changed: Lottie animations (761) › Tissue fluid, lymph-node immunity, and venous return; changed: Lottie animations (761) › Total microscope magnification; changed: Lottie animations (761) › Tracing a most recent common ancestor; changed: Lottie animations (761) › Transcription and RNA processing; changed: Lottie animations (761) › Transcription elongation and RNA synthesis; changed: Lottie animations (761) › Transcription termination and RNA release; changed: Lottie animations (761) › Transcription unit promoter and terminator; changed: Lottie animations (761) › Translation elongation: A-site entry, peptide transfer, translocation; changed: Lottie animations (761) › Translation initiation: AUG, initiator methionine, and P site; changed: Lottie animations (761) › Translation termination: UAA, release factor, and released peptide; changed: Lottie animations (761) › Translation: mRNA, ribosome, tRNA, and polypeptide; changed: Lottie animations (761) › Transmission electron microscopy versus scanning electron microscopy; changed: Lottie animations (761) › Transpiration pull and cohesive xylem water; changed: Lottie animations (761) › Triglyceride structure; changed: Lottie animations (761) › Trophic transfer efficiency and heat loss; changed: Lottie animations (761) › Two copies of the same regulatory sequence compare weak transcription with one activator against stronger expression when the full transcription-factor combination binds.; changed: Lottie animations (761) › Two independently assorting chromosome pairs produce four possible haploid parental-origin combinations across meioses; changed: Lottie animations (761) › Two independently oriented homologous pairs segregate into complementary mixed-origin cells; changed: Lottie animations (761) › Two recognizable eukaryotic cells retain the same genome while different regulatory states activate different genes and produce different proteins.; changed: Lottie animations (761) › Type I, II, and III ecological survivorship curves; changed: Lottie animations (761) › Undirected isopod kinesis and favorable-habitat retention; changed: Lottie animations (761) › Unscaled branch length versus relatedness; changed: Lottie animations (761) › Vaccine-induced immune memory; changed: Lottie animations (761) › Vertebrate diversity and adaptations; changed: Lottie animations (761) › Vertebrate shared derived innovation cladogram; changed: Lottie animations (761) › Vertebrate skin and reproduction on land; changed: Lottie animations (761) › Vestibular rotation and hair-cell signaling; changed: Lottie animations (761) › Viruses and prokaryotes; changed: Lottie animations (761) › Visual sensory pathway from retina to cortex; changed: Lottie animations (761) › Water adhesion and capillary rise; changed: Lottie animations (761) › Water autoionization, hydronium, and hydroxide; changed: Lottie animations (761) › Water high heat of vaporization and evaporative cooling; changed: Lottie animations (761) › Water infiltration, groundwater movement, and surface discharge; changed: Lottie animations (761) › Water molecule polarity; changed: Lottie animations (761) › Water phase changes and return pathways; changed: Lottie animations (761) › Water structure and hydrogen bonding; changed: Lottie animations (761) › Water surface tension; changed: Lottie animations (761) › Water-soluble surface receptors versus lipid-soluble internal receptors; changed: Lottie animations (761) › When lactose is already present and glucose falls, cAMP binds CAP, the CAP–cAMP complex recruits RNA polymerase, and lac transcription increases.; changed: Lottie animations (761) › Whole-organism cooling restores temperature toward a set point; changed: Lottie animations (761) › Why a whale is a mammal, not a fish; changed: Lottie animations (761) › Why small cells exchange materials efficiently; changed: Lottie animations (761) › Withdrawal-reflex sensory and motor response; changed: Lottie animations (761) › Xylem and phloem transport comparison; changed: Lottie animations (761) › Xylem water and transpiration stream; changed: Lottie animations (761) › Yeast budding reproduction; changed: Other views (no three.js or Lottie dependency) (809) › Abo rh blood typing; changed: Other views (no three.js or Lottie dependency) (809) › Abo rh transfusion compatibility; changed: Other views (no three.js or Lottie dependency) (809) › Absorbance spectrum; changed: Other views (no three.js or Lottie dependency) (809) › Absorption variable costing inventory profit: `\mathrm{OI}_{A}-\mathrm{OI}_{V}=\Delta I\times \mathrm{FOH}_{u}`; changed: Other views (no three.js or Lottie dependency) (809) › Accrual vs cash accounting; changed: Other views (no three.js or Lottie dependency) (809) › Accuracy vs precision targets; changed: Other views (no three.js or Lottie dependency) (809) › Acid base proton transfer; changed: Other views (no three.js or Lottie dependency) (809) › Acid base speciation; changed: Other views (no three.js or Lottie dependency) (809) › Acid base titration; changed: Other views (no three.js or Lottie dependency) (809) › Acid deposition; changed: Other views (no three.js or Lottie dependency) (809) › Acid strength and conjugate base stability; changed: Other views (no three.js or Lottie dependency) (809) › Action potential neuron; changed: Other views (no three.js or Lottie dependency) (809) › Action potential nodes; changed: Other views (no three.js or Lottie dependency) (809) › Action potential voltage; changed: Other views (no three.js or Lottie dependency) (809) › Activation energy distribution; changed: Other views (no three.js or Lottie dependency) (809) › Active vs passive immunity; changed: Other views (no three.js or Lottie dependency) (809) › Acute inflammation; changed: Other views (no three.js or Lottie dependency) (809) › Acute triangle; changed: Other views (no three.js or Lottie dependency) (809) › Add fractions; changed: Other views (no three.js or Lottie dependency) (809) › Adding integers; changed: Other views (no three.js or Lottie dependency) (809) › Adding negative integer; changed: Other views (no three.js or Lottie dependency) (809) › Adsr envelope; changed: Other views (no three.js or Lottie dependency) (809) › Age structure pyramid; changed: Other views (no three.js or Lottie dependency) (809) › Aggregate demand; changed: Other views (no three.js or Lottie dependency) (809) › Aggregate demand and supply; changed: Other views (no three.js or Lottie dependency) (809) › Agricultural soil erosion; changed: Other views (no three.js or Lottie dependency) (809) › Alcohol oxidation products; changed: Other views (no three.js or Lottie dependency) (809) › Alkene e z stereochemistry; changed: Other views (no three.js or Lottie dependency) (809) › Alkene stereochemical additions; changed: Other views (no three.js or Lottie dependency) (809) › Alveolar gas exchange; changed: Other views (no three.js or Lottie dependency) (809) › Amino acids and peptide bonds; changed: Other views (no three.js or Lottie dependency) (809) › Angular frequency relation: `\omega = 2\pi f`; changed: Other views (no three.js or Lottie dependency) (809) › Animal life cycle; changed: Other views (no three.js or Lottie dependency) (809) › Anova decomposition: `F = \frac{\text{between-group variation}}{\text{within-group variation}}`; changed: Other views (no three.js or Lottie dependency) (809) › Anova interaction plot; changed: Other views (no three.js or Lottie dependency) (809) › Antibiotic resistance; changed: Other views (no three.js or Lottie dependency) (809) › Antibody structure; changed: Other views (no three.js or Lottie dependency) (809) › Apoptosis; changed: Other views (no three.js or Lottie dependency) (809) › Aquifer and groundwater; changed: Other views (no three.js or Lottie dependency) (809) › Arc length; changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic mean; changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic sequence: `a_n = a_1 + (n - 1)d`; changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic sequence sum formula; changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic vs geometric: `\begin{aligned} a_n &= a_1 + (n - 1)d \\ g_n &= a_1 r^{n - 1} \end{aligned}`; changed: Other views (no three.js or Lottie dependency) (809) › Aromaticity and huckels rule; changed: Other views (no three.js or Lottie dependency) (809) › Array queue front rear; changed: Other views (no three.js or Lottie dependency) (809) › Asymmetric key roles; changed: Other views (no three.js or Lottie dependency) (809) › Atherosclerosis; changed: Other views (no three.js or Lottie dependency) (809) › Atmospheric layers; changed: Other views (no three.js or Lottie dependency) (809) › Atmospheric pollution plume; changed: Other views (no three.js or Lottie dependency) (809) › Atomic composition; changed: Other views (no three.js or Lottie dependency) (809) › Atp cycle; changed: Other views (no three.js or Lottie dependency) (809) › Autocorrelation; changed: Other views (no three.js or Lottie dependency) (809) › Average speed distance time; changed: Other views (no three.js or Lottie dependency) (809) › Avogadros law: `\frac{V_1}{n_1}=\frac{V_2}{n_2}`; changed: Other views (no three.js or Lottie dependency) (809) › Balancing equations; changed: Other views (no three.js or Lottie dependency) (809) › Bank credit money multiplier: `m = \frac{1}{r}`; changed: Other views (no three.js or Lottie dependency) (809) › Bar magnet field strength; changed: Other views (no three.js or Lottie dependency) (809) › Bayes theorem; changed: Other views (no three.js or Lottie dependency) (809) › Bayesian beta binomial updating; changed: Other views (no three.js or Lottie dependency) (809) › Beer lambert law: `A = \varepsilon c l`; changed: Other views (no three.js or Lottie dependency) (809) › Beta oxidation cycle; changed: Other views (no three.js or Lottie dependency) (809) › Bfs dfs traversal; changed: Other views (no three.js or Lottie dependency) (809) › Big o growth comparison; changed: Other views (no three.js or Lottie dependency) (809) › Big o time complexity; changed: Other views (no three.js or Lottie dependency) (809) › Binary heap operations; changed: Other views (no three.js or Lottie dependency) (809) › Binary place value; changed: Other views (no three.js or Lottie dependency) (809) › Binary search; changed: Other views (no three.js or Lottie dependency) (809) › Binary search tree insertion; changed: Other views (no three.js or Lottie dependency) (809) › Binomial distribution; changed: Other views (no three.js or Lottie dependency) (809) › Binomial square; changed: Other views (no three.js or Lottie dependency) (809) › Binomial theorem pascal triangle: `(a+b)^n = \sum_{k=0}^{n}\binom{n}{k}a^{n-k}b^k`; changed: Other views (no three.js or Lottie dependency) (809) › Biological ph and buffers: `\mathrm{pH}=\mathrm{p}K_a+\log_{10}\!\left(\frac{[A^-]}{[HA]}\right)`; changed: Other views (no three.js or Lottie dependency) (809) › Biomagnification; changed: Other views (no three.js or Lottie dependency) (809) › Biome climatograph; changed: Other views (no three.js or Lottie dependency) (809) › Blockchain hash chain; changed: Other views (no three.js or Lottie dependency) (809) › Blood circulation; changed: Other views (no three.js or Lottie dependency) (809) › Blood glucose regulation; changed: Other views (no three.js or Lottie dependency) (809) › Blood pressure regulation; changed: Other views (no three.js or Lottie dependency) (809) › Blue white screening; changed: Other views (no three.js or Lottie dependency) (809) › Boiling point elevation: `\Delta T_b=iK_bm`; changed: Other views (no three.js or Lottie dependency) (809) › Bomb calorimetry; changed: Other views (no three.js or Lottie dependency) (809) › Bond energy curve; changed: Other views (no three.js or Lottie dependency) (809) › Bond polarity: `\Delta \chi = |\chi_2 - \chi_1|`; changed: Other views (no three.js or Lottie dependency) (809) › Boolean logic; changed: Other views (no three.js or Lottie dependency) (809) › Boolean truth table; changed: Other views (no three.js or Lottie dependency) (809) › Bootstrap distribution; changed: Other views (no three.js or Lottie dependency) (809) › Born haber cycle; changed: Other views (no three.js or Lottie dependency) (809) › Break even quantity; changed: Other views (no three.js or Lottie dependency) (809) › Breathing mechanics; changed: Other views (no three.js or Lottie dependency) (809) › Bubble sort; changed: Other views (no three.js or Lottie dependency) (809) › Buffer composition: `\mathrm{pH}=\mathrm{p}K_a+\log_{10}\!\left(\frac{[A^-]}{[HA]}\right)`; changed: Other views (no three.js or Lottie dependency) (809) › Buffer ph strong acid base; changed: Other views (no three.js or Lottie dependency) (809) › Buoyancy; changed: Other views (no three.js or Lottie dependency) (809) › Business cycles; changed: Other views (no three.js or Lottie dependency) (809) › C array pointer arithmetic; changed: Other views (no three.js or Lottie dependency) (809) › Cadences; changed: Other views (no three.js or Lottie dependency) (809) › Calcium pth calcitonin feedback; changed: Other views (no three.js or Lottie dependency) (809) › Calvin cycle; changed: Other views (no three.js or Lottie dependency) (809) › Capillary starling forces: `J_v=K_f[(P_c-P_i)-\sigma(\pi_c-\pi_i)]`; changed: Other views (no three.js or Lottie dependency) (809) › Capital flows; changed: Other views (no three.js or Lottie dependency) (809) › Carbohydrate structure; changed: Other views (no three.js or Lottie dependency) (809) › Carbon cycle; changed: Other views (no three.js or Lottie dependency) (809) › Carbonyl nucleophilic addition; changed: Other views (no three.js or Lottie dependency) (809) › Cardiac action potential; changed: Other views (no three.js or Lottie dependency) (809) › Cardiac cycle; changed: Other views (no three.js or Lottie dependency) (809) › Cardiac output product: `CO = HR \times SV`; changed: Other views (no three.js or Lottie dependency) (809) › Catalyst activation energy; changed: Other views (no three.js or Lottie dependency) (809) › Cathodic protection; changed: Other views (no three.js or Lottie dependency) (809) › Cell cycle; changed: Other views (no three.js or Lottie dependency) (809) › Cell cycle checkpoints; changed: Other views (no three.js or Lottie dependency) (809) › Cell junctions; changed: Other views (no three.js or Lottie dependency) (809) › Cell membrane transport; changed: Other views (no three.js or Lottie dependency) (809) › Cell organelles; changed: Other views (no three.js or Lottie dependency) (809) › Cell signaling pathway; changed: Other views (no three.js or Lottie dependency) (809) › Cellular respiration inputs outputs; changed: Other views (no three.js or Lottie dependency) (809) › Central limit theorem; changed: Other views (no three.js or Lottie dependency) (809) › Centripetal force mvr: `F_c = \frac{mv^2}{r}`; changed: Other views (no three.js or Lottie dependency) (809) › Change of basis: `P_B\mathbf{v}_B=\mathbf{v}`; changed: Other views (no three.js or Lottie dependency) (809) › Charles law: `\frac{V_1}{T_1} = \frac{V_2}{T_2}`; changed: Other views (no three.js or Lottie dependency) (809) › Chemiosmosis; changed: Other views (no three.js or Lottie dependency) (809) › Chi square distribution; changed: Other views (no three.js or Lottie dependency) (809) › Chi square goodness of fit: `\chi^2 = \sum \frac{(O_i-E_i)^2}{E_i}`; changed: Other views (no three.js or Lottie dependency) (809) › Chi square independence; changed: Other views (no three.js or Lottie dependency) (809) › Chirality and r s configuration; changed: Other views (no three.js or Lottie dependency) (809) › Chord construction; changed: Other views (no three.js or Lottie dependency) (809) › Chromatography; changed: Other views (no three.js or Lottie dependency) (809) › Circle area: `A = \pi r^2`; changed: Other views (no three.js or Lottie dependency) (809) › Circle circumference: `C = 2\pi r`; changed: Other views (no three.js or Lottie dependency) (809) › Classes of levers; changed: Other views (no three.js or Lottie dependency) (809) › Classical conditioning; changed: Other views (no three.js or Lottie dependency) (809) › Classification threshold; changed: Other views (no three.js or Lottie dependency) (809) › Classification tree; changed: Other views (no three.js or Lottie dependency) (809) › Climate feedback loops; changed: Other views (no three.js or Lottie dependency) (809) › Climate mitigation wedges; changed: Other views (no three.js or Lottie dependency) (809) › Clonal selection and immune memory; changed: Other views (no three.js or Lottie dependency) (809) › Co2 and temperature time series; changed: Other views (no three.js or Lottie dependency) (809) › Coal power plant; changed: Other views (no three.js or Lottie dependency) (809) › Codon chart; changed: Other views (no three.js or Lottie dependency) (809) › Cohens d: `d = \frac{\bar{x}_2 - \bar{x}_1}{s_{\mathrm{pooled}}}`; changed: Other views (no three.js or Lottie dependency) (809) › Coin flipping; changed: Other views (no three.js or Lottie dependency) (809) › Collision orientation; changed: Other views (no three.js or Lottie dependency) (809) › Collision simulation: `m_1v_{1,i} + m_2v_{2,i} = m_1v_{1,f} + m_2v_{2,f}`; changed: Other views (no three.js or Lottie dependency) (809) › Combination formula; changed: Other views (no three.js or Lottie dependency) (809) › Combined gas law; changed: Other views (no three.js or Lottie dependency) (809) › Combining like terms tiles; changed: Other views (no three.js or Lottie dependency) (809) › Common ion effect; changed: Other views (no three.js or Lottie dependency) (809) › Common normal intervals; changed: Other views (no three.js or Lottie dependency) (809) › Comparative advantage trade; changed: Other views (no three.js or Lottie dependency) (809) › Competition and niches; changed: Other views (no three.js or Lottie dependency) (809) › Competitive firm loss; changed: Other views (no three.js or Lottie dependency) (809) › Competitive firm profit; changed: Other views (no three.js or Lottie dependency) (809) › Competitive labor hiring; changed: Other views (no three.js or Lottie dependency) (809) › Composite perimeter area; changed: Other views (no three.js or Lottie dependency) (809) › Compound interest; changed: Other views (no three.js or Lottie dependency) (809) › Compound pulley mechanical advantage: `\mathrm{IMA}=n`; changed: Other views (no three.js or Lottie dependency) (809) › Compressor curve; changed: Other views (no three.js or Lottie dependency) (809) › Concentration cell: `E_{\mathrm{cell}}=\frac{0.0592\,\mathrm{V}}{z}\log_{10}\!\left(\frac{c_{\mathrm{high}}}{c_{\mathrm{low}}}\right)`; changed: Other views (no three.js or Lottie dependency) (809) › Conditional probability definition; changed: Other views (no three.js or Lottie dependency) (809) › Conductometric titration; changed: Other views (no three.js or Lottie dependency) (809) › Cone surface area: `A = \pi r(r + l)`; changed: Other views (no three.js or Lottie dependency) (809) › Cone volume: `V = \frac{1}{3}\pi r^2 h`; changed: Other views (no three.js or Lottie dependency) (809) › Confidence interval proportion: `\hat p \pm z^*\sqrt{\frac{\hat p(1-\hat p)}{n}}`; changed: Other views (no three.js or Lottie dependency) (809) › Confidence vs prediction bands; changed: Other views (no three.js or Lottie dependency) (809) › Confusion matrix metrics; changed: Other views (no three.js or Lottie dependency) (809) › Conjugated dienes and diels alder; changed: Other views (no three.js or Lottie dependency) (809) › Consumer and producer surplus; changed: Other views (no three.js or Lottie dependency) (809) › Consumer budget line comparative statics: `M = P_x X + P_y Y`; changed: Other views (no three.js or Lottie dependency) (809) › Context free grammar ambiguity; changed: Other views (no three.js or Lottie dependency) (809) › Continuous uniform distribution; changed: Other views (no three.js or Lottie dependency) (809) › Contour lines and relief; changed: Other views (no three.js or Lottie dependency) (809) › Coral bleaching; changed: Other views (no three.js or Lottie dependency) (809) › Corrective policy; changed: Other views (no three.js or Lottie dependency) (809) › Correlation; changed: Other views (no three.js or Lottie dependency) (809) › Correlation matrix; changed: Other views (no three.js or Lottie dependency) (809) › Cortisol regulation; changed: Other views (no three.js or Lottie dependency) (809) › Coulombs law: `F = k\frac{q_1q_2}{r^2}`; changed: Other views (no three.js or Lottie dependency) (809) › Counting sequences; changed: Other views (no three.js or Lottie dependency) (809) › Cpu fetch decode execute; changed: Other views (no three.js or Lottie dependency) (809) › Crispr cas9; changed: Other views (no three.js or Lottie dependency) (809) › Critical angle sine relation: `\sin\theta_c = \frac{n_2}{n_1}`; changed: Other views (no three.js or Lottie dependency) (809) › Critical path network; changed: Other views (no three.js or Lottie dependency) (809) › Cross price elasticity: `E_{xy} = \frac{\%\Delta Q_x}{\%\Delta P_y}`; changed: Other views (no three.js or Lottie dependency) (809) › Cross product geometry: `|a\times b|=|a||b|\sin(\theta)`; changed: Other views (no three.js or Lottie dependency) (809) › Crossing over; changed: Other views (no three.js or Lottie dependency) (809) › Crowding out; changed: Other views (no three.js or Lottie dependency) (809) › Crystal unit cells; changed: Other views (no three.js or Lottie dependency) (809) › Currency appreciation; changed: Other views (no three.js or Lottie dependency) (809) › Current to magnetic field: `B = \frac{\mu_0 I}{2\pi r}`; changed: Other views (no three.js or Lottie dependency) (809) › Current to magnetic field direction; changed: Other views (no three.js or Lottie dependency) (809) › Cyclohexane chair flips; changed: Other views (no three.js or Lottie dependency) (809) › Cylinder volume: `V = \pi r^2 h`; changed: Other views (no three.js or Lottie dependency) (809) › Dc circuit power: `P = VI`; changed: Other views (no three.js or Lottie dependency) (809) › Decibel safety; changed: Other views (no three.js or Lottie dependency) (809) › Decision tree classification path; changed: Other views (no three.js or Lottie dependency) (809) › Degree of unsaturation; changed: Other views (no three.js or Lottie dependency) (809) › Dehydration synthesis vs hydrolysis; changed: Other views (no three.js or Lottie dependency) (809) › Delta g k e relationship; changed: Other views (no three.js or Lottie dependency) (809) › Demand curve; changed: Other views (no three.js or Lottie dependency) (809) › Demand elasticity; changed: Other views (no three.js or Lottie dependency) (809) › Demand shock; changed: Other views (no three.js or Lottie dependency) (809) › Denial of service overload; changed: Other views (no three.js or Lottie dependency) (809) › Density dependence; changed: Other views (no three.js or Lottie dependency) (809) › Derivative; changed: Other views (no three.js or Lottie dependency) (809) › Derivative as secant: `f'(a)=\lim_{h\to0^+}\frac{f(a+h)-f(a)}{h}`; changed: Other views (no three.js or Lottie dependency) (809) › Derivative product rule: `(fg)' = f'g + fg'`; changed: Other views (no three.js or Lottie dependency) (809) › Detergent micelle grease; changed: Other views (no three.js or Lottie dependency) (809) › Dice rolling; changed: Other views (no three.js or Lottie dependency) (809) › Dichotomous key; changed: Other views (no three.js or Lottie dependency) (809) › Difference in differences: `\widehat{\tau}_{DiD} = \Delta Y_T - \Delta Y_C`; changed: Other views (no three.js or Lottie dependency) (809) › Difference of squares; changed: Other views (no three.js or Lottie dependency) (809) › Diffusion; changed: Other views (no three.js or Lottie dependency) (809) › Digestive tract absorption; changed: Other views (no three.js or Lottie dependency) (809) › Dijkstra shortest path; changed: Other views (no three.js or Lottie dependency) (809) › Diminishing marginal returns; changed: Other views (no three.js or Lottie dependency) (809) › Diminishing marginal utility; changed: Other views (no three.js or Lottie dependency) (809) › Direct inverse proportion; changed: Other views (no three.js or Lottie dependency) (809) › Discrete event queue simulation; changed: Other views (no three.js or Lottie dependency) (809) › Discriminant; changed: Other views (no three.js or Lottie dependency) (809) › Dissolution; changed: Other views (no three.js or Lottie dependency) (809) › Distance formula; changed: Other views (no three.js or Lottie dependency) (809) › Distance traveled vs displacement; changed: Other views (no three.js or Lottie dependency) (809) › Distillation; changed: Other views (no three.js or Lottie dependency) (809) › Distributive property: `a(b+c)=ab+ac`; changed: Other views (no three.js or Lottie dependency) (809) › Divide conquer recurrence tree; changed: Other views (no three.js or Lottie dependency) (809) › Dna gel fragment migration; changed: Other views (no three.js or Lottie dependency) (809) › Dna replication fork; changed: Other views (no three.js or Lottie dependency) (809) › Dna transcription; changed: Other views (no three.js or Lottie dependency) (809) › Dns resolution; changed: Other views (no three.js or Lottie dependency) (809) › Doppler effect; changed: Other views (no three.js or Lottie dependency) (809) › Dose response curve; changed: Other views (no three.js or Lottie dependency) (809) › Dot plot; changed: Other views (no three.js or Lottie dependency) (809) › Double entry transaction effects; changed: Other views (no three.js or Lottie dependency) (809) › Double fertilization; changed: Other views (no three.js or Lottie dependency) (809) › Drum grid notation; changed: Other views (no three.js or Lottie dependency) (809) › Dynamic equilibrium; changed: Other views (no three.js or Lottie dependency) (809) › Dynamics and articulation; changed: Other views (no three.js or Lottie dependency) (809) › Earth layers and convection; changed: Other views (no three.js or Lottie dependency) (809) › Ecological footprint; changed: Other views (no three.js or Lottie dependency) (809) › Ecological succession stages; changed: Other views (no three.js or Lottie dependency) (809) › Ecological tolerance curve; changed: Other views (no three.js or Lottie dependency) (809) › Economic externalities; changed: Other views (no three.js or Lottie dependency) (809) › Economic order quantity; changed: Other views (no three.js or Lottie dependency) (809) › Economies of scale; changed: Other views (no three.js or Lottie dependency) (809) › Eigendirections: `A\mathbf{v}=\lambda\mathbf{v}`; changed: Other views (no three.js or Lottie dependency) (809) › Ekg parts; changed: Other views (no three.js or Lottie dependency) (809) › El nino and la nina; changed: Other views (no three.js or Lottie dependency) (809) › Elasticity total revenue; changed: Other views (no three.js or Lottie dependency) (809) › Electric current charge flow: `I = \frac{Q}{t}`; changed: Other views (no three.js or Lottie dependency) (809) › Electric field: `E\propto\frac{1}{r^2}`; changed: Other views (no three.js or Lottie dependency) (809) › Electric field multiple charges; changed: Other views (no three.js or Lottie dependency) (809) › Electric flux flat surface: `\Phi_E = EA\cos(\theta)`; changed: Other views (no three.js or Lottie dependency) (809) › Electrical resistance factors; changed: Other views (no three.js or Lottie dependency) (809) › Electrolyte conductivity; changed: Other views (no three.js or Lottie dependency) (809) › Electrolytic cell; changed: Other views (no three.js or Lottie dependency) (809) › Electromagnetic spectrum; changed: Other views (no three.js or Lottie dependency) (809) › Electron orbital filling; changed: Other views (no three.js or Lottie dependency) (809) › Element vs compound vs mixture; changed: Other views (no three.js or Lottie dependency) (809) › Elementary row operations: `\left[A\mid\mathbf{b}\right]\sim\left[I\mid\mathbf{x}\right]`; changed: Other views (no three.js or Lottie dependency) (809) › Empirical rule; changed: Other views (no three.js or Lottie dependency) (809) › Empirical vs molecular formula; changed: Other views (no three.js or Lottie dependency) (809) › Endocrine feedback axis; changed: Other views (no three.js or Lottie dependency) (809) › Endocytosis and exocytosis; changed: Other views (no three.js or Lottie dependency) (809) › Endomembrane pathway; changed: Other views (no three.js or Lottie dependency) (809) › Energy coupling; changed: Other views (no three.js or Lottie dependency) (809) › Energy efficiency sankey diagram: `\text{Efficiency}=\frac{\text{useful output}}{\text{total input}}`; changed: Other views (no three.js or Lottie dependency) (809) › Enthalpy: `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`; changed: Other views (no three.js or Lottie dependency) (809) › Entropy and dispersal; changed: Other views (no three.js or Lottie dependency) (809) › Enzyme and temperature; changed: Other views (no three.js or Lottie dependency) (809) › Enzyme inhibition rate effects; changed: Other views (no three.js or Lottie dependency) (809) › Enzyme lock key cycle; changed: Other views (no three.js or Lottie dependency) (809) › Epigenetics; changed: Other views (no three.js or Lottie dependency) (809) › Epsp ipsp summation; changed: Other views (no three.js or Lottie dependency) (809) › Eq curve; changed: Other views (no three.js or Lottie dependency) (809) › Equilateral triangle; changed: Other views (no three.js or Lottie dependency) (809) › Equilibrium concentration graph; changed: Other views (no three.js or Lottie dependency) (809) › Er diagram relational tables; changed: Other views (no three.js or Lottie dependency) (809) › Eukaryotic gene regulation; changed: Other views (no three.js or Lottie dependency) (809) › Euler formula; changed: Other views (no three.js or Lottie dependency) (809) › Eutrophication; changed: Other views (no three.js or Lottie dependency) (809) › Evaporation rate factors; changed: Other views (no three.js or Lottie dependency) (809) › Even odd function symmetry; changed: Other views (no three.js or Lottie dependency) (809) › Expected value weighted average; changed: Other views (no three.js or Lottie dependency) (809) › Exponent laws repeated multiplication; changed: Other views (no three.js or Lottie dependency) (809) › Exponential decay: `y = e^{-kt}`; changed: Other views (no three.js or Lottie dependency) (809) › Exponential distribution: `f(t)=\lambda e^{-\lambda t},\quad t\ge 0`; changed: Other views (no three.js or Lottie dependency) (809) › Exports; changed: Other views (no three.js or Lottie dependency) (809) › Eye accommodation; changed: Other views (no three.js or Lottie dependency) (809) › Eye prescription; changed: Other views (no three.js or Lottie dependency) (809) › Factor pairs arrays; changed: Other views (no three.js or Lottie dependency) (809) › Fahrenheit celsius scale: `F = \frac{9}{5}C + 32`; changed: Other views (no three.js or Lottie dependency) (809) › Faradays law electrolysis: `m=\frac{MQ}{zF},\quad Q=It`; changed: Other views (no three.js or Lottie dependency) (809) › Fatty acid saturation; changed: Other views (no three.js or Lottie dependency) (809) › Fermentation; changed: Other views (no three.js or Lottie dependency) (809) › Fifo lifo cost flow; changed: Other views (no three.js or Lottie dependency) (809) › Filling rates: `r_{\mathrm{net}}=r_{\mathrm{in}}-r_{\mathrm{out}}`; changed: Other views (no three.js or Lottie dependency) (809) › Filtration; changed: Other views (no three.js or Lottie dependency) (809) › Finite state machine; changed: Other views (no three.js or Lottie dependency) (809) › Fire triangle fire tetrahedron; changed: Other views (no three.js or Lottie dependency) (809) › Firm cost curves; changed: Other views (no three.js or Lottie dependency) (809) › First order ode; changed: Other views (no three.js or Lottie dependency) (809) › Fiscal policy; changed: Other views (no three.js or Lottie dependency) (809) › Fisheries and maximum sustainable yield; changed: Other views (no three.js or Lottie dependency) (809) › Fitness and adaptation; changed: Other views (no three.js or Lottie dependency) (809) › Fixed perimeter rectangle area: `A = w \times h`; changed: Other views (no three.js or Lottie dependency) (809) › Fixed ratio scaling; changed: Other views (no three.js or Lottie dependency) (809) › Flower pollination; changed: Other views (no three.js or Lottie dependency) (809) › Fluid mosaic membrane; changed: Other views (no three.js or Lottie dependency) (809) › Foil binomial; changed: Other views (no three.js or Lottie dependency) (809) › Food chain; changed: Other views (no three.js or Lottie dependency) (809) › Food web; changed: Other views (no three.js or Lottie dependency) (809) › Foreign exchange market; changed: Other views (no three.js or Lottie dependency) (809) › Forestry methods; changed: Other views (no three.js or Lottie dependency) (809) › Formal charge; changed: Other views (no three.js or Lottie dependency) (809) › Fossil fuel formation; changed: Other views (no three.js or Lottie dependency) (809) › Founder effect and bottleneck; changed: Other views (no three.js or Lottie dependency) (809) › Four to one multiplexer; changed: Other views (no three.js or Lottie dependency) (809) › Fractions number line; changed: Other views (no three.js or Lottie dependency) (809) › Free fall: `h(t) = h_0 + v_0t - \frac{1}{2}gt^2`; changed: Other views (no three.js or Lottie dependency) (809) › Freezing point depression: `\Delta T_f = iK_fm`; changed: Other views (no three.js or Lottie dependency) (809) › Frequency spectrum; changed: Other views (no three.js or Lottie dependency) (809) › Function call stack; changed: Other views (no three.js or Lottie dependency) (809) › Function composition; changed: Other views (no three.js or Lottie dependency) (809) › Futures hedge locked revenue; changed: Other views (no three.js or Lottie dependency) (809) › Fx net exports ad; changed: Other views (no three.js or Lottie dependency) (809) › Gains from trade; changed: Other views (no three.js or Lottie dependency) (809) › Galvanic cell; changed: Other views (no three.js or Lottie dependency) (809) › Gas solubility; changed: Other views (no three.js or Lottie dependency) (809) › Gaussian surface symmetry; changed: Other views (no three.js or Lottie dependency) (809) › Gay lussacs law: `\frac{P_1}{T_1}=\frac{P_2}{T_2}`; changed: Other views (no three.js or Lottie dependency) (809) › Gcd; changed: Other views (no three.js or Lottie dependency) (809) › Gcf lcm; changed: Other views (no three.js or Lottie dependency) (809) › Gdp expenditure identity; changed: Other views (no three.js or Lottie dependency) (809) › Gdp value double counting; changed: Other views (no three.js or Lottie dependency) (809) › Genetic drift; changed: Other views (no three.js or Lottie dependency) (809) › Geometric distribution: `P(X=k)=p(1-p)^{k-1}`; changed: Other views (no three.js or Lottie dependency) (809) › Geometric series; changed: Other views (no three.js or Lottie dependency) (809) › Geothermal power; changed: Other views (no three.js or Lottie dependency) (809) › Ghk membrane potential: `P_{\mathrm{ion}}\uparrow \Rightarrow V_m \to E_{\mathrm{ion}}`; changed: Other views (no three.js or Lottie dependency) (809) › Gibbs free energy: `\Delta G^\circ=-RT\ln K`; changed: Other views (no three.js or Lottie dependency) (809) › Global atmospheric circulation; changed: Other views (no three.js or Lottie dependency) (809) › Glycolysis; changed: Other views (no three.js or Lottie dependency) (809) › Gpcr signaling; changed: Other views (no three.js or Lottie dependency) (809) › Gpp vs npp: `\mathrm{NPP}=\mathrm{GPP}-R_a`; changed: Other views (no three.js or Lottie dependency) (809) › Gram stain; changed: Other views (no three.js or Lottie dependency) (809) › Grand staff piano map; changed: Other views (no three.js or Lottie dependency) (809) › Graphable function; changed: Other views (no three.js or Lottie dependency) (809) › Graphable function (v2); changed: Other views (no three.js or Lottie dependency) (809) › Greenhouse infrared trapping; changed: Other views (no three.js or Lottie dependency) (809) › Guitar chord chart; changed: Other views (no three.js or Lottie dependency) (809) › Guitar fretboard map; changed: Other views (no three.js or Lottie dependency) (809) › Guitar scale patterns; changed: Other views (no three.js or Lottie dependency) (809) › Habitat fragmentation; changed: Other views (no three.js or Lottie dependency) (809) › Half full adder logic; changed: Other views (no three.js or Lottie dependency) (809) › Half life relation; changed: Other views (no three.js or Lottie dependency) (809) › Halogen reactivity trend; changed: Other views (no three.js or Lottie dependency) (809) › Hardy weinberg equilibrium: `p^2 + 2pq + q^2 = 1`; changed: Other views (no three.js or Lottie dependency) (809) › Hash table collisions: `h(k)=k\bmod 7`; changed: Other views (no three.js or Lottie dependency) (809) › Hemoglobin curve; changed: Other views (no three.js or Lottie dependency) (809) › Hemostasis and clotting; changed: Other views (no three.js or Lottie dependency) (809) › Herons formula area; changed: Other views (no three.js or Lottie dependency) (809) › Heteroskedasticity; changed: Other views (no three.js or Lottie dependency) (809) › Histogram; changed: Other views (no three.js or Lottie dependency) (809) › Homogeneous ode roots: `ay''+by'+cy=0`; changed: Other views (no three.js or Lottie dependency) (809) › Homogeneous vs heterogeneous mixture; changed: Other views (no three.js or Lottie dependency) (809) › Homologous structures; changed: Other views (no three.js or Lottie dependency) (809) › Hookes law; changed: Other views (no three.js or Lottie dependency) (809) › Http protocol; changed: Other views (no three.js or Lottie dependency) (809) › Human body systems map; changed: Other views (no three.js or Lottie dependency) (809) › Hybridization sigma pi bonds; changed: Other views (no three.js or Lottie dependency) (809) › Hydrocarbon structures; changed: Other views (no three.js or Lottie dependency) (809) › Hydroelectric dam; changed: Other views (no three.js or Lottie dependency) (809) › Hydrogen fuel cell; changed: Other views (no three.js or Lottie dependency) (809) › Hypergeometric distribution: `P(X=k)=\frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}`; changed: Other views (no three.js or Lottie dependency) (809) › Hyperopia; changed: Other views (no three.js or Lottie dependency) (809) › Ideal transformer: `\frac{V_s}{V_p}=\frac{N_s}{N_p}`; changed: Other views (no three.js or Lottie dependency) (809) › Ieee 754 floating point: `x=(-1)^s(1.f)_2\,2^{E-\mathrm{bias}}`; changed: Other views (no three.js or Lottie dependency) (809) › If statement execution flow; changed: Other views (no three.js or Lottie dependency) (809) › Igneous cooling rate and crystal size; changed: Other views (no three.js or Lottie dependency) (809) › Immune cell phagocytosis; changed: Other views (no three.js or Lottie dependency) (809) › Import quota; changed: Other views (no three.js or Lottie dependency) (809) › Incidence vs prevalence; changed: Other views (no three.js or Lottie dependency) (809) › Inclined plane acceleration: `a = g \sin \theta`; changed: Other views (no three.js or Lottie dependency) (809) › Independent assortment; changed: Other views (no three.js or Lottie dependency) (809) › Independent probability intersection; changed: Other views (no three.js or Lottie dependency) (809) › Initial rate experiment: `\frac{r_{0,2}}{r_{0,1}}=\left(\frac{[X]_{0,2}}{[X]_{0,1}}\right)^p`; changed: Other views (no three.js or Lottie dependency) (809) › Innate vs adaptive immunity; changed: Other views (no three.js or Lottie dependency) (809) › Insertion sort; changed: Other views (no three.js or Lottie dependency) (809) › Instrument families; changed: Other views (no three.js or Lottie dependency) (809) › Insulin deficiency vs resistance; changed: Other views (no three.js or Lottie dependency) (809) › Integral; changed: Other views (no three.js or Lottie dependency) (809) › Integration by parts; changed: Other views (no three.js or Lottie dependency) (809) › Integration estimation; changed: Other views (no three.js or Lottie dependency) (809) › Intermolecular forces; changed: Other views (no three.js or Lottie dependency) (809) › International trade world price; changed: Other views (no three.js or Lottie dependency) (809) › Ionic bond formation; changed: Other views (no three.js or Lottie dependency) (809) › Ionic formulas; changed: Other views (no three.js or Lottie dependency) (809) › Ionic lattice; changed: Other views (no three.js or Lottie dependency) (809) › Ionic vs covalent; changed: Other views (no three.js or Lottie dependency) (809) › Ir spectroscopy; changed: Other views (no three.js or Lottie dependency) (809) › Irrigation and salinization; changed: Other views (no three.js or Lottie dependency) (809) › Island biogeography; changed: Other views (no three.js or Lottie dependency) (809) › Isosceles triangle; changed: Other views (no three.js or Lottie dependency) (809) › Isotope atomic mass; changed: Other views (no three.js or Lottie dependency) (809) › Iupac hydrocarbon naming; changed: Other views (no three.js or Lottie dependency) (809) › Joint marginal conditional table; changed: Other views (no three.js or Lottie dependency) (809) › Kaplan meier survival curve; changed: Other views (no three.js or Lottie dependency) (809) › Keynesian cross; changed: Other views (no three.js or Lottie dependency) (809) › Keystone species and trophic cascade; changed: Other views (no three.js or Lottie dependency) (809) › Kinase cascade; changed: Other views (no three.js or Lottie dependency) (809) › Kinematics velocity: `v_f = v_i + at`; changed: Other views (no three.js or Lottie dependency) (809) › Kinetic and potential energy: `E_{\text{total}} = PE + KE`; changed: Other views (no three.js or Lottie dependency) (809) › Kinetic energy: `\mathrm{KE} = \frac{1}{2}mv^2`; changed: Other views (no three.js or Lottie dependency) (809) › Knn neighbor voting; changed: Other views (no three.js or Lottie dependency) (809) › Labeled drum kit; changed: Other views (no three.js or Lottie dependency) (809) › Labor force flows; changed: Other views (no three.js or Lottie dependency) (809) › Labor markets; changed: Other views (no three.js or Lottie dependency) (809) › Lac operon; changed: Other views (no three.js or Lottie dependency) (809) › Laffer curve; changed: Other views (no three.js or Lottie dependency) (809) › Land and sea breeze; changed: Other views (no three.js or Lottie dependency) (809) › Landfill design; changed: Other views (no three.js or Lottie dependency) (809) › Landslide risk and movement types; changed: Other views (no three.js or Lottie dependency) (809) › Latitude longitude; changed: Other views (no three.js or Lottie dependency) (809) › Law of cosines; changed: Other views (no three.js or Lottie dependency) (809) › Law of definite proportions; changed: Other views (no three.js or Lottie dependency) (809) › Law of reflection: `\theta_i = \theta_r`; changed: Other views (no three.js or Lottie dependency) (809) › Lcm; changed: Other views (no three.js or Lottie dependency) (809) › Ld50 dose response curve; changed: Other views (no three.js or Lottie dependency) (809) › Le chateliers principle; changed: Other views (no three.js or Lottie dependency) (809) › Least square regression; changed: Other views (no three.js or Lottie dependency) (809) › Lens equation: `\frac{1}{f} = \frac{1}{d_o} + \frac{1}{d_i}`; changed: Other views (no three.js or Lottie dependency) (809) › Levels of organization; changed: Other views (no three.js or Lottie dependency) (809) › Lewis dot symbols; changed: Other views (no three.js or Lottie dependency) (809) › Lewis structure builder; changed: Other views (no three.js or Lottie dependency) (809) › Likelihood function: `L(p\mid k,n) \propto p^k(1-p)^{n-k}`; changed: Other views (no three.js or Lottie dependency) (809) › Limiting reactant; changed: Other views (no three.js or Lottie dependency) (809) › Linear combination: `\vec{w}=a\vec{u}+b\vec{v}`; changed: Other views (no three.js or Lottie dependency) (809) › Linear equation two vars simple; changed: Other views (no three.js or Lottie dependency) (809) › Linear independence discriminant: `A=\left|\det(\mathbf{u},\mathbf{v})\right|`; changed: Other views (no three.js or Lottie dependency) (809) › Linear inequalities feasible region; changed: Other views (no three.js or Lottie dependency) (809) › Linear inequality solution ray: `ax + b \lessgtr c`; changed: Other views (no three.js or Lottie dependency) (809) › Lipids and phospholipids; changed: Other views (no three.js or Lottie dependency) (809) › Loanable funds; changed: Other views (no three.js or Lottie dependency) (809) › Logarithm inverse exponential; changed: Other views (no three.js or Lottie dependency) (809) › Logistic growth; changed: Other views (no three.js or Lottie dependency) (809) › Logistic regression: `P(Y=1\mid x)=\frac{1}{1+e^{-(\beta_0+\beta_1x)}}`; changed: Other views (no three.js or Lottie dependency) (809) › Long division; changed: Other views (no three.js or Lottie dependency) (809) › Long run growth; changed: Other views (no three.js or Lottie dependency) (809) › Loop break control flow; changed: Other views (no three.js or Lottie dependency) (809) › Lorenz curve; changed: Other views (no three.js or Lottie dependency) (809) › Lras; changed: Other views (no three.js or Lottie dependency) (809) › Lung gas gradient; changed: Other views (no three.js or Lottie dependency) (809) › Lytic vs lysogenic virus cycle; changed: Other views (no three.js or Lottie dependency) (809) › Magnet induced current; changed: Other views (no three.js or Lottie dependency) (809) › Magnet induced current direction; changed: Other views (no three.js or Lottie dependency) (809) › Magnetic field direction on charge: `\vec F_B=q\vec v\times\vec B`; changed: Other views (no three.js or Lottie dependency) (809) › Map measurement; changed: Other views (no three.js or Lottie dependency) (809) › Marginal analysis; changed: Other views (no three.js or Lottie dependency) (809) › Markovnikov alkene addition; changed: Other views (no three.js or Lottie dependency) (809) › Mass density volume relation: `\rho = \frac{m}{V}`; changed: Other views (no three.js or Lottie dependency) (809) › Mass spectrum; changed: Other views (no three.js or Lottie dependency) (809) › Mass spring shm: `T = 2\pi\sqrt{\frac{m}{k}}`; changed: Other views (no three.js or Lottie dependency) (809) › Matched pairs design; changed: Other views (no three.js or Lottie dependency) (809) › Matrix inverse 2d: `A^{-1}A=I\quad A^{-1}Ax=x`; changed: Other views (no three.js or Lottie dependency) (809) › Matrix multiplication row column rule; changed: Other views (no three.js or Lottie dependency) (809) › Matrix transformation 2d: `A\vec{v}=\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}`; changed: Other views (no three.js or Lottie dependency) (809) › Maxwell boltzmann distribution; changed: Other views (no three.js or Lottie dependency) (809) › Mean as balance point; changed: Other views (no three.js or Lottie dependency) (809) › Mean value theorem: `f'(c) = \frac{f(b) - f(a)}{b - a}`; changed: Other views (no three.js or Lottie dependency) (809) › Mean vs median; changed: Other views (no three.js or Lottie dependency) (809) › Mediation indirect effect: `c = c^{\prime} + a \times b`; changed: Other views (no three.js or Lottie dependency) (809) › Meiosis; changed: Other views (no three.js or Lottie dependency) (809) › Meiosis nondisjunction; changed: Other views (no three.js or Lottie dependency) (809) › Memory hierarchy; changed: Other views (no three.js or Lottie dependency) (809) › Menstrual cycle fertilization; changed: Other views (no three.js or Lottie dependency) (809) › Merge sort; changed: Other views (no three.js or Lottie dependency) (809) › Meta analysis; changed: Other views (no three.js or Lottie dependency) (809) › Meta analysis forest weights; changed: Other views (no three.js or Lottie dependency) (809) › Metal reactivity series; changed: Other views (no three.js or Lottie dependency) (809) › Metallic bonding; changed: Other views (no three.js or Lottie dependency) (809) › Metric distance; changed: Other views (no three.js or Lottie dependency) (809) › Mhc i vs mhc ii presentation; changed: Other views (no three.js or Lottie dependency) (809) › Michaelis menten dynamics; changed: Other views (no three.js or Lottie dependency) (809) › Microbial tolerance curve; changed: Other views (no three.js or Lottie dependency) (809) › Microphone polar patterns; changed: Other views (no three.js or Lottie dependency) (809) › Midpoint formula; changed: Other views (no three.js or Lottie dependency) (809) › Minimum wage; changed: Other views (no three.js or Lottie dependency) (809) › Minor scale formula; changed: Other views (no three.js or Lottie dependency) (809) › Mirror equation: `\frac{1}{f} = \frac{1}{u} + \frac{1}{v}`; changed: Other views (no three.js or Lottie dependency) (809) › Mitosis; changed: Other views (no three.js or Lottie dependency) (809) › Mixed numbers; changed: Other views (no three.js or Lottie dependency) (809) › Mixing solutions: `C_{\mathrm{mix}}=\frac{C_1V_1+C_2V_2}{V_1+V_2}`; changed: Other views (no three.js or Lottie dependency) (809) › Molarity moles per liter; changed: Other views (no three.js or Lottie dependency) (809) › Mole avogadro number visual; changed: Other views (no three.js or Lottie dependency) (809) › Molecular polarity; changed: Other views (no three.js or Lottie dependency) (809) › Momentum: `p = mv`; changed: Other views (no three.js or Lottie dependency) (809) › Monetary policy; changed: Other views (no three.js or Lottie dependency) (809) › Money market; changed: Other views (no three.js or Lottie dependency) (809) › Monopolistic competition; changed: Other views (no three.js or Lottie dependency) (809) › Monopoly inefficiency; changed: Other views (no three.js or Lottie dependency) (809) › Monopoly pricing; changed: Other views (no three.js or Lottie dependency) (809) › Monopsony labor market power; changed: Other views (no three.js or Lottie dependency) (809) › Moon phases; changed: Other views (no three.js or Lottie dependency) (809) › Mosaic plot; changed: Other views (no three.js or Lottie dependency) (809) › Mrna translation; changed: Other views (no three.js or Lottie dependency) (809) › Multiplication as repeated addition; changed: Other views (no three.js or Lottie dependency) (809) › Musical harmonic series; changed: Other views (no three.js or Lottie dependency) (809) › Musical interval chart; changed: Other views (no three.js or Lottie dependency) (809) › Mutation types; changed: Other views (no three.js or Lottie dependency) (809) › Myopia; changed: Other views (no three.js or Lottie dependency) (809) › Natural monopoly; changed: Other views (no three.js or Lottie dependency) (809) › Natural selection allele frequency; changed: Other views (no three.js or Lottie dependency) (809) › Negative feedback loop; changed: Other views (no three.js or Lottie dependency) (809) › Nephron; changed: Other views (no three.js or Lottie dependency) (809) › Nernst equation: `E_{\mathrm{cell}}=E^\circ_{\mathrm{cell}}-\frac{0.0592\,\mathrm{V}}{n}\log_{10}Q`; changed: Other views (no three.js or Lottie dependency) (809) › Net ionic equations; changed: Other views (no three.js or Lottie dependency) (809) › Network fault tolerance; changed: Other views (no three.js or Lottie dependency) (809) › Newman projections; changed: Other views (no three.js or Lottie dependency) (809) › Newton first law; changed: Other views (no three.js or Lottie dependency) (809) › Newton second law: `F_{\mathrm{net}} = ma`; changed: Other views (no three.js or Lottie dependency) (809) › Newton third law; changed: Other views (no three.js or Lottie dependency) (809) › Newtons gravitation law; changed: Other views (no three.js or Lottie dependency) (809) › Nitrogen cycle; changed: Other views (no three.js or Lottie dependency) (809) › Normal approximation to binomial; changed: Other views (no three.js or Lottie dependency) (809) › Nuclear decay modes; changed: Other views (no three.js or Lottie dependency) (809) › Nuclear fission; changed: Other views (no three.js or Lottie dependency) (809) › Nuclear fusion; changed: Other views (no three.js or Lottie dependency) (809) › Nuclear power plant; changed: Other views (no three.js or Lottie dependency) (809) › Nucleotides dna and rna; changed: Other views (no three.js or Lottie dependency) (809) › Obtuse triangle; changed: Other views (no three.js or Lottie dependency) (809) › Ocean acidification; changed: Other views (no three.js or Lottie dependency) (809) › Ogive; changed: Other views (no three.js or Lottie dependency) (809) › Ohms law: `I = \frac{V}{R}`; changed: Other views (no three.js or Lottie dependency) (809) › Oil spill fate; changed: Other views (no three.js or Lottie dependency) (809) › Okuns law; changed: Other views (no three.js or Lottie dependency) (809) › One sample t test: `t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}`; changed: Other views (no three.js or Lottie dependency) (809) › Operant conditioning; changed: Other views (no three.js or Lottie dependency) (809) › Orbital shapes; changed: Other views (no three.js or Lottie dependency) (809) › Orchestra seating; changed: Other views (no three.js or Lottie dependency) (809) › Osmosis; changed: Other views (no three.js or Lottie dependency) (809) › Osmotic pressure: `\pi = i c R T`; changed: Other views (no three.js or Lottie dependency) (809) › Outlier leverage influence; changed: Other views (no three.js or Lottie dependency) (809) › Oxygen sag curve; changed: Other views (no three.js or Lottie dependency) (809) › P series threshold: `\sum_{n=1}^{\infty}\frac{1}{n^p}`; changed: Other views (no three.js or Lottie dependency) (809) › Paired t test; changed: Other views (no three.js or Lottie dependency) (809) › Parallel line; changed: Other views (no three.js or Lottie dependency) (809) › Particulate matter size; changed: Other views (no three.js or Lottie dependency) (809) › Pascals law hydraulics: `p = \frac{F}{A}`; changed: Other views (no three.js or Lottie dependency) (809) › Pcr cycle; changed: Other views (no three.js or Lottie dependency) (809) › Pedigree; changed: Other views (no three.js or Lottie dependency) (809) › Percent part whole proportion; changed: Other views (no three.js or Lottie dependency) (809) › Perfect competition; changed: Other views (no three.js or Lottie dependency) (809) › Perfect competition market firm; changed: Other views (no three.js or Lottie dependency) (809) › Period frequency relation: `f = \frac{1}{T}`; changed: Other views (no three.js or Lottie dependency) (809) › Periodic table explorer; changed: Other views (no three.js or Lottie dependency) (809) › Periodic trends; changed: Other views (no three.js or Lottie dependency) (809) › Permutation formula; changed: Other views (no three.js or Lottie dependency) (809) › Permutations vs combinations; changed: Other views (no three.js or Lottie dependency) (809) › Perpendicular line; changed: Other views (no three.js or Lottie dependency) (809) › Pesticide treadmill; changed: Other views (no three.js or Lottie dependency) (809) › Ph from concentration: `\mathrm{pH}=-\log_{10}([\mathrm{H_3O^+}])`; changed: Other views (no three.js or Lottie dependency) (809) › Pharmacokinetic curve; changed: Other views (no three.js or Lottie dependency) (809) › Phase change cycle; changed: Other views (no three.js or Lottie dependency) (809) › Phase diagram; changed: Other views (no three.js or Lottie dependency) (809) › Phillips curve; changed: Other views (no three.js or Lottie dependency) (809) › Phillips curve shifts; changed: Other views (no three.js or Lottie dependency) (809) › Phosphorus cycle; changed: Other views (no three.js or Lottie dependency) (809) › Photochemical smog; changed: Other views (no three.js or Lottie dependency) (809) › Photoelectric energy balance: `hf = \phi + K_{\max}`; changed: Other views (no three.js or Lottie dependency) (809) › Photoelectron spectrum; changed: Other views (no three.js or Lottie dependency) (809) › Photosynthesis; changed: Other views (no three.js or Lottie dependency) (809) › Photosynthesis overview: `6CO_2 + 6H_2O + \text{light energy} \rightarrow C_6H_{12}O_6 + 6O_2`; changed: Other views (no three.js or Lottie dependency) (809) › Photosynthetic pigment spectrum; changed: Other views (no three.js or Lottie dependency) (809) › Phototropism; changed: Other views (no three.js or Lottie dependency) (809) › Phylogenetic tree; changed: Other views (no three.js or Lottie dependency) (809) › Physical vs chemical process; changed: Other views (no three.js or Lottie dependency) (809) › Piano chord chart; changed: Other views (no three.js or Lottie dependency) (809) › Piano keyboard note names; changed: Other views (no three.js or Lottie dependency) (809) › Piano roll; changed: Other views (no three.js or Lottie dependency) (809) › Place value; changed: Other views (no three.js or Lottie dependency) (809) › Plant anatomy; changed: Other views (no three.js or Lottie dependency) (809) › Plant life cycle; changed: Other views (no three.js or Lottie dependency) (809) › Plant vs animal cell; changed: Other views (no three.js or Lottie dependency) (809) › Plate boundaries; changed: Other views (no three.js or Lottie dependency) (809) › Point slope line: `y - y_1 = m(x - x_1)`; changed: Other views (no three.js or Lottie dependency) (809) › Point to plane distance: `d = PH`; changed: Other views (no three.js or Lottie dependency) (809) › Poisson distribution: `P(X=k)=\frac{e^{-\lambda}\lambda^k}{k!}`; changed: Other views (no three.js or Lottie dependency) (809) › Polar curves; changed: Other views (no three.js or Lottie dependency) (809) › Polar double integral; changed: Other views (no three.js or Lottie dependency) (809) › Polygon interior angle sum: `(n - 2)\times 180^\circ`; changed: Other views (no three.js or Lottie dependency) (809) › Polymerization; changed: Other views (no three.js or Lottie dependency) (809) › Polynomial multiplicity intercepts: `f(x) = k(x-r_1)^{m_1}(x-r_2)^{m_2}`; changed: Other views (no three.js or Lottie dependency) (809) › Polyprotic titration; changed: Other views (no three.js or Lottie dependency) (809) › Population density: `D = \frac{P}{A}`; changed: Other views (no three.js or Lottie dependency) (809) › Positive externality; changed: Other views (no three.js or Lottie dependency) (809) › Positive feedback loop; changed: Other views (no three.js or Lottie dependency) (809) › Ppc growth; changed: Other views (no three.js or Lottie dependency) (809) › Ppc opportunity cost; changed: Other views (no three.js or Lottie dependency) (809) › Precipitation reactions; changed: Other views (no three.js or Lottie dependency) (809) › Predator prey cycle; changed: Other views (no three.js or Lottie dependency) (809) › Predator prey dynamics; changed: Other views (no three.js or Lottie dependency) (809) › Presbyopia; changed: Other views (no three.js or Lottie dependency) (809) › Present value discounting; changed: Other views (no three.js or Lottie dependency) (809) › Pressure: `P = \frac{F}{A}`; changed: Other views (no three.js or Lottie dependency) (809) › Price ceilings and floors; changed: Other views (no three.js or Lottie dependency) (809) › Price discrimination; changed: Other views (no three.js or Lottie dependency) (809) › Primary vs secondary pollutants; changed: Other views (no three.js or Lottie dependency) (809) › Primes; changed: Other views (no three.js or Lottie dependency) (809) › Probability intersection; changed: Other views (no three.js or Lottie dependency) (809) › Probability tree; changed: Other views (no three.js or Lottie dependency) (809) › Process capability cp cpk; changed: Other views (no three.js or Lottie dependency) (809) › Production function; changed: Other views (no three.js or Lottie dependency) (809) › Production possibilities frontier; changed: Other views (no three.js or Lottie dependency) (809) › Projectile motion; changed: Other views (no three.js or Lottie dependency) (809) › Prokaryotic vs eukaryotic cells; changed: Other views (no three.js or Lottie dependency) (809) › Protein denaturation; changed: Other views (no three.js or Lottie dependency) (809) › Protein structure levels; changed: Other views (no three.js or Lottie dependency) (809) › Proton nmr splitting; changed: Other views (no three.js or Lottie dependency) (809) › Pulmonary surfactant and compliance; changed: Other views (no three.js or Lottie dependency) (809) › Punnett squares; changed: Other views (no three.js or Lottie dependency) (809) › Pupillary light reflex; changed: Other views (no three.js or Lottie dependency) (809) › Pv nrt equation: `PV = nRT`; changed: Other views (no three.js or Lottie dependency) (809) › Pythagorean theorem: `a^2 + b^2 = c^2`; changed: Other views (no three.js or Lottie dependency) (809) › Python range for loop; changed: Other views (no three.js or Lottie dependency) (809) › Q vs k; changed: Other views (no three.js or Lottie dependency) (809) › Qt prolongation torsades; changed: Other views (no three.js or Lottie dependency) (809) › Quadratic formula: `x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}`; changed: Other views (no three.js or Lottie dependency) (809) › Quadratic inequalities: `ax^2 + bx + c > 0`; changed: Other views (no three.js or Lottie dependency) (809) › Quadratic vertex form: `y = a(x - h)^2 + k`; changed: Other views (no three.js or Lottie dependency) (809) › Quicksort; changed: Other views (no three.js or Lottie dependency) (809) › Raas and adh; changed: Other views (no three.js or Lottie dependency) (809) › Radiation penetration; changed: Other views (no three.js or Lottie dependency) (809) › Radiometric dating; changed: Other views (no three.js or Lottie dependency) (809) › Rain shadow effect; changed: Other views (no three.js or Lottie dependency) (809) › Randomized controlled trial flow; changed: Other views (no three.js or Lottie dependency) (809) › Randomized experiment; changed: Other views (no three.js or Lottie dependency) (809) › Rates and bonds; changed: Other views (no three.js or Lottie dependency) (809) › Rational inequality sign chart; changed: Other views (no three.js or Lottie dependency) (809) › Rational limits at infinity: `\lim_{x\to\pm\infty}\left(f(x)-q(x)\right)=0`; changed: Other views (no three.js or Lottie dependency) (809) › Reaction order plots; changed: Other views (no three.js or Lottie dependency) (809) › Reaction rate over time; changed: Other views (no three.js or Lottie dependency) (809) › Reaction thermodynamics: `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`; changed: Other views (no three.js or Lottie dependency) (809) › Reaction type explorer; changed: Other views (no three.js or Lottie dependency) (809) › Recrystallization purification; changed: Other views (no three.js or Lottie dependency) (809) › Rectangle area; changed: Other views (no three.js or Lottie dependency) (809) › Rectangular prism volume; changed: Other views (no three.js or Lottie dependency) (809) › Redox electron transfer; changed: Other views (no three.js or Lottie dependency) (809) › Reflection transformation coordinate plane; changed: Other views (no three.js or Lottie dependency) (809) › Reorder point and safety stock; changed: Other views (no three.js or Lottie dependency) (809) › Resistors in parallel equivalent: `\frac{1}{R_T} = \frac{1}{R_1} + \frac{1}{R_2} + \frac{1}{R_3}`; changed: Other views (no three.js or Lottie dependency) (809) › Resistors in series equivalent: `R_{\text{total}} = R_1 + R_2 + \dots`; changed: Other views (no three.js or Lottie dependency) (809) › Resonance structures; changed: Other views (no three.js or Lottie dependency) (809) › Rest value chart; changed: Other views (no three.js or Lottie dependency) (809) › Restriction enzyme map; changed: Other views (no three.js or Lottie dependency) (809) › Rgb additive mixing; changed: Other views (no three.js or Lottie dependency) (809) › Riemann sums; changed: Other views (no three.js or Lottie dependency) (809) › Right triangle; changed: Other views (no three.js or Lottie dependency) (809) › Rna processing; changed: Other views (no three.js or Lottie dependency) (809) › Roc curve; changed: Other views (no three.js or Lottie dependency) (809) › Rock cycle; changed: Other views (no three.js or Lottie dependency) (809) › Rods cones light levels; changed: Other views (no three.js or Lottie dependency) (809) › Rolles theorem: `f(a)=f(b)\implies\exists\,c\in(a,b):f'(c)=0`; changed: Other views (no three.js or Lottie dependency) (809) › Root power equivalence; changed: Other views (no three.js or Lottie dependency) (809) › Rotation transformation coordinate plane; changed: Other views (no three.js or Lottie dependency) (809) › Round robin cpu scheduling; changed: Other views (no three.js or Lottie dependency) (809) › Rutherford gold foil experiment; changed: Other views (no three.js or Lottie dependency) (809) › Saltwater intrusion; changed: Other views (no three.js or Lottie dependency) (809) › Sample space grid; changed: Other views (no three.js or Lottie dependency) (809) › Sample variance; changed: Other views (no three.js or Lottie dependency) (809) › Sampling distribution; changed: Other views (no three.js or Lottie dependency) (809) › Sampling without replacement; changed: Other views (no three.js or Lottie dependency) (809) › Sarcomere structure; changed: Other views (no three.js or Lottie dependency) (809) › Saturated vs unsaturated solution; changed: Other views (no three.js or Lottie dependency) (809) › Scalene triangle; changed: Other views (no three.js or Lottie dependency) (809) › Scientific notation: `a \times 10^n`; changed: Other views (no three.js or Lottie dependency) (809) › Sea level rise; changed: Other views (no three.js or Lottie dependency) (809) › Seasons and solar angle; changed: Other views (no three.js or Lottie dependency) (809) › Seed germination; changed: Other views (no three.js or Lottie dependency) (809) › Segment ratio: `AP:PB=m:n`; changed: Other views (no three.js or Lottie dependency) (809) › Selection patterns; changed: Other views (no three.js or Lottie dependency) (809) › Selection sort; changed: Other views (no three.js or Lottie dependency) (809) › Set operations venn regions; changed: Other views (no three.js or Lottie dependency) (809) › Shadow price: `P = 3x + 4y`; changed: Other views (no three.js or Lottie dependency) (809) › Shutdown decision; changed: Other views (no three.js or Lottie dependency) (809) › Side by side box plots; changed: Other views (no three.js or Lottie dependency) (809) › Similar triangles; changed: Other views (no three.js or Lottie dependency) (809) › Simple division; changed: Other views (no three.js or Lottie dependency) (809) › Simple pendulum: `T \approx 2\pi\sqrt{\frac{L}{g}}`; changed: Other views (no three.js or Lottie dependency) (809) › Simplified fraction; changed: Other views (no three.js or Lottie dependency) (809) › Simpson rule; changed: Other views (no three.js or Lottie dependency) (809) › Singly linked list pointers; changed: Other views (no three.js or Lottie dependency) (809) › Singular value decomposition: `A=U\Sigma V^{\mathsf T}`; changed: Other views (no three.js or Lottie dependency) (809) › Skeleton and muscle movement; changed: Other views (no three.js or Lottie dependency) (809) › Skewness direction; changed: Other views (no three.js or Lottie dependency) (809) › Sleep cycle hypnogram; changed: Other views (no three.js or Lottie dependency) (809) › Sliding filament muscle contraction; changed: Other views (no three.js or Lottie dependency) (809) › Slope equation; changed: Other views (no three.js or Lottie dependency) (809) › Slope intercept: `y = mx + b`; changed: Other views (no three.js or Lottie dependency) (809) › Sn1 vs sn2 substitution; changed: Other views (no three.js or Lottie dependency) (809) › Soil field capacity and wilting point; changed: Other views (no three.js or Lottie dependency) (809) › Soil texture and water retention; changed: Other views (no three.js or Lottie dependency) (809) › Soil texture triangle; changed: Other views (no three.js or Lottie dependency) (809) › Solar photovoltaic system; changed: Other views (no three.js or Lottie dependency) (809) › Solenoid internal field: `B = \mu_0 n I`; changed: Other views (no three.js or Lottie dependency) (809) › Solow steady state: `s f(k^*) = (\delta + n + g)k^*`; changed: Other views (no three.js or Lottie dependency) (809) › Solubility curve; changed: Other views (no three.js or Lottie dependency) (809) › Solubility equilibrium; changed: Other views (no three.js or Lottie dependency) (809) › Solution dilution: `M_1V_1=M_2V_2`; changed: Other views (no three.js or Lottie dependency) (809) › Speciation; changed: Other views (no three.js or Lottie dependency) (809) › Specific heat: `\Delta T = \frac{q}{mc}`; changed: Other views (no three.js or Lottie dependency) (809) › Sphere volume: `V = \frac{4}{3}\pi r^3`; changed: Other views (no three.js or Lottie dependency) (809) › Spreadsheet if function; changed: Other views (no three.js or Lottie dependency) (809) › Spreadsheet text extraction; changed: Other views (no three.js or Lottie dependency) (809) › Sql ddl vs dml; changed: Other views (no three.js or Lottie dependency) (809) › Sql group by; changed: Other views (no three.js or Lottie dependency) (809) › Sql join; changed: Other views (no three.js or Lottie dependency) (809) › Sql primary foreign key constraints; changed: Other views (no three.js or Lottie dependency) (809) › Sql transaction commit rollback; changed: Other views (no three.js or Lottie dependency) (809) › Square area; changed: Other views (no three.js or Lottie dependency) (809) › Sras; changed: Other views (no three.js or Lottie dependency) (809) › Standard deviation: `\sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^2}`; changed: Other views (no three.js or Lottie dependency) (809) › Standard score z: `z = \frac{x - \mu}{\sigma}`; changed: Other views (no three.js or Lottie dependency) (809) › States of matter particle model; changed: Other views (no three.js or Lottie dependency) (809) › Stereo field; changed: Other views (no three.js or Lottie dependency) (809) › Stoichiometric mole ratios: `2\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\mathrm{H_2O}`; changed: Other views (no three.js or Lottie dependency) (809) › Stopping distance safe following: `d_{\mathrm{stop}}=d_{\mathrm{reaction}}+d_{\mathrm{braking}}`; changed: Other views (no three.js or Lottie dependency) (809) › Storm hydrograph; changed: Other views (no three.js or Lottie dependency) (809) › Straight line depreciation: `D = \frac{C-S}{L}`; changed: Other views (no three.js or Lottie dependency) (809) › Stratospheric ozone depletion; changed: Other views (no three.js or Lottie dependency) (809) › Stress strain material limits; changed: Other views (no three.js or Lottie dependency) (809) › Strong vs weak acid; changed: Other views (no three.js or Lottie dependency) (809) › Structural isomers; changed: Other views (no three.js or Lottie dependency) (809) › Subtracting integers; changed: Other views (no three.js or Lottie dependency) (809) › Subtracting negative integers: `a - n = a + |n|, \quad n < 0`; changed: Other views (no three.js or Lottie dependency) (809) › Successive percent change: `100\left(1+\frac{p_1}{100}\right)\left(1+\frac{p_2}{100}\right)`; changed: Other views (no three.js or Lottie dependency) (809) › Supply and demand; changed: Other views (no three.js or Lottie dependency) (809) › Supply curve; changed: Other views (no three.js or Lottie dependency) (809) › Supply shock; changed: Other views (no three.js or Lottie dependency) (809) › Surface area cube; changed: Other views (no three.js or Lottie dependency) (809) › Surface area sphere: `S = 4\pi r^2`; changed: Other views (no three.js or Lottie dependency) (809) › Surface area to volume ratio; changed: Other views (no three.js or Lottie dependency) (809) › Survivorship curves; changed: Other views (no three.js or Lottie dependency) (809) › Synaptic transmission; changed: Other views (no three.js or Lottie dependency) (809) › Synth signal flow; changed: Other views (no three.js or Lottie dependency) (809) › Synthetic division; changed: Other views (no three.js or Lottie dependency) (809) › System of equations; changed: Other views (no three.js or Lottie dependency) (809) › T distribution: `T=\frac{\bar{x}-\mu}{s/\sqrt{n}}`; changed: Other views (no three.js or Lottie dependency) (809) › T stat p score; changed: Other views (no three.js or Lottie dependency) (809) › Tangent segments common point: `PA = PB`; changed: Other views (no three.js or Lottie dependency) (809) › Tariff; changed: Other views (no three.js or Lottie dependency) (809) › Tax incidence and elasticity; changed: Other views (no three.js or Lottie dependency) (809) › Taxes and subsidies; changed: Other views (no three.js or Lottie dependency) (809) › Taylor series expansion; changed: Other views (no three.js or Lottie dependency) (809) › Tcp three way handshake; changed: Other views (no three.js or Lottie dependency) (809) › Tcp vs udp; changed: Other views (no three.js or Lottie dependency) (809) › Tempo marking chart; changed: Other views (no three.js or Lottie dependency) (809) › Tendon reflex; changed: Other views (no three.js or Lottie dependency) (809) › Test cross; changed: Other views (no three.js or Lottie dependency) (809) › Thermohaline circulation; changed: Other views (no three.js or Lottie dependency) (809) › Three set inclusion exclusion: `|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|`; changed: Other views (no three.js or Lottie dependency) (809) › Thyroid regulation; changed: Other views (no three.js or Lottie dependency) (809) › Torque; changed: Other views (no three.js or Lottie dependency) (809) › Transversal angle relationships; changed: Other views (no three.js or Lottie dependency) (809) › Trapezoid area; changed: Other views (no three.js or Lottie dependency) (809) › Trapezoidal rule; changed: Other views (no three.js or Lottie dependency) (809) › Triangle angle sum; changed: Other views (no three.js or Lottie dependency) (809) › Triangle angle sum proof; changed: Other views (no three.js or Lottie dependency) (809) › Triangle area: `A = \frac{1}{2}bh`; changed: Other views (no three.js or Lottie dependency) (809) › Trig angle sum identity; changed: Other views (no three.js or Lottie dependency) (809) › Trig identity pythagorean; changed: Other views (no three.js or Lottie dependency) (809) › Trig inverse; changed: Other views (no three.js or Lottie dependency) (809) › Trig ratio tangent: `\tan(\theta) = \frac{\sin(\theta)}{\cos(\theta)}`; changed: Other views (no three.js or Lottie dependency) (809) › Two cable static equilibrium; changed: Other views (no three.js or Lottie dependency) (809) › Two digit multiply; changed: Other views (no three.js or Lottie dependency) (809) › Two dimensional array indexing; changed: Other views (no three.js or Lottie dependency) (809) › Two sample t test; changed: Other views (no three.js or Lottie dependency) (809) › Twos complement; changed: Other views (no three.js or Lottie dependency) (809) › Type i type ii power; changed: Other views (no three.js or Lottie dependency) (809) › Union probability inclusion exclusion; changed: Other views (no three.js or Lottie dependency) (809) › Unit circle: `x^2 + y^2 = 1`; changed: Other views (no three.js or Lottie dependency) (809) › Urbanization and impervious surfaces; changed: Other views (no three.js or Lottie dependency) (809) › Vapor pressure; changed: Other views (no three.js or Lottie dependency) (809) › Vapor pressure lowering: `P_{\mathrm{solution}}=X_{\mathrm{solvent}}P^\circ_{\mathrm{solvent}}`; changed: Other views (no three.js or Lottie dependency) (809) › Variance; changed: Other views (no three.js or Lottie dependency) (809) › Vector components: `x=r\cos\theta,\qquad y=r\sin\theta`; changed: Other views (no three.js or Lottie dependency) (809) › Vector dot product; changed: Other views (no three.js or Lottie dependency) (809) › Vector projection; changed: Other views (no three.js or Lottie dependency) (809) › Velocity as slope graph: `v = \frac{\Delta x}{\Delta t}`; changed: Other views (no three.js or Lottie dependency) (809) › Venn diagram two set counting; changed: Other views (no three.js or Lottie dependency) (809) › Virus life cycle; changed: Other views (no three.js or Lottie dependency) (809) › Visual fields; changed: Other views (no three.js or Lottie dependency) (809) › Vocal ranges; changed: Other views (no three.js or Lottie dependency) (809) › Volume cube; changed: Other views (no three.js or Lottie dependency) (809) › Waste hierarchy; changed: Other views (no three.js or Lottie dependency) (809) › Wastewater treatment; changed: Other views (no three.js or Lottie dependency) (809) › Water phase diagram; changed: Other views (no three.js or Lottie dependency) (809) › Water polarity; changed: Other views (no three.js or Lottie dependency) (809) › Water potential; changed: Other views (no three.js or Lottie dependency) (809) › Wave speed: `v = f\lambda`; changed: Other views (no three.js or Lottie dependency) (809) › Waveform anatomy; changed: Other views (no three.js or Lottie dependency) (809) › Weight force: `F_g = mg`; changed: Other views (no three.js or Lottie dependency) (809) › Wetland filtration and flood buffering; changed: Other views (no three.js or Lottie dependency) (809) › While loop boolean condition; changed: Other views (no three.js or Lottie dependency) (809) › Wilcoxon rank sum; changed: Other views (no three.js or Lottie dependency) (809) › Wind turbine; changed: Other views (no three.js or Lottie dependency) (809) › Withdrawal reflex; changed: Other views (no three.js or Lottie dependency) (809) › Work done by force; changed: Other views (no three.js or Lottie dependency) (809) › Z score p value; changed: Other views (no three.js or Lottie dependency) (809) › Zero based array indexing)
+
+### chatgpt-learning-blocks.md
+
+#### changed: three.js 3D scenes (22) › Column space: `A\mathbf{x}\in\operatorname{span}(A)`
+
+```diff
+  Parameters: `rank` (integer, default `1`, range 1 to 3); `inputX` (number, default `1`, range -1.5 to 1.5); `inputY` (number, default `0`, range -1.5 to 1.5); `inputZ` (number, default `0`, range -1.5 to 1.5).
+  
+- Source: manifest `model-44d6ee3a3108.js`; view `visualization-418c928bbaa4.js` → `ColumnSpaceVisualization`.
++ Source: manifest `model-44d6ee3a3108.js`; view `visualization-dd05723c6873.js` → `ColumnSpaceVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Cylindrical coordinates: `\int_{a_z}^{b_z}\int_{a_{\theta}}^{b_{\theta}}\int_{a_r}^{b_r}r\,dr\,d\theta\,dz`
+
+```diff
+  Parameters: `rStart` (number, default `0`, range 0 to 5); `r` (number, default `3`, range 0 to 5); `thetaStart` (number, default `0`, range 0 to 6.283185307179586); `theta` (number, default `6.283185307179586`, range 0 to 6.283185307179586); `zStart` (number, default `0`, range 0 to 5); `z` (number, default `3`, range 0 to 5); `shape` (enum, default `cylinder`, one of `cylinder`, `sector`, `cylindrical-shell`).
+  
+- Source: manifest `content-c9925bc5b917.js`; view `visualization-b186b208958e.js` → `CylindricalCoordinatesVisualization`.
++ Source: manifest `content-c9925bc5b917.js`; view `visualization-f28f57205ab9.js` → `CylindricalCoordinatesVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Divergence theorem flux: `\iint_{\partial V}\mathbf F\cdot\mathbf n\,dS=\iiint_V\nabla\cdot\mathbf F\,dV`
+
+```diff
+  Parameters: `radius` (number, default `1.35`, range 0.8 to 1.9); `strength` (number, default `0.75`, range -1.2 to 1.2).
+  
+- Source: manifest `type-a59f58f3e3e0.js`; view `visualization-2e9e5c4e19ff.js` → `DivergenceTheoremFluxVisualization`.
++ Source: manifest `type-a59f58f3e3e0.js`; view `visualization-f599294093f2.js` → `DivergenceTheoremFluxVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Double integral cartesian
+
+```diff
+  Type `DOUBLE_INTEGRAL_CARTESIAN`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-21615b2cefb8.js` → `CartesianDoubleIntegralVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c8d22effecd7.js` → `CartesianDoubleIntegralVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Gradient directional derivative: `D_{\mathbf u}f=\nabla f\cdot\mathbf u`
+
+```diff
+  Parameters: `angle` (number, default `35`, range 0 to 360); `pointX` (number, default `1`, range -2.2 to 2.2); `pointY` (number, default `0.65`, range -1.6 to 1.6).
+  
+- Source: manifest `type-977bdfa6cb63.js`; view `visualization-d03d61a3b372.js` → `GradientDirectionalDerivativeVisualization`.
++ Source: manifest `type-977bdfa6cb63.js`; view `visualization-841dd8950e89.js` → `GradientDirectionalDerivativeVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Jacobian grid transformation: `dA=\left|\det J\right|\,du\,dv`
+
+```diff
+  Parameters: `scale` (number, default `1.4`, range 0.7 to 2); `shear` (number, default `0.6`, range -0.95 to 0.95).
+  
+- Source: manifest `type-f72a37ec91c5.js`; view `visualization-50c38c66caa4.js` → `JacobianGridTransformationVisualization`.
++ Source: manifest `type-f72a37ec91c5.js`; view `visualization-3f104685a8ae.js` → `JacobianGridTransformationVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Lagrange gradient parallelism: `\nabla f=\lambda\nabla g`
+
+```diff
+  Parameters: `example` (enum, default `linear`, one of `linear`, `product`, `ellipse`); `angleDegrees` (number, default `30`, range 0 to 360).
+  
+- Source: manifest `model-b583204f43e9.js`; view `visualization-1aa35c8d408c.js` → `LagrangeGradientParallelismVisualization`.
++ Source: manifest `model-b583204f43e9.js`; view `visualization-36ac7a1866f8.js` → `LagrangeGradientParallelismVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Line integral work
+
+```diff
+  Type `LINE_INTEGRAL_WORK`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-10e6dfc9597c.js` → `LineIntegralWorkVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-51e6bf51e986.js` → `LineIntegralWorkVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Multivariable limit paths: `f(x,y)=\frac{x^2-y^2}{x^2+y^2}`
+
+```diff
+  Parameters: `mode` (enum, default `dne`, one of `dne`, `exists`); `path` (enum, default `y-zero`, one of `y-zero`, `x-zero`); `distance` (number, default `0.75`, range 0 to 1.2).
+  
+- Source: manifest `model-2e64cf87fd64.js`; view `visualization-20734f10a402.js` → `MultivariableLimitPathsVisualization`.
++ Source: manifest `model-2e64cf87fd64.js`; view `visualization-c2934304348d.js` → `MultivariableLimitPathsVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Null space: `A\mathbf{x}=\mathbf{0}`
+
+```diff
+  Parameters: `rank` (integer, default `1`, range 1 to 3).
+  
+- Source: manifest `model-b86e7b9561e2.js`; view `visualization-a00c704dde7c.js` → `NullSpaceVisualization`.
++ Source: manifest `model-b86e7b9561e2.js`; view `visualization-2f3cc28eb82f.js` → `NullSpaceVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Parametrized line 2d
+
+```diff
+  Parameters: `t` (number, default `0`, range -12.566370614359172 to 12.566370614359172).
+  
+- Source: manifest `model-e5ade770ac2f.js`; view `visualization-bd7a59e1e9d2.js` → `LineIntegralVisualization`.
++ Source: manifest `model-e5ade770ac2f.js`; view `visualization-65f696b40218.js` → `LineIntegralVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Parametrized line 3d
+
+```diff
+  Parameters: `t` (number, default `0`, range -12.566370614359172 to 12.566370614359172).
+  
+- Source: manifest `model-2139461cc43f.js`; view `visualization-99beef34fcdc.js` → `ParametrizedLine3DVisualization`.
++ Source: manifest `model-2139461cc43f.js`; view `visualization-9d38136bd5ca.js` → `ParametrizedLine3DVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Parametrized surfaces
+
+```diff
+  Parameters: `t` (number, default `1`, range -2 to 2); `s` (number, default `1.5707963267948966`, range -6.283185307179586 to 6.283185307179586).
+  
+- Source: manifest `model-a4f0614d0c79.js`; view `visualization-bf68daf45e5d.js` → `ParametrizedSurfacesVisualization`.
++ Source: manifest `model-a4f0614d0c79.js`; view `visualization-10d992f89841.js` → `ParametrizedSurfacesVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Power iteration
+
+```diff
+  Type `POWER_ITERATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1de149ef4245.js` → `PowerIterationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c960b6c3a377.js` → `PowerIterationVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Shifted inverse iteration: `\mathbf{x}_{k+1}=\frac{B\mathbf{x}_k}{\lVert B\mathbf{x}_k\rVert}`
+
+```diff
+  Parameters: `mode` (enum, default `shifted`, one of `shifted`, `inverse`, `shifted_inverse`).
+  
+- Source: manifest `model-7393bb1ed478.js`; view `visualization-b362e1437a9e.js` → `ShiftedInverseIterationVisualization`.
++ Source: manifest `model-7393bb1ed478.js`; view `visualization-deb58c551095.js` → `ShiftedInverseIterationVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Solar system
+
+```diff
+  Type `SOLAR_SYSTEM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-31945c883e75.js` → `SolarSystemVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fb3893521c1c.js` → `SolarSystemVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Spherical coordinates: `\int_{a_p}^{b_p}\int_{a_{\phi}}^{b_{\phi}}\int_{a_{\theta}}^{b_{\theta}}p^2\sin\phi\,d\theta\,d\phi\,dp`
+
+```diff
+  Parameters: `p` (number, default `3`, range 0 to 5); `phi` (number, default `3.141592653589793`, range 0 to 3.141592653589793); `theta` (number, default `6.283185307179586`, range 0 to 6.283185307179586); `radialInnerFraction` (number, default `0`, range 0 to 1); `polarLowerFraction` (number, default `0`, range 0 to 1); `azimuthalLowerFraction` (number, default `0`, range 0 to 1); `shape` (enum, default `sphere`, one of `sphere`, `cone`, `donut`).
+  
+- Source: manifest `content-cd9720b3fd21.js`; view `visualization-0f563996b86c.js` → `SphericalCoordinatesVisualization`.
++ Source: manifest `content-cd9720b3fd21.js`; view `visualization-df06e5bfb9fe.js` → `SphericalCoordinatesVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Surface level curves
+
+```diff
+  Parameters: `axis` (enum, default `z`, one of `x`, `y`, `z`); `level` (number, default `1`, range -2 to 2).
+  
+- Source: manifest `model-8407dd056273.js`; view `visualization-a5417bb09a24.js` → `SurfaceLevelCurvesVisualization`.
++ Source: manifest `model-8407dd056273.js`; view `visualization-c8147576298f.js` → `SurfaceLevelCurvesVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Tangent plane linearization: `\small f(x_0,y_0)+\nabla f(x_0,y_0)\cdot{\langle x-x_0,y-y_0\rangle}`
+
+```diff
+  Parameters: `contactX` (number, default `0.65`, range -1.2 to 1.2); `contactY` (number, default `-0.45`, range -1.2 to 1.2).
+  
+- Source: manifest `type-3e5d3f81a72e.js`; view `visualization-b3735802c648.js` → `TangentPlaneLinearizationVisualization`.
++ Source: manifest `type-3e5d3f81a72e.js`; view `visualization-c706e5dd5927.js` → `TangentPlaneLinearizationVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Triple integral cartesian
+
+```diff
+  Type `TRIPLE_INTEGRAL_CARTESIAN`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bf188af8fd61.js` → `CartesianTripleIntegralVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2a0083b33687.js` → `CartesianTripleIntegralVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Vector field curl divergence: `\begin{aligned}\operatorname{div}\mathbf F&=\nabla\cdot\mathbf F\\\operatorname{curl}\mathbf F&=\nabla\times\mathbf F\end{aligned}`
+
+```diff
+  Parameters: `field` (enum, default `rotation`, one of `source`, `sink`, `rotation`, `saddle`); `strength` (number, default `0.85`, range 0.35 to 1.45).
+  
+- Source: manifest `type-2a06847ff944.js`; view `visualization-1de074e47b5d.js` → `VectorFieldCurlDivergenceVisualization`.
++ Source: manifest `type-2a06847ff944.js`; view `visualization-620625e909c2.js` → `VectorFieldCurlDivergenceVisualization`.
+```
+
+#### changed: three.js 3D scenes (22) › Vsepr geometry
+
+```diff
+  Parameters: `configuration` (enum, default `AX4`, one of `AX2`, `AX3`, `AX2E`, `AX4`, `AX3E`, `AX2E2`, `AX5`, `AX4E`, `AX3E2`, `AX2E3`, `AX6`, `AX5E`, `AX4E2`, `AX3E3`, `AX2E4`).
+  
+- Source: manifest `model-cde8f9761457.js`; view `visualization-f34e998bd81f.js` → `VseprGeometryVisualization`.
++ Source: manifest `model-cde8f9761457.js`; view `visualization-65d3b6f8d734.js` → `VseprGeometryVisualization`.
+```
+
+#### changed: Lottie animations (761) › A and B antigen products expressed together on one AB red blood cell
+
+```diff
+  Type `CODOMINANCE_ALLELE_EXPRESSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-545276c09013.js`; view `visualization-878248204896.js` → `CodominanceAlleleExpressionVisualization`.
++ Source: manifest `type-545276c09013.js`; view `visualization-db5309130b2d.js` → `CodominanceAlleleExpressionVisualization`.
+```
+
+#### changed: Lottie animations (761) › A basal body anchors one motile cilium across the plasma membrane
+
+```diff
+  Type `BASAL_BODY_CILIUM_ANCHORING` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-99041db0e99c.js`; view `visualization-8ddf26e469c4.js` → `Visualization`.
++ Source: manifest `type-99041db0e99c.js`; view `visualization-8671fd1574ec.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A biological stain reveals the same previously faint cell nucleus
+
+```diff
+  Type `MICROSCOPY_STAINING_SPECIMEN_CONTRAST` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fff586ba396e.js`; view `visualization-b8b5f8c97a3c.js` → `Visualization`.
++ Source: manifest `type-fff586ba396e.js`; view `visualization-48c087b50499.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A competitive inhibitor occupies the substrate's own active site
+
+```diff
+  Type `ENZYME_COMPETITIVE_INHIBITION_BINDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-79be525c7666.js`; view `visualization-ced1991e2601.js` → `Visualization`.
++ Source: manifest `type-79be525c7666.js`; view `visualization-302051af05ec.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A complementary microRNA binds an existing mature mRNA, suppresses translation or promotes RNA degradation, and reduces protein output after transcription.
+
+```diff
+  Type `MICRORNA_MRNA_TRANSLATIONAL_SILENCING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f4498f9db9f3.js`; view `visualization-6dec0e67b533.js` → `Visualization`.
++ Source: manifest `type-f4498f9db9f3.js`; view `visualization-12d75651a99f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A complementary substrate fits an enzyme's specific active site
+
+```diff
+  Type `ENZYME_ACTIVE_SITE_SPECIFICITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2b7c325e1fe8.js`; view `visualization-f1f2e0b1f66c.js` → `Visualization`.
++ Source: manifest `type-2b7c325e1fe8.js`; view `visualization-bafee6911e21.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A confined tumor stays above an intact boundary while invasive cells cross it
+
+```diff
+  Type `BENIGN_VERSUS_INVASIVE_TUMOR_BOUNDARY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4287ce92608f.js`; view `visualization-dbf00050544c.js` → `Visualization`.
++ Source: manifest `type-4287ce92608f.js`; view `visualization-2851c3c97520.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A fixed recessive pp tester distinguishes PP from Pp dominant-phenotype parents
+
+```diff
+  Type `MENDELIAN_TEST_CROSS_GENOTYPE_INFERENCE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1bf8bcff530f.js`; view `visualization-937b41eafa8d.js` → `Visualization`.
++ Source: manifest `type-1bf8bcff530f.js`; view `visualization-f4fa2c4ba06c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A lac-operon example aligns a CAP activator site, promoter, operator, and three structural genes that share one polycistronic mRNA.
+
+```diff
+  Type `PROKARYOTIC_OPERON_ARCHITECTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8a019b8d6e07.js`; view `visualization-14b90317337e.js` → `Visualization`.
++ Source: manifest `type-8a019b8d6e07.js`; view `visualization-963e3e4c03fe.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A local developmental signal induces neighboring-cell gene expression and fate
+
+```diff
+  Type `DEVELOPMENTAL_CELL_FATE_INDUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7d1f02258b02.js`; view `visualization-94ea6eb639c7.js` → `Visualization`.
++ Source: manifest `type-7d1f02258b02.js`; view `visualization-ec1bae3dff6e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A local regulator reaches a nearby receptor-bearing cell
+
+```diff
+  Type `PARACRINE_CELL_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1276c3670217.js`; view `visualization-471630b223ac.js` → `ParacrineCellSignalingVisualization`.
++ Source: manifest `type-1276c3670217.js`; view `visualization-c37e35d05e57.js` → `ParacrineCellSignalingVisualization`.
+```
+
+#### changed: Lottie animations (761) › A migratory bird follows seasonal photoperiod and resource cues
+
+```diff
+  Type `SEASONAL_MIGRATION_ENVIRONMENTAL_CUES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7f09749cfe46.js`; view `visualization-ce18a758448b.js` → `SeasonalMigrationEnvironmentalCuesVisualization`.
++ Source: manifest `type-7f09749cfe46.js`; view `visualization-eedd9f31b9a3.js` → `SeasonalMigrationEnvironmentalCuesVisualization`.
+```
+
+#### changed: Lottie animations (761) › A pancreas senses high glucose and a distinct effector lowers it
+
+```diff
+  Type `FEEDBACK_SENSOR_AND_EFFECTOR_ROLES` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fbf512d18a6c.js`; view `visualization-9e72dbcd8447.js` → `FeedbackSensorAndEffectorRolesVisualization`.
++ Source: manifest `type-fbf512d18a6c.js`; view `visualization-f05fe625808b.js` → `FeedbackSensorAndEffectorRolesVisualization`.
+```
+
+#### changed: Lottie animations (761) › A recognizable common precursor differentiates into nerve and muscle cells
+
+```diff
+  Type `MULTICELLULAR_CELL_DIFFERENTIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ee3b981a0c54.js`; view `visualization-e299f2085cfb.js` → `Visualization`.
++ Source: manifest `type-ee3b981a0c54.js`; view `visualization-bcb8681233d5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A rooted shoot bends toward directional light through growth
+
+```diff
+  Type `PLANT_PHOTOTROPISM_DIRECTIONAL_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eaa20eefe63b.js`; view `visualization-ef146d3b51cf.js` → `PlantPhototropismDirectionalGrowthVisualization`.
++ Source: manifest `type-eaa20eefe63b.js`; view `visualization-68cd565aaec4.js` → `PlantPhototropismDirectionalGrowthVisualization`.
+```
+
+#### changed: Lottie animations (761) › A separate allosteric inhibitor reduces catalytic capacity without occupying the active site
+
+```diff
+  Type `ENZYME_NONCOMPETITIVE_INHIBITION_ALLOSTERIC` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4a167c68f228.js`; view `visualization-ca46cb9f1aef.js` → `Visualization`.
++ Source: manifest `type-4a167c68f228.js`; view `visualization-d669cd013df1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › A short-day plant flowers after a sufficiently long uninterrupted night
+
+```diff
+  Type `PLANT_PHOTOPERIOD_SEASONAL_FLOWERING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9699a92ce5d3.js`; view `visualization-7ff58c8706ff.js` → `PlantPhotoperiodSeasonalFloweringVisualization`.
++ Source: manifest `type-9699a92ce5d3.js`; view `visualization-784e7e08f1b1.js` → `PlantPhotoperiodSeasonalFloweringVisualization`.
+```
+
+#### changed: Lottie animations (761) › A surface receptor responds while its water-soluble ligand stays outside
+
+```diff
+  Type `CELL_SURFACE_RECEPTOR_RECOGNITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1286b1e030b2.js`; view `visualization-27ac6b42246b.js` → `CellSurfaceReceptorRecognitionVisualization`.
++ Source: manifest `type-1286b1e030b2.js`; view `visualization-8f2e3b683a12.js` → `CellSurfaceReceptorRecognitionVisualization`.
+```
+
+#### changed: Lottie animations (761) › A traveling peristaltic muscle wave propels one food bolus
+
+```diff
+  Type `ANIMAL_DIGESTIVE_PERISTALSIS_AND_FOOD_TRANSPORT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7e0ee9100ae8.js`; view `visualization-ceea7db85cc2.js` → `AnimalDigestivePeristalsisAndFoodTransportVisualization`.
++ Source: manifest `type-7e0ee9100ae8.js`; view `visualization-7d415e2ba8e0.js` → `AnimalDigestivePeristalsisAndFoodTransportVisualization`.
+```
+
+#### changed: Lottie animations (761) › ABA versus gibberellin seed dormancy
+
+```diff
+  Type `ABA_VERSUS_GIBBERELLIN_SEED_DORMANCY` · manifest v1 (also v1, v1, v1) · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-888603d16da6.js`; view `visualization-bc90fdb1ea92.js` → `Visualization`.
++ Source: manifest `type-888603d16da6.js`; view `visualization-83825fb50cdc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Abundant tryptophan binds an inactive trp repressor, enabling the complex to occupy the operator and stop tryptophan-biosynthesis transcription.
+
+```diff
+  Type `TRP_OPERON_COREPRESSOR_SWITCH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-11defa77e1c6.js`; view `visualization-b29ed65690c0.js` → `Visualization`.
++ Source: manifest `type-11defa77e1c6.js`; view `visualization-6bc5cce1b240.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Acid strength versus concentration
+
+```diff
+  Type `BIOLOGICAL_ACID_STRENGTH_VERSUS_CONCENTRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-414481fae786.js`; view `visualization-e2eff56044c3.js` → `Visualization`.
++ Source: manifest `type-414481fae786.js`; view `visualization-f0d77f0df771.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Acidic lysosomal digestion remains separate from near-neutral cytosol
+
+```diff
+  Type `COMPARTMENT_MICROENVIRONMENTS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e2cd7c8e14b2.js`; view `visualization-6d145a49e41a.js` → `Visualization`.
++ Source: manifest `type-e2cd7c8e14b2.js`; view `visualization-6b6375ca441d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Acoelomate, pseudocoelomate, and coelomate
+
+```diff
+  Type `ANIMAL_ACOELOMATE_PSEUDOCOELOMATE_COELOMATE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-94770f08d250.js`; view `visualization-4500d1de27bc.js` → `AnimalAcoelomatePseudocoelomateCoelomateVisualization`.
++ Source: manifest `type-94770f08d250.js`; view `visualization-4ee4a8b3ba24.js` → `AnimalAcoelomatePseudocoelomateCoelomateVisualization`.
+```
+
+#### changed: Lottie animations (761) › Actin filament polymerization
+
+```diff
+  Type `ACTIN_FILAMENT_POLYMERIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7e1d6c4d3594.js`; view `visualization-26a7ae8f33e0.js` → `Visualization`.
++ Source: manifest `type-7e1d6c4d3594.js`; view `visualization-c3ac902e1e1d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Actin treadmilling preserves filament length during subunit turnover
+
+```diff
+  Type `ACTIN_FILAMENT_TREADMILLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8bf5d00b3eb9.js`; view `visualization-8980baa6a9a9.js` → `Visualization`.
++ Source: manifest `type-8bf5d00b3eb9.js`; view `visualization-dfb67df129e4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Actin-driven cell migration
+
+```diff
+  Type `ACTIN_DRIVEN_CELL_MIGRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c16e7f85108b.js`; view `visualization-62eb22e47a32.js` → `Visualization`.
++ Source: manifest `type-c16e7f85108b.js`; view `visualization-dc12791152fd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Action-potential depolarization and repolarization
+
+```diff
+  Type `ACTION_POTENTIAL_DEPOLARIZATION_AND_REPOLARIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bd392aa3db83.js`; view `visualization-620b5fedd80b.js` → `ActionPotentialDepolarizationAndRepolarizationVisualization`.
++ Source: manifest `type-bd392aa3db83.js`; view `visualization-786c91912c33.js` → `ActionPotentialDepolarizationAndRepolarizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Activated oncogene growth signal compared with lost tumor-suppressor brake
+
+```diff
+  Type `ONCOGENE_VERSUS_TUMOR_SUPPRESSOR_LOSS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bff75777a396.js`; view `visualization-dc1a1c0abf9e.js` → `Visualization`.
++ Source: manifest `type-bff75777a396.js`; view `visualization-a3b3ffc60c05.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › active-habitat-restoration-population-recovery
+
+```diff
+  Type `ACTIVE_HABITAT_RESTORATION_POPULATION_RECOVERY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-97671b1f6834.js`; view `visualization-3989586aca35.js` → `ActiveHabitatRestorationPopulationRecoveryVisualization`.
++ Source: manifest `type-97671b1f6834.js`; view `visualization-573af206cfe0.js` → `ActiveHabitatRestorationPopulationRecoveryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Acute inflammation and neutrophil recruitment
+
+```diff
+  Type `IMMUNE_ACUTE_INFLAMMATION_NEUTROPHIL_RECRUITMENT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2ff2490776d8.js`; view `visualization-9de1334e151b.js` → `ImmuneAcuteInflammationNeutrophilRecruitmentVisualization`.
++ Source: manifest `type-2ff2490776d8.js`; view `visualization-12a8e49892f5.js` → `ImmuneAcuteInflammationNeutrophilRecruitmentVisualization`.
+```
+
+#### changed: Lottie animations (761) › Adaptation and environmental fitness
+
+```diff
+  Type `ADAPTATION_ENVIRONMENTAL_FITNESS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8978b1113585.js`; view `visualization-f9877307fb94.js` → `AdaptationEnvironmentalFitnessVisualization`.
++ Source: manifest `type-8978b1113585.js`; view `visualization-da0c0b134aaa.js` → `AdaptationEnvironmentalFitnessVisualization`.
+```
+
+#### changed: Lottie animations (761) › Adenylyl cyclase converts ATP into intracellular cAMP that activates protein kinase A
+
+```diff
+  Type `CAMP_SECOND_MESSENGER_RELAY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2595d26b3297.js`; view `visualization-3b77b3560c30.js` → `Visualization`.
++ Source: manifest `type-2595d26b3297.js`; view `visualization-c9924deb44f2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › ADH osmoregulation neuroendocrine loop
+
+```diff
+  Type `ADH_OSMOREGULATION_NEUROENDOCRINE_LOOP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3727660a2c24.js`; view `visualization-5e7a1840f445.js` → `Visualization`.
++ Source: manifest `type-3727660a2c24.js`; view `visualization-2b107d8aca89.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › ADH water balance negative feedback
+
+```diff
+  Type `ADH_WATER_BALANCE_NEGATIVE_FEEDBACK` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2a967b7defda.js`; view `visualization-359737c1a880.js` → `AdhWaterBalanceNegativeFeedbackVisualization`.
++ Source: manifest `type-2a967b7defda.js`; view `visualization-e36f32ee8ad2.js` → `AdhWaterBalanceNegativeFeedbackVisualization`.
+```
+
+#### changed: Lottie animations (761) › Adjacent plant membranes, cellulose walls, and middle lamella
+
+```diff
+  Type `PLANT_CELL_WALL_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cb73f889e16d.js`; view `visualization-cbd8cefe2cbc.js` → `Visualization`.
++ Source: manifest `type-cb73f889e16d.js`; view `visualization-ea5a5aec05aa.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Aerobic, facultative, and anaerobic bacteria share one oxygen gradient
+
+```diff
+  Type `BACTERIAL_OXYGEN_REQUIREMENTS_AND_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-451f45882761.js`; view `visualization-61bf31c958f7.js` → `BacterialOxygenRequirementsAndGrowthVisualization`.
++ Source: manifest `type-451f45882761.js`; view `visualization-3c94c228ec3c.js` → `BacterialOxygenRequirementsAndGrowthVisualization`.
+```
+
+#### changed: Lottie animations (761) › agricultural-nutrient-management-runoff-tradeoffs
+
+```diff
+  Type `AGRICULTURAL_NUTRIENT_MANAGEMENT_RUNOFF_TRADEOFFS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5eebf8396a1b.js`; view `visualization-f2bef2432f1d.js` → `AgriculturalNutrientManagementRunoffTradeoffsVisualization`.
++ Source: manifest `type-5eebf8396a1b.js`; view `visualization-78b005ed7fed.js` → `AgriculturalNutrientManagementRunoffTradeoffsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Aldehyde versus ketone carbonyl placement
+
+```diff
+  Type `BIOLOGICAL_CARBONYL_ALDEHYDE_VERSUS_KETONE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-92b2050a1f27.js`; view `visualization-9347c721fc77.js` → `Visualization`.
++ Source: manifest `type-92b2050a1f27.js`; view `visualization-1487b56d56a8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Algal photosynthesis and oxygen production
+
+```diff
+  Type `ALGAL_PHOTOSYNTHESIS_OXYGEN_PRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a1c7352f47a1.js`; view `visualization-7d48c409b23b.js` → `Visualization`.
++ Source: manifest `type-a1c7352f47a1.js`; view `visualization-1678778c6c6d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › All four DNA-template-to-RNA complementary transcription pairs
+
+```diff
+  Type `DNA_TEMPLATE_RNA_COMPLEMENTARITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-20662f220b13.js`; view `visualization-ab1d607c9212.js` → `DnaTemplateRnaComplementarityVisualization`.
++ Source: manifest `type-20662f220b13.js`; view `visualization-1d2057e5f2e2.js` → `DnaTemplateRnaComplementarityVisualization`.
+```
+
+#### changed: Lottie animations (761) › All-or-none action-potential threshold
+
+```diff
+  Type `ALL_OR_NONE_ACTION_POTENTIAL_THRESHOLD` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ba20d22de16e.js`; view `visualization-ab422c1788e1.js` → `AllOrNoneActionPotentialThresholdVisualization`.
++ Source: manifest `type-ba20d22de16e.js`; view `visualization-1c13b86518ba.js` → `AllOrNoneActionPotentialThresholdVisualization`.
+```
+
+#### changed: Lottie animations (761) › Allolactose inactivates the operator-bound LacI repressor, allowing RNA polymerase to transcribe the lac structural genes.
+
+```diff
+  Type `LAC_OPERON_INDUCER_REPRESSION_SWITCH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ccd61b53bbb0.js`; view `visualization-7bd12c52cfb3.js` → `Visualization`.
++ Source: manifest `type-ccd61b53bbb0.js`; view `visualization-b427947e0148.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Allopatric geographic separation versus sympatric shared habitat
+
+```diff
+  Type `ALLOPATRIC_VERSUS_SYMPATRIC_SPECIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-88a050f8fd8d.js`; view `visualization-be8519064ecc.js` → `AllopatricVersusSympatricSpeciationVisualization`.
++ Source: manifest `type-88a050f8fd8d.js`; view `visualization-6444a2932cf2.js` → `AllopatricVersusSympatricSpeciationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Alpha helices and beta sheets
+
+```diff
+  Type `PROTEIN_SECONDARY_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4964ed0b7591.js`; view `visualization-7c94c112c3c4.js` → `ProteinSecondaryStructureVisualization`.
++ Source: manifest `type-4964ed0b7591.js`; view `visualization-d0a46efa6a0b.js` → `ProteinSecondaryStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Alternative RNA-splicing isoforms
+
+```diff
+  Type `ALTERNATIVE_RNA_SPLICING_ISOFORMS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f192ed5b50f7.js`; view `visualization-7e710a89bf60.js` → `Visualization`.
++ Source: manifest `type-f192ed5b50f7.js`; view `visualization-4eccb3cd77a4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Amino-acid carboxyl, amino, and zwitterion states
+
+```diff
+  Type `BIOLOGICAL_CARBOXYL_AMINO_ZWITTERION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4574a5c56f9f.js`; view `visualization-ead86fd43c7c.js` → `Visualization`.
++ Source: manifest `type-4574a5c56f9f.js`; view `visualization-0fcf9527aa03.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Amino-acid charge states across pH
+
+```diff
+  Type `BIOLOGICAL_AMINO_ACID_PH_DEPENDENT_CHARGE_STATES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5b4c0775832e.js`; view `visualization-323039cc9257.js` → `Visualization`.
++ Source: manifest `type-5b4c0775832e.js`; view `visualization-507c4a6f5c5c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Amino-acid molecular structure
+
+```diff
+  Type `AMINO_ACID_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-58a5e07040d8.js`; view `visualization-59473e6f1473.js` → `AminoAcidStructureVisualization`.
++ Source: manifest `type-58a5e07040d8.js`; view `visualization-5991bd3fce89.js` → `AminoAcidStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Amniotic egg and extraembryonic membranes
+
+```diff
+  Type `ANIMAL_AMNIOTIC_EGG_MEMBRANES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b23f5a244906.js`; view `visualization-975b9b69c41d.js` → `AnimalAmnioticEggMembranesVisualization`.
++ Source: manifest `type-b23f5a244906.js`; view `visualization-c0e4e16a5b6d.js` → `AnimalAmnioticEggMembranesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Amniotic egg structure
+
+```diff
+  Type `VERTEBRATE_AMNIOTIC_EGG_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ea66978c4070.js`; view `visualization-76f6a960bb64.js` → `Visualization`.
++ Source: manifest `type-ea66978c4070.js`; view `visualization-7b8ae8b42296.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Amoeba phagocytosis
+
+```diff
+  Type `AMOEBA_PHAGOCYTOSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f0cbe3382bff.js`; view `visualization-5e52318064f0.js` → `Visualization`.
++ Source: manifest `type-f0cbe3382bff.js`; view `visualization-1e41945ad508.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › An affected aa child proves both unaffected pedigree parents are Aa carriers
+
+```diff
+  Type `MENDELIAN_AUTOSOMAL_RECESSIVE_PEDIGREE_CARRIER_INFERENCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4d9f48837c76.js`; view `visualization-51446ae9806f.js` → `Visualization`.
++ Source: manifest `type-4d9f48837c76.js`; view `visualization-ceecf8d4f26c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › An affected X-linked dominant father transmits his affected X to every daughter and no son
+
+```diff
+  Type `X_LINKED_DOMINANT_FATHER_DAUGHTER_TRANSMISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c705ba5329ea.js`; view `visualization-b08eca135b16.js` → `XLinkedDominantFatherDaughterTransmissionVisualization`.
++ Source: manifest `type-c705ba5329ea.js`; view `visualization-5180c64667c9.js` → `XLinkedDominantFatherDaughterTransmissionVisualization`.
+```
+
+#### changed: Lottie animations (761) › An ectotherm cools by choosing a shaded environmental microhabitat
+
+```diff
+  Type `BEHAVIORAL_THERMOREGULATION_MICROHABITAT_CHOICE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-776db5ea682f.js`; view `visualization-7800e153f011.js` → `BehavioralThermoregulationMicrohabitatChoiceVisualization`.
++ Source: manifest `type-776db5ea682f.js`; view `visualization-15f55b8972ad.js` → `BehavioralThermoregulationMicrohabitatChoiceVisualization`.
+```
+
+#### changed: Lottie animations (761) › An enhancer-bound transcriptional activator loops one continuous DNA molecule toward a promoter, recruits RNA polymerase, and increases mRNA output.
+
+```diff
+  Type `EUKARYOTIC_ENHANCER_PROMOTER_LOOPING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9d5acd2c2812.js`; view `visualization-c00876d46d21.js` → `Visualization`.
++ Source: manifest `type-9d5acd2c2812.js`; view `visualization-69b7a89dac5f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Angiosperm double fertilization
+
+```diff
+  Type `ANGIOSPERM_DOUBLE_FERTILIZATION_EMBRYO_AND_ENDOSPERM` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cbad57cb2e22.js`; view `visualization-7eec8f5ea052.js` → `AngiospermDoubleFertilizationEmbryoAndEndospermVisualization`.
++ Source: manifest `type-cbad57cb2e22.js`; view `visualization-4a5e783508b3.js` → `AngiospermDoubleFertilizationEmbryoAndEndospermVisualization`.
+```
+
+#### changed: Lottie animations (761) › Angiosperm flowers, fruit, and enclosed seeds
+
+```diff
+  Type `ANGIOSPERM_FLOWER_FERTILIZATION_FRUIT_AND_SEEDS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-90bfb33d04c2.js`; view `visualization-5c8c6cafc81d.js` → `AngiospermFlowerFertilizationFruitAndSeedsVisualization`.
++ Source: manifest `type-90bfb33d04c2.js`; view `visualization-4a90d05627ce.js` → `AngiospermFlowerFertilizationFruitAndSeedsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Animal body axes and cephalization
+
+```diff
+  Type `ANIMAL_BODY_AXES_AND_CEPHALIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d16e0a53fad2.js`; view `visualization-d9834cdc341f.js` → `AnimalBodyAxesAndCephalizationVisualization`.
++ Source: manifest `type-d16e0a53fad2.js`; view `visualization-1183bd6dea67.js` → `AnimalBodyAxesAndCephalizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Animal cell structure and function
+
+```diff
+  Type `ANIMAL_CELL_STRUCTURE_AND_FUNCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1b2e670dbd36.js`; view `visualization-a21ebdec4ed6.js` → `Visualization`.
++ Source: manifest `type-1b2e670dbd36.js`; view `visualization-d1c031557c02.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Animal digestive tract organ sequence
+
+```diff
+  Type `ANIMAL_DIGESTIVE_TRACT_ORGAN_SEQUENCE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d0c6c533fe7a.js`; view `visualization-f2e9da9c909c.js` → `AnimalDigestiveTractOrganSequenceVisualization`.
++ Source: manifest `type-d0c6c533fe7a.js`; view `visualization-f7dfc2a80b0e.js` → `AnimalDigestiveTractOrganSequenceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Animal diversity and body plans
+
+```diff
+  Type `ANIMAL_DIVERSITY_AND_BODY_PLANS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a683f46ddd5d.js`; view `visualization-8f82fb3739d7.js` → `AnimalDiversityAndBodyPlansVisualization`.
++ Source: manifest `type-a683f46ddd5d.js`; view `visualization-abfc9ba34cea.js` → `AnimalDiversityAndBodyPlansVisualization`.
+```
+
+#### changed: Lottie animations (761) › Animal excretion and osmoregulation
+
+```diff
+  Type `ANIMAL_EXCRETION_AND_OSMOREGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-913cfe23625b.js`; view `visualization-3d7795d7032c.js` → `AnimalExcretionAndOsmoregulationVisualization`.
++ Source: manifest `type-913cfe23625b.js`; view `visualization-dab8ee5f115e.js` → `AnimalExcretionAndOsmoregulationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Animal extracellular-matrix components and integrin attachment
+
+```diff
+  Type `EXTRACELLULAR_MATRIX_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1c3c1e0e2d72.js`; view `visualization-f027f3fca8f1.js` → `Visualization`.
++ Source: manifest `type-1c3c1e0e2d72.js`; view `visualization-8f32fd755037.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Animal respiration uses food and oxygen and releases energy and waste
+
+```diff
+  Type `RESPIRATION_FOOD_OXYGEN_ENERGY_WASTE_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-806e954231f8.js`; view `visualization-88f0fb9e467c.js` → `Visualization`.
++ Source: manifest `type-806e954231f8.js`; view `visualization-6a58b7e58d35.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Animal tight junctions seal, desmosomes anchor, and gap junctions connect
+
+```diff
+  Type `ANIMAL_CELL_JUNCTION_FUNCTIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6f6a8749d4cc.js`; view `visualization-a1ce95c15452.js` → `Visualization`.
++ Source: manifest `type-6f6a8749d4cc.js`; view `visualization-4360e5167b33.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Animal tissues, integument, and barrier repair
+
+```diff
+  Type `ANIMAL_TISSUES_INTEGUMENT_AND_BARRIER_REPAIR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6e4674121c5a.js`; view `visualization-a462d68dbdb9.js` → `AnimalTissuesIntegumentAndBarrierRepairVisualization`.
++ Source: manifest `type-6e4674121c5a.js`; view `visualization-9a1c1cbcb1a1.js` → `AnimalTissuesIntegumentAndBarrierRepairVisualization`.
+```
+
+#### changed: Lottie animations (761) › Animal-cell cytokinesis divides cytoplasm after nuclear division
+
+```diff
+  Type `ANIMAL_CELL_CYTOKINESIS_CLEAVAGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cb11e0c6fd49.js`; view `visualization-1c3f94b4c4a5.js` → `Visualization`.
++ Source: manifest `type-cb11e0c6fd49.js`; view `visualization-d709eed79464.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Animal-cell swelling, balance, and shrinking across three tonicities
+
+```diff
+  Type `ANIMAL_CELL_TONICITY_COMPARISON` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f3dba7d97d54.js`; view `visualization-7a8562b7d8c5.js` → `Visualization`.
++ Source: manifest `type-f3dba7d97d54.js`; view `visualization-917b4774f398.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Annelid peristaltic locomotion
+
+```diff
+  Type `ANIMAL_ANNELID_PERISTALTIC_LOCOMOTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7c7eccb9eb6a.js`; view `visualization-e9dcb20cece3.js` → `AnimalAnnelidPeristalticLocomotionVisualization`.
++ Source: manifest `type-7c7eccb9eb6a.js`; view `visualization-4bf9238007c8.js` → `AnimalAnnelidPeristalticLocomotionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ant pheromone trail and food recruitment
+
+```diff
+  Type `ANIMAL_PHEROMONE_TRAIL_RECRUITMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-af499b718fd6.js`; view `visualization-2aba90eefe4c.js` → `Visualization`.
++ Source: manifest `type-af499b718fd6.js`; view `visualization-1eaf32954df8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Antagonistic elbow flexion and extension
+
+```diff
+  Type `MUSCULOSKELETAL_ANTAGONISTIC_ELBOW_FLEXION_EXTENSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2997e16bf52b.js`; view `visualization-e6971a23f156.js` → `MusculoskeletalAntagonisticElbowFlexionExtensionVisualization`.
++ Source: manifest `type-2997e16bf52b.js`; view `visualization-4b3ceb3eadef.js` → `MusculoskeletalAntagonisticElbowFlexionExtensionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antibiotic selection of resistant bacteria
+
+```diff
+  Type `ANTIBIOTIC_SELECTION_RESISTANT_BACTERIA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-802b4dd6e13b.js`; view `visualization-e16e165ea716.js` → `AntibioticSelectionResistantBacteriaVisualization`.
++ Source: manifest `type-802b4dd6e13b.js`; view `visualization-b91a89449869.js` → `AntibioticSelectionResistantBacteriaVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antibody heavy chains, light chains, Fab, and Fc
+
+```diff
+  Type `ANTIBODY_HEAVY_LIGHT_CHAIN_FAB_FC_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-40eeb111c0e1.js`; view `visualization-3c599b2e2e0b.js` → `AntibodyHeavyLightChainFabFcStructureVisualization`.
++ Source: manifest `type-40eeb111c0e1.js`; view `visualization-f7257bb0f761.js` → `AntibodyHeavyLightChainFabFcStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antibody specificity and neutralization
+
+```diff
+  Type `ANTIBODY_SPECIFICITY_AND_ANTIGEN_NEUTRALIZATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ea3f8f53184e.js`; view `visualization-36a0b47d187c.js` → `AntibodySpecificityAndAntigenNeutralizationVisualization`.
++ Source: manifest `type-ea3f8f53184e.js`; view `visualization-e6bbc48c1a67.js` → `AntibodySpecificityAndAntigenNeutralizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antigen presentation pathways
+
+```diff
+  Type `ANTIGEN_PRESENTATION_PATHWAYS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-97e3fb15672b.js`; view `visualization-3686bf93de78.js` → `AntigenPresentationPathwaysVisualization`.
++ Source: manifest `type-97e3fb15672b.js`; view `visualization-b88bcaf5841d.js` → `AntigenPresentationPathwaysVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antigen-specific clonal selection and expansion
+
+```diff
+  Type `ANTIGEN_SPECIFIC_CLONAL_SELECTION_AND_EXPANSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-982dd19b2dc9.js`; view `visualization-14c4f22faac9.js` → `AntigenSpecificClonalSelectionAndExpansionVisualization`.
++ Source: manifest `type-982dd19b2dc9.js`; view `visualization-64e886c909ca.js` → `AntigenSpecificClonalSelectionAndExpansionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antiparallel AUG codon and UAC tRNA anticodon pairing
+
+```diff
+  Type `CODON_ANTICODON_PAIRING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9769188bb6a1.js`; view `visualization-a522e6b0a3c1.js` → `CodonAnticodonPairingVisualization`.
++ Source: manifest `type-9769188bb6a1.js`; view `visualization-f2afd153e7c3.js` → `CodonAnticodonPairingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Antiparallel DNA strands
+
+```diff
+  Type `ANTIPARALLEL_DNA_STRANDS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cfba3c82c3af.js`; view `visualization-5b2e73a4d102.js` → `Visualization`.
++ Source: manifest `type-cfba3c82c3af.js`; view `visualization-46b188808759.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Antiparallel template and daughter polarity
+
+```diff
+  Type `DNA_REPLICATION_ANTIPARALLEL_TEMPLATE_POLARITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-51b2e3398223.js`; view `visualization-bb9d0fa727f2.js` → `DnaReplicationAntiparallelTemplatePolarityVisualization`.
++ Source: manifest `type-51b2e3398223.js`; view `visualization-2087615599b4.js` → `DnaReplicationAntiparallelTemplatePolarityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Apical dominance auxin and cytokinin
+
+```diff
+  Type `APICAL_DOMINANCE_AUXIN_CYTOKININ` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6c3282e07d05.js`; view `visualization-4e08d14e012a.js` → `Visualization`.
++ Source: manifest `type-6c3282e07d05.js`; view `visualization-e8fbada82e23.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Artery, vein, and capillary structure comparison
+
+```diff
+  Type `ANIMAL_ARTERY_VEIN_CAPILLARY_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-652df7b8cca1.js`; view `visualization-977e9b1974c5.js` → `AnimalArteryVeinCapillaryStructureVisualization`.
++ Source: manifest `type-652df7b8cca1.js`; view `visualization-5aa4f228caf4.js` → `AnimalArteryVeinCapillaryStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Arthropod body plan and jointed appendages
+
+```diff
+  Type `ANIMAL_ARTHROPOD_BODY_PLAN_JOINTED_APPENDAGES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-153bd2ef9e5e.js`; view `visualization-a1dc29055a6a.js` → `AnimalArthropodBodyPlanJointedAppendagesVisualization`.
++ Source: manifest `type-153bd2ef9e5e.js`; view `visualization-265dc919449a.js` → `AnimalArthropodBodyPlanJointedAppendagesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Artificial selection and selective breeding
+
+```diff
+  Type `ARTIFICIAL_SELECTION_SELECTIVE_BREEDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-942f711e0087.js`; view `visualization-fe8d8d759cf0.js` → `ArtificialSelectionSelectiveBreedingVisualization`.
++ Source: manifest `type-942f711e0087.js`; view `visualization-9866aa88954f.js` → `ArtificialSelectionSelectiveBreedingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Asexual plant propagation by runners
+
+```diff
+  Type `PLANT_ASEXUAL_RUNNER_PROPAGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2c26d444906d.js`; view `visualization-7fb2802a7e8b.js` → `Visualization`.
++ Source: manifest `type-2c26d444906d.js`; view `visualization-22b593fd077a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Asymmetric stem-cell division renews one stem cell and differentiates its sibling
+
+```diff
+  Type `STEM_CELL_ASYMMETRIC_DIVISION_AND_SELF_RENEWAL` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-689b3aa08e59.js`; view `visualization-3be47f20bdeb.js` → `Visualization`.
++ Source: manifest `type-689b3aa08e59.js`; view `visualization-5b16af017714.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Atmospheric nitrogen, root-nodule bacteria, soil nitrogen, and feeding
+
+```diff
+  Type `BIOGEOCHEMICAL_NITROGEN_FIXATION_AND_ASSIMILATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-54c26514e9b7.js`; view `visualization-25486836ab20.js` → `Visualization`.
++ Source: manifest `type-54c26514e9b7.js`; view `visualization-a81b90824875.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › ATP and ADP preserve adenosine while one phosphate changes attachment
+
+```diff
+  Type `ATP_ADP_PHOSPHATE_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fb2a1f973b3d.js`; view `visualization-63813cad048f.js` → `AtpAdpPhosphateStructureVisualization`.
++ Source: manifest `type-fb2a1f973b3d.js`; view `visualization-3cd757d744c4.js` → `AtpAdpPhosphateStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › ATP hydrolysis transfers one phosphate and metabolic energy regenerates ATP
+
+```diff
+  Type `ATP_HYDROLYSIS_AND_REGENERATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8300643c305a.js`; view `visualization-ba8bf6029eea.js` → `AtpHydrolysisAndRegenerationVisualization`.
++ Source: manifest `type-8300643c305a.js`; view `visualization-33c349fb4a44.js` → `AtpHydrolysisAndRegenerationVisualization`.
+```
+
+#### changed: Lottie animations (761) › ATP phosphorylation activates a substrate and enables a new chemical bond
+
+```diff
+  Type `PHOSPHORYLATION_COUPLED_CELLULAR_WORK` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2d1673cb9409.js`; view `visualization-3bd433dbe3dc.js` → `PhosphorylationCoupledCellularWorkVisualization`.
++ Source: manifest `type-2d1673cb9409.js`; view `visualization-38338bb22ce5.js` → `PhosphorylationCoupledCellularWorkVisualization`.
+```
+
+#### changed: Lottie animations (761) › ATP synthase chemiosmosis
+
+```diff
+  Type `ATP_SYNTHASE_CHEMIOSMOSIS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6cbf6f94a417.js`; view `visualization-a50fd45cc624.js` → `AtpSynthaseChemiosmosisVisualization`.
++ Source: manifest `type-6cbf6f94a417.js`; view `visualization-ebb5ad53101e.js` → `AtpSynthaseChemiosmosisVisualization`.
+```
+
+#### changed: Lottie animations (761) › ATP-dependent cross-bridge cycle
+
+```diff
+  Type `MUSCULOSKELETAL_ATP_CROSS_BRIDGE_CYCLE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-39a8560c3bfb.js`; view `visualization-cfeeccd32dc4.js` → `MusculoskeletalAtpCrossBridgeCycleVisualization`.
++ Source: manifest `type-39a8560c3bfb.js`; view `visualization-f97a44585c82.js` → `MusculoskeletalAtpCrossBridgeCycleVisualization`.
+```
+
+#### changed: Lottie animations (761) › ATP-derived phosphate activates a membrane pump before against-gradient ion transport
+
+```diff
+  Type `ATP_DRIVEN_ACTIVE_TRANSPORT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c7ea28e4ea8e.js`; view `visualization-938c517e8fcb.js` → `AtpDrivenActiveTransportVisualization`.
++ Source: manifest `type-c7ea28e4ea8e.js`; view `visualization-2ad93f1d0607.js` → `AtpDrivenActiveTransportVisualization`.
+```
+
+#### changed: Lottie animations (761) › Auditory hair-cell sensory transduction
+
+```diff
+  Type `SENSORY_AUDITORY_HAIR_CELL_TRANSDUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9870c8ab5420.js`; view `visualization-921566591f19.js` → `Visualization`.
++ Source: manifest `type-9870c8ab5420.js`; view `visualization-1f2dad32d41f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Autophagy encloses damaged cargo for lysosomal recycling
+
+```diff
+  Type `AUTOPHAGY_LYSOSOME_RECYCLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-678887ccf7d8.js`; view `visualization-32231d418006.js` → `Visualization`.
++ Source: manifest `type-678887ccf7d8.js`; view `visualization-1698624e7f49.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Autosomal dominant vertical transmission contrasted with recessive transmission through an unaffected carrier generation
+
+```diff
+  Type `MENDELIAN_AUTOSOMAL_DOMINANT_VERSUS_RECESSIVE_PEDIGREE_PATTERNS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8f7ed7ae3194.js`; view `visualization-1b93872e5077.js` → `Visualization`.
++ Source: manifest `type-8f7ed7ae3194.js`; view `visualization-a83fd0dcda13.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Autosomal father-to-son transmission contrasted with paternal X-to-daughter transmission
+
+```diff
+  Type `MENDELIAN_AUTOSOMAL_VERSUS_X_LINKED_PEDIGREE_TRANSMISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-71af11eb5df9.js`; view `visualization-ced632066bcf.js` → `Visualization`.
++ Source: manifest `type-71af11eb5df9.js`; view `visualization-b59f477f9608.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Auxin acid-growth cell elongation
+
+```diff
+  Type `AUXIN_ACID_GROWTH_CELL_ELONGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1805cba087c8.js`; view `visualization-fbec65cf3734.js` → `Visualization`.
++ Source: manifest `type-1805cba087c8.js`; view `visualization-60076b82ddc4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › B-cell plasma-cell antibody secretion
+
+```diff
+  Type `B_CELL_PLASMA_CELL_ANTIBODY_SECRETION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b5c2097cd130.js`; view `visualization-f13114d98710.js` → `BCellPlasmaCellAntibodySecretionVisualization`.
++ Source: manifest `type-b5c2097cd130.js`; view `visualization-487b6f80fdd5.js` → `BCellPlasmaCellAntibodySecretionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial and animal cells share core structures but differ in nuclear organization
+
+```diff
+  Type `CELL_THEORY_PROKARYOTIC_AND_EUKARYOTIC_CELLS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2984118d783e.js`; view `visualization-94dd1f93c5d4.js` → `Visualization`.
++ Source: manifest `type-2984118d783e.js`; view `visualization-186018bef3ab.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial batch-culture growth phases
+
+```diff
+  Type `BACTERIAL_BATCH_CULTURE_GROWTH_PHASES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f5bd8d82824c.js`; view `visualization-bbdb6fff1f3b.js` → `BacterialBatchCultureGrowthPhasesVisualization`.
++ Source: manifest `type-f5bd8d82824c.js`; view `visualization-118212a5163d.js` → `BacterialBatchCultureGrowthPhasesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial binary fission
+
+```diff
+  Type `BACTERIAL_BINARY_FISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-22c63a9cd888.js`; view `visualization-9641d61357aa.js` → `BacterialBinaryFissionVisualization`.
++ Source: manifest `type-22c63a9cd888.js`; view `visualization-6aa9c81aa16b.js` → `BacterialBinaryFissionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial cell envelope and accessory structures
+
+```diff
+  Type `BACTERIAL_CELL_ENVELOPE_AND_ACCESSORY_STRUCTURES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a79469a0080a.js`; view `visualization-6f59101e5f54.js` → `BacterialCellEnvelopeAndAccessoryStructuresVisualization`.
++ Source: manifest `type-a79469a0080a.js`; view `visualization-3f57f00482f5.js` → `BacterialCellEnvelopeAndAccessoryStructuresVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial cell shapes and arrangements
+
+```diff
+  Type `BACTERIAL_CELL_SHAPES_AND_ARRANGEMENTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ba757dc9e400.js`; view `visualization-b5647d2ab843.js` → `BacterialCellShapesAndArrangementsVisualization`.
++ Source: manifest `type-ba757dc9e400.js`; view `visualization-b128ac597bb0.js` → `BacterialCellShapesAndArrangementsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial conjugation and plasmid transfer
+
+```diff
+  Type `BACTERIAL_CONJUGATION_PLASMID_TRANSFER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-da50844dbb13.js`; view `visualization-ae3d266a680e.js` → `BacterialConjugationPlasmidTransferVisualization`.
++ Source: manifest `type-da50844dbb13.js`; view `visualization-c2abe1d0cb4a.js` → `BacterialConjugationPlasmidTransferVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial horizontal gene transfer routes
+
+```diff
+  Type `BACTERIAL_HORIZONTAL_GENE_TRANSFER_ROUTES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4842463d2b9c.js`; view `visualization-ecf923aa7d39.js` → `BacterialHorizontalGeneTransferRoutesVisualization`.
++ Source: manifest `type-4842463d2b9c.js`; view `visualization-43b18ead32b5.js` → `BacterialHorizontalGeneTransferRoutesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial operons and eukaryotic chromatin, transcription, and RNA processing regulate the unchanged pathway from DNA to RNA to protein.
+
+```diff
+  Type `GENE_EXPRESSION_REGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5205086ad8f2.js`; view `visualization-9807cd426072.js` → `Visualization`.
++ Source: manifest `type-5205086ad8f2.js`; view `visualization-603bf3e59125.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial population density triggers a shared quorum-sensing response
+
+```diff
+  Type `BACTERIAL_QUORUM_SENSING_DENSITY_THRESHOLD` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c03b23303f20.js`; view `visualization-820f553e9d4a.js` → `BacterialQuorumSensingDensityThresholdVisualization`.
++ Source: manifest `type-c03b23303f20.js`; view `visualization-90c1fef9a554.js` → `BacterialQuorumSensingDensityThresholdVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial prophage induction
+
+```diff
+  Type `BACTERIAL_PROPHAGE_INDUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-58c4175b99e7.js`; view `visualization-c2bf832f6263.js` → `BacterialProphageInductionVisualization`.
++ Source: manifest `type-58c4175b99e7.js`; view `visualization-d01de54c8d05.js` → `BacterialProphageInductionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial transformation and antibiotic selection
+
+```diff
+  Type `BACTERIAL_TRANSFORMATION_ANTIBIOTIC_SELECTION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1a2c38f9cd50.js`; view `visualization-529edf6e3ead.js` → `Visualization`.
++ Source: manifest `type-1a2c38f9cd50.js`; view `visualization-a0d24de52b51.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Bacterial transformation and free DNA uptake
+
+```diff
+  Type `BACTERIAL_TRANSFORMATION_FREE_DNA_UPTAKE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-42af29e28dc1.js`; view `visualization-4db94745cedc.js` → `BacterialTransformationFreeDnaUptakeVisualization`.
++ Source: manifest `type-42af29e28dc1.js`; view `visualization-45e7208213cd.js` → `BacterialTransformationFreeDnaUptakeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacteriophage attachment and genome injection
+
+```diff
+  Type `BACTERIOPHAGE_ATTACHMENT_AND_GENOME_INJECTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-10a9f2c0fc13.js`; view `visualization-3ba49309f148.js` → `BacteriophageAttachmentAndGenomeInjectionVisualization`.
++ Source: manifest `type-10a9f2c0fc13.js`; view `visualization-af2c4c0ce3de.js` → `BacteriophageAttachmentAndGenomeInjectionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacteriophage lysogeny and prophage inheritance
+
+```diff
+  Type `BACTERIOPHAGE_LYSOGENY_AND_PROPHAGE_INHERITANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-909470642d06.js`; view `visualization-1f7a9958aa38.js` → `BacteriophageLysogenyAndProphageInheritanceVisualization`.
++ Source: manifest `type-909470642d06.js`; view `visualization-399c3096a939.js` → `BacteriophageLysogenyAndProphageInheritanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacteriophage lytic replication and lysis
+
+```diff
+  Type `BACTERIOPHAGE_LYTIC_REPLICATION_AND_LYSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3d08c7be808d.js`; view `visualization-5560d169197b.js` → `BacteriophageLyticReplicationAndLysisVisualization`.
++ Source: manifest `type-3d08c7be808d.js`; view `visualization-e62bd41ed698.js` → `BacteriophageLyticReplicationAndLysisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacteriophage lytic versus lysogenic pathways
+
+```diff
+  Type `BACTERIOPHAGE_LYTIC_VERSUS_LYSOGENIC_PATHWAYS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ffec32f63499.js`; view `visualization-17c48051eb6e.js` → `BacteriophageLyticVersusLysogenicPathwaysVisualization`.
++ Source: manifest `type-ffec32f63499.js`; view `visualization-83de6f2ab182.js` → `BacteriophageLyticVersusLysogenicPathwaysVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacteriophage structure and host recognition
+
+```diff
+  Type `BACTERIOPHAGE_STRUCTURE_AND_HOST_RECOGNITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ab95f7c62d15.js`; view `visualization-29ad52ff8e58.js` → `BacteriophageStructureAndHostRecognitionVisualization`.
++ Source: manifest `type-ab95f7c62d15.js`; view `visualization-17d3196e0e33.js` → `BacteriophageStructureAndHostRecognitionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bacteriophage transduction of bacterial genes
+
+```diff
+  Type `BACTERIOPHAGE_TRANSDUCTION_BACTERIAL_GENE_TRANSFER` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-77cc63d10a98.js`; view `visualization-1e2825a9b63b.js` → `BacteriophageTransductionBacterialGeneTransferVisualization`.
++ Source: manifest `type-77cc63d10a98.js`; view `visualization-374fe03d60f1.js` → `BacteriophageTransductionBacterialGeneTransferVisualization`.
+```
+
+#### changed: Lottie animations (761) › Basal melanocytes transfer protective melanin
+
+```diff
+  Type `EPIDERMAL_MELANOCYTE_MELANIN_UV_PROTECTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6d75a72828bb.js`; view `visualization-d79a667795d7.js` → `EpidermalMelanocyteMelaninUvProtectionVisualization`.
++ Source: manifest `type-6d75a72828bb.js`; view `visualization-a4ad8aa16336.js` → `EpidermalMelanocyteMelaninUvProtectionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bidirectional replication forks
+
+```diff
+  Type `DNA_REPLICATION_ORIGIN_BIDIRECTIONAL_FORKS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2eab92721c8d.js`; view `visualization-a7668db65cee.js` → `DnaReplicationOriginBidirectionalForksVisualization`.
++ Source: manifest `type-2eab92721c8d.js`; view `visualization-8c724cde88c5.js` → `DnaReplicationOriginBidirectionalForksVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bile emulsifies fat before lipase digests exposed droplet surfaces
+
+```diff
+  Type `ANIMAL_BILE_EMULSIFICATION_AND_FAT_DIGESTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2d8109ac9cd3.js`; view `visualization-d556e8944aae.js` → `AnimalBileEmulsificationAndFatDigestionVisualization`.
++ Source: manifest `type-2d8109ac9cd3.js`; view `visualization-e729263b130a.js` → `AnimalBileEmulsificationAndFatDigestionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Biological acid-base proton transfer
+
+```diff
+  Type `BIOLOGICAL_ACID_BASE_PROTON_TRANSFER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9c1e4e00b6d6.js`; view `visualization-6325ad5e0671.js` → `Visualization`.
++ Source: manifest `type-9c1e4e00b6d6.js`; view `visualization-cab42a36f0ed.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological bicarbonate buffer equilibrium
+
+```diff
+  Type `BIOLOGICAL_BICARBONATE_BUFFER_EQUILIBRIUM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7be157d7b26f.js`; view `visualization-df9e225b5bc1.js` → `Visualization`.
++ Source: manifest `type-7be157d7b26f.js`; view `visualization-5910f21afdd4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological buffer capacity and exhaustion
+
+```diff
+  Type `BIOLOGICAL_BUFFER_CAPACITY_AND_EXHAUSTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-69b19a38a764.js`; view `visualization-9b4bb195b130.js` → `Visualization`.
++ Source: manifest `type-69b19a38a764.js`; view `visualization-8f23d55eca43.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological buffer conjugate pair
+
+```diff
+  Type `BIOLOGICAL_BUFFER_CONJUGATE_PAIR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8eeb77b86b9e.js`; view `visualization-82bfe86fdaaf.js` → `Visualization`.
++ Source: manifest `type-8eeb77b86b9e.js`; view `visualization-bfe40f4573b0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological buffer response to added acid
+
+```diff
+  Type `BIOLOGICAL_BUFFER_ADDED_ACID_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-64bc0103213d.js`; view `visualization-baeed2e45e61.js` → `Visualization`.
++ Source: manifest `type-64bc0103213d.js`; view `visualization-1fb196397df7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological buffer response to added base
+
+```diff
+  Type `BIOLOGICAL_BUFFER_ADDED_BASE_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-acd416fdb720.js`; view `visualization-522c1acf05de.js` → `Visualization`.
++ Source: manifest `type-acd416fdb720.js`; view `visualization-cf79acd96379.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological calibration curve and unknown concentration
+
+```diff
+  Type `BIOLOGICAL_CALIBRATION_CURVE_AND_UNKNOWN_CONCENTRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b35c39150721.js`; view `visualization-917052a78fd7.js` → `BiologicalCalibrationCurveAndUnknownConcentrationVisualization`.
++ Source: manifest `type-b35c39150721.js`; view `visualization-dfd1b286d4a1.js` → `BiologicalCalibrationCurveAndUnknownConcentrationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Biological pH scale and tenfold proton changes
+
+```diff
+  Type `BIOLOGICAL_PH_SCALE_TENFOLD_PROTON_CHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-688c92b9a52f.js`; view `visualization-edde539c454c.js` → `Visualization`.
++ Source: manifest `type-688c92b9a52f.js`; view `visualization-2a931df520fd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological pH, pKa, and protonation states
+
+```diff
+  Type `BIOLOGICAL_PH_PKA_PROTONATION_STATES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f1b3351f62a6.js`; view `visualization-3dbc7f37474e.js` → `Visualization`.
++ Source: manifest `type-f1b3351f62a6.js`; view `visualization-f318f00d67b0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Biological serial dilution and concentration
+
+```diff
+  Type `BIOLOGICAL_SERIAL_DILUTION_AND_CONCENTRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7187246792b9.js`; view `visualization-2c3e7d32fd32.js` → `BiologicalSerialDilutionAndConcentrationVisualization`.
++ Source: manifest `type-7187246792b9.js`; view `visualization-26fbbcfb4067.js` → `BiologicalSerialDilutionAndConcentrationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Biotechnology methods
+
+```diff
+  Type `BIOTECHNOLOGY` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ac7b8cda010c.js`; view `visualization-752cf51ab4e2.js` → `Visualization`.
++ Source: manifest `type-ac7b8cda010c.js`; view `visualization-bfd1c329cab2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Birds nested within reptiles
+
+```diff
+  Type `VERTEBRATE_BIRDS_NESTED_WITHIN_REPTILES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-938843672aa6.js`; view `visualization-5f7525a5f4cb.js` → `Visualization`.
++ Source: manifest `type-938843672aa6.js`; view `visualization-3080288701f4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Births, deaths, immigration, and emigration
+
+```diff
+  Type `POPULATION_ECOLOGY_DEMOGRAPHIC_CHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4f8dca8d977d.js`; view `visualization-f6959e1a4b1a.js` → `Visualization`.
++ Source: manifest `type-4f8dca8d977d.js`; view `visualization-d9168683333a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Blastocyst implantation and cell lineages
+
+```diff
+  Type `ANIMAL_BLASTOCYST_IMPLANTATION_CELL_LINEAGES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ce928739d071.js`; view `visualization-61b393b53f4c.js` → `AnimalBlastocystImplantationCellLineagesVisualization`.
++ Source: manifest `type-ce928739d071.js`; view `visualization-7dd89081f5ec.js` → `AnimalBlastocystImplantationCellLineagesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Both plants and animals use food and oxygen for respiration
+
+```diff
+  Type `PLANTS_AND_ANIMALS_BOTH_RESPIRE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-919f80337893.js`; view `visualization-eaabb79cdb6f.js` → `Visualization`.
++ Source: manifest `type-919f80337893.js`; view `visualization-20d8f088c798.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Branching timeline of major biological transitions
+
+```diff
+  Type `BRANCHING_TIMELINE_OF_MAJOR_BIOLOGICAL_TRANSITIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-89d21841567a.js`; view `visualization-67647f262a0a.js` → `BranchingTimelineOfMajorBiologicalTransitionsVisualization`.
++ Source: manifest `type-89d21841567a.js`; view `visualization-940be9eb1c3c.js` → `BranchingTimelineOfMajorBiologicalTransitionsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Bread mold sporangium spore release
+
+```diff
+  Type `BREAD_MOLD_SPORANGIUM_SPORE_RELEASE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-47746364e6cc.js`; view `visualization-3ba4ee48bf4f.js` → `Visualization`.
++ Source: manifest `type-47746364e6cc.js`; view `visualization-dd2675c1a3f3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Brightfield versus phase-contrast imaging of one unstained live cell
+
+```diff
+  Type `MICROSCOPY_PHASE_CONTRAST_LIVE_CELLS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d42c0dca9d86.js`; view `visualization-d8fc48693324.js` → `Visualization`.
++ Source: manifest `type-d42c0dca9d86.js`; view `visualization-2ed9cd4818e7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Butterfly complete metamorphosis
+
+```diff
+  Type `ORGANISM_BUTTERFLY_COMPLETE_METAMORPHOSIS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-742afae4dfb8.js`; view `visualization-ef9302551a1e.js` → `OrganismButterflyCompleteMetamorphosisVisualization`.
++ Source: manifest `type-742afae4dfb8.js`; view `visualization-564b001c8550.js` → `OrganismButterflyCompleteMetamorphosisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Calcium, troponin, and tropomyosin
+
+```diff
+  Type `MUSCULOSKELETAL_CALCIUM_TROPONIN_TROPOMYOSIN` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3707ba102b13.js`; view `visualization-8b667a26d216.js` → `MusculoskeletalCalciumTroponinTropomyosinVisualization`.
++ Source: manifest `type-3707ba102b13.js`; view `visualization-7ad7ae4ed9b2.js` → `MusculoskeletalCalciumTroponinTropomyosinVisualization`.
+```
+
+#### changed: Lottie animations (761) › Calvin cycle: carbon dioxide, RuBP, G3P, and regenerated RuBP
+
+```diff
+  Type `PHOTOSYNTHESIS_CALVIN_CYCLE_CARBON_FIXATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f142f4215cdc.js`; view `visualization-41be81c8674a.js` → `Visualization`.
++ Source: manifest `type-f142f4215cdc.js`; view `visualization-f821ed0b8e96.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cambrian animal body-plan diversification
+
+```diff
+  Type `CAMBRIAN_ANIMAL_BODY_PLAN_DIVERSIFICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b439c29dc06d.js`; view `visualization-cb9c20051e7e.js` → `CambrianAnimalBodyPlanDiversificationVisualization`.
++ Source: manifest `type-b439c29dc06d.js`; view `visualization-28e655998519.js` → `CambrianAnimalBodyPlanDiversificationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Carbohydrate structure and function
+
+```diff
+  Type `CARBOHYDRATE_STRUCTURE_FUNCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3ed86fb590b6.js`; view `visualization-fd9b631537e4.js` → `Visualization`.
++ Source: manifest `type-3ed86fb590b6.js`; view `visualization-7a1083017a48.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Carbohydrates overview
+
+```diff
+  Type `CARBOHYDRATES_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f11541ad36ff.js`; view `visualization-8f15538b28c5.js` → `Visualization`.
++ Source: manifest `type-f11541ad36ff.js`; view `visualization-343a957a2a7e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Carbon dioxide right-shifts the hemoglobin oxygen affinity curve
+
+```diff
+  Type `ANIMAL_BOHR_EFFECT_AND_OXYGEN_UNLOADING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8d29529847e2.js`; view `visualization-8843dc36adbc.js` → `AnimalBohrEffectAndOxygenUnloadingVisualization`.
++ Source: manifest `type-8d29529847e2.js`; view `visualization-98475478035b.js` → `AnimalBohrEffectAndOxygenUnloadingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Carbon dioxide, bicarbonate transport, and blood pH
+
+```diff
+  Type `ANIMAL_CARBON_DIOXIDE_BICARBONATE_AND_PH` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bebbb05ab922.js`; view `visualization-fa0e5c8d2efe.js` → `AnimalCarbonDioxideBicarbonateAndPhVisualization`.
++ Source: manifest `type-bebbb05ab922.js`; view `visualization-d5004baf7e58.js` → `AnimalCarbonDioxideBicarbonateAndPhVisualization`.
+```
+
+#### changed: Lottie animations (761) › Carbon from air becomes plant sugar and new leaf tissue
+
+```diff
+  Type `PLANT_GROWTH_CARBON_FROM_AIR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ee194e125de6.js`; view `visualization-8f24d8e4a077.js` → `Visualization`.
++ Source: manifest `type-ee194e125de6.js`; view `visualization-1be8a4bad6b0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Carbon reservoirs and fluxes
+
+```diff
+  Type `BIOGEOCHEMICAL_CARBON_RESERVOIRS_AND_FLUXES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3287a0c0c401.js`; view `visualization-97f2608f79b8.js` → `Visualization`.
++ Source: manifest `type-3287a0c0c401.js`; view `visualization-9731f4bbe4b3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › carbon-budget-emission-reduction-and-sink-restoration
+
+```diff
+  Type `CARBON_BUDGET_EMISSION_REDUCTION_AND_SINK_RESTORATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-319095e210a6.js`; view `visualization-b555fd0b0233.js` → `CarbonBudgetEmissionReductionAndSinkRestorationVisualization`.
++ Source: manifest `type-319095e210a6.js`; view `visualization-db8f5d885b2b.js` → `CarbonBudgetEmissionReductionAndSinkRestorationVisualization`.
+```
+
+#### changed: Lottie animations (761) › carbon-cycle-anthropogenic-imbalance
+
+```diff
+  Type `CARBON_CYCLE_ANTHROPOGENIC_IMBALANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2b6dbe275ed6.js`; view `visualization-e8277baf0b90.js` → `CarbonCycleAnthropogenicImbalanceVisualization`.
++ Source: manifest `type-2b6dbe275ed6.js`; view `visualization-648917533f69.js` → `CarbonCycleAnthropogenicImbalanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Carrier mother and unaffected father produce one affected X-linked son
+
+```diff
+  Type `X_LINKED_RECESSIVE_INHERITANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8c8ad4f8dce7.js`; view `visualization-9a2e04ed84eb.js` → `XLinkedRecessiveInheritanceVisualization`.
++ Source: manifest `type-8c8ad4f8dce7.js`; view `visualization-f073016ad7b7.js` → `XLinkedRecessiveInheritanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cell specialization: same genome, different cellular identities
+
+```diff
+  Type `CELL_SPECIALIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2848b8bd66c0.js`; view `visualization-959c4c4d3544.js` → `Visualization`.
++ Source: manifest `type-2848b8bd66c0.js`; view `visualization-168fccd249ec.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cell theory: living things, cellular units, and existing-cell lineage
+
+```diff
+  Type `CELL_THEORY_EVIDENCE_AND_SCALE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5489280ca726.js`; view `visualization-8ad1b0d4b8c7.js` → `Visualization`.
++ Source: manifest `type-5489280ca726.js`; view `visualization-0134c26a804d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cell-cycle phases and regulation overview
+
+```diff
+  Type `CELL_CYCLE_AND_REGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c0c1b64d21f0.js`; view `visualization-c8236a31790e.js` → `Visualization`.
++ Source: manifest `type-c0c1b64d21f0.js`; view `visualization-c8c83d5abb41.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cell-size surface area, volume, and SA:V comparison
+
+```diff
+  Type `CELL_SIZE_SURFACE_AREA_TO_VOLUME` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-831f7c46dd63.js`; view `visualization-3cce44edd845.js` → `CellSizeSurfaceAreaToVolumeVisualization`.
++ Source: manifest `type-831f7c46dd63.js`; view `visualization-3d4dab8d148b.js` → `CellSizeSurfaceAreaToVolumeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cell-specific transcription factors activate matching genes in the same genome
+
+```diff
+  Type `CELL_TYPE_SPECIFIC_TRANSCRIPTION_FACTORS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4f9c4bf41a5b.js`; view `visualization-1b8a9be1a573.js` → `Visualization`.
++ Source: manifest `type-4f9c4bf41a5b.js`; view `visualization-ba5e9be3dc47.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cell-surface movement and cytoskeleton
+
+```diff
+  Type `CELL_SURFACE_MOVEMENT_AND_CYTOSKELETON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6cf922fb666d.js`; view `visualization-10b91aa02070.js` → `Visualization`.
++ Source: manifest `type-6cf922fb666d.js`; view `visualization-64faa3e28b2f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cellular respiration pathway overview
+
+```diff
+  Type `CELLULAR_RESPIRATION_PATHWAY_OVERVIEW` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ac534fbf2909.js`; view `visualization-303287e721ad.js` → `CellularRespirationPathwayOverviewVisualization`.
++ Source: manifest `type-ac534fbf2909.js`; view `visualization-ec9ffc7024c0.js` → `CellularRespirationPathwayOverviewVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cellular structure and functions
+
+```diff
+  Type `CELLULAR_STRUCTURE_AND_FUNCTIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cca2d1279025.js`; view `visualization-9a5e7492323a.js` → `Visualization`.
++ Source: manifest `type-cca2d1279025.js`; view `visualization-a52851df4fbd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Central and peripheral nervous-system organization
+
+```diff
+  Type `NERVOUS_SYSTEM_CENTRAL_PERIPHERAL_ORGANIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9c47921fc211.js`; view `visualization-258d3bbb757f.js` → `NervousSystemCentralPeripheralOrganizationVisualization`.
++ Source: manifest `type-9c47921fc211.js`; view `visualization-7f43f744fa5b.js` → `NervousSystemCentralPeripheralOrganizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Checkpoint failure inherits DNA damage through repeated cell division
+
+```diff
+  Type `CHECKPOINT_FAILURE_UNCONTROLLED_PROLIFERATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8a0ed2c5e436.js`; view `visualization-63bc06948504.js` → `Visualization`.
++ Source: manifest `type-8a0ed2c5e436.js`; view `visualization-82b1c5f9a2bc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Chemical-synapse neurotransmitter release
+
+```diff
+  Type `CHEMICAL_SYNAPSE_NEUROTRANSMITTER_RELEASE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6d9e9c0bd954.js`; view `visualization-b8aa999387db.js` → `ChemicalSynapseNeurotransmitterReleaseVisualization`.
++ Source: manifest `type-6d9e9c0bd954.js`; view `visualization-8cbff35b8989.js` → `ChemicalSynapseNeurotransmitterReleaseVisualization`.
+```
+
+#### changed: Lottie animations (761) › Chloroplast structure and photosynthesis
+
+```diff
+  Type `CHLOROPLAST_STRUCTURE_AND_PHOTOSYNTHESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3ee19e5c3b04.js`; view `visualization-865488f9c6ab.js` → `Visualization`.
++ Source: manifest `type-3ee19e5c3b04.js`; view `visualization-ac7ba5e917e3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cholesterol buffers cool packing and warm membrane motion
+
+```diff
+  Type `CHOLESTEROL_MEMBRANE_FLUIDITY` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fe38f4b848ea.js`; view `visualization-b3dc3ef24a56.js` → `CholesterolMembraneFluidityVisualization`.
++ Source: manifest `type-fe38f4b848ea.js`; view `visualization-ba4a58b479ee.js` → `CholesterolMembraneFluidityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Chromosome-21 nondisjunction produces a 24-chromosome gamete; fertilization by a normal 23-chromosome gamete produces trisomy 21
+
+```diff
+  Type `MEIOTIC_NONDISJUNCTION_FERTILIZATION_TRISOMY` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f023a589001e.js`; view `visualization-fa400f099d11.js` → `Visualization`.
++ Source: manifest `type-f023a589001e.js`; view `visualization-e7fcc6f2a51e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cilia versus microvilli
+
+```diff
+  Type `CILIA_VERSUS_MICROVILLI` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-45f2294a8894.js`; view `visualization-e95f3b8fcd57.js` → `Visualization`.
++ Source: manifest `type-45f2294a8894.js`; view `visualization-faeac5849e8c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ciliary power and recovery stroke
+
+```diff
+  Type `CILIARY_POWER_AND_RECOVERY_STROKE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1fc17825b632.js`; view `visualization-f40686e7f773.js` → `Visualization`.
++ Source: manifest `type-1fc17825b632.js`; view `visualization-ae98634a72d7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Circadian melatonin neuroendocrine pathway
+
+```diff
+  Type `CIRCADIAN_MELATONIN_NEUROENDOCRINE_PATHWAY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c488b3fb18f1.js`; view `visualization-43b61e8923a9.js` → `Visualization`.
++ Source: manifest `type-c488b3fb18f1.js`; view `visualization-1f67f7bc795f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Citric acid cycle carbon and carriers
+
+```diff
+  Type `CITRIC_ACID_CYCLE_CARBON_AND_CARRIERS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-191aa237339d.js`; view `visualization-d66e65e102fb.js` → `CitricAcidCycleCarbonAndCarriersVisualization`.
++ Source: manifest `type-191aa237339d.js`; view `visualization-b44d21b7a167.js` → `CitricAcidCycleCarbonAndCarriersVisualization`.
+```
+
+#### changed: Lottie animations (761) › climate-disruption-coral-bleaching
+
+```diff
+  Type `CLIMATE_DISRUPTION_CORAL_BLEACHING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1eaf975bddf6.js`; view `visualization-abe18216e6cf.js` → `ClimateDisruptionCoralBleachingVisualization`.
++ Source: manifest `type-1eaf975bddf6.js`; view `visualization-43b7146b326e.js` → `ClimateDisruptionCoralBleachingVisualization`.
+```
+
+#### changed: Lottie animations (761) › climate-disruption-species-range-shift
+
+```diff
+  Type `CLIMATE_DISRUPTION_SPECIES_RANGE_SHIFT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5dea8a6cd756.js`; view `visualization-901033604b25.js` → `ClimateDisruptionSpeciesRangeShiftVisualization`.
++ Source: manifest `type-5dea8a6cd756.js`; view `visualization-7ec19f55a227.js` → `ClimateDisruptionSpeciesRangeShiftVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cnidarian nematocyst discharge
+
+```diff
+  Type `ANIMAL_CNIDARIAN_NEMATOCYST_DISCHARGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5d401172ede9.js`; view `visualization-2d43f7a5dabd.js` → `AnimalCnidarianNematocystDischargeVisualization`.
++ Source: manifest `type-5d401172ede9.js`; view `visualization-53a05e73f275.js` → `AnimalCnidarianNematocystDischargeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cnidarian polyp versus medusa
+
+```diff
+  Type `ANIMAL_CNIDARIAN_POLYP_VERSUS_MEDUSA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8ffd188b1903.js`; view `visualization-a1b5acc331d3.js` → `AnimalCnidarianPolypVersusMedusaVisualization`.
++ Source: manifest `type-8ffd188b1903.js`; view `visualization-8bf420d20d8c.js` → `AnimalCnidarianPolypVersusMedusaVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cochlear tonotopic pitch mapping
+
+```diff
+  Type `SENSORY_COCHLEAR_TONOTOPIC_PITCH_MAPPING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-435abf75f508.js`; view `visualization-251baa15b1a0.js` → `Visualization`.
++ Source: manifest `type-435abf75f508.js`; view `visualization-4c70c31cdb95.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Coding and template DNA strands determine transcription direction
+
+```diff
+  Type `GENE_CODING_TEMPLATE_STRAND_ORIENTATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-0d5a93fdaa3f.js`; view `visualization-79f10e189f88.js` → `GeneCodingTemplateStrandOrientationVisualization`.
++ Source: manifest `type-0d5a93fdaa3f.js`; view `visualization-5fc102de8def.js` → `GeneCodingTemplateStrandOrientationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Coding strand template strand and RNA comparison
+
+```diff
+  Type `CODING_TEMPLATE_RNA_STRAND_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cd83bfb62ac5.js`; view `visualization-2f47ae2ba29a.js` → `Visualization`.
++ Source: manifest `type-cd83bfb62ac5.js`; view `visualization-887a90106f96.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Commensalism nesting partnership
+
+```diff
+  Type `COMMENSALISM_NESTING_PARTNERSHIP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7503dd5d9f07.js`; view `visualization-a052a7e358d4.js` → `CommensalismNestingPartnershipVisualization`.
++ Source: manifest `type-7503dd5d9f07.js`; view `visualization-7b9cfb1308d4.js` → `CommensalismNestingPartnershipVisualization`.
+```
+
+#### changed: Lottie animations (761) › Comparative vertebrate embryology
+
+```diff
+  Type `EVOLUTION_COMPARATIVE_EMBRYOLOGY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-615085e849cf.js`; view `visualization-d499de4c1364.js` → `EvolutionComparativeEmbryologyVisualization`.
++ Source: manifest `type-615085e849cf.js`; view `visualization-ad3c471d2d62.js` → `EvolutionComparativeEmbryologyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Compare internal metabolic heat and external environmental heat
+
+```diff
+  Type `ENDOTHERM_ECTOTHERM_HEAT_SOURCE_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c3fe6c2472a2.js`; view `visualization-3354b64ceb63.js` → `EndothermEctothermHeatSourceComparisonVisualization`.
++ Source: manifest `type-c3fe6c2472a2.js`; view `visualization-fa7c7f229218.js` → `EndothermEctothermHeatSourceComparisonVisualization`.
+```
+
+#### changed: Lottie animations (761) › Compare oriented taxis with nondirectional kinesis
+
+```diff
+  Type `TAXIS_VERSUS_KINESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c3ff970cc858.js`; view `visualization-8a1516d20ec9.js` → `TaxisVersusKinesisVisualization`.
++ Source: manifest `type-c3ff970cc858.js`; view `visualization-98b9cde79af3.js` → `TaxisVersusKinesisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Compare phylogenetic relatedness
+
+```diff
+  Type `PHYLOGENETIC_RELATEDNESS_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dfa112eb3084.js`; view `visualization-d025eb9c730b.js` → `Visualization`.
++ Source: manifest `type-dfa112eb3084.js`; view `visualization-94e1f7b3b41c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Competitive and pure noncompetitive inhibition have distinct rate limits
+
+```diff
+  Type `ENZYME_INHIBITION_KINETICS_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-215b73e31187.js`; view `visualization-7530247e006a.js` → `Visualization`.
++ Source: manifest `type-215b73e31187.js`; view `visualization-549e40f44174.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Complement opsonization
+
+```diff
+  Type `COMPLEMENT_OPSONIZATION_PHAGOCYTE_RECOGNITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2743436748f9.js`; view `visualization-a8eb1007cd73.js` → `ComplementOpsonizationPhagocyteRecognitionVisualization`.
++ Source: manifest `type-2743436748f9.js`; view `visualization-f19b0ff5fd07.js` → `ComplementOpsonizationPhagocyteRecognitionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Complementary base pairing
+
+```diff
+  Type `COMPLEMENTARY_BASE_PAIRING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-184ee5d16a84.js`; view `visualization-e746784f02c9.js` → `Visualization`.
++ Source: manifest `type-184ee5d16a84.js`; view `visualization-cb6d1b3a009c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Complementary cell-surface recognition produces physical adhesion
+
+```diff
+  Type `CELL_SURFACE_RECOGNITION_ADHESION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4a95909092dd.js`; view `visualization-db250038936e.js` → `Visualization`.
++ Source: manifest `type-4a95909092dd.js`; view `visualization-640841297022.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Complete phosphorus reservoirs and return pathways
+
+```diff
+  Type `BIOGEOCHEMICAL_PHOSPHORUS_RESERVOIRS_AND_RETURN_PATHWAYS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a557c884f6f0.js`; view `visualization-3767f09a0d0d.js` → `Visualization`.
++ Source: manifest `type-a557c884f6f0.js`; view `visualization-bffb89af17c2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Complete versus incomplete metamorphosis
+
+```diff
+  Type `ORGANISM_COMPLETE_VERSUS_INCOMPLETE_METAMORPHOSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-43e787595df8.js`; view `visualization-a7cbcc6e9bc1.js` → `OrganismCompleteVersusIncompleteMetamorphosisVisualization`.
++ Source: manifest `type-43e787595df8.js`; view `visualization-447ba18dda3a.js` → `OrganismCompleteVersusIncompleteMetamorphosisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Complete water reservoirs and branching return pathways
+
+```diff
+  Type `BIOGEOCHEMICAL_WATER_RESERVOIRS_AND_PATHWAYS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1dcba4f5b8e9.js`; view `visualization-91bd16a66b31.js` → `Visualization`.
++ Source: manifest `type-1dcba4f5b8e9.js`; view `visualization-627512ab7ee2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Compound microscope anatomy
+
+```diff
+  Type `MICROSCOPY_COMPOUND_MICROSCOPE_ANATOMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1c20da86be71.js`; view `visualization-3f42ee5b0640.js` → `Visualization`.
++ Source: manifest `type-1c20da86be71.js`; view `visualization-6086ad2ddfe5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Concentration gradient and dynamic equilibrium
+
+```diff
+  Type `CONCENTRATION_GRADIENT_EQUILIBRIUM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d224d9727c3f.js`; view `visualization-d41531413a90.js` → `Visualization`.
++ Source: manifest `type-d224d9727c3f.js`; view `visualization-c9c37d3fb36a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Connective tissue cells, fibers, and matrix
+
+```diff
+  Type `ANIMAL_CONNECTIVE_TISSUE_CELLS_FIBERS_MATRIX` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fb4a17bf09e8.js`; view `visualization-4a2e7778a0bf.js` → `AnimalConnectiveTissueCellsFibersMatrixVisualization`.
++ Source: manifest `type-fb4a17bf09e8.js`; view `visualization-6a75426c30c8.js` → `AnimalConnectiveTissueCellsFibersMatrixVisualization`.
+```
+
+#### changed: Lottie animations (761) › Connective tissue matrix comparison
+
+```diff
+  Type `CONNECTIVE_TISSUE_LOOSE_DENSE_ADIPOSE_BLOOD_MATRIX` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5cb90db1e742.js`; view `visualization-91c1d6648c22.js` → `ConnectiveTissueLooseDenseAdiposeBloodMatrixVisualization`.
++ Source: manifest `type-5cb90db1e742.js`; view `visualization-1defd07256e0.js` → `ConnectiveTissueLooseDenseAdiposeBloodMatrixVisualization`.
+```
+
+#### changed: Lottie animations (761) › Conservation population size, inherited diversity, and habitat connectivity
+
+```diff
+  Type `BIODIVERSITY_CONSERVATION_POPULATION_RISK` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-87446c096512.js`; view `visualization-1c7bc8277b46.js` → `Visualization`.
++ Source: manifest `type-87446c096512.js`; view `visualization-e9d4418cc8f0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Contained apoptotic bodies compared with accidental necrotic rupture
+
+```diff
+  Type `APOPTOSIS_VERSUS_NECROSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b4b476228285.js`; view `visualization-5e5bc612f38f.js` → `Visualization`.
++ Source: manifest `type-b4b476228285.js`; view `visualization-d7887b96fb5e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Continuous leading-strand synthesis
+
+```diff
+  Type `DNA_REPLICATION_LEADING_STRAND_SYNTHESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4482ddc667d8.js`; view `visualization-bf6b5c38c039.js` → `DnaReplicationLeadingStrandSynthesisVisualization`.
++ Source: manifest `type-4482ddc667d8.js`; view `visualization-83ea2c183ebd.js` → `DnaReplicationLeadingStrandSynthesisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Conventional pedigree symbols, connected generations, and carrier states
+
+```diff
+  Type `MENDELIAN_PEDIGREE_SYMBOLS_AND_GENERATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2a06bceb3c0b.js`; view `visualization-d627bab4382f.js` → `Visualization`.
++ Source: manifest `type-2a06bceb3c0b.js`; view `visualization-73f54148e631.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Convergent aquatic vertebrate body shapes
+
+```diff
+  Type `VERTEBRATE_CONVERGENT_AQUATIC_BODY_SHAPES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c275a732f227.js`; view `visualization-63e44dd80b56.js` → `Visualization`.
++ Source: manifest `type-c275a732f227.js`; view `visualization-3decca54d3f0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Corneocytes and lipids limit epidermal water loss
+
+```diff
+  Type `EPIDERMAL_CORNEOCYTES_LIPID_WATER_BARRIER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4a91b425b9ac.js`; view `visualization-8793a125375b.js` → `EpidermalCorneocytesLipidWaterBarrierVisualization`.
++ Source: manifest `type-4a91b425b9ac.js`; view `visualization-dde95c4ac96a.js` → `EpidermalCorneocytesLipidWaterBarrierVisualization`.
+```
+
+#### changed: Lottie animations (761) › Cortical versus juxtamedullary nephron
+
+```diff
+  Type `CORTICAL_VERSUS_JUXTAMEDULLARY_NEPHRON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c128a7643419.js`; view `visualization-8cf568156562.js` → `CorticalVersusJuxtamedullaryNephronVisualization`.
++ Source: manifest `type-c128a7643419.js`; view `visualization-75955aac26cd.js` → `CorticalVersusJuxtamedullaryNephronVisualization`.
+```
+
+#### changed: Lottie animations (761) › CRISPR DNA repair outcomes
+
+```diff
+  Type `CRISPR_DNA_REPAIR_OUTCOMES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1cf5b0f2b9a6.js`; view `visualization-ec5ae82badcb.js` → `Visualization`.
++ Source: manifest `type-1cf5b0f2b9a6.js`; view `visualization-edf28bd14dc7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › CRISPR guide-directed DNA cleavage
+
+```diff
+  Type `CRISPR_GUIDE_DIRECTED_DNA_CLEAVAGE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-90d0cb4ffb61.js`; view `visualization-bf11f0ec7a23.js` → `Visualization`.
++ Source: manifest `type-90d0cb4ffb61.js`; view `visualization-2f9440378cb6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › CRISPR-Cas9 target recognition
+
+```diff
+  Type `CRISPR_CAS9_TARGET_RECOGNITION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4f238c17a2a5.js`; view `visualization-61a06fe32262.js` → `Visualization`.
++ Source: manifest `type-4f238c17a2a5.js`; view `visualization-7395ecee43c1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cytokinin divides an attached lateral bud into a leafy side shoot
+
+```diff
+  Type `CYTOKININ_CELL_DIVISION_AND_BUD_GROWTH` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-abce2ea9e6f8.js`; view `visualization-cd387b1381b2.js` → `Visualization`.
++ Source: manifest `type-abce2ea9e6f8.js`; view `visualization-9cc2b3550b7f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cytoskeletal filament comparison
+
+```diff
+  Type `CYTOSKELETAL_FILAMENT_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-51b65abd2af6.js`; view `visualization-ddbfddd4f594.js` → `Visualization`.
++ Source: manifest `type-51b65abd2af6.js`; view `visualization-d575704323e8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Cytotoxic T-cell infected-cell killing
+
+```diff
+  Type `CYTOTOXIC_T_CELL_INFECTED_CELL_KILLING` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5bf56dfcdd91.js`; view `visualization-98f82f7c41fb.js` → `CytotoxicTCellInfectedCellKillingVisualization`.
++ Source: manifest `type-5bf56dfcdd91.js`; view `visualization-3434b8e4be1a.js` → `CytotoxicTCellInfectedCellKillingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Damaged cell undergoes contained apoptosis while its healthy neighbor survives
+
+```diff
+  Type `PROGRAMMED_CELL_DEATH_APOPTOSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5d3c82dc48a7.js`; view `visualization-f9884b66a079.js` → `Visualization`.
++ Source: manifest `type-5d3c82dc48a7.js`; view `visualization-b6e8e470d6d2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Damaged DNA arrests G1 until repair permits S-phase entry
+
+```diff
+  Type `G1_DNA_DAMAGE_CHECKPOINT_ARREST` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a2eb70ab697d.js`; view `visualization-f8fd9b56b06d.js` → `Visualization`.
++ Source: manifest `type-a2eb70ab697d.js`; view `visualization-f93845cca9e8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Daylight entrains an approximately daily organismal activity rhythm
+
+```diff
+  Type `CIRCADIAN_RHYTHM_LIGHT_ENTRAINMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8361d3883c3e.js`; view `visualization-b946d3b88910.js` → `CircadianRhythmLightEntrainmentVisualization`.
++ Source: manifest `type-8361d3883c3e.js`; view `visualization-2cefff912fc7.js` → `CircadianRhythmLightEntrainmentVisualization`.
+```
+
+#### changed: Lottie animations (761) › Decomposer nutrient recycling
+
+```diff
+  Type `DECOMPOSER_NUTRIENT_RECYCLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6bc6cf95ae61.js`; view `visualization-9c54c081e7ef.js` → `Visualization`.
++ Source: manifest `type-6bc6cf95ae61.js`; view `visualization-7e5c7ffaf2fb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Deep time and the Precambrian–Phanerozoic scale
+
+```diff
+  Type `GEOLOGIC_DEEP_TIME_PRECAMBRIAN_PHANEROZOIC_SCALE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a3f39ff38550.js`; view `visualization-5f937b19fd7e.js` → `GeologicDeepTimePrecambrianPhanerozoicScaleVisualization`.
++ Source: manifest `type-a3f39ff38550.js`; view `visualization-bc17e485ec39.js` → `GeologicDeepTimePrecambrianPhanerozoicScaleVisualization`.
+```
+
+#### changed: Lottie animations (761) › Dendritic-cell antigen presentation
+
+```diff
+  Type `DENDRITIC_CELL_ANTIGEN_PRESENTATION_HELPER_T_CELL` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e74633664c21.js`; view `visualization-c7aa7d4cd08a.js` → `DendriticCellAntigenPresentationHelperTCellVisualization`.
++ Source: manifest `type-e74633664c21.js`; view `visualization-73c60645f860.js` → `DendriticCellAntigenPresentationHelperTCellVisualization`.
+```
+
+#### changed: Lottie animations (761) › Density-dependent population limiting factors
+
+```diff
+  Type `POPULATION_ECOLOGY_DENSITY_DEPENDENT_LIMITING_FACTORS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-287064aeb533.js`; view `visualization-8c87dbace06b.js` → `Visualization`.
++ Source: manifest `type-287064aeb533.js`; view `visualization-b60ec7883efd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Desmosomal cadherins and intermediate filaments resist tensile stress
+
+```diff
+  Type `DESMOSOME_CELL_ANCHORING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5cc25cdcb23a.js`; view `visualization-2a48c5f5758e.js` → `Visualization`.
++ Source: manifest `type-5cc25cdcb23a.js`; view `visualization-3b6bbcfc5f8d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Diaphragm-driven inhalation and quiet exhalation
+
+```diff
+  Type `ANIMAL_DIAPHRAGM_VENTILATION_MECHANICS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-424664833bf6.js`; view `visualization-12086f5176da.js` → `AnimalDiaphragmVentilationMechanicsVisualization`.
++ Source: manifest `type-424664833bf6.js`; view `visualization-70b0a9e62ec9.js` → `AnimalDiaphragmVentilationMechanicsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Diploblastic versus triploblastic organization
+
+```diff
+  Type `ANIMAL_DIPLOBLASTIC_VERSUS_TRIPLOBLASTIC_ORGANIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-979021136373.js`; view `visualization-1b28e773d4ce.js` → `AnimalDiploblasticVersusTriploblasticOrganizationVisualization`.
++ Source: manifest `type-979021136373.js`; view `visualization-bfc4ee8e0b76.js` → `AnimalDiploblasticVersusTriploblasticOrganizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Diploid population allele-frequency bookkeeping
+
+```diff
+  Type `POPULATION_GENETICS_ALLELE_FREQUENCY_BOOKKEEPING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f898c4eb601c.js`; view `visualization-e35992cab759.js` → `Visualization`.
++ Source: manifest `type-f898c4eb601c.js`; view `visualization-17b6bb5b7a18.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Direct animal-cell communication through aligned gap junctions
+
+```diff
+  Type `GAP_JUNCTION_CELL_COMMUNICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c64e52121975.js`; view `visualization-c690ceb3dfd4.js` → `Visualization`.
++ Source: manifest `type-c64e52121975.js`; view `visualization-a98831006df0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Direct insect tracheal oxygen delivery
+
+```diff
+  Type `ANIMAL_INSECT_TRACHEAL_GAS_DELIVERY` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8bfdf3eae073.js`; view `visualization-73f5d301d3f8.js` → `AnimalInsectTrachealGasDeliveryVisualization`.
++ Source: manifest `type-8bfdf3eae073.js`; view `visualization-df3214660303.js` → `AnimalInsectTrachealGasDeliveryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Direct membrane-stretch osmotic negative feedback
+
+```diff
+  Type `OSMOTIC_NEGATIVE_FEEDBACK_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6c26ab36c0d3.js`; view `visualization-136d90fa4a35.js` → `Visualization`.
++ Source: manifest `type-6c26ab36c0d3.js`; view `visualization-54c9856c4c20.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Direct olfactory cortical pathway
+
+```diff
+  Type `SENSORY_OLFACTORY_DIRECT_CORTICAL_PATHWAY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f189b0c0b4a3.js`; view `visualization-d47a735c2efc.js` → `Visualization`.
++ Source: manifest `type-f189b0c0b4a3.js`; view `visualization-89267dd7d7da.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Direct plant-cell communication through a plasmodesma
+
+```diff
+  Type `PLASMODESMATA_CELL_COMMUNICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ca59a08b125b.js`; view `visualization-330a997ec431.js` → `Visualization`.
++ Source: manifest `type-ca59a08b125b.js`; view `visualization-70e6a72da5bf.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Direct versus indirect development
+
+```diff
+  Type `ANIMAL_DIRECT_VERSUS_INDIRECT_DEVELOPMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f72842582d7b.js`; view `visualization-1499a9cd5ed1.js` → `AnimalDirectVersusIndirectDevelopmentVisualization`.
++ Source: manifest `type-f72842582d7b.js`; view `visualization-9897177cf6a3.js` → `AnimalDirectVersusIndirectDevelopmentVisualization`.
+```
+
+#### changed: Lottie animations (761) › Direct-contact, local, and long-distance cell communication
+
+```diff
+  Type `CELL_COMMUNICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e353c31b65d6.js`; view `visualization-269639091c5f.js` → `CellCommunicationVisualization`.
++ Source: manifest `type-e353c31b65d6.js`; view `visualization-5c7b5c1d40fa.js` → `CellCommunicationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Directed isopod taxis toward a favorable moisture stimulus
+
+```diff
+  Type `DIRECTED_TAXIS_STIMULUS_GRADIENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-555488305e41.js`; view `visualization-d3d526f29c2f.js` → `DirectedTaxisStimulusGradientVisualization`.
++ Source: manifest `type-555488305e41.js`; view `visualization-8c554e1b7610.js` → `DirectedTaxisStimulusGradientVisualization`.
+```
+
+#### changed: Lottie animations (761) › Discontinuous Okazaki-fragment synthesis
+
+```diff
+  Type `DNA_REPLICATION_LAGGING_OKAZAKI_FRAGMENTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9e7df1ab4453.js`; view `visualization-1b0915e134c4.js` → `DnaReplicationLaggingOkazakiFragmentsVisualization`.
++ Source: manifest `type-9e7df1ab4453.js`; view `visualization-331639a8e4f3.js` → `DnaReplicationLaggingOkazakiFragmentsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Diversity of life overview
+
+```diff
+  Type `DIVERSITY_OF_LIFE_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d128dc8aaacf.js`; view `visualization-8af713f36819.js` → `Visualization`.
++ Source: manifest `type-d128dc8aaacf.js`; view `visualization-6dada7fb1c1a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › DNA and RNA nucleotide comparison
+
+```diff
+  Type `DNA_RNA_NUCLEOTIDE_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d8a307b03004.js`; view `visualization-f22bc914cdd4.js` → `Visualization`.
++ Source: manifest `type-d8a307b03004.js`; view `visualization-583265879dfc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › DNA gene structure produces an aligned complementary RNA message
+
+```diff
+  Type `DNA_AND_RNA_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4d8787b10dc9.js`; view `visualization-dd3760ae2498.js` → `DnaAndRnaStructureVisualization`.
++ Source: manifest `type-4d8787b10dc9.js`; view `visualization-f601e9e60445.js` → `DnaAndRnaStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › DNA polymerase proofreading
+
+```diff
+  Type `DNA_REPLICATION_POLYMERASE_PROOFREADING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-805e59ce7ab3.js`; view `visualization-50f44a3f424e.js` → `DnaReplicationPolymeraseProofreadingVisualization`.
++ Source: manifest `type-805e59ce7ab3.js`; view `visualization-2eca3814cf98.js` → `DnaReplicationPolymeraseProofreadingVisualization`.
+```
+
+#### changed: Lottie animations (761) › DNA replication overview
+
+```diff
+  Type `DNA_REPLICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-36cf057d68b8.js`; view `visualization-83f8d201070d.js` → `DnaReplicationVisualization`.
++ Source: manifest `type-36cf057d68b8.js`; view `visualization-9da82adb4c03.js` → `DnaReplicationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Dominant Golgi stack receives at cis and ships at trans
+
+```diff
+  Type `GOLGI_APPARATUS_STRUCTURE_AND_SORTING` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fac0216447fb.js`; view `visualization-3ce11bb0aff1.js` → `Visualization`.
++ Source: manifest `type-fac0216447fb.js`; view `visualization-c035eef6beec.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Doubling model-cell width lowers its surface-area-to-volume ratio
+
+```diff
+  Type `CELL_THEORY_SURFACE_AREA_TO_VOLUME_RATIO` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d860ae5a868e.js`; view `visualization-bba8a0420aa3.js` → `Visualization`.
++ Source: manifest `type-d860ae5a868e.js`; view `visualization-5537a822858e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Early-Earth prebiotic environments
+
+```diff
+  Type `EARLY_EARTH_PREBIOTIC_ENVIRONMENTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-81058b95054b.js`; view `visualization-219db823513c.js` → `Visualization`.
++ Source: manifest `type-81058b95054b.js`; view `visualization-f9231c07590f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Echinoderm larval-to-adult symmetry
+
+```diff
+  Type `ANIMAL_ECHINODERM_LARVAL_TO_ADULT_SYMMETRY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b58fa045c9d8.js`; view `visualization-63ea3aa6865a.js` → `AnimalEchinodermLarvalToAdultSymmetryVisualization`.
++ Source: manifest `type-b58fa045c9d8.js`; view `visualization-4babeb8614cd.js` → `AnimalEchinodermLarvalToAdultSymmetryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Echinoderm water vascular tube feet
+
+```diff
+  Type `ANIMAL_ECHINODERM_WATER_VASCULAR_TUBE_FEET` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e4912b15d968.js`; view `visualization-176f70a09b80.js` → `AnimalEchinodermWaterVascularTubeFeetVisualization`.
++ Source: manifest `type-e4912b15d968.js`; view `visualization-f8ef384f1254.js` → `AnimalEchinodermWaterVascularTubeFeetVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ecological population density and habitat area
+
+```diff
+  Type `POPULATION_ECOLOGY_DENSITY_AND_AREA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-abaf090ceac1.js`; view `visualization-a06beeaa91c8.js` → `Visualization`.
++ Source: manifest `type-abaf090ceac1.js`; view `visualization-3fc567b01e49.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › ecological-disturbance-secondary-succession
+
+```diff
+  Type `ECOLOGICAL_DISTURBANCE_SECONDARY_SUCCESSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7c909b1a818f.js`; view `visualization-f0afd8bd177b.js` → `EcologicalDisturbanceSecondarySuccessionVisualization`.
++ Source: manifest `type-7c909b1a818f.js`; view `visualization-ba1b834805e5.js` → `EcologicalDisturbanceSecondarySuccessionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ecosystem energy flow versus matter cycling
+
+```diff
+  Type `ECOSYSTEM_ENERGY_FLOW_VERSUS_MATTER_CYCLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e29ca0dd9ed3.js`; view `visualization-76cf3f376efb.js` → `Visualization`.
++ Source: manifest `type-e29ca0dd9ed3.js`; view `visualization-fe330897c44f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ecosystem food web energy pathways
+
+```diff
+  Type `ECOSYSTEM_FOOD_WEB_ENERGY_PATHWAYS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-99ac228d759b.js`; view `visualization-22de919da6a6.js` → `Visualization`.
++ Source: manifest `type-99ac228d759b.js`; view `visualization-59afaa100a80.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ecosystem primary productivity GPP and NPP
+
+```diff
+  Type `ECOSYSTEM_PRIMARY_PRODUCTIVITY_GPP_NPP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b1aa2146fe45.js`; view `visualization-b796860effb7.js` → `Visualization`.
++ Source: manifest `type-b1aa2146fe45.js`; view `visualization-fbbe56d2aa08.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ecosystem trophic energy pyramid
+
+```diff
+  Type `ECOSYSTEM_TROPHIC_ENERGY_PYRAMID` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9660c42abf3b.js`; view `visualization-31e5e34e51a1.js` → `Visualization`.
++ Source: manifest `type-9660c42abf3b.js`; view `visualization-4672153689e5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ecosystem trophic level hierarchy
+
+```diff
+  Type `ECOSYSTEM_TROPHIC_LEVEL_HIERARCHY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-28ad22688ec0.js`; view `visualization-f36e0672a54a.js` → `Visualization`.
++ Source: manifest `type-28ad22688ec0.js`; view `visualization-1a2fe194fe58.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › ecosystem-disturbance-food-web-cascade
+
+```diff
+  Type `ECOSYSTEM_DISTURBANCE_FOOD_WEB_CASCADE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b07ef11f08ac.js`; view `visualization-2ebfe1d55a45.js` → `EcosystemDisturbanceFoodWebCascadeVisualization`.
++ Source: manifest `type-b07ef11f08ac.js`; view `visualization-89dfff2bbabf.js` → `EcosystemDisturbanceFoodWebCascadeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Effective buffer range around pKa
+
+```diff
+  Type `BIOLOGICAL_BUFFER_EFFECTIVE_PH_RANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cdcc03897190.js`; view `visualization-8cb6a4767b4f.js` → `Visualization`.
++ Source: manifest `type-cdcc03897190.js`; view `visualization-92f5af76cf85.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Electron transport chain proton pumping
+
+```diff
+  Type `ELECTRON_TRANSPORT_CHAIN_PROTON_PUMPING` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2a071fe8df9a.js`; view `visualization-698f8caba0cd.js` → `ElectronTransportChainProtonPumpingVisualization`.
++ Source: manifest `type-2a071fe8df9a.js`; view `visualization-b616c53842dd.js` → `ElectronTransportChainProtonPumpingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Embryo gibberellin activates aleurone enzymes and germination
+
+```diff
+  Type `GIBBERELLIN_SEED_GERMINATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bc1e84b8d572.js`; view `visualization-92b19dad9c46.js` → `Visualization`.
++ Source: manifest `type-bc1e84b8d572.js`; view `visualization-81330ab414eb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Embryonic cleavage and blastula formation
+
+```diff
+  Type `ANIMAL_EMBRYONIC_CLEAVAGE_BLASTULA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-13d19f969c7a.js`; view `visualization-94ca0f94bb55.js` → `AnimalEmbryonicCleavageBlastulaVisualization`.
++ Source: manifest `type-13d19f969c7a.js`; view `visualization-597f90569e41.js` → `AnimalEmbryonicCleavageBlastulaVisualization`.
+```
+
+#### changed: Lottie animations (761) › Embryonic development stage sequence
+
+```diff
+  Type `ANIMAL_EMBRYONIC_DEVELOPMENT_STAGE_SEQUENCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c840ad7d526d.js`; view `visualization-428261120c85.js` → `AnimalEmbryonicDevelopmentStageSequenceVisualization`.
++ Source: manifest `type-c840ad7d526d.js`; view `visualization-7a9e16ad5443.js` → `AnimalEmbryonicDevelopmentStageSequenceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Endocytosis and vesicle uptake
+
+```diff
+  Type `ENDOCYTOSIS_VESICLE_UPTAKE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-74ea7c8761d9.js`; view `visualization-6ef63ebc998c.js` → `Visualization`.
++ Source: manifest `type-74ea7c8761d9.js`; view `visualization-8d1cf6b72684.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Endosymbiotic origin of chloroplasts
+
+```diff
+  Type `LIFE_CHLOROPLAST_ENDOSYMBIOTIC_ORIGIN` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-94f29a3fe0fe.js`; view `visualization-9c2135e580e2.js` → `Visualization`.
++ Source: manifest `type-94f29a3fe0fe.js`; view `visualization-94161ac6b953.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Endosymbiotic origin of mitochondria
+
+```diff
+  Type `LIFE_ENDOSYMBIOTIC_ORIGIN_OF_MITOCHONDRIA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-245e5281b392.js`; view `visualization-d1f51feab9ed.js` → `Visualization`.
++ Source: manifest `type-245e5281b392.js`; view `visualization-6cd6bfbb8c7d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Endothermy versus ectothermy
+
+```diff
+  Type `VERTEBRATE_ENDOTHERMY_VERSUS_ECTOTHERMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cca550000786.js`; view `visualization-ddb7ed983a0f.js` → `Visualization`.
++ Source: manifest `type-cca550000786.js`; view `visualization-a335645c1424.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Environmental change shifts carrying capacity
+
+```diff
+  Type `POPULATION_ECOLOGY_CARRYING_CAPACITY_ENVIRONMENTAL_CHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bca3f4b3ba3b.js`; view `visualization-29f95d7b5413.js` → `Visualization`.
++ Source: manifest `type-bca3f4b3ba3b.js`; view `visualization-76f1d81495eb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Environmental selection pressure
+
+```diff
+  Type `ENVIRONMENTAL_SELECTION_PRESSURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-372842ff9913.js`; view `visualization-6bb5de5e5cf5.js` → `EnvironmentalSelectionPressureVisualization`.
++ Source: manifest `type-372842ff9913.js`; view `visualization-24fdfc93c6d2.js` → `EnvironmentalSelectionPressureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Enzyme activity rises to a temperature optimum before denaturation
+
+```diff
+  Type `ENZYME_TEMPERATURE_ACTIVITY_CURVE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-48ac00d257e0.js`; view `visualization-c973aed172a6.js` → `Visualization`.
++ Source: manifest `type-48ac00d257e0.js`; view `visualization-8c1e2311b788.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Enzyme structure, active site, substrate, and products
+
+```diff
+  Type `ENZYME_STRUCTURE_AND_FUNCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-67b650603009.js`; view `visualization-3b707dca88af.js` → `Visualization`.
++ Source: manifest `type-67b650603009.js`; view `visualization-b8e35096f38e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Enzymes lower activation energy without changing reaction free energy
+
+```diff
+  Type `ENZYME_ACTIVATION_ENERGY_PROFILE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-42aa1ee5e675.js`; view `visualization-682603636068.js` → `Visualization`.
++ Source: manifest `type-42aa1ee5e675.js`; view `visualization-1ed7da86da05.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Epidermal renewal and shedding
+
+```diff
+  Type `EPIDERMAL_KERATINOCYTE_RENEWAL_AND_SHEDDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5ff6311826ce.js`; view `visualization-dcb744998598.js` → `EpidermalKeratinocyteRenewalAndSheddingVisualization`.
++ Source: manifest `type-5ff6311826ce.js`; view `visualization-eedc95a8405b.js` → `EpidermalKeratinocyteRenewalAndSheddingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Epithelial apical-basal polarity
+
+```diff
+  Type `EPITHELIAL_APICAL_BASAL_POLARITY_BASEMENT_MEMBRANE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f0e22c55295b.js`; view `visualization-38b26047b249.js` → `EpithelialApicalBasalPolarityBasementMembraneVisualization`.
++ Source: manifest `type-f0e22c55295b.js`; view `visualization-adfbe0706aae.js` → `EpithelialApicalBasalPolarityBasementMembraneVisualization`.
+```
+
+#### changed: Lottie animations (761) › Epithelial cell migration closes a wound
+
+```diff
+  Type `WOUND_REEPITHELIALIZATION_CELL_MIGRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bda3eb68be5b.js`; view `visualization-c54c091d1952.js` → `WoundReepithelializationCellMigrationVisualization`.
++ Source: manifest `type-bda3eb68be5b.js`; view `visualization-e937ab5fd99f.js` → `WoundReepithelializationCellMigrationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Equal-time nutrient diffusion into small and large cells
+
+```diff
+  Type `CELL_SIZE_DIFFUSION_PENETRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c9658a4fa072.js`; view `visualization-d03653d18270.js` → `CellSizeDiffusionPenetrationVisualization`.
++ Source: manifest `type-c9658a4fa072.js`; view `visualization-d816a4f84bc9.js` → `CellSizeDiffusionPenetrationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Equal-volume compact and flattened cell surface comparison
+
+```diff
+  Type `CELL_SIZE_SHAPE_EXCHANGE_SURFACE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-57068f32547f.js`; view `visualization-c18d7ebb2d13.js` → `CellSizeShapeExchangeSurfaceVisualization`.
++ Source: manifest `type-57068f32547f.js`; view `visualization-cc730e7e8b05.js` → `CellSizeShapeExchangeSurfaceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ethylene fruit ripening feedback
+
+```diff
+  Type `ETHYLENE_FRUIT_RIPENING_FEEDBACK` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dd55cfa4fea1.js`; view `visualization-a346912ef01d.js` → `Visualization`.
++ Source: manifest `type-dd55cfa4fea1.js`; view `visualization-8dd398c185bf.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ethylene leaf abscission
+
+```diff
+  Type `ETHYLENE_LEAF_ABSCISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-790391f33cd1.js`; view `visualization-4b9f94871718.js` → `Visualization`.
++ Source: manifest `type-790391f33cd1.js`; view `visualization-fee2f7df84a4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Eukaryotic flagellum propulsion
+
+```diff
+  Type `EUKARYOTIC_FLAGELLUM_PROPULSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-018087453a82.js`; view `visualization-ba8a4c3c39aa.js` → `Visualization`.
++ Source: manifest `type-018087453a82.js`; view `visualization-af64fe94a931.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Eusocial colony division of labor
+
+```diff
+  Type `ANIMAL_EUSOCIAL_COLONY_DIVISION_OF_LABOR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d6e90727b239.js`; view `visualization-28f426679641.js` → `Visualization`.
++ Source: manifest `type-d6e90727b239.js`; view `visualization-c5ce2a7732db.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › eutrophication-decomposition-oxygen-depletion
+
+```diff
+  Type `EUTROPHICATION_DECOMPOSITION_OXYGEN_DEPLETION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c97aefcc55e3.js`; view `visualization-f665d5806f32.js` → `EutrophicationDecompositionOxygenDepletionVisualization`.
++ Source: manifest `type-c97aefcc55e3.js`; view `visualization-18289b07a5fa.js` → `EutrophicationDecompositionOxygenDepletionVisualization`.
+```
+
+#### changed: Lottie animations (761) › eutrophication-nutrient-runoff-algal-bloom
+
+```diff
+  Type `EUTROPHICATION_NUTRIENT_RUNOFF_ALGAL_BLOOM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-371d3382c4cc.js`; view `visualization-a6d316dacf26.js` → `EutrophicationNutrientRunoffAlgalBloomVisualization`.
++ Source: manifest `type-371d3382c4cc.js`; view `visualization-9e9f084603bf.js` → `EutrophicationNutrientRunoffAlgalBloomVisualization`.
+```
+
+#### changed: Lottie animations (761) › Evidence for evolution
+
+```diff
+  Type `EVIDENCE_FOR_EVOLUTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e455190d0e52.js`; view `visualization-90b860671deb.js` → `EvidenceForEvolutionVisualization`.
++ Source: manifest `type-e455190d0e52.js`; view `visualization-df69519475f7.js` → `EvidenceForEvolutionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Evolutionary time, fossils, and major transitions
+
+```diff
+  Type `EVOLUTIONARY_TIME_FOSSILS_AND_MAJOR_TRANSITIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c64579b37e0d.js`; view `visualization-edd133a24d0a.js` → `EvolutionaryTimeFossilsAndMajorTransitionsVisualization`.
++ Source: manifest `type-c64579b37e0d.js`; view `visualization-bc6aa816ff7c.js` → `EvolutionaryTimeFossilsAndMajorTransitionsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Excitation-contraction coupling
+
+```diff
+  Type `MUSCULOSKELETAL_EXCITATION_CONTRACTION_COUPLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6b48b6e720d9.js`; view `visualization-e6090c5270ae.js` → `MusculoskeletalExcitationContractionCouplingVisualization`.
++ Source: manifest `type-6b48b6e720d9.js`; view `visualization-d456c8722a6f.js` → `MusculoskeletalExcitationContractionCouplingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Excitatory versus inhibitory synapses
+
+```diff
+  Type `EXCITATORY_VERSUS_INHIBITORY_SYNAPSES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-74fcb7e43d98.js`; view `visualization-d8b4fb9b930b.js` → `ExcitatoryVersusInhibitorySynapsesVisualization`.
++ Source: manifest `type-74fcb7e43d98.js`; view `visualization-ef4217194978.js` → `ExcitatoryVersusInhibitorySynapsesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Exocytosis and vesicle secretion
+
+```diff
+  Type `EXOCYTOSIS_VESICLE_SECRETION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-883dc4ee9e3f.js`; view `visualization-cb737636d831.js` → `Visualization`.
++ Source: manifest `type-883dc4ee9e3f.js`; view `visualization-46c2c16d3632.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Exponential population growth with abundant resources
+
+```diff
+  Type `POPULATION_ECOLOGY_EXPONENTIAL_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ffd542c2ce07.js`; view `visualization-7d4613cf70cd.js` → `Visualization`.
++ Source: manifest `type-ffd542c2ce07.js`; view `visualization-bb6c13a94c99.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Exponential versus logistic population-growth models
+
+```diff
+  Type `POPULATION_ECOLOGY_EXPONENTIAL_VERSUS_LOGISTIC_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9a8bbb060c43.js`; view `visualization-e91bffce6300.js` → `Visualization`.
++ Source: manifest `type-9a8bbb060c43.js`; view `visualization-77892b2b7485.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Exposed gymnosperm seeds versus enclosed angiosperm seeds
+
+```diff
+  Type `PLANT_GYMNOSPERM_VERSUS_ANGIOSPERM_SEED_ENCLOSURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-594d18be1033.js`; view `visualization-a899a7157a1a.js` → `PlantGymnospermVersusAngiospermSeedEnclosureVisualization`.
++ Source: manifest `type-594d18be1033.js`; view `visualization-e0361d5ba30e.js` → `PlantGymnospermVersusAngiospermSeedEnclosureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Facilitated diffusion through a carrier
+
+```diff
+  Type `FACILITATED_DIFFUSION_CARRIER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-51ad246c8d12.js`; view `visualization-a9f7e1af3a3d.js` → `Visualization`.
++ Source: manifest `type-51ad246c8d12.js`; view `visualization-58443ee0aa94.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Facilitated diffusion through a channel
+
+```diff
+  Type `FACILITATED_DIFFUSION_CHANNEL` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5a9db9c8f033.js`; view `visualization-67bedd986f4c.js` → `Visualization`.
++ Source: manifest `type-5a9db9c8f033.js`; view `visualization-77691e670661.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Female reproductive anatomy
+
+```diff
+  Type `ANIMAL_FEMALE_REPRODUCTIVE_ANATOMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3e918a857c6f.js`; view `visualization-cfefc8e6fb62.js` → `AnimalFemaleReproductiveAnatomyVisualization`.
++ Source: manifest `type-3e918a857c6f.js`; view `visualization-27297ccc7bd5.js` → `AnimalFemaleReproductiveAnatomyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fermentation NAD regeneration
+
+```diff
+  Type `FERMENTATION_NAD_REGENERATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bf0deb61b361.js`; view `visualization-4026a96ebb59.js` → `FermentationNadRegenerationVisualization`.
++ Source: manifest `type-bf0deb61b361.js`; view `visualization-ec5f2e411653.js` → `FermentationNadRegenerationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fern sori, sporangia, and spores
+
+```diff
+  Type `FERN_SORI_SPORANGIA_AND_SPORE_PRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-92b3231a4a1e.js`; view `visualization-acb44767517f.js` → `FernSoriSporangiaAndSporeProductionVisualization`.
++ Source: manifest `type-92b3231a4a1e.js`; view `visualization-ee06b23c4259.js` → `FernSoriSporangiaAndSporeProductionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fern sporophyte and gametophyte life cycle
+
+```diff
+  Type `FERN_SPOROPHYTE_GAMETOPHYTE_LIFE_CYCLE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4357ee6b3888.js`; view `visualization-55acfb24101a.js` → `FernSporophyteGametophyteLifeCycleVisualization`.
++ Source: manifest `type-4357ee6b3888.js`; view `visualization-b8839719ea9f.js` → `FernSporophyteGametophyteLifeCycleVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fertilization and the block to polyspermy
+
+```diff
+  Type `ANIMAL_FERTILIZATION_CORTICAL_BLOCK_POLYSPERMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1f935d4bac27.js`; view `visualization-3c5afe4ce4e7.js` → `AnimalFertilizationCorticalBlockPolyspermyVisualization`.
++ Source: manifest `type-1f935d4bac27.js`; view `visualization-9ac9e671b382.js` → `AnimalFertilizationCorticalBlockPolyspermyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fish operculum and gill ventilation
+
+```diff
+  Type `VERTEBRATE_FISH_OPERCULUM_GILL_VENTILATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a73142cd456e.js`; view `visualization-a7a033c91b3c.js` → `Visualization`.
++ Source: manifest `type-a73142cd456e.js`; view `visualization-33333318a007.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fish-gill countercurrent oxygen exchange
+
+```diff
+  Type `ANIMAL_GILL_COUNTERCURRENT_OXYGEN_EXCHANGE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2936b53c6479.js`; view `visualization-f6ee0d68d7c2.js` → `AnimalGillCountercurrentOxygenExchangeVisualization`.
++ Source: manifest `type-2936b53c6479.js`; view `visualization-a9a7d1e3db96.js` → `AnimalGillCountercurrentOxygenExchangeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Five major mass extinctions in geologic time
+
+```diff
+  Type `FIVE_MAJOR_MASS_EXTINCTIONS_IN_GEOLOGIC_TIME` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5f246c089eb7.js`; view `visualization-ee3f96830c33.js` → `FiveMajorMassExtinctionsInGeologicTimeVisualization`.
++ Source: manifest `type-5f246c089eb7.js`; view `visualization-41ec691660b8.js` → `FiveMajorMassExtinctionsInGeologicTimeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Five-prime-to-three-prime DNA synthesis
+
+```diff
+  Type `DNA_REPLICATION_FIVE_PRIME_TO_THREE_PRIME_SYNTHESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-68d8f07ee799.js`; view `visualization-aa2372763a85.js` → `DnaReplicationFivePrimeToThreePrimeSynthesisVisualization`.
++ Source: manifest `type-68d8f07ee799.js`; view `visualization-cba5fae59b5e.js` → `DnaReplicationFivePrimeToThreePrimeSynthesisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Flatworm branched gastrovascular distribution
+
+```diff
+  Type `ANIMAL_FLATWORM_BRANCHED_GASTROVASCULAR_DISTRIBUTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cf5096137673.js`; view `visualization-d122fca053c4.js` → `AnimalFlatwormBranchedGastrovascularDistributionVisualization`.
++ Source: manifest `type-cf5096137673.js`; view `visualization-851d06185e75.js` → `AnimalFlatwormBranchedGastrovascularDistributionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Florigen leaf to shoot apex
+
+```diff
+  Type `FLORIGEN_LEAF_TO_SHOOT_APEX` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cfb2e291bbf8.js`; view `visualization-438e019119b2.js` → `Visualization`.
++ Source: manifest `type-cfb2e291bbf8.js`; view `visualization-d9e447eec9b9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Flower reproductive anatomy
+
+```diff
+  Type `PLANT_FLOWER_REPRODUCTIVE_ANATOMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-70e9046b2d2f.js`; view `visualization-f5e79cc90378.js` → `Visualization`.
++ Source: manifest `type-70e9046b2d2f.js`; view `visualization-beaae84b167f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Flower-to-fruit and ovule-to-seed development
+
+```diff
+  Type `PLANT_FLOWER_TO_FRUIT_SEED_DEVELOPMENT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dcf56e501255.js`; view `visualization-946e4e12f1dd.js` → `Visualization`.
++ Source: manifest `type-dcf56e501255.js`; view `visualization-f2c051e6da53.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Flowering plant structure, transport, and reproduction
+
+```diff
+  Type `PLANT_STRUCTURE_TRANSPORT_AND_REPRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-73c45877b1bc.js`; view `visualization-aa61cc4be7e4.js` → `Visualization`.
++ Source: manifest `type-73c45877b1bc.js`; view `visualization-c35de0c15057.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Flowering-plant life cycle
+
+```diff
+  Type `ORGANISM_FLOWERING_PLANT_LIFE_CYCLE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-324c515c6607.js`; view `visualization-cd25cefceff4.js` → `OrganismFloweringPlantLifeCycleVisualization`.
++ Source: manifest `type-324c515c6607.js`; view `visualization-f9c89b758149.js` → `OrganismFloweringPlantLifeCycleVisualization`.
+```
+
+#### changed: Lottie animations (761) › Flowering-plant life cycle #2
+
+```diff
+  Type `PLANT_FLOWERING_LIFE_CYCLE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-416a5b513130.js`; view `visualization-e73900e9bca4.js` → `Visualization`.
++ Source: manifest `type-416a5b513130.js`; view `visualization-4f441aced73e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Focus and microscope depth of field
+
+```diff
+  Type `MICROSCOPY_FOCUS_DEPTH_OF_FIELD` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d4306cc9f2f8.js`; view `visualization-61f1e434ad26.js` → `Visualization`.
++ Source: manifest `type-d4306cc9f2f8.js`; view `visualization-8c20081cb3c3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Folded mitochondrial inner membranes localize many ATP-forming complexes
+
+```diff
+  Type `ORGANELLE_MEMBRANE_SURFACE_AREA` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-453b4ad324ee.js`; view `visualization-2cce7388d869.js` → `Visualization`.
++ Source: manifest `type-453b4ad324ee.js`; view `visualization-97614bdcce79.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Food separates into nutrients that become growing body tissue
+
+```diff
+  Type `FOOD_DIGESTION_TO_BUILDING_MATERIALS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cb82ca8447e5.js`; view `visualization-ae4c1a27dc3a.js` → `Visualization`.
++ Source: manifest `type-cb82ca8447e5.js`; view `visualization-ebe9ed3b6d57.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fossil strata and relative age
+
+```diff
+  Type `EVOLUTION_FOSSIL_STRATA_RELATIVE_AGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9f05b607c84d.js`; view `visualization-aa1b84d06c93.js` → `EvolutionFossilStrataRelativeAgeVisualization`.
++ Source: manifest `type-9f05b607c84d.js`; view `visualization-bca884699ba6.js` → `EvolutionFossilStrataRelativeAgeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fossil-age bracketing with volcanic ash
+
+```diff
+  Type `FOSSIL_AGE_BRACKETING_WITH_VOLCANIC_ASH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-70f88dbb98e8.js`; view `visualization-302d6b0ce51f.js` → `FossilAgeBracketingWithVolcanicAshVisualization`.
++ Source: manifest `type-70f88dbb98e8.js`; view `visualization-33ddb42fa10d.js` → `FossilAgeBracketingWithVolcanicAshVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fossil-record preservation and sampling bias
+
+```diff
+  Type `FOSSIL_RECORD_PRESERVATION_AND_SAMPLING_BIAS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7956eb431ee9.js`; view `visualization-f29a5e90d7c5.js` → `FossilRecordPreservationAndSamplingBiasVisualization`.
++ Source: manifest `type-7956eb431ee9.js`; view `visualization-18babd1653c8.js` → `FossilRecordPreservationAndSamplingBiasVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fossilization through burial, mineralization, and exposure
+
+```diff
+  Type `FOSSILIZATION_BURIAL_MINERALIZATION_EXPOSURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-16af45aaa5a5.js`; view `visualization-9cb5782911c6.js` → `FossilizationBurialMineralizationExposureVisualization`.
++ Source: manifest `type-16af45aaa5a5.js`; view `visualization-30d1bd637400.js` → `FossilizationBurialMineralizationExposureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Founder effect and a newly established population
+
+```diff
+  Type `POPULATION_GENETICS_FOUNDER_EFFECT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b44205a60514.js`; view `visualization-378f062cb890.js` → `Visualization`.
++ Source: manifest `type-b44205a60514.js`; view `visualization-da2bd6a14bcb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Four abnormal meiosis-I gametes contrast with two abnormal and two normal meiosis-II gametes
+
+```diff
+  Type `MEIOTIC_NONDISJUNCTION_OUTCOME_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-730967eec15c.js`; view `visualization-2a4fca8f2b37.js` → `Visualization`.
++ Source: manifest `type-730967eec15c.js`; view `visualization-36d93cf098d1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Four animal tissue types
+
+```diff
+  Type `ANIMAL_FOUR_TISSUE_TYPES_STRUCTURE_AND_FUNCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4bad07577538.js`; view `visualization-87e15712ed36.js` → `AnimalFourTissueTypesStructureAndFunctionVisualization`.
++ Source: manifest `type-4bad07577538.js`; view `visualization-1fbc808a73c1.js` → `AnimalFourTissueTypesStructureAndFunctionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Four cells crossing a calibrated 320-micrometer microscope field
+
+```diff
+  Type `CELL_THEORY_MICROSCOPE_FIELD_OF_VIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5c33e30ce081.js`; view `visualization-d4be33cf689b.js` → `Visualization`.
++ Source: manifest `type-5c33e30ce081.js`; view `visualization-f693c4b187c9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Four Pp by Pp transmission paths become 1:2:1 genotypes and 3:1 phenotypes
+
+```diff
+  Type `MENDELIAN_MONOHYBRID_PHENOTYPE_RATIOS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-be85edf3a8cf.js`; view `visualization-ec0acc416900.js` → `Visualization`.
++ Source: manifest `type-be85edf3a8cf.js`; view `visualization-74404b8ce197.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Four stages of skin wound repair
+
+```diff
+  Type `SKIN_WOUND_HEMOSTASIS_SCAB_AND_TISSUE_REPAIR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9b2ef94680d5.js`; view `visualization-7cd01e4c7ac9.js` → `SkinWoundHemostasisScabAndTissueRepairVisualization`.
++ Source: manifest `type-9b2ef94680d5.js`; view `visualization-e048337c2074.js` → `SkinWoundHemostasisScabAndTissueRepairVisualization`.
+```
+
+#### changed: Lottie animations (761) › Fracture healing and callus formation
+
+```diff
+  Type `MUSCULOSKELETAL_FRACTURE_HEALING_STAGES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c637cb0eec12.js`; view `visualization-746bfc9c0c76.js` → `MusculoskeletalFractureHealingStagesVisualization`.
++ Source: manifest `type-c637cb0eec12.js`; view `visualization-eb2de60a33e9.js` → `MusculoskeletalFractureHealingStagesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Frameshift versus in-frame insertion
+
+```diff
+  Type `MUTATION_FRAMESHIFT_VERSUS_IN_FRAME` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4bb2814e92f7.js`; view `visualization-c005b391455d.js` → `Visualization`.
++ Source: manifest `type-4bb2814e92f7.js`; view `visualization-3c89470c4786.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Free bacterial cells attach and develop a protective biofilm matrix
+
+```diff
+  Type `BACTERIAL_BIOFILM_FORMATION_AND_MATRIX` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-456585d3a920.js`; view `visualization-97f1a72a2d0f.js` → `BacterialBiofilmFormationAndMatrixVisualization`.
++ Source: manifest `type-456585d3a920.js`; view `visualization-bb6bc9b06882.js` → `BacterialBiofilmFormationAndMatrixVisualization`.
+```
+
+#### changed: Lottie animations (761) › Freshwater fish osmoregulation
+
+```diff
+  Type `FRESHWATER_FISH_OSMOREGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-89e0028a0ec7.js`; view `visualization-5cc89980db94.js` → `FreshwaterFishOsmoregulationVisualization`.
++ Source: manifest `type-89e0028a0ec7.js`; view `visualization-ab10b0038c45.js` → `FreshwaterFishOsmoregulationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Freshwater protist contractile-vacuole osmoregulation
+
+```diff
+  Type `CONTRACTILE_VACUOLE_OSMOREGULATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-49d4dc985996.js`; view `visualization-49f7714fbcdc.js` → `Visualization`.
++ Source: manifest `type-49d4dc985996.js`; view `visualization-cc7059bff24a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Freshwater versus marine fish osmoregulation
+
+```diff
+  Type `FRESHWATER_VERSUS_MARINE_FISH_OSMOREGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b63773132957.js`; view `visualization-456adb2caa3c.js` → `FreshwaterVersusMarineFishOsmoregulationVisualization`.
++ Source: manifest `type-b63773132957.js`; view `visualization-ab81e4072136.js` → `FreshwaterVersusMarineFishOsmoregulationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Frog metamorphosis
+
+```diff
+  Type `ORGANISM_FROG_METAMORPHOSIS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f323766213be.js`; view `visualization-2e6eef62182d.js` → `OrganismFrogMetamorphosisVisualization`.
++ Source: manifest `type-f323766213be.js`; view `visualization-447162b6d719.js` → `OrganismFrogMetamorphosisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Functional redundancy preserves a represented pollination role
+
+```diff
+  Type `BIODIVERSITY_FUNCTIONAL_REDUNDANCY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cccc281bbee7.js`; view `visualization-c6e8be6508b6.js` → `Visualization`.
++ Source: manifest `type-cccc281bbee7.js`; view `visualization-12ffd140718c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Functional-group polarity and water interactions
+
+```diff
+  Type `BIOLOGICAL_FUNCTIONAL_GROUP_POLARITY_AND_WATER_INTERACTIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-728bb0a4c34b.js`; view `visualization-a89b7f83d60c.js` → `Visualization`.
++ Source: manifest `type-728bb0a4c34b.js`; view `visualization-54a57ff4fe23.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fungal decomposition and matter cycling
+
+```diff
+  Type `LIFE_FUNGAL_DECOMPOSITION_AND_MATTER_CYCLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b3a0c8b50778.js`; view `visualization-4d95529e52b3.js` → `Visualization`.
++ Source: manifest `type-b3a0c8b50778.js`; view `visualization-3f89f5a042cf.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fungal extracellular digestion
+
+```diff
+  Type `FUNGAL_EXTRACELLULAR_DIGESTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2a19f75221d6.js`; view `visualization-ec2b7f46726e.js` → `Visualization`.
++ Source: manifest `type-2a19f75221d6.js`; view `visualization-b845484d49aa.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fungal hyphae and mycelium
+
+```diff
+  Type `FUNGAL_HYPHAE_AND_MYCELIUM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bc847d169533.js`; view `visualization-707adb53cf9e.js` → `Visualization`.
++ Source: manifest `type-bc847d169533.js`; view `visualization-1eec8d2819dc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fungal septate and coenocytic hyphae
+
+```diff
+  Type `FUNGAL_SEPTATE_AND_COENOCYTIC_HYPHAE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7771be7086de.js`; view `visualization-487fb49abe3c.js` → `Visualization`.
++ Source: manifest `type-7771be7086de.js`; view `visualization-8feaafb70785.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Fungal spore dispersal and germination
+
+```diff
+  Type `FUNGAL_SPORE_DISPERSAL_AND_GERMINATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-540bf415710b.js`; view `visualization-54febf77952b.js` → `Visualization`.
++ Source: manifest `type-540bf415710b.js`; view `visualization-632ea9bfbdea.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › G1/S, G2/M, and spindle checkpoint prerequisites
+
+```diff
+  Type `CELL_CYCLE_CHECKPOINT_DECISION_MAP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-38c7b029795b.js`; view `visualization-a300f9c34ed0.js` → `Visualization`.
++ Source: manifest `type-38c7b029795b.js`; view `visualization-a5532427ad6d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Gametophyte versus sporophyte dominance
+
+```diff
+  Type `PLANT_GAMETOPHYTE_SPOROPHYTE_DOMINANCE_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2b6de71a891e.js`; view `visualization-9098845dae0f.js` → `PlantGametophyteSporophyteDominanceComparisonVisualization`.
++ Source: manifest `type-2b6de71a891e.js`; view `visualization-549198fc95ba.js` → `PlantGametophyteSporophyteDominanceComparisonVisualization`.
+```
+
+#### changed: Lottie animations (761) › Gastrulation and three germ layers
+
+```diff
+  Type `ANIMAL_GASTRULATION_GERM_LAYER_FORMATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cbb13a39903e.js`; view `visualization-cb367f42d9c0.js` → `AnimalGastrulationGermLayerFormationVisualization`.
++ Source: manifest `type-cbb13a39903e.js`; view `visualization-acf9a0c7484e.js` → `AnimalGastrulationGermLayerFormationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Gel electrophoresis apparatus
+
+```diff
+  Type `GEL_ELECTROPHORESIS_APPARATUS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-19d92ba3f9ff.js`; view `visualization-b910ff7a03cb.js` → `Visualization`.
++ Source: manifest `type-19d92ba3f9ff.js`; view `visualization-4e5270906f45.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Gel electrophoresis size separation
+
+```diff
+  Type `GEL_ELECTROPHORESIS_SIZE_SEPARATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7d3d7e57affb.js`; view `visualization-2933a1cbf2bf.js` → `Visualization`.
++ Source: manifest `type-7d3d7e57affb.js`; view `visualization-5a0f8cbc7d1c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Gene flow between existing populations
+
+```diff
+  Type `POPULATION_GENETICS_GENE_FLOW_MIGRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7bfc4ad9b598.js`; view `visualization-79843bd43156.js` → `Visualization`.
++ Source: manifest `type-7bfc4ad9b598.js`; view `visualization-c1e4f33a7fe2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Gibberellin stem internode elongation
+
+```diff
+  Type `GIBBERELLIN_STEM_INTERNODE_ELONGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-56d6af94495e.js`; view `visualization-46d3d499f8b4.js` → `Visualization`.
++ Source: manifest `type-56d6af94495e.js`; view `visualization-7ea1e8a721c9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Glycolysis carbon and energy flow
+
+```diff
+  Type `GLYCOLYSIS_CARBON_AND_ENERGY_FLOW` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2042578c6082.js`; view `visualization-f0725026bee8.js` → `GlycolysisCarbonAndEnergyFlowVisualization`.
++ Source: manifest `type-2042578c6082.js`; view `visualization-76328d69806f.js` → `GlycolysisCarbonAndEnergyFlowVisualization`.
+```
+
+#### changed: Lottie animations (761) › Glycosidic bond formation and hydrolysis
+
+```diff
+  Type `GLYCOSIDIC_BOND_FORMATION_HYDROLYSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6985a3ff1284.js`; view `visualization-440e956047e4.js` → `Visualization`.
++ Source: manifest `type-6985a3ff1284.js`; view `visualization-7b0be5fba2f2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Gradual versus punctuated fossil change
+
+```diff
+  Type `GRADUAL_VERSUS_PUNCTUATED_FOSSIL_CHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-592424351345.js`; view `visualization-4cb98053b955.js` → `GradualVersusPunctuatedFossilChangeVisualization`.
++ Source: manifest `type-592424351345.js`; view `visualization-2d60c355944e.js` → `GradualVersusPunctuatedFossilChangeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Gram-positive versus Gram-negative envelopes
+
+```diff
+  Type `GRAM_POSITIVE_VERSUS_GRAM_NEGATIVE_ENVELOPES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-69751cc87d2a.js`; view `visualization-a442b8c6f1e9.js` → `GramPositiveVersusGramNegativeEnvelopesVisualization`.
++ Source: manifest `type-69751cc87d2a.js`; view `visualization-77b076a73e7d.js` → `GramPositiveVersusGramNegativeEnvelopesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Great Oxygenation and the rise of atmospheric oxygen
+
+```diff
+  Type `GREAT_OXYGENATION_AND_ATMOSPHERIC_OXYGEN_RISE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-253c0912488c.js`; view `visualization-197f85ed2914.js` → `GreatOxygenationAndAtmosphericOxygenRiseVisualization`.
++ Source: manifest `type-253c0912488c.js`; view `visualization-c640d5c9f021.js` → `GreatOxygenationAndAtmosphericOxygenRiseVisualization`.
+```
+
+#### changed: Lottie animations (761) › Guard-cell turgor and stomatal opening
+
+```diff
+  Type `PLANT_GUARD_CELL_TURGOR_STOMATAL_OPENING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4e450da83722.js`; view `visualization-d796920c4a78.js` → `Visualization`.
++ Source: manifest `type-4e450da83722.js`; view `visualization-9cf1860e25cc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Gymnosperm cones, pollen, and exposed seeds
+
+```diff
+  Type `GYMNOSPERM_CONE_POLLINATION_AND_EXPOSED_SEEDS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ce71b0df47d1.js`; view `visualization-b63c4aa71446.js` → `GymnospermConePollinationAndExposedSeedsVisualization`.
++ Source: manifest `type-ce71b0df47d1.js`; view `visualization-9ac667193dc2.js` → `GymnospermConePollinationAndExposedSeedsVisualization`.
+```
+
+#### changed: Lottie animations (761) › habitat-fragmentation-population-isolation
+
+```diff
+  Type `HABITAT_FRAGMENTATION_POPULATION_ISOLATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5a5c7e69e977.js`; view `visualization-740e6d8c697d.js` → `HabitatFragmentationPopulationIsolationVisualization`.
++ Source: manifest `type-5a5c7e69e977.js`; view `visualization-bdffc1a9893e.js` → `HabitatFragmentationPopulationIsolationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Hardy–Weinberg expected genotype frequencies
+
+```diff
+  Type `POPULATION_GENETICS_HARDY_WEINBERG_EQUILIBRIUM_EXPECTATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5150123cf932.js`; view `visualization-407ad4aa5336.js` → `Visualization`.
++ Source: manifest `type-5150123cf932.js`; view `visualization-12d8a6bba9b2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Helper T-cell coordination
+
+```diff
+  Type `HELPER_T_CELL_COORDINATES_ADAPTIVE_IMMUNITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-93747a3369c7.js`; view `visualization-82b3f086c90d.js` → `HelperTCellCoordinatesAdaptiveImmunityVisualization`.
++ Source: manifest `type-93747a3369c7.js`; view `visualization-5adc752f7adf.js` → `HelperTCellCoordinatesAdaptiveImmunityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Hemoglobin loads oxygen at lungs and unloads it at tissues
+
+```diff
+  Type `ANIMAL_HEMOGLOBIN_OXYGEN_LOADING_UNLOADING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5e4bde0a90b5.js`; view `visualization-a2353582c11f.js` → `AnimalHemoglobinOxygenLoadingUnloadingVisualization`.
++ Source: manifest `type-5e4bde0a90b5.js`; view `visualization-a9fa483e8ed0.js` → `AnimalHemoglobinOxygenLoadingUnloadingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Heritable trait variation in a population
+
+```diff
+  Type `HERITABLE_TRAIT_VARIATION_POPULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a615e14ccc37.js`; view `visualization-b2b882cc43ba.js` → `HeritableTraitVariationPopulationVisualization`.
++ Source: manifest `type-a615e14ccc37.js`; view `visualization-44b0636747e9.js` → `HeritableTraitVariationPopulationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Hinge versus ball-and-socket motion
+
+```diff
+  Type `MUSCULOSKELETAL_HINGE_VERSUS_BALL_AND_SOCKET` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-762e2335d307.js`; view `visualization-e8732c6d651b.js` → `MusculoskeletalHingeVersusBallAndSocketVisualization`.
++ Source: manifest `type-762e2335d307.js`; view `visualization-6d1f0523b442.js` → `MusculoskeletalHingeVersusBallAndSocketVisualization`.
+```
+
+#### changed: Lottie animations (761) › Histone acetylation is associated with more open chromatin, increased promoter accessibility, RNA-polymerase recruitment, and visible mRNA production.
+
+```diff
+  Type `HISTONE_ACETYLATION_CHROMATIN_OPENING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-167d63e1a2f5.js`; view `visualization-7d8668a89130.js` → `Visualization`.
++ Source: manifest `type-167d63e1a2f5.js`; view `visualization-a02a5f927128.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Homologous vertebrate forelimbs
+
+```diff
+  Type `EVOLUTION_HOMOLOGOUS_VERTEBRATE_FORELIMBS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e38b20b2bf6b.js`; view `visualization-b01d4d03f800.js` → `EvolutionHomologousVertebrateForelimbsVisualization`.
++ Source: manifest `type-e38b20b2bf6b.js`; view `visualization-d7344cdf4161.js` → `EvolutionHomologousVertebrateForelimbsVisualization`.
+```
+
+#### changed: Lottie animations (761) › HPA axis cortisol stress response
+
+```diff
+  Type `HPA_AXIS_CORTISOL_STRESS_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2f43bdec8785.js`; view `visualization-f6187bb1f6fd.js` → `Visualization`.
++ Source: manifest `type-2f43bdec8785.js`; view `visualization-255dead1fe0e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › HPT axis thyroid hormone regulation
+
+```diff
+  Type `HPT_AXIS_THYROID_HORMONE_REGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7df912491cdc.js`; view `visualization-bc9e453e21dc.js` → `Visualization`.
++ Source: manifest `type-7df912491cdc.js`; view `visualization-4c9e61d61a04.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › human-land-use-biodiversity-loss
+
+```diff
+  Type `HUMAN_LAND_USE_BIODIVERSITY_LOSS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3c23925a2cff.js`; view `visualization-e41c3a3f3ac8.js` → `HumanLandUseBiodiversityLossVisualization`.
++ Source: manifest `type-3c23925a2cff.js`; view `visualization-8a5449a6f686.js` → `HumanLandUseBiodiversityLossVisualization`.
+```
+
+#### changed: Lottie animations (761) › Humoral versus cell-mediated immunity
+
+```diff
+  Type `HUMORAL_VERSUS_CELL_MEDIATED_IMMUNITY` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-11a1a8a393bb.js`; view `visualization-da97c9050cf5.js` → `HumoralVersusCellMediatedImmunityVisualization`.
++ Source: manifest `type-11a1a8a393bb.js`; view `visualization-484f687b9400.js` → `HumoralVersusCellMediatedImmunityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Hydrostatic skeleton, exoskeleton, and endoskeleton
+
+```diff
+  Type `ANIMAL_HYDROSTATIC_EXOSKELETON_ENDOSKELETON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f77a214b3acf.js`; view `visualization-d4f135005504.js` → `AnimalHydrostaticExoskeletonEndoskeletonVisualization`.
++ Source: manifest `type-f77a214b3acf.js`; view `visualization-73509c794e70.js` → `AnimalHydrostaticExoskeletonEndoskeletonVisualization`.
+```
+
+#### changed: Lottie animations (761) › Immersion oil retains light lost at a glass-to-air interface
+
+```diff
+  Type `MICROSCOPY_OIL_IMMERSION_REFRACTIVE_INDEX` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-780edb36cbd7.js`; view `visualization-6647bae1f2cd.js` → `Visualization`.
++ Source: manifest `type-780edb36cbd7.js`; view `visualization-a9814f6e97f4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › In-frame insertion and deletion
+
+```diff
+  Type `MUTATION_IN_FRAME_INDELS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-aaecd71e70d3.js`; view `visualization-ea247749876c.js` → `Visualization`.
++ Source: manifest `type-aaecd71e70d3.js`; view `visualization-a66bdd70d625.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Incomplete DNA replication blocks G2 until a complete chromosome can enter mitosis
+
+```diff
+  Type `G2_REPLICATION_COMPLETION_CHECKPOINT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-558a29617ab5.js`; view `visualization-8d0943e2aff4.js` → `Visualization`.
++ Source: manifest `type-558a29617ab5.js`; view `visualization-cba3fc976742.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Incomplete dominance heterozygote cross and one-to-two-to-one ratio
+
+```diff
+  Type `INCOMPLETE_DOMINANCE_PHENOTYPE_RATIOS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-822c8d210de0.js`; view `visualization-9ddc92ccd8f0.js` → `IncompleteDominancePhenotypeRatiosVisualization`.
++ Source: manifest `type-822c8d210de0.js`; view `visualization-fabcefcb7fc5.js` → `IncompleteDominancePhenotypeRatiosVisualization`.
+```
+
+#### changed: Lottie animations (761) › Incomplete versus complete digestive tract
+
+```diff
+  Type `ANIMAL_INCOMPLETE_VERSUS_COMPLETE_DIGESTIVE_TRACT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-23c40861ef25.js`; view `visualization-b18375cb764a.js` → `AnimalIncompleteVersusCompleteDigestiveTractVisualization`.
++ Source: manifest `type-23c40861ef25.js`; view `visualization-57f3d5ad4b65.js` → `AnimalIncompleteVersusCompleteDigestiveTractVisualization`.
+```
+
+#### changed: Lottie animations (761) › Independent chromosome-set and DNA-content accounting through S phase and both meiotic divisions
+
+```diff
+  Type `MEIOTIC_CHROMOSOME_CHROMATID_ACCOUNTING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d0a4b5e77aed.js`; view `visualization-b3e46724d25f.js` → `Visualization`.
++ Source: manifest `type-d0a4b5e77aed.js`; view `visualization-7da7540120a0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Index-fossil correlation across rock layers
+
+```diff
+  Type `INDEX_FOSSIL_CORRELATION_ACROSS_ROCK_LAYERS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ea30f50b04d8.js`; view `visualization-f865d35769ab.js` → `IndexFossilCorrelationAcrossRockLayersVisualization`.
++ Source: manifest `type-ea30f50b04d8.js`; view `visualization-7ca926480ded.js` → `IndexFossilCorrelationAcrossRockLayersVisualization`.
+```
+
+#### changed: Lottie animations (761) › Induced-fit binding, catalysis, product release, and enzyme reuse
+
+```diff
+  Type `ENZYME_INDUCED_FIT_CATALYTIC_CYCLE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d09e20b6ac28.js`; view `visualization-81f485c25b2a.js` → `Visualization`.
++ Source: manifest `type-d09e20b6ac28.js`; view `visualization-8617a3cada14.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Inherited diversity within one species
+
+```diff
+  Type `BIODIVERSITY_GENETIC_DIVERSITY_WITHIN_SPECIES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7ead817c9a68.js`; view `visualization-98614b4c2fc9.js` → `Visualization`.
++ Source: manifest `type-7ead817c9a68.js`; view `visualization-3f616e79a4ee.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Innate versus adaptive immune response timing
+
+```diff
+  Type `INNATE_VERSUS_ADAPTIVE_IMMUNE_RESPONSE_TIMING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-53728c5f3da2.js`; view `visualization-af8c087049f2.js` → `InnateVersusAdaptiveImmuneResponseTimingVisualization`.
++ Source: manifest `type-53728c5f3da2.js`; view `visualization-a421cbdd5e90.js` → `InnateVersusAdaptiveImmuneResponseTimingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Integrin mechanically attaches extracellular matrix to actin
+
+```diff
+  Type `INTEGRIN_CELL_MATRIX_ADHESION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-186cbe0b107d.js`; view `visualization-467643369b6b.js` → `Visualization`.
++ Source: manifest `type-186cbe0b107d.js`; view `visualization-394dbd854782.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Interferon antiviral signaling between cells
+
+```diff
+  Type `INTERFERON_ANTIVIRAL_SIGNALING_BETWEEN_CELLS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-afc926098422.js`; view `visualization-42bae97fddf2.js` → `InterferonAntiviralSignalingBetweenCellsVisualization`.
++ Source: manifest `type-afc926098422.js`; view `visualization-5d3d4ddc81c5.js` → `InterferonAntiviralSignalingBetweenCellsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Internal versus external fertilization
+
+```diff
+  Type `ANIMAL_INTERNAL_VERSUS_EXTERNAL_FERTILIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c7ac3f150e46.js`; view `visualization-880baab2fa61.js` → `AnimalInternalVersusExternalFertilizationVisualization`.
++ Source: manifest `type-c7ac3f150e46.js`; view `visualization-e1d199d08011.js` → `AnimalInternalVersusExternalFertilizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Interphase growth, DNA replication, and preparation
+
+```diff
+  Type `INTERPHASE_GROWTH_AND_DNA_REPLICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ce51cb96bd01.js`; view `visualization-daf6865b3d24.js` → `Visualization`.
++ Source: manifest `type-ce51cb96bd01.js`; view `visualization-a0268154ed35.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Intestinal nutrient delivery through the hepatic portal vein
+
+```diff
+  Type `ANIMAL_HEPATIC_PORTAL_NUTRIENT_ROUTING` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dd795f50e100.js`; view `visualization-96f7ebf97059.js` → `AnimalHepaticPortalNutrientRoutingVisualization`.
++ Source: manifest `type-dd795f50e100.js`; view `visualization-383b248b35e8.js` → `AnimalHepaticPortalNutrientRoutingVisualization`.
+```
+
+#### changed: Lottie animations (761) › invasive-species-competitive-displacement
+
+```diff
+  Type `INVASIVE_SPECIES_COMPETITIVE_DISPLACEMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e80de06881ec.js`; view `visualization-252ac33eaff4.js` → `InvasiveSpeciesCompetitiveDisplacementVisualization`.
++ Source: manifest `type-e80de06881ec.js`; view `visualization-e4e4fbc0018b.js` → `InvasiveSpeciesCompetitiveDisplacementVisualization`.
+```
+
+#### changed: Lottie animations (761) › Inverted microscope image and opposite stage movement
+
+```diff
+  Type `MICROSCOPY_INVERTED_IMAGE_STAGE_MOVEMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2403f89fd437.js`; view `visualization-37f5392f5211.js` → `Visualization`.
++ Source: manifest `type-2403f89fd437.js`; view `visualization-e18570f139d1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › IP3 opens an ER channel and previously stored calcium ions activate a response
+
+```diff
+  Type `CALCIUM_SECOND_MESSENGER_RELAY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ffe400528963.js`; view `visualization-bd1ec0b2d51a.js` → `Visualization`.
++ Source: manifest `type-ffe400528963.js`; view `visualization-804fa27a839f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Island colonization and evolutionary biogeography
+
+```diff
+  Type `EVOLUTION_BIOGEOGRAPHY_ISLAND_COLONIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3ddd1b7f2f89.js`; view `visualization-6f2876b7b573.js` → `EvolutionBiogeographyIslandColonizationVisualization`.
++ Source: manifest `type-3ddd1b7f2f89.js`; view `visualization-df12e1651160.js` → `EvolutionBiogeographyIslandColonizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Jawless versus jawed fish
+
+```diff
+  Type `VERTEBRATE_JAWLESS_VERSUS_JAWED_FISH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eeca5948c7c2.js`; view `visualization-94d359195f77.js` → `Visualization`.
++ Source: manifest `type-eeca5948c7c2.js`; view `visualization-d6fb36621394.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Kinesin and dynein vesicle transport
+
+```diff
+  Type `KINESIN_DYNEIN_VESICLE_TRANSPORT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-432c209e1ce6.js`; view `visualization-9fec0b7a594a.js` → `Visualization`.
++ Source: manifest `type-432c209e1ce6.js`; view `visualization-29060e1c257b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Lateral fluidity of the plasma membrane
+
+```diff
+  Type `PLASMA_MEMBRANE_LATERAL_FLUIDITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-23e85f38633a.js`; view `visualization-f65d9deca116.js` → `Visualization`.
++ Source: manifest `type-23e85f38633a.js`; view `visualization-bc1d45b59caa.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Leading-versus-lagging synthesis comparison
+
+```diff
+  Type `DNA_REPLICATION_LEADING_LAGGING_STRAND_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a47564d8ff56.js`; view `visualization-4541d5bcc51a.js` → `DnaReplicationLeadingLaggingStrandComparisonVisualization`.
++ Source: manifest `type-a47564d8ff56.js`; view `visualization-914f1b125b8d.js` → `DnaReplicationLeadingLaggingStrandComparisonVisualization`.
+```
+
+#### changed: Lottie animations (761) › Leaf tissue and stomatal anatomy
+
+```diff
+  Type `PLANT_LEAF_TISSUE_AND_STOMATA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-519b5b544178.js`; view `visualization-894ff50c8fbe.js` → `Visualization`.
++ Source: manifest `type-519b5b544178.js`; view `visualization-11fb074056ad.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Lichen fungal-algal symbiosis
+
+```diff
+  Type `LICHEN_FUNGAL_ALGAL_SYMBIOSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ce2c8996ae63.js`; view `visualization-af0023fed7bb.js` → `Visualization`.
++ Source: manifest `type-ce2c8996ae63.js`; view `visualization-5eaefbefaa2a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Life-history tradeoffs in offspring number and care
+
+```diff
+  Type `POPULATION_ECOLOGY_LIFE_HISTORY_TRADEOFFS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f195fc53fca2.js`; view `visualization-1bb491b260f6.js` → `Visualization`.
++ Source: manifest `type-f195fc53fca2.js`; view `visualization-f45bda878510.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ligand dissociation and phosphatase-mediated phosphate removal terminate a cellular response
+
+```diff
+  Type `SIGNALING_PATHWAY_TERMINATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-056b02527aad.js`; view `visualization-5f002777c687.js` → `Visualization`.
++ Source: manifest `type-056b02527aad.js`; view `visualization-d64b21ffdb66.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Linked chromosome loci favor parental over recombinant allele combinations
+
+```diff
+  Type `LINKED_GENE_INHERITANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9127482d87d3.js`; view `visualization-dd3ad4239dd6.js` → `LinkedGeneInheritanceVisualization`.
++ Source: manifest `type-9127482d87d3.js`; view `visualization-529a839e0473.js` → `LinkedGeneInheritanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Lipid classes overview
+
+```diff
+  Type `LIPID_CLASSES_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4d388e531655.js`; view `visualization-8a3e2ddf02b2.js` → `LipidClassesOverviewVisualization`.
++ Source: manifest `type-4d388e531655.js`; view `visualization-243acf960ce2.js` → `LipidClassesOverviewVisualization`.
+```
+
+#### changed: Lottie animations (761) › Lipid hydrophobicity in water
+
+```diff
+  Type `LIPID_HYDROPHOBICITY_IN_WATER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a315e1c4a7f6.js`; view `visualization-863ec8f31f8e.js` → `LipidHydrophobicityInWaterVisualization`.
++ Source: manifest `type-a315e1c4a7f6.js`; view `visualization-426224e5a112.js` → `LipidHydrophobicityInWaterVisualization`.
+```
+
+#### changed: Lottie animations (761) › Lipid tail saturation and packing
+
+```diff
+  Type `LIPID_TAIL_SATURATION_PACKING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-772703df0b68.js`; view `visualization-86849ea2fccc.js` → `LipidTailSaturationPackingVisualization`.
++ Source: manifest `type-772703df0b68.js`; view `visualization-9f09162128e4.js` → `LipidTailSaturationPackingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Living seed: protective coat, stored food, and embryo
+
+```diff
+  Type `ORGANISM_SEED_STRUCTURE_AND_STORED_FOOD` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c8498b391a03.js`; view `visualization-7eeed6997166.js` → `OrganismSeedStructureAndStoredFoodVisualization`.
++ Source: manifest `type-c8498b391a03.js`; view `visualization-685bb7552464.js` → `OrganismSeedStructureAndStoredFoodVisualization`.
+```
+
+#### changed: Lottie animations (761) › Lobe-fin to tetrapod limb homology
+
+```diff
+  Type `VERTEBRATE_LOBE_FIN_TO_TETRAPOD_LIMB_HOMOLOGY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-edb0bb920300.js`; view `visualization-14a3204a4aa4.js` → `Visualization`.
++ Source: manifest `type-edb0bb920300.js`; view `visualization-ac0788fff03e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Logistic population growth and carrying capacity
+
+```diff
+  Type `POPULATION_ECOLOGY_LOGISTIC_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-da06ed90723c.js`; view `visualization-c2c6d65d8cce.js` → `Visualization`.
++ Source: manifest `type-da06ed90723c.js`; view `visualization-05e28cebbf3d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Long-bone growth at the growth plate
+
+```diff
+  Type `MUSCULOSKELETAL_LONG_BONE_GROWTH_PLATE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-43845f929544.js`; view `visualization-e93cfdd1bd14.js` → `MusculoskeletalLongBoneGrowthPlateVisualization`.
++ Source: manifest `type-43845f929544.js`; view `visualization-f7ceddc6867f.js` → `MusculoskeletalLongBoneGrowthPlateVisualization`.
+```
+
+#### changed: Lottie animations (761) › Long-bone structure and function
+
+```diff
+  Type `MUSCULOSKELETAL_LONG_BONE_COMPACT_SPONGY_MARROW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5f5e13b6ab5b.js`; view `visualization-2b822ecfb988.js` → `MusculoskeletalLongBoneCompactSpongyMarrowVisualization`.
++ Source: manifest `type-5f5e13b6ab5b.js`; view `visualization-1898f5743c21.js` → `MusculoskeletalLongBoneCompactSpongyMarrowVisualization`.
+```
+
+#### changed: Lottie animations (761) › Loop of Henle countercurrent concentration
+
+```diff
+  Type `LOOP_OF_HENLE_COUNTERCURRENT_CONCENTRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bb7e74c71801.js`; view `visualization-d49aea832834.js` → `LoopOfHenleCountercurrentConcentrationVisualization`.
++ Source: manifest `type-bb7e74c71801.js`; view `visualization-2ac49765dee1.js` → `LoopOfHenleCountercurrentConcentrationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Lophotrochozoan versus ecdysozoan lineages
+
+```diff
+  Type `ANIMAL_LOPHOTROCHOZOAN_VERSUS_ECDYSOZOAN_LINEAGES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1a0aea7b3410.js`; view `visualization-68d40fd01672.js` → `AnimalLophotrochozoanVersusEcdysozoanLineagesVisualization`.
++ Source: manifest `type-1a0aea7b3410.js`; view `visualization-2374344c8f7c.js` → `AnimalLophotrochozoanVersusEcdysozoanLineagesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Lymphocyte development and recirculation
+
+```diff
+  Type `LYMPHOCYTE_DEVELOPMENT_RECIRCULATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b6d38700d2b7.js`; view `visualization-52bb5b965a85.js` → `LymphocyteDevelopmentRecirculationVisualization`.
++ Source: manifest `type-b6d38700d2b7.js`; view `visualization-da8aedc0e5db.js` → `LymphocyteDevelopmentRecirculationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Magnification versus resolving power
+
+```diff
+  Type `MICROSCOPY_MAGNIFICATION_VERSUS_RESOLVING_POWER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-14ad585f6688.js`; view `visualization-1be39e9b2f57.js` → `Visualization`.
++ Source: manifest `type-14ad585f6688.js`; view `visualization-62d8a817ac50.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Major animal phyla and representative body plans
+
+```diff
+  Type `ANIMAL_MAJOR_PHYLA_AND_BODY_PLAN_TRAITS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-61ce21314989.js`; view `visualization-ea995afaca37.js` → `AnimalMajorPhylaAndBodyPlanTraitsVisualization`.
++ Source: manifest `type-61ce21314989.js`; view `visualization-ee0ec600eb8e.js` → `AnimalMajorPhylaAndBodyPlanTraitsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Male reproductive anatomy and sperm route
+
+```diff
+  Type `ANIMAL_MALE_REPRODUCTIVE_ANATOMY_SPERM_ROUTE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-52d53df3c9e7.js`; view `visualization-e10ad0116bbd.js` → `AnimalMaleReproductiveAnatomySpermRouteVisualization`.
++ Source: manifest `type-52d53df3c9e7.js`; view `visualization-d862a9183753.js` → `AnimalMaleReproductiveAnatomySpermRouteVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mammalian airway, lungs, and alveolar exchange anatomy
+
+```diff
+  Type `ANIMAL_RESPIRATORY_AIRWAY_AND_LUNG_ANATOMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e72cfd1bca46.js`; view `visualization-e0aa989194a6.js` → `AnimalRespiratoryAirwayAndLungAnatomyVisualization`.
++ Source: manifest `type-e72cfd1bca46.js`; view `visualization-0dd6360349a6.js` → `AnimalRespiratoryAirwayAndLungAnatomyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mammalian pulmonary and systemic double circulation
+
+```diff
+  Type `ANIMAL_PULMONARY_AND_SYSTEMIC_CIRCULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c64ab2df2499.js`; view `visualization-a57957651e21.js` → `AnimalPulmonaryAndSystemicCirculationVisualization`.
++ Source: manifest `type-c64ab2df2499.js`; view `visualization-1eabfb9e4f6e.js` → `AnimalPulmonaryAndSystemicCirculationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mammalian urinary system anatomy
+
+```diff
+  Type `MAMMALIAN_URINARY_SYSTEM_ANATOMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9183bd73705b.js`; view `visualization-5c985aa90640.js` → `MammalianUrinarySystemAnatomyVisualization`.
++ Source: manifest `type-9183bd73705b.js`; view `visualization-ed3d2c416460.js` → `MammalianUrinarySystemAnatomyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Marine fish osmoregulation
+
+```diff
+  Type `MARINE_FISH_OSMOREGULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c550cf95a1b9.js`; view `visualization-95f8243d8e55.js` → `MarineFishOsmoregulationVisualization`.
++ Source: manifest `type-c550cf95a1b9.js`; view `visualization-786db8a289b4.js` → `MarineFishOsmoregulationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mass-extinction survival and adaptive radiation
+
+```diff
+  Type `MASS_EXTINCTION_SURVIVAL_AND_ADAPTIVE_RADIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8f0079451279.js`; view `visualization-dee6bb6b9cb8.js` → `MassExtinctionSurvivalAndAdaptiveRadiationVisualization`.
++ Source: manifest `type-8f0079451279.js`; view `visualization-230a775ec11b.js` → `MassExtinctionSurvivalAndAdaptiveRadiationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Matched heterozygotes distinguish uniform blending from codominance
+
+```diff
+  Type `INCOMPLETE_DOMINANCE_VERSUS_CODOMINANCE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a0ef520456c3.js`; view `visualization-f4feb4984342.js` → `IncompleteDominanceVersusCodominanceVisualization`.
++ Source: manifest `type-a0ef520456c3.js`; view `visualization-6ba25c9e7c2f.js` → `IncompleteDominanceVersusCodominanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Maternal allele silencing makes the same nuclear variant depend on its parent of origin
+
+```diff
+  Type `GENOMIC_IMPRINTING_PARENT_OF_ORIGIN` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f8aac9842be6.js`; view `visualization-f933a08869d3.js` → `GenomicImprintingParentOfOriginVisualization`.
++ Source: manifest `type-f8aac9842be6.js`; view `visualization-f9ee9350f469.js` → `GenomicImprintingParentOfOriginVisualization`.
+```
+
+#### changed: Lottie animations (761) › Maternal mitochondrial transmission compared with no paternal transmission
+
+```diff
+  Type `MITOCHONDRIAL_MATERNAL_INHERITANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9cc835a152fb.js`; view `visualization-ee206fee98e8.js` → `MitochondrialMaternalInheritanceVisualization`.
++ Source: manifest `type-9cc835a152fb.js`; view `visualization-a6f7d442fc82.js` → `MitochondrialMaternalInheritanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Matter cycles while energy flows
+
+```diff
+  Type `BIOGEOCHEMICAL_MATTER_CYCLING_VERSUS_ENERGY_FLOW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f76c55fd1b22.js`; view `visualization-358c8fe7c37d.js` → `Visualization`.
++ Source: manifest `type-f76c55fd1b22.js`; view `visualization-5cb127852d99.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Mature mRNA structure
+
+```diff
+  Type `MATURE_MRNA_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-49869326c395.js`; view `visualization-f37bf12f0b8b.js` → `Visualization`.
++ Source: manifest `type-49869326c395.js`; view `visualization-ed9169b96f08.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Measured image size, actual specimen size, and magnification
+
+```diff
+  Type `MICROSCOPY_IMAGE_SIZE_ACTUAL_SIZE_MAGNIFICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-aa7e4e9c7882.js`; view `visualization-3334cc8579ef.js` → `Visualization`.
++ Source: manifest `type-aa7e4e9c7882.js`; view `visualization-47d6d240aacd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Measurement accuracy and precision
+
+```diff
+  Type `BIOLOGICAL_MEASUREMENT_ACCURACY_AND_PRECISION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8b3293eb3b2f.js`; view `visualization-f4533fa34250.js` → `BiologicalMeasurementAccuracyAndPrecisionVisualization`.
++ Source: manifest `type-8b3293eb3b2f.js`; view `visualization-bee4be166e60.js` → `BiologicalMeasurementAccuracyAndPrecisionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Meiosis I separates intact replicated homologs and reduces diploid cells to haploid
+
+```diff
+  Type `HOMOLOGOUS_CHROMOSOME_SEGREGATION_MEIOSIS_ONE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4fd95528f685.js`; view `visualization-d7a18dd31f8a.js` → `Visualization`.
++ Source: manifest `type-4fd95528f685.js`; view `visualization-5965d4d8e45f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Meiosis II separates sister chromatids while preserving one haploid chromosome set
+
+```diff
+  Type `SISTER_CHROMATID_SEGREGATION_MEIOSIS_TWO` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1933f57a34c9.js`; view `visualization-0eac2a2a596f.js` → `Visualization`.
++ Source: manifest `type-1933f57a34c9.js`; view `visualization-98dec1f9120f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Meiosis-I nondisjunction sends both homologs together and produces four abnormal gametes
+
+```diff
+  Type `MEIOSIS_ONE_NONDISJUNCTION_SEGREGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-46c3ec3902e8.js`; view `visualization-ccd9ba9e8738.js` → `Visualization`.
++ Source: manifest `type-46c3ec3902e8.js`; view `visualization-d910061e66d1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Meiosis-II nondisjunction in one branch leaves two normal and two abnormal gametes
+
+```diff
+  Type `MEIOSIS_TWO_NONDISJUNCTION_SEGREGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8520cf5c3419.js`; view `visualization-b86b87566eff.js` → `Visualization`.
++ Source: manifest `type-8520cf5c3419.js`; view `visualization-80f34665b8c7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Membrane bilayer polarity
+
+```diff
+  Type `MEMBRANE_BILAYER_POLARITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-549b648a502a.js`; view `visualization-1ecf98d1df42.js` → `MembraneBilayerPolarityVisualization`.
++ Source: manifest `type-549b648a502a.js`; view `visualization-9a82bea6e7bd.js` → `MembraneBilayerPolarityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Membrane-bound compartments within one eukaryotic cell
+
+```diff
+  Type `CELLULAR_COMPARTMENTALIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-47e4ca3ded08.js`; view `visualization-5e7252d80ce6.js` → `Visualization`.
++ Source: manifest `type-47e4ca3ded08.js`; view `visualization-a75edc1d7b80.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Membrane-bound ligand signals a touching neighboring cell
+
+```diff
+  Type `DIRECT_CONTACT_CELL_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d8a0405176cd.js`; view `visualization-15b2aabcaf4f.js` → `DirectContactCellSignalingVisualization`.
++ Source: manifest `type-d8a0405176cd.js`; view `visualization-6f5ba68f5a86.js` → `DirectContactCellSignalingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mendelian garden-pea P, F1, and F2 inheritance overview
+
+```diff
+  Type `MENDELIAN_GENETICS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9cd861e080d5.js`; view `visualization-82827faf68b3.js` → `Visualization`.
++ Source: manifest `type-9cd861e080d5.js`; view `visualization-6f1ed5f8edae.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Metamorphosis from larva to adult
+
+```diff
+  Type `ANIMAL_METAMORPHOSIS_LARVA_TO_ADULT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c0c9f0d5ebec.js`; view `visualization-686372254f47.js` → `AnimalMetamorphosisLarvaToAdultVisualization`.
++ Source: manifest `type-c0c9f0d5ebec.js`; view `visualization-9a4954a8f911.js` → `AnimalMetamorphosisLarvaToAdultVisualization`.
+```
+
+#### changed: Lottie animations (761) › Microscope illumination and image path
+
+```diff
+  Type `MICROSCOPY_ILLUMINATION_TO_EYEPIECE_PATH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3c830228c3fc.js`; view `visualization-9811488777c5.js` → `Visualization`.
++ Source: manifest `type-3c830228c3fc.js`; view `visualization-43d42b8ffe9b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Microscopy scale bar cell measurement
+
+```diff
+  Type `MICROSCOPY_SCALE_BAR_CELL_MEASUREMENT` · manifest v1 · not in the type enum.
+  
+- Source: manifest `type-e95d6b1ca1f3.js`; view `visualization-bec74e400b4a.js` → `Visualization`.
++ Source: manifest `type-e95d6b1ca1f3.js`; view `visualization-2504747f443e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Microtubule polarity and growth
+
+```diff
+  Type `MICROTUBULE_POLARITY_AND_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8b1bee59d525.js`; view `visualization-43f649cdcd10.js` → `Visualization`.
++ Source: manifest `type-8b1bee59d525.js`; view `visualization-1a7eef9b843b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Missense amino-acid substitution
+
+```diff
+  Type `MUTATION_MISSENSE_SUBSTITUTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b3afddd2f55b.js`; view `visualization-4644cc82aac8.js` → `Visualization`.
++ Source: manifest `type-b3afddd2f55b.js`; view `visualization-13f532c17a71.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Mitochondrion structure and ATP production
+
+```diff
+  Type `MITOCHONDRION_STRUCTURE_AND_ATP_PRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ac46f1238339.js`; view `visualization-2e0085bab352.js` → `Visualization`.
++ Source: manifest `type-ac46f1238339.js`; view `visualization-b260553e33c2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Molecular sequence similarity
+
+```diff
+  Type `EVOLUTION_MOLECULAR_SEQUENCE_SIMILARITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ac1b1b4528e3.js`; view `visualization-9b00a1de0d27.js` → `EvolutionMolecularSequenceSimilarityVisualization`.
++ Source: manifest `type-ac1b1b4528e3.js`; view `visualization-d4379ece6a74.js` → `EvolutionMolecularSequenceSimilarityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mollusk foot modifications
+
+```diff
+  Type `ANIMAL_MOLLUSK_FOOT_MODIFICATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1df450b5a80b.js`; view `visualization-634ca0e9297b.js` → `AnimalMolluskFootModificationsVisualization`.
++ Source: manifest `type-1df450b5a80b.js`; view `visualization-da321ec95da2.js` → `AnimalMolluskFootModificationsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mollusk mantle, foot, and visceral mass
+
+```diff
+  Type `ANIMAL_MOLLUSK_MANTLE_FOOT_VISCERAL_MASS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7142547afcd9.js`; view `visualization-90a30a49fdef.js` → `AnimalMolluskMantleFootVisceralMassVisualization`.
++ Source: manifest `type-7142547afcd9.js`; view `visualization-df655849ae47.js` → `AnimalMolluskMantleFootVisceralMassVisualization`.
+```
+
+#### changed: Lottie animations (761) › Monophyletic clade membership
+
+```diff
+  Type `MONOPHYLETIC_CLADE_MEMBERSHIP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9cec470e9471.js`; view `visualization-a79dbed798a7.js` → `Visualization`.
++ Source: manifest `type-9cec470e9471.js`; view `visualization-8feb780656e6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Moss gametophyte and sporophyte life cycle
+
+```diff
+  Type `MOSS_GAMETOPHYTE_SPOROPHYTE_LIFE_CYCLE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8887b8fd3dec.js`; view `visualization-9311d7610a0f.js` → `MossGametophyteSporophyteLifeCycleVisualization`.
++ Source: manifest `type-8887b8fd3dec.js`; view `visualization-3db0fedfe210.js` → `MossGametophyteSporophyteLifeCycleVisualization`.
+```
+
+#### changed: Lottie animations (761) › Motile cilium axoneme structure
+
+```diff
+  Type `MOTILE_CILIUM_AXONEME_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-30de38936a0c.js`; view `visualization-46097015b30c.js` → `Visualization`.
++ Source: manifest `type-30de38936a0c.js`; view `visualization-2cd249c3e1f9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Motor-unit recruitment and force
+
+```diff
+  Type `MUSCULOSKELETAL_MOTOR_UNIT_RECRUITMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eefe1b0d8c69.js`; view `visualization-5ad3bfd9b29a.js` → `MusculoskeletalMotorUnitRecruitmentVisualization`.
++ Source: manifest `type-eefe1b0d8c69.js`; view `visualization-129f73326fb0.js` → `MusculoskeletalMotorUnitRecruitmentVisualization`.
+```
+
+#### changed: Lottie animations (761) › mRNA matches coding DNA except for thymine-to-uracil substitution
+
+```diff
+  Type `CODING_STRAND_MRNA_SEQUENCE_RELATIONSHIP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-92ba5f9b9ddc.js`; view `visualization-7493fb290aaa.js` → `CodingStrandMrnaSequenceRelationshipVisualization`.
++ Source: manifest `type-92ba5f9b9ddc.js`; view `visualization-7277ed4e64cd.js` → `CodingStrandMrnaSequenceRelationshipVisualization`.
+```
+
+#### changed: Lottie animations (761) › Multicellular cell, tissue, and organ hierarchy
+
+```diff
+  Type `MULTICELLULAR_CELL_TISSUE_ORGAN_HIERARCHY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eb93226f8795.js`; view `visualization-2389afbd769d.js` → `Visualization`.
++ Source: manifest `type-eb93226f8795.js`; view `visualization-daae454319d1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Multiple tissues build a functional organ
+
+```diff
+  Type `MULTICELLULAR_TISSUES_BUILD_ORGANS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ef89c323f7bf.js`; view `visualization-ea50fbfe0312.js` → `Visualization`.
++ Source: manifest `type-ef89c323f7bf.js`; view `visualization-6409c3d030d8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Mutation codon reading frame
+
+```diff
+  Type `MUTATION_CODON_READING_FRAME` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6ea333a284e9.js`; view `visualization-d3be9c3c97bb.js` → `Visualization`.
++ Source: manifest `type-6ea333a284e9.js`; view `visualization-b7193efa6169.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Mutation DNA to cellular phenotype
+
+```diff
+  Type `MUTATION_DNA_RNA_PROTEIN_PHENOTYPE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-867ac10bacdb.js`; view `visualization-ee1e81847f2a.js` → `Visualization`.
++ Source: manifest `type-867ac10bacdb.js`; view `visualization-4a2b1433ac84.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Mutualism cleaning partnership
+
+```diff
+  Type `MUTUALISM_CLEANING_PARTNERSHIP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-58a325bee689.js`; view `visualization-32402adcde57.js` → `MutualismCleaningPartnershipVisualization`.
++ Source: manifest `type-58a325bee689.js`; view `visualization-b3370b3d6052.js` → `MutualismCleaningPartnershipVisualization`.
+```
+
+#### changed: Lottie animations (761) › Mycorrhizal mutualism
+
+```diff
+  Type `MYCORRHIZAL_MUTUALISM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ba78afa4c3b9.js`; view `visualization-a1ab76eea58b.js` → `Visualization`.
++ Source: manifest `type-ba78afa4c3b9.js`; view `visualization-d51704b9a2a2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Myelinated versus unmyelinated conduction
+
+```diff
+  Type `MYELINATED_VERSUS_UNMYELINATED_CONDUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cd97efba78f5.js`; view `visualization-ecd3412e1ad1.js` → `MyelinatedVersusUnmyelinatedConductionVisualization`.
++ Source: manifest `type-cd97efba78f5.js`; view `visualization-6b79a9d104de.js` → `MyelinatedVersusUnmyelinatedConductionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Natural killer cell missing-self recognition
+
+```diff
+  Type `NATURAL_KILLER_CELL_MISSING_SELF_RECOGNITION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a79320848a80.js`; view `visualization-2053c9a7bff3.js` → `NaturalKillerCellMissingSelfRecognitionVisualization`.
++ Source: manifest `type-a79320848a80.js`; view `visualization-c81b077093f3.js` → `NaturalKillerCellMissingSelfRecognitionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Natural selection and differential reproduction
+
+```diff
+  Type `NATURAL_SELECTION_DIFFERENTIAL_REPRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9f3be931acd6.js`; view `visualization-9ea2d003736d.js` → `NaturalSelectionDifferentialReproductionVisualization`.
++ Source: manifest `type-9f3be931acd6.js`; view `visualization-2a86fac00d14.js` → `NaturalSelectionDifferentialReproductionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Natural selection and differential survival
+
+```diff
+  Type `NATURAL_SELECTION_DIFFERENTIAL_SURVIVAL` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b69500996b7c.js`; view `visualization-dee0140f7c98.js` → `NaturalSelectionDifferentialSurvivalVisualization`.
++ Source: manifest `type-b69500996b7c.js`; view `visualization-352342770790.js` → `NaturalSelectionDifferentialSurvivalVisualization`.
+```
+
+#### changed: Lottie animations (761) › Natural selection through differential reproduction
+
+```diff
+  Type `POPULATION_GENETICS_SELECTION_DIFFERENTIAL_REPRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-60e2070dd38f.js`; view `visualization-1a113f69291b.js` → `Visualization`.
++ Source: manifest `type-60e2070dd38f.js`; view `visualization-6e32bd57f2e3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nephron anatomy across cortex and medulla
+
+```diff
+  Type `NEPHRON_ANATOMY_CORTEX_MEDULLA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1cf35a26845a.js`; view `visualization-e52014699426.js` → `NephronAnatomyCortexMedullaVisualization`.
++ Source: manifest `type-1cf35a26845a.js`; view `visualization-23c54fcb290b.js` → `NephronAnatomyCortexMedullaVisualization`.
+```
+
+#### changed: Lottie animations (761) › Nervous, muscular, and skeletal systems coordinate movement
+
+```diff
+  Type `NERVOUS_MUSCULAR_SKELETAL_MOVEMENT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eceb82f62656.js`; view `visualization-f0566e1fe56f.js` → `Visualization`.
++ Source: manifest `type-eceb82f62656.js`; view `visualization-ed7a9d20ec8d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nested intestinal folds, villi, and epithelial microvilli
+
+```diff
+  Type `ANIMAL_INTESTINAL_FOLDS_VILLI_AND_MICROVILLI` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-46ee491c27f6.js`; view `visualization-ef0559dcd3de.js` → `AnimalIntestinalFoldsVilliAndMicrovilliVisualization`.
++ Source: manifest `type-46ee491c27f6.js`; view `visualization-2df6dd1b614d.js` → `AnimalIntestinalFoldsVilliAndMicrovilliVisualization`.
+```
+
+#### changed: Lottie animations (761) › Neuroendocrine negative feedback
+
+```diff
+  Type `NEUROENDOCRINE_NEGATIVE_FEEDBACK` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d2c67a2d1e11.js`; view `visualization-c78cca819d3e.js` → `Visualization`.
++ Source: manifest `type-d2c67a2d1e11.js`; view `visualization-1812506856fd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Neuromuscular junction transmission
+
+```diff
+  Type `MUSCULOSKELETAL_NEUROMUSCULAR_JUNCTION_TRANSMISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f682a67626fb.js`; view `visualization-55692c8231b1.js` → `MusculoskeletalNeuromuscularJunctionTransmissionVisualization`.
++ Source: manifest `type-f682a67626fb.js`; view `visualization-f99d39b27ccf.js` → `MusculoskeletalNeuromuscularJunctionTransmissionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Neuron anatomy and signal direction
+
+```diff
+  Type `NEURON_ANATOMY_AND_SIGNAL_DIRECTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-12666ffdf8fa.js`; view `visualization-5cebfc564d7d.js` → `NeuronAnatomyAndSignalDirectionVisualization`.
++ Source: manifest `type-12666ffdf8fa.js`; view `visualization-784ecb96006e.js` → `NeuronAnatomyAndSignalDirectionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Neuronal resting potential and ion gradients
+
+```diff
+  Type `NEURONAL_RESTING_POTENTIAL_ION_GRADIENTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ca7d004370ba.js`; view `visualization-996686ef3060.js` → `NeuronalRestingPotentialIonGradientsVisualization`.
++ Source: manifest `type-ca7d004370ba.js`; view `visualization-9da27d3260f8.js` → `NeuronalRestingPotentialIonGradientsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Neurons and muscle cells express different genes from the same genome
+
+```diff
+  Type `NEURON_VERSUS_MUSCLE_GENE_EXPRESSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b8052381e876.js`; view `visualization-84d797d77234.js` → `Visualization`.
++ Source: manifest `type-b8052381e876.js`; view `visualization-9844b3383a69.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Neurons, synapses, and neural circuits
+
+```diff
+  Type `NEURONS_SYNAPSES_AND_NEURAL_CIRCUITS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f20bb932bb7c.js`; view `visualization-5017d37a76fa.js` → `NeuronsSynapsesAndNeuralCircuitsVisualization`.
++ Source: manifest `type-f20bb932bb7c.js`; view `visualization-232b66f7dca0.js` → `NeuronsSynapsesAndNeuralCircuitsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Neurotransmitter reuptake and synaptic clearance
+
+```diff
+  Type `NEUROTRANSMITTER_REUPTAKE_AND_CLEARANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7c1af0bff819.js`; view `visualization-3f56b90bf5f3.js` → `NeurotransmitterReuptakeAndClearanceVisualization`.
++ Source: manifest `type-7c1af0bff819.js`; view `visualization-39043ce128ec.js` → `NeurotransmitterReuptakeAndClearanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Nitrification and denitrification
+
+```diff
+  Type `BIOGEOCHEMICAL_NITROGEN_NITRIFICATION_AND_DENITRIFICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-19d786cf3a01.js`; view `visualization-2fadb87e20e6.js` → `Visualization`.
++ Source: manifest `type-19d786cf3a01.js`; view `visualization-8304be1c5d39.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nitrogen ammonification and decomposition
+
+```diff
+  Type `BIOGEOCHEMICAL_NITROGEN_AMMONIFICATION_AND_DECOMPOSITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d12b6f865d56.js`; view `visualization-90d85c1ae54a.js` → `Visualization`.
++ Source: manifest `type-d12b6f865d56.js`; view `visualization-e98971d73ffb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nitrogen reservoirs and transformations
+
+```diff
+  Type `BIOGEOCHEMICAL_NITROGEN_RESERVOIRS_AND_TRANSFORMATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d15ab1bb70cb.js`; view `visualization-bf0d042ec0a1.js` → `Visualization`.
++ Source: manifest `type-d15ab1bb70cb.js`; view `visualization-b0006e33041e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nonsense mutation premature stop
+
+```diff
+  Type `MUTATION_NONSENSE_PREMATURE_STOP` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-65285c5241d7.js`; view `visualization-7e17af4e3fdf.js` → `Visualization`.
++ Source: manifest `type-65285c5241d7.js`; view `visualization-c42648e0abd6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nonvascular epithelium and connective blood supply
+
+```diff
+  Type `EPITHELIAL_NONVASCULAR_CONNECTIVE_TISSUE_BLOOD_SUPPLY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2553d85b2745.js`; view `visualization-3f36040b9312.js` → `EpithelialNonvascularConnectiveTissueBloodSupplyVisualization`.
++ Source: manifest `type-2553d85b2745.js`; view `visualization-f768e957e131.js` → `EpithelialNonvascularConnectiveTissueBloodSupplyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Nonvascular versus vascular plants
+
+```diff
+  Type `PLANT_NONVASCULAR_VERSUS_VASCULAR_TISSUE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8df93f6c376d.js`; view `visualization-9339714af0cd.js` → `PlantNonvascularVersusVascularTissueVisualization`.
++ Source: manifest `type-8df93f6c376d.js`; view `visualization-7dee5c7bff74.js` → `PlantNonvascularVersusVascularTissueVisualization`.
+```
+
+#### changed: Lottie animations (761) › Normal cell contact stops growth while contact-insensitive cells keep piling up
+
+```diff
+  Type `DENSITY_DEPENDENT_CONTACT_INHIBITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-84e53f4d916e.js`; view `visualization-b430208ff9f1.js` → `Visualization`.
++ Source: manifest `type-84e53f4d916e.js`; view `visualization-f9978b6a8a3a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nucleic acids
+
+```diff
+  Type `NUCLEIC_ACIDS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-559d658f1bc7.js`; view `visualization-9cb12c700d1a.js` → `Visualization`.
++ Source: manifest `type-559d658f1bc7.js`; view `visualization-c73ef7b6d4b5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nucleic-acid polymerization
+
+```diff
+  Type `NUCLEIC_ACID_POLYMERIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-15d314d9a413.js`; view `visualization-c6f2b1dc845a.js` → `Visualization`.
++ Source: manifest `type-15d314d9a413.js`; view `visualization-727bb47105b9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nucleotide structure
+
+```diff
+  Type `NUCLEOTIDE_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-47efaf198b89.js`; view `visualization-fc9a4bc39fc0.js` → `Visualization`.
++ Source: manifest `type-47efaf198b89.js`; view `visualization-d83c656f2a72.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nucleus and ribosome functions
+
+```diff
+  Type `NUCLEUS_AND_RIBOSOME_FUNCTIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ee04370f5b4d.js`; view `visualization-1fca2ac86b94.js` → `Visualization`.
++ Source: manifest `type-ee04370f5b4d.js`; view `visualization-1cda57db672b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Nutrient runoff and eutrophication
+
+```diff
+  Type `BIOGEOCHEMICAL_NUTRIENT_RUNOFF_AND_EUTROPHICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fd6b1f69df6b.js`; view `visualization-4a593f85174c.js` → `Visualization`.
++ Source: manifest `type-fd6b1f69df6b.js`; view `visualization-2eef85c9d933.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Objective power and field of view
+
+```diff
+  Type `MICROSCOPY_OBJECTIVE_POWER_FIELD_OF_VIEW` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d76cf63ba314.js`; view `visualization-6bd028c86e9b.js` → `Visualization`.
++ Source: manifest `type-d76cf63ba314.js`; view `visualization-e7c430ba8dc1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ocean-atmosphere carbon exchange
+
+```diff
+  Type `BIOGEOCHEMICAL_CARBON_OCEAN_ATMOSPHERE_EXCHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5aeed8fabbff.js`; view `visualization-b0a8c7f14dcf.js` → `Visualization`.
++ Source: manifest `type-5aeed8fabbff.js`; view `visualization-d4a713707c7e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Okazaki-fragment maturation and joining
+
+```diff
+  Type `DNA_REPLICATION_OKAZAKI_FRAGMENT_JOINING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fd02dcfeacd9.js`; view `visualization-aa626062e50a.js` → `DnaReplicationOkazakiFragmentJoiningVisualization`.
++ Source: manifest `type-fd02dcfeacd9.js`; view `visualization-47dbc8ecf5d4.js` → `DnaReplicationOkazakiFragmentJoiningVisualization`.
+```
+
+#### changed: Lottie animations (761) › Oldest fossil and an unsampled ghost lineage
+
+```diff
+  Type `OLDEST_FOSSIL_AND_UNSAMPLED_GHOST_LINEAGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-216aa557c026.js`; view `visualization-d75e072ed5c0.js` → `OldestFossilAndUnsampledGhostLineageVisualization`.
++ Source: manifest `type-216aa557c026.js`; view `visualization-769f09fba4b9.js` → `OldestFossilAndUnsampledGhostLineageVisualization`.
+```
+
+#### changed: Lottie animations (761) › One affected X allele passes from a grandfather through his carrier daughter to an affected grandson without father-to-son transmission
+
+```diff
+  Type `MENDELIAN_X_LINKED_PEDIGREE_GRANDFATHER_TO_GRANDSON_TRANSMISSION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-385e9e52f941.js`; view `visualization-fa809f94b702.js` → `Visualization`.
++ Source: manifest `type-385e9e52f941.js`; view `visualization-d935720188ab.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One aligned four-chromatid meiotic tetrad preserves maternal and paternal loci
+
+```diff
+  Type `HOMOLOGOUS_CHROMOSOME_PAIRING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7b8c4c4307c7.js`; view `visualization-7fecd0bdec18.js` → `Visualization`.
++ Source: manifest `type-7b8c4c4307c7.js`; view `visualization-ce655d37212c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One bacterial cell compared with many cooperating animal cells
+
+```diff
+  Type `CELL_THEORY_UNICELLULAR_AND_MULTICELLULAR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-138f34a0c4e3.js`; view `visualization-6cbe7e6b11ba.js` → `Visualization`.
++ Source: manifest `type-138f34a0c4e3.js`; view `visualization-a7469f1706f6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One bacterium biases run-and-tumble movement toward an attractant
+
+```diff
+  Type `BACTERIAL_CHEMOTAXIS_RUN_AND_TUMBLE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d1b77d25749f.js`; view `visualization-b7c854db9396.js` → `BacterialChemotaxisRunAndTumbleVisualization`.
++ Source: manifest `type-d1b77d25749f.js`; view `visualization-a2f9ed9eb63f.js` → `BacterialChemotaxisRunAndTumbleVisualization`.
+```
+
+#### changed: Lottie animations (761) › One biological outlier shifts the mean but not the median
+
+```diff
+  Type `BIOLOGICAL_OUTLIER_EFFECTS_ON_MEAN_AND_MEDIAN` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-17e25ff46a6a.js`; view `visualization-f0115fa16c94.js` → `BiologicalOutlierEffectsOnMeanAndMedianVisualization`.
++ Source: manifest `type-17e25ff46a6a.js`; view `visualization-8e1065f18a88.js` → `BiologicalOutlierEffectsOnMeanAndMedianVisualization`.
+```
+
+#### changed: Lottie animations (761) › One cell secretes and receives its own extracellular signal
+
+```diff
+  Type `AUTOCRINE_CELL_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ef11fd8d8bd3.js`; view `visualization-4b9fc091f169.js` → `AutocrineCellSignalingVisualization`.
++ Source: manifest `type-ef11fd8d8bd3.js`; view `visualization-b9755a40b382.js` → `AutocrineCellSignalingVisualization`.
+```
+
+#### changed: Lottie animations (761) › One chromosome before and after sister-chromatid duplication
+
+```diff
+  Type `CHROMOSOME_SISTER_CHROMATID_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6b03cb5fae86.js`; view `visualization-2144e3b6e2aa.js` → `Visualization`.
++ Source: manifest `type-6b03cb5fae86.js`; view `visualization-d4d3b0b9d04a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One diploid germ cell divides into four genetically distinguishable haploid gametes
+
+```diff
+  Type `MEIOSIS_AND_GENETIC_DIVERSITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-903f216ef2d9.js`; view `visualization-7a5d0bab43be.js` → `Visualization`.
++ Source: manifest `type-903f216ef2d9.js`; view `visualization-ce41f4b4eb93.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One DNA sequence substitution changes the corresponding RNA message
+
+```diff
+  Type `DNA_SEQUENCE_CHANGE_RNA_MESSAGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c4fe17689039.js`; view `visualization-1cc0d1c40198.js` → `DnaSequenceChangeRnaMessageVisualization`.
++ Source: manifest `type-c4fe17689039.js`; view `visualization-893fad00fd5a.js` → `DnaSequenceChangeRnaMessageVisualization`.
+```
+
+#### changed: Lottie animations (761) › One enclosed secretory protein travels from rough ER through Golgi to outside
+
+```diff
+  Type `ENDOMEMBRANE_TRAFFICKING` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4d983c1481e8.js`; view `visualization-f9adba69a370.js` → `Visualization`.
++ Source: manifest `type-4d983c1481e8.js`; view `visualization-7316b27085e9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One endocrine hormone travels through blood to a distant target
+
+```diff
+  Type `ENDOCRINE_LONG_DISTANCE_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f6c683cdbc60.js`; view `visualization-c66a67b102c7.js` → `EndocrineLongDistanceSignalingVisualization`.
++ Source: manifest `type-f6c683cdbc60.js`; view `visualization-d52a6714704b.js` → `EndocrineLongDistanceSignalingVisualization`.
+```
+
+#### changed: Lottie animations (761) › One existing animal cell divides into two daughter cells
+
+```diff
+  Type `CELL_THEORY_CELLS_FROM_EXISTING_CELLS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e98c48550afd.js`; view `visualization-9bf8ec0c5e34.js` → `Visualization`.
++ Source: manifest `type-e98c48550afd.js`; view `visualization-d86206406c4c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One extracellular ligand drives ordered reception, transduction, and response
+
+```diff
+  Type `RECEPTION_TRANSDUCTION_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d1c80e1d0db4.js`; view `visualization-38b9ade7072b.js` → `Visualization`.
++ Source: manifest `type-d1c80e1d0db4.js`; view `visualization-6e05629efb91.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One genotype responds phenotypically after environmental water increases
+
+```diff
+  Type `PHENOTYPIC_PLASTICITY_ENVIRONMENTAL_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2be4dee1b436.js`; view `visualization-eee15f1aad77.js` → `Visualization`.
++ Source: manifest `type-2be4dee1b436.js`; view `visualization-ed9e95fedb14.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One lipid-soluble hormone crosses the membrane and binds inside the cell
+
+```diff
+  Type `INTRACELLULAR_RECEPTOR_HORMONE_BINDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-be1fb62525a4.js`; view `visualization-ac243a0f5d1b.js` → `IntracellularReceptorHormoneBindingVisualization`.
++ Source: manifest `type-be1fb62525a4.js`; view `visualization-afe9f3049f80.js` → `IntracellularReceptorHormoneBindingVisualization`.
+```
+
+#### changed: Lottie animations (761) › One morphogen concentration gradient specifies three genome-matched cell fates
+
+```diff
+  Type `MORPHOGEN_CONCENTRATION_AND_CELL_FATE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-91baef91fb80.js`; view `visualization-5e76876cfacf.js` → `Visualization`.
++ Source: manifest `type-91baef91fb80.js`; view `visualization-4375b1c9bbb4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One neurotransmitter crosses a short extracellular synaptic cleft
+
+```diff
+  Type `SYNAPTIC_CELL_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-66f5a1e9f035.js`; view `visualization-65d77c3d061e.js` → `SynapticCellSignalingVisualization`.
++ Source: manifest `type-66f5a1e9f035.js`; view `visualization-e90596610b4a.js` → `SynapticCellSignalingVisualization`.
+```
+
+#### changed: Lottie animations (761) › One Pp homologous allele pair segregates into separate haploid gametes
+
+```diff
+  Type `MENDELIAN_ALLELE_SEGREGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8996a01b4d7e.js`; view `visualization-d9d137783a8d.js` → `Visualization`.
++ Source: manifest `type-8996a01b4d7e.js`; view `visualization-d17bb7f53a10.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One pre-mRNA containing three identifiable exons is alternatively spliced into two mature RNA exon combinations that encode different protein isoforms.
+
+```diff
+  Type `ALTERNATIVE_RNA_SPLICING_PROTEIN_ISOFORMS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9bb3ea7504d6.js`; view `visualization-725d356e55f5.js` → `Visualization`.
++ Source: manifest `type-9bb3ea7504d6.js`; view `visualization-f10581c81aca.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One receptor input becomes two, four, and eight countable activated downstream targets
+
+```diff
+  Type `SIGNAL_AMPLIFICATION_CASCADE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-968519e2786a.js`; view `visualization-fe27de8f6139.js` → `Visualization`.
++ Source: manifest `type-968519e2786a.js`; view `visualization-442327b4157e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One reciprocal prophase-I crossover changes only two non-sister chromatids
+
+```diff
+  Type `MEIOTIC_CROSSING_OVER_RECOMBINATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e252b29c9c09.js`; view `visualization-764e643e1c82.js` → `Visualization`.
++ Source: manifest `type-e252b29c9c09.js`; view `visualization-2a10e20a079f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One typical XY germ cell separates X and Y in meiosis I and produces two X-bearing and two Y-bearing gametes after meiosis II
+
+```diff
+  Type `MEIOTIC_SEX_CHROMOSOME_SEGREGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-36434ad5d741.js`; view `visualization-abbc6199ffb8.js` → `Visualization`.
++ Source: manifest `type-36434ad5d741.js`; view `visualization-ed9f0695ee3f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One-base deletion frameshift
+
+```diff
+  Type `MUTATION_DELETION_FRAMESHIFT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dae82b908220.js`; view `visualization-486d70791679.js` → `Visualization`.
++ Source: manifest `type-dae82b908220.js`; view `visualization-523833b15cca.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › One-base insertion frameshift
+
+```diff
+  Type `MUTATION_INSERTION_FRAMESHIFT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cc1dd2f67540.js`; view `visualization-062e3831a191.js` → `Visualization`.
++ Source: manifest `type-cc1dd2f67540.js`; view `visualization-523cd1574d6b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Only the receptor-bearing cell responds to a shared extracellular signal
+
+```diff
+  Type `TARGET_CELL_RECEPTOR_SPECIFICITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-89cfdf3518e2.js`; view `visualization-f93005107d59.js` → `TargetCellReceptorSpecificityVisualization`.
++ Source: manifest `type-89cfdf3518e2.js`; view `visualization-ca1c5c0eff0d.js` → `TargetCellReceptorSpecificityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Open insect circulation versus closed fish circulation
+
+```diff
+  Type `ANIMAL_OPEN_VERSUS_CLOSED_CIRCULATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-14474e6a1a00.js`; view `visualization-b27a0080c86d.js` → `AnimalOpenVersusClosedCirculationVisualization`.
++ Source: manifest `type-14474e6a1a00.js`; view `visualization-88e6f68cb898.js` → `AnimalOpenVersusClosedCirculationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ordered AUG GCU ACC UAA mRNA codons produce Met Ala Thr and stop
+
+```diff
+  Type `MRNA_CODON_AMINO_ACID_SEQUENCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ede2bb873d62.js`; view `visualization-246b11fb37ca.js` → `MrnaCodonAminoAcidSequenceVisualization`.
++ Source: manifest `type-ede2bb873d62.js`; view `visualization-f798e361e40f.js` → `MrnaCodonAminoAcidSequenceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ordered chromosome alignment, attachment, separation, and nuclear reformation
+
+```diff
+  Type `MITOSIS_CHROMOSOME_SEGREGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dace53f04818.js`; view `visualization-2ce374da9aed.js` → `Visualization`.
++ Source: manifest `type-dace53f04818.js`; view `visualization-b8060e299419.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Organic-carbon burial and long-term geological storage
+
+```diff
+  Type `BIOGEOCHEMICAL_CARBON_BURIAL_AND_GEOLOGICAL_STORAGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-71205a4ffa8c.js`; view `visualization-7a247256cbb3.js` → `Visualization`.
++ Source: manifest `type-71205a4ffa8c.js`; view `visualization-b3fb6f15821b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Origin of life
+
+```diff
+  Type `ORIGIN_OF_LIFE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d95bac035d6b.js`; view `visualization-99ed174529b5.js` → `Visualization`.
++ Source: manifest `type-d95bac035d6b.js`; view `visualization-56a21cf3df48.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Osmoregulator versus osmoconformer
+
+```diff
+  Type `OSMOREGULATOR_VERSUS_OSMOCONFORMER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dc5c5dc65787.js`; view `visualization-ed32686ca2f6.js` → `OsmoregulatorVersusOsmoconformerVisualization`.
++ Source: manifest `type-dc5c5dc65787.js`; view `visualization-8741fd9ebae1.js` → `OsmoregulatorVersusOsmoconformerVisualization`.
+```
+
+#### changed: Lottie animations (761) › Osmosis across a selectively permeable membrane
+
+```diff
+  Type `OSMOSIS_ACROSS_SELECTIVELY_PERMEABLE_MEMBRANE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9865b84bddc0.js`; view `visualization-db399aa6cbde.js` → `Visualization`.
++ Source: manifest `type-9865b84bddc0.js`; view `visualization-286db59bf4fd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Outgroup and rooted ingroup
+
+```diff
+  Type `PHYLOGENETIC_OUTGROUP_ROOTING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f43d45b6ce67.js`; view `visualization-488e9447a56b.js` → `Visualization`.
++ Source: manifest `type-f43d45b6ce67.js`; view `visualization-606f0dfb560e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Oviparous versus viviparous development
+
+```diff
+  Type `ANIMAL_OVIPAROUS_VERSUS_VIVIPAROUS_DEVELOPMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-281c7b0fdce4.js`; view `visualization-1bf97fc5407f.js` → `AnimalOviparousVersusViviparousDevelopmentVisualization`.
++ Source: manifest `type-281c7b0fdce4.js`; view `visualization-4c7bfc03439f.js` → `AnimalOviparousVersusViviparousDevelopmentVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ovulation, fertilization, and implantation
+
+```diff
+  Type `ANIMAL_OVULATION_FERTILIZATION_IMPLANTATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7fc66abbad67.js`; view `visualization-1dc7475cbc79.js` → `AnimalOvulationFertilizationImplantationVisualization`.
++ Source: manifest `type-7fc66abbad67.js`; view `visualization-d82b3300a7dc.js` → `AnimalOvulationFertilizationImplantationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Paramecium cell structure
+
+```diff
+  Type `PARAMECIUM_CELL_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1ca05a6f8caf.js`; view `visualization-2e498748b9ba.js` → `Visualization`.
++ Source: manifest `type-1ca05a6f8caf.js`; view `visualization-31b7c4364026.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Paramecium ciliary feeding
+
+```diff
+  Type `PARAMECIUM_CILIARY_FEEDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2812b151314b.js`; view `visualization-4aa793d6bea5.js` → `Visualization`.
++ Source: manifest `type-2812b151314b.js`; view `visualization-fd3d3357c213.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Paramecium conjugation genetic exchange
+
+```diff
+  Type `PARAMECIUM_CONJUGATION_GENETIC_EXCHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-10c6b91f46d9.js`; view `visualization-ef9dc7ffea52.js` → `Visualization`.
++ Source: manifest `type-10c6b91f46d9.js`; view `visualization-cdad12ef218d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Parasitism host exploitation
+
+```diff
+  Type `PARASITISM_HOST_EXPLOITATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e2995816cc04.js`; view `visualization-638118ecf5ce.js` → `ParasitismHostExploitationVisualization`.
++ Source: manifest `type-e2995816cc04.js`; view `visualization-31607fb6bf32.js` → `ParasitismHostExploitationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Passive versus active membrane transport
+
+```diff
+  Type `PASSIVE_VERSUS_ACTIVE_MEMBRANE_TRANSPORT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-60c0f2051182.js`; view `visualization-a074887f5f9c.js` → `Visualization`.
++ Source: manifest `type-60c0f2051182.js`; view `visualization-d9be0c0f4565.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pasteur swan-neck control compared with airborne contamination
+
+```diff
+  Type `CELL_THEORY_PASTEUR_SWAN_NECK_EXPERIMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-176ec8799755.js`; view `visualization-1d54011d0021.js` → `Visualization`.
++ Source: manifest `type-176ec8799755.js`; view `visualization-a3a4a553994a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pathogen types
+
+```diff
+  Type `PATHOGEN_TYPES_BACTERIA_VIRUSES_FUNGI_PROTISTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fa708737a87c.js`; view `visualization-d6880449a97e.js` → `PathogenTypesBacteriaVirusesFungiProtistsVisualization`.
++ Source: manifest `type-fa708737a87c.js`; view `visualization-11d022058310.js` → `PathogenTypesBacteriaVirusesFungiProtistsVisualization`.
+```
+
+#### changed: Lottie animations (761) › PCR exponential DNA amplification
+
+```diff
+  Type `PCR_EXPONENTIAL_DNA_AMPLIFICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c5e965dedd58.js`; view `visualization-f8c0eaf4aa1b.js` → `Visualization`.
++ Source: manifest `type-c5e965dedd58.js`; view `visualization-31f16deece14.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › PCR primer-directed extension
+
+```diff
+  Type `PCR_PRIMER_DIRECTED_EXTENSION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9286f48637e3.js`; view `visualization-ce2bfe9f3c09.js` → `Visualization`.
++ Source: manifest `type-9286f48637e3.js`; view `visualization-cf9f874208c5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › PCR temperature cycle
+
+```diff
+  Type `PCR_TEMPERATURE_CYCLE_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b1f5bdff361b.js`; view `visualization-a3ebc60f664f.js` → `Visualization`.
++ Source: manifest `type-b1f5bdff361b.js`; view `visualization-b857c95863b9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pepsin and trypsin have different pH activity optima
+
+```diff
+  Type `ENZYME_PH_ACTIVITY_PROFILES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-514aee4664b9.js`; view `visualization-2d2167308592.js` → `Visualization`.
++ Source: manifest `type-514aee4664b9.js`; view `visualization-4e2760874e8b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Peptide-bond formation
+
+```diff
+  Type `PEPTIDE_BOND_FORMATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-74770209df91.js`; view `visualization-f69473be4acc.js` → `PeptideBondFormationVisualization`.
++ Source: manifest `type-74770209df91.js`; view `visualization-c7b3c161ee0b.js` → `PeptideBondFormationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Peroxisome catalase compartmentalizes hydrogen peroxide detoxification
+
+```diff
+  Type `PEROXISOME_DETOXIFICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c73b720d8ff4.js`; view `visualization-81b17f66efef.js` → `Visualization`.
++ Source: manifest `type-c73b720d8ff4.js`; view `visualization-be289a869c39.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › pH and enzyme active-site charge
+
+```diff
+  Type `BIOLOGICAL_PH_ENZYME_ACTIVE_SITE_CHARGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a9265b5284a6.js`; view `visualization-12edf42443bd.js` → `Visualization`.
++ Source: manifest `type-a9265b5284a6.js`; view `visualization-2f4c5d6ad82c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phagocytosis and phagolysosome digestion
+
+```diff
+  Type `IMMUNE_PHAGOCYTOSIS_PHAGOLYSOSOME_DIGESTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-47fb4096cea6.js`; view `visualization-3807ff1f7988.js` → `ImmunePhagocytosisPhagolysosomeDigestionVisualization`.
++ Source: manifest `type-47fb4096cea6.js`; view `visualization-1cc75af14274.js` → `ImmunePhagocytosisPhagolysosomeDigestionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Phanerozoic Paleozoic, Mesozoic, and Cenozoic eras
+
+```diff
+  Type `PHANEROZOIC_PALEOZOIC_MESOZOIC_CENOZOIC_ERAS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-582c2660c9dc.js`; view `visualization-ef97a6dc385a.js` → `PhanerozoicPaleozoicMesozoicCenozoicErasVisualization`.
++ Source: manifest `type-582c2660c9dc.js`; view `visualization-cd3f3e282104.js` → `PhanerozoicPaleozoicMesozoicCenozoicErasVisualization`.
+```
+
+#### changed: Lottie animations (761) › Phloem source-to-sink sugar transport
+
+```diff
+  Type `PLANT_PHLOEM_SOURCE_TO_SINK_TRANSPORT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9a2cd7c5afe7.js`; view `visualization-d5e2970c1a43.js` → `Visualization`.
++ Source: manifest `type-9a2cd7c5afe7.js`; view `visualization-2675b2c35421.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phosphate functional-group structure and negative charge
+
+```diff
+  Type `BIOLOGICAL_PHOSPHATE_FUNCTIONAL_GROUP_CHARGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e70e31610f3c.js`; view `visualization-73c87f6f4367.js` → `Visualization`.
++ Source: manifest `type-e70e31610f3c.js`; view `visualization-e4b7f4c37c86.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phospholipid bilayer self-assembly
+
+```diff
+  Type `PHOSPHOLIPID_BILAYER_SELF_ASSEMBLY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dd0c1b24d29b.js`; view `visualization-279ee0659997.js` → `PhospholipidBilayerSelfAssemblyVisualization`.
++ Source: manifest `type-dd0c1b24d29b.js`; view `visualization-6d45d6cad90b.js` → `PhospholipidBilayerSelfAssemblyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Phospholipid structure and polarity
+
+```diff
+  Type `PHOSPHOLIPID_STRUCTURE_POLARITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f39f27209112.js`; view `visualization-77431a1fe84f.js` → `PhospholipidStructurePolarityVisualization`.
++ Source: manifest `type-f39f27209112.js`; view `visualization-35cd53629b4c.js` → `PhospholipidStructurePolarityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Phosphorus from rock to the food web
+
+```diff
+  Type `BIOGEOCHEMICAL_PHOSPHORUS_ROCK_TO_FOOD_WEB` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4b9d5cc2789d.js`; view `visualization-907667434e5b.js` → `Visualization`.
++ Source: manifest `type-4b9d5cc2789d.js`; view `visualization-f569d1f3f1c2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phosphorus has no major atmospheric reservoir
+
+```diff
+  Type `BIOGEOCHEMICAL_PHOSPHORUS_NO_ATMOSPHERIC_RESERVOIR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-22a22f45a358.js`; view `visualization-df8a8ee1e252.js` → `Visualization`.
++ Source: manifest `type-22a22f45a358.js`; view `visualization-b1845223cfa0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phosphorus sedimentation and uplift
+
+```diff
+  Type `BIOGEOCHEMICAL_PHOSPHORUS_SEDIMENTATION_AND_UPLIFT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b55fe341963b.js`; view `visualization-b05ec9f7170c.js` → `Visualization`.
++ Source: manifest `type-b55fe341963b.js`; view `visualization-4668463fa926.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis and respiration carbon exchange
+
+```diff
+  Type `BIOGEOCHEMICAL_CARBON_PHOTOSYNTHESIS_RESPIRATION_EXCHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-601faaaa2b3f.js`; view `visualization-bb6764b16422.js` → `Visualization`.
++ Source: manifest `type-601faaaa2b3f.js`; view `visualization-db063368197f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis Calvin-cycle carbon accounting
+
+```diff
+  Type `PHOTOSYNTHESIS_CALVIN_CYCLE_CARBON_ACCOUNTING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4b69eb2051a2.js`; view `visualization-99d98b25ffd1.js` → `Visualization`.
++ Source: manifest `type-4b69eb2051a2.js`; view `visualization-684f71046679.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis chemiosmosis and ATP production
+
+```diff
+  Type `PHOTOSYNTHESIS_CHEMIOSMOSIS_ATP_PRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d944714824d1.js`; view `visualization-1c3ab8562866.js` → `Visualization`.
++ Source: manifest `type-d944714824d1.js`; view `visualization-7b8c7e2296b4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis chloroplast organization
+
+```diff
+  Type `PHOTOSYNTHESIS_CHLOROPLAST_ORGANIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5813e9552d88.js`; view `visualization-815bccedb539.js` → `Visualization`.
++ Source: manifest `type-5813e9552d88.js`; view `visualization-116dbfe63678.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis light and carbon-dioxide limitation
+
+```diff
+  Type `PHOTOSYNTHESIS_LIGHT_CARBON_DIOXIDE_LIMITATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7439b956bf95.js`; view `visualization-3c94ffb4c2d7.js` → `Visualization`.
++ Source: manifest `type-7439b956bf95.js`; view `visualization-7a0239ae27c5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis light reaction and Calvin-cycle coupling
+
+```diff
+  Type `PHOTOSYNTHESIS_LIGHT_CALVIN_STAGE_COUPLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b4093a0b5b43.js`; view `visualization-3c138664a851.js` → `Visualization`.
++ Source: manifest `type-b4093a0b5b43.js`; view `visualization-2f5590cb6f01.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis matter and energy inputs and outputs
+
+```diff
+  Type `PHOTOSYNTHESIS_MATTER_ENERGY_INPUTS_OUTPUTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3ea07158b348.js`; view `visualization-bddeede21c38.js` → `Visualization`.
++ Source: manifest `type-3ea07158b348.js`; view `visualization-f318a151dd96.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis stomatal water and carbon tradeoff
+
+```diff
+  Type `PHOTOSYNTHESIS_STOMATAL_WATER_CARBON_TRADEOFF` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1e708a76dbab.js`; view `visualization-5d2eaf470cc4.js` → `Visualization`.
++ Source: manifest `type-1e708a76dbab.js`; view `visualization-1847451dddc0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis thylakoid proton gradient
+
+```diff
+  Type `PHOTOSYNTHESIS_THYLAKOID_PROTON_GRADIENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-38c90aa02cfd.js`; view `visualization-46e7478cb72c.js` → `Visualization`.
++ Source: manifest `type-38c90aa02cfd.js`; view `visualization-7423299bafba.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis water splitting and oxygen release
+
+```diff
+  Type `PHOTOSYNTHESIS_WATER_SPLITTING_OXYGEN_RELEASE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a6a40f3e6ad7.js`; view `visualization-48827445b556.js` → `Visualization`.
++ Source: manifest `type-a6a40f3e6ad7.js`; view `visualization-42403ffc0f0f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthesis: water to NADPH through PSII, ETC, and PSI
+
+```diff
+  Type `PHOTOSYNTHESIS_LIGHT_REACTION_ELECTRON_TRANSPORT` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3d6c55d30edf.js`; view `visualization-2e3874caa780.js` → `Visualization`.
++ Source: manifest `type-3d6c55d30edf.js`; view `visualization-b67198f07465.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Photosynthetic producers and consuming organisms
+
+```diff
+  Type `LIFE_PHOTOSYNTHETIC_VERSUS_CONSUMING_ORGANISMS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-957f4059bcf0.js`; view `visualization-775004a393d0.js` → `Visualization`.
++ Source: manifest `type-957f4059bcf0.js`; view `visualization-65bc418e2152.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phototropism auxin redistribution
+
+```diff
+  Type `PHOTOTROPISM_AUXIN_REDISTRIBUTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-730ccc93b238.js`; view `visualization-5f8671a69d9f.js` → `Visualization`.
++ Source: manifest `type-730ccc93b238.js`; view `visualization-3c0538a0ea1a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phylogenetic branch rotation invariance
+
+```diff
+  Type `PHYLOGENETIC_TREE_ROTATION_INVARIANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3450bd7547c0.js`; view `visualization-0460feef96c4.js` → `Visualization`.
++ Source: manifest `type-3450bd7547c0.js`; view `visualization-cb288b72dcaa.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phylogeny and common ancestry overview
+
+```diff
+  Type `PHYLOGENY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2b8c3230c712.js`; view `visualization-397147da9e5f.js` → `Visualization`.
++ Source: manifest `type-2b8c3230c712.js`; view `visualization-94c4a29b67de.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Phytochrome night interruption
+
+```diff
+  Type `PHYTOCHROME_NIGHT_INTERRUPTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6d2ee197824e.js`; view `visualization-7c954082f5ab.js` → `Visualization`.
++ Source: manifest `type-6d2ee197824e.js`; view `visualization-ee52bc70b45f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Placental maternal-fetal exchange
+
+```diff
+  Type `ANIMAL_PLACENTAL_MATERNAL_FETAL_EXCHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1b121da66991.js`; view `visualization-49a73561a7d6.js` → `AnimalPlacentalMaternalFetalExchangeVisualization`.
++ Source: manifest `type-1b121da66991.js`; view `visualization-471be3a715c3.js` → `AnimalPlacentalMaternalFetalExchangeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Plant cell structure and function
+
+```diff
+  Type `PLANT_CELL_STRUCTURE_AND_FUNCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3112f6a513b6.js`; view `visualization-a1ea0504071e.js` → `Visualization`.
++ Source: manifest `type-3112f6a513b6.js`; view `visualization-a980dbb829f7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant cell wall and animal extracellular-matrix overview
+
+```diff
+  Type `CELLULAR_ENVIRONMENT_INTERACTIONS_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c20397973282.js`; view `visualization-4f81020ffcb4.js` → `Visualization`.
++ Source: manifest `type-c20397973282.js`; view `visualization-4492ae269d07.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant cell wall, membrane, and vacuole
+
+```diff
+  Type `PLANT_CELL_WALL_MEMBRANE_AND_VACUOLE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9ed00bb79a1b.js`; view `visualization-f5207a666d6b.js` → `Visualization`.
++ Source: manifest `type-9ed00bb79a1b.js`; view `visualization-5cda2373847d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant diversity and life cycles
+
+```diff
+  Type `PLANT_DIVERSITY_AND_LIFE_CYCLES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5a4bba801ffe.js`; view `visualization-a910b4726de9.js` → `PlantDiversityAndLifeCyclesVisualization`.
++ Source: manifest `type-5a4bba801ffe.js`; view `visualization-993fbdcef00e.js` → `PlantDiversityAndLifeCyclesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Plant evolution: vascular tissue, seeds, and flowers
+
+```diff
+  Type `PLANT_EVOLUTION_VASCULAR_TISSUE_SEEDS_AND_FLOWERS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c08e9adeca21.js`; view `visualization-30f44d3b04a7.js` → `PlantEvolutionVascularTissueSeedsAndFlowersVisualization`.
++ Source: manifest `type-c08e9adeca21.js`; view `visualization-a5606654dd9f.js` → `PlantEvolutionVascularTissueSeedsAndFlowersVisualization`.
+```
+
+#### changed: Lottie animations (761) › Plant photosynthesis inputs are sunlight, carbon dioxide, and water
+
+```diff
+  Type `PHOTOSYNTHESIS_INPUTS_SUGAR_OXYGEN_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-31d40876948d.js`; view `visualization-139127ad5523.js` → `Visualization`.
++ Source: manifest `type-31d40876948d.js`; view `visualization-77831d9f6e5f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant respiration continues as daytime photosynthesis gives way to night
+
+```diff
+  Type `PLANT_PHOTOSYNTHESIS_AND_RESPIRATION_DAY_NIGHT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c60f2e059d80.js`; view `visualization-20fd9ff389d8.js` → `Visualization`.
++ Source: manifest `type-c60f2e059d80.js`; view `visualization-8aba5db95d4d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant root and shoot system interdependence
+
+```diff
+  Type `PLANT_ROOT_SHOOT_SYSTEM_INTERDEPENDENCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-34882bf4bb7d.js`; view `visualization-8f902f5e6e8a.js` → `Visualization`.
++ Source: manifest `type-34882bf4bb7d.js`; view `visualization-f6e7173eeae2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant root-water uptake and leaf transpiration
+
+```diff
+  Type `BIOGEOCHEMICAL_WATER_PLANT_UPTAKE_AND_TRANSPIRATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ca8bf97e182d.js`; view `visualization-cb4f6364fbcd.js` → `Visualization`.
++ Source: manifest `type-ca8bf97e182d.js`; view `visualization-5a3133a61130.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant spores versus seeds
+
+```diff
+  Type `PLANT_SPORES_VERSUS_SEEDS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-11635086c77a.js`; view `visualization-dcbee349cdd5.js` → `PlantSporesVersusSeedsVisualization`.
++ Source: manifest `type-11635086c77a.js`; view `visualization-883f4ff0c875.js` → `PlantSporesVersusSeedsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Plant statolith gravity sensing
+
+```diff
+  Type `PLANT_STATOLITH_GRAVITY_SENSING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-87082793c117.js`; view `visualization-334c7a52a66d.js` → `Visualization`.
++ Source: manifest `type-87082793c117.js`; view `visualization-81cbd14d5e32.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant-cell turgidity, flaccidity, and plasmolysis across three tonicities
+
+```diff
+  Type `PLANT_CELL_TONICITY_COMPARISON` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-473636c1b4a2.js`; view `visualization-639e0b77717a.js` → `Visualization`.
++ Source: manifest `type-473636c1b4a2.js`; view `visualization-2a54b140abb8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant-made sugar moves into root storage and supports new growth
+
+```diff
+  Type `PLANT_SUGAR_STORAGE_AND_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1bb10f568067.js`; view `visualization-3255252069c6.js` → `Visualization`.
++ Source: manifest `type-1bb10f568067.js`; view `visualization-7dd28de4cc26.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plant, fungal, and animal cell structures
+
+```diff
+  Type `LIFE_PLANT_ANIMAL_FUNGAL_CELL_STRUCTURES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-43d87d417522.js`; view `visualization-5be0ce5e5984.js` → `Visualization`.
++ Source: manifest `type-43d87d417522.js`; view `visualization-7e66543d1574.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plants and animals exchange matter while energy enters and leaves
+
+```diff
+  Type `MATTER_AND_ENERGY_IN_WHOLE_ORGANISMS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9346786336cc.js`; view `visualization-7038e7b68b4c.js` → `Visualization`.
++ Source: manifest `type-9346786336cc.js`; view `visualization-f9184ae4ca1c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plasma membrane as a cell boundary
+
+```diff
+  Type `PLASMA_MEMBRANE_CELL_BOUNDARY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f17429136507.js`; view `visualization-11c4927b492d.js` → `Visualization`.
++ Source: manifest `type-f17429136507.js`; view `visualization-238401c06bd7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plasma membrane fluid-mosaic architecture
+
+```diff
+  Type `PLASMA_MEMBRANE_FLUID_MOSAIC_ARCHITECTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d88acbd7550a.js`; view `visualization-cd0f27ac54c1.js` → `Visualization`.
++ Source: manifest `type-d88acbd7550a.js`; view `visualization-8502a44c5878.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Plasmid sticky-end ligation
+
+```diff
+  Type `PLASMID_STICKY_END_LIGATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1d40c81439ff.js`; view `visualization-be90100b6bbd.js` → `Visualization`.
++ Source: manifest `type-1d40c81439ff.js`; view `visualization-5e25f60dd8e7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Platelet recruitment amplifies until the same vessel wound is sealed
+
+```diff
+  Type `POSITIVE_FEEDBACK_BLOOD_CLOTTING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b02b2dfd921a.js`; view `visualization-1f8a9c321a63.js` → `PositiveFeedbackBloodClottingVisualization`.
++ Source: manifest `type-b02b2dfd921a.js`; view `visualization-7133ef790da3.js` → `PositiveFeedbackBloodClottingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Pollen fertilization without standing water
+
+```diff
+  Type `PLANT_POLLEN_FERTILIZATION_WITHOUT_STANDING_WATER` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a7661cf22b89.js`; view `visualization-53d80b185b75.js` → `PlantPollenFertilizationWithoutStandingWaterVisualization`.
++ Source: manifest `type-a7661cf22b89.js`; view `visualization-d5bf711c2840.js` → `PlantPollenFertilizationWithoutStandingWaterVisualization`.
+```
+
+#### changed: Lottie animations (761) › Pollen transfer during pollination
+
+```diff
+  Type `PLANT_POLLINATION_POLLEN_TRANSFER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-66f677011260.js`; view `visualization-9873b29fb639.js` → `Visualization`.
++ Source: manifest `type-66f677011260.js`; view `visualization-2bdb57bde1ed.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pollen-tube growth and fertilization
+
+```diff
+  Type `PLANT_POLLEN_TUBE_FERTILIZATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1ef887f46e6e.js`; view `visualization-2cf4bab83def.js` → `Visualization`.
++ Source: manifest `type-1ef887f46e6e.js`; view `visualization-be3e789495f2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pollination, fertilization, and seed formation
+
+```diff
+  Type `ORGANISM_POLLINATION_FERTILIZATION_AND_SEEDS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-456f40972751.js`; view `visualization-fba43d5dc83b.js` → `OrganismPollinationFertilizationAndSeedsVisualization`.
++ Source: manifest `type-456f40972751.js`; view `visualization-fd51b8a0439f.js` → `OrganismPollinationFertilizationAndSeedsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Population adaptation across generations
+
+```diff
+  Type `POPULATION_ADAPTATION_ACROSS_GENERATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e363e27a2e77.js`; view `visualization-c71e4bafb11e.js` → `PopulationAdaptationAcrossGenerationsVisualization`.
++ Source: manifest `type-e363e27a2e77.js`; view `visualization-482a3cbacfee.js` → `PopulationAdaptationAcrossGenerationsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Population bottleneck and persistent variation loss
+
+```diff
+  Type `POPULATION_GENETICS_BOTTLENECK_EFFECT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d3c203a3615d.js`; view `visualization-8dd0d1612407.js` → `Visualization`.
++ Source: manifest `type-d3c203a3615d.js`; view `visualization-61026b1129c6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Population ecology and environmental limits
+
+```diff
+  Type `POPULATION_ECOLOGY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-33388a0d2369.js`; view `visualization-648d24d401c6.js` → `Visualization`.
++ Source: manifest `type-33388a0d2369.js`; view `visualization-47d74565a9ed.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Population genetics and evolutionary mechanisms
+
+```diff
+  Type `POPULATION_GENETICS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f47a75a6fa96.js`; view `visualization-41384accc6a5.js` → `Visualization`.
++ Source: manifest `type-f47a75a6fa96.js`; view `visualization-84bbec832c22.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Population size and genetic-drift magnitude
+
+```diff
+  Type `POPULATION_GENETICS_POPULATION_SIZE_AND_DRIFT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9c814862b668.js`; view `visualization-5581868f829e.js` → `Visualization`.
++ Source: manifest `type-9c814862b668.js`; view `visualization-55156c2c8047.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Posterior pituitary neurohormone release
+
+```diff
+  Type `POSTERIOR_PITUITARY_NEUROHORMONE_RELEASE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2294a8d7b5d0.js`; view `visualization-1635028b898f.js` → `Visualization`.
++ Source: manifest `type-2294a8d7b5d0.js`; view `visualization-deec13421c3b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Postsynaptic potential summation
+
+```diff
+  Type `POSTSYNAPTIC_POTENTIAL_SUMMATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ec07fcfd2e5c.js`; view `visualization-55c0d8e6f12e.js` → `PostsynapticPotentialSummationVisualization`.
++ Source: manifest `type-ec07fcfd2e5c.js`; view `visualization-294e7b4e681d.js` → `PostsynapticPotentialSummationVisualization`.
+```
+
+#### changed: Lottie animations (761) › PP and Pp are purple while only pp expresses the white recessive phenotype
+
+```diff
+  Type `MENDELIAN_GENOTYPE_PHENOTYPE_DOMINANCE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d879e1d7aee6.js`; view `visualization-4d4e943a6f13.js` → `Visualization`.
++ Source: manifest `type-d879e1d7aee6.js`; view `visualization-f6f53ad85ea1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › PP, Pp, and pp parental genotypes predict distinct one-allele gametes
+
+```diff
+  Type `MENDELIAN_GAMETE_FORMATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-417542ada9fc.js`; view `visualization-f84fd2adbfdc.js` → `Visualization`.
++ Source: manifest `type-417542ada9fc.js`; view `visualization-499e6eba7d48.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pre-existing genetic variation and environmental disturbance
+
+```diff
+  Type `BIODIVERSITY_GENETIC_VARIATION_ENVIRONMENTAL_CHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e170c982f551.js`; view `visualization-d3db9db3d188.js` → `Visualization`.
++ Source: manifest `type-e170c982f551.js`; view `visualization-b2ddc11fad16.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pre-mRNA exon and intron structure
+
+```diff
+  Type `PRE_MRNA_EXON_INTRON_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-56a4ca180bc0.js`; view `visualization-786a5fa7c717.js` → `Visualization`.
++ Source: manifest `type-56a4ca180bc0.js`; view `visualization-2563babf3c26.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pre-mRNA intron splicing
+
+```diff
+  Type `PRE_MRNA_INTRON_SPLICING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-431599afd2c5.js`; view `visualization-20afac708871.js` → `Visualization`.
++ Source: manifest `type-431599afd2c5.js`; view `visualization-2f3f9c06f89f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Pre-mRNA processing
+
+```diff
+  Type `PRE_MRNA_PROCESSING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-49cdf9fb2e2a.js`; view `visualization-e2c6bbb55bff.js` → `Visualization`.
++ Source: manifest `type-49cdf9fb2e2a.js`; view `visualization-54572340ae8d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Prebiotic organic-molecule synthesis
+
+```diff
+  Type `PREBIOTIC_ORGANIC_MOLECULE_SYNTHESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ad9c84116c3e.js`; view `visualization-ed158f69ba4c.js` → `Visualization`.
++ Source: manifest `type-ad9c84116c3e.js`; view `visualization-960b60af63d7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Predation energy and population effects
+
+```diff
+  Type `PREDATION_ENERGY_AND_POPULATION_EFFECTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9a0afcf611ce.js`; view `visualization-fe56af8019cf.js` → `PredationEnergyAndPopulationEffectsVisualization`.
++ Source: manifest `type-9a0afcf611ce.js`; view `visualization-8cc08a4a9993.js` → `PredationEnergyAndPopulationEffectsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Predator reintroduction trophic recovery
+
+```diff
+  Type `PREDATOR_REINTRODUCTION_TROPHIC_RECOVERY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-38f3976a9f65.js`; view `visualization-b7bcc462f577.js` → `PredatorReintroductionTrophicRecoveryVisualization`.
++ Source: manifest `type-38f3976a9f65.js`; view `visualization-bc3f79db2888.js` → `PredatorReintroductionTrophicRecoveryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Predator removal trophic cascade
+
+```diff
+  Type `PREDATOR_REMOVAL_TROPHIC_CASCADE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c87ab31932ad.js`; view `visualization-35e3738b4329.js` → `PredatorRemovalTrophicCascadeVisualization`.
++ Source: manifest `type-c87ab31932ad.js`; view `visualization-2509f776878e.js` → `PredatorRemovalTrophicCascadeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Prepare a wet-mount microscope slide
+
+```diff
+  Type `MICROSCOPY_WET_MOUNT_SLIDE_PREPARATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9ee7adca7cb4.js`; view `visualization-7ab3e0a5a00f.js` → `Visualization`.
++ Source: manifest `type-9ee7adca7cb4.js`; view `visualization-714003273577.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Primary amino-acid sequence determines protein fold
+
+```diff
+  Type `PROTEIN_PRIMARY_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-db2739ae4e9e.js`; view `visualization-bd3854ad9707.js` → `ProteinPrimaryStructureVisualization`.
++ Source: manifest `type-db2739ae4e9e.js`; view `visualization-5b34ff46e25e.js` → `ProteinPrimaryStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Primary and secondary immune response
+
+```diff
+  Type `IMMUNE_MEMORY_SECONDARY_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-525fa85740da.js`; view `visualization-274262de5060.js` → `ImmuneMemorySecondaryResponseVisualization`.
++ Source: manifest `type-525fa85740da.js`; view `visualization-9d68c322d978.js` → `ImmuneMemorySecondaryResponseVisualization`.
+```
+
+#### changed: Lottie animations (761) › Primary sensory cilium compared with multiple motile cilia
+
+```diff
+  Type `PRIMARY_VERSUS_MOTILE_CILIA` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-22e1b8e54a6d.js`; view `visualization-f00c2b1539cc.js` → `Visualization`.
++ Source: manifest `type-22e1b8e54a6d.js`; view `visualization-28de644d781c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Primary succession community assembly
+
+```diff
+  Type `PRIMARY_SUCCESSION_COMMUNITY_ASSEMBLY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b1c99b0e9519.js`; view `visualization-5de9f64cd031.js` → `PrimarySuccessionCommunityAssemblyVisualization`.
++ Source: manifest `type-b1c99b0e9519.js`; view `visualization-eaace2b28782.js` → `PrimarySuccessionCommunityAssemblyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Producer to consumer energy transfer
+
+```diff
+  Type `PRODUCER_TO_CONSUMER_ENERGY_TRANSFER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bc6a88a45b34.js`; view `visualization-bbc7954bf4ec.js` → `Visualization`.
++ Source: manifest `type-bc6a88a45b34.js`; view `visualization-9d459f04f53e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Programmed interdigital cell death separates a recognizable developing hand
+
+```diff
+  Type `DEVELOPMENTAL_APOPTOSIS_AND_DIGIT_SEPARATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5708de5d2d55.js`; view `visualization-386b110c16fe.js` → `Visualization`.
++ Source: manifest `type-5708de5d2d55.js`; view `visualization-8fbe3f75cfa3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Prokaryotic cell organization
+
+```diff
+  Type `PROKARYOTIC_CELL_ORGANIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-87edb06effd5.js`; view `visualization-b36673800298.js` → `Visualization`.
++ Source: manifest `type-87edb06effd5.js`; view `visualization-38b0d034ad5c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Promoter and RNA polymerase initiation
+
+```diff
+  Type `PROMOTER_RNA_POLYMERASE_INITIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7240b8a55edc.js`; view `visualization-47a4b3eb6e29.js` → `Visualization`.
++ Source: manifest `type-7240b8a55edc.js`; view `visualization-1b2b2fac2f58.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Promoter-associated DNA methylation accumulates on an unchanged DNA sequence, reduces transcriptional access, and silences mRNA production.
+
+```diff
+  Type `DNA_METHYLATION_TRANSCRIPTIONAL_SILENCING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-681a2655f19a.js`; view `visualization-1a27211a2992.js` → `Visualization`.
++ Source: manifest `type-681a2655f19a.js`; view `visualization-57f732e04daa.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Prophase, metaphase, anaphase, and telophase comparison
+
+```diff
+  Type `MITOSIS_PHASE_SEQUENCE_OVERVIEW` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bcf4f215a71f.js`; view `visualization-c8612206a06e.js` → `Visualization`.
++ Source: manifest `type-bcf4f215a71f.js`; view `visualization-263bc63a74e7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Proteins: four levels of structure and functional shape
+
+```diff
+  Type `PROTEINS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-256a9cb0a0be.js`; view `visualization-9cc0dc653d22.js` → `ProteinsVisualization`.
++ Source: manifest `type-256a9cb0a0be.js`; view `visualization-c28f11f4bb18.js` → `ProteinsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Protist binary fission
+
+```diff
+  Type `PROTIST_BINARY_FISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3c3b810eebf1.js`; view `visualization-b0287847eeba.js` → `Visualization`.
++ Source: manifest `type-3c3b810eebf1.js`; view `visualization-37cfef2b20cc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Protist diversity and nutrition
+
+```diff
+  Type `PROTIST_DIVERSITY_AND_NUTRITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bd028d9729f9.js`; view `visualization-d9ab4c7c44f9.js` → `Visualization`.
++ Source: manifest `type-bd028d9729f9.js`; view `visualization-fcf738a6cc35.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Protist locomotion mechanisms
+
+```diff
+  Type `PROTIST_LOCOMOTION_MECHANISMS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6748a0cc812e.js`; view `visualization-8828df2ded31.js` → `Visualization`.
++ Source: manifest `type-6748a0cc812e.js`; view `visualization-af79325cef27.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Protocell membrane self-assembly
+
+```diff
+  Type `PROTOCELL_MEMBRANE_SELF_ASSEMBLY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-65e5956bead2.js`; view `visualization-7b5a1ddc2600.js` → `Visualization`.
++ Source: manifest `type-65e5956bead2.js`; view `visualization-a74a310ab193.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Protostome versus deuterostome development
+
+```diff
+  Type `ANIMAL_PROTOSTOME_VERSUS_DEUTEROSTOME_DEVELOPMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-36f42c0631b0.js`; view `visualization-1698c220f7e6.js` → `AnimalProtostomeVersusDeuterostomeDevelopmentVisualization`.
++ Source: manifest `type-36f42c0631b0.js`; view `visualization-76fa174643aa.js` → `AnimalProtostomeVersusDeuterostomeDevelopmentVisualization`.
+```
+
+#### changed: Lottie animations (761) › Pyruvate oxidation carbon transfer
+
+```diff
+  Type `PYRUVATE_OXIDATION_CARBON_TRANSFER` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-22451dfcee89.js`; view `visualization-29efd856b261.js` → `PyruvateOxidationCarbonTransferVisualization`.
++ Source: manifest `type-22451dfcee89.js`; view `visualization-753782af682e.js` → `PyruvateOxidationCarbonTransferVisualization`.
+```
+
+#### changed: Lottie animations (761) › Quaternary protein subunit assembly
+
+```diff
+  Type `PROTEIN_QUATERNARY_ASSEMBLY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c3c73ddc9a67.js`; view `visualization-96df074437a1.js` → `ProteinQuaternaryAssemblyVisualization`.
++ Source: manifest `type-c3c73ddc9a67.js`; view `visualization-b31cf437752a.js` → `ProteinQuaternaryAssemblyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Radial versus bilateral animal symmetry
+
+```diff
+  Type `ANIMAL_RADIAL_VERSUS_BILATERAL_SYMMETRY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b96e0196f8fc.js`; view `visualization-e357d327c000.js` → `AnimalRadialVersusBilateralSymmetryVisualization`.
++ Source: manifest `type-b96e0196f8fc.js`; view `visualization-67fdf005a214.js` → `AnimalRadialVersusBilateralSymmetryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Random biological sampling and selection bias
+
+```diff
+  Type `BIOLOGICAL_RANDOM_SAMPLING_AND_SELECTION_BIAS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3ffcf202f4bc.js`; view `visualization-380a78a61b84.js` → `BiologicalRandomSamplingAndSelectionBiasVisualization`.
++ Source: manifest `type-3ffcf202f4bc.js`; view `visualization-689014e2b333.js` → `BiologicalRandomSamplingAndSelectionBiasVisualization`.
+```
+
+#### changed: Lottie animations (761) › Random genetic drift through chance sampling
+
+```diff
+  Type `POPULATION_GENETICS_RANDOM_GENETIC_DRIFT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-da43ebb83605.js`; view `visualization-1e8856475558.js` → `Visualization`.
++ Source: manifest `type-da43ebb83605.js`; view `visualization-32751ae86bec.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Reception, intracellular transduction, and response in one target cell
+
+```diff
+  Type `SIGNAL_TRANSDUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7d3e23e63010.js`; view `visualization-5285309158ed.js` → `Visualization`.
++ Source: manifest `type-7d3e23e63010.js`; view `visualization-d190233f9fad.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Reciprocal crossover preserves parental and recombinant chromatid products
+
+```diff
+  Type `LINKED_GENE_RECOMBINATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e21ff116a578.js`; view `visualization-f65d70b35ad5.js` → `LinkedGeneRecombinationVisualization`.
++ Source: manifest `type-e21ff116a578.js`; view `visualization-5ae45bbce53b.js` → `LinkedGeneRecombinationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Recognizable blood, nerve, and muscle cells perform complementary jobs
+
+```diff
+  Type `SPECIALIZED_CELLS_AND_DIVISION_OF_LABOR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-23270fc37604.js`; view `visualization-3893c3bbafda.js` → `Visualization`.
++ Source: manifest `type-23270fc37604.js`; view `visualization-53e094dac8af.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Recognizable DNA and RNA polymerases make two DNA duplexes or one RNA strand from the same DNA
+
+```diff
+  Type `DNA_REPLICATION_VERSUS_TRANSCRIPTION_PRODUCTS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ec4662dd36a9.js`; view `visualization-c9e0709c581d.js` → `DnaReplicationVersusTranscriptionProductsVisualization`.
++ Source: manifest `type-ec4662dd36a9.js`; view `visualization-6f9ef7461b72.js` → `DnaReplicationVersusTranscriptionProductsVisualization`.
+```
+
+#### changed: Lottie animations (761) › Recognizable fish single circulation versus mammalian double circulation
+
+```diff
+  Type `ANIMAL_SINGLE_VERSUS_DOUBLE_CIRCULATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5166bb8452fd.js`; view `visualization-1b2728f6b49c.js` → `AnimalSingleVersusDoubleCirculationVisualization`.
++ Source: manifest `type-5166bb8452fd.js`; view `visualization-e99cd6743f00.js` → `AnimalSingleVersusDoubleCirculationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Recognizable pea pollen and ovule fuse into a Pp zygote before a subordinate purple-flower phenotype appears
+
+```diff
+  Type `MENDELIAN_RANDOM_FERTILIZATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b9a71ab31d05.js`; view `visualization-f66785dae2ba.js` → `Visualization`.
++ Source: manifest `type-b9a71ab31d05.js`; view `visualization-ef10bf88bc62.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Recombinant DNA plasmid workflow
+
+```diff
+  Type `RECOMBINANT_DNA_PLASMID_WORKFLOW` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eb58d40a2be5.js`; view `visualization-4a7630177422.js` → `Visualization`.
++ Source: manifest `type-eb58d40a2be5.js`; view `visualization-7d1b258c40b5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Reductional meiosis I separates homologs while equational meiosis II separates sisters
+
+```diff
+  Type `MEIOSIS_ONE_VERSUS_MEIOSIS_TWO` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eab69d4e0986.js`; view `visualization-fa2d9626a184.js` → `Visualization`.
++ Source: manifest `type-eab69d4e0986.js`; view `visualization-b56dc05c6ce5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Reflex-arc neural-circuit wiring
+
+```diff
+  Type `REFLEX_ARC_NEURAL_CIRCUIT_WIRING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-884bf18a6de5.js`; view `visualization-1789e4a3d4bd.js` → `ReflexArcNeuralCircuitWiringVisualization`.
++ Source: manifest `type-884bf18a6de5.js`; view `visualization-4935e4486180.js` → `ReflexArcNeuralCircuitWiringVisualization`.
+```
+
+#### changed: Lottie animations (761) › Relative versus radiometric fossil dating
+
+```diff
+  Type `RELATIVE_VERSUS_RADIOMETRIC_FOSSIL_DATING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5dac37ab176d.js`; view `visualization-c1f52074d082.js` → `RelativeVersusRadiometricFossilDatingVisualization`.
++ Source: manifest `type-5dac37ab176d.js`; view `visualization-71e1efbf5fc4.js` → `RelativeVersusRadiometricFossilDatingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Repairable DNA damage permits survival while irreparable damage triggers apoptosis
+
+```diff
+  Type `DNA_DAMAGE_REPAIR_VERSUS_APOPTOSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2d9552d87b54.js`; view `visualization-8a909cf795be.js` → `Visualization`.
++ Source: manifest `type-2d9552d87b54.js`; view `visualization-2e02141fbaa4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Replication-fork architecture
+
+```diff
+  Type `DNA_REPLICATION_FORK_ARCHITECTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-84a825f34b15.js`; view `visualization-7ee6e78f4ded.js` → `DnaReplicationForkArchitectureVisualization`.
++ Source: manifest `type-84a825f34b15.js`; view `visualization-e3f3d20e71a0.js` → `DnaReplicationForkArchitectureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Representative bacterial, animal, and plant cells on a logarithmic scale
+
+```diff
+  Type `CELL_THEORY_CELL_SIZE_SCALE_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4918d12b14e8.js`; view `visualization-2d82b1e0a4f8.js` → `Visualization`.
++ Source: manifest `type-4918d12b14e8.js`; view `visualization-eba65eff9e08.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Resource partitioning habitat zones
+
+```diff
+  Type `RESOURCE_PARTITIONING_HABITAT_ZONES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-719c392ffb20.js`; view `visualization-b893a4247e3f.js` → `ResourcePartitioningHabitatZonesVisualization`.
++ Source: manifest `type-719c392ffb20.js`; view `visualization-1f27974ef5c3.js` → `ResourcePartitioningHabitatZonesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Restriction digest gel band patterns
+
+```diff
+  Type `RESTRICTION_DIGEST_GEL_BAND_PATTERNS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-40644034cec7.js`; view `visualization-5f295243cc1d.js` → `Visualization`.
++ Source: manifest `type-40644034cec7.js`; view `visualization-54af565ccf4c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Restriction enzyme recognition sites
+
+```diff
+  Type `RESTRICTION_ENZYME_RECOGNITION_SITES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-65a92b70efc5.js`; view `visualization-6f306929a57b.js` → `Visualization`.
++ Source: manifest `type-65a92b70efc5.js`; view `visualization-be1146f62079.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Restriction enzyme sticky-end cleavage
+
+```diff
+  Type `RESTRICTION_ENZYME_STICKY_END_CLEAVAGE` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8d101a5ae687.js`; view `visualization-9a114486b9c8.js` → `Visualization`.
++ Source: manifest `type-8d101a5ae687.js`; view `visualization-5573fc9b8ac3.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Retinal phototransduction and hyperpolarization
+
+```diff
+  Type `SENSORY_RETINAL_PHOTOTRANSDUCTION_HYPERPOLARIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-32d2e210b282.js`; view `visualization-c1fd035cb7aa.js` → `Visualization`.
++ Source: manifest `type-32d2e210b282.js`; view `visualization-ef9f5445dc3c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Reversible macromolecule dehydration synthesis and hydrolysis
+
+```diff
+  Type `MACROMOLECULE_DEHYDRATION_HYDROLYSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3944760eb043.js`; view `visualization-bbd0bb280056.js` → `Visualization`.
++ Source: manifest `type-3944760eb043.js`; view `visualization-e05d0982fc18.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Ribosome E exit, P peptidyl, and A aminoacyl sites
+
+```diff
+  Type `RIBOSOME_A_P_E_SITES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4afe8158dd2f.js`; view `visualization-415f113a4cc0.js` → `RibosomeAPESitesVisualization`.
++ Source: manifest `type-4afe8158dd2f.js`; view `visualization-f561965b3f7e.js` → `RibosomeAPESitesVisualization`.
+```
+
+#### changed: Lottie animations (761) › RNA polymerase reads a DNA template and extends RNA five to three prime
+
+```diff
+  Type `RNA_POLYMERASE_TEMPLATE_DIRECTED_SYNTHESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9a2714f81251.js`; view `visualization-65d6514ab588.js` → `RnaPolymeraseTemplateDirectedSynthesisVisualization`.
++ Source: manifest `type-9a2714f81251.js`; view `visualization-ea59c3966889.js` → `RnaPolymeraseTemplateDirectedSynthesisVisualization`.
+```
+
+#### changed: Lottie animations (761) › RNA polymerase template-strand reading
+
+```diff
+  Type `RNA_POLYMERASE_TEMPLATE_STRAND_READING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cf97b8333197.js`; view `visualization-5a11f7ccf3b5.js` → `Visualization`.
++ Source: manifest `type-cf97b8333197.js`; view `visualization-783cbdf0942d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › RNA primer initiates DNA synthesis
+
+```diff
+  Type `DNA_REPLICATION_RNA_PRIMER_INITIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ba1da8d050b8.js`; view `visualization-37456c0b4a96.js` → `DnaReplicationRnaPrimerInitiationVisualization`.
++ Source: manifest `type-ba1da8d050b8.js`; view `visualization-4259c5e0db7f.js` → `DnaReplicationRnaPrimerInitiationVisualization`.
+```
+
+#### changed: Lottie animations (761) › RNA template-directed replication
+
+```diff
+  Type `RNA_TEMPLATE_DIRECTED_REPLICATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-218e81c32abc.js`; view `visualization-dd4c8ee7b580.js` → `Visualization`.
++ Source: manifest `type-218e81c32abc.js`; view `visualization-41c33b5ade57.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › RNA-world information and catalysis
+
+```diff
+  Type `RNA_WORLD_INFORMATION_AND_CATALYSIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-49cb1621f5ba.js`; view `visualization-8d31a425d6ed.js` → `Visualization`.
++ Source: manifest `type-49cb1621f5ba.js`; view `visualization-656cde91b6d7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Rod and cone visual sensitivity
+
+```diff
+  Type `SENSORY_VISUAL_RODS_CONES_LIGHT_SENSITIVITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6afae062f026.js`; view `visualization-349780dc4bc5.js` → `Visualization`.
++ Source: manifest `type-6afae062f026.js`; view `visualization-1d95c42df832.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Root cross-section tissue systems
+
+```diff
+  Type `PLANT_ROOT_CROSS_SECTION_TISSUE_SYSTEMS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1b82a77caf7f.js`; view `visualization-9defaae0728a.js` → `Visualization`.
++ Source: manifest `type-1b82a77caf7f.js`; view `visualization-f7ed78b97b9a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Root gravitropism auxin reorientation
+
+```diff
+  Type `ROOT_GRAVITROPISM_AUXIN_REORIENTATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-feeae5b7bea7.js`; view `visualization-24be35f2d0ad.js` → `Visualization`.
++ Source: manifest `type-feeae5b7bea7.js`; view `visualization-3d7ad113bd76.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Root hydrotropism and moisture gradients
+
+```diff
+  Type `ROOT_HYDROTROPISM_MOISTURE_GRADIENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ae71bdeade15.js`; view `visualization-fe432c3530a1.js` → `Visualization`.
++ Source: manifest `type-ae71bdeade15.js`; view `visualization-d8ef0bfc2fca.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Root-hair mineral-ion uptake
+
+```diff
+  Type `PLANT_ROOT_HAIR_MINERAL_ION_UPTAKE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cda463d5cfd9.js`; view `visualization-7edd3f8b12aa.js` → `Visualization`.
++ Source: manifest `type-cda463d5cfd9.js`; view `visualization-c18ef4b4ebc2.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Root-hair water absorption
+
+```diff
+  Type `PLANT_ROOT_HAIR_WATER_ABSORPTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-118f50b240ca.js`; view `visualization-bf2cab356b7e.js` → `Visualization`.
++ Source: manifest `type-118f50b240ca.js`; view `visualization-d109aa601e5a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Rooted phylogenetic tree anatomy
+
+```diff
+  Type `ROOTED_PHYLOGENETIC_TREE_ANATOMY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b5cb286d2ce2.js`; view `visualization-42a353414441.js` → `Visualization`.
++ Source: manifest `type-b5cb286d2ce2.js`; view `visualization-c85ae4d9fe7f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Rough versus smooth endoplasmic reticulum
+
+```diff
+  Type `ROUGH_VERSUS_SMOOTH_ENDOPLASMIC_RETICULUM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-12cccf874cb5.js`; view `visualization-e671e735f044.js` → `Visualization`.
++ Source: manifest `type-12cccf874cb5.js`; view `visualization-bb10562f5a1f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Saturating biological dose-response relationship
+
+```diff
+  Type `BIOLOGICAL_DOSE_RESPONSE_AND_SATURATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a29ff7456296.js`; view `visualization-5ae0e4de60e5.js` → `BiologicalDoseResponseAndSaturationVisualization`.
++ Source: manifest `type-a29ff7456296.js`; view `visualization-fd0f4ec8d71a.js` → `BiologicalDoseResponseAndSaturationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Seasonal food scarcity induces hibernation and reduced metabolism
+
+```diff
+  Type `HIBERNATION_SEASONAL_ENERGY_CONSERVATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f30ca30c2a6d.js`; view `visualization-3344d4a37dab.js` → `HibernationSeasonalEnergyConservationVisualization`.
++ Source: manifest `type-f30ca30c2a6d.js`; view `visualization-3be5987a872a.js` → `HibernationSeasonalEnergyConservationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Secondary active cotransport
+
+```diff
+  Type `SECONDARY_ACTIVE_COTRANSPORT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fdaa35f99070.js`; view `visualization-eaef119a936e.js` → `Visualization`.
++ Source: manifest `type-fdaa35f99070.js`; view `visualization-876fa659fe00.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Secondary succession ecosystem recovery
+
+```diff
+  Type `SECONDARY_SUCCESSION_ECOSYSTEM_RECOVERY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-58e653f36fa9.js`; view `visualization-2d650a8c6e9c.js` → `SecondarySuccessionEcosystemRecoveryVisualization`.
++ Source: manifest `type-58e653f36fa9.js`; view `visualization-d9f69719f63f.js` → `SecondarySuccessionEcosystemRecoveryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Seed dispersal adaptations: wings and hooks
+
+```diff
+  Type `PLANT_SEED_DISPERSAL_ADAPTATIONS` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b6c0eab2709a.js`; view `visualization-6ab3b831725a.js` → `Visualization`.
++ Source: manifest `type-b6c0eab2709a.js`; view `visualization-f0087c18e74f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Seed dispersal and the next generation
+
+```diff
+  Type `ORGANISM_SEED_DISPERSAL_AND_NEXT_GENERATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-558840ae4c86.js`; view `visualization-8d1d66c1d664.js` → `OrganismSeedDispersalAndNextGenerationVisualization`.
++ Source: manifest `type-558840ae4c86.js`; view `visualization-2f7934505b79.js` → `OrganismSeedDispersalAndNextGenerationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Seed germination and seedling growth
+
+```diff
+  Type `ORGANISM_SEED_GERMINATION_AND_SEEDLING_GROWTH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-328a29e06d5b.js`; view `visualization-5ad612e5a649.js` → `OrganismSeedGerminationAndSeedlingGrowthVisualization`.
++ Source: manifest `type-328a29e06d5b.js`; view `visualization-865975ecee09.js` → `OrganismSeedGerminationAndSeedlingGrowthVisualization`.
+```
+
+#### changed: Lottie animations (761) › Seed germination: root before shoot
+
+```diff
+  Type `PLANT_SEED_GERMINATION_ROOT_BEFORE_SHOOT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-cf3233c2081b.js`; view `visualization-4e7d9d6a1588.js` → `Visualization`.
++ Source: manifest `type-cf3233c2081b.js`; view `visualization-ac18f6991f2c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Selective channel and carrier proteins
+
+```diff
+  Type `MEMBRANE_CHANNEL_CARRIER_SPECIFICITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a215e928bcb4.js`; view `visualization-323d4213f878.js` → `Visualization`.
++ Source: manifest `type-a215e928bcb4.js`; view `visualization-2199721c6dcd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Selective permeability of the plasma membrane
+
+```diff
+  Type `MEMBRANE_SELECTIVE_PERMEABILITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1ee3bc06b9f4.js`; view `visualization-660c3632d27f.js` → `Visualization`.
++ Source: manifest `type-1ee3bc06b9f4.js`; view `visualization-21530d604533.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Semiconservative DNA replication
+
+```diff
+  Type `DNA_REPLICATION_SEMICONSERVATIVE_INHERITANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-865ce1221646.js`; view `visualization-7a4cd4a93d6a.js` → `DnaReplicationSemiconservativeInheritanceVisualization`.
++ Source: manifest `type-865ce1221646.js`; view `visualization-4efcdc85bc87.js` → `DnaReplicationSemiconservativeInheritanceVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sensory adaptation in phasic and tonic receptors
+
+```diff
+  Type `SENSORY_ADAPTATION_PHASIC_TONIC_RECEPTORS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d74c69b35ab6.js`; view `visualization-14dda78d3fd9.js` → `Visualization`.
++ Source: manifest `type-d74c69b35ab6.js`; view `visualization-950582b06986.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sensory population recruitment and stimulus intensity
+
+```diff
+  Type `SENSORY_POPULATION_RECRUITMENT_INTENSITY_CODING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-44bde8bcd42d.js`; view `visualization-3c5a36c71e50.js` → `Visualization`.
++ Source: manifest `type-44bde8bcd42d.js`; view `visualization-ffc47fdcd195.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sensory receptor potential and firing threshold
+
+```diff
+  Type `SENSORY_RECEPTOR_POTENTIAL_THRESHOLD` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-66bccf0a3d32.js`; view `visualization-cfb318c44eae.js` → `Visualization`.
++ Source: manifest `type-66bccf0a3d32.js`; view `visualization-de12b5cbb788.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sensory stimulus intensity frequency coding
+
+```diff
+  Type `SENSORY_STIMULUS_INTENSITY_FREQUENCY_CODING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c00f95c080db.js`; view `visualization-2c9de6b44538.js` → `Visualization`.
++ Source: manifest `type-c00f95c080db.js`; view `visualization-e10fd61e88e0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Separate meiotic cells compare two equally likely independent-assortment orientations
+
+```diff
+  Type `METAPHASE_ONE_INDEPENDENT_ASSORTMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e36233912456.js`; view `visualization-c5d1958ef0a3.js` → `Visualization`.
++ Source: manifest `type-e36233912456.js`; view `visualization-6c4cd6892049.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sequential colonization of land by life
+
+```diff
+  Type `SEQUENTIAL_COLONIZATION_OF_LAND_BY_LIFE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-61c57c98ee7f.js`; view `visualization-8e1aeff1a37e.js` → `SequentialColonizationOfLandByLifeVisualization`.
++ Source: manifest `type-61c57c98ee7f.js`; view `visualization-1d401ddaef1c.js` → `SequentialColonizationOfLandByLifeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sexual versus asexual animal reproduction
+
+```diff
+  Type `ANIMAL_SEXUAL_VERSUS_ASEXUAL_REPRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7a5959e73df1.js`; view `visualization-fac066aaba29.js` → `AnimalSexualVersusAsexualReproductionVisualization`.
++ Source: manifest `type-7a5959e73df1.js`; view `visualization-865a21225c41.js` → `AnimalSexualVersusAsexualReproductionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Shade avoidance red/far-red signaling
+
+```diff
+  Type `SHADE_AVOIDANCE_RED_FAR_RED_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-41099eb227b7.js`; view `visualization-38f2e89af665.js` → `Visualization`.
++ Source: manifest `type-41099eb227b7.js`; view `visualization-4c6c36320eeb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Shape-dependent protein function is lost during denaturation
+
+```diff
+  Type `PROTEIN_DENATURATION_UNFOLDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-531ada35ff78.js`; view `visualization-f25107c471b6.js` → `ProteinDenaturationUnfoldingVisualization`.
++ Source: manifest `type-531ada35ff78.js`; view `visualization-62cc91b5e7f3.js` → `ProteinDenaturationUnfoldingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Shared derived character inheritance
+
+```diff
+  Type `SHARED_DERIVED_CHARACTER_INHERITANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e04eaf16d16a.js`; view `visualization-27e08b4d55e3.js` → `Visualization`.
++ Source: manifest `type-e04eaf16d16a.js`; view `visualization-4c422e47a87d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Shared derived characters define nested clades
+
+```diff
+  Type `SHARED_DERIVED_CHARACTER_CLADE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9577d13255f9.js`; view `visualization-f0f6eea17b28.js` → `Visualization`.
++ Source: manifest `type-9577d13255f9.js`; view `visualization-5ca3ae4ee8bd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Shared signal transduction can alter a cytoplasmic enzyme or nuclear gene expression
+
+```diff
+  Type `SIGNAL_RESPONSE_GENE_EXPRESSION_VERSUS_ENZYME_ACTIVATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e3a99bb3880b.js`; view `visualization-d46de40b5572.js` → `Visualization`.
++ Source: manifest `type-e3a99bb3880b.js`; view `visualization-865e464cb5d6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Short-wavelength excitation causes longer-wavelength fluorescence
+
+```diff
+  Type `MICROSCOPY_FLUORESCENCE_EXCITATION_EMISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-daa2567423cb.js`; view `visualization-fd3561895eaa.js` → `Visualization`.
++ Source: manifest `type-daa2567423cb.js`; view `visualization-62eefed29c2b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sigmoidal hemoglobin oxygen saturation at tissues and lungs
+
+```diff
+  Type `ANIMAL_HEMOGLOBIN_OXYGEN_DISSOCIATION_CURVE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-6de633b923d6.js`; view `visualization-7144fd77f15d.js` → `AnimalHemoglobinOxygenDissociationCurveVisualization`.
++ Source: manifest `type-6de633b923d6.js`; view `visualization-9ebf9e558f7f.js` → `AnimalHemoglobinOxygenDissociationCurveVisualization`.
+```
+
+#### changed: Lottie animations (761) › Silent missense and nonsense outcomes
+
+```diff
+  Type `MUTATION_SUBSTITUTION_OUTCOMES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a914b2788b8b.js`; view `visualization-a0360518ffb5.js` → `Visualization`.
++ Source: manifest `type-a914b2788b8b.js`; view `visualization-509202b839d6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Silent synonymous substitution
+
+```diff
+  Type `MUTATION_SILENT_SUBSTITUTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-21952aa7c1c4.js`; view `visualization-ebf30da2b2af.js` → `Visualization`.
++ Source: manifest `type-21952aa7c1c4.js`; view `visualization-209177f0e02c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Simple diffusion across a plasma membrane
+
+```diff
+  Type `SIMPLE_DIFFUSION_ACROSS_MEMBRANE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1c85b0dfed0f.js`; view `visualization-8e82afdcdf03.js` → `Visualization`.
++ Source: manifest `type-1c85b0dfed0f.js`; view `visualization-a9c9f8ab8234.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Simple versus stratified epithelium
+
+```diff
+  Type `EPITHELIAL_SIMPLE_VERSUS_STRATIFIED_BARRIERS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-96827e41dc93.js`; view `visualization-bbc6f20fa612.js` → `EpithelialSimpleVersusStratifiedBarriersVisualization`.
++ Source: manifest `type-96827e41dc93.js`; view `visualization-67740d0ad760.js` → `EpithelialSimpleVersusStratifiedBarriersVisualization`.
+```
+
+#### changed: Lottie animations (761) › Single-base substitution
+
+```diff
+  Type `MUTATION_BASE_SUBSTITUTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-aad7ce449b9a.js`; view `visualization-1eb8c67da9b5.js` → `Visualization`.
++ Source: manifest `type-aad7ce449b9a.js`; view `visualization-d6d75a26a78e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sinoatrial initiation, atrioventricular delay, and ventricular conduction
+
+```diff
+  Type `ANIMAL_CARDIAC_ELECTRICAL_CONDUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ef881225bb1f.js`; view `visualization-6a2e1abe937b.js` → `AnimalCardiacElectricalConductionVisualization`.
++ Source: manifest `type-ef881225bb1f.js`; view `visualization-687246475e0a.js` → `AnimalCardiacElectricalConductionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sister taxa and their exclusive ancestor
+
+```diff
+  Type `PHYLOGENETIC_SISTER_TAXA` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ec96b26e46c4.js`; view `visualization-158892e10e1c.js` → `Visualization`.
++ Source: manifest `type-ec96b26e46c4.js`; view `visualization-662ea92bcceb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Skeletal-muscle structural organization
+
+```diff
+  Type `MUSCULOSKELETAL_SKELETAL_MUSCLE_ORGANIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-baed8a5b88f8.js`; view `visualization-ffbf4dab79bf.js` → `MusculoskeletalSkeletalMuscleOrganizationVisualization`.
++ Source: manifest `type-baed8a5b88f8.js`; view `visualization-23f2a12029ca.js` → `MusculoskeletalSkeletalMuscleOrganizationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Skin and mucosal barrier defense
+
+```diff
+  Type `SKIN_MUCUS_PHYSICAL_CHEMICAL_BARRIERS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f00157b0e889.js`; view `visualization-3bca0b23f296.js` → `SkinMucusPhysicalChemicalBarriersVisualization`.
++ Source: manifest `type-f00157b0e889.js`; view `visualization-d2dc147cd92a.js` → `SkinMucusPhysicalChemicalBarriersVisualization`.
+```
+
+#### changed: Lottie animations (761) › Skin layers and accessory structures
+
+```diff
+  Type `INTEGUMENT_SKIN_LAYERS_AND_ACCESSORY_STRUCTURES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9b37492c65f2.js`; view `visualization-3df27b590da6.js` → `IntegumentSkinLayersAndAccessoryStructuresVisualization`.
++ Source: manifest `type-9b37492c65f2.js`; view `visualization-3d9a0ba59004.js` → `IntegumentSkinLayersAndAccessoryStructuresVisualization`.
+```
+
+#### changed: Lottie animations (761) › Small-scale DNA mutations
+
+```diff
+  Type `MUTATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f22d40e897cf.js`; view `visualization-28cfe0c50415.js` → `Visualization`.
++ Source: manifest `type-f22d40e897cf.js`; view `visualization-792b4ccadd6d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Smooth and folded membranes with the same projected cell width
+
+```diff
+  Type `CELL_SIZE_MEMBRANE_FOLDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3cf3e2230e6f.js`; view `visualization-48d9aa6d039c.js` → `CellSizeMembraneFoldingVisualization`.
++ Source: manifest `type-3cf3e2230e6f.js`; view `visualization-d4b205b54b9e.js` → `CellSizeMembraneFoldingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sodium-potassium pump active transport
+
+```diff
+  Type `SODIUM_POTASSIUM_ACTIVE_TRANSPORT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-53c5621a933e.js`; view `visualization-9aab575d9d90.js` → `Visualization`.
++ Source: manifest `type-53c5621a933e.js`; view `visualization-e5fde8c76575.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Somatic versus autonomic motor pathways
+
+```diff
+  Type `SOMATIC_VERSUS_AUTONOMIC_MOTOR_PATHWAYS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-504118e2c088.js`; view `visualization-970caa4ad125.js` → `SomaticVersusAutonomicMotorPathwaysVisualization`.
++ Source: manifest `type-504118e2c088.js`; view `visualization-9f7de0fa4780.js` → `SomaticVersusAutonomicMotorPathwaysVisualization`.
+```
+
+#### changed: Lottie animations (761) › Somatotopic sensory cortical representation
+
+```diff
+  Type `SENSORY_SOMATOTOPIC_CORTICAL_REPRESENTATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c53cdcd511d8.js`; view `visualization-ae3daa0f0598.js` → `Visualization`.
++ Source: manifest `type-c53cdcd511d8.js`; view `visualization-a030747aceb0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Specialized nerve, muscle, and secretory structures support different functions
+
+```diff
+  Type `SPECIALIZED_CELL_STRUCTURE_AND_FUNCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ad726e2626ee.js`; view `visualization-f1ef56399b50.js` → `Visualization`.
++ Source: manifest `type-ad726e2626ee.js`; view `visualization-421296b48a6a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sperm versus egg specialization
+
+```diff
+  Type `ANIMAL_SPERM_VERSUS_EGG_SPECIALIZATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-2264e623055f.js`; view `visualization-df7b7714605a.js` → `AnimalSpermVersusEggSpecializationVisualization`.
++ Source: manifest `type-2264e623055f.js`; view `visualization-77edf67a0bd2.js` → `AnimalSpermVersusEggSpecializationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Spermatogenesis versus oogenesis
+
+```diff
+  Type `ANIMAL_SPERMATOGENESIS_VERSUS_OOGENESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-486c524c8a25.js`; view `visualization-d74e1b8d5a23.js` → `AnimalSpermatogenesisVersusOogenesisVisualization`.
++ Source: manifest `type-486c524c8a25.js`; view `visualization-1f7f3b022e06.js` → `AnimalSpermatogenesisVersusOogenesisVisualization`.
+```
+
+#### changed: Lottie animations (761) › Spindle checkpoint requires bipolar attachment before anaphase
+
+```diff
+  Type `SPINDLE_ASSEMBLY_CHECKPOINT_ATTACHMENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ac9239514bc7.js`; view `visualization-9d068e78060d.js` → `Visualization`.
++ Source: manifest `type-ac9239514bc7.js`; view `visualization-971379c1a413.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sponge filter feeding
+
+```diff
+  Type `ANIMAL_SPONGE_FILTER_FEEDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9013930a3d2c.js`; view `visualization-9b8d14d534ff.js` → `AnimalSpongeFilterFeedingVisualization`.
++ Source: manifest `type-9013930a3d2c.js`; view `visualization-2c8d105db4d1.js` → `AnimalSpongeFilterFeedingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Squamous, cuboidal, and columnar epithelial cells
+
+```diff
+  Type `EPITHELIAL_SQUAMOUS_CUBOIDAL_COLUMNAR_CELL_SHAPES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dfd608ddf1e1.js`; view `visualization-78e8547a0fc5.js` → `EpithelialSquamousCuboidalColumnarCellShapesVisualization`.
++ Source: manifest `type-dfd608ddf1e1.js`; view `visualization-4f424a16c418.js` → `EpithelialSquamousCuboidalColumnarCellShapesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Stable allele frequencies across generations
+
+```diff
+  Type `POPULATION_GENETICS_EQUILIBRIUM_ACROSS_GENERATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7ccbb2803f74.js`; view `visualization-97852b0c0e20.js` → `Visualization`.
++ Source: manifest `type-7ccbb2803f74.js`; view `visualization-9fd26e5358bb.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Stem vascular-bundle cross section
+
+```diff
+  Type `PLANT_STEM_VASCULAR_BUNDLE_CROSS_SECTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bbfe8c75e571.js`; view `visualization-c54206d952ba.js` → `Visualization`.
++ Source: manifest `type-bbfe8c75e571.js`; view `visualization-688437270df4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Stem-cell differentiation: neuronal gene expression precedes specialized structure
+
+```diff
+  Type `STEM_CELL_DIFFERENTIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-a029640dedb7.js`; view `visualization-e72b8ca97d8b.js` → `Visualization`.
++ Source: manifest `type-a029640dedb7.js`; view `visualization-2c368ddcd311.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Stem-cell potency narrows from totipotent to a restricted neuronal lineage
+
+```diff
+  Type `STEM_CELL_POTENCY_AND_LINEAGE_RESTRICTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7dcb52ef948e.js`; view `visualization-750b4ac568fc.js` → `Visualization`.
++ Source: manifest `type-7dcb52ef948e.js`; view `visualization-a11bb8a824bc.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Stored fossil carbon, human combustion, and atmospheric accumulation
+
+```diff
+  Type `BIOGEOCHEMICAL_CARBON_FOSSIL_FUEL_IMBALANCE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-96d9ff82458b.js`; view `visualization-f109abe1d2f4.js` → `Visualization`.
++ Source: manifest `type-96d9ff82458b.js`; view `visualization-74047f74065e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Stored seed food supports growth until first true leaves develop
+
+```diff
+  Type `ORGANISM_SEED_RESERVES_TO_FIRST_LEAVES` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-525177d04c19.js`; view `visualization-39ede8e270c5.js` → `OrganismSeedReservesToFirstLeavesVisualization`.
++ Source: manifest `type-525177d04c19.js`; view `visualization-81423cb7a76c.js` → `OrganismSeedReservesToFirstLeavesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Substrate concentration raises enzyme activity until active sites saturate
+
+```diff
+  Type `ENZYME_SUBSTRATE_SATURATION_KINETICS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-191de9d49e6a.js`; view `visualization-a386263cca71.js` → `Visualization`.
++ Source: manifest `type-191de9d49e6a.js`; view `visualization-e2be58e7a9a7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sugar-phosphate backbone
+
+```diff
+  Type `SUGAR_PHOSPHATE_BACKBONE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1ca029de8929.js`; view `visualization-fc45830a6cf7.js` → `Visualization`.
++ Source: manifest `type-1ca029de8929.js`; view `visualization-cf6daebe7e73.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sulfhydryl groups forming a disulfide bond
+
+```diff
+  Type `BIOLOGICAL_SULFHYDRYL_DISULFIDE_BOND_FORMATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-bd6cdbdaf26f.js`; view `visualization-c976de58fd37.js` → `Visualization`.
++ Source: manifest `type-bd6cdbdaf26f.js`; view `visualization-4f3b5ed36296.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Sunlight energy travels through food to animal activity and heat
+
+```diff
+  Type `SUNLIGHT_FOOD_ENERGY_AND_HEAT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-eac0a546ddd0.js`; view `visualization-3def9df8f7ba.js` → `Visualization`.
++ Source: manifest `type-eac0a546ddd0.js`; view `visualization-5a77826fac21.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Superficial skin regeneration versus deeper collagen scarring
+
+```diff
+  Type `SKIN_SUPERFICIAL_REGENERATION_VERSUS_DEEP_SCAR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-85dba1f309e2.js`; view `visualization-e1535542b355.js` → `SkinSuperficialRegenerationVersusDeepScarVisualization`.
++ Source: manifest `type-85dba1f309e2.js`; view `visualization-d08ab4e0cf55.js` → `SkinSuperficialRegenerationVersusDeepScarVisualization`.
+```
+
+#### changed: Lottie animations (761) › sustainable-fisheries-harvest-population-recovery
+
+```diff
+  Type `SUSTAINABLE_FISHERIES_HARVEST_POPULATION_RECOVERY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1776f8d89e90.js`; view `visualization-e08c6ba3d012.js` → `SustainableFisheriesHarvestPopulationRecoveryVisualization`.
++ Source: manifest `type-1776f8d89e90.js`; view `visualization-be308c64f095.js` → `SustainableFisheriesHarvestPopulationRecoveryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sweat and sebaceous glands use different secretion routes
+
+```diff
+  Type `INTEGUMENT_SWEAT_VERSUS_SEBACEOUS_GLAND_SECRETION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3b01ed20948d.js`; view `visualization-83749f45c907.js` → `IntegumentSweatVersusSebaceousGlandSecretionVisualization`.
++ Source: manifest `type-3b01ed20948d.js`; view `visualization-cf75da30f01a.js` → `IntegumentSweatVersusSebaceousGlandSecretionVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sweating and evaporative cooling
+
+```diff
+  Type `SKIN_SWEAT_EVAPORATION_COOLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-da74e4fc3144.js`; view `visualization-54b386449592.js` → `SkinSweatEvaporationCoolingVisualization`.
++ Source: manifest `type-da74e4fc3144.js`; view `visualization-7fba138f3be0.js` → `SkinSweatEvaporationCoolingVisualization`.
+```
+
+#### changed: Lottie animations (761) › Symbiosis outcome comparison
+
+```diff
+  Type `SYMBIOSIS_OUTCOME_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fccea7da84e7.js`; view `visualization-92f8fa12471c.js` → `SymbiosisOutcomeComparisonVisualization`.
++ Source: manifest `type-fccea7da84e7.js`; view `visualization-35e192575b75.js` → `SymbiosisOutcomeComparisonVisualization`.
+```
+
+#### changed: Lottie animations (761) › Sympathetic adrenal medulla response
+
+```diff
+  Type `SYMPATHETIC_ADRENAL_MEDULLA_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4ad7a58993ce.js`; view `visualization-a17109a7dc40.js` → `Visualization`.
++ Source: manifest `type-4ad7a58993ce.js`; view `visualization-5ea8dca145a4.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Synovial-joint structure
+
+```diff
+  Type `MUSCULOSKELETAL_SYNOVIAL_JOINT_CARTILAGE_AND_FLUID` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-24211dc7b30e.js`; view `visualization-33f4a1e7192f.js` → `MusculoskeletalSynovialJointCartilageAndFluidVisualization`.
++ Source: manifest `type-24211dc7b30e.js`; view `visualization-fa16de725771.js` → `MusculoskeletalSynovialJointCartilageAndFluidVisualization`.
+```
+
+#### changed: Lottie animations (761) › Systemic blood pressure falls most steeply across resistance arterioles
+
+```diff
+  Type `ANIMAL_SYSTEMIC_BLOOD_PRESSURE_GRADIENT` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-73b3d9f0adfb.js`; view `visualization-c65c4f82613a.js` → `AnimalSystemicBloodPressureGradientVisualization`.
++ Source: manifest `type-73b3d9f0adfb.js`; view `visualization-237030f169ce.js` → `AnimalSystemicBloodPressureGradientVisualization`.
+```
+
+#### changed: Lottie animations (761) › Systemic capillary exchange at body tissues
+
+```diff
+  Type `ANIMAL_SYSTEMIC_CAPILLARY_TISSUE_EXCHANGE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ecf6f560f3a3.js`; view `visualization-ea83d3148d95.js` → `AnimalSystemicCapillaryTissueExchangeVisualization`.
++ Source: manifest `type-ecf6f560f3a3.js`; view `visualization-e3a7188faa87.js` → `AnimalSystemicCapillaryTissueExchangeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Temporal versus spatial summation
+
+```diff
+  Type `TEMPORAL_VERSUS_SPATIAL_SUMMATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-17ac95f695ab.js`; view `visualization-5c64fb6a4a46.js` → `TemporalVersusSpatialSummationVisualization`.
++ Source: manifest `type-17ac95f695ab.js`; view `visualization-75dff2a139e4.js` → `TemporalVersusSpatialSummationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Ten and twenty percent recombination correspond to unequal linked chromosome intervals
+
+```diff
+  Type `LINKAGE_DISTANCE_AND_RECOMBINATION_FREQUENCY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5c06b35a88e6.js`; view `visualization-c5828d627678.js` → `LinkageDistanceAndRecombinationFrequencyVisualization`.
++ Source: manifest `type-5c06b35a88e6.js`; view `visualization-e3f0ff6e1cdf.js` → `LinkageDistanceAndRecombinationFrequencyVisualization`.
+```
+
+#### changed: Lottie animations (761) › Tendril thigmotropism and touch coiling
+
+```diff
+  Type `TENDRIL_THIGMOTROPISM_TOUCH_COILING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-581b22ad7267.js`; view `visualization-fd5e6a393709.js` → `Visualization`.
++ Source: manifest `type-581b22ad7267.js`; view `visualization-606654667181.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › The same DNA sequence is compared in tightly packed inaccessible chromatin and open accessible chromatin with RNA polymerase and transcript output.
+
+```diff
+  Type `CHROMATIN_ACCESSIBILITY_GENE_EXPRESSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e6bc5423dc0f.js`; view `visualization-7261a285a63e.js` → `Visualization`.
++ Source: manifest `type-e6bc5423dc0f.js`; view `visualization-b3b21140c7ee.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › The same food and oxygen atoms rearrange as separate energy is released
+
+```diff
+  Type `MATTER_IS_REARRANGED_ENERGY_IS_RELEASED` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d646e6416600.js`; view `visualization-4bbed9d88a32.js` → `Visualization`.
++ Source: manifest `type-d646e6416600.js`; view `visualization-7a809f34becd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › The same neuronal gene is accessible in a neuron and compact in a muscle cell
+
+```diff
+  Type `CHROMATIN_ACCESSIBILITY_AND_CELL_IDENTITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5db16323776f.js`; view `visualization-70daa8e3e0f7.js` → `Visualization`.
++ Source: manifest `type-5db16323776f.js`; view `visualization-59192d02bf2a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › The same received signal activates different intracellular pathways in two target cells
+
+```diff
+  Type `PATHWAY_SPECIFIC_CELL_RESPONSES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-76490f668ce8.js`; view `visualization-76f8db0bfeeb.js` → `Visualization`.
++ Source: manifest `type-76490f668ce8.js`; view `visualization-d6b54411284c.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Three additive genes create seven dosage classes and a symmetric 1:6:15:20:15:6:1 distribution
+
+```diff
+  Type `POLYGENIC_INHERITANCE_CONTINUOUS_VARIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-86cd0157a229.js`; view `visualization-a80ff00b88fa.js` → `PolygenicInheritanceContinuousVariationVisualization`.
++ Source: manifest `type-86cd0157a229.js`; view `visualization-d762ce740473.js` → `PolygenicInheritanceContinuousVariationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Three AP Biology amino-acid R-group categories
+
+```diff
+  Type `AMINO_ACID_SIDE_CHAIN_PROPERTIES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-8d32179b3852.js`; view `visualization-b6a5d4b98e13.js` → `AminoAcidSideChainPropertiesVisualization`.
++ Source: manifest `type-8d32179b3852.js`; view `visualization-78dbe2ac4c95.js` → `AminoAcidSideChainPropertiesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Three domains and common ancestry
+
+```diff
+  Type `LIFE_THREE_DOMAINS_AND_COMMON_ANCESTOR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-83c27ef11d12.js`; view `visualization-e1434443ce83.js` → `Visualization`.
++ Source: manifest `type-83c27ef11d12.js`; view `visualization-3276b2e498b6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Three generations of connected autosomal dominant Aa-to-child transmission
+
+```diff
+  Type `MENDELIAN_AUTOSOMAL_DOMINANT_PEDIGREE_TRANSMISSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9dcc2e8e146d.js`; view `visualization-da557e7b2303.js` → `Visualization`.
++ Source: manifest `type-9dcc2e8e146d.js`; view `visualization-d9365cd3e4d0.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Three levels of biodiversity
+
+```diff
+  Type `BIODIVERSITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-fc8da6ee3c53.js`; view `visualization-4fe0ecc7eb99.js` → `Visualization`.
++ Source: manifest `type-fc8da6ee3c53.js`; view `visualization-3d2929a865e6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Three ordered protein kinases use separate ATP phosphates and reversible phosphatase activity
+
+```diff
+  Type `PHOSPHORYLATION_CASCADE_ARCHITECTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-72787eb264c0.js`; view `visualization-dbc6630fd6d6.js` → `Visualization`.
++ Source: manifest `type-72787eb264c0.js`; view `visualization-605126d92245.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Three population-level ABO alleles and four two-allele blood phenotypes
+
+```diff
+  Type `ABO_MULTIPLE_ALLELES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f3b8a5dd0737.js`; view `visualization-d29b07dd72d5.js` → `AboMultipleAllelesVisualization`.
++ Source: manifest `type-f3b8a5dd0737.js`; view `visualization-2276d7679860.js` → `AboMultipleAllelesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Three separate ATP-derived phosphates sequentially activate a protein-kinase cascade
+
+```diff
+  Type `PHOSPHORYLATION_CASCADE_ACTIVATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4ccd6d7b7174.js`; view `visualization-b2d829927dc9.js` → `Visualization`.
++ Source: manifest `type-4ccd6d7b7174.js`; view `visualization-8c909fdf946a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Three-prime poly-A tail addition
+
+```diff
+  Type `THREE_PRIME_POLY_A_TAIL_ADDITION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b41904e68997.js`; view `visualization-9e070d66a266.js` → `Visualization`.
++ Source: manifest `type-b41904e68997.js`; view `visualization-462eddfa6b51.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Tight junction blocks the route between adjacent animal cells
+
+```diff
+  Type `TIGHT_JUNCTION_BARRIER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-4bf6420bb5b4.js`; view `visualization-c443582d66ea.js` → `Visualization`.
++ Source: manifest `type-4bf6420bb5b4.js`; view `visualization-9650a35b9516.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Tight-junction epithelial barrier
+
+```diff
+  Type `EPITHELIAL_TIGHT_JUNCTION_SELECTIVE_BARRIER` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b152dcc3c867.js`; view `visualization-dcfd6ed85db3.js` → `EpithelialTightJunctionSelectiveBarrierVisualization`.
++ Source: manifest `type-b152dcc3c867.js`; view `visualization-38674cd7abaa.js` → `EpithelialTightJunctionSelectiveBarrierVisualization`.
+```
+
+#### changed: Lottie animations (761) › Tip order versus evolutionary relatedness
+
+```diff
+  Type `PHYLOGENETIC_TIP_ORDER_MISCONCEPTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-dd16ce5a35d7.js`; view `visualization-644e5bd3e1af.js` → `Visualization`.
++ Source: manifest `type-dd16ce5a35d7.js`; view `visualization-9c419471aba9.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Tissue fluid, lymph-node immunity, and venous return
+
+```diff
+  Type `ANIMAL_LYMPHATIC_FLUID_RETURN_AND_IMMUNITY` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-851682e94321.js`; view `visualization-bd4dc20e65f5.js` → `AnimalLymphaticFluidReturnAndImmunityVisualization`.
++ Source: manifest `type-851682e94321.js`; view `visualization-0912e5884694.js` → `AnimalLymphaticFluidReturnAndImmunityVisualization`.
+```
+
+#### changed: Lottie animations (761) › Total microscope magnification
+
+```diff
+  Type `MICROSCOPY_OBJECTIVE_EYEPIECE_TOTAL_MAGNIFICATION` · manifest v2 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-73bc95687614.js`; view `visualization-8980d4a50482.js` → `Visualization`.
++ Source: manifest `type-73bc95687614.js`; view `visualization-71a1307bd205.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Tracing a most recent common ancestor
+
+```diff
+  Type `PHYLOGENETIC_COMMON_ANCESTOR_TRACING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-1f8990b5904a.js`; view `visualization-7d040ce278e9.js` → `Visualization`.
++ Source: manifest `type-1f8990b5904a.js`; view `visualization-e9ec5e4443da.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Transcription and RNA processing
+
+```diff
+  Type `TRANSCRIPTION_AND_RNA_PROCESSING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7a6838122995.js`; view `visualization-d1c47facb489.js` → `Visualization`.
++ Source: manifest `type-7a6838122995.js`; view `visualization-1c79f0ee427d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Transcription elongation and RNA synthesis
+
+```diff
+  Type `TRANSCRIPTION_ELONGATION_RNA_SYNTHESIS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ac3675c15171.js`; view `visualization-b4bdda258086.js` → `Visualization`.
++ Source: manifest `type-ac3675c15171.js`; view `visualization-e623ddd549cd.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Transcription termination and RNA release
+
+```diff
+  Type `TRANSCRIPTION_TERMINATION_RNA_RELEASE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-caaa65c169e6.js`; view `visualization-b696db3f8c98.js` → `Visualization`.
++ Source: manifest `type-caaa65c169e6.js`; view `visualization-a60f1c356a74.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Transcription unit promoter and terminator
+
+```diff
+  Type `TRANSCRIPTION_UNIT_PROMOTER_TERMINATOR` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d11021362679.js`; view `visualization-50077be4c29f.js` → `Visualization`.
++ Source: manifest `type-d11021362679.js`; view `visualization-391f2761f8ac.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Translation elongation: A-site entry, peptide transfer, translocation
+
+```diff
+  Type `TRANSLATION_ELONGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-336e52c18ea4.js`; view `visualization-43203e15a02a.js` → `TranslationElongationVisualization`.
++ Source: manifest `type-336e52c18ea4.js`; view `visualization-c1d79e67c2bd.js` → `TranslationElongationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Translation initiation: AUG, initiator methionine, and P site
+
+```diff
+  Type `TRANSLATION_INITIATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b956405a451b.js`; view `visualization-6be5cc22b164.js` → `TranslationInitiationVisualization`.
++ Source: manifest `type-b956405a451b.js`; view `visualization-202e05a3ffe2.js` → `TranslationInitiationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Translation termination: UAA, release factor, and released peptide
+
+```diff
+  Type `TRANSLATION_TERMINATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-10ad0f646a17.js`; view `visualization-38d0c8f0296a.js` → `TranslationTerminationVisualization`.
++ Source: manifest `type-10ad0f646a17.js`; view `visualization-b0ba294aa8cc.js` → `TranslationTerminationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Translation: mRNA, ribosome, tRNA, and polypeptide
+
+```diff
+  Type `TRANSLATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-7d1063d05668.js`; view `visualization-f88a4ddaa263.js` → `TranslationVisualization`.
++ Source: manifest `type-7d1063d05668.js`; view `visualization-375694806bbe.js` → `TranslationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Transmission electron microscopy versus scanning electron microscopy
+
+```diff
+  Type `MICROSCOPY_TEM_VERSUS_SEM_IMAGING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-44ea58ea7d6f.js`; view `visualization-a379e61aa5d7.js` → `Visualization`.
++ Source: manifest `type-44ea58ea7d6f.js`; view `visualization-7d4be5c81db7.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Transpiration pull and cohesive xylem water
+
+```diff
+  Type `PLANT_XYLEM_TRANSPIRATION_COHESION_PULL` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b52ed19f6540.js`; view `visualization-489f880c8d0e.js` → `Visualization`.
++ Source: manifest `type-b52ed19f6540.js`; view `visualization-d5c7900ab0e1.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Triglyceride structure
+
+```diff
+  Type `TRIGLYCERIDE_STRUCTURE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d48e755453d9.js`; view `visualization-3b3ef7e83fab.js` → `TriglycerideStructureVisualization`.
++ Source: manifest `type-d48e755453d9.js`; view `visualization-9c0cb2f55212.js` → `TriglycerideStructureVisualization`.
+```
+
+#### changed: Lottie animations (761) › Trophic transfer efficiency and heat loss
+
+```diff
+  Type `TROPHIC_TRANSFER_EFFICIENCY_AND_HEAT_LOSS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f26d8b834324.js`; view `visualization-be57e377c52a.js` → `Visualization`.
++ Source: manifest `type-f26d8b834324.js`; view `visualization-2998636ad533.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Two copies of the same regulatory sequence compare weak transcription with one activator against stronger expression when the full transcription-factor combination binds.
+
+```diff
+  Type `TRANSCRIPTION_FACTOR_COMBINATORIAL_CONTROL` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9bb95b49538f.js`; view `visualization-4720a67f980b.js` → `Visualization`.
++ Source: manifest `type-9bb95b49538f.js`; view `visualization-581c97d94f0b.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Two independently assorting chromosome pairs produce four possible haploid parental-origin combinations across meioses
+
+```diff
+  Type `GAMETE_CHROMOSOME_COMBINATION_DIVERSITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-ed582bc170d9.js`; view `visualization-637c3b1c1905.js` → `Visualization`.
++ Source: manifest `type-ed582bc170d9.js`; view `visualization-a2b6b2351566.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Two independently oriented homologous pairs segregate into complementary mixed-origin cells
+
+```diff
+  Type `INDEPENDENT_ASSORTMENT_CHROMOSOME_SEGREGATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9e2e4f96d5df.js`; view `visualization-1890ce5180ff.js` → `Visualization`.
++ Source: manifest `type-9e2e4f96d5df.js`; view `visualization-35d9eeccb556.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Two recognizable eukaryotic cells retain the same genome while different regulatory states activate different genes and produce different proteins.
+
+```diff
+  Type `CELL_TYPE_SPECIFIC_GENE_EXPRESSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9b624db869d2.js`; view `visualization-db0e8e3832cb.js` → `Visualization`.
++ Source: manifest `type-9b624db869d2.js`; view `visualization-1a87ffc9cf38.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Type I, II, and III ecological survivorship curves
+
+```diff
+  Type `POPULATION_ECOLOGY_SURVIVORSHIP_CURVES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-faa491a1c84a.js`; view `visualization-7bc3f918c481.js` → `Visualization`.
++ Source: manifest `type-faa491a1c84a.js`; view `visualization-bb968a7eefe8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Undirected isopod kinesis and favorable-habitat retention
+
+```diff
+  Type `KINESIS_ENVIRONMENTAL_ACCUMULATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-db92c466be6e.js`; view `visualization-716fc7bf4760.js` → `KinesisEnvironmentalAccumulationVisualization`.
++ Source: manifest `type-db92c466be6e.js`; view `visualization-a82eeedfc95d.js` → `KinesisEnvironmentalAccumulationVisualization`.
+```
+
+#### changed: Lottie animations (761) › Unscaled branch length versus relatedness
+
+```diff
+  Type `PHYLOGENETIC_BRANCH_LENGTH_MISCONCEPTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5b89cbee5ff6.js`; view `visualization-a025218513f4.js` → `Visualization`.
++ Source: manifest `type-5b89cbee5ff6.js`; view `visualization-4b7e3ad05673.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Vaccine-induced immune memory
+
+```diff
+  Type `VACCINE_INDUCED_IMMUNE_MEMORY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d5f1f871ded8.js`; view `visualization-b23b4166288f.js` → `VaccineInducedImmuneMemoryVisualization`.
++ Source: manifest `type-d5f1f871ded8.js`; view `visualization-4a87cf838677.js` → `VaccineInducedImmuneMemoryVisualization`.
+```
+
+#### changed: Lottie animations (761) › Vertebrate diversity and adaptations
+
+```diff
+  Type `VERTEBRATE_DIVERSITY_AND_ADAPTATIONS` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-79df90570682.js`; view `visualization-1d2d69415eb6.js` → `Visualization`.
++ Source: manifest `type-79df90570682.js`; view `visualization-17929f5b42a8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Vertebrate shared derived innovation cladogram
+
+```diff
+  Type `VERTEBRATE_SHARED_DERIVED_INNOVATION_CLADOGRAM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-18c1051b36a2.js`; view `visualization-b0327b7d8628.js` → `Visualization`.
++ Source: manifest `type-18c1051b36a2.js`; view `visualization-656dde6fbcd5.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Vertebrate skin and reproduction on land
+
+```diff
+  Type `VERTEBRATE_SKIN_AND_REPRODUCTION_ON_LAND` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-59d01fc89060.js`; view `visualization-a2125419ccb8.js` → `Visualization`.
++ Source: manifest `type-59d01fc89060.js`; view `visualization-26f62302df69.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Vestibular rotation and hair-cell signaling
+
+```diff
+  Type `SENSORY_VESTIBULAR_ROTATION_HAIR_CELL_SIGNALING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5101f91c02b7.js`; view `visualization-8b63d97095a5.js` → `Visualization`.
++ Source: manifest `type-5101f91c02b7.js`; view `visualization-3858dcc97d12.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Viruses and prokaryotes
+
+```diff
+  Type `VIRUSES_AND_PROKARYOTES` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-88107789d63f.js`; view `visualization-3164a031e8e6.js` → `VirusesAndProkaryotesVisualization`.
++ Source: manifest `type-88107789d63f.js`; view `visualization-924066b480b2.js` → `VirusesAndProkaryotesVisualization`.
+```
+
+#### changed: Lottie animations (761) › Visual sensory pathway from retina to cortex
+
+```diff
+  Type `SENSORY_VISUAL_RETINA_CORTEX_PATHWAY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d2beaf09ff5a.js`; view `visualization-3a7e7f2c9356.js` → `Visualization`.
++ Source: manifest `type-d2beaf09ff5a.js`; view `visualization-e7e62e9709d8.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water adhesion and capillary rise
+
+```diff
+  Type `WATER_ADHESION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-b98b5f150a4c.js`; view `visualization-7d7feae6b5a6.js` → `Visualization`.
++ Source: manifest `type-b98b5f150a4c.js`; view `visualization-e03f1dbd25ec.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water autoionization, hydronium, and hydroxide
+
+```diff
+  Type `BIOLOGICAL_WATER_AUTOIONIZATION_HYDRONIUM_HYDROXIDE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-978d8b153dc0.js`; view `visualization-d33dc2b30451.js` → `Visualization`.
++ Source: manifest `type-978d8b153dc0.js`; view `visualization-3d2ef018affe.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water high heat of vaporization and evaporative cooling
+
+```diff
+  Type `WATER_EVAPORATIVE_COOLING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-10560b6b1e94.js`; view `visualization-7d17223c58db.js` → `Visualization`.
++ Source: manifest `type-10560b6b1e94.js`; view `visualization-92a8ed11379a.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water infiltration, groundwater movement, and surface discharge
+
+```diff
+  Type `BIOGEOCHEMICAL_WATER_INFILTRATION_AND_GROUNDWATER_RETURN` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-34fa4d2188aa.js`; view `visualization-4260f04b2041.js` → `Visualization`.
++ Source: manifest `type-34fa4d2188aa.js`; view `visualization-c77306c14c27.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water molecule polarity
+
+```diff
+  Type `WATER_MOLECULE_POLARITY` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3f98a719cdac.js`; view `visualization-d70f5c19910c.js` → `Visualization`.
++ Source: manifest `type-3f98a719cdac.js`; view `visualization-a5faa81cf56e.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water phase changes and return pathways
+
+```diff
+  Type `BIOGEOCHEMICAL_WATER_PHASE_CHANGE_AND_RETURN` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-55b70b78423f.js`; view `visualization-ddba339554e4.js` → `Visualization`.
++ Source: manifest `type-55b70b78423f.js`; view `visualization-a4b5930f235d.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water structure and hydrogen bonding
+
+```diff
+  Type `STRUCTURE_OF_WATER_HYDROGEN_BONDING` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-30b271c923a2.js`; view `visualization-2fe6e66e5323.js` → `Visualization`.
++ Source: manifest `type-30b271c923a2.js`; view `visualization-1e840b9ec501.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water surface tension
+
+```diff
+  Type `WATER_SURFACE_TENSION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-900de7db375d.js`; view `visualization-2a76987a8725.js` → `Visualization`.
++ Source: manifest `type-900de7db375d.js`; view `visualization-a3c498a9f7ad.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Water-soluble surface receptors versus lipid-soluble internal receptors
+
+```diff
+  Type `CELL_RECEPTOR_LOCATION_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-44959a606b0f.js`; view `visualization-10246091ef4a.js` → `CellReceptorLocationComparisonVisualization`.
++ Source: manifest `type-44959a606b0f.js`; view `visualization-8fa38a52e738.js` → `CellReceptorLocationComparisonVisualization`.
+```
+
+#### changed: Lottie animations (761) › When lactose is already present and glucose falls, cAMP binds CAP, the CAP–cAMP complex recruits RNA polymerase, and lac transcription increases.
+
+```diff
+  Type `LAC_OPERON_CATABOLITE_ACTIVATION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-c7643a3d5e8b.js`; view `visualization-bac5b6b29247.js` → `Visualization`.
++ Source: manifest `type-c7643a3d5e8b.js`; view `visualization-1517e98badb6.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Whole-organism cooling restores temperature toward a set point
+
+```diff
+  Type `PHYSIOLOGICAL_THERMOREGULATION_NEGATIVE_FEEDBACK` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-d71d53aba559.js`; view `visualization-5703247b3981.js` → `PhysiologicalThermoregulationNegativeFeedbackVisualization`.
++ Source: manifest `type-d71d53aba559.js`; view `visualization-1cced93dd649.js` → `PhysiologicalThermoregulationNegativeFeedbackVisualization`.
+```
+
+#### changed: Lottie animations (761) › Why a whale is a mammal, not a fish
+
+```diff
+  Type `VERTEBRATE_WHALE_MAMMAL_NOT_FISH` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-3ccbde9870dd.js`; view `visualization-1d9a59e0ecd3.js` → `Visualization`.
++ Source: manifest `type-3ccbde9870dd.js`; view `visualization-d99782b4d0aa.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Why small cells exchange materials efficiently
+
+```diff
+  Type `CELL_SIZE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-5573d3c7efeb.js`; view `visualization-e46955460b06.js` → `CellSizeVisualization`.
++ Source: manifest `type-5573d3c7efeb.js`; view `visualization-65a48d25f4a5.js` → `CellSizeVisualization`.
+```
+
+#### changed: Lottie animations (761) › Withdrawal-reflex sensory and motor response
+
+```diff
+  Type `WITHDRAWAL_REFLEX_SENSORY_MOTOR_RESPONSE` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-e55422374e65.js`; view `visualization-799cd963d33b.js` → `WithdrawalReflexSensoryMotorResponseVisualization`.
++ Source: manifest `type-e55422374e65.js`; view `visualization-7e2e951d7808.js` → `WithdrawalReflexSensoryMotorResponseVisualization`.
+```
+
+#### changed: Lottie animations (761) › Xylem and phloem transport comparison
+
+```diff
+  Type `PLANT_XYLEM_PHLOEM_TRANSPORT_COMPARISON` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-9fa238b86f42.js`; view `visualization-398413438969.js` → `Visualization`.
++ Source: manifest `type-9fa238b86f42.js`; view `visualization-45067be8d51f.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Xylem water and transpiration stream
+
+```diff
+  Type `PLANT_XYLEM_WATER_TRANSPIRATION_STREAM` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-f380070a883b.js`; view `visualization-8c752965a322.js` → `Visualization`.
++ Source: manifest `type-f380070a883b.js`; view `visualization-1c65df0705ce.js` → `Visualization`.
+```
+
+#### changed: Lottie animations (761) › Yeast budding reproduction
+
+```diff
+  Type `YEAST_BUDDING_REPRODUCTION` · manifest v1 · animated thumbnail · not in the type enum.
+  
+- Source: manifest `type-76a5aa97f57d.js`; view `visualization-1ed61c610ed5.js` → `Visualization`.
++ Source: manifest `type-76a5aa97f57d.js`; view `visualization-d4f60c768897.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Abo rh blood typing
+
+```diff
+  Parameters: `initial_blood_type` (enum, default `A+`, one of `O-`, `O+`, `A-`, `A+`, `B-`, `B+`, `AB-`, `AB+`).
+  
+- Source: manifest `model-20fa5aabbc94.js`; view `visualization-20e6f7af8635.js` → `AboRhBloodTypingVisualization`.
++ Source: manifest `model-20fa5aabbc94.js`; view `visualization-f3ccd120fc29.js` → `AboRhBloodTypingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Abo rh transfusion compatibility
+
+```diff
+  Parameters: `donorType` (enum, default `A+`, one of `O-`, `O+`, `A-`, `A+`, `B-`, `B+`, `AB-`, `AB+`); `recipientType` (enum, default `B-`, one of `O-`, `O+`, `A-`, `A+`, `B-`, `B+`, `AB-`, `AB+`).
+  
+- Source: manifest `type-99cca3d49ce0.js`; view `visualization-d968674df25d.js` → `AboRhTransfusionVisualization`.
++ Source: manifest `type-99cca3d49ce0.js`; view `visualization-252285428c27.js` → `AboRhTransfusionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Absorbance spectrum
+
+```diff
+  Parameters: `lambda_max_nm` (number, default `520`, range 210 to 740).
+  
+- Source: manifest `type-dfeec9c7c75e.js`; view `visualization-13c18ed7b61a.js` → `Visualization`.
++ Source: manifest `type-dfeec9c7c75e.js`; view `visualization-49a8419bd12c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Absorption variable costing inventory profit: `\mathrm{OI}_{A}-\mathrm{OI}_{V}=\Delta I\times \mathrm{FOH}_{u}`
+
+```diff
+  Parameters: `unitsProduced` (integer, default `800`, range 100 to 10000); `unitsSold` (integer, default `600`, range 100 to 10000).
+  
+- Source: manifest `type-796063db4408.js`; view `visualization-82813b468f36.js` → `AbsorptionVariableCostingVisualization`.
++ Source: manifest `type-796063db4408.js`; view `visualization-4a95939ef05c.js` → `AbsorptionVariableCostingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Accrual vs cash accounting
+
+```diff
+  Type `ACCRUAL_VS_CASH_ACCOUNTING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1805a2517dc4.js` → `AccrualVsCashAccountingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-72a70953c34d.js` → `AccrualVsCashAccountingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Accuracy vs precision targets
+
+```diff
+  Parameters: `meanPosition` (enum, default `centered`, one of `centered`, `offset`); `measurementSpread` (enum, default `small`, one of `small`, `large`).
+  
+- Source: manifest `type-c3de85d12da6.js`; view `visualization-b1f3ccba272b.js` → `AccuracyPrecisionVisualization`.
++ Source: manifest `type-c3de85d12da6.js`; view `visualization-a43ecaa50c01.js` → `AccuracyPrecisionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acid base proton transfer
+
+```diff
+  Type `ACID_BASE_PROTON_TRANSFER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8e43371ee19a.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-898245fdd499.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acid base speciation
+
+```diff
+  Parameters: `pKa1` (number, default `6.35`, range 0 to 6.5); `pKa2` (number, default `10.33`, range 7.5 to 14).
+  
+- Source: manifest `model-579301f7f78f.js`; view `visualization-b288075a46d1.js` → `AcidBaseSpeciationVisualization`.
++ Source: manifest `model-579301f7f78f.js`; view `visualization-8216d6516f7c.js` → `AcidBaseSpeciationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acid base titration
+
+```diff
+  Parameters: `experiment` (enum, default `strong-strong`, one of `strong-strong`, `strong-weak`, `weak-strong`); `acidVolumeMl` (number, default `0`, range 0 to 20).
+  
+- Source: manifest `model-b31ccf83cf9c.js`; view `visualization-725e91ef6dcb.js` → `AcidBaseTitrationVisualization`.
++ Source: manifest `model-b31ccf83cf9c.js`; view `visualization-d35b7549cb2e.js` → `AcidBaseTitrationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acid deposition
+
+```diff
+  Type `ACID_DEPOSITION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b4e02541a51d.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9fe9723dd3ba.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acid strength and conjugate base stability
+
+```diff
+  Parameters: `comparison` (enum, default `resonance`, one of `resonance`, `inductive`, `atom-trend`, `hybridization`).
+  
+- Source: manifest `model-7206de562b9d.js`; view `visualization-9418a3f384c2.js` → `Visualization`.
++ Source: manifest `model-7206de562b9d.js`; view `visualization-1466538130c9.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Action potential neuron
+
+```diff
+  Type `ACTION_POTENTIAL_NEURON`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-fe9e86d84676.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ae727bd2932c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Action potential nodes
+
+```diff
+  Type `ACTION_POTENTIAL_NODES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-20297b348465.js` → `ActionPotentialNodesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4e66a94ceed0.js` → `ActionPotentialNodesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Action potential voltage
+
+```diff
+  Type `ACTION_POTENTIAL_VOLTAGE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6ccb195649f7.js` → `ActionPotentialVoltageVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c1f4cb2cb47c.js` → `ActionPotentialVoltageVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Activation energy distribution
+
+```diff
+  Parameters: `initial_temperature_k` (number, default `600`, range 300 to 900); `activation_energy_kj_mol` (number, default `16`, range 8 to 28).
+  
+- Source: manifest `type-a73db772b207.js`; view `visualization-f8f0f34b53a8.js` → `ActivationEnergyDistributionVisualization`.
++ Source: manifest `type-a73db772b207.js`; view `visualization-57b67ba2ffd6.js` → `ActivationEnergyDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Active vs passive immunity
+
+```diff
+  Parameters: `initial_example` (enum, default `vaccination`, one of `infection-and-recovery`, `vaccination`, `maternal-antibodies`, `immune-globulin`).
+  
+- Source: manifest `model-c57d1e222f54.js`; view `visualization-4fa68b9faa79.js` → `Visualization`.
++ Source: manifest `model-c57d1e222f54.js`; view `visualization-ff2fc31a2139.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acute inflammation
+
+```diff
+  Type `ACUTE_INFLAMMATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c0dca6f589f6.js` → `AcuteInflammationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-bdb2a8154af3.js` → `AcuteInflammationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Acute triangle
+
+```diff
+  Type `ACUTE_TRIANGLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2f43cb7a0505.js` → `AcuteTriangleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f45c95b006e3.js` → `AcuteTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Add fractions
+
+```diff
+  Parameters: `firstNumerator` (integer, default `1`, range 1 to 4); `firstDenominator` (integer, default `3`, range 2 to 6); `secondNumerator` (integer, default `3`, range 1 to 4); `secondDenominator` (integer, default `6`, range 2 to 6).
+  
+- Source: manifest `type-4b5ff0bb4ae8.js`; view `visualization-cf80e486eed6.js` → `AddFractionsVisualization`.
++ Source: manifest `type-4b5ff0bb4ae8.js`; view `visualization-4d3602ca43bb.js` → `AddFractionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Adding integers
+
+```diff
+  Parameters: `firstAddend` (integer, default `3`, range 1 to 12); `secondAddend` (integer, default `6`, range 1 to 12).
+  
+- Source: manifest `model-1ff2e69cbdc9.js`; view `visualization-9157ac0c8802.js` → `AddingIntegersVisualization`.
++ Source: manifest `model-1ff2e69cbdc9.js`; view `visualization-ccd2e6563fdb.js` → `AddingIntegersVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Adding negative integer
+
+```diff
+  Parameters: `positiveInteger` (integer, default `7`, range 1 to 12); `negativeInteger` (integer, default `-4`, range -12 to -1).
+  
+- Source: manifest `model-5b5c3055d254.js`; view `visualization-33ebd9a065a1.js` → `AddingNegativeIntegerVisualization`.
++ Source: manifest `model-5b5c3055d254.js`; view `visualization-f11eaa52d3cd.js` → `AddingNegativeIntegerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Adsr envelope
+
+```diff
+  Type `ADSR_ENVELOPE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2e13b5e4170c.js` → `AdsrEnvelopeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2b30c7dfb8f8.js` → `AdsrEnvelopeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Age structure pyramid
+
+```diff
+  Parameters: `initial_pattern` (enum, default `expansive`, one of `expansive`, `stationary`, `constrictive`).
+  
+- Source: manifest `type-19661ffd37c1.js`; view `visualization-ba19c2d6797a.js` → `Visualization`.
++ Source: manifest `type-19661ffd37c1.js`; view `visualization-3f3401f1cd01.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Aggregate demand
+
+```diff
+  Type `AGGREGATE_DEMAND`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d3d0202d9030.js` → `AggregateDemandVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5b810ad515f3.js` → `AggregateDemandVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Aggregate demand and supply
+
+```diff
+  Type `AGGREGATE_DEMAND_AND_SUPPLY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1a89a0761f6b.js` → `AdAsEquilibriumVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-22987fb87e9a.js` → `AdAsEquilibriumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Agricultural soil erosion
+
+```diff
+  Type `AGRICULTURAL_SOIL_EROSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3efa47b5742c.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c381356cf2b6.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Alcohol oxidation products
+
+```diff
+  Parameters: `oxidationConditions` (enum, default `dess_martin`, one of `dess_martin`, `jones_reagent`).
+  
+- Source: manifest `model-9f7763fa34f6.js`; view `visualization-dcb3bcd6f506.js` → `AlcoholOxidationProductsVisualization`.
++ Source: manifest `model-9f7763fa34f6.js`; view `visualization-b8dd3aacab0a.js` → `AlcoholOxidationProductsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Alkene e z stereochemistry
+
+```diff
+  Type `ALKENE_E_Z_STEREOCHEMISTRY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-164950475e85.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-64715ab1528a.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Alkene stereochemical additions
+
+```diff
+  Type `ALKENE_STEREOCHEMICAL_ADDITIONS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f671ef0ef3fc.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-997085727f88.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Alveolar gas exchange
+
+```diff
+  Type `ALVEOLAR_GAS_EXCHANGE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f87dcf95bb6c.js` → `AlveolarGasExchangeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-6060f4a9c4f4.js` → `AlveolarGasExchangeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Amino acids and peptide bonds
+
+```diff
+  Type `AMINO_ACIDS_AND_PEPTIDE_BONDS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e60fa8589b3e.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d55425f81db4.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Angular frequency relation: `\omega = 2\pi f`
+
+```diff
+  Parameters: `frequency` (number, default `1.5`, range 0.01 to 1000).
+  
+- Source: manifest `type-dd26222ad182.js`; view `visualization-9167147eddab.js` → `AngularFrequencyRelationVisualization`.
++ Source: manifest `type-dd26222ad182.js`; view `visualization-1d6511acda6b.js` → `AngularFrequencyRelationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Animal life cycle
+
+```diff
+  Parameters: `animal` (enum, default `butterfly`, one of `butterfly`, `frog`, `chicken`, `mammal`).
+  
+- Source: manifest `type-11d77b78e3d4.js`; view `visualization-9b63ed7beab9.js` → `AnimalLifeCycleVisualization`.
++ Source: manifest `type-11d77b78e3d4.js`; view `visualization-f4b4698e2660.js` → `AnimalLifeCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Anova decomposition: `F = \frac{\text{between-group variation}}{\text{within-group variation}}`
+
+```diff
+  Parameters: `groupA1` (number, default `32`, range 0 to 100); `groupA2` (number, default `36`, range 0 to 100); `groupA3` (number, default `38`, range 0 to 100); `groupA4` (number, default `40`, range 0 to 100); `groupA5` (number, default `43`, range 0 to 100); `groupA6` (number, default `45`, range 0 to 100); `groupB1` (number, default `44`, range 0 to 100); `groupB2` (number, default `47`, range 0 to 100); `groupB3` (number, default `49`, range 0 to 100); `groupB4` (number, default `51`, range 0 to 100); `groupB5` (number, default `53`, range 0 to 100); `groupB6` (number, default `56`, range 0 to 100); `groupC1` (number, default `55`, range 0 to 100); `groupC2` (number, default `58`, range 0 to 100); `groupC3` (number, default `60`, range 0 to 100); `groupC4` (number, default `62`, range 0 to 100); `groupC5` (number, default `65`, range 0 to 100); `groupC6` (number, default `66`, range 0 to 100).
+  
+- Source: manifest `model-2ea1a60fd78b.js`; view `visualization-a632f07924d8.js` → `AnovaDecompositionVisualization`.
++ Source: manifest `model-2ea1a60fd78b.js`; view `visualization-6390659dee97.js` → `AnovaDecompositionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Anova interaction plot
+
+```diff
+  Parameters: `initial_pattern` (enum, default `no-interaction`, one of `no-interaction`, `non-crossover-interaction`, `crossover-interaction`).
+  
+- Source: manifest `model-485af57b772f.js`; view `visualization-5ada4cea2019.js` → `Visualization`.
++ Source: manifest `model-485af57b772f.js`; view `visualization-a7ecb4efdaef.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Antibiotic resistance
+
+```diff
+  Type `ANTIBIOTIC_RESISTANCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f7d81860699b.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c92a988124c3.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Antibody structure
+
+```diff
+  Type `ANTIBODY_STRUCTURE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-78900d0111bf.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-94fd8b22dbbf.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Apoptosis
+
+```diff
+  Type `APOPTOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-15a122e375b9.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-35ee3966af00.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Aquifer and groundwater
+
+```diff
+  Type `AQUIFER_AND_GROUNDWATER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8df1526a95b5.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fab7b9d32069.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Arc length
+
+```diff
+  Type `ARC_LENGTH`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ad4c108eec43.js` → `ArcLengthVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1d0389b2f0d2.js` → `ArcLengthVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic mean
+
+```diff
+  Parameters: `observation1` (integer, default `2`, range 1 to 10); `observation2` (integer, default `4`, range 1 to 10); `observation3` (integer, default `7`, range 1 to 10).
+  
+- Source: manifest `type-501bb4244183.js`; view `visualization-a8914ccb7d31.js` → `ArithmeticMeanVisualization`.
++ Source: manifest `type-501bb4244183.js`; view `visualization-d07cf708825c.js` → `ArithmeticMeanVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic sequence: `a_n = a_1 + (n - 1)d`
+
+```diff
+  Parameters: `firstTerm` (integer, default `2`, range -6 to 6); `commonDifference` (integer, default `3`, range -4 to 4); `termNumber` (integer, default `5`, range 1 to 6).
+  
+- Source: manifest `model-d8a81301bcce.js`; view `visualization-86da777140e9.js` → `ArithmeticSequenceVisualization`.
++ Source: manifest `model-d8a81301bcce.js`; view `visualization-aedebb730b6e.js` → `ArithmeticSequenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic sequence sum formula
+
+```diff
+  Type `ARITHMETIC_SEQUENCE_SUM_FORMULA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-126a23448330.js` → `ArithmeticSequenceSumVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e463b2c63f9e.js` → `ArithmeticSequenceSumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Arithmetic vs geometric: `\begin{aligned} a_n &= a_1 + (n - 1)d \\ g_n &= a_1 r^{n - 1} \end{aligned}`
+
+```diff
+  Parameters: `commonDifference` (number, default `2`, range -20 to 20); `commonRatio` (number, default `2`, range -3 to 3).
+  
+- Source: manifest `model-5dd2c88fcae7.js`; view `visualization-9cc19f33a162.js` → `ArithmeticVsGeometricVisualization`.
++ Source: manifest `model-5dd2c88fcae7.js`; view `visualization-231672358362.js` → `ArithmeticVsGeometricVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Aromaticity and huckels rule
+
+```diff
+  Parameters: `initial_example` (enum, default `benzene`, one of `benzene`, `cyclobutadiene`, `cyclooctatetraene`, `cyclopentadienyl-anion`, `cyclopropenyl-cation`).
+  
+- Source: manifest `type-4644d5bf838d.js`; view `visualization-b3e514a19067.js` → `Visualization`.
++ Source: manifest `type-4644d5bf838d.js`; view `visualization-31d7fe2bbed5.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Array queue front rear
+
+```diff
+  Parameters: `mode` (enum, default `linear`, one of `linear`, `circular`).
+  
+- Source: manifest `model-9eabfa87d180.js`; view `visualization-259447a84a96.js` → `ArrayQueueFrontRearVisualization`.
++ Source: manifest `model-9eabfa87d180.js`; view `visualization-300c59703c2e.js` → `ArrayQueueFrontRearVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Asymmetric key roles
+
+```diff
+  Type `ASYMMETRIC_KEY_ROLES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e3e9ef3de8ab.js` → `AsymmetricKeyRolesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-644a49c13b9e.js` → `AsymmetricKeyRolesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Atherosclerosis
+
+```diff
+  Parameters: `initial_stage` (enum, default `established plaque`, one of `healthy artery`, `fatty streak`, `established plaque`, `plaque rupture and thrombus`).
+  
+- Source: manifest `type-c62486043386.js`; view `visualization-8ea35fedf34b.js` → `AtherosclerosisVisualization`.
++ Source: manifest `type-c62486043386.js`; view `visualization-5f953ee23d5d.js` → `AtherosclerosisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Atmospheric layers
+
+```diff
+  Type `ATMOSPHERIC_LAYERS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2902da3f9f9f.js` → `AtmosphericLayersVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2b2897673b44.js` → `AtmosphericLayersVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Atmospheric pollution plume
+
+```diff
+  Parameters: `initial_plume_regime` (enum, default `looping`, one of `looping`, `coning`, `fanning`, `lofting`, `fumigation`, `trapping`).
+  
+- Source: manifest `type-b367cfc0fc69.js`; view `visualization-4a1d9d6e68e2.js` → `Visualization`.
++ Source: manifest `type-b367cfc0fc69.js`; view `visualization-faaf2acc29ef.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Atomic composition
+
+```diff
+  Type `ATOMIC_COMPOSITION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-da5739819751.js` → `AtomicCompositionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fa0a48bfb690.js` → `AtomicCompositionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Atp cycle
+
+```diff
+  Type `ATP_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4b803f605a96.js` → `AtpCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-bbf51662024b.js` → `AtpCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Autocorrelation
+
+```diff
+  Type `AUTOCORRELATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-fdeffcee8eda.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-304001cbe288.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Average speed distance time
+
+```diff
+  Type `AVERAGE_SPEED_DISTANCE_TIME`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c9b9c630ac1e.js` → `AverageSpeedDistanceTimeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b3225b407c7b.js` → `AverageSpeedDistanceTimeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Avogadros law: `\frac{V_1}{n_1}=\frac{V_2}{n_2}`
+
+```diff
+  Parameters: `reference_amount_mol` (number, default `1`, range 0.25 to 5); `reference_volume_l` (number, default `22.4`, range 1 to 120).
+  
+- Source: manifest `model-5a84276bd5aa.js`; view `visualization-921cbc3554bc.js` → `Visualization`.
++ Source: manifest `model-5a84276bd5aa.js`; view `visualization-47f9859a2b06.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Balancing equations
+
+```diff
+  Parameters: `reaction_example` (enum, default `hydrogen-and-oxygen-to-water`, one of `hydrogen-and-oxygen-to-water`, `nitrogen-and-hydrogen-to-ammonia`, `methane-combustion`).
+  
+- Source: manifest `type-ee78dd3b1e31.js`; view `visualization-d3a33194e4bc.js` → `BalancingEquationsVisualization`.
++ Source: manifest `type-ee78dd3b1e31.js`; view `visualization-df4ba11c8347.js` → `BalancingEquationsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bank credit money multiplier: `m = \frac{1}{r}`
+
+```diff
+  Parameters: `initialDepositUsd` (number, default `1000`, range 100 to 2000); `reserveRatioPercent` (number, default `10`, range 5 to 50).
+  
+- Source: manifest `model-deaf0a16998f.js`; view `visualization-5c689f680587.js` → `BankCreditMoneyMultiplierVisualization`.
++ Source: manifest `model-deaf0a16998f.js`; view `visualization-2d699bd76be5.js` → `BankCreditMoneyMultiplierVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bar magnet field strength
+
+```diff
+  Type `BAR_MAGNET_FIELD_STRENGTH`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b24dfeb4d0f2.js` → `BarMagnetFieldStrengthVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7149757cb225.js` → `BarMagnetFieldStrengthVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bayes theorem
+
+```diff
+  Type `BAYES_THEOREM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-838d60a9c191.js` → `BayesTheoremVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d04ec12c0d8a.js` → `BayesTheoremVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bayesian beta binomial updating
+
+```diff
+  Parameters: `prior_alpha` (number, default `5`, range 1.5 to 6); `prior_beta` (number, default `5`, range 1.5 to 6); `observed_successes` (integer, default `6`, range 0 to 12); `observed_failures` (integer, default `2`, range 0 to 12).
+  
+- Source: manifest `model-65899196f0dd.js`; view `visualization-230a0399c81b.js` → `BayesianBetaBinomialVisualization`.
++ Source: manifest `model-65899196f0dd.js`; view `visualization-d224344e4f1a.js` → `BayesianBetaBinomialVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Beer lambert law: `A = \varepsilon c l`
+
+```diff
+  Parameters: `molarAbsorptivity` (number, default `1.2`, range 0.01 to 100000); `concentration` (number, default `0.8`, range 0.01 to 10); `pathLength` (number, default `1`, range 0.01 to 100).
+  
+- Source: manifest `type-b34069051dae.js`; view `visualization-77d40e275e37.js` → `BeerLambertLawVisualization`.
++ Source: manifest `type-b34069051dae.js`; view `visualization-aa73cd49928c.js` → `BeerLambertLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Beta oxidation cycle
+
+```diff
+  Type `BETA_OXIDATION_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b11fe2bffc85.js` → `BetaOxidationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-daaf12166670.js` → `BetaOxidationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bfs dfs traversal
+
+```diff
+  Type `BFS_DFS_TRAVERSAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-651eb229f9a7.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-67f128d2c0a0.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Big o growth comparison
+
+```diff
+  Parameters: `n` (integer, default `10`, range 1 to 20).
+  
+- Source: manifest `model-d45c8c7b3dc6.js`; view `visualization-184a6b731381.js` → `BigOGrowthComparisonVisualization`.
++ Source: manifest `model-d45c8c7b3dc6.js`; view `visualization-fa9798f817f2.js` → `BigOGrowthComparisonVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Big o time complexity
+
+```diff
+  Type `BIG_O_TIME_COMPLEXITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b8722ad2cbd3.js` → `BigOTimeComplexityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c78cea7ac873.js` → `BigOTimeComplexityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binary heap operations
+
+```diff
+  Parameters: `heap_kind` (enum, default `min-heap`, one of `min-heap`, `max-heap`); `initial_operation` (enum, default `insert`, one of `insert`, `remove-root`).
+  
+- Source: manifest `model-775baaf06261.js`; view `visualization-712dd863328e.js` → `BinaryHeapOperationsVisualization`.
++ Source: manifest `model-775baaf06261.js`; view `visualization-c59a705ac6ba.js` → `BinaryHeapOperationsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binary place value
+
+```diff
+  Parameters: `initial_value` (integer, default `45`, range 0 to 255).
+  
+- Source: manifest `model-e76cabbd5aab.js`; view `visualization-2dbdc2f0fbb5.js` → `BinaryPlaceValueVisualization`.
++ Source: manifest `model-e76cabbd5aab.js`; view `visualization-b01dd11fa11d.js` → `BinaryPlaceValueVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binary search
+
+```diff
+  Parameters: `target` (integer, default `55`, range 10 to 100).
+  
+- Source: manifest `model-d9cf6b8411c6.js`; view `visualization-143a99541531.js` → `BinarySearchVisualization`.
++ Source: manifest `model-d9cf6b8411c6.js`; view `visualization-29cfa5686719.js` → `BinarySearchVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binary search tree insertion
+
+```diff
+  Parameters: `insertionSequence` (enum, default `mixed`, one of `mixed`, `balanced`, `ascending`).
+  
+- Source: manifest `model-5abcde22832d.js`; view `visualization-9369790be382.js` → `BinarySearchTreeInsertionVisualization`.
++ Source: manifest `model-5abcde22832d.js`; view `visualization-4e94e5ac35c4.js` → `BinarySearchTreeInsertionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binomial distribution
+
+```diff
+  Parameters: `trials` (integer, default `6`, range 1 to 10); `successPercent` (number, default `50`, range 0 to 100).
+  
+- Source: manifest `model-4378a4161730.js`; view `visualization-d9a10690af27.js` → `BinomialDistributionVisualization`.
++ Source: manifest `model-4378a4161730.js`; view `visualization-331dd3fb4d96.js` → `BinomialDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binomial square
+
+```diff
+  Type `BINOMIAL_SQUARE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-71f69e65c5ef.js` → `BinomialSquareVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5197ae17fdca.js` → `BinomialSquareVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Binomial theorem pascal triangle: `(a+b)^n = \sum_{k=0}^{n}\binom{n}{k}a^{n-k}b^k`
+
+```diff
+  Parameters: `n` (integer, default `5`, range 0 to 6).
+  
+- Source: manifest `model-3791234ec878.js`; view `visualization-3834170b3c77.js` → `BinomialTheoremPascalTriangleVisualization`.
++ Source: manifest `model-3791234ec878.js`; view `visualization-f13018b6752d.js` → `BinomialTheoremPascalTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Biological ph and buffers: `\mathrm{pH}=\mathrm{p}K_a+\log_{10}\!\left(\frac{[A^-]}{[HA]}\right)`
+
+```diff
+  Parameters: `pKa` (number, default `7.2`, range 4.5 to 9.5).
+  
+- Source: manifest `type-9b7b6f94e6e1.js`; view `visualization-292a57058391.js` → `Visualization`.
++ Source: manifest `type-9b7b6f94e6e1.js`; view `visualization-8c92c1b5f297.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Biomagnification
+
+```diff
+  Parameters: `contaminant` (enum, default `DDT`, one of `DDT`, `methylmercury`, `PCBs`).
+  
+- Source: manifest `model-aae321d23dad.js`; view `visualization-a4854983138c.js` → `Visualization`.
++ Source: manifest `model-aae321d23dad.js`; view `visualization-3e19e8888144.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Biome climatograph
+
+```diff
+  Parameters: `mean_annual_temperature_c` (number, default `18`, range -15 to 30); `annual_precipitation_cm` (number, default `100`, range 0 to 450).
+  
+- Source: manifest `type-894614f7a446.js`; view `visualization-716f30c38d29.js` → `BiomeClimatographVisualization`.
++ Source: manifest `type-894614f7a446.js`; view `visualization-e08775eab442.js` → `BiomeClimatographVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Blockchain hash chain
+
+```diff
+  Parameters: `chainState` (enum, default `original`, one of `original`, `tamper_block_1`, `tamper_block_2`, `tamper_block_3`).
+  
+- Source: manifest `model-c23e01a5b875.js`; view `visualization-73e93f006c6c.js` → `BlockchainHashChainVisualization`.
++ Source: manifest `model-c23e01a5b875.js`; view `visualization-63f8c0df7aac.js` → `BlockchainHashChainVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Blood circulation
+
+```diff
+  Parameters: `circulation` (enum, default `pulmonary`, one of `pulmonary`, `systemic`).
+  
+- Source: manifest `model-135f4cf52f9c.js`; view `visualization-948650b76e1f.js` → `BloodCirculationVisualization`.
++ Source: manifest `model-135f4cf52f9c.js`; view `visualization-adc8edbda9f7.js` → `BloodCirculationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Blood glucose regulation
+
+```diff
+  Parameters: `initial_condition` (enum, default `high`, one of `high`, `low`).
+  
+- Source: manifest `model-106204ffd60a.js`; view `visualization-3935cb3e044e.js` → `BloodGlucoseVisualization`.
++ Source: manifest `model-106204ffd60a.js`; view `visualization-77592425435a.js` → `BloodGlucoseVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Blood pressure regulation
+
+```diff
+  Parameters: `initial_pressure_condition` (enum, default `high`, one of `low`, `normal`, `high`).
+  
+- Source: manifest `model-e9d53ce0f19d.js`; view `visualization-f05de75b8346.js` → `BloodPressureVisualization`.
++ Source: manifest `model-e9d53ce0f19d.js`; view `visualization-f10ba818b91e.js` → `BloodPressureVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Blue white screening
+
+```diff
+  Type `BLUE_WHITE_SCREENING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b1e941306362.js` → `BlueWhiteScreeningVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-295db505b200.js` → `BlueWhiteScreeningVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Boiling point elevation: `\Delta T_b=iK_bm`
+
+```diff
+  Parameters: `solvent` (enum, default `benzene`, one of `water`, `benzene`); `initial_solute_molality` (number, default `0.15`, range 0 to 0.25); `initial_particle_factor` (integer, default `2`, range 1 to 3).
+  
+- Source: manifest `model-aed74d60f0d7.js`; view `visualization-dc966ec4c303.js` → `BoilingPointElevationVisualization`.
++ Source: manifest `model-aed74d60f0d7.js`; view `visualization-c2284bee5103.js` → `BoilingPointElevationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bomb calorimetry
+
+```diff
+  Parameters: `sample_mass_g` (number, default `1`, range 0.25 to 2); `combustion_energy_kj_per_g` (number, default `24`, range 15 to 35); `calorimeter_heat_capacity_kj_per_k` (number, default `12`, range 8 to 25).
+  
+- Source: manifest `type-cb7946b61519.js`; view `visualization-8ece82454599.js` → `BombCalorimetryVisualization`.
++ Source: manifest `type-cb7946b61519.js`; view `visualization-22bcc6e928c8.js` → `BombCalorimetryVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bond energy curve
+
+```diff
+  Type `BOND_ENERGY_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1054c5530cad.js` → `BondEnergyCurveVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-80fe3e9e09c9.js` → `BondEnergyCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bond polarity: `\Delta \chi = |\chi_2 - \chi_1|`
+
+```diff
+  Parameters: `atom1` (enum, default `H`, one of `H`, `C`, `O`, `F`, `Cl`); `atom2` (enum, default `Cl`, one of `H`, `C`, `O`, `F`, `Cl`).
+  
+- Source: manifest `model-940064895671.js`; view `visualization-4d543f8c4294.js` → `BondPolarityVisualization`.
++ Source: manifest `model-940064895671.js`; view `visualization-3968b89db10b.js` → `BondPolarityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Boolean logic
+
+```diff
+  Parameters: `inputA` (boolean, default `true`); `inputB` (boolean, default `false`); `operator` (enum, default `and`, one of `and`, `or`).
+  
+- Source: manifest `type-8da18ccae221.js`; view `visualization-c0dba6022942.js` → `BooleanLogicVisualization`.
++ Source: manifest `type-8da18ccae221.js`; view `visualization-af95fe70d269.js` → `BooleanLogicVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Boolean truth table
+
+```diff
+  Parameters: `inputA` (boolean, default `true`); `inputB` (boolean, default `true`); `operator` (enum, default `OR`, one of `AND`, `OR`, `XOR`, `XNOR`).
+  
+- Source: manifest `model-57f01654f1a3.js`; view `visualization-e6ffa888a6f5.js` → `BooleanTruthTableVisualization`.
++ Source: manifest `model-57f01654f1a3.js`; view `visualization-2815b3812f86.js` → `BooleanTruthTableVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bootstrap distribution
+
+```diff
+  Type `BOOTSTRAP_DISTRIBUTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e4c56b7d7305.js` → `BootstrapDistributionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f2c2efb60ab6.js` → `BootstrapDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Born haber cycle
+
+```diff
+  Type `BORN_HABER_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9ceff2387be4.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-92f4e14ecd6f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Break even quantity
+
+```diff
+  Type `BREAK_EVEN_QUANTITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-708fd9b25e1d.js` → `BreakEvenQuantityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-25aed7f2d8ba.js` → `BreakEvenQuantityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Breathing mechanics
+
+```diff
+  Type `BREATHING_MECHANICS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9182e7407cd6.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-36825618f0b7.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Bubble sort
+
+```diff
+  Parameters: `initialOrder` (enum, default `mixed`, one of `mixed`, `reversed`, `nearly_sorted`, `few_swaps`).
+  
+- Source: manifest `model-37272c97cf25.js`; view `visualization-d454520778fe.js` → `BubbleSortVisualization`.
++ Source: manifest `model-37272c97cf25.js`; view `visualization-f1ca64509cc6.js` → `BubbleSortVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Buffer composition: `\mathrm{pH}=\mathrm{p}K_a+\log_{10}\!\left(\frac{[A^-]}{[HA]}\right)`
+
+```diff
+  Parameters: `pKa` (number, default `4.76`, range 2 to 12); `baseToAcidRatio` (number, default `1`, range 0.01 to 100).
+  
+- Source: manifest `type-4aeefa8d363c.js`; view `visualization-fe826e1dec7f.js` → `BufferCompositionVisualization`.
++ Source: manifest `type-4aeefa8d363c.js`; view `visualization-245dfd716367.js` → `BufferCompositionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Buffer ph strong acid base
+
+```diff
+  Parameters: `netStrongAcidMinusBaseMoles` (number, default `0`, range -0.02 to 0.02).
+  
+- Source: manifest `model-cf55e77d3f7b.js`; view `visualization-fe0356e6d420.js` → `BufferPhStrongAcidBaseVisualization`.
++ Source: manifest `model-cf55e77d3f7b.js`; view `visualization-bb223147ffce.js` → `BufferPhStrongAcidBaseVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Buoyancy
+
+```diff
+  Type `BUOYANCY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d2ebb1601423.js` → `BuoyancyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a9691c670b51.js` → `BuoyancyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Business cycles
+
+```diff
+  Type `BUSINESS_CYCLES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ea53e28f7bbd.js` → `BusinessCyclesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-169084c2af50.js` → `BusinessCyclesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › C array pointer arithmetic
+
+```diff
+  Parameters: `index` (integer, default `3`, range 0 to 7).
+  
+- Source: manifest `model-d82ec1ece7ce.js`; view `visualization-e413387ea917.js` → `CArrayPointerArithmeticVisualization`.
++ Source: manifest `model-d82ec1ece7ce.js`; view `visualization-d370c50381bf.js` → `CArrayPointerArithmeticVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cadences
+
+```diff
+  Type `CADENCES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d6df42872f19.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8870d06e32d0.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Calcium pth calcitonin feedback
+
+```diff
+  Parameters: `calciumCondition` (enum, default `low`, one of `low`, `high`).
+  
+- Source: manifest `model-ff8cd9e1b433.js`; view `visualization-8e7764c343e4.js` → `CalciumFeedbackVisualization`.
++ Source: manifest `model-ff8cd9e1b433.js`; view `visualization-9ab058b39270.js` → `CalciumFeedbackVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Calvin cycle
+
+```diff
+  Type `CALVIN_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3523899620c2.js` → `CalvinCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e294fdf0ead4.js` → `CalvinCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Capillary starling forces: `J_v=K_f[(P_c-P_i)-\sigma(\pi_c-\pi_i)]`
+
+```diff
+  Parameters: `initial_scenario` (enum, default `typical-systemic-capillary`, one of `typical-systemic-capillary`, `raised-capillary-hydrostatic-pressure`, `reduced-plasma-oncotic-pressure`, `raised-interstitial-oncotic-pressure`, `raised-interstitial-hydrostatic-pressure`).
+  
+- Source: manifest `type-f530fb4543f1.js`; view `visualization-548a624b3138.js` → `CapillaryStarlingVisualization`.
++ Source: manifest `type-f530fb4543f1.js`; view `visualization-a820874697ec.js` → `CapillaryStarlingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Capital flows
+
+```diff
+  Type `CAPITAL_FLOWS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6ca38e47dbdf.js` → `CapitalFlowsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fba217ef2264.js` → `CapitalFlowsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Carbohydrate structure
+
+```diff
+  Type `CARBOHYDRATE_STRUCTURE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6b9143ae8317.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2ff2dbe53d4b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Carbon cycle
+
+```diff
+  Parameters: `initial_pathway` (enum, default `biological cycle`, one of `biological cycle`, `ocean exchange`, `long-term storage and combustion`).
+  
+- Source: manifest `model-2389f073136d.js`; view `visualization-13d24c6b327e.js` → `CarbonCycleVisualization`.
++ Source: manifest `model-2389f073136d.js`; view `visualization-b234d23f709e.js` → `CarbonCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Carbonyl nucleophilic addition
+
+```diff
+  Type `CARBONYL_NUCLEOPHILIC_ADDITION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f5edce750aab.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3ecd690c5e3f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cardiac action potential
+
+```diff
+  Type `CARDIAC_ACTION_POTENTIAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f6c4a695bf70.js` → `CardiacActionPotentialVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-98a37d331f27.js` → `CardiacActionPotentialVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cardiac cycle
+
+```diff
+  Type `CARDIAC_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a0ef80677b8c.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-6224c4460739.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cardiac output product: `CO = HR \times SV`
+
+```diff
+  Parameters: `heartRateBeatsPerMinute` (number, default `70`, range 40 to 180); `strokeVolumeMilliliters` (number, default `70`, range 30 to 120).
+  
+- Source: manifest `type-33538976a327.js`; view `visualization-2742502a4673.js` → `CardiacOutputProductVisualization`.
++ Source: manifest `type-33538976a327.js`; view `visualization-9c3bd454016a.js` → `CardiacOutputProductVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Catalyst activation energy
+
+```diff
+  Parameters: `catalystEffectivenessPercent` (number, default `50`, range 0 to 100).
+  
+- Source: manifest `type-af7f92e44cfd.js`; view `visualization-ee08908ca458.js` → `CatalystActivationEnergyVisualization`.
++ Source: manifest `type-af7f92e44cfd.js`; view `visualization-86a7e5050c15.js` → `CatalystActivationEnergyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cathodic protection
+
+```diff
+  Parameters: `anode_material` (enum, default `magnesium`, one of `magnesium`, `zinc`).
+  
+- Source: manifest `model-a538838ccb34.js`; view `visualization-bd9bfa1c4f90.js` → `Visualization`.
++ Source: manifest `model-a538838ccb34.js`; view `visualization-5d813cce3bde.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cell cycle
+
+```diff
+  Type `CELL_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c8ff78fb8fbb.js` → `CellCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e42ebcbe9540.js` → `CellCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cell cycle checkpoints
+
+```diff
+  Type `CELL_CYCLE_CHECKPOINTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-127f2ab546ce.js` → `CellCycleCheckpointsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7b029f15cfde.js` → `CellCycleCheckpointsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cell junctions
+
+```diff
+  Type `CELL_JUNCTIONS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ca3ee031a5de.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b4fe8fc207cf.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cell membrane transport
+
+```diff
+  Parameters: `mechanism` (enum, default `diffusion`, one of `diffusion`, `facilitatedDiffusion`, `activeTransport`).
+  
+- Source: manifest `model-89c283b46546.js`; view `visualization-268ed5cd2d32.js` → `Visualization`.
++ Source: manifest `model-89c283b46546.js`; view `visualization-a5a5e7a60dd5.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cell organelles
+
+```diff
+  Type `CELL_ORGANELLES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-34fec9d82613.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7e8d997803d3.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cell signaling pathway
+
+```diff
+  Type `CELL_SIGNALING_PATHWAY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-81758ee1e0c5.js` → `CellSignalingPathwayVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a1bb18d5e60c.js` → `CellSignalingPathwayVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cellular respiration inputs outputs
+
+```diff
+  Type `CELLULAR_RESPIRATION_INPUTS_OUTPUTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9d6575c08912.js` → `CellularRespirationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f94dbcd564d2.js` → `CellularRespirationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Central limit theorem
+
+```diff
+  Parameters: `population_shape` (enum, default `right-skewed`, one of `right-skewed`, `uniform`, `bimodal`, `normal`); `sample_size` (integer, default `5`, range 1 to 100).
+  
+- Source: manifest `type-c608c5f26be7.js`; view `visualization-9bc83cca6b03.js` → `CentralLimitTheoremVisualization`.
++ Source: manifest `type-c608c5f26be7.js`; view `visualization-a9d2b63a23da.js` → `CentralLimitTheoremVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Centripetal force mvr: `F_c = \frac{mv^2}{r}`
+
+```diff
+  Parameters: `massKilograms` (number, default `2`, range 0.5 to 5); `speedMetersPerSecond` (number, default `4`, range 0 to 8); `radiusMeters` (number, default `2`, range 1 to 5).
+  
+- Source: manifest `type-3b03c35824de.js`; view `visualization-82e8d61e4847.js` → `CentripetalForceVisualization`.
++ Source: manifest `type-3b03c35824de.js`; view `visualization-bd8cf8792726.js` → `CentripetalForceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Change of basis: `P_B\mathbf{v}_B=\mathbf{v}`
+
+```diff
+  Parameters: `vectorX` (number, default `3`, range -5 to 5); `vectorY` (number, default `1`, range -5 to 5); `basis1X` (number, default `1`, range -4 to 4); `basis1Y` (number, default `0`, range -4 to 4); `basis2X` (number, default `0`, range -4 to 4); `basis2Y` (number, default `1`, range -4 to 4).
+  
+- Source: manifest `model-17f47a9d9054.js`; view `visualization-546ec91821e2.js` → `ChangeOfBasisVisualization`.
++ Source: manifest `model-17f47a9d9054.js`; view `visualization-4001b2bf4643.js` → `ChangeOfBasisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Charles law: `\frac{V_1}{T_1} = \frac{V_2}{T_2}`
+
+```diff
+  Parameters: `v1` (number, default `12`, range 0.01 to 10000); `t1` (number, default `300`, range 1 to 5000); `v2` (number, default `18`, range 0.01 to 10000); `t2` (number, default `450`, range 1 to 5000); `solveFor` (enum, default `v2`, one of `v1`, `t1`, `v2`, `t2`).
+  
+- Source: manifest `type-fa03d5dd9600.js`; view `visualization-be1292029263.js` → `CharlesLawVisualization`.
++ Source: manifest `type-fa03d5dd9600.js`; view `visualization-d3a80d08630b.js` → `CharlesLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chemiosmosis
+
+```diff
+  Type `CHEMIOSMOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2e98259a992c.js` → `ChemiosmosisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7d29c9461c54.js` → `ChemiosmosisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chi square distribution
+
+```diff
+  Parameters: `degrees_of_freedom` (integer, default `5`, range 1 to 20); `observed_value` (number, default `11.1`, range 0 to 30).
+  
+- Source: manifest `model-a66b5ddc2f62.js`; view `visualization-d13ee109d047.js` → `ChiSquareDistributionVisualization`.
++ Source: manifest `model-a66b5ddc2f62.js`; view `visualization-353a94f4b686.js` → `ChiSquareDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chi square goodness of fit: `\chi^2 = \sum \frac{(O_i-E_i)^2}{E_i}`
+
+```diff
+  Parameters: `observedA` (integer, default `18`, range 5 to 60); `observedB` (integer, default `22`, range 5 to 60); `observedC` (integer, default `27`, range 5 to 60); `observedD` (integer, default `33`, range 5 to 60).
+  
+- Source: manifest `type-f50250083878.js`; view `visualization-313359a48d3f.js` → `ChiSquareGoodnessOfFitVisualization`.
++ Source: manifest `type-f50250083878.js`; view `visualization-7697cb2ab36d.js` → `ChiSquareGoodnessOfFitVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chi square independence
+
+```diff
+  Parameters: `observedTopLeft` (integer, default `54`, range 20 to 60); `observedTopRight` (integer, default `26`, range 20 to 60); `observedBottomLeft` (integer, default `30`, range 20 to 60); `observedBottomRight` (integer, default `30`, range 20 to 60).
+  
+- Source: manifest `model-12b1180c259e.js`; view `visualization-5506a278a52b.js` → `ChiSquareIndependenceVisualization`.
++ Source: manifest `model-12b1180c259e.js`; view `visualization-4e534bbc8af6.js` → `ChiSquareIndependenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chirality and r s configuration
+
+```diff
+  Type `CHIRALITY_AND_R_S_CONFIGURATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b02062db679b.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2188c8a32740.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chord construction
+
+```diff
+  Type `CHORD_CONSTRUCTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-20b853b1ee68.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-964979a2753a.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Chromatography
+
+```diff
+  Type `CHROMATOGRAPHY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-render-b8743cf96d70.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-render-ecb1f5efcdfd.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Circle area: `A = \pi r^2`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000).
+  
+- Source: manifest `template-f75272b4eabf.js`; view `visualization-6941902c690d.js` → `CircleAreaVisualization`.
++ Source: manifest `template-f75272b4eabf.js`; view `visualization-211eb535bdda.js` → `CircleAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Circle circumference: `C = 2\pi r`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000).
+  
+- Source: manifest `template-d09a2fe7dec8.js`; view `visualization-3a540b78011e.js` → `CircleCircumferenceVisualization`.
++ Source: manifest `template-d09a2fe7dec8.js`; view `visualization-69187e3728f5.js` → `CircleCircumferenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Classes of levers
+
+```diff
+  Parameters: `leverClass` (enum, default `first`, one of `first`, `second`, `third`).
+  
+- Source: manifest `type-93019a122ac1.js`; view `visualization-5ce7fbc4ba0d.js` → `ClassesOfLeversVisualization`.
++ Source: manifest `type-93019a122ac1.js`; view `visualization-4504f746c9ab.js` → `ClassesOfLeversVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Classical conditioning
+
+```diff
+  Type `CLASSICAL_CONDITIONING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f3756a6311c6.js` → `ClassicalConditioningVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c1aa2c4ebc90.js` → `ClassicalConditioningVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Classification threshold
+
+```diff
+  Parameters: `threshold` (number, default `0.5`, range 0 to 1).
+  
+- Source: manifest `type-dca95d451915.js`; view `visualization-fb954a4ac181.js` → `ClassificationThresholdVisualization`.
++ Source: manifest `type-dca95d451915.js`; view `visualization-8353517bc27c.js` → `ClassificationThresholdVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Classification tree
+
+```diff
+  Type `CLASSIFICATION_TREE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-53782f417cb6.js` → `ClassificationTreeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e06716345819.js` → `ClassificationTreeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Climate feedback loops
+
+```diff
+  Parameters: `initial_mechanism` (enum, default `ice-albedo`, one of `ice-albedo`, `water-vapor`, `radiative-response`); `initial_change` (enum, default `warming`, one of `warming`, `cooling`).
+  
+- Source: manifest `type-81172b31949f.js`; view `visualization-f9073948df0c.js` → `ClimateFeedbackLoopsVisualization`.
++ Source: manifest `type-81172b31949f.js`; view `visualization-d2b6ceacf7a3.js` → `ClimateFeedbackLoopsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Climate mitigation wedges
+
+```diff
+  Parameters: `required_wedges` (integer, default `7`, range 3 to 12); `horizon_years` (integer, default `50`, range 20 to 100).
+  
+- Source: manifest `type-6a0aad7ace5c.js`; view `visualization-3cb4f1795d2c.js` → `ClimateMitigationWedgesVisualization`.
++ Source: manifest `type-6a0aad7ace5c.js`; view `visualization-a80132c74b69.js` → `ClimateMitigationWedgesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Clonal selection and immune memory
+
+```diff
+  Type `CLONAL_SELECTION_AND_IMMUNE_MEMORY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7f77860d16a8.js` → `ClonalSelectionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-63dc1cf69963.js` → `ClonalSelectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Co2 and temperature time series
+
+```diff
+  Parameters: `initial_time_span` (enum, default `industrial-era`, one of `industrial-era`, `paleoclimate`).
+  
+- Source: manifest `model-7fd3bf30713f.js`; view `visualization-633026c1d346.js` → `Visualization`.
++ Source: manifest `model-7fd3bf30713f.js`; view `visualization-e00693aa2540.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Coal power plant
+
+```diff
+  Type `COAL_POWER_PLANT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7e6b0baeda29.js` → `CoalPowerPlantVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-502f11761756.js` → `CoalPowerPlantVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Codon chart
+
+```diff
+  Parameters: `first_base` (enum, default `A`, one of `U`, `C`, `A`, `G`); `second_base` (enum, default `U`, one of `U`, `C`, `A`, `G`); `third_base` (enum, default `G`, one of `U`, `C`, `A`, `G`).
+  
+- Source: manifest `model-7fc37b4d721d.js`; view `visualization-8a336b7f7052.js` → `CodonChartVisualization`.
++ Source: manifest `model-7fc37b4d721d.js`; view `visualization-c2b62bb2e31e.js` → `CodonChartVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cohens d: `d = \frac{\bar{x}_2 - \bar{x}_1}{s_{\mathrm{pooled}}}`
+
+```diff
+  Parameters: `initial_mean_difference` (number, default `0.8`, range -4 to 4); `pooled_standard_deviation` (number, default `1`, range 0.75 to 2).
+  
+- Source: manifest `type-8848a63b92ff.js`; view `visualization-f95a1281a6ea.js` → `CohensDVisualization`.
++ Source: manifest `type-8848a63b92ff.js`; view `visualization-355572ef973c.js` → `CohensDVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Coin flipping
+
+```diff
+  Type `COIN_FLIPPING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ab8e6e781224.js` → `CoinFlippingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7410d664fdac.js` → `CoinFlippingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Collision orientation
+
+```diff
+  Type `COLLISION_ORIENTATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-618e2b6fc909.js` → `CollisionOrientationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-81f807a25a01.js` → `CollisionOrientationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Collision simulation: `m_1v_{1,i} + m_2v_{2,i} = m_1v_{1,f} + m_2v_{2,f}`
+
+```diff
+  Parameters: `cartAInitialVelocityMps` (number, default `2`, range -3 to 3); `cartBInitialVelocityMps` (number, default `-1.5`, range -3 to 3); `collisionType` (enum, default `elastic`, one of `elastic`, `perfectlyInelastic`).
+  
+- Source: manifest `type-833c7fb020af.js`; view `visualization-cd1cd5eb7e72.js` → `CollisionSimulationVisualization`.
++ Source: manifest `type-833c7fb020af.js`; view `visualization-b3ce8b4525a4.js` → `CollisionSimulationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Combination formula
+
+```diff
+  Parameters: `n` (integer, default `6`, range 4 to 8); `r` (integer, default `3`, range 2 to 4).
+  
+- Source: manifest `type-1635fe6bba2b.js`; view `visualization-3aba32098119.js` → `CombinationFormulaVisualization`.
++ Source: manifest `type-1635fe6bba2b.js`; view `visualization-454f28e52933.js` → `CombinationFormulaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Combined gas law
+
+```diff
+  Type `COMBINED_GAS_LAW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b8ca5bbf9cef.js` → `CombinedGasLawVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-61da9edebbe7.js` → `CombinedGasLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Combining like terms tiles
+
+```diff
+  Type `COMBINING_LIKE_TERMS_TILES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b27f7761d51d.js` → `CombiningLikeTermsTilesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2164810a63a0.js` → `CombiningLikeTermsTilesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Common ion effect
+
+```diff
+  Parameters: `salt_example` (enum, default `AgCl with NaCl`, one of `AgCl with NaCl`, `CaF2 with NaF`, `Mg(OH)2 with KOH`).
+  
+- Source: manifest `model-e104bfbc6342.js`; view `visualization-f52dcddc8f6e.js` → `CommonIonEffectVisualization`.
++ Source: manifest `model-e104bfbc6342.js`; view `visualization-c20b72000769.js` → `CommonIonEffectVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Common normal intervals
+
+```diff
+  Parameters: `z` (number, default `1`, range 0 to 4).
+  
+- Source: manifest `model-69143636c0d5.js`; view `visualization-bf42dc5c8dcb.js` → `CommonNormalIntervalsVisualization`.
++ Source: manifest `model-69143636c0d5.js`; view `visualization-5caa168ad728.js` → `CommonNormalIntervalsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Comparative advantage trade
+
+```diff
+  Type `COMPARATIVE_ADVANTAGE_TRADE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a413338ebfb1.js` → `ComparativeAdvantageTradeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-6842e94b5866.js` → `ComparativeAdvantageTradeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Competition and niches
+
+```diff
+  Parameters: `resource_dimension` (enum, default `food size`, one of `food size`, `habitat space`, `feeding time`).
+  
+- Source: manifest `model-dc560f6410fb.js`; view `visualization-ef49fdd9ac81.js` → `CompetitionAndNichesVisualization`.
++ Source: manifest `model-dc560f6410fb.js`; view `visualization-7a94b03130a7.js` → `CompetitionAndNichesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Competitive firm loss
+
+```diff
+  Type `COMPETITIVE_FIRM_LOSS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4a16e0f402ef.js` → `CompetitiveFirmLossVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c604860e8711.js` → `CompetitiveFirmLossVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Competitive firm profit
+
+```diff
+  Type `COMPETITIVE_FIRM_PROFIT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9028a97273e8.js` → `CompetitiveFirmProfitVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e73c78f08da3.js` → `CompetitiveFirmProfitVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Competitive labor hiring
+
+```diff
+  Type `COMPETITIVE_LABOR_HIRING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6c3a91747d8c.js` → `CompetitiveLaborHiringVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-70f27f8177d0.js` → `CompetitiveLaborHiringVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Composite perimeter area
+
+```diff
+  Parameters: `lowerWidth` (integer, default `6`, range 4 to 7); `lowerHeight` (integer, default `3`, range 2 to 4); `upperWidth` (integer, default `3`, range 2 to 3); `upperHeight` (integer, default `2`, range 1 to 3); `triangleRun` (integer, default `4`, range 1 to 4); `mode` (enum, default `area`, one of `area`, `perimeter`).
+  
+- Source: manifest `type-94076f401ee2.js`; view `visualization-2cbb041e5d35.js` → `CompositePerimeterAreaVisualization`.
++ Source: manifest `type-94076f401ee2.js`; view `visualization-2edea8698e42.js` → `CompositePerimeterAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Compound interest
+
+```diff
+  Parameters: `amount` (number, default `1000`, range 0.01 to 1000000000); `ratePercent` (number, default `5`, range 0 to 100); `periods` (integer, default `20`, range 0 to 1000).
+  
+- Source: manifest `type-ea02b25da175.js`; view `visualization-f4154cc8cc3e.js` → `CompoundInterestVisualization`.
++ Source: manifest `type-ea02b25da175.js`; view `visualization-1d3b7e7ef8e5.js` → `CompoundInterestVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Compound pulley mechanical advantage: `\mathrm{IMA}=n`
+
+```diff
+  Parameters: `supportSegments` (integer, default `2`, range 2 to 6).
+  
+- Source: manifest `type-58df9aa6d32b.js`; view `visualization-50ce6f1cf5dd.js` → `CompoundPulleyVisualization`.
++ Source: manifest `type-58df9aa6d32b.js`; view `visualization-918e71ff050b.js` → `CompoundPulleyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Compressor curve
+
+```diff
+  Type `COMPRESSOR_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-28f4f14eec85.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5e8a5e1ea6e7.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Concentration cell: `E_{\mathrm{cell}}=\frac{0.0592\,\mathrm{V}}{z}\log_{10}\!\left(\frac{c_{\mathrm{high}}}{c_{\mathrm{low}}}\right)`
+
+```diff
+  Parameters: `initial_dilute_concentration_molar` (number, default `0.001`, range 0.0001 to 0.001); `initial_concentrated_concentration_molar` (number, default `0.1`, range 0.001 to 0.1); `ion_charge` (integer, default `2`, range 1 to 3).
+  
+- Source: manifest `type-facf186bb1fa.js`; view `visualization-bcdc6568ab28.js` → `Visualization`.
++ Source: manifest `type-facf186bb1fa.js`; view `visualization-3f6112bf3859.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Conditional probability definition
+
+```diff
+  Type `CONDITIONAL_PROBABILITY_DEFINITION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5e59f446e8ac.js` → `ConditionalProbabilityDefinitionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-af711b9ffdd0.js` → `ConditionalProbabilityDefinitionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Conductometric titration
+
+```diff
+  Type `CONDUCTOMETRIC_TITRATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-87ff3f8aa06f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-68e000a10814.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cone surface area: `A = \pi r(r + l)`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000); `slantHeight` (number, default `6`, range 0.01 to 10000).
+  
+- Source: manifest `type-286f80bf78cd.js`; view `visualization-45c1597df621.js` → `ConeSurfaceAreaVisualization`.
++ Source: manifest `type-286f80bf78cd.js`; view `visualization-8d2404d17a39.js` → `ConeSurfaceAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cone volume: `V = \frac{1}{3}\pi r^2 h`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000); `height` (number, default `8`, range 0.01 to 10000).
+  
+- Source: manifest `type-92907d86d962.js`; view `visualization-6ef53091ecb9.js` → `ConeVolumeVisualization`.
++ Source: manifest `type-92907d86d962.js`; view `visualization-a039ddd28ea8.js` → `ConeVolumeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Confidence interval proportion: `\hat p \pm z^*\sqrt{\frac{\hat p(1-\hat p)}{n}}`
+
+```diff
+  Parameters: `sample_proportion` (number, default `0.4`, range 0.02 to 0.98); `sample_size` (integer, default `100`, range 100 to 400); `confidence_level` (number, default `0.95`, range 0.9 to 0.99).
+  
+- Source: manifest `type-1e1a69bc5852.js`; view `visualization-4ac7ecb3959b.js` → `Visualization`.
++ Source: manifest `type-1e1a69bc5852.js`; view `visualization-250e91610678.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Confidence vs prediction bands
+
+```diff
+  Parameters: `confidence_level` (enum, default `95%`, one of `90%`, `95%`, `99%`).
+  
+- Source: manifest `model-ceec6b52318c.js`; view `visualization-4874f3152685.js` → `ConfidenceVsPredictionBandsVisualization`.
++ Source: manifest `model-ceec6b52318c.js`; view `visualization-757ae179d3ab.js` → `ConfidenceVsPredictionBandsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Confusion matrix metrics
+
+```diff
+  Parameters: `truePositiveCount` (integer, default `32`, range 0 to 100); `falsePositiveCount` (integer, default `8`, range 0 to 100); `trueNegativeCount` (integer, default `48`, range 0 to 100); `falseNegativeCount` (integer, default `12`, range 0 to 100).
+  
+- Source: manifest `model-f8363e95e559.js`; view `visualization-548db1929948.js` → `ConfusionMatrixMetricsVisualization`.
++ Source: manifest `model-f8363e95e559.js`; view `visualization-4f561c83f4be.js` → `ConfusionMatrixMetricsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Conjugated dienes and diels alder
+
+```diff
+  Parameters: `example` (enum, default `butadiene-and-ethene`, one of `butadiene-and-ethene`, `butadiene-and-methyl-vinyl-ketone`, `butadiene-and-maleic-anhydride`).
+  
+- Source: manifest `model-456ae69d4c49.js`; view `visualization-dce04aaa04b4.js` → `DielsAlderVisualization`.
++ Source: manifest `model-456ae69d4c49.js`; view `visualization-330d43af4cbe.js` → `DielsAlderVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Consumer and producer surplus
+
+```diff
+  Parameters: `demand_shift` (number, default `0`, range -2.5 to 2.5).
+  
+- Source: manifest `type-1a390930447d.js`; view `visualization-2091bb2f8a39.js` → `Visualization`.
++ Source: manifest `type-1a390930447d.js`; view `visualization-69a8afef4597.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Consumer budget line comparative statics: `M = P_x X + P_y Y`
+
+```diff
+  Parameters: `changeScenario` (enum, default `income_increase`, one of `income_increase`, `income_decrease`, `price_x_increase`, `price_x_decrease`); `changeMagnitudePercent` (number, default `30`, range 5 to 55).
+  
+- Source: manifest `model-bbcfc45a37c2.js`; view `visualization-86a310460f58.js` → `ConsumerBudgetLineVisualization`.
++ Source: manifest `model-bbcfc45a37c2.js`; view `visualization-185ed4f94540.js` → `ConsumerBudgetLineVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Context free grammar ambiguity
+
+```diff
+  Type `CONTEXT_FREE_GRAMMAR_AMBIGUITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7fc283918a53.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9a44f7144546.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Continuous uniform distribution
+
+```diff
+  Parameters: `lower_bound` (number, default `0`, range -20 to 10); `upper_bound` (number, default `15`, range 11 to 40).
+  
+- Source: manifest `type-19d8b437a2d9.js`; view `visualization-127c6b4dcd87.js` → `Visualization`.
++ Source: manifest `type-19d8b437a2d9.js`; view `visualization-413f99dad6e0.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Contour lines and relief
+
+```diff
+  Type `CONTOUR_LINES_AND_RELIEF`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ff393b987bd6.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-11bc1ce9b65d.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Coral bleaching
+
+```diff
+  Type `CORAL_BLEACHING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1698b1320f0e.js` → `CoralBleachingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1addee87d6ba.js` → `CoralBleachingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Corrective policy
+
+```diff
+  Type `CORRECTIVE_POLICY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3042b4a7840a.js` → `CorrectivePolicyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-45db7c34a510.js` → `CorrectivePolicyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Correlation
+
+```diff
+  Parameters: `pattern` (enum, default `positive`, one of `negative`, `none`, `positive`).
+  
+- Source: manifest `model-624ee5d1bac5.js`; view `visualization-42b94835e5d7.js` → `CorrelationVisualization`.
++ Source: manifest `model-624ee5d1bac5.js`; view `visualization-88ed527b9dc0.js` → `CorrelationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Correlation matrix
+
+```diff
+  Parameters: `exampleContext` (enum, default `body-measurements`, one of `body-measurements`, `vehicle-features`, `student-survey`).
+  
+- Source: manifest `model-60673a8e81e9.js`; view `visualization-b638b3a5fae5.js` → `CorrelationMatrixVisualization`.
++ Source: manifest `model-60673a8e81e9.js`; view `visualization-ce65ad591f54.js` → `CorrelationMatrixVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cortisol regulation
+
+```diff
+  Type `CORTISOL_REGULATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ee647bbc117d.js` → `CortisolRegulationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b56e82fa96a4.js` → `CortisolRegulationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Coulombs law: `F = k\frac{q_1q_2}{r^2}`
+
+```diff
+  Parameters: `q1` (number, default `3`, range -10000 to 10000); `q2` (number, default `-3`, range -10000 to 10000); `distance` (number, default `4`, range 0.01 to 10000).
+  
+- Source: manifest `type-98e888d7432f.js`; view `visualization-34d372578e0e.js` → `CoulombsLawVisualization`.
++ Source: manifest `type-98e888d7432f.js`; view `visualization-3e7f291e3b42.js` → `CoulombsLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Counting sequences
+
+```diff
+  Parameters: `optionCount` (integer, default `6`, range 4 to 8); `sequenceLength` (integer, default `3`, range 2 to 4); `replacementMode` (enum, default `with`, one of `with`, `without`).
+  
+- Source: manifest `model-5170f20e545d.js`; view `visualization-be61df1ff1cb.js` → `CountingSequencesVisualization`.
++ Source: manifest `model-5170f20e545d.js`; view `visualization-1c9a05466e4b.js` → `CountingSequencesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cpu fetch decode execute
+
+```diff
+  Parameters: `instructionExample` (enum, default `load`, one of `load`, `add`, `branch`).
+  
+- Source: manifest `model-21889c1e147f.js`; view `visualization-debf4847249f.js` → `CpuFetchDecodeExecuteVisualization`.
++ Source: manifest `model-21889c1e147f.js`; view `visualization-be1f86bb7904.js` → `CpuFetchDecodeExecuteVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Crispr cas9
+
+```diff
+  Type `CRISPR_CAS9`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b6e8561a0b76.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-21e1ec5e2ef2.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Critical angle sine relation: `\sin\theta_c = \frac{n_2}{n_1}`
+
+```diff
+  Parameters: `indexRatio` (number, default `0.67`, range 0.5 to 0.95).
+  
+- Source: manifest `type-945e0105df87.js`; view `visualization-87f7e5cbae15.js` → `CriticalAngleSineRelationVisualization`.
++ Source: manifest `type-945e0105df87.js`; view `visualization-a7b7548d2d00.js` → `CriticalAngleSineRelationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Critical path network
+
+```diff
+  Parameters: `durationADays` (number, default `3`, range 1 to 10); `durationBDays` (number, default `4`, range 1 to 10); `durationCDays` (number, default `4`, range 1 to 10); `durationDDays` (number, default `3`, range 1 to 10); `durationEDays` (number, default `4`, range 1 to 10); `durationFDays` (number, default `5`, range 1 to 10).
+  
+- Source: manifest `model-8a2addb2a518.js`; view `visualization-77413c31f81d.js` → `CriticalPathNetworkVisualization`.
++ Source: manifest `model-8a2addb2a518.js`; view `visualization-34b8b2e39b2d.js` → `CriticalPathNetworkVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cross price elasticity: `E_{xy} = \frac{\%\Delta Q_x}{\%\Delta P_y}`
+
+```diff
+  Parameters: `relationship` (enum, default `substitutes`, one of `substitutes`, `complements`); `priceChangeDirection` (enum, default `increase`, one of `increase`, `decrease`); `priceChangeMagnitudePercent` (number, default `30`, range 5 to 60).
+  
+- Source: manifest `model-71c00d3e4c5e.js`; view `visualization-dcf6669f8199.js` → `CrossPriceElasticityVisualization`.
++ Source: manifest `model-71c00d3e4c5e.js`; view `visualization-a523baf83ff5.js` → `CrossPriceElasticityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cross product geometry: `|a\times b|=|a||b|\sin(\theta)`
+
+```diff
+  Parameters: `magnitudeA` (number, default `3`, range 0.5 to 6); `magnitudeB` (number, default `2.5`, range 0.5 to 6); `angleDeg` (number, default `60`, range 5 to 175); `order` (enum, default `axb`, one of `axb`, `bxa`).
+  
+- Source: manifest `type-25a004ce6551.js`; view `visualization-cbf19009f5db.js` → `CrossProductGeometryVisualization`.
++ Source: manifest `type-25a004ce6551.js`; view `visualization-d68145fdec6d.js` → `CrossProductGeometryVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Crossing over
+
+```diff
+  Type `CROSSING_OVER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8313295139c3.js` → `CrossingOverVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3585c39480fd.js` → `CrossingOverVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Crowding out
+
+```diff
+  Type `CROWDING_OUT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4103e4274d91.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-80632823e2a8.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Crystal unit cells
+
+```diff
+  Type `CRYSTAL_UNIT_CELLS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5caad02b2bb5.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5901a8b92693.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Currency appreciation
+
+```diff
+  Type `CURRENCY_APPRECIATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-26a652ba6075.js` → `CurrencyAppreciationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-52dab4510afe.js` → `CurrencyAppreciationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Current to magnetic field: `B = \frac{\mu_0 I}{2\pi r}`
+
+```diff
+  Parameters: `currentDirection` (enum, default `up`, one of `up`, `down`); `currentStrengthAmperes` (number, default `5`, range 1 to 10).
+  
+- Source: manifest `model-b39b238c2140.js`; view `visualization-a38bfbc7ce44.js` → `CurrentToMagneticFieldVisualization`.
++ Source: manifest `model-b39b238c2140.js`; view `visualization-3b6846cf20f1.js` → `CurrentToMagneticFieldVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Current to magnetic field direction
+
+```diff
+  Parameters: `currentDirection` (enum, default `up`, one of `up`, `down`).
+  
+- Source: manifest `type-8ea75e03943c.js`; view `visualization-42e5c786ddff.js` → `CurrentToMagneticFieldDirectionVisualization`.
++ Source: manifest `type-8ea75e03943c.js`; view `visualization-8ffac81c6aa1.js` → `CurrentToMagneticFieldDirectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cyclohexane chair flips
+
+```diff
+  Type `CYCLOHEXANE_CHAIR_FLIPS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d166567b9d7f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a813508a3e22.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Cylinder volume: `V = \pi r^2 h`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000); `height` (number, default `8`, range 0.01 to 10000).
+  
+- Source: manifest `type-e93330f8f338.js`; view `visualization-81977f42d8c7.js` → `CylinderVolumeVisualization`.
++ Source: manifest `type-e93330f8f338.js`; view `visualization-9a4b988cdbd0.js` → `CylinderVolumeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dc circuit power: `P = VI`
+
+```diff
+  Parameters: `voltageVolts` (number, default `12`, range 1 to 24); `resistanceOhms` (number, default `6`, range 1 to 24).
+  
+- Source: manifest `type-81adbb1f028d.js`; view `visualization-a2163db9628f.js` → `DcCircuitPowerVisualization`.
++ Source: manifest `type-81adbb1f028d.js`; view `visualization-6687707ff374.js` → `DcCircuitPowerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Decibel safety
+
+```diff
+  Parameters: `sound_level_dba` (number, default `85`, range 82 to 100); `exposure_duration_minutes` (integer, default `480`, range 0 to 960).
+  
+- Source: manifest `type-b72953d55796.js`; view `visualization-ce3309b69962.js` → `Visualization`.
++ Source: manifest `type-b72953d55796.js`; view `visualization-259aba8dd579.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Decision tree classification path
+
+```diff
+  Parameters: `x1` (number, default `5.5`, range 0 to 10); `x2` (number, default `3.5`, range 0 to 10).
+  
+- Source: manifest `model-23fec778784f.js`; view `visualization-4a84ea0a81e7.js` → `DecisionTreeClassificationPathVisualization`.
++ Source: manifest `model-23fec778784f.js`; view `visualization-7b5c26fca593.js` → `DecisionTreeClassificationPathVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Degree of unsaturation
+
+```diff
+  Parameters: `example_formula` (enum, default `C6H10`, one of `C2H6`, `C4H8`, `C6H10`, `C6H6`, `C4H6Br2`, `C5H8O`, `C5H9N`).
+  
+- Source: manifest `type-60f4e9362b4d.js`; view `visualization-2659fbc95e4b.js` → `DegreeOfUnsaturationVisualization`.
++ Source: manifest `type-60f4e9362b4d.js`; view `visualization-ef91f1474235.js` → `DegreeOfUnsaturationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dehydration synthesis vs hydrolysis
+
+```diff
+  Type `DEHYDRATION_SYNTHESIS_VS_HYDROLYSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d6b0d33a445f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b6f2231e937e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Delta g k e relationship
+
+```diff
+  Parameters: `standard_cell_potential_volts` (number, default `0.12`, range -0.3 to 0.3); `electrons_transferred` (integer, default `2`, range 1 to 6); `temperature_kelvin` (number, default `298.15`, range 250 to 400).
+  
+- Source: manifest `model-873e0c320c3b.js`; view `visualization-468111ed8a31.js` → `DeltaGKERelationshipVisualization`.
++ Source: manifest `model-873e0c320c3b.js`; view `visualization-ad644053c2fa.js` → `DeltaGKERelationshipVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Demand curve
+
+```diff
+  Parameters: `price` (number, default `5`, range 1 to 9); `demand_shift` (number, default `0`, range -1 to 1).
+  
+- Source: manifest `type-759e4fab0713.js`; view `visualization-f21684fae5ec.js` → `Visualization`.
++ Source: manifest `type-759e4fab0713.js`; view `visualization-5a4ac7e615ce.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Demand elasticity
+
+```diff
+  Type `DEMAND_ELASTICITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8f620b64d619.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ca8d6b7eaed2.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Demand shock
+
+```diff
+  Type `DEMAND_SHOCK`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-75c5e0d201e0.js` → `DemandShockVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1f7a885a4253.js` → `DemandShockVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Denial of service overload
+
+```diff
+  Parameters: `server_capacity` (integer, default `120`, range 100 to 300); `legitimate_request_rate` (integer, default `40`, range 10 to 80).
+  
+- Source: manifest `type-253ef788d0bb.js`; view `visualization-f7666872daea.js` → `Visualization`.
++ Source: manifest `type-253ef788d0bb.js`; view `visualization-f03b4e9bac0e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Density dependence
+
+```diff
+  Parameters: `carrying_capacity` (integer, default `100`, range 40 to 200); `intrinsic_growth_rate` (number, default `0.4`, range 0.1 to 0.8).
+  
+- Source: manifest `model-43a9f02da387.js`; view `visualization-592ad0110941.js` → `DensityDependenceVisualization`.
++ Source: manifest `model-43a9f02da387.js`; view `visualization-b9b42f81de14.js` → `DensityDependenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Derivative
+
+```diff
+  Type `DERIVATIVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-68b33db59556.js` → `DerivativeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2897bb2f10e3.js` → `DerivativeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Derivative as secant: `f'(a)=\lim_{h\to0^+}\frac{f(a+h)-f(a)}{h}`
+
+```diff
+  Parameters: `functionExpression` (enum, default `x^2`, one of `x^2`, `x^3`, `x^3-x`, `sin(x)`, `cos(x)`, `e^x`); `xValue` (number, default `1`, range -10 to 10); `h` (number, default `2`, range 0.05 to 4).
+  
+- Source: manifest `type-b5036e205e38.js`; view `visualization-ea8859292d66.js` → `DerivativeAsSecantVisualization`.
++ Source: manifest `type-b5036e205e38.js`; view `visualization-945ff5bee546.js` → `DerivativeAsSecantVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Derivative product rule: `(fg)' = f'g + fg'`
+
+```diff
+  Parameters: `deltaX` (number, default `2`, range 0.05 to 2).
+  
+- Source: manifest `type-3f3e34153e7c.js`; view `visualization-fb7a08b38874.js` → `DerivativeProductRuleVisualization`.
++ Source: manifest `type-3f3e34153e7c.js`; view `visualization-959fb6615527.js` → `DerivativeProductRuleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Detergent micelle grease
+
+```diff
+  Parameters: `relativeDetergentAmountPercent` (number, default `40`, range 0 to 100).
+  
+- Source: manifest `model-94e102697f8c.js`; view `visualization-2e6aad2a5b13.js` → `DetergentMicelleGreaseVisualization`.
++ Source: manifest `model-94e102697f8c.js`; view `visualization-df5595406cd6.js` → `DetergentMicelleGreaseVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dice rolling
+
+```diff
+  Type `DICE_ROLLING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4c72e3abeeb9.js` → `DiceRollingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9ed4aaa7a513.js` → `DiceRollingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dichotomous key
+
+```diff
+  Type `DICHOTOMOUS_KEY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2964cb9ce568.js` → `DichotomousKeyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7c6f01627e8f.js` → `DichotomousKeyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Difference in differences: `\widehat{\tau}_{DiD} = \Delta Y_T - \Delta Y_C`
+
+```diff
+  Parameters: `treated_pre_outcome` (number, default `60`, range 20 to 80); `control_pre_outcome` (number, default `40`, range 20 to 80); `common_change` (number, default `8`, range -15 to 15); `treatment_effect` (number, default `14`, range -20 to 20).
+  
+- Source: manifest `type-62bcf9304582.js`; view `visualization-cb4b4f877893.js` → `Visualization`.
++ Source: manifest `type-62bcf9304582.js`; view `visualization-13e1d5f5e606.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Difference of squares
+
+```diff
+  Type `DIFFERENCE_OF_SQUARES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9ed4b9e91421.js` → `DifferenceOfSquaresVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-66fcce66f93d.js` → `DifferenceOfSquaresVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Diffusion
+
+```diff
+  Type `DIFFUSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3ae9544808b0.js` → `DiffusionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-eb35a68e89e6.js` → `DiffusionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Digestive tract absorption
+
+```diff
+  Parameters: `nutrient` (enum, default `carbohydrate`, one of `carbohydrate`, `protein`, `long-chain fat`).
+  
+- Source: manifest `model-7f8b73e7da12.js`; view `visualization-5574143ffb81.js` → `DigestiveTractAbsorptionVisualization`.
++ Source: manifest `model-7f8b73e7da12.js`; view `visualization-246f4e87a157.js` → `DigestiveTractAbsorptionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dijkstra shortest path
+
+```diff
+  Type `DIJKSTRA_SHORTEST_PATH`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a24bf7596d02.js` → `DijkstraShortestPathVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-38ca575be3bb.js` → `DijkstraShortestPathVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Diminishing marginal returns
+
+```diff
+  Type `DIMINISHING_MARGINAL_RETURNS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d902d84006c8.js` → `MarginalProductVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3c066f4116a7.js` → `MarginalProductVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Diminishing marginal utility
+
+```diff
+  Type `DIMINISHING_MARGINAL_UTILITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-df388f26f526.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b542600c8601.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Direct inverse proportion
+
+```diff
+  Parameters: `x` (number, default `1`, range 0.5 to 2.5).
+  
+- Source: manifest `type-bd43c0bf82aa.js`; view `visualization-99c59e9046d3.js` → `DirectInverseProportionVisualization`.
++ Source: manifest `type-bd43c0bf82aa.js`; view `visualization-1812989bbe92.js` → `DirectInverseProportionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Discrete event queue simulation
+
+```diff
+  Parameters: `workload` (enum, default `bursty`, one of `spaced`, `bursty`).
+  
+- Source: manifest `type-178545bdd851.js`; view `visualization-2e7ddfcf2d7a.js` → `DiscreteEventQueueSimulationVisualization`.
++ Source: manifest `type-178545bdd851.js`; view `visualization-24b74e15aaf6.js` → `DiscreteEventQueueSimulationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Discriminant
+
+```diff
+  Type `DISCRIMINANT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c355fb7c9a7b.js` → `DiscriminantVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-816f00246e85.js` → `DiscriminantVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dissolution
+
+```diff
+  Type `DISSOLUTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-72aae2c4a4e9.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-35637cb57e1b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Distance formula
+
+```diff
+  Type `DISTANCE_FORMULA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2ca587b1743a.js` → `DistanceFormulaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ab968398f009.js` → `DistanceFormulaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Distance traveled vs displacement
+
+```diff
+  Parameters: `route` (enum, default `detour`, one of `direct`, `detour`, `round_trip`).
+  
+- Source: manifest `model-3fc8a8edee3e.js`; view `visualization-eb0ada7f1faf.js` → `DistanceTraveledVsDisplacementVisualization`.
++ Source: manifest `model-3fc8a8edee3e.js`; view `visualization-7a53d14943c5.js` → `DistanceTraveledVsDisplacementVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Distillation
+
+```diff
+  Parameters: `mixture_example` (enum, default `salt water`, one of `salt water`, `colored solution`, `widely separated liquids`).
+  
+- Source: manifest `model-a11bd7ff405e.js`; view `visualization-9f083de0743e.js` → `DistillationVisualization`.
++ Source: manifest `model-a11bd7ff405e.js`; view `visualization-9cdfe031cd95.js` → `DistillationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Distributive property: `a(b+c)=ab+ac`
+
+```diff
+  Parameters: `a` (integer, default `8`, range 2 to 8); `b` (integer, default `7`, range 2 to 8); `c` (integer, default `7`, range 2 to 8).
+  
+- Source: manifest `type-50c9fc73ec1d.js`; view `visualization-27a3025ced7b.js` → `DistributivePropertyVisualization`.
++ Source: manifest `type-50c9fc73ec1d.js`; view `visualization-e1d666a5478c.js` → `DistributivePropertyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Divide conquer recurrence tree
+
+```diff
+  Parameters: `recurrence_example` (enum, default `T(n) = 2T(n/2) + n`, one of `T(n) = 2T(n/2) + 1`, `T(n) = 2T(n/2) + n`, `T(n) = 2T(n/2) + n^2`).
+  
+- Source: manifest `type-603f86db5a64.js`; view `visualization-8eacfd469593.js` → `DivideConquerRecurrenceTreeVisualization`.
++ Source: manifest `type-603f86db5a64.js`; view `visualization-15d7bd7cacec.js` → `DivideConquerRecurrenceTreeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dna gel fragment migration
+
+```diff
+  Parameters: `runTimeMinutes` (integer, default `18`, range 1 to 40); `fragmentSizeBasePairs` (integer, default `700`, range 100 to 2000).
+  
+- Source: manifest `type-72629e85a720.js`; view `visualization-fc8165cc4da4.js` → `DnaGelFragmentMigrationVisualization`.
++ Source: manifest `type-72629e85a720.js`; view `visualization-3f509e375c9f.js` → `DnaGelFragmentMigrationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dna replication fork
+
+```diff
+  Type `DNA_REPLICATION_FORK`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5878bdaacaac.js` → `DnaReplicationForkVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2c604b474e93.js` → `DnaReplicationForkVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dna transcription
+
+```diff
+  Type `DNA_TRANSCRIPTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9c5742fe4c07.js` → `DnaTranscriptionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-612c2ba3e2b9.js` → `DnaTranscriptionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dns resolution
+
+```diff
+  Type `DNS_RESOLUTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a808d4d9ca24.js` → `DnsResolutionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2e48128d0e5e.js` → `DnsResolutionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Doppler effect
+
+```diff
+  Type `DOPPLER_EFFECT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-342e1d051cd9.js` → `DopplerEffectVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9dfd2335d060.js` → `DopplerEffectVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dose response curve
+
+```diff
+  Type `DOSE_RESPONSE_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-62c4a1de70d9.js` → `DoseResponseVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a1e533b2023b.js` → `DoseResponseVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dot plot
+
+```diff
+  Type `DOT_PLOT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f9f2735528c0.js` → `DotPlotVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b0badf6db7f5.js` → `DotPlotVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Double entry transaction effects
+
+```diff
+  Parameters: `transaction_type` (enum, default `owner investment for cash`, one of `owner investment for cash`, `equipment purchase for cash`, `supplies purchase on account`, `payment of accounts payable`).
+  
+- Source: manifest `model-2922d86b57c4.js`; view `visualization-a02a73f05ad6.js` → `DoubleEntryTransactionEffectsVisualization`.
++ Source: manifest `model-2922d86b57c4.js`; view `visualization-33469625f2b0.js` → `DoubleEntryTransactionEffectsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Double fertilization
+
+```diff
+  Type `DOUBLE_FERTILIZATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7de455db3ce0.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-baf2273c58cc.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Drum grid notation
+
+```diff
+  Type `DRUM_GRID_NOTATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9cf833447594.js` → `DrumGridNotationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-6d080f2cc0bd.js` → `DrumGridNotationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dynamic equilibrium
+
+```diff
+  Type `DYNAMIC_EQUILIBRIUM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a4e2f2952de1.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b402b2f210f7.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Dynamics and articulation
+
+```diff
+  Type `DYNAMICS_AND_ARTICULATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-fba275eb9472.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-de8b6e53838e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Earth layers and convection
+
+```diff
+  Type `EARTH_LAYERS_AND_CONVECTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d3c9307203ec.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-42014c7ce817.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ecological footprint
+
+```diff
+  Parameters: `focus_year` (integer, default `2014`, range 1961 to 2014).
+  
+- Source: manifest `type-e177a5957273.js`; view `visualization-11502f5b0b86.js` → `EcologicalFootprintVisualization`.
++ Source: manifest `type-e177a5957273.js`; view `visualization-fc77b7292586.js` → `EcologicalFootprintVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ecological succession stages
+
+```diff
+  Parameters: `successionType` (enum, default `primary`, one of `primary`, `secondary`).
+  
+- Source: manifest `model-f721c5cf751c.js`; view `visualization-86d5b2b9641c.js` → `EcologicalSuccessionVisualization`.
++ Source: manifest `model-f721c5cf751c.js`; view `visualization-f73fbb9705d9.js` → `EcologicalSuccessionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ecological tolerance curve
+
+```diff
+  Parameters: `environmental_factor` (enum, default `temperature`, one of `temperature`, `salinity`, `pH`, `dissolved oxygen`, `moisture`).
+  
+- Source: manifest `model-d1b5eccccd13.js`; view `visualization-3cb74d796623.js` → `EcologicalToleranceCurveVisualization`.
++ Source: manifest `model-d1b5eccccd13.js`; view `visualization-642719ab1726.js` → `EcologicalToleranceCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Economic externalities
+
+```diff
+  Type `ECONOMIC_EXTERNALITIES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5bf979c2c415.js` → `NegativeExternalityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a03cf9ecf0bf.js` → `NegativeExternalityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Economic order quantity
+
+```diff
+  Type `ECONOMIC_ORDER_QUANTITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7a187cd51899.js` → `EconomicOrderQuantityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8980b52c2f0f.js` → `EconomicOrderQuantityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Economies of scale
+
+```diff
+  Type `ECONOMIES_OF_SCALE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1dd88eb065df.js` → `LongRunAtcVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5a2e4c4a61ee.js` → `LongRunAtcVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Eigendirections: `A\mathbf{v}=\lambda\mathbf{v}`
+
+```diff
+  Parameters: `a11` (number, default `2`, range -2 to 2); `a12` (number, default `1`, range -2 to 2); `a21` (number, default `1`, range -2 to 2); `a22` (number, default `2`, range -2 to 2).
+  
+- Source: manifest `type-9dd1c641b080.js`; view `visualization-fa0d38568aed.js` → `EigendirectionsVisualization`.
++ Source: manifest `type-9dd1c641b080.js`; view `visualization-89dd7025b33a.js` → `EigendirectionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ekg parts
+
+```diff
+  Type `EKG_PARTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6285f6c185ee.js` → `EkgPartsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9b1987a3e3e4.js` → `EkgPartsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › El nino and la nina
+
+```diff
+  Parameters: `initial_phase` (enum, default `Neutral`, one of `La Niña`, `Neutral`, `El Niño`).
+  
+- Source: manifest `type-44fc1ec684df.js`; view `visualization-d8634348de5d.js` → `ElNinoAndLaNinaVisualization`.
++ Source: manifest `type-44fc1ec684df.js`; view `visualization-f795c5c0706e.js` → `ElNinoAndLaNinaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Elasticity total revenue
+
+```diff
+  Type `ELASTICITY_TOTAL_REVENUE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4a0f2b5c3e7f.js` → `ElasticityTotalRevenueVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4d9dd9ef146a.js` → `ElasticityTotalRevenueVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electric current charge flow: `I = \frac{Q}{t}`
+
+```diff
+  Parameters: `packetRatePerSecond` (number, default `4`, range 1 to 8); `chargePerPacketCoulombs` (number, default `1`, range 0.5 to 3).
+  
+- Source: manifest `type-dcb1b5569c53.js`; view `visualization-b5998cf24f93.js` → `ElectricCurrentChargeFlowVisualization`.
++ Source: manifest `type-dcb1b5569c53.js`; view `visualization-79ed4e3dfd3b.js` → `ElectricCurrentChargeFlowVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electric field: `E\propto\frac{1}{r^2}`
+
+```diff
+  Parameters: `polarity` (enum, default `positive`, one of `positive`, `negative`).
+  
+- Source: manifest `model-51dd0b398611.js`; view `visualization-af41454fc8db.js` → `ElectricFieldVisualization`.
++ Source: manifest `model-51dd0b398611.js`; view `visualization-cd877bb68c69.js` → `ElectricFieldVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electric field multiple charges
+
+```diff
+  Type `ELECTRIC_FIELD_MULTIPLE_CHARGES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-206d7c7957c3.js` → `ElectricFieldMultipleChargesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-243682553e1f.js` → `ElectricFieldMultipleChargesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electric flux flat surface: `\Phi_E = EA\cos(\theta)`
+
+```diff
+  Parameters: `fieldStrengthNewtonsPerCoulomb` (number, default `6`, range 0 to 10); `areaSquareMeters` (number, default `3`, range 0.5 to 5); `angleDegrees` (number, default `30`, range 0 to 90).
+  
+- Source: manifest `type-8d1ac0d714c4.js`; view `visualization-732d83b5c9e5.js` → `ElectricFluxFlatSurfaceVisualization`.
++ Source: manifest `type-8d1ac0d714c4.js`; view `visualization-1bc41fc040b2.js` → `ElectricFluxFlatSurfaceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electrical resistance factors
+
+```diff
+  Type `ELECTRICAL_RESISTANCE_FACTORS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-386a4b4b56a9.js` → `ElectricalResistanceFactorsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-96d443373a07.js` → `ElectricalResistanceFactorsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electrolyte conductivity
+
+```diff
+  Parameters: `initial_solution` (enum, default `potassium-chloride`, one of `potassium-chloride`, `acetic-acid`, `ethanol`); `initial_concentration` (number, default `0.6`, range 0.1 to 1).
+  
+- Source: manifest `type-ba543fe66918.js`; view `visualization-a12eb08ccb6f.js` → `ElectrolyteConductivityVisualization`.
++ Source: manifest `type-ba543fe66918.js`; view `visualization-710624aaead4.js` → `ElectrolyteConductivityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electrolytic cell
+
+```diff
+  Parameters: `electrolyte` (enum, default `molten sodium chloride`, one of `molten sodium chloride`, `molten lead(II) bromide`).
+  
+- Source: manifest `model-ffbb570f1ec8.js`; view `visualization-ada7a23666ca.js` → `Visualization`.
++ Source: manifest `model-ffbb570f1ec8.js`; view `visualization-a01b292c8320.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electromagnetic spectrum
+
+```diff
+  Parameters: `focus_band` (enum, default `visible`, one of `radio`, `microwave`, `infrared`, `visible`, `ultraviolet`, `x-ray`, `gamma-ray`).
+  
+- Source: manifest `model-e044398b5fd7.js`; view `visualization-ff7155a8e1f9.js` → `ElectromagneticSpectrumVisualization`.
++ Source: manifest `model-e044398b5fd7.js`; view `visualization-1c7ec769d8e5.js` → `ElectromagneticSpectrumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Electron orbital filling
+
+```diff
+  Parameters: `atomicNumber` (integer, default `10`, range 1 to 36).
+  
+- Source: manifest `model-b586e91ccccc.js`; view `visualization-5dfbdcd33ef6.js` → `ElectronOrbitalFillingVisualization`.
++ Source: manifest `model-b586e91ccccc.js`; view `visualization-329b22015684.js` → `ElectronOrbitalFillingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Element vs compound vs mixture
+
+```diff
+  Parameters: `initial_sample` (enum, default `monatomic element`, one of `monatomic element`, `diatomic element`, `molecular compound`, `mixture of elements`, `mixture of element and compound`, `mixture of compounds`).
+  
+- Source: manifest `type-ea91da6d3b05.js`; view `visualization-d9cf800f090c.js` → `Visualization`.
++ Source: manifest `type-ea91da6d3b05.js`; view `visualization-fd57b365a189.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Elementary row operations: `\left[A\mid\mathbf{b}\right]\sim\left[I\mid\mathbf{x}\right]`
+
+```diff
+  Parameters: `solutionX` (number, default `1`, range -2 to 2); `solutionY` (number, default `2`, range -2 to 2).
+  
+- Source: manifest `model-41a7cd3908a8.js`; view `visualization-a90782b34700.js` → `ElementaryRowOperationsVisualization`.
++ Source: manifest `model-41a7cd3908a8.js`; view `visualization-8d693dd115d2.js` → `ElementaryRowOperationsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Empirical rule
+
+```diff
+  Parameters: `mean` (number, default `100`, range -10000 to 10000); `standard_deviation` (number, default `15`, range 0.1 to 3000).
+  
+- Source: manifest `model-8bc3f47e8528.js`; view `visualization-2f2dae37e1f5.js` → `EmpiricalRuleVisualization`.
++ Source: manifest `model-8bc3f47e8528.js`; view `visualization-fd34b3fa4a1d.js` → `EmpiricalRuleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Empirical vs molecular formula
+
+```diff
+  Type `EMPIRICAL_VS_MOLECULAR_FORMULA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-aa28f2fa08f6.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cbde0232860e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Endocrine feedback axis
+
+```diff
+  Parameters: `axis` (enum, default `thyroid`, one of `thyroid`, `adrenal`).
+  
+- Source: manifest `model-5a5542c48ccf.js`; view `visualization-f9a8719cc505.js` → `Visualization`.
++ Source: manifest `model-5a5542c48ccf.js`; view `visualization-1f6ea125e0aa.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Endocytosis and exocytosis
+
+```diff
+  Type `ENDOCYTOSIS_AND_EXOCYTOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4a5b5bc2a36d.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-45683eeedd15.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Endomembrane pathway
+
+```diff
+  Parameters: `cargo_destination` (enum, default `secretion`, one of `secretion`, `plasma membrane`, `lysosome`).
+  
+- Source: manifest `model-6d0fe1644e34.js`; view `visualization-b5b3e1066992.js` → `Visualization`.
++ Source: manifest `model-6d0fe1644e34.js`; view `visualization-162ed650a68b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Energy coupling
+
+```diff
+  Type `ENERGY_COUPLING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-af8c92ab3171.js` → `EnergyCouplingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-75f8cb4c1ad0.js` → `EnergyCouplingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Energy efficiency sankey diagram: `\text{Efficiency}=\frac{\text{useful output}}{\text{total input}}`
+
+```diff
+  Parameters: `energy_system` (enum, default `light bulb`, one of `light bulb`, `electric motor`, `car engine`); `input_energy_joules` (number, default `100`, range 1 to 10000); `initial_efficiency_percent` (number, default `40`, range 0 to 100).
+  
+- Source: manifest `type-c20db913b337.js`; view `visualization-5fce99ac71f0.js` → `EnergyEfficiencySankeyVisualization`.
++ Source: manifest `type-c20db913b337.js`; view `visualization-86a0fa18f7b6.js` → `EnergyEfficiencySankeyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Enthalpy: `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`
+
+```diff
+  Parameters: `enthalpyChangeKilojoules` (number, default `-50`, range -100 to 100).
+  
+- Source: manifest `model-c5cda5a90fb9.js`; view `visualization-de5a9eee6205.js` → `EnthalpyVisualization`.
++ Source: manifest `model-c5cda5a90fb9.js`; view `visualization-2604c7411c2e.js` → `EnthalpyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Entropy and dispersal
+
+```diff
+  Type `ENTROPY_AND_DISPERSAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-995363862b08.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-23c4e23046de.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Enzyme and temperature
+
+```diff
+  Parameters: `temperatureCelsius` (number, default `25`, range 0 to 70).
+  
+- Source: manifest `model-f5d8a0ad0545.js`; view `visualization-9ae1bd93c965.js` → `EnzymeAndTemperatureVisualization`.
++ Source: manifest `model-f5d8a0ad0545.js`; view `visualization-e069da12786d.js` → `EnzymeAndTemperatureVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Enzyme inhibition rate effects
+
+```diff
+  Parameters: `relativeSubstrateConcentration` (number, default `2`, range 0 to 10); `inhibitorLevel` (enum, default `low`, one of `none`, `low`, `high`).
+  
+- Source: manifest `model-7ecafb9fbe11.js`; view `visualization-6bac77b5a01c.js` → `EnzymeInhibitionRateEffectsVisualization`.
++ Source: manifest `model-7ecafb9fbe11.js`; view `visualization-b2c28f524b3d.js` → `EnzymeInhibitionRateEffectsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Enzyme lock key cycle
+
+```diff
+  Type `ENZYME_LOCK_KEY_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-590c3a9ebbfe.js` → `EnzymeLockKeyCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-330493e065f3.js` → `EnzymeLockKeyCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Epigenetics
+
+```diff
+  Type `EPIGENETICS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-43b7e917fba9.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9f145066bfe2.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Epsp ipsp summation
+
+```diff
+  Type `EPSP_IPSP_SUMMATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-499703ac7d49.js` → `EpspIpspSummationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7e928bbf8746.js` → `EpspIpspSummationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Eq curve
+
+```diff
+  Type `EQ_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cee0ca565a94.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-6fe6ec8763a1.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Equilateral triangle
+
+```diff
+  Type `EQUILATERAL_TRIANGLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-78185eaf9f63.js` → `EquilateralTriangleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a172b24908bb.js` → `EquilateralTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Equilibrium concentration graph
+
+```diff
+  Parameters: `equilibrium_constant` (number, default `2`, range 0.25 to 4); `initial_total_concentration` (number, default `1`, range 0.5 to 2).
+  
+- Source: manifest `model-0b71968a76c7.js`; view `visualization-5b58cf8890d3.js` → `EquilibriumConcentrationVisualization`.
++ Source: manifest `model-0b71968a76c7.js`; view `visualization-53590704edbd.js` → `EquilibriumConcentrationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Er diagram relational tables
+
+```diff
+  Parameters: `relationship_kind` (enum, default `one-to-many`, one of `one-to-one`, `one-to-many`, `many-to-many`); `include_relationship_attribute` (boolean, default `true`).
+  
+- Source: manifest `model-b729a24f3575.js`; view `visualization-8ca584d2b229.js` → `ErDiagramVisualization`.
++ Source: manifest `model-b729a24f3575.js`; view `visualization-997bb5be5133.js` → `ErDiagramVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Eukaryotic gene regulation
+
+```diff
+  Type `EUKARYOTIC_GENE_REGULATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-86e9a3b6e7a6.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2c7d2a91a151.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Euler formula
+
+```diff
+  Type `EULER_FORMULA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ada72916a09d.js` → `EulerFormulaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f1c1a0777c58.js` → `EulerFormulaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Eutrophication
+
+```diff
+  Parameters: `waterBody` (enum, default `freshwater lake`, one of `freshwater lake`, `estuary`, `coastal bay`).
+  
+- Source: manifest `model-6d7b03cccde0.js`; view `visualization-99356747691d.js` → `EutrophicationVisualization`.
++ Source: manifest `model-6d7b03cccde0.js`; view `visualization-7dc45b0c12c0.js` → `EutrophicationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Evaporation rate factors
+
+```diff
+  Parameters: `temperatureCelsius` (number, default `25`, range 10 to 60); `surfaceAreaPercent` (number, default `60`, range 25 to 100); `airflowMetersPerSecond` (number, default `1`, range 0 to 3); `humidityPercent` (number, default `40`, range 0 to 100); `attraction` (enum, default `medium`, one of `weak`, `medium`, `strong`).
+  
+- Source: manifest `type-119bdab76cbe.js`; view `visualization-6ceeae4550dd.js` → `EvaporationRateFactorsVisualization`.
++ Source: manifest `type-119bdab76cbe.js`; view `visualization-27f04c154f5d.js` → `EvaporationRateFactorsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Even odd function symmetry
+
+```diff
+  Parameters: `symmetryType` (enum, default `even`, one of `even`, `odd`, `neither`); `x` (number, default `3`, range 1.25 to 4.5).
+  
+- Source: manifest `model-4d3238eeddf7.js`; view `visualization-69926e78bb76.js` → `EvenOddFunctionSymmetryVisualization`.
++ Source: manifest `model-4d3238eeddf7.js`; view `visualization-dbfb8bccf964.js` → `EvenOddFunctionSymmetryVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Expected value weighted average
+
+```diff
+  Type `EXPECTED_VALUE_WEIGHTED_AVERAGE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4d01df2715e3.js` → `ExpectedValueWeightedAverageVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-49eba75e9ba6.js` → `ExpectedValueWeightedAverageVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Exponent laws repeated multiplication
+
+```diff
+  Type `EXPONENT_LAWS_REPEATED_MULTIPLICATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e060561fe0c0.js` → `ExponentLawsRepeatedMultiplicationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1d63b1040a34.js` → `ExponentLawsRepeatedMultiplicationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Exponential decay: `y = e^{-kt}`
+
+```diff
+  Parameters: `initial` (number, default `6`, range 0.01 to 10000); `decay` (number, default `0.6`, range 0.01 to 10000).
+  
+- Source: manifest `type-33f0d487d38b.js`; view `visualization-874bcb9fbee2.js` → `ExponentialDecayVisualization`.
++ Source: manifest `type-33f0d487d38b.js`; view `visualization-80a4f82ac3f2.js` → `ExponentialDecayVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Exponential distribution: `f(t)=\lambda e^{-\lambda t},\quad t\ge 0`
+
+```diff
+  Parameters: `rate` (number, default `0.5`, range 0.25 to 1); `waiting_time` (number, default `5`, range 0 to 12).
+  
+- Source: manifest `model-1f7a57227d2e.js`; view `visualization-8160441d509d.js` → `ExponentialDistributionVisualization`.
++ Source: manifest `model-1f7a57227d2e.js`; view `visualization-9f93877cdc00.js` → `ExponentialDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Exports
+
+```diff
+  Type `EXPORTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bb206c23753c.js` → `ExportsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-15f37820e814.js` → `ExportsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Eye accommodation
+
+```diff
+  Parameters: `objectDistanceMeters` (number, default `1`, range 0.25 to 6).
+  
+- Source: manifest `type-42a870b7bbdb.js`; view `visualization-8f2fe41d828d.js` → `EyeAccommodationVisualization`.
++ Source: manifest `type-42a870b7bbdb.js`; view `visualization-f0c011a2ca0d.js` → `EyeAccommodationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Eye prescription
+
+```diff
+  Parameters: `sphereDiopters` (number, default `2.5`, range -10 to 10); `cylinderDiopters` (number, default `-0.5`, range -6 to 6); `axisDegrees` (number, default `135`, range 0 to 180).
+  
+- Source: manifest `type-ba89e7f5dcc4.js`; view `visualization-5b5cc4cbf8a9.js` → `EyePrescriptionVisualization`.
++ Source: manifest `type-ba89e7f5dcc4.js`; view `visualization-16e8b2f54ff8.js` → `EyePrescriptionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Factor pairs arrays
+
+```diff
+  Parameters: `wholeNumber` (integer, default `24`, range 1 to 36).
+  
+- Source: manifest `model-b7e30c22fb74.js`; view `visualization-5cf7104222dd.js` → `FactorPairsArraysVisualization`.
++ Source: manifest `model-b7e30c22fb74.js`; view `visualization-961f38b65876.js` → `FactorPairsArraysVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fahrenheit celsius scale: `F = \frac{9}{5}C + 32`
+
+```diff
+  Parameters: `celsius` (number, default `0`, range -40 to 120).
+  
+- Source: manifest `type-7ff60fd7b3ba.js`; view `visualization-72f0a99e843f.js` → `FahrenheitCelsiusScaleVisualization`.
++ Source: manifest `type-7ff60fd7b3ba.js`; view `visualization-9a06bd0784f2.js` → `FahrenheitCelsiusScaleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Faradays law electrolysis: `m=\frac{MQ}{zF},\quad Q=It`
+
+```diff
+  Parameters: `electrolyte` (enum, default `silver nitrate`, one of `silver nitrate`, `copper(II) sulfate`).
+  
+- Source: manifest `model-a414c3bf04d3.js`; view `visualization-e8cb2ccc552f.js` → `Visualization`.
++ Source: manifest `model-a414c3bf04d3.js`; view `visualization-8245d6374ced.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fatty acid saturation
+
+```diff
+  Parameters: `doubleBonds` (integer, default `1`, range 0 to 3); `temperatureCelsius` (number, default `20`, range 0 to 50).
+  
+- Source: manifest `model-a41a580621d5.js`; view `visualization-cd806c66cc7a.js` → `FattyAcidSaturationVisualization`.
++ Source: manifest `model-a41a580621d5.js`; view `visualization-e28d24acb035.js` → `FattyAcidSaturationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fermentation
+
+```diff
+  Parameters: `fermentation_type` (enum, default `lactic acid`, one of `lactic acid`, `alcohol`).
+  
+- Source: manifest `model-e9d1e1169b7a.js`; view `visualization-e082a74f8c7e.js` → `FermentationVisualization`.
++ Source: manifest `model-e9d1e1169b7a.js`; view `visualization-3cb6834e33b7.js` → `FermentationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fifo lifo cost flow
+
+```diff
+  Parameters: `unitsSold` (integer, default `180`, range 0 to 300); `priceTrend` (enum, default `rising`, one of `falling`, `flat`, `rising`).
+  
+- Source: manifest `model-8ce870eed550.js`; view `visualization-2982547f3ea4.js` → `FifoLifoCostFlowVisualization`.
++ Source: manifest `model-8ce870eed550.js`; view `visualization-1bd2d41f09e8.js` → `FifoLifoCostFlowVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Filling rates: `r_{\mathrm{net}}=r_{\mathrm{in}}-r_{\mathrm{out}}`
+
+```diff
+  Parameters: `inflowRateLitersPerMinute` (number, default `6`, range 0 to 8); `outflowRateLitersPerMinute` (number, default `2`, range 0 to 8).
+  
+- Source: manifest `type-33d5b92afbca.js`; view `visualization-44acf1eaaadc.js` → `FillingRatesVisualization`.
++ Source: manifest `type-33d5b92afbca.js`; view `visualization-73b719c14848.js` → `FillingRatesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Filtration
+
+```diff
+  Type `FILTRATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e80ce20a9562.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3319fc359847.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Finite state machine
+
+```diff
+  Type `FINITE_STATE_MACHINE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-951f8efa66e2.js` → `FiniteStateMachineVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2eb00d7c595f.js` → `FiniteStateMachineVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fire triangle fire tetrahedron
+
+```diff
+  Type `FIRE_TRIANGLE_FIRE_TETRAHEDRON`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-dedf228f5667.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-92e56224529b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Firm cost curves
+
+```diff
+  Type `FIRM_COST_CURVES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-fcdcadc2a9aa.js` → `FirmCostCurvesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-362e079f21a3.js` → `FirmCostCurvesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › First order ode
+
+```diff
+  Type `FIRST_ORDER_ODE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ef240d3dd853.js` → `FirstOrderOdeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8f8d0e84c5ee.js` → `FirstOrderOdeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fiscal policy
+
+```diff
+  Type `FISCAL_POLICY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8848eccbf95f.js` → `FiscalPolicyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2b763a72eafd.js` → `FiscalPolicyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fisheries and maximum sustainable yield
+
+```diff
+  Type `FISHERIES_AND_MAXIMUM_SUSTAINABLE_YIELD`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d49dfae72ba1.js` → `FisheriesAndMaximumSustainableYieldVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d164095d530d.js` → `FisheriesAndMaximumSustainableYieldVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fitness and adaptation
+
+```diff
+  Type `FITNESS_AND_ADAPTATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f649a041cf45.js` → `FitnessAndAdaptationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b0d2c71454aa.js` → `FitnessAndAdaptationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fixed perimeter rectangle area: `A = w \times h`
+
+```diff
+  Parameters: `width` (number, default `4`, range 1 to 11).
+  
+- Source: manifest `model-b128078a1c67.js`; view `visualization-8f91541968c6.js` → `FixedPerimeterRectangleAreaVisualization`.
++ Source: manifest `model-b128078a1c67.js`; view `visualization-1131272fcab4.js` → `FixedPerimeterRectangleAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fixed ratio scaling
+
+```diff
+  Parameters: `scaleFactor` (number, default `1.5`, range 0.5 to 2).
+  
+- Source: manifest `type-6d69838b61ac.js`; view `visualization-b68ab01675de.js` → `FixedRatioScalingVisualization`.
++ Source: manifest `type-6d69838b61ac.js`; view `visualization-f674d7499dcb.js` → `FixedRatioScalingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Flower pollination
+
+```diff
+  Parameters: `pollination_type` (enum, default `cross-pollination`, one of `self-pollination`, `cross-pollination`).
+  
+- Source: manifest `model-eed880ff8885.js`; view `visualization-e938c01ed333.js` → `FlowerPollinationVisualization`.
++ Source: manifest `model-eed880ff8885.js`; view `visualization-c3a14be7def3.js` → `FlowerPollinationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fluid mosaic membrane
+
+```diff
+  Type `FLUID_MOSAIC_MEMBRANE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4d5400886db5.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-10abb005c01b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Foil binomial
+
+```diff
+  Parameters: `a` (number, default `1`, range -12 to 12); `b` (number, default `3`, range -12 to 12); `c` (number, default `1`, range -12 to 12); `d` (number, default `2`, range -12 to 12).
+  
+- Source: manifest `type-49e9f66a2d98.js`; view `visualization-8ac375250bc1.js` → `FoilBinomialVisualization`.
++ Source: manifest `type-49e9f66a2d98.js`; view `visualization-2ed5974a6c18.js` → `FoilBinomialVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Food chain
+
+```diff
+  Parameters: `ecosystem` (enum, default `grassland`, one of `grassland`, `pond`, `ocean`).
+  
+- Source: manifest `model-b3392fd69f76.js`; view `visualization-b82c6696bbe2.js` → `Visualization`.
++ Source: manifest `model-b3392fd69f76.js`; view `visualization-dea386f1a382.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Food web
+
+```diff
+  Parameters: `ecosystem` (enum, default `terrestrial`, one of `terrestrial`, `freshwater`, `marine`).
+  
+- Source: manifest `model-c8be72ed6ac0.js`; view `visualization-2e3e66d3c840.js` → `FoodWebVisualization`.
++ Source: manifest `model-c8be72ed6ac0.js`; view `visualization-d6eb8c38d473.js` → `FoodWebVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Foreign exchange market
+
+```diff
+  Type `FOREIGN_EXCHANGE_MARKET`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e9793de28344.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c8e4ee164920.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Forestry methods
+
+```diff
+  Type `FORESTRY_METHODS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cc7b1e9e9eed.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9cd500dd446c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Formal charge
+
+```diff
+  Parameters: `example` (enum, default `carbon-dioxide-candidates`, one of `carbon-dioxide-candidates`, `nitrite-resonance`, `ammonium`).
+  
+- Source: manifest `type-23b0e0e9a23b.js`; view `visualization-d3f645e51705.js` → `FormalChargeVisualization`.
++ Source: manifest `type-23b0e0e9a23b.js`; view `visualization-b091931da635.js` → `FormalChargeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fossil fuel formation
+
+```diff
+  Type `FOSSIL_FUEL_FORMATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2bfb4bcf959d.js` → `FossilFuelFormationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-64f582640ef6.js` → `FossilFuelFormationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Founder effect and bottleneck
+
+```diff
+  Type `FOUNDER_EFFECT_AND_BOTTLENECK`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-dad59d22ef21.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d410b5c185af.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Four to one multiplexer
+
+```diff
+  Parameters: `input0` (boolean, default `false`); `input1` (boolean, default `true`); `input2` (boolean, default `false`); `input3` (boolean, default `true`); `select1` (boolean, default `false`); `select0` (boolean, default `true`).
+  
+- Source: manifest `model-85aa75328d7c.js`; view `visualization-9f9ff0425a05.js` → `FourToOneMultiplexerVisualization`.
++ Source: manifest `model-85aa75328d7c.js`; view `visualization-dd394373d92d.js` → `FourToOneMultiplexerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fractions number line
+
+```diff
+  Parameters: `numerator` (integer, default `7`, range 0 to 36); `denominator` (integer, default `4`, range 2 to 12).
+  
+- Source: manifest `model-e01a7cfd8d48.js`; view `visualization-29c1289f0b81.js` → `FractionsNumberLineVisualization`.
++ Source: manifest `model-e01a7cfd8d48.js`; view `visualization-63a96af9b48f.js` → `FractionsNumberLineVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Free fall: `h(t) = h_0 + v_0t - \frac{1}{2}gt^2`
+
+```diff
+  Parameters: `initialHeightMeters` (number, default `14`, range 4 to 18); `initialVelocityMetersPerSecond` (number, default `0`, range -8 to 8).
+  
+- Source: manifest `type-f5876f848904.js`; view `visualization-6cb4f2fe8ded.js` → `FreeFallVisualization`.
++ Source: manifest `type-f5876f848904.js`; view `visualization-86c39673bf82.js` → `FreeFallVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Freezing point depression: `\Delta T_f = iK_fm`
+
+```diff
+  Parameters: `solvent` (enum, default `water`, one of `water`, `benzene`, `cyclohexane`).
+  
+- Source: manifest `model-ebe02413f5a3.js`; view `visualization-6bd198c197fe.js` → `FreezingPointDepressionVisualization`.
++ Source: manifest `model-ebe02413f5a3.js`; view `visualization-824cc1c64fb5.js` → `FreezingPointDepressionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Frequency spectrum
+
+```diff
+  Type `FREQUENCY_SPECTRUM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-425026887fd9.js` → `FrequencySpectrumVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-77ae6ac87f44.js` → `FrequencySpectrumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Function call stack
+
+```diff
+  Type `FUNCTION_CALL_STACK`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-25d24987f217.js` → `FunctionCallStackVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-43b761300c0f.js` → `FunctionCallStackVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Function composition
+
+```diff
+  Parameters: `input_value` (number, default `2`, range -10 to 10); `g_operation` (enum, default `add 2`, one of `add 2`, `multiply by 3`, `square`, `negate`); `f_operation` (enum, default `multiply by 3`, one of `add 2`, `multiply by 3`, `square`, `negate`); `composition_order` (enum, default `g_then_f`, one of `g_then_f`, `f_then_g`).
+  
+- Source: manifest `type-08ab5fc42dc6.js`; view `visualization-59f9f390bb55.js` → `FunctionCompositionVisualization`.
++ Source: manifest `type-08ab5fc42dc6.js`; view `visualization-f7e0a2023328.js` → `FunctionCompositionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Futures hedge locked revenue
+
+```diff
+  Type `FUTURES_HEDGE_LOCKED_REVENUE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-387533cfa89c.js` → `FuturesHedgeLockedRevenueVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4ba3c8577a8d.js` → `FuturesHedgeLockedRevenueVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Fx net exports ad
+
+```diff
+  Parameters: `currency_value` (number, default `1`, range -2 to 2).
+  
+- Source: manifest `model-1bcf71fb73f9.js`; view `visualization-583c154fa727.js` → `FxNetExportsAdVisualization`.
++ Source: manifest `model-1bcf71fb73f9.js`; view `visualization-793e0a4e9c15.js` → `FxNetExportsAdVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gains from trade
+
+```diff
+  Parameters: `production_wheat` (number, default `7`, range 5 to 9); `trade_rate` (number, default `1.6`, range 0.4 to 1.8).
+  
+- Source: manifest `model-80ffe0775316.js`; view `visualization-a6606422aae4.js` → `GainsFromTradeVisualization`.
++ Source: manifest `model-80ffe0775316.js`; view `visualization-c12bdf002bd4.js` → `GainsFromTradeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Galvanic cell
+
+```diff
+  Parameters: `cell_pair` (enum, default `zinc-copper`, one of `zinc-copper`, `copper-silver`).
+  
+- Source: manifest `type-448ce06dc011.js`; view `visualization-8d94e57d9313.js` → `Visualization`.
++ Source: manifest `type-448ce06dc011.js`; view `visualization-d64c72bca7ea.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gas solubility
+
+```diff
+  Type `GAS_SOLUBILITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a4882cdd80e0.js` → `GasSolubilityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1514c43fbf8e.js` → `GasSolubilityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gaussian surface symmetry
+
+```diff
+  Type `GAUSSIAN_SURFACE_SYMMETRY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7d8217f9d9df.js` → `GaussianSurfaceSymmetryVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-903d0c1b4b4b.js` → `GaussianSurfaceSymmetryVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gay lussacs law: `\frac{P_1}{T_1}=\frac{P_2}{T_2}`
+
+```diff
+  Parameters: `initial_temperature_k` (number, default `300`, range 250 to 400); `initial_pressure_kpa` (number, default `100`, range 50 to 160).
+  
+- Source: manifest `model-235829f7022e.js`; view `visualization-72fe03cf6175.js` → `GayLussacsLawVisualization`.
++ Source: manifest `model-235829f7022e.js`; view `visualization-f1726a188b01.js` → `GayLussacsLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gcd
+
+```diff
+  Parameters: `first_number` (integer, default `18`, range 2 to 24); `second_number` (integer, default `12`, range 2 to 24).
+  
+- Source: manifest `type-a2fa2066a9f8.js`; view `visualization-1ed94cfc59d9.js` → `GcdVisualization`.
++ Source: manifest `type-a2fa2066a9f8.js`; view `visualization-81ace345d852.js` → `GcdVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gcf lcm
+
+```diff
+  Parameters: not read (the manifest module could not be evaluated).
+  
+- Source: manifest `type-58fe70da6bde.js`; view `visualization-8dee6fa678b7.js` → `GcfLcmVisualization`.
++ Source: manifest `type-d490994d2b28.js`; view `visualization-726ce6aa9b3a.js` → `GcfLcmVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gdp expenditure identity
+
+```diff
+  Type `GDP_EXPENDITURE_IDENTITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a17606082406.js` → `GdpExpenditureIdentityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1d1d2c60f706.js` → `GdpExpenditureIdentityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gdp value double counting
+
+```diff
+  Parameters: `countMode` (enum, default `sales`, one of `sales`, `valueAdded`).
+  
+- Source: manifest `type-18452383754a.js`; view `visualization-bffcd0f7dd3d.js` → `GdpValueDoubleCountingVisualization`.
++ Source: manifest `type-18452383754a.js`; view `visualization-de6d2f552621.js` → `GdpValueDoubleCountingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Genetic drift
+
+```diff
+  Type `GENETIC_DRIFT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-38e3ed07dd14.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8110511e13fa.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Geometric distribution: `P(X=k)=p(1-p)^{k-1}`
+
+```diff
+  Parameters: `success_probability` (number, default `0.25`, range 0.05 to 0.8); `selected_trial` (integer, default `4`, range 1 to 16).
+  
+- Source: manifest `model-435009a98def.js`; view `visualization-21a9b668a91b.js` → `GeometricDistributionVisualization`.
++ Source: manifest `model-435009a98def.js`; view `visualization-91fe7ec7a3b8.js` → `GeometricDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Geometric series
+
+```diff
+  Type `GEOMETRIC_SERIES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a3b4203ea286.js` → `GeometricSeriesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8226a0754879.js` → `GeometricSeriesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Geothermal power
+
+```diff
+  Parameters: `plant_type` (enum, default `dry steam`, one of `dry steam`, `flash steam`, `binary cycle`).
+  
+- Source: manifest `model-f5fc9c2ff44e.js`; view `visualization-7491e9d62f90.js` → `GeothermalPowerVisualization`.
++ Source: manifest `model-f5fc9c2ff44e.js`; view `visualization-2f4aa1d7d51f.js` → `GeothermalPowerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ghk membrane potential: `P_{\mathrm{ion}}\uparrow \Rightarrow V_m \to E_{\mathrm{ion}}`
+
+```diff
+  Parameters: `sodiumToPotassiumPermeabilityRatio` (number, default `0.04`, range 0 to 1); `chlorideToPotassiumPermeabilityRatio` (number, default `0.45`, range 0 to 1).
+  
+- Source: manifest `type-b2f3bbb776a0.js`; view `visualization-4342ce00e7f5.js` → `GhkMembranePotentialVisualization`.
++ Source: manifest `type-b2f3bbb776a0.js`; view `visualization-10e3c14b36d7.js` → `GhkMembranePotentialVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gibbs free energy: `\Delta G^\circ=-RT\ln K`
+
+```diff
+  Parameters: `deltaGKilojoulesPerMole` (number, default `-20`, range -50 to 50).
+  
+- Source: manifest `type-7d87631529a2.js`; view `visualization-9285631dfa77.js` → `GibbsFreeEnergyVisualization`.
++ Source: manifest `type-7d87631529a2.js`; view `visualization-f72c1e34bd5b.js` → `GibbsFreeEnergyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Global atmospheric circulation
+
+```diff
+  Type `GLOBAL_ATMOSPHERIC_CIRCULATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a83b76330815.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1871c2ef5a79.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Glycolysis
+
+```diff
+  Type `GLYCOLYSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1e723326cfb2.js` → `GlycolysisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c93163cd133b.js` → `GlycolysisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gpcr signaling
+
+```diff
+  Parameters: `pathway` (enum, default `Gs`, one of `Gs`, `Gi`, `Gq`).
+  
+- Source: manifest `model-e7c8cc43e8df.js`; view `visualization-958ef9eca977.js` → `GpcrSignalingVisualization`.
++ Source: manifest `model-e7c8cc43e8df.js`; view `visualization-229a8f10065c.js` → `GpcrSignalingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gpp vs npp: `\mathrm{NPP}=\mathrm{GPP}-R_a`
+
+```diff
+  Parameters: `gross_primary_productivity` (number, default `240`, range 100 to 400); `autotrophic_respiration` (number, default `80`, range 0 to 100).
+  
+- Source: manifest `type-1aff40f97e6c.js`; view `visualization-2398a33490ab.js` → `GppVsNppVisualization`.
++ Source: manifest `type-1aff40f97e6c.js`; view `visualization-ad08f50aa4a7.js` → `GppVsNppVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Gram stain
+
+```diff
+  Parameters: `bacteriaType` (enum, default `positive`, one of `positive`, `negative`).
+  
+- Source: manifest `type-6ec40c0e5685.js`; view `visualization-d3704c3c3cc1.js` → `GramStainVisualization`.
++ Source: manifest `type-6ec40c0e5685.js`; view `visualization-ed85c782ac93.js` → `GramStainVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Grand staff piano map
+
+```diff
+  Type `GRAND_STAFF_PIANO_MAP`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-15c4c517c25a.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-50224227e858.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Graphable function
+
+```diff
+  Type `GRAPHABLE_FUNCTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-81a659a9cdb2.js` → `GraphableFunctionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8e25d8f83063.js` → `GraphableFunctionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Graphable function (v2)
+
+```diff
+  Type `GRAPHABLE_FUNCTION_V2`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-82a549a16320.js` → `GraphableFunctionV2Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e8e6db09e981.js` → `GraphableFunctionV2Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Greenhouse infrared trapping
+
+```diff
+  Type `GREENHOUSE_INFRARED_TRAPPING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d4a215977d89.js` → `GreenhouseInfraredTrappingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-19470f101016.js` → `GreenhouseInfraredTrappingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Guitar chord chart
+
+```diff
+  Type `GUITAR_CHORD_CHART`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f115ed5fe27f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-143337de20e6.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Guitar fretboard map
+
+```diff
+  Type `GUITAR_FRETBOARD_MAP`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bd8e93a08fc8.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-98b3d7b8a3b1.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Guitar scale patterns
+
+```diff
+  Type `GUITAR_SCALE_PATTERNS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-55f51a5b37d3.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-450b5aba737e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Habitat fragmentation
+
+```diff
+  Type `HABITAT_FRAGMENTATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-35052e40e750.js` → `HabitatFragmentationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9728d0c7ac90.js` → `HabitatFragmentationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Half full adder logic
+
+```diff
+  Parameters: `a` (boolean, default `true`); `b` (boolean, default `false`); `carryIn` (boolean, default `true`).
+  
+- Source: manifest `type-6637f6f4ce37.js`; view `visualization-c1a47cec11ef.js` → `HalfFullAdderLogicVisualization`.
++ Source: manifest `type-6637f6f4ce37.js`; view `visualization-767d395b075a.js` → `HalfFullAdderLogicVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Half life relation
+
+```diff
+  Type `HALF_LIFE_RELATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f2f3bb2ae773.js` → `HalfLifeRelationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-10f72e7b1fd6.js` → `HalfLifeRelationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Halogen reactivity trend
+
+```diff
+  Parameters: `initial_halogen` (enum, default `chlorine`, one of `chlorine`, `bromine`, `iodine`); `initial_halide` (enum, default `bromide`, one of `chloride`, `bromide`, `iodide`).
+  
+- Source: manifest `model-9811711de13c.js`; view `visualization-46a814a713a4.js` → `HalogenReactivityVisualization`.
++ Source: manifest `model-9811711de13c.js`; view `visualization-97c84523a0c5.js` → `HalogenReactivityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hardy weinberg equilibrium: `p^2 + 2pq + q^2 = 1`
+
+```diff
+  Parameters: `allele_frequency_p` (number, default `0.5`, range 0 to 1).
+  
+- Source: manifest `model-e6350a687712.js`; view `visualization-27fd3ab1b525.js` → `HardyWeinbergVisualization`.
++ Source: manifest `model-e6350a687712.js`; view `visualization-9782b34604ad.js` → `HardyWeinbergVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hash table collisions: `h(k)=k\bmod 7`
+
+```diff
+  Parameters: `resolution_strategy` (enum, default `separate chaining`, one of `separate chaining`, `linear probing`).
+  
+- Source: manifest `model-8a1ce53f2bd0.js`; view `visualization-75ba395cd702.js` → `HashTableCollisionsVisualization`.
++ Source: manifest `model-8a1ce53f2bd0.js`; view `visualization-56e8c583baef.js` → `HashTableCollisionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hemoglobin curve
+
+```diff
+  Parameters: `oxygenPartialPressureMmHg` (number, default `40`, range 0 to 120); `ph` (number, default `7.4`, range 7.2 to 7.6); `carbonDioxidePartialPressureMmHg` (number, default `40`, range 20 to 60); `temperatureCelsius` (number, default `37`, range 35 to 39).
+  
+- Source: manifest `type-9f5bb286483b.js`; view `visualization-51255214ad72.js` → `HemoglobinCurveVisualization`.
++ Source: manifest `type-9f5bb286483b.js`; view `visualization-49f1e73166ff.js` → `HemoglobinCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hemostasis and clotting
+
+```diff
+  Type `HEMOSTASIS_AND_CLOTTING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d1122be2bebd.js` → `HemostasisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fcf9197b7392.js` → `HemostasisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Herons formula area
+
+```diff
+  Type `HERONS_FORMULA_AREA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e93fbd981e80.js` → `HeronsFormulaAreaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-306d82bf3fb0.js` → `HeronsFormulaAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Heteroskedasticity
+
+```diff
+  Parameters: `initial_variance_pattern` (enum, default `constant`, one of `constant`, `increasing`, `decreasing`, `bulge`).
+  
+- Source: manifest `model-45fb684d19d6.js`; view `visualization-e64fead20e7f.js` → `HeteroskedasticityVisualization`.
++ Source: manifest `model-45fb684d19d6.js`; view `visualization-58a579ae95f5.js` → `HeteroskedasticityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Histogram
+
+```diff
+  Parameters: `distribution_shape` (enum, default `roughly symmetric`, one of `roughly symmetric`, `skewed right`, `bimodal`, `gap or outlier`).
+  
+- Source: manifest `model-dbdb00b115a8.js`; view `visualization-acb0e18845c9.js` → `HistogramVisualization`.
++ Source: manifest `model-dbdb00b115a8.js`; view `visualization-5e2fdda010a0.js` → `HistogramVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Homogeneous ode roots: `ay''+by'+cy=0`
+
+```diff
+  Parameters: `a` (number, default `1`, range 0.1 to 100); `b` (number, default `2`, range -10000 to 10000); `c` (number, default `5`, range -10000 to 10000).
+  
+- Source: manifest `type-9e1fda92abdc.js`; view `visualization-766db1efdba8.js` → `HomogeneousOdeRootsVisualization`.
++ Source: manifest `type-9e1fda92abdc.js`; view `visualization-29b4e3c79e14.js` → `HomogeneousOdeRootsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Homogeneous vs heterogeneous mixture
+
+```diff
+  Type `HOMOGENEOUS_VS_HETEROGENEOUS_MIXTURE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-859b3b17a877.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-04176aa2fb4f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Homologous structures
+
+```diff
+  Type `HOMOLOGOUS_STRUCTURES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1241e8b835a2.js` → `HomologousStructuresVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3b2d6736e414.js` → `HomologousStructuresVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hookes law
+
+```diff
+  Type `HOOKES_LAW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2dcc81ae25e1.js` → `HookesLawVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-63615af87d79.js` → `HookesLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Http protocol
+
+```diff
+  Type `HTTP_PROTOCOL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4394a3fd1d1b.js` → `HttpProtocolVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-76c9f736f447.js` → `HttpProtocolVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Human body systems map
+
+```diff
+  Parameters: `focus_system` (enum, default `respiratory`, one of `integumentary`, `skeletal`, `muscular`, `nervous`, `endocrine`, `cardiovascular`, `lymphatic-immune`, `respiratory`, `digestive`, `urinary-excretory`, `reproductive`).
+  
+- Source: manifest `model-31563588c1d0.js`; view `visualization-38853d4dc7c5.js` → `Visualization`.
++ Source: manifest `model-31563588c1d0.js`; view `visualization-4dec6f67a319.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hybridization sigma pi bonds
+
+```diff
+  Parameters: `hybridization` (enum, default `sp2`, one of `sp3`, `sp2`, `sp`).
+  
+- Source: manifest `type-6fafbd960065.js`; view `visualization-b0d3b5107168.js` → `HybridizationVisualization`.
++ Source: manifest `type-6fafbd960065.js`; view `visualization-3122ca8fb5ca.js` → `HybridizationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hydrocarbon structures
+
+```diff
+  Type `HYDROCARBON_STRUCTURES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-def963ad7149.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1db2532e4f22.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hydroelectric dam
+
+```diff
+  Type `HYDROELECTRIC_DAM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-11b76011df57.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a21378b3aa4e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hydrogen fuel cell
+
+```diff
+  Type `HYDROGEN_FUEL_CELL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-82f4ae688b83.js` → `HydrogenFuelCellVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-29981f3232d3.js` → `HydrogenFuelCellVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hypergeometric distribution: `P(X=k)=\frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}`
+
+```diff
+  Parameters: `population_size` (integer, default `12`, range 12 to 24); `population_successes` (integer, default `5`, range 0 to 12); `sample_size` (integer, default `7`, range 1 to 12).
+  
+- Source: manifest `model-e077e5821034.js`; view `visualization-15490c0fc41c.js` → `HypergeometricDistributionVisualization`.
++ Source: manifest `model-e077e5821034.js`; view `visualization-8ff53efe8987.js` → `HypergeometricDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Hyperopia
+
+```diff
+  Parameters: `objectDistanceMeters` (number, default `0.5`, range 0.25 to 6).
+  
+- Source: manifest `type-9f359e6ad739.js`; view `visualization-d7d994791423.js` → `HyperopiaVisualization`.
++ Source: manifest `type-9f359e6ad739.js`; view `visualization-2d425b0caa21.js` → `HyperopiaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ideal transformer: `\frac{V_s}{V_p}=\frac{N_s}{N_p}`
+
+```diff
+  Parameters: `turnsRatio` (number, default `2`, range 0.1 to 10); `loadResistanceOhms` (number, default `30`, range 1 to 10000).
+  
+- Source: manifest `type-f90cbc2eec2d.js`; view `visualization-43c916062366.js` → `IdealTransformerVisualization`.
++ Source: manifest `type-f90cbc2eec2d.js`; view `visualization-527b60c736d7.js` → `IdealTransformerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ieee 754 floating point: `x=(-1)^s(1.f)_2\,2^{E-\mathrm{bias}}`
+
+```diff
+  Parameters: `precision` (enum, default `single`, one of `single`, `double`).
+  
+- Source: manifest `model-cdb21fd8d79e.js`; view `visualization-7af8a4b1c483.js` → `Ieee754Visualization`.
++ Source: manifest `model-cdb21fd8d79e.js`; view `visualization-71bd9d8fdd12.js` → `Ieee754Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › If statement execution flow
+
+```diff
+  Parameters: `score` (integer, default `60`, range 0 to 100).
+  
+- Source: manifest `type-62569be7b3b6.js`; view `visualization-61b28cc9cc5e.js` → `IfStatementExecutionFlowVisualization`.
++ Source: manifest `type-62569be7b3b6.js`; view `visualization-f97985856e91.js` → `IfStatementExecutionFlowVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Igneous cooling rate and crystal size
+
+```diff
+  Type `IGNEOUS_COOLING_RATE_AND_CRYSTAL_SIZE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f86f76a011ae.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-778c3db86277.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Immune cell phagocytosis
+
+```diff
+  Type `IMMUNE_CELL_PHAGOCYTOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-941837592953.js` → `ImmuneCellPhagocytosisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8671c4bf8564.js` → `ImmuneCellPhagocytosisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Import quota
+
+```diff
+  Type `IMPORT_QUOTA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2dacd9d2aad4.js` → `ImportQuotaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ab46891debf7.js` → `ImportQuotaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Incidence vs prevalence
+
+```diff
+  Type `INCIDENCE_VS_PREVALENCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-71302b803429.js` → `IncidenceVsPrevalenceVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-37ccbe429a37.js` → `IncidenceVsPrevalenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Inclined plane acceleration: `a = g \sin \theta`
+
+```diff
+  Parameters: `planeAngleDegrees` (number, default `30`, range 15 to 45); `boxMassKilograms` (number, default `4`, range 2 to 6).
+  
+- Source: manifest `type-dc5d4e4fe966.js`; view `visualization-61c28ea7e528.js` → `InclinedPlaneAccelerationVisualization`.
++ Source: manifest `type-dc5d4e4fe966.js`; view `visualization-f3d22337c907.js` → `InclinedPlaneAccelerationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Independent assortment
+
+```diff
+  Type `INDEPENDENT_ASSORTMENT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-81441bbb19a1.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-964cb08274bc.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Independent probability intersection
+
+```diff
+  Type `INDEPENDENT_PROBABILITY_INTERSECTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e3bf9f575bd3.js` → `IndependentProbabilityIntersectionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-eaa268020859.js` → `IndependentProbabilityIntersectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Initial rate experiment: `\frac{r_{0,2}}{r_{0,1}}=\left(\frac{[X]_{0,2}}{[X]_{0,1}}\right)^p`
+
+```diff
+  Parameters: `order_a` (enum, default `first`, one of `zero`, `first`, `second`); `order_b` (enum, default `second`, one of `zero`, `first`, `second`).
+  
+- Source: manifest `model-353d6b580655.js`; view `visualization-8670bb70a792.js` → `InitialRateExperimentVisualization`.
++ Source: manifest `model-353d6b580655.js`; view `visualization-63a55cb3909a.js` → `InitialRateExperimentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Innate vs adaptive immunity
+
+```diff
+  Type `INNATE_VS_ADAPTIVE_IMMUNITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7d1f2181dd0b.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8250d6943668.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Insertion sort
+
+```diff
+  Parameters: `value1` (number, default `7`, range 1 to 9); `value2` (number, default `3`, range 1 to 9); `value3` (number, default `8`, range 1 to 9); `value4` (number, default `2`, range 1 to 9); `value5` (number, default `6`, range 1 to 9); `value6` (number, default `4`, range 1 to 9); `value7` (number, default `5`, range 1 to 9).
+  
+- Source: manifest `model-9ce2e0b98e4f.js`; view `visualization-a26136f246ec.js` → `InsertionSortVisualization`.
++ Source: manifest `model-9ce2e0b98e4f.js`; view `visualization-16bb6b3730fd.js` → `InsertionSortVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Instrument families
+
+```diff
+  Type `INSTRUMENT_FAMILIES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-676875e09cf9.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-be08cd47546f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Insulin deficiency vs resistance
+
+```diff
+  Type `INSULIN_DEFICIENCY_VS_RESISTANCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-240f348e0a12.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a0ad0fad29f6.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Integral
+
+```diff
+  Type `INTEGRAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6a9d56da6a54.js` → `IntegralVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-826ab0d2b8d9.js` → `IntegralVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Integration by parts
+
+```diff
+  Type `INTEGRATION_BY_PARTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9eb446d31e92.js` → `IntegrationByPartsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fb5bfcd8e993.js` → `IntegrationByPartsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Integration estimation
+
+```diff
+  Type `INTEGRATION_ESTIMATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-963bae2b7cc8.js` → `IntegrationEstimationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8801ad1e1dcc.js` → `IntegrationEstimationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Intermolecular forces
+
+```diff
+  Parameters: `initial_example` (enum, default `water`, one of `methane`, `hydrogen chloride`, `water`).
+  
+- Source: manifest `type-9e89df8b418e.js`; view `visualization-5e596324656e.js` → `IntermolecularForcesVisualization`.
++ Source: manifest `type-9e89df8b418e.js`; view `visualization-6d20125946c1.js` → `IntermolecularForcesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › International trade world price
+
+```diff
+  Parameters: `world_price` (number, default `40`, range 18 to 82).
+  
+- Source: manifest `type-df5248337cc3.js`; view `visualization-a166e9d6a474.js` → `InternationalTradeWorldPriceVisualization`.
++ Source: manifest `type-df5248337cc3.js`; view `visualization-3bab643d2389.js` → `InternationalTradeWorldPriceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ionic bond formation
+
+```diff
+  Parameters: `compound` (enum, default `sodium chloride`, one of `sodium chloride`, `magnesium oxide`, `magnesium chloride`, `sodium oxide`).
+  
+- Source: manifest `model-483deeec96b8.js`; view `visualization-e896b4f7dd9f.js` → `IonicBondFormationVisualization`.
++ Source: manifest `model-483deeec96b8.js`; view `visualization-6afa4dcba0fc.js` → `IonicBondFormationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ionic formulas
+
+```diff
+  Parameters: `cation` (enum, default `aluminum`, one of `sodium`, `potassium`, `silver`, `magnesium`, `calcium`, `zinc`, `barium`, `aluminum`, `iron_iii`); `anion` (enum, default `oxide`, one of `chloride`, `fluoride`, `bromide`, `oxide`, `sulfide`, `nitride`, `phosphide`).
+  
+- Source: manifest `type-892c2b1ba446.js`; view `visualization-aaea8b863af3.js` → `IonicFormulasVisualization`.
++ Source: manifest `type-892c2b1ba446.js`; view `visualization-f4215a3866ee.js` → `IonicFormulasVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ionic lattice
+
+```diff
+  Type `IONIC_LATTICE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a9c92c2df627.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e5c94c0cfb5d.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ionic vs covalent
+
+```diff
+  Parameters: `bondType` (enum, default `ionic`, one of `ionic`, `covalent`).
+  
+- Source: manifest `type-72520cdd5971.js`; view `visualization-9fb7858a648c.js` → `IonicVsCovalentVisualization`.
++ Source: manifest `type-72520cdd5971.js`; view `visualization-5c7f3b3c6943.js` → `IonicVsCovalentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ir spectroscopy
+
+```diff
+  Parameters: `initial_molecular_class` (enum, default `alcohol`, one of `alkane`, `alcohol`, `ketone`, `carboxylic acid`, `nitrile`).
+  
+- Source: manifest `model-4e2972a7ab7b.js`; view `visualization-56acc46836f1.js` → `Visualization`.
++ Source: manifest `model-4e2972a7ab7b.js`; view `visualization-716604643299.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Irrigation and salinization
+
+```diff
+  Type `IRRIGATION_AND_SALINIZATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6737754b55ed.js` → `IrrigationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-48069d4ee36f.js` → `IrrigationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Island biogeography
+
+```diff
+  Parameters: `island_area` (enum, default `large`, one of `small`, `large`); `isolation` (enum, default `near`, one of `near`, `far`).
+  
+- Source: manifest `model-a8957b9529f0.js`; view `visualization-2d0c9e5ccdd5.js` → `Visualization`.
++ Source: manifest `model-a8957b9529f0.js`; view `visualization-6df4f4d6ae93.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Isosceles triangle
+
+```diff
+  Type `ISOSCELES_TRIANGLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-af38adf7f292.js` → `IsoscelesTriangleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8519eb422298.js` → `IsoscelesTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Isotope atomic mass
+
+```diff
+  Parameters: `element` (enum, default `chlorine`, one of `boron`, `carbon`, `neon`, `magnesium`, `sulfur`, `chlorine`, `copper`).
+  
+- Source: manifest `type-b5e0ca3b765a.js`; view `visualization-b7e114c671ee.js` → `IsotopeAtomicMassVisualization`.
++ Source: manifest `type-b5e0ca3b765a.js`; view `visualization-be906400eb3d.js` → `IsotopeAtomicMassVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Iupac hydrocarbon naming
+
+```diff
+  Type `IUPAC_HYDROCARBON_NAMING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e269d2be2b7e.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ebe08c355ae2.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Joint marginal conditional table
+
+```diff
+  Parameters: `probabilityQuestion` (enum, default `passed_and_studied`, one of `passed_and_studied`, `passed_and_did_not_study`, `did_not_pass_and_studied`, `did_not_pass_and_did_not_study`, `passed`, `did_not_pass`, `studied`, `did_not_study`, `studied_given_passed`, `did_not_study_given_passed`, `studied_given_did_not_pass`, `did_not_study_given_did_not_pass`, `passed_given_studied`, `did_not_pass_given_studied`, `passed_given_did_not_study`, `did_not_pass_given_did_not_study`).
+  
+- Source: manifest `model-fd7375308d68.js`; view `visualization-86b29f1ba021.js` → `JointMarginalConditionalTableVisualization`.
++ Source: manifest `model-fd7375308d68.js`; view `visualization-e1df419cb552.js` → `JointMarginalConditionalTableVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Kaplan meier survival curve
+
+```diff
+  Type `KAPLAN_MEIER_SURVIVAL_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ab0c99be8b1b.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1374cc8b82be.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Keynesian cross
+
+```diff
+  Type `KEYNESIAN_CROSS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-83163725f438.js` → `KeynesianCrossVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a329422b5bf0.js` → `KeynesianCrossVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Keystone species and trophic cascade
+
+```diff
+  Type `KEYSTONE_SPECIES_AND_TROPHIC_CASCADE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-babe624c803b.js` → `KeystoneCascadeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a8b000a8e42a.js` → `KeystoneCascadeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Kinase cascade
+
+```diff
+  Type `KINASE_CASCADE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9ab246340a24.js` → `KinaseCascadeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7cecde797bf9.js` → `KinaseCascadeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Kinematics velocity: `v_f = v_i + at`
+
+```diff
+  Parameters: `initialVelocityMetersPerSecond` (number, default `2`, range -6 to 10); `accelerationMetersPerSecondSquared` (number, default `1`, range -2 to 4); `timeSeconds` (number, default `5`, range 1 to 9).
+  
+- Source: manifest `type-ce7a4fb22b44.js`; view `visualization-7d7e754d3f9c.js` → `KinematicsDisplacementUniformAccelerationVisualization`.
++ Source: manifest `type-ce7a4fb22b44.js`; view `visualization-50e5067e0a23.js` → `KinematicsDisplacementUniformAccelerationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Kinetic and potential energy: `E_{\text{total}} = PE + KE`
+
+```diff
+  Parameters: `startHeightMeters` (number, default `6`, range 2 to 10).
+  
+- Source: manifest `type-ae7b919b937d.js`; view `visualization-d9d7cce4c832.js` → `KineticPotentialEnergyVisualization`.
++ Source: manifest `type-ae7b919b937d.js`; view `visualization-c72562c78f61.js` → `KineticPotentialEnergyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Kinetic energy: `\mathrm{KE} = \frac{1}{2}mv^2`
+
+```diff
+  Parameters: `mass` (number, default `5`, range 1 to 9); `velocity` (number, default `0`, range -10 to 10).
+  
+- Source: manifest `type-e6de8eed347a.js`; view `visualization-e8081c10253f.js` → `KineticEnergyVisualization`.
++ Source: manifest `type-e6de8eed347a.js`; view `visualization-ad38c72e0f7d.js` → `KineticEnergyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Knn neighbor voting
+
+```diff
+  Parameters: `k` (integer, default `5`, range 1 to 9); `queryX` (number, default `5.2`, range 0 to 10); `queryY` (number, default `3.3`, range 0 to 10).
+  
+- Source: manifest `model-9d831e60e68f.js`; view `visualization-20d0272a45db.js` → `KnnNeighborVotingVisualization`.
++ Source: manifest `model-9d831e60e68f.js`; view `visualization-e8f141e11ec0.js` → `KnnNeighborVotingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Labeled drum kit
+
+```diff
+  Type `LABELED_DRUM_KIT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-fab2de675f77.js` → `LabeledDrumKitVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8e83ee34ff76.js` → `LabeledDrumKitVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Labor force flows
+
+```diff
+  Type `LABOR_FORCE_FLOWS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-54a55945f668.js` → `LaborForceFlowsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9019dfd8f937.js` → `LaborForceFlowsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Labor markets
+
+```diff
+  Type `LABOR_MARKETS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c29fd960682c.js` → `FactorMarketEquilibriumVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c1e2325ca6fb.js` → `FactorMarketEquilibriumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lac operon
+
+```diff
+  Type `LAC_OPERON`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7192a3925af9.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-142a396053b3.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Laffer curve
+
+```diff
+  Type `LAFFER_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d497890c3497.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-40041909485e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Land and sea breeze
+
+```diff
+  Type `LAND_AND_SEA_BREEZE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f0930415dc20.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e2c02b6449eb.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Landfill design
+
+```diff
+  Type `LANDFILL_DESIGN`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-240d8da001d0.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b07726eae43f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Landslide risk and movement types
+
+```diff
+  Parameters: `initial_movement_type` (enum, default `fall`, one of `fall`, `topple`, `rotational slide`, `translational slide`, `spread`, `flow`).
+  
+- Source: manifest `model-a050f4969274.js`; view `visualization-efb5a2148cc1.js` → `Visualization`.
++ Source: manifest `model-a050f4969274.js`; view `visualization-eb58e4b26d35.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Latitude longitude
+
+```diff
+  Parameters: `latitude` (integer, default `30`, range -90 to 90); `longitude` (integer, default `45`, range -180 to 180).
+  
+- Source: manifest `model-fe09a72207e2.js`; view `visualization-8a6122199faf.js` → `Visualization`.
++ Source: manifest `model-fe09a72207e2.js`; view `visualization-14440af4b2eb.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Law of cosines
+
+```diff
+  Type `LAW_OF_COSINES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-44efec81c440.js` → `LawOfCosinesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-50792a882b5b.js` → `LawOfCosinesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Law of definite proportions
+
+```diff
+  Type `LAW_OF_DEFINITE_PROPORTIONS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c44633fb0a7d.js` → `LawOfDefiniteProportionsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-adfa681249da.js` → `LawOfDefiniteProportionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Law of reflection: `\theta_i = \theta_r`
+
+```diff
+  Parameters: `incidentAngleDeg` (number, default `40`, range 10 to 75).
+  
+- Source: manifest `model-2bccbf866c14.js`; view `visualization-270c2104fc79.js` → `LawOfReflectionVisualization`.
++ Source: manifest `model-2bccbf866c14.js`; view `visualization-34b3f28fe98c.js` → `LawOfReflectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lcm
+
+```diff
+  Parameters: `first_number` (integer, default `4`, range 1 to 12); `second_number` (integer, default `6`, range 1 to 12).
+  
+- Source: manifest `type-afc86e267b1f.js`; view `visualization-12b145431c19.js` → `LcmVisualization`.
++ Source: manifest `type-afc86e267b1f.js`; view `visualization-f04af4d20bdb.js` → `LcmVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ld50 dose response curve
+
+```diff
+  Parameters: `reference_ld50_mg_per_kg` (number, default `100`, range 3 to 300); `comparison_ld50_mg_per_kg` (number, default `30`, range 3 to 300).
+  
+- Source: manifest `model-5e134de0146d.js`; view `visualization-7bd719e5b9af.js` → `Visualization`.
++ Source: manifest `model-5e134de0146d.js`; view `visualization-d33daadb415e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Le chateliers principle
+
+```diff
+  Type `LE_CHATELIERS_PRINCIPLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-65c7015ae363.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f231e422c16f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Least square regression
+
+```diff
+  Type `LEAST_SQUARE_REGRESSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-da3e95b032e2.js` → `LeastSquareRegressionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8d976a1b87f7.js` → `LeastSquareRegressionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lens equation: `\frac{1}{f} = \frac{1}{d_o} + \frac{1}{d_i}`
+
+```diff
+  Parameters: `objectDistance` (number, default `32`, range 0.01 to 10000); `focalLength` (number, default `16`, range -10000 to 10000).
+  
+- Source: manifest `type-2b5f6faeedd9.js`; view `visualization-e2763333b60c.js` → `LensEquationVisualization`.
++ Source: manifest `type-2b5f6faeedd9.js`; view `visualization-ec1e0f816f55.js` → `LensEquationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Levels of organization
+
+```diff
+  Type `LEVELS_OF_ORGANIZATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b956c0de1ffe.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b85cc7246188.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lewis dot symbols
+
+```diff
+  Parameters: `element` (enum, default `C`, one of `H`, `He`, `Li`, `Be`, `B`, `C`, `N`, `O`, `F`, `Ne`, `Na`, `Mg`, `Al`, `Si`, `P`, `S`, `Cl`, `Ar`).
+  
+- Source: manifest `type-84ec9bea3a73.js`; view `visualization-538e99009a3e.js` → `Visualization`.
++ Source: manifest `type-84ec9bea3a73.js`; view `visualization-6e2820f95216.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lewis structure builder
+
+```diff
+  Parameters: `molecule` (enum, default `carbon dioxide`, one of `water`, `ammonia`, `carbon dioxide`, `hydrogen cyanide`, `formate ion`, `nitrite ion`).
+  
+- Source: manifest `model-afc621595d57.js`; view `visualization-342de2864de0.js` → `Visualization`.
++ Source: manifest `model-afc621595d57.js`; view `visualization-525b4e0846e6.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Likelihood function: `L(p\mid k,n) \propto p^k(1-p)^{n-k}`
+
+```diff
+  Parameters: `successes` (integer, default `3`, range 0 to 48); `trials` (integer, default `12`, range 12 to 48).
+  
+- Source: manifest `type-8c2ee062fabe.js`; view `visualization-62ef1389c3c1.js` → `LikelihoodFunctionVisualization`.
++ Source: manifest `type-8c2ee062fabe.js`; view `visualization-2d261392b0f2.js` → `LikelihoodFunctionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Limiting reactant
+
+```diff
+  Type `LIMITING_REACTANT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-504ef943eff2.js` → `LimitingReactantVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d32b4a74e306.js` → `LimitingReactantVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Linear combination: `\vec{w}=a\vec{u}+b\vec{v}`
+
+```diff
+  Parameters: `coefficientA` (number, default `1`, range -2 to 2); `coefficientB` (number, default `1`, range -2 to 2).
+  
+- Source: manifest `type-f010dd668ee0.js`; view `visualization-5003eead0a7f.js` → `LinearCombinationVisualization`.
++ Source: manifest `type-f010dd668ee0.js`; view `visualization-fa64b9bc56de.js` → `LinearCombinationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Linear equation two vars simple
+
+```diff
+  Type `LINEAR_EQUATION_TWO_VARS_SIMPLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8735f197886d.js` → `LinearEquationTwoVarsSimpleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-91dd6efa9938.js` → `LinearEquationTwoVarsSimpleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Linear independence discriminant: `A=\left|\det(\mathbf{u},\mathbf{v})\right|`
+
+```diff
+  Parameters: `uX` (number, default `4`, range -20 to 20); `uY` (number, default `1`, range -20 to 20); `vX` (number, default `1`, range -20 to 20); `vY` (number, default `3`, range -20 to 20).
+  
+- Source: manifest `type-630959edaee6.js`; view `visualization-691b770e02f6.js` → `LinearIndependenceVisualization`.
++ Source: manifest `type-630959edaee6.js`; view `visualization-a7e73fc7e66d.js` → `LinearIndependenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Linear inequalities feasible region
+
+```diff
+  Parameters: `slope1` (number, default `1`, range -4 to 4); `intercept1` (number, default `-2`, range -6 to 6); `relation1` (enum, default `>=`, one of `<=`, `>=`, `<`, `>`); `slope2` (number, default `-1`, range -4 to 4); `intercept2` (number, default `-2`, range -6 to 6); `relation2` (enum, default `>=`, one of `<=`, `>=`, `<`, `>`); `slope3` (number, default `0`, range -4 to 4); `intercept3` (number, default `3`, range -6 to 6); `relation3` (enum, default `<=`, one of `<=`, `>=`, `<`, `>`).
+  
+- Source: manifest `model-84524f724fa2.js`; view `visualization-87b1f5971f21.js` → `LinearInequalitiesFeasibleRegionVisualization`.
++ Source: manifest `model-84524f724fa2.js`; view `visualization-c3c50787910c.js` → `LinearInequalitiesFeasibleRegionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Linear inequality solution ray: `ax + b \lessgtr c`
+
+```diff
+  Parameters: `a` (integer, default `-3`, range -5 to 5); `b` (number, default `2`, range -12 to 12); `c` (number, default `11`, range -12 to 12); `relation` (enum, default `greater_than`, one of `less_than`, `greater_than`).
+  
+- Source: manifest `model-f27f59868f2e.js`; view `visualization-e9e7a02a7f65.js` → `LinearInequalitySolutionRayVisualization`.
++ Source: manifest `model-f27f59868f2e.js`; view `visualization-f07e7455bb2b.js` → `LinearInequalitySolutionRayVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lipids and phospholipids
+
+```diff
+  Type `LIPIDS_AND_PHOSPHOLIPIDS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1ca8cd5a18f5.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c3638aed5812.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Loanable funds
+
+```diff
+  Type `LOANABLE_FUNDS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-21fc5018acce.js` → `LoanableFundsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ae9cabd6ee0c.js` → `LoanableFundsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Logarithm inverse exponential
+
+```diff
+  Type `LOGARITHM_INVERSE_EXPONENTIAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a67c1db08b7d.js` → `LogarithmInverseExponentialVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fb3f6b6d2674.js` → `LogarithmInverseExponentialVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Logistic growth
+
+```diff
+  Type `LOGISTIC_GROWTH`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-261b854e6c41.js` → `LogisticGrowthVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-507e1ef501c0.js` → `LogisticGrowthVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Logistic regression: `P(Y=1\mid x)=\frac{1}{1+e^{-(\beta_0+\beta_1x)}}`
+
+```diff
+  Parameters: `intercept` (number, default `-0.5`, range -2 to 2); `coefficient` (number, default `1.2`, range -2.5 to 2.5).
+  
+- Source: manifest `type-8875ae84811a.js`; view `visualization-4159ee7500f4.js` → `LogisticRegressionVisualization`.
++ Source: manifest `type-8875ae84811a.js`; view `visualization-27ce18fa5edd.js` → `LogisticRegressionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Long division
+
+```diff
+  Parameters: `dividend` (integer, default `458`, range 1 to 9999); `divisor` (integer, default `3`, range 1 to 99).
+  
+- Source: manifest `type-eb0199ee4cef.js`; view `visualization-7308d4d71c88.js` → `LongDivisionVisualization`.
++ Source: manifest `type-eb0199ee4cef.js`; view `visualization-9b0f05ed9740.js` → `LongDivisionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Long run growth
+
+```diff
+  Type `LONG_RUN_GROWTH`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-564464e89281.js` → `LongRunGrowthVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c2c32dbd3ad8.js` → `LongRunGrowthVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Loop break control flow
+
+```diff
+  Parameters: `loop_kind` (enum, default `for`, one of `for`, `while`); `loop_limit` (integer, default `5`, range 3 to 5); `break_value` (integer, default `2`, range 1 to 6).
+  
+- Source: manifest `type-b7a8fbf7a420.js`; view `visualization-21c486e57166.js` → `LoopBreakControlFlowVisualization`.
++ Source: manifest `type-b7a8fbf7a420.js`; view `visualization-4d37e809bd08.js` → `LoopBreakControlFlowVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lorenz curve
+
+```diff
+  Parameters: `gini_coefficient` (number, default `0.33`, range 0 to 0.65); `population_share` (number, default `50`, range 0 to 100).
+  
+- Source: manifest `type-a513a18b2ee6.js`; view `visualization-702ad534dcc2.js` → `LorenzCurveVisualization`.
++ Source: manifest `type-a513a18b2ee6.js`; view `visualization-b01fb03e7546.js` → `LorenzCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lras
+
+```diff
+  Parameters: `capacity_change_percent` (number, default `15`, range -35 to 35).
+  
+- Source: manifest `model-182295b28076.js`; view `visualization-7f4f7d5687a5.js` → `LrasVisualization`.
++ Source: manifest `model-182295b28076.js`; view `visualization-5c68f9c691c1.js` → `LrasVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lung gas gradient
+
+```diff
+  Parameters: `alveolarOxygenPartialPressureMmHg` (number, default `100`, range 0 to 300); `bloodOxygenPartialPressureMmHg` (number, default `40`, range 0 to 300); `alveolarCarbonDioxidePartialPressureMmHg` (number, default `40`, range 0 to 150); `bloodCarbonDioxidePartialPressureMmHg` (number, default `45`, range 0 to 150).
+  
+- Source: manifest `type-8a9437331f93.js`; view `visualization-455a9bfc09b2.js` → `LungGasGradientVisualization`.
++ Source: manifest `type-8a9437331f93.js`; view `visualization-6c27ece00fd4.js` → `LungGasGradientVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Lytic vs lysogenic virus cycle
+
+```diff
+  Parameters: `initial_pathway` (enum, default `lytic`, one of `lytic`, `lysogenic`).
+  
+- Source: manifest `type-ee3c6146db4d.js`; view `visualization-80ebbf0d345c.js` → `VirusCycleVisualization`.
++ Source: manifest `type-ee3c6146db4d.js`; view `visualization-98fc1c86823a.js` → `VirusCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Magnet induced current
+
+```diff
+  Type `MAGNET_INDUCED_CURRENT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d3a954490544.js` → `MagnetInducedCurrentVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4cb314144144.js` → `MagnetInducedCurrentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Magnet induced current direction
+
+```diff
+  Type `MAGNET_INDUCED_CURRENT_DIRECTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c84798ac5993.js` → `MagnetInducedCurrentDirectionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1e6876413a28.js` → `MagnetInducedCurrentDirectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Magnetic field direction on charge: `\vec F_B=q\vec v\times\vec B`
+
+```diff
+  Parameters: `velocityAngleDegrees` (number, default `0`, range 0 to 360); `fieldDirection` (enum, default `into-page`, one of `into-page`, `out-of-page`); `chargeSign` (enum, default `positive`, one of `positive`, `negative`).
+  
+- Source: manifest `type-f09422f3bf66.js`; view `visualization-a817424b9ef0.js` → `MagneticFieldDirectionVisualization`.
++ Source: manifest `type-f09422f3bf66.js`; view `visualization-3a6221d67965.js` → `MagneticFieldDirectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Map measurement
+
+```diff
+  Type `MAP_MEASUREMENT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6d4924af0ee5.js` → `MapMeasurementVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1336f2aa5d02.js` → `MapMeasurementVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Marginal analysis
+
+```diff
+  Type `MARGINAL_ANALYSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5f8f5570ae3a.js` → `MarginalAnalysisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b5c5546aa2eb.js` → `MarginalAnalysisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Markovnikov alkene addition
+
+```diff
+  Type `MARKOVNIKOV_ALKENE_ADDITION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-564b0edc709d.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c2dd13f6f6c1.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mass density volume relation: `\rho = \frac{m}{V}`
+
+```diff
+  Parameters: `mass` (number, default `12`, range 0.01 to 10000); `volume` (number, default `5`, range 0.01 to 10000).
+  
+- Source: manifest `type-18b6b503ca52.js`; view `visualization-5173c549efe9.js` → `MassDensityVolumeRelationVisualization`.
++ Source: manifest `type-18b6b503ca52.js`; view `visualization-e3e375bb1e82.js` → `MassDensityVolumeRelationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mass spectrum
+
+```diff
+  Parameters: `example` (enum, default `fragment-dominant`, one of `fragment-dominant`, `molecular-ion-dominant`, `chlorine-isotope-pattern`, `bromine-isotope-pattern`).
+  
+- Source: manifest `type-793044e0b754.js`; view `visualization-46682d199b71.js` → `MassSpectrumVisualization`.
++ Source: manifest `type-793044e0b754.js`; view `visualization-4fecb4025f64.js` → `MassSpectrumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mass spring shm: `T = 2\pi\sqrt{\frac{m}{k}}`
+
+```diff
+  Parameters: `massKilograms` (number, default `1.5`, range 0.5 to 5); `springConstantNewtonsPerMeter` (number, default `40`, range 10 to 100); `amplitudeMeters` (number, default `0.25`, range 0.05 to 0.5).
+  
+- Source: manifest `type-a880aebad1b1.js`; view `visualization-d6aba342f880.js` → `MassSpringShmVisualization`.
++ Source: manifest `type-a880aebad1b1.js`; view `visualization-4662b496f836.js` → `MassSpringShmVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Matched pairs design
+
+```diff
+  Parameters: `design_variant` (enum, default `separate-units`, one of `separate-units`, `self-paired`).
+  
+- Source: manifest `model-3df69373af20.js`; view `visualization-5904e0bba98f.js` → `Visualization`.
++ Source: manifest `model-3df69373af20.js`; view `visualization-1e61876839db.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Matrix inverse 2d: `A^{-1}A=I\quad A^{-1}Ax=x`
+
+```diff
+  Parameters: `matrixA` (number, default `0`, range -2 to 2); `matrixB` (number, default `1`, range -2 to 2); `matrixC` (number, default `-1`, range -2 to 2); `matrixD` (number, default `0`, range -2 to 2); `vectorX` (number, default `1`, range -5 to 5); `vectorY` (number, default `2`, range -5 to 5).
+  
+- Source: manifest `type-654523ab98b5.js`; view `visualization-3999b6019de0.js` → `MatrixInverseVisualization`.
++ Source: manifest `type-654523ab98b5.js`; view `visualization-a55dae747409.js` → `MatrixInverseVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Matrix multiplication row column rule
+
+```diff
+  Type `MATRIX_MULTIPLICATION_ROW_COLUMN_RULE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-673c1a559d5b.js` → `MatrixMultiplicationRowColumnRuleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e99a3734bb4c.js` → `MatrixMultiplicationRowColumnRuleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Matrix transformation 2d: `A\vec{v}=\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}`
+
+```diff
+  Parameters: `matrixA` (number, default `2`, range -2 to 2); `matrixB` (number, default `0`, range -2 to 2); `matrixC` (number, default `0`, range -2 to 2); `matrixD` (number, default `2`, range -2 to 2); `vectorX` (number, default `1`, range -1.5 to 1.5); `vectorY` (number, default `1`, range -1.5 to 1.5).
+  
+- Source: manifest `type-e537504d901a.js`; view `visualization-ff242e5d29ed.js` → `MatrixTransformationVisualization`.
++ Source: manifest `type-e537504d901a.js`; view `visualization-8df5d2266273.js` → `MatrixTransformationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Maxwell boltzmann distribution
+
+```diff
+  Parameters: `temperature_kelvin` (number, default `300`, range 200 to 800); `molar_mass_g_per_mol` (number, default `28`, range 4 to 80).
+  
+- Source: manifest `type-f22c71cb1245.js`; view `visualization-c99288bbb322.js` → `MaxwellBoltzmannVisualization`.
++ Source: manifest `type-f22c71cb1245.js`; view `visualization-de3b05a6c636.js` → `MaxwellBoltzmannVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mean as balance point
+
+```diff
+  Type `MEAN_AS_BALANCE_POINT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-affa7e9f265e.js` → `MeanAsBalancePointVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ecea85218f41.js` → `MeanAsBalancePointVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mean value theorem: `f'(c) = \frac{f(b) - f(a)}{b - a}`
+
+```diff
+  Parameters: `cubicCoefficient` (number, default `0`, range -5 to 5); `quadraticCoefficient` (number, default `-0.25`, range -10 to 10); `linearCoefficient` (number, default `0.8`, range -20 to 20); `constantTerm` (number, default `4`, range -100 to 100); `intervalCenter` (number, default `5`, range -8 to 8); `intervalWidth` (number, default `2`, range 0.5 to 16).
+  
+- Source: manifest `model-816de77e9772.js`; view `visualization-377c5035dbf4.js` → `MeanValueTheoremVisualization`.
++ Source: manifest `model-816de77e9772.js`; view `visualization-899868aa728a.js` → `MeanValueTheoremVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mean vs median
+
+```diff
+  Parameters: `outlierMode` (enum, default `without`, one of `without`, `with`).
+  
+- Source: manifest `model-34404a0ff6b5.js`; view `visualization-8b88631eb6b3.js` → `MeanVsMedianVisualization`.
++ Source: manifest `model-34404a0ff6b5.js`; view `visualization-10b39f06827c.js` → `MeanVsMedianVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mediation indirect effect: `c = c^{\prime} + a \times b`
+
+```diff
+  Parameters: `a` (number, default `0.6`, range -1 to 1); `b` (number, default `0.5`, range -1 to 1); `directEffect` (number, default `0.2`, range -1 to 1).
+  
+- Source: manifest `type-e52ae9a5f679.js`; view `visualization-5a8a53570317.js` → `MediationIndirectEffectVisualization`.
++ Source: manifest `type-e52ae9a5f679.js`; view `visualization-ad3fc4b4ca7b.js` → `MediationIndirectEffectVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Meiosis
+
+```diff
+  Type `MEIOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e066341b3d6e.js` → `MeiosisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8c39d8a7f32f.js` → `MeiosisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Meiosis nondisjunction
+
+```diff
+  Parameters: `errorDivision` (enum, default `meiosis-one`, one of `meiosis-one`, `meiosis-two`).
+  
+- Source: manifest `model-265ef64a42f0.js`; view `visualization-f4abdb5f76b7.js` → `MeiosisNondisjunctionVisualization`.
++ Source: manifest `model-265ef64a42f0.js`; view `visualization-c3fea60f4420.js` → `MeiosisNondisjunctionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Memory hierarchy
+
+```diff
+  Type `MEMORY_HIERARCHY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4fbda75f96d2.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-59a99e449c43.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Menstrual cycle fertilization
+
+```diff
+  Parameters: `day` (integer, default `1`, range 1 to 28); `outcome` (enum, default `noImplantation`, one of `noImplantation`, `successfulImplantation`).
+  
+- Source: manifest `model-6d9c94a4186b.js`; view `visualization-74341f0b21d1.js` → `MenstrualCycleFertilizationVisualization`.
++ Source: manifest `model-6d9c94a4186b.js`; view `visualization-8373b93af5d4.js` → `MenstrualCycleFertilizationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Merge sort
+
+```diff
+  Parameters: `value1` (integer, default `38`, range 1 to 99); `value2` (integer, default `12`, range 1 to 99); `value3` (integer, default `27`, range 1 to 99); `value4` (integer, default `43`, range 1 to 99); `value5` (integer, default `9`, range 1 to 99); `value6` (integer, default `31`, range 1 to 99); `value7` (integer, default `18`, range 1 to 99); `value8` (integer, default `25`, range 1 to 99).
+  
+- Source: manifest `model-1a2ca3b0dc37.js`; view `visualization-cf4be68767a7.js` → `MergeSortVisualization`.
++ Source: manifest `model-1a2ca3b0dc37.js`; view `visualization-9ea5b6e41586.js` → `MergeSortVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Meta analysis
+
+```diff
+  Type `META_ANALYSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ade0dd6efb20.js` → `MetaAnalysisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-96c5dfd66231.js` → `MetaAnalysisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Meta analysis forest weights
+
+```diff
+  Parameters: `effect1` (number, default `-0.35`, range -0.8 to 0.8); `effect2` (number, default `-0.08`, range -0.8 to 0.8); `effect3` (number, default `0.18`, range -0.8 to 0.8); `effect4` (number, default `0.42`, range -0.8 to 0.8); `effect5` (number, default `0.1`, range -0.8 to 0.8); `weight1` (number, default `5`, range 2 to 24); `weight2` (number, default `12`, range 2 to 24); `weight3` (number, default `8`, range 2 to 24); `weight4` (number, default `18`, range 2 to 24); `weight5` (number, default `10`, range 2 to 24).
+  
+- Source: manifest `type-72e940cb9aa1.js`; view `visualization-fc4296429e34.js` → `MetaAnalysisForestWeightsVisualization`.
++ Source: manifest `type-72e940cb9aa1.js`; view `visualization-ce628157f64c.js` → `MetaAnalysisForestWeightsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Metal reactivity series
+
+```diff
+  Parameters: `initial_solid_metal` (enum, default `zinc`, one of `magnesium`, `zinc`, `iron`, `copper`, `silver`); `initial_aqueous_metal` (enum, default `copper`, one of `magnesium`, `zinc`, `iron`, `copper`, `silver`).
+  
+- Source: manifest `model-71af2c81ea03.js`; view `visualization-40edce330535.js` → `MetalReactivitySeriesVisualization`.
++ Source: manifest `model-71af2c81ea03.js`; view `visualization-ae93f4ebc77a.js` → `MetalReactivitySeriesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Metallic bonding
+
+```diff
+  Type `METALLIC_BONDING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-262d4402cf30.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e3ec7b816594.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Metric distance
+
+```diff
+  Parameters: `lengthCm` (number, default `32`, range 10 to 50); `unit` (enum, default `cm`, one of `mm`, `cm`, `m`, `km`).
+  
+- Source: manifest `type-aa70f27546d0.js`; view `visualization-eb819b600e36.js` → `MetricDistanceVisualization`.
++ Source: manifest `type-aa70f27546d0.js`; view `visualization-2e976d8821b7.js` → `MetricDistanceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mhc i vs mhc ii presentation
+
+```diff
+  Parameters: `initial_pathway` (enum, default `MHC I (endogenous)`, one of `MHC I (endogenous)`, `MHC II (exogenous)`).
+  
+- Source: manifest `model-d908b4b52347.js`; view `visualization-b5ff056f0636.js` → `MhcPresentationVisualization`.
++ Source: manifest `model-d908b4b52347.js`; view `visualization-6b70994a3012.js` → `MhcPresentationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Michaelis menten dynamics
+
+```diff
+  Type `MICHAELIS_MENTEN_DYNAMICS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-12b99aae9409.js` → `MichaelisMentenDynamicsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9daac6e27ae7.js` → `MichaelisMentenDynamicsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Microbial tolerance curve
+
+```diff
+  Parameters: `microbial_group` (enum, default `mesophile`, one of `psychrophile`, `mesophile`, `thermophile`, `hyperthermophile`); `temperature_c` (number, default `37`, range -10 to 110).
+  
+- Source: manifest `model-28116a0d525d.js`; view `visualization-90e2eb2380aa.js` → `MicrobialToleranceCurveVisualization`.
++ Source: manifest `model-28116a0d525d.js`; view `visualization-ddf378eb2830.js` → `MicrobialToleranceCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Microphone polar patterns
+
+```diff
+  Type `MICROPHONE_POLAR_PATTERNS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9dd59efb5d47.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5a9ad462729f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Midpoint formula
+
+```diff
+  Type `MIDPOINT_FORMULA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b264d6914546.js` → `MidpointFormulaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-43eede45f785.js` → `MidpointFormulaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Minimum wage
+
+```diff
+  Type `MINIMUM_WAGE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5156bf3fe64c.js` → `MinimumWageVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f3fcabee1b40.js` → `MinimumWageVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Minor scale formula
+
+```diff
+  Type `MINOR_SCALE_FORMULA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-66fd155cdd26.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cfded32b1023.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mirror equation: `\frac{1}{f} = \frac{1}{u} + \frac{1}{v}`
+
+```diff
+  Parameters: `objectDistance` (number, default `28`, range 0.01 to 10000); `focalLength` (number, default `14`, range -10000 to 10000).
+  
+- Source: manifest `type-763c6e0ad6c9.js`; view `visualization-f5db55face8b.js` → `MirrorEquationVisualization`.
++ Source: manifest `type-763c6e0ad6c9.js`; view `visualization-ddf1ce0fa4b4.js` → `MirrorEquationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mitosis
+
+```diff
+  Type `MITOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ba98595a2557.js` → `MitosisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-decd2c823f75.js` → `MitosisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mixed numbers
+
+```diff
+  Parameters: `numerator` (integer, default `23`, range 7 to 35).
+  
+- Source: manifest `model-6ab8da229be6.js`; view `visualization-7170618c43c5.js` → `MixedNumbersVisualization`.
++ Source: manifest `model-6ab8da229be6.js`; view `visualization-f4e3bc54de93.js` → `MixedNumbersVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mixing solutions: `C_{\mathrm{mix}}=\frac{C_1V_1+C_2V_2}{V_1+V_2}`
+
+```diff
+  Parameters: `solution1VolumeLiters` (number, default `0.8`, range 0.01 to 1000); `solution1ConcentrationMolesPerLiter` (number, default `2`, range 0 to 20); `solution2VolumeLiters` (number, default `1.2`, range 0.01 to 1000); `solution2ConcentrationMolesPerLiter` (number, default `0.5`, range 0 to 20).
+  
+- Source: manifest `type-cbd0267ff3a9.js`; view `visualization-bc834888c05b.js` → `MixingSolutionsVisualization`.
++ Source: manifest `type-cbd0267ff3a9.js`; view `visualization-73ccbb95c131.js` → `MixingSolutionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Molarity moles per liter
+
+```diff
+  Type `MOLARITY_MOLES_PER_LITER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2738dca3bb3c.js` → `MolarityMolesPerLiterVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8d58c65ff061.js` → `MolarityMolesPerLiterVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mole avogadro number visual
+
+```diff
+  Parameters: `substance` (enum, default `copper`, one of `carbon`, `copper`, `water`); `initial_moles` (number, default `1`, range 0.25 to 5).
+  
+- Source: manifest `type-bd9c85267933.js`; view `visualization-d7d789ce55cc.js` → `Visualization`.
++ Source: manifest `type-bd9c85267933.js`; view `visualization-74e48c17efca.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Molecular polarity
+
+```diff
+  Parameters: `molecule` (enum, default `H2O`, one of `CO2`, `H2O`, `BF3`, `NH3`, `CCl4`, `CH3Cl`).
+  
+- Source: manifest `type-8376aae4ceec.js`; view `visualization-45e72b61383e.js` → `Visualization`.
++ Source: manifest `type-8376aae4ceec.js`; view `visualization-918985342549.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Momentum: `p = mv`
+
+```diff
+  Parameters: `m1` (number, default `4`, range 0.01 to 10000); `m2` (number, default `4`, range 0.01 to 10000); `v` (number, default `6`, range 0 to 10000).
+  
+- Source: manifest `type-85baef7164cd.js`; view `visualization-29bfda115a0a.js` → `MomentumVisualization`.
++ Source: manifest `type-85baef7164cd.js`; view `visualization-e3556ee6bca2.js` → `MomentumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Monetary policy
+
+```diff
+  Type `MONETARY_POLICY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9989c33e9aa5.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-387b9344b823.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Money market
+
+```diff
+  Type `MONEY_MARKET`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8b845d111d18.js` → `MoneyMarketVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d72a3616fc86.js` → `MoneyMarketVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Monopolistic competition
+
+```diff
+  Parameters: `entry_progress` (number, default `100`, range 0 to 100).
+  
+- Source: manifest `type-1d713bfd423d.js`; view `visualization-296cf509d637.js` → `MonopolisticCompetitionVisualization`.
++ Source: manifest `type-1d713bfd423d.js`; view `visualization-708c3ea140ab.js` → `MonopolisticCompetitionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Monopoly inefficiency
+
+```diff
+  Type `MONOPOLY_INEFFICIENCY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-51da2fc29fa4.js` → `MonopolyInefficiencyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-de0e8533e12b.js` → `MonopolyInefficiencyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Monopoly pricing
+
+```diff
+  Type `MONOPOLY_PRICING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-54f7748ead7f.js` → `MonopolyProfitVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f94434685c7b.js` → `MonopolyProfitVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Monopsony labor market power
+
+```diff
+  Type `MONOPSONY_LABOR_MARKET_POWER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8ea88b5a23bf.js` → `MonopsonyLaborMarketPowerVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a6f71fa47db4.js` → `MonopsonyLaborMarketPowerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Moon phases
+
+```diff
+  Type `MOON_PHASES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-952ad907a7f4.js` → `MoonPhasesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f2f879d396d1.js` → `MoonPhasesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mosaic plot
+
+```diff
+  Type `MOSAIC_PLOT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-312cff367ca4.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-dd33c2520753.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mrna translation
+
+```diff
+  Type `MRNA_TRANSLATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cd31057b1681.js` → `MrnaTranslationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f712bdb80604.js` → `MrnaTranslationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Multiplication as repeated addition
+
+```diff
+  Parameters: `groupCount` (integer, default `4`, range 1 to 6); `itemsPerGroup` (integer, default `3`, range 1 to 6).
+  
+- Source: manifest `model-5e0ebac94978.js`; view `visualization-153158bb197b.js` → `Visualization`.
++ Source: manifest `model-5e0ebac94978.js`; view `visualization-30856e2a7127.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Musical harmonic series
+
+```diff
+  Parameters: `fundamental_frequency_hz` (number, default `220`, range 20 to 2000).
+  
+- Source: manifest `type-6bf72910493c.js`; view `visualization-32d4b5ab8498.js` → `Visualization`.
++ Source: manifest `type-6bf72910493c.js`; view `visualization-841a9d54ca50.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Musical interval chart
+
+```diff
+  Parameters: `lower_note` (enum, default `C`, one of `C`, `C-sharp`, `D-flat`, `D`, `E-flat`, `E`, `F`, `F-sharp`, `G-flat`, `G`, `A-flat`, `A`, `B-flat`, `B`).
+  
+- Source: manifest `type-d4074e9cd37d.js`; view `visualization-388bc57751b1.js` → `Visualization`.
++ Source: manifest `type-d4074e9cd37d.js`; view `visualization-6ff2a66d3421.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Mutation types
+
+```diff
+  Type `MUTATION_TYPES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f85759478804.js` → `MutationTypesVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2daaeb81d0f5.js` → `MutationTypesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Myopia
+
+```diff
+  Parameters: `objectDistanceMeters` (number, default `6`, range 0.25 to 6).
+  
+- Source: manifest `type-d92a49fbb130.js`; view `visualization-38d2d04d3521.js` → `MyopiaVisualization`.
++ Source: manifest `type-d92a49fbb130.js`; view `visualization-97d08d6f167d.js` → `MyopiaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Natural monopoly
+
+```diff
+  Type `NATURAL_MONOPOLY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bba58a266f85.js` → `NaturalMonopolyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-48af7de89e67.js` → `NaturalMonopolyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Natural selection allele frequency
+
+```diff
+  Type `NATURAL_SELECTION_ALLELE_FREQUENCY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b0e432889bf9.js` → `NaturalSelectionAlleleFrequencyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7a9af303dbad.js` → `NaturalSelectionAlleleFrequencyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Negative feedback loop
+
+```diff
+  Parameters: `example` (enum, default `body_temperature`, one of `body_temperature`, `blood_glucose`, `thermostat`); `initial_deviation` (enum, default `above`, one of `above`, `below`).
+  
+- Source: manifest `model-66d4b6ae060b.js`; view `visualization-5e7b5572d07a.js` → `NegativeFeedbackVisualization`.
++ Source: manifest `model-66d4b6ae060b.js`; view `visualization-480d1d8dc4d6.js` → `NegativeFeedbackVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nephron
+
+```diff
+  Type `NEPHRON`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-865887ba710e.js` → `NephronVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-aa52e6256757.js` → `NephronVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nernst equation: `E_{\mathrm{cell}}=E^\circ_{\mathrm{cell}}-\frac{0.0592\,\mathrm{V}}{n}\log_{10}Q`
+
+```diff
+  Parameters: `standard_cell_potential_v` (number, default `1.1`, range 0.1 to 1.3); `transferred_electrons` (integer, default `2`, range 1 to 4).
+  
+- Source: manifest `model-37f1f0ea4383.js`; view `visualization-760f947c8129.js` → `NernstEquationVisualization`.
++ Source: manifest `model-37f1f0ea4383.js`; view `visualization-396946877b5b.js` → `NernstEquationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Net ionic equations
+
+```diff
+  Parameters: `reaction_example` (enum, default `silver-chloride-precipitation`, one of `silver-chloride-precipitation`, `barium-sulfate-precipitation`, `strong-acid-base-neutralization`).
+  
+- Source: manifest `model-1cc997c09d9b.js`; view `visualization-9e5ddb18d9c2.js` → `Visualization`.
++ Source: manifest `model-1cc997c09d9b.js`; view `visualization-950190259a50.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Network fault tolerance
+
+```diff
+  Parameters: `topology` (enum, default `ring`, one of `ring`, `mesh`, `star`, `tree`).
+  
+- Source: manifest `model-cf3822ac6f6a.js`; view `visualization-29230b0a0a0f.js` → `NetworkFaultToleranceVisualization`.
++ Source: manifest `model-cf3822ac6f6a.js`; view `visualization-e86cdf6ba6bb.js` → `NetworkFaultToleranceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Newman projections
+
+```diff
+  Parameters: `molecule` (enum, default `butane`, one of `ethane`, `butane`).
+  
+- Source: manifest `model-5e45c222a8d6.js`; view `visualization-5719051fc9c7.js` → `NewmanProjectionVisualization`.
++ Source: manifest `model-5e45c222a8d6.js`; view `visualization-a921559aafa0.js` → `NewmanProjectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Newton first law
+
+```diff
+  Type `NEWTON_FIRST_LAW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-357446d79fd4.js` → `NewtonFirstLawVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1290b1d7bc7b.js` → `NewtonFirstLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Newton second law: `F_{\mathrm{net}} = ma`
+
+```diff
+  Parameters: `netForceNewtons` (number, default `8`, range 2 to 12); `massKilograms` (number, default `2`, range 1 to 4).
+  
+- Source: manifest `type-5028a1c12442.js`; view `visualization-918a7c5116a1.js` → `NewtonSecondLawVisualization`.
++ Source: manifest `type-5028a1c12442.js`; view `visualization-e31b004271d4.js` → `NewtonSecondLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Newton third law
+
+```diff
+  Type `NEWTON_THIRD_LAW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-854917b37695.js` → `NewtonThirdLawVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e185ec21e443.js` → `NewtonThirdLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Newtons gravitation law
+
+```diff
+  Type `NEWTONS_GRAVITATION_LAW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-64eea4a00e3e.js` → `NewtonsGravitationLawVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b368695d913b.js` → `NewtonsGravitationLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nitrogen cycle
+
+```diff
+  Parameters: `focus_process` (enum, default `whole cycle`, one of `whole cycle`, `fixation`, `assimilation and food web`, `ammonification`, `nitrification`, `denitrification`).
+  
+- Source: manifest `model-4ade1fb3e1f8.js`; view `visualization-590db4db76df.js` → `NitrogenCycleVisualization`.
++ Source: manifest `model-4ade1fb3e1f8.js`; view `visualization-d2aa44237e42.js` → `NitrogenCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Normal approximation to binomial
+
+```diff
+  Parameters: `trials` (integer, default `40`, range 10 to 80); `success_probability` (number, default `0.5`, range 0.02 to 0.98); `success_count` (integer, default `20`, range 0 to 80); `event` (enum, default `at_most`, one of `at_most`, `at_least`, `exactly`).
+  
+- Source: manifest `model-dff7e5b52187.js`; view `visualization-7e0a06aee719.js` → `NormalApproximationVisualization`.
++ Source: manifest `model-dff7e5b52187.js`; view `visualization-c4e9b173104f.js` → `NormalApproximationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nuclear decay modes
+
+```diff
+  Type `NUCLEAR_DECAY_MODES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2fb97b621cd4.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c2bf2593eb6c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nuclear fission
+
+```diff
+  Type `NUCLEAR_FISSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ef922dcab48a.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-feda518fb31e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nuclear fusion
+
+```diff
+  Type `NUCLEAR_FUSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7e9ad7f419ad.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e8be5b6b6637.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nuclear power plant
+
+```diff
+  Type `NUCLEAR_POWER_PLANT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-61b6c610c0fb.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-95cf1b33caeb.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Nucleotides dna and rna
+
+```diff
+  Type `NUCLEOTIDES_DNA_AND_RNA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-76ff4b4f40f3.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-10638416746e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Obtuse triangle
+
+```diff
+  Type `OBTUSE_TRIANGLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3d84e1a469b6.js` → `ObtuseTriangleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b51e72f53189.js` → `ObtuseTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ocean acidification
+
+```diff
+  Type `OCEAN_ACIDIFICATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-18ce896864da.js` → `OceanAcidificationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4dd272a80f67.js` → `OceanAcidificationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ogive
+
+```diff
+  Type `OGIVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f7c0d441ad16.js` → `OgiveVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-bf5c505a1d69.js` → `OgiveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ohms law: `I = \frac{V}{R}`
+
+```diff
+  Parameters: `voltage` (number, default `12`, range 0 to 1000); `resistance` (number, default `6`, range 0.1 to 100000).
+  
+- Source: manifest `type-4b769e1efbb8.js`; view `visualization-247c124a5d72.js` → `OhmsLawVisualization`.
++ Source: manifest `type-4b769e1efbb8.js`; view `visualization-97796b121eb9.js` → `OhmsLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Oil spill fate
+
+```diff
+  Type `OIL_SPILL_FATE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a6a275fa1b47.js` → `OilSpillFateVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-483485fd8117.js` → `OilSpillFateVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Okuns law
+
+```diff
+  Type `OKUNS_LAW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-aacfef2f03dc.js` → `OkunsLawVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-70515a9ac2a6.js` → `OkunsLawVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › One sample t test: `t = \frac{\bar{x}-\mu_0}{s/\sqrt{n}}`
+
+```diff
+  Parameters: `hypothesized_mean` (number, default `50`, range 0 to 100); `sample_mean` (number, default `54`, range 0 to 100); `sample_standard_deviation` (number, default `10`, range 0.1 to 100); `sample_size` (integer, default `16`, range 3 to 100); `alternative` (enum, default `two-sided`, one of `two-sided`, `greater`, `less`); `significance_level` (number, default `0.05`, range 0.001 to 0.2).
+  
+- Source: manifest `model-bc3413504a24.js`; view `visualization-cc685c896334.js` → `OneSampleTTestVisualization`.
++ Source: manifest `model-bc3413504a24.js`; view `visualization-7f0c85b2befe.js` → `OneSampleTTestVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Operant conditioning
+
+```diff
+  Parameters: `behaviorEffect` (enum, default `more_likely`, one of `more_likely`, `less_likely`); `stimulusChange` (enum, default `added`, one of `added`, `removed`).
+  
+- Source: manifest `model-68a88869b001.js`; view `visualization-a45ad5d99e7a.js` → `OperantConditioningVisualization`.
++ Source: manifest `model-68a88869b001.js`; view `visualization-568ce7842000.js` → `OperantConditioningVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Orbital shapes
+
+```diff
+  Type `ORBITAL_SHAPES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-70073f8498e4.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e6cbd4ca077e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Orchestra seating
+
+```diff
+  Type `ORCHESTRA_SEATING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2911fc33b339.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4d95bff007aa.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Osmosis
+
+```diff
+  Type `OSMOSIS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-63998deddb00.js` → `OsmosisVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-44090ed3a465.js` → `OsmosisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Osmotic pressure: `\pi = i c R T`
+
+```diff
+  Parameters: `solute_concentration_molar` (number, default `0.2`, range 0.05 to 0.5); `vant_hoff_factor` (number, default `2`, range 1 to 3); `temperature_kelvin` (number, default `298`, range 273 to 323).
+  
+- Source: manifest `type-3a57bdeab4d8.js`; view `visualization-b42eb993520b.js` → `Visualization`.
++ Source: manifest `type-3a57bdeab4d8.js`; view `visualization-e39cd36b7892.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Outlier leverage influence
+
+```diff
+  Parameters: `initial_case` (enum, default `influential`, one of `central-outlier`, `aligned-high-leverage`, `influential`).
+  
+- Source: manifest `type-d42397bb5e22.js`; view `visualization-5afcc816c190.js` → `Visualization`.
++ Source: manifest `type-d42397bb5e22.js`; view `visualization-b3f153667d44.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Oxygen sag curve
+
+```diff
+  Parameters: `initial_ultimate_bod_mg_l` (number, default `9`, range 4 to 14); `initial_oxygen_deficit_mg_l` (number, default `0.25`, range 0 to 0.5); `deoxygenation_rate_per_day` (number, default `0.25`, range 0.15 to 0.35); `reaeration_rate_per_day` (number, default `0.75`, range 0.35 to 1.15).
+  
+- Source: manifest `type-523f134bfeb2.js`; view `visualization-a6ec6405d82f.js` → `Visualization`.
++ Source: manifest `type-523f134bfeb2.js`; view `visualization-f8539ead8c06.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › P series threshold: `\sum_{n=1}^{\infty}\frac{1}{n^p}`
+
+```diff
+  Parameters: `p` (number, default `1`, range 0.6 to 1.4); `termCount` (integer, default `12`, range 4 to 30).
+  
+- Source: manifest `type-ede084b98a92.js`; view `visualization-3c0cd061cb0d.js` → `PSeriesThresholdVisualization`.
++ Source: manifest `type-ede084b98a92.js`; view `visualization-8dbfa233a8b6.js` → `PSeriesThresholdVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Paired t test
+
+```diff
+  Parameters: `number_of_pairs` (integer, default `10`, range 4 to 16); `alternative` (enum, default `two-sided`, one of `two-sided`, `greater`, `less`).
+  
+- Source: manifest `model-a8a79b39391c.js`; view `visualization-fbcb30cfa4f6.js` → `PairedTTestVisualization`.
++ Source: manifest `model-a8a79b39391c.js`; view `visualization-e265beafe6da.js` → `PairedTTestVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Parallel line
+
+```diff
+  Parameters: `slope` (number, default `0.6`, range -1 to 1); `referenceIntercept` (number, default `0`, range -4 to 4); `comparisonIntercept` (number, default `3`, range -4 to 4).
+  
+- Source: manifest `type-5ace481a4856.js`; view `visualization-f965b49115f7.js` → `ParallelLineVisualization`.
++ Source: manifest `type-5ace481a4856.js`; view `visualization-545264008bab.js` → `ParallelLineVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Particulate matter size
+
+```diff
+  Type `PARTICULATE_MATTER_SIZE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d5e6c6d08bc7.js` → `ParticulateMatterSizeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cfac638deacb.js` → `ParticulateMatterSizeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pascals law hydraulics: `p = \frac{F}{A}`
+
+```diff
+  Parameters: `inputForceNewtons` (number, default `100`, range 20 to 200); `inputAreaSquareCentimeters` (number, default `10`, range 5 to 25); `outputAreaSquareCentimeters` (number, default `50`, range 25 to 100).
+  
+- Source: manifest `type-9d02b768e9bf.js`; view `visualization-281ed98b58b0.js` → `PascalsLawHydraulicsVisualization`.
++ Source: manifest `type-9d02b768e9bf.js`; view `visualization-a80e072babfa.js` → `PascalsLawHydraulicsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pcr cycle
+
+```diff
+  Type `PCR_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c4027be107b1.js` → `PcrCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c0169318dbf6.js` → `PcrCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pedigree
+
+```diff
+  Parameters: `inheritance_pattern` (enum, default `autosomal-dominant`, one of `autosomal-dominant`, `autosomal-recessive`, `x-linked-recessive`).
+  
+- Source: manifest `model-a39f1b9e2e01.js`; view `visualization-80343da9f33c.js` → `PedigreeVisualization`.
++ Source: manifest `model-a39f1b9e2e01.js`; view `visualization-a73c7d5024e0.js` → `PedigreeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Percent part whole proportion
+
+```diff
+  Type `PERCENT_PART_WHOLE_PROPORTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b0fc15f0f60e.js` → `PercentPartWholeProportionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7f5431bca314.js` → `PercentPartWholeProportionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Perfect competition
+
+```diff
+  Parameters: `adjustment` (enum, default `profit_entry`, one of `profit_entry`, `loss_exit`).
+  
+- Source: manifest `model-3deda9c55881.js`; view `visualization-b4a46f81c642.js` → `LongRunCompetitiveEquilibriumVisualization`.
++ Source: manifest `model-3deda9c55881.js`; view `visualization-b56956de209c.js` → `LongRunCompetitiveEquilibriumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Perfect competition market firm
+
+```diff
+  Type `PERFECT_COMPETITION_MARKET_FIRM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8dcb8f891e39.js` → `PerfectCompetitionMarketFirmVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-38d9d475cba8.js` → `PerfectCompetitionMarketFirmVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Period frequency relation: `f = \frac{1}{T}`
+
+```diff
+  Parameters: `period` (number, default `2`, range 0.01 to 1000).
+  
+- Source: manifest `type-af2e2029147a.js`; view `visualization-85db6d3212e0.js` → `PeriodFrequencyRelationVisualization`.
++ Source: manifest `type-af2e2029147a.js`; view `visualization-95b35ff00256.js` → `PeriodFrequencyRelationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Periodic table explorer
+
+```diff
+  Type `PERIODIC_TABLE_EXPLORER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-364e516790cc.js` → `PeriodicTableVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-276eb09aad5e.js` → `PeriodicTableVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Periodic trends
+
+```diff
+  Parameters: `initial_trend` (enum, default `atomic radius`, one of `atomic radius`, `first ionization energy`, `electronegativity`).
+  
+- Source: manifest `type-5d4a85edaa4f.js`; view `visualization-63c685f89d76.js` → `Visualization`.
++ Source: manifest `type-5d4a85edaa4f.js`; view `visualization-d2acb2a9a07e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Permutation formula
+
+```diff
+  Parameters: `n` (integer, default `6`, range 4 to 8); `r` (integer, default `3`, range 2 to 4).
+  
+- Source: manifest `type-1af4bc023ce6.js`; view `visualization-fa63f76873c4.js` → `PermutationFormulaVisualization`.
++ Source: manifest `type-1af4bc023ce6.js`; view `visualization-2ab22157ad4f.js` → `PermutationFormulaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Permutations vs combinations
+
+```diff
+  Type `PERMUTATIONS_VS_COMBINATIONS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e4f11bdb3b12.js` → `PermutationsVsCombinationsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-98d5c26ce669.js` → `PermutationsVsCombinationsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Perpendicular line
+
+```diff
+  Parameters: `slope` (number, default `2`, range -10000 to 10000); `intercept` (number, default `1`, range -10000 to 10000); `perpendicularIntercept` (number, default `-2`, range -10000 to 10000).
+  
+- Source: manifest `type-edfc78ae68b7.js`; view `visualization-81e88913e03e.js` → `PerpendicularLineVisualization`.
++ Source: manifest `type-edfc78ae68b7.js`; view `visualization-a6f52836beb2.js` → `PerpendicularLineVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pesticide treadmill
+
+```diff
+  Type `PESTICIDE_TREADMILL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7930c6b824bc.js` → `PesticideTreadmillVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-dad6fe87619d.js` → `PesticideTreadmillVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ph from concentration: `\mathrm{pH}=-\log_{10}([\mathrm{H_3O^+}])`
+
+```diff
+  Parameters: `hydronium_concentration_molar` (number, default `1e-7`, range 1e-12 to 0.01).
+  
+- Source: manifest `type-5afefdccef0f.js`; view `visualization-ad9dd517542b.js` → `PhFromConcentrationVisualization`.
++ Source: manifest `type-5afefdccef0f.js`; view `visualization-3b9f693a02d0.js` → `PhFromConcentrationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pharmacokinetic curve
+
+```diff
+  Parameters: `dose_mg` (number, default `240`, range 80 to 400); `elimination_half_life_hours` (number, default `6`, range 2 to 10); `minimum_effective_concentration` (number, default `1.5`, range 0.8 to 2.5); `minimum_toxic_concentration` (number, default `5.5`, range 4 to 8).
+  
+- Source: manifest `type-a0444b690340.js`; view `visualization-d085f4e56d1d.js` → `PharmacokineticCurveVisualization`.
++ Source: manifest `type-a0444b690340.js`; view `visualization-88ea00cfb94a.js` → `PharmacokineticCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phase change cycle
+
+```diff
+  Parameters: `initial_transition` (enum, default `melting`, one of `melting`, `freezing`, `vaporization`, `condensation`, `sublimation`, `deposition`).
+  
+- Source: manifest `model-f0617ef38ba2.js`; view `visualization-71c74e68c959.js` → `PhaseChangeCycleVisualization`.
++ Source: manifest `model-f0617ef38ba2.js`; view `visualization-b41350d05720.js` → `PhaseChangeCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phase diagram
+
+```diff
+  Type `PHASE_DIAGRAM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-df6b5363c00a.js` → `PhaseDiagramVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9251efb438d7.js` → `PhaseDiagramVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phillips curve
+
+```diff
+  Type `PHILLIPS_CURVE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-db5cc4198ebe.js` → `PhillipsCurveVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ab9b8fa3e8ff.js` → `PhillipsCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phillips curve shifts
+
+```diff
+  Type `PHILLIPS_CURVE_SHIFTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-11840a2d81a0.js` → `PhillipsCurveShiftsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-dc003d9853ad.js` → `PhillipsCurveShiftsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phosphorus cycle
+
+```diff
+  Type `PHOSPHORUS_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-90e6b8826a76.js` → `PhosphorusCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b5860be46b6f.js` → `PhosphorusCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Photochemical smog
+
+```diff
+  Type `PHOTOCHEMICAL_SMOG`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f92006fff8e4.js` → `PhotochemicalSmogVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2e8b4f1c3e55.js` → `PhotochemicalSmogVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Photoelectric energy balance: `hf = \phi + K_{\max}`
+
+```diff
+  Parameters: `frequencyTimes10To14Hertz` (number, default `8`, range 3 to 15); `intensityPercent` (number, default `50`, range 10 to 100); `workFunctionElectronVolts` (number, default `2.3`, range 1.5 to 6).
+  
+- Source: manifest `type-389cfab21292.js`; view `visualization-7499624c77be.js` → `PhotoelectricEnergyBalanceVisualization`.
++ Source: manifest `type-389cfab21292.js`; view `visualization-95f1557882e5.js` → `PhotoelectricEnergyBalanceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Photoelectron spectrum
+
+```diff
+  Type `PHOTOELECTRON_SPECTRUM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e6f32620777d.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b78ea5515297.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Photosynthesis
+
+```diff
+  Parameters: `lightIntensity` (enum, default `low`, one of `low`, `medium`, `high`); `carbonDioxide` (enum, default `low`, one of `low`, `medium`, `high`); `water` (enum, default `low`, one of `low`, `medium`, `high`).
+  
+- Source: manifest `type-b4bcce60d760.js`; view `visualization-7cbc9abe92a8.js` → `PhotosynthesisVisualization`.
++ Source: manifest `type-b4bcce60d760.js`; view `visualization-97f6844717d5.js` → `PhotosynthesisVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Photosynthesis overview: `6CO_2 + 6H_2O + \text{light energy} \rightarrow C_6H_{12}O_6 + 6O_2`
+
+```diff
+  Parameters: `initial_focus` (enum, default `whole process`, one of `whole process`, `light reactions`, `Calvin cycle`).
+  
+- Source: manifest `model-7354fd8cc5a6.js`; view `visualization-ba382e408f5a.js` → `PhotosynthesisOverviewVisualization`.
++ Source: manifest `model-7354fd8cc5a6.js`; view `visualization-6e66ac80c1a0.js` → `PhotosynthesisOverviewVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Photosynthetic pigment spectrum
+
+```diff
+  Type `PHOTOSYNTHETIC_PIGMENT_SPECTRUM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-77852f26bac5.js` → `PhotosyntheticPigmentSpectrumVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1a42b5efb40a.js` → `PhotosyntheticPigmentSpectrumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phototropism
+
+```diff
+  Type `PHOTOTROPISM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7c9b1967af04.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-156813b97880.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Phylogenetic tree
+
+```diff
+  Type `PHYLOGENETIC_TREE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7cf1209756ff.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c62fc6f0c9ea.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Physical vs chemical process
+
+```diff
+  Type `PHYSICAL_VS_CHEMICAL_PROCESS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bb03f5080542.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-91c53e0b19aa.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Piano chord chart
+
+```diff
+  Parameters: `root_note` (enum, default `C`, one of `C`, `Db`, `D`, `Eb`, `E`, `F`, `F#`, `G`, `Ab`, `A`, `Bb`, `B`); `quality` (enum, default `major`, one of `major`, `minor`).
+  
+- Source: manifest `type-f409ad2953b1.js`; view `visualization-8fbb5af781e1.js` → `Visualization`.
++ Source: manifest `type-f409ad2953b1.js`; view `visualization-e47ec42d4a1d.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Piano keyboard note names
+
+```diff
+  Type `PIANO_KEYBOARD_NOTE_NAMES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-67fd5879f948.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f40c630ba724.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Piano roll
+
+```diff
+  Type `PIANO_ROLL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a1856d734bb6.js` → `PianoRollVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5b2f4ae6f5d1.js` → `PianoRollVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Place value
+
+```diff
+  Parameters: `number` (integer, default `2654`, range 0 to 9999).
+  
+- Source: manifest `type-3be9f9a369b1.js`; view `visualization-6aa8fc1a365a.js` → `PlaceValueVisualization`.
++ Source: manifest `type-3be9f9a369b1.js`; view `visualization-7e47b50c5b57.js` → `PlaceValueVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Plant anatomy
+
+```diff
+  Parameters: `initial_organ` (enum, default `root`, one of `root`, `stem`, `leaf`); `initial_transport_tissue` (enum, default `xylem`, one of `xylem`, `phloem`).
+  
+- Source: manifest `type-a2c1e373aef7.js`; view `visualization-4bc5d880f121.js` → `Visualization`.
++ Source: manifest `type-a2c1e373aef7.js`; view `visualization-c4f00931ed35.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Plant life cycle
+
+```diff
+  Parameters: `initial_stage` (enum, default `germination`, one of `germination`, `seedling`, `mature flowering plant`, `pollination`, `seed formation`, `seed dispersal`).
+  
+- Source: manifest `model-9badbb3726c5.js`; view `visualization-460410b3fa38.js` → `PlantLifeCycleVisualization`.
++ Source: manifest `model-9badbb3726c5.js`; view `visualization-ed833ac0c2f3.js` → `PlantLifeCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Plant vs animal cell
+
+```diff
+  Type `PLANT_VS_ANIMAL_CELL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1cb02e739035.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a9f31a4319ef.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Plate boundaries
+
+```diff
+  Type `PLATE_BOUNDARIES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e4abacaf3b6a.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-426ad11ab169.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Point slope line: `y - y_1 = m(x - x_1)`
+
+```diff
+  Parameters: `x1` (number, default `-3`, range -100 to 100); `y1` (number, default `-2`, range -100 to 100); `slope` (number, default `0.75`, range -20 to 20).
+  
+- Source: manifest `type-27959fdf7d51.js`; view `visualization-e07154cb7990.js` → `PointSlopeLineVisualization`.
++ Source: manifest `type-27959fdf7d51.js`; view `visualization-7d3ee39ff89c.js` → `PointSlopeLineVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Point to plane distance: `d = PH`
+
+```diff
+  Parameters: `pointX` (number, default `1.5`, range -3 to 3); `pointY` (number, default `4`, range 2 to 5.5); `planeAngleDegrees` (number, default `-10`, range -25 to 25).
+  
+- Source: manifest `type-96ed8dbb8a85.js`; view `visualization-a5cb597f76c4.js` → `PointToPlaneDistanceVisualization`.
++ Source: manifest `type-96ed8dbb8a85.js`; view `visualization-7f5d1c5c69fe.js` → `PointToPlaneDistanceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Poisson distribution: `P(X=k)=\frac{e^{-\lambda}\lambda^k}{k!}`
+
+```diff
+  Parameters: `lambda` (number, default `5`, range 0.5 to 20); `count` (integer, default `5`, range 0 to 40).
+  
+- Source: manifest `model-253b6086c636.js`; view `visualization-6c5e4787f441.js` → `PoissonDistributionVisualization`.
++ Source: manifest `model-253b6086c636.js`; view `visualization-58f4fc13193a.js` → `PoissonDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Polar curves
+
+```diff
+  Parameters: `offset` (number, default `1`, range 0 to 2); `amplitude` (number, default `2`, range 0 to 2).
+  
+- Source: manifest `model-eb52e6c3fc55.js`; view `visualization-f0e5532df10c.js` → `PolarCurvesVisualization`.
++ Source: manifest `model-eb52e6c3fc55.js`; view `visualization-5516775ea42b.js` → `PolarCurvesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Polar double integral
+
+```diff
+  Type `POLAR_DOUBLE_INTEGRAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-25d6c56878e8.js` → `PolarDoubleIntegralVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9d67978612d4.js` → `PolarDoubleIntegralVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Polygon interior angle sum: `(n - 2)\times 180^\circ`
+
+```diff
+  Parameters: `n` (number, default `6`, range 3 to 50).
+  
+- Source: manifest `type-e574ac8a1abb.js`; view `visualization-69aee5710650.js` → `PolygonInteriorAngleSumVisualization`.
++ Source: manifest `type-e574ac8a1abb.js`; view `visualization-68bd34be6312.js` → `PolygonInteriorAngleSumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Polymerization
+
+```diff
+  Type `POLYMERIZATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-53e1a9569e61.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fb6337dcec8c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Polynomial multiplicity intercepts: `f(x) = k(x-r_1)^{m_1}(x-r_2)^{m_2}`
+
+```diff
+  Parameters: `rootCenter` (number, default `0`, range -2 to 2); `rootSeparation` (number, default `4`, range 1 to 4); `leftRootMultiplicity` (integer, default `2`, range 1 to 3); `rightRootMultiplicity` (integer, default `3`, range 1 to 3).
+  
+- Source: manifest `model-397adfbb4078.js`; view `visualization-80827407e95d.js` → `PolynomialMultiplicityInterceptsVisualization`.
++ Source: manifest `model-397adfbb4078.js`; view `visualization-ff0a6fbabe7e.js` → `PolynomialMultiplicityInterceptsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Polyprotic titration
+
+```diff
+  Type `POLYPROTIC_TITRATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-eb3409043fd8.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4325dd065890.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Population density: `D = \frac{P}{A}`
+
+```diff
+  Parameters: `population` (integer, default `500000`, range 1000 to 1000000); `landAreaSquareKilometers` (number, default `100`, range 5 to 1000).
+  
+- Source: manifest `model-72ba9b7b6395.js`; view `visualization-56e702acceb6.js` → `PopulationDensityVisualization`.
++ Source: manifest `model-72ba9b7b6395.js`; view `visualization-388a2e1f1489.js` → `PopulationDensityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Positive externality
+
+```diff
+  Type `POSITIVE_EXTERNALITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-da69eda25bed.js` → `PositiveExternalityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7504309f3319.js` → `PositiveExternalityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Positive feedback loop
+
+```diff
+  Parameters: `example` (enum, default `childbirth`, one of `childbirth`, `ice-albedo`).
+  
+- Source: manifest `model-1d9447e10398.js`; view `visualization-aa56fb5ab882.js` → `PositiveFeedbackVisualization`.
++ Source: manifest `model-1d9447e10398.js`; view `visualization-811fccfa50e1.js` → `PositiveFeedbackVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ppc growth
+
+```diff
+  Parameters: `capacity_change_percent` (number, default `15`, range -40 to 30).
+  
+- Source: manifest `type-358342ea04f6.js`; view `visualization-617f80b8a45c.js` → `PpcGrowthVisualization`.
++ Source: manifest `type-358342ea04f6.js`; view `visualization-d713d86b37b0.js` → `PpcGrowthVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Ppc opportunity cost
+
+```diff
+  Parameters: `extraWheat` (number, default `5`, range 0.5 to 6).
+  
+- Source: manifest `model-7f6fce9d5547.js`; view `visualization-1d7aaf1846c9.js` → `Visualization`.
++ Source: manifest `model-7f6fce9d5547.js`; view `visualization-d25777eadbd4.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Precipitation reactions
+
+```diff
+  Type `PRECIPITATION_REACTIONS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c6941ec6b14e.js` → `PrecipitationReactionsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e543e72f9ce8.js` → `PrecipitationReactionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Predator prey cycle
+
+```diff
+  Parameters: `population_pair` (enum, default `hare-and-lynx`, one of `hare-and-lynx`, `rabbit-and-fox`, `generic-prey-and-predator`).
+  
+- Source: manifest `type-3465f183219c.js`; view `visualization-2cf72306c1c4.js` → `PredatorPreyCycleVisualization`.
++ Source: manifest `type-3465f183219c.js`; view `visualization-ebae109ded62.js` → `PredatorPreyCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Predator prey dynamics
+
+```diff
+  Parameters: `initial_prey_abundance` (number, default `1.4`, range 0.65 to 1.4); `initial_predator_abundance` (number, default `0.65`, range 0.65 to 1.4).
+  
+- Source: manifest `model-cec47be50a46.js`; view `visualization-a282fd7e2dd2.js` → `PredatorPreyVisualization`.
++ Source: manifest `model-cec47be50a46.js`; view `visualization-50e344f4615c.js` → `PredatorPreyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Presbyopia
+
+```diff
+  Parameters: `condition` (enum, default `presbyopia`, one of `typical`, `presbyopia`); `objectDistanceCentimeters` (number, default `35`, range 25 to 200).
+  
+- Source: manifest `model-cb61e61a81ef.js`; view `visualization-e929e662ad29.js` → `PresbyopiaVisualization`.
++ Source: manifest `model-cb61e61a81ef.js`; view `visualization-7ecfd82e90c3.js` → `PresbyopiaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Present value discounting
+
+```diff
+  Type `PRESENT_VALUE_DISCOUNTING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ac26ac272767.js` → `PresentValueDiscountingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b93b1c19d555.js` → `PresentValueDiscountingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pressure: `P = \frac{F}{A}`
+
+```diff
+  Parameters: `forceNewtons` (number, default `100`, range 0 to 200); `areaSquareMeters` (number, default `2`, range 0.25 to 5).
+  
+- Source: manifest `type-e210bd3bc009.js`; view `visualization-f8347d2fa095.js` → `PressureVisualization`.
++ Source: manifest `type-e210bd3bc009.js`; view `visualization-981e9cdb2d0c.js` → `PressureVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Price ceilings and floors
+
+```diff
+  Type `PRICE_CEILINGS_AND_FLOORS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b3801a35a290.js` → `PriceCeilingsAndFloorsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-95bfa8bbc301.js` → `PriceCeilingsAndFloorsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Price discrimination
+
+```diff
+  Type `PRICE_DISCRIMINATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6eea4fe04ad0.js` → `PriceDiscriminationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-485420f6f479.js` → `PriceDiscriminationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Primary vs secondary pollutants
+
+```diff
+  Parameters: `initial_pathway` (enum, default `photochemical-smog`, one of `photochemical-smog`, `secondary-particles`).
+  
+- Source: manifest `model-5ba45a3a952c.js`; view `visualization-5af2fb7507f2.js` → `PrimaryVsSecondaryPollutantsVisualization`.
++ Source: manifest `model-5ba45a3a952c.js`; view `visualization-e92f9178c740.js` → `PrimaryVsSecondaryPollutantsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Primes
+
+```diff
+  Parameters: `number` (integer, default `100`, range 2 to 1000).
+  
+- Source: manifest `model-24b2fb9cdc75.js`; view `visualization-c567230aa40a.js` → `PrimesVisualization`.
++ Source: manifest `model-24b2fb9cdc75.js`; view `visualization-a71fe63afe86.js` → `PrimesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Probability intersection
+
+```diff
+  Type `PROBABILITY_INTERSECTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-da4bd198efc8.js` → `ProbabilityIntersectionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-316a46c11a37.js` → `ProbabilityIntersectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Probability tree
+
+```diff
+  Parameters: `first_outcome_count` (integer, default `3`, range 1 to 12); `second_outcome_count` (integer, default `8`, range 1 to 12); `with_replacement` (boolean, default `false`).
+  
+- Source: manifest `type-bb80ea70b787.js`; view `visualization-383d5fd7d88d.js` → `ProbabilityTreeVisualization`.
++ Source: manifest `type-bb80ea70b787.js`; view `visualization-ad9c130318a0.js` → `ProbabilityTreeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Process capability cp cpk
+
+```diff
+  Parameters: `lower_specification_limit` (number, default `90`, range 80 to 95); `upper_specification_limit` (number, default `110`, range 105 to 120); `process_mean` (number, default `100`, range 80 to 120); `process_standard_deviation` (number, default `2.5`, range 1 to 4).
+  
+- Source: manifest `model-9f44ebe8bcfd.js`; view `visualization-d9677eac1ca9.js` → `ProcessCapabilityVisualization`.
++ Source: manifest `model-9f44ebe8bcfd.js`; view `visualization-5fad5e3a28b5.js` → `ProcessCapabilityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Production function
+
+```diff
+  Type `PRODUCTION_FUNCTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2e20de7f8c55.js` → `ProductionFunctionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-fc5551d4f0b5.js` → `ProductionFunctionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Production possibilities frontier
+
+```diff
+  Parameters: `wheat` (number, default `4`, range 0 to 9); `computers` (number, default `4`, range 0 to 9).
+  
+- Source: manifest `type-f06e3a1bfe5a.js`; view `visualization-ade6b0f4cf6d.js` → `Visualization`.
++ Source: manifest `type-f06e3a1bfe5a.js`; view `visualization-d335d5435a14.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Projectile motion
+
+```diff
+  Parameters: `initialSpeedMetersPerSecond` (number, default `18`, range 12 to 25); `launchAngleDegrees` (number, default `45`, range 25 to 65).
+  
+- Source: manifest `model-7239f4550c95.js`; view `visualization-cdd57dd481d3.js` → `ProjectileMotionVisualization`.
++ Source: manifest `model-7239f4550c95.js`; view `visualization-4a67984c9b40.js` → `ProjectileMotionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Prokaryotic vs eukaryotic cells
+
+```diff
+  Type `PROKARYOTIC_VS_EUKARYOTIC_CELLS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ccb04b0c6ee8.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9d1095edfaee.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Protein denaturation
+
+```diff
+  Type `PROTEIN_DENATURATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-fbb4ff8da26b.js` → `ProteinDenaturationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-55cc768ae1dd.js` → `ProteinDenaturationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Protein structure levels
+
+```diff
+  Type `PROTEIN_STRUCTURE_LEVELS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f226610abaee.js` → `ProteinStructureVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c3f8110fb0fc.js` → `ProteinStructureVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Proton nmr splitting
+
+```diff
+  Parameters: `neighbor_count` (enum, default `2`, one of `0`, `1`, `2`, `3`, `4`, `6`).
+  
+- Source: manifest `type-ec08a0c3755f.js`; view `visualization-184461f1b480.js` → `Visualization`.
++ Source: manifest `type-ec08a0c3755f.js`; view `visualization-d59166f50286.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pulmonary surfactant and compliance
+
+```diff
+  Type `PULMONARY_SURFACTANT_AND_COMPLIANCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9b9cd6c95cc2.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8fcd22258869.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Punnett squares
+
+```diff
+  Type `PUNNETT_SQUARES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-58da526f6efd.js` → `PunnettSquareVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b5a070d2b76f.js` → `PunnettSquareVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pupillary light reflex
+
+```diff
+  Type `PUPILLARY_LIGHT_REFLEX`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2ca6b58dc6c5.js` → `PupillaryLightReflexVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a9c262111438.js` → `PupillaryLightReflexVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pv nrt equation: `PV = nRT`
+
+```diff
+  Parameters: `P` (number, default `1`, range 0.01 to 100); `V` (number, default `24`, range 0.01 to 10000); `n` (number, default `1`, range 0.01 to 1000); `T` (number, default `298`, range 1 to 5000); `solveFor` (enum, default `P`, one of `P`, `V`, `n`, `T`).
+  
+- Source: manifest `type-545469cf1dee.js`; view `visualization-b5884c14b417.js` → `PVNRTVisualization`.
++ Source: manifest `type-545469cf1dee.js`; view `visualization-31e33915a172.js` → `PVNRTVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Pythagorean theorem: `a^2 + b^2 = c^2`
+
+```diff
+  Parameters: `a` (number, default `15`, range 0.01 to 10000); `b` (number, default `15`, range 0.01 to 10000).
+  
+- Source: manifest `type-8d5332dc0d4a.js`; view `visualization-4bec3ca4688f.js` → `PythagoreanVisualization`.
++ Source: manifest `type-8d5332dc0d4a.js`; view `visualization-37af000030d6.js` → `PythagoreanVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Python range for loop
+
+```diff
+  Parameters: `start` (integer, default `2`, range -4 to 10); `stop` (integer, default `10`, range -4 to 10); `step` (integer, default `2`, range -4 to 4).
+  
+- Source: manifest `model-5a0d6a0ec95c.js`; view `visualization-794b7f29de3b.js` → `PythonRangeForLoopVisualization`.
++ Source: manifest `model-5a0d6a0ec95c.js`; view `visualization-8b532c26a65b.js` → `PythonRangeForLoopVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Q vs k
+
+```diff
+  Parameters: `equilibrium_constant` (number, default `1`, range 1e-100 to 1e+100); `initial_reaction_quotient` (number, default `0.1`, range 0 to 1e+101).
+  
+- Source: manifest `model-aa3adbeb5d62.js`; view `visualization-41fa8af95212.js` → `QVsKVisualization`.
++ Source: manifest `model-aa3adbeb5d62.js`; view `visualization-ec4f73612f7a.js` → `QVsKVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Qt prolongation torsades
+
+```diff
+  Parameters: `qtcMs` (number, default `420`, range 360 to 560).
+  
+- Source: manifest `type-2cfafbf12fe5.js`; view `visualization-3b71a3b64b89.js` → `QTProlongationV2Visualization`.
++ Source: manifest `type-2cfafbf12fe5.js`; view `visualization-d5a74dcd66f5.js` → `QTProlongationV2Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Quadratic formula: `x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}`
+
+```diff
+  Parameters: `a` (number, default `1`, range -5 to 5); `b` (number, default `0`, range -5 to 5); `c` (number, default `-4`, range -5 to 5).
+  
+- Source: manifest `type-46bd62c7daa0.js`; view `visualization-7b7472c4558c.js` → `QuadraticFormulaVisualization`.
++ Source: manifest `type-46bd62c7daa0.js`; view `visualization-87e8522f2a36.js` → `QuadraticFormulaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Quadratic inequalities: `ax^2 + bx + c > 0`
+
+```diff
+  Parameters: `a` (number, default `1`, range 0.1 to 10); `b` (number, default `-1`, range -20 to 20); `c` (number, default `-6`, range -20 to 20); `operator` (enum, default `>`, one of `>`, `<`, `>=`, `<=`).
+  
+- Source: manifest `model-dcf2f0fdafb4.js`; view `visualization-1f27d11b0e46.js` → `QuadraticInequalitiesVisualization`.
++ Source: manifest `model-dcf2f0fdafb4.js`; view `visualization-95b40d34bf14.js` → `QuadraticInequalitiesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Quadratic vertex form: `y = a(x - h)^2 + k`
+
+```diff
+  Parameters: `h` (number, default `0`, range -5 to 5); `k` (number, default `0`, range -5 to 5).
+  
+- Source: manifest `model-870129d9ea20.js`; view `visualization-6219c6ca2900.js` → `QuadraticVertexFormVisualization`.
++ Source: manifest `model-870129d9ea20.js`; view `visualization-e5e884d25cdc.js` → `QuadraticVertexFormVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Quicksort
+
+```diff
+  Type `QUICKSORT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-65c1445dfc7c.js` → `QuicksortVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5ab0f2512194.js` → `QuicksortVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Raas and adh
+
+```diff
+  Parameters: `initial_condition` (enum, default `volume loss`, one of `normal`, `volume loss`, `increased osmolality`).
+  
+- Source: manifest `model-f92e3f01a456.js`; view `visualization-961081da7d68.js` → `Visualization`.
++ Source: manifest `model-f92e3f01a456.js`; view `visualization-aca7260a3ad0.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Radiation penetration
+
+```diff
+  Parameters: `initial_shielding` (enum, default `lead-or-concrete`, one of `none`, `paper`, `aluminium-or-plastic`, `lead-or-concrete`).
+  
+- Source: manifest `type-7a83abf1c6c4.js`; view `visualization-7b909d30f9c4.js` → `RadiationPenetrationVisualization`.
++ Source: manifest `type-7a83abf1c6c4.js`; view `visualization-ec8177671407.js` → `RadiationPenetrationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Radiometric dating
+
+```diff
+  Parameters: `isotope_system` (enum, default `carbon-14-to-nitrogen-14`, one of `carbon-14-to-nitrogen-14`, `potassium-40-to-argon-40`, `uranium-238-to-lead-206`).
+  
+- Source: manifest `model-d7a1e636d00a.js`; view `visualization-14c22908a73d.js` → `RadiometricDatingVisualization`.
++ Source: manifest `model-d7a1e636d00a.js`; view `visualization-1df72b7c49a6.js` → `RadiometricDatingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rain shadow effect
+
+```diff
+  Type `RAIN_SHADOW_EFFECT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-eae5391c285b.js` → `RainShadowVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d03e4c4e1109.js` → `RainShadowVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Randomized controlled trial flow
+
+```diff
+  Type `RANDOMIZED_CONTROLLED_TRIAL_FLOW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b6bc22b4ce0f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d0dfe605d805.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Randomized experiment
+
+```diff
+  Parameters: `experimental_units` (integer, default `16`, range 6 to 30); `treatment_effect` (number, default `8`, range -20 to 20).
+  
+- Source: manifest `type-b2315d4b532d.js`; view `visualization-da3183f25b98.js` → `RandomizedExperimentVisualization`.
++ Source: manifest `type-b2315d4b532d.js`; view `visualization-3b6c4aa63be8.js` → `RandomizedExperimentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rates and bonds
+
+```diff
+  Parameters: `yieldChangePercentagePoints` (number, default `0`, range -3 to 3).
+  
+- Source: manifest `model-57ce9234be9d.js`; view `visualization-e65c1e9e0fc2.js` → `RatesAndBondsVisualization`.
++ Source: manifest `model-57ce9234be9d.js`; view `visualization-1bc0b7684e77.js` → `RatesAndBondsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rational inequality sign chart
+
+```diff
+  Type `RATIONAL_INEQUALITY_SIGN_CHART`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cdeca41d8165.js` → `RationalInequalitySignChartVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9fd59cef2a7d.js` → `RationalInequalitySignChartVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rational limits at infinity: `\lim_{x\to\pm\infty}\left(f(x)-q(x)\right)=0`
+
+```diff
+  Parameters: `numeratorDegree` (integer, default `1`, range 0 to 3); `denominatorDegree` (integer, default `2`, range 1 to 3); `numeratorLeadingCoefficient` (number, default `2`, range 0.5 to 5); `denominatorLeadingCoefficient` (number, default `1`, range 0.5 to 5).
+  
+- Source: manifest `model-65944a036c44.js`; view `visualization-b556ab5c5b02.js` → `RationalLimitsAtInfinityVisualization`.
++ Source: manifest `model-65944a036c44.js`; view `visualization-3f51ed45839b.js` → `RationalLimitsAtInfinityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Reaction order plots
+
+```diff
+  Parameters: `reaction_order` (enum, default `first-order`, one of `zero-order`, `first-order`, `second-order`).
+  
+- Source: manifest `type-d93f8783cbfc.js`; view `visualization-4b6d7d3e319a.js` → `ReactionOrderPlotsVisualization`.
++ Source: manifest `type-d93f8783cbfc.js`; view `visualization-e80fafd467c9.js` → `ReactionOrderPlotsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Reaction rate over time
+
+```diff
+  Parameters: `observed_species` (enum, default `reactant`, one of `reactant`, `product`).
+  
+- Source: manifest `model-501467f4520d.js`; view `visualization-8f11326b323b.js` → `ReactionRateVisualization`.
++ Source: manifest `model-501467f4520d.js`; view `visualization-c1201bd8cedc.js` → `ReactionRateVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Reaction thermodynamics: `\Delta H = H_{\mathrm{products}} - H_{\mathrm{reactants}}`
+
+```diff
+  Parameters: `activationEnergyKilojoulesPerMole` (number, default `90`, range 50 to 150); `enthalpyChangeKilojoulesPerMole` (number, default `-30`, range -60 to 40).
+  
+- Source: manifest `type-f44192a3e2d7.js`; view `visualization-89219f22d8ce.js` → `ReactionThermodynamicsVisualization`.
++ Source: manifest `type-f44192a3e2d7.js`; view `visualization-bd08909ba4f9.js` → `ReactionThermodynamicsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Reaction type explorer
+
+```diff
+  Type `REACTION_TYPE_EXPLORER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-341d204da63f.js` → `ReactionTypeExplorerVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-291e22f916b2.js` → `ReactionTypeExplorerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Recrystallization purification
+
+```diff
+  Type `RECRYSTALLIZATION_PURIFICATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-189bbe150a94.js` → `RecrystallizationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9cf881396fbb.js` → `RecrystallizationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rectangle area
+
+```diff
+  Type `RECTANGLE_AREA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ea4cec8aa357.js` → `RectangleAreaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7920b59e203c.js` → `RectangleAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rectangular prism volume
+
+```diff
+  Type `RECTANGULAR_PRISM_VOLUME`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c8542b59958b.js` → `RectangularPrismVolumeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1b7e0726a09d.js` → `RectangularPrismVolumeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Redox electron transfer
+
+```diff
+  Type `REDOX_ELECTRON_TRANSFER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-70252c38b040.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e26f4e5ce89a.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Reflection transformation coordinate plane
+
+```diff
+  Parameters: `objectMode` (enum, default `triangle`, one of `point`, `triangle`); `reflectionLine` (enum, default `y_equals_x`, one of `x_axis`, `y_axis`, `y_equals_x`, `y_equals_negative_x`); `ax` (number, default `-3.5`, range -5.5 to 5.5); `ay` (number, default `0.25`, range -5.5 to 5.5); `triangleCenterX` (number, default `-2`, range -2 to 2); `triangleCenterY` (number, default `1`, range -2 to 2); `triangleWidth` (number, default `3`, range 1 to 4); `triangleHeight` (number, default `2.5`, range 1 to 4); `triangleRotationDegrees` (number, default `0`, range -90 to 90).
+  
+- Source: manifest `model-965ba7ea53bb.js`; view `visualization-82be2556ec98.js` → `ReflectionTransformationCoordinatePlaneVisualization`.
++ Source: manifest `model-965ba7ea53bb.js`; view `visualization-9d778c20f202.js` → `ReflectionTransformationCoordinatePlaneVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Reorder point and safety stock
+
+```diff
+  Parameters: `initialInventory` (number, default `240`, range 220 to 300); `demandRateUnitsPerDay` (number, default `20`, range 20 to 40); `leadTimeDays` (number, default `4`, range 2 to 4); `safetyStock` (number, default `40`, range 20 to 60).
+  
+- Source: manifest `model-63190570fb43.js`; view `visualization-2f6cb1f08024.js` → `ReorderPointAndSafetyStockVisualization`.
++ Source: manifest `model-63190570fb43.js`; view `visualization-91a4da3f7566.js` → `ReorderPointAndSafetyStockVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Resistors in parallel equivalent: `\frac{1}{R_T} = \frac{1}{R_1} + \frac{1}{R_2} + \frac{1}{R_3}`
+
+```diff
+  Parameters: `r1` (number, default `8`, range 0.1 to 100000); `r2` (number, default `8`, range 0.1 to 100000); `r3` (number, default `8`, range 0.1 to 100000); `voltage` (number, default `12`, range 0 to 1000).
+  
+- Source: manifest `type-1994a14ca218.js`; view `visualization-5ae8b7909aed.js` → `ResistorsInParallelEquivalentVisualization`.
++ Source: manifest `type-1994a14ca218.js`; view `visualization-9328763d13dd.js` → `ResistorsInParallelEquivalentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Resistors in series equivalent: `R_{\text{total}} = R_1 + R_2 + \dots`
+
+```diff
+  Parameters: `r1` (number, default `8`, range 0.1 to 100000); `r2` (number, default `8`, range 0.1 to 100000); `r3` (number, default `8`, range 0.1 to 100000); `voltage` (number, default `12`, range 0 to 1000).
+  
+- Source: manifest `type-ff1e86d5dbe7.js`; view `visualization-2968bcaf5aa9.js` → `ResistorsInSeriesEquivalentVisualization`.
++ Source: manifest `type-ff1e86d5dbe7.js`; view `visualization-363bebba2afa.js` → `ResistorsInSeriesEquivalentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Resonance structures
+
+```diff
+  Type `RESONANCE_STRUCTURES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-28741ba4ec50.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cdc07c8dd7bc.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rest value chart
+
+```diff
+  Type `REST_VALUE_CHART`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-83b30515bbfe.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f7844c246e49.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Restriction enzyme map
+
+```diff
+  Parameters: `molecule_topology` (enum, default `circular plasmid`, one of `circular plasmid`, `linear DNA`).
+  
+- Source: manifest `model-6e039b1d844f.js`; view `visualization-c2480e901f06.js` → `Visualization`.
++ Source: manifest `model-6e039b1d844f.js`; view `visualization-f3df3fdb1a6f.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rgb additive mixing
+
+```diff
+  Parameters: `red` (integer, default `255`, range 0 to 255); `green` (integer, default `255`, range 0 to 255); `blue` (integer, default `255`, range 0 to 255).
+  
+- Source: manifest `type-8b177dd67695.js`; view `visualization-52f9fc60a6bd.js` → `RgbAdditiveMixingVisualization`.
++ Source: manifest `type-8b177dd67695.js`; view `visualization-bb8ecbd6f17a.js` → `RgbAdditiveMixingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Riemann sums
+
+```diff
+  Type `RIEMANN_SUMS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e773f22e8d52.js` → `IntegrationEstimationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-94895a87c67c.js` → `IntegrationEstimationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Right triangle
+
+```diff
+  Type `RIGHT_TRIANGLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4770881cc359.js` → `RightTriangleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3cb6650598b7.js` → `RightTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rna processing
+
+```diff
+  Type `RNA_PROCESSING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4e5e1df03f2e.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7c089029f453.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Roc curve
+
+```diff
+  Parameters: `auroc` (number, default `0.75`, range 0.5 to 0.95); `threshold` (number, default `0.5`, range 0 to 1).
+  
+- Source: manifest `type-c65766b09e91.js`; view `visualization-226bec6c32f6.js` → `RocCurveVisualization`.
++ Source: manifest `type-c65766b09e91.js`; view `visualization-973b89cff40a.js` → `RocCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rock cycle
+
+```diff
+  Type `ROCK_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-718df332a90e.js` → `RockCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-547c76d19a36.js` → `RockCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rods cones light levels
+
+```diff
+  Type `RODS_CONES_LIGHT_LEVELS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6b7633d1e4a1.js` → `RodsConesLightLevelsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-18c48b7ea487.js` → `RodsConesLightLevelsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rolles theorem: `f(a)=f(b)\implies\exists\,c\in(a,b):f'(c)=0`
+
+```diff
+  Parameters: `endpointY` (number, default `-2`, range -10 to 10); `vertexOffset` (number, default `6`, range -10 to 10).
+  
+- Source: manifest `model-d7d56680b09d.js`; view `visualization-18be2e886ec5.js` → `RollesTheoremVisualization`.
++ Source: manifest `model-d7d56680b09d.js`; view `visualization-665e023345b4.js` → `RollesTheoremVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Root power equivalence
+
+```diff
+  Type `ROOT_POWER_EQUIVALENCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3306ea057aa2.js` → `RootPowerEquivalenceVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d7f8148e03af.js` → `RootPowerEquivalenceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rotation transformation coordinate plane
+
+```diff
+  Parameters: `angleDeg` (number, default `90`, range -180 to 180).
+  
+- Source: manifest `model-50addbd68e43.js`; view `visualization-ab5ad52b8f9e.js` → `RotationTransformationCoordinatePlaneVisualization`.
++ Source: manifest `model-50addbd68e43.js`; view `visualization-b42bd94e447a.js` → `RotationTransformationCoordinatePlaneVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Round robin cpu scheduling
+
+```diff
+  Parameters: `time_quantum` (integer, default `3`, range 1 to 8); `workload` (enum, default `mixed-bursts`, one of `mixed-bursts`, `one-long-two-short`, `equal-bursts`).
+  
+- Source: manifest `model-5fdbc0dfab74.js`; view `visualization-3c990cb185bd.js` → `RoundRobinCpuSchedulingVisualization`.
++ Source: manifest `model-5fdbc0dfab74.js`; view `visualization-62ce69ad7557.js` → `RoundRobinCpuSchedulingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Rutherford gold foil experiment
+
+```diff
+  Type `RUTHERFORD_GOLD_FOIL_EXPERIMENT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-132f7ce87e59.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-eb8886c93691.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Saltwater intrusion
+
+```diff
+  Type `SALTWATER_INTRUSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e8f4e1628e6c.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cb0919cd8b3d.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sample space grid
+
+```diff
+  Parameters: `event` (enum, default `sum equals 7`, one of `sum equals 5`, `sum equals 7`, `sum at least 10`, `matching values`).
+  
+- Source: manifest `model-f4dbaa3dfc38.js`; view `visualization-ea5beac122d7.js` → `SampleSpaceGridVisualization`.
++ Source: manifest `model-f4dbaa3dfc38.js`; view `visualization-3049c54bd9da.js` → `SampleSpaceGridVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sample variance
+
+```diff
+  Type `SAMPLE_VARIANCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ecc11984821f.js` → `SampleVarianceVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ebea8f3d10ea.js` → `SampleVarianceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sampling distribution
+
+```diff
+  Parameters: `population_shape` (enum, default `normal`, one of `normal`, `right-skewed`); `population_mean` (number, default `50`, range -10000 to 10000); `population_standard_deviation` (number, default `12`, range 0.1 to 1000); `sample_size` (integer, default `10`, range 2 to 100).
+  
+- Source: manifest `model-935d6fe1930e.js`; view `visualization-3db5db4202f9.js` → `SamplingDistributionVisualization`.
++ Source: manifest `model-935d6fe1930e.js`; view `visualization-101c03a4088b.js` → `SamplingDistributionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sampling without replacement
+
+```diff
+  Parameters: `category_a_count` (integer, default `4`, range 1 to 10); `category_b_count` (integer, default `3`, range 1 to 10).
+  
+- Source: manifest `type-9a0c50e93ce3.js`; view `visualization-4647ffb39a92.js` → `SamplingWithoutReplacementVisualization`.
++ Source: manifest `type-9a0c50e93ce3.js`; view `visualization-6a56bdb1737e.js` → `SamplingWithoutReplacementVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sarcomere structure
+
+```diff
+  Type `SARCOMERE_STRUCTURE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5804a02e2e9a.js` → `SarcomereStructureVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3612a014b518.js` → `SarcomereStructureVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Saturated vs unsaturated solution
+
+```diff
+  Type `SATURATED_VS_UNSATURATED_SOLUTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4f36c6aa44dd.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-98f9a363339c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Scalene triangle
+
+```diff
+  Type `SCALENE_TRIANGLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9f42a17b8310.js` → `ScaleneTriangleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9a1dc5d15a66.js` → `ScaleneTriangleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Scientific notation: `a \times 10^n`
+
+```diff
+  Parameters: `coefficient` (number, default `2.12`, range 1 to 9.99); `exponent` (integer, default `5`, range -9 to 9).
+  
+- Source: manifest `model-d8a30bda1b33.js`; view `visualization-bec23f9d9724.js` → `ScientificNotationVisualization`.
++ Source: manifest `model-d8a30bda1b33.js`; view `visualization-8b07b5106e2c.js` → `ScientificNotationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sea level rise
+
+```diff
+  Type `SEA_LEVEL_RISE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-9aec9a05b363.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b226b224e875.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Seasons and solar angle
+
+```diff
+  Parameters: `latitude_degrees` (number, default `40`, range -80 to 80).
+  
+- Source: manifest `type-afd9de5814d9.js`; view `visualization-64069f5fb29d.js` → `SeasonsVisualization`.
++ Source: manifest `type-afd9de5814d9.js`; view `visualization-cdb52a78249a.js` → `SeasonsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Seed germination
+
+```diff
+  Type `SEED_GERMINATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-71a57919e8de.js` → `SeedGerminationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-51c123654964.js` → `SeedGerminationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Segment ratio: `AP:PB=m:n`
+
+```diff
+  Parameters: `pointAX` (number, default `-6`, range -10000 to 10000); `pointAY` (number, default `-2`, range -10000 to 10000); `segmentLength` (number, default `14.142135623730951`, range 1 to 10000); `segmentAngleDeg` (number, default `45`, range -180 to 180); `m` (integer, default `2`, range 1 to 12); `n` (integer, default `3`, range 1 to 12).
+  
+- Source: manifest `type-10f0ea8edfaf.js`; view `visualization-d7399f48c4f9.js` → `SegmentRatioVisualization`.
++ Source: manifest `type-10f0ea8edfaf.js`; view `visualization-505910c9712a.js` → `SegmentRatioVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Selection patterns
+
+```diff
+  Parameters: `initial_selection_pattern` (enum, default `stabilizing`, one of `stabilizing`, `directional`, `disruptive`).
+  
+- Source: manifest `type-111ad055626d.js`; view `visualization-6fee9c8088f1.js` → `SelectionPatternsVisualization`.
++ Source: manifest `type-111ad055626d.js`; view `visualization-629b03cbe547.js` → `SelectionPatternsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Selection sort
+
+```diff
+  Parameters: `order` (enum, default `6,3,8,2,7,1,5,4`, one of `6,3,8,2,7,1,5,4`, `8,7,6,5,4,3,2,1`, `1,2,3,4,5,6,7,8`, `4,1,7,3,8,5,2,6`).
+  
+- Source: manifest `type-979c1644f178.js`; view `visualization-afe5fc221ab8.js` → `SelectionSortVisualization`.
++ Source: manifest `type-979c1644f178.js`; view `visualization-61d89aea55c1.js` → `SelectionSortVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Set operations venn regions
+
+```diff
+  Parameters: `operation` (enum, default `union`, one of `union`, `intersection`, `a_minus_b`, `b_minus_a`, `a_complement`, `b_complement`).
+  
+- Source: manifest `model-ec0b6a77f077.js`; view `visualization-78116a5cdaae.js` → `SetOperationsVennRegionsVisualization`.
++ Source: manifest `model-ec0b6a77f077.js`; view `visualization-8f45e271c2d7.js` → `SetOperationsVennRegionsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Shadow price: `P = 3x + 4y`
+
+```diff
+  Parameters: `resourceLimit` (number, default `12`, range 8 to 18).
+  
+- Source: manifest `model-f675b47b1a69.js`; view `visualization-cab03dd1ef12.js` → `ShadowPriceVisualization`.
++ Source: manifest `model-f675b47b1a69.js`; view `visualization-5a59c02c90c3.js` → `ShadowPriceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Shutdown decision
+
+```diff
+  Type `SHUTDOWN_DECISION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a81f0793d99c.js` → `ShutdownDecisionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f13399749334.js` → `ShutdownDecisionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Side by side box plots
+
+```diff
+  Parameters: `initial_comparison` (enum, default `same-median-different-iqr`, one of `same-median-different-iqr`, `different-median-same-iqr`, `different-median-different-iqr`).
+  
+- Source: manifest `model-7b21f981f07c.js`; view `visualization-44327f57a1fb.js` → `SideBySideBoxPlotsVisualization`.
++ Source: manifest `model-7b21f981f07c.js`; view `visualization-156108fb997c.js` → `SideBySideBoxPlotsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Similar triangles
+
+```diff
+  Parameters: `scale` (number, default `1.4`, range 0.5 to 2).
+  
+- Source: manifest `type-57ca60bb3e4c.js`; view `visualization-290afaca4cd7.js` → `SimilarTrianglesVisualization`.
++ Source: manifest `type-57ca60bb3e4c.js`; view `visualization-e0f2e892bb23.js` → `SimilarTrianglesVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Simple division
+
+```diff
+  Parameters: `dividend` (integer, default `14`, range 1 to 30); `divisor` (integer, default `4`, range 1 to 10).
+  
+- Source: manifest `model-1b1a0d17905e.js`; view `visualization-8420e53d9d97.js` → `SimpleDivisionVisualization`.
++ Source: manifest `model-1b1a0d17905e.js`; view `visualization-9c14beb2cbdd.js` → `SimpleDivisionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Simple pendulum: `T \approx 2\pi\sqrt{\frac{L}{g}}`
+
+```diff
+  Parameters: `lengthMeters` (number, default `1.2`, range 0.5 to 2); `startingAngleDegrees` (number, default `35`, range 5 to 60).
+  
+- Source: manifest `type-fff8bf6df8e9.js`; view `visualization-e60aed5b2cdd.js` → `SimplePendulumVisualization`.
++ Source: manifest `type-fff8bf6df8e9.js`; view `visualization-489404756d5d.js` → `SimplePendulumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Simplified fraction
+
+```diff
+  Parameters: `numerator` (integer, default `6`, range 1 to 12); `denominator` (integer, default `8`, range 4 to 24).
+  
+- Source: manifest `type-b2d049022561.js`; view `visualization-c15db09d93cc.js` → `SimplifiedFractionVisualization`.
++ Source: manifest `type-b2d049022561.js`; view `visualization-2c975bb5ef52.js` → `SimplifiedFractionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Simpson rule
+
+```diff
+  Type `SIMPSON_RULE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8927dca5eddf.js` → `SimpsonRuleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cfe4d2727efa.js` → `SimpsonRuleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Singly linked list pointers
+
+```diff
+  Parameters: `operation` (enum, default `insert`, one of `insert`, `delete`).
+  
+- Source: manifest `type-bc36333e58e1.js`; view `visualization-be90ab2044b9.js` → `SinglyLinkedListPointersVisualization`.
++ Source: manifest `type-bc36333e58e1.js`; view `visualization-dce264e95fe1.js` → `SinglyLinkedListPointersVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Singular value decomposition: `A=U\Sigma V^{\mathsf T}`
+
+```diff
+  Parameters: `rank` (integer, default `2`, range 1 to 4).
+  
+- Source: manifest `type-3a822ada5784.js`; view `visualization-fc8a83d1f057.js` → `SingularValueDecompositionVisualization`.
++ Source: manifest `type-3a822ada5784.js`; view `visualization-8bf68612ffca.js` → `SingularValueDecompositionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Skeleton and muscle movement
+
+```diff
+  Type `SKELETON_AND_MUSCLE_MOVEMENT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-58db30e1fda0.js` → `SkeletonAndMuscleMovementVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-50c2fcf97498.js` → `SkeletonAndMuscleMovementVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Skewness direction
+
+```diff
+  Parameters: `direction` (enum, default `right`, one of `left`, `right`); `skewStrength` (number, default `0.6`, range 0 to 1).
+  
+- Source: manifest `model-f7b391d4c9ce.js`; view `visualization-f899e108a585.js` → `SkewnessDirectionVisualization`.
++ Source: manifest `model-f7b391d4c9ce.js`; view `visualization-a78f203b7adc.js` → `SkewnessDirectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sleep cycle hypnogram
+
+```diff
+  Parameters: `sleep_duration_hours` (number, default `8`, range 5 to 10).
+  
+- Source: manifest `model-af359ee5ae9b.js`; view `visualization-cb3d9482179d.js` → `Visualization`.
++ Source: manifest `model-af359ee5ae9b.js`; view `visualization-d769c6d12701.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sliding filament muscle contraction
+
+```diff
+  Type `SLIDING_FILAMENT_MUSCLE_CONTRACTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-37a0afeb1ea8.js` → `SlidingFilamentVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b56761ba51a1.js` → `SlidingFilamentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Slope equation
+
+```diff
+  Type `SLOPE_EQUATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-49532fc45da8.js` → `SlopeEquationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cf2e2eae0d4f.js` → `SlopeEquationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Slope intercept: `y = mx + b`
+
+```diff
+  Parameters: `slope` (number, default `1`, range -10000 to 10000); `intercept` (number, default `5`, range -10000 to 10000).
+  
+- Source: manifest `type-110ca488953a.js`; view `visualization-a1e384b72497.js` → `SlopeInterceptVisualization`.
++ Source: manifest `type-110ca488953a.js`; view `visualization-74422adc26a9.js` → `SlopeInterceptVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sn1 vs sn2 substitution
+
+```diff
+  Type `SN1_VS_SN2_SUBSTITUTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-95391c407449.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-d7fb99154500.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Soil field capacity and wilting point
+
+```diff
+  Type `SOIL_FIELD_CAPACITY_AND_WILTING_POINT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-198c92475803.js` → `SoilWaterVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-cdea273f94c0.js` → `SoilWaterVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Soil texture and water retention
+
+```diff
+  Type `SOIL_TEXTURE_AND_WATER_RETENTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-47e39cb3668f.js` → `SoilTextureAndWaterRetentionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-65763efec7fd.js` → `SoilTextureAndWaterRetentionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Soil texture triangle
+
+```diff
+  Parameters: `sand_percent` (number, default `40`, range 0 to 100); `clay_percent` (number, default `20`, range 0 to 100).
+  
+- Source: manifest `type-4ea25b9db993.js`; view `visualization-bd22c317154b.js` → `Visualization`.
++ Source: manifest `type-4ea25b9db993.js`; view `visualization-d4b81a7d4320.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Solar photovoltaic system
+
+```diff
+  Parameters: `array_capacity_kw` (number, default `6`, range 1 to 20).
+  
+- Source: manifest `type-f31fc951c570.js`; view `visualization-ce20c0307875.js` → `SolarPhotovoltaicSystemVisualization`.
++ Source: manifest `type-f31fc951c570.js`; view `visualization-62ded17ac00e.js` → `SolarPhotovoltaicSystemVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Solenoid internal field: `B = \mu_0 n I`
+
+```diff
+  Parameters: `currentAmperes` (number, default `2`, range 0.5 to 5); `turnsPerMeter` (number, default `500`, range 100 to 1000); `direction` (enum, default `counterclockwise`, one of `clockwise`, `counterclockwise`).
+  
+- Source: manifest `type-17796e12b6d2.js`; view `visualization-11097d64a5d8.js` → `SolenoidInternalFieldVisualization`.
++ Source: manifest `type-17796e12b6d2.js`; view `visualization-d02437f3cc4a.js` → `SolenoidInternalFieldVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Solow steady state: `s f(k^*) = (\delta + n + g)k^*`
+
+```diff
+  Parameters: `savingRatePercent` (number, default `40`, range 20 to 50); `depreciationRatePercent` (number, default `5`, range 4.5 to 10); `populationGrowthRatePercent` (number, default `1.5`, range 1 to 4); `technologyGrowthRatePercent` (number, default `2`, range 1.5 to 4).
+  
+- Source: manifest `type-3ecced4722ba.js`; view `visualization-958f730a4835.js` → `SolowSteadyStateVisualization`.
++ Source: manifest `type-3ecced4722ba.js`; view `visualization-c60492888718.js` → `SolowSteadyStateVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Solubility curve
+
+```diff
+  Parameters: `solute` (enum, default `potassium nitrate`, one of `potassium nitrate`, `sodium chloride`, `cerium(III) sulfate`).
+  
+- Source: manifest `model-17f916a4e975.js`; view `visualization-84d1e9441980.js` → `SolubilityCurveVisualization`.
++ Source: manifest `model-17f916a4e975.js`; view `visualization-449bbf3b87e9.js` → `SolubilityCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Solubility equilibrium
+
+```diff
+  Parameters: `dissolution_stoichiometry` (enum, default `MX`, one of `MX`, `MX2`, `M2X3`); `ksp` (number, default `8.5e-17`, range 1e-18 to 1e-16).
+  
+- Source: manifest `model-57d17e7a5c30.js`; view `visualization-420d67e21af0.js` → `SolubilityEquilibriumVisualization`.
++ Source: manifest `model-57d17e7a5c30.js`; view `visualization-93a172d66657.js` → `SolubilityEquilibriumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Solution dilution: `M_1V_1=M_2V_2`
+
+```diff
+  Parameters: `initialConcentrationMolesPerLiter` (number, default `1.5`, range 0.1 to 3); `initialVolumeLiters` (number, default `2`, range 0.5 to 5); `waterAddedLiters` (number, default `3`, range 0 to 5).
+  
+- Source: manifest `type-b20da9986277.js`; view `visualization-9aa98497644c.js` → `SolutionDilutionVisualization`.
++ Source: manifest `type-b20da9986277.js`; view `visualization-ccf0d988c3bb.js` → `SolutionDilutionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Speciation
+
+```diff
+  Type `SPECIATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d8d567487502.js` → `SpeciationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c76698591823.js` → `SpeciationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Specific heat: `\Delta T = \frac{q}{mc}`
+
+```diff
+  Parameters: `material` (enum, default `water`, one of `copper`, `sand`, `water`); `heatKj` (number, default `40`, range 0 to 60).
+  
+- Source: manifest `type-34ba530d4dd9.js`; view `visualization-6a4e372e92ad.js` → `SpecificHeatVisualization`.
++ Source: manifest `type-34ba530d4dd9.js`; view `visualization-e60214de8bd5.js` → `SpecificHeatVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sphere volume: `V = \frac{4}{3}\pi r^3`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000).
+  
+- Source: manifest `type-6b1390f6b07f.js`; view `visualization-961bfffbf6fc.js` → `SphereVolumeVisualization`.
++ Source: manifest `type-6b1390f6b07f.js`; view `visualization-874bd76e0c7c.js` → `SphereVolumeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Spreadsheet if function
+
+```diff
+  Parameters: `comparison_operator` (enum, default `>=`, one of `>`, `>=`, `<`, `<=`); `initial_input_value` (number, default `8`, range 0 to 20); `initial_comparison_value` (number, default `10`, range 0 to 20).
+  
+- Source: manifest `model-379965cd8d4f.js`; view `visualization-9d6eab3c43d3.js` → `SpreadsheetIfVisualization`.
++ Source: manifest `model-379965cd8d4f.js`; view `visualization-ad1225d3464c.js` → `SpreadsheetIfVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Spreadsheet text extraction
+
+```diff
+  Type `SPREADSHEET_TEXT_EXTRACTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-95717fde7295.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3b44ef738ba2.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sql ddl vs dml
+
+```diff
+  Type `SQL_DDL_VS_DML`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bacf64045a16.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2dc72ce36a32.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sql group by
+
+```diff
+  Parameters: `groupBy` (enum, default `country`, one of `country`, `age`).
+  
+- Source: manifest `model-a061927447b9.js`; view `visualization-ad789aaeaeeb.js` → `SqlGroupByVisualization`.
++ Source: manifest `model-a061927447b9.js`; view `visualization-94e2df4e73a0.js` → `SqlGroupByVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sql join
+
+```diff
+  Parameters: `joinType` (enum, default `inner`, one of `inner`, `left`, `right`, `full`).
+  
+- Source: manifest `model-f4de27b0379a.js`; view `visualization-49f795bbc4ba.js` → `SqlJoinVisualization`.
++ Source: manifest `model-f4de27b0379a.js`; view `visualization-9eeca0c8ad26.js` → `SqlJoinVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sql primary foreign key constraints
+
+```diff
+  Type `SQL_PRIMARY_FOREIGN_KEY_CONSTRAINTS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cbfc2c7ed6c8.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1c8ad7ec88d4.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sql transaction commit rollback
+
+```diff
+  Parameters: `transfer_amount` (number, default `150`, range 25 to 500).
+  
+- Source: manifest `model-b26f29efe99c.js`; view `visualization-2cc33a918cff.js` → `SqlTransactionVisualization`.
++ Source: manifest `model-b26f29efe99c.js`; view `visualization-4a0645ca2bdf.js` → `SqlTransactionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Square area
+
+```diff
+  Type `SQUARE_AREA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cfbf243ac2ef.js` → `SquareAreaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-7f21435461db.js` → `SquareAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Sras
+
+```diff
+  Type `SRAS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-60704f5b1c51.js` → `SrasVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-769249fbd788.js` → `SrasVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Standard deviation: `\sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^2}`
+
+```diff
+  Parameters: `sigma` (number, default `1.5`, range 0 to 3).
+  
+- Source: manifest `model-a45393aa052e.js`; view `visualization-cdffe5686823.js` → `StandardDeviationVisualization`.
++ Source: manifest `model-a45393aa052e.js`; view `visualization-fb807d1e1b0e.js` → `StandardDeviationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Standard score z: `z = \frac{x - \mu}{\sigma}`
+
+```diff
+  Parameters: `x` (number, default `1.2`, range -4 to 4); `mu` (number, default `0`, range -1.5 to 1.5); `sigma` (number, default `1`, range 0.4 to 1.8).
+  
+- Source: manifest `type-3941c7525dca.js`; view `visualization-fbc71dd6928e.js` → `StandardScoreZVisualization`.
++ Source: manifest `type-3941c7525dca.js`; view `visualization-5b44ecb74bff.js` → `StandardScoreZVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › States of matter particle model
+
+```diff
+  Type `STATES_OF_MATTER_PARTICLE_MODEL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-b9d1f3ad7b5a.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-dca86d1d8caa.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Stereo field
+
+```diff
+  Type `STEREO_FIELD`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-789da70a78a5.js` → `StereoFieldVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f1db5bf359b2.js` → `StereoFieldVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Stoichiometric mole ratios: `2\mathrm{H_2} + \mathrm{O_2} \rightarrow 2\mathrm{H_2O}`
+
+```diff
+  Parameters: `reactionExtentMoles` (number, default `1`, range 0.5 to 5).
+  
+- Source: manifest `model-4a23866f1ccf.js`; view `visualization-6ff8fa763b66.js` → `StoichiometricMoleRatiosVisualization`.
++ Source: manifest `model-4a23866f1ccf.js`; view `visualization-4d85cbfa4edb.js` → `StoichiometricMoleRatiosVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Stopping distance safe following: `d_{\mathrm{stop}}=d_{\mathrm{reaction}}+d_{\mathrm{braking}}`
+
+```diff
+  Parameters: `speedKmh` (number, default `60`, range 30 to 100); `reactionTimeSeconds` (number, default `1`, range 0.5 to 2); `roadCondition` (enum, default `dry`, one of `dry`, `wet`, `snow_ice`).
+  
+- Source: manifest `type-23e40668163a.js`; view `visualization-43444425cf46.js` → `StoppingDistanceVisualization`.
++ Source: manifest `type-23e40668163a.js`; view `visualization-9bc8d00c827d.js` → `StoppingDistanceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Storm hydrograph
+
+```diff
+  Type `STORM_HYDROGRAPH`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-361d1806cb8f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c2a3a8b436b6.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Straight line depreciation: `D = \frac{C-S}{L}`
+
+```diff
+  Parameters: `costUsd` (number, default `60000`, range 20000 to 100000); `salvageFraction` (number, default `0.1`, range 0 to 0.5); `usefulLifeYears` (integer, default `5`, range 3 to 10); `ageFraction` (number, default `0.4`, range 0 to 1).
+  
+- Source: manifest `model-586cf7d3fcc3.js`; view `visualization-be4e2b162390.js` → `StraightLineDepreciationVisualization`.
++ Source: manifest `model-586cf7d3fcc3.js`; view `visualization-eb6387bbebbb.js` → `StraightLineDepreciationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Stratospheric ozone depletion
+
+```diff
+  Type `STRATOSPHERIC_OZONE_DEPLETION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a0157992a82b.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-19ec5f27911e.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Stress strain material limits
+
+```diff
+  Parameters: `material` (enum, default `steel`, one of `steel`, `aluminum`, `copper`).
+  
+- Source: manifest `model-dc171645f526.js`; view `visualization-e5e9cf88d802.js` → `StressStrainVisualization`.
++ Source: manifest `model-dc171645f526.js`; view `visualization-fa242c004054.js` → `StressStrainVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Strong vs weak acid
+
+```diff
+  Parameters: `initial_concentration_molar` (number, default `0.15`, range 0.1 to 0.25).
+  
+- Source: manifest `type-e8c4aa2e5b51.js`; view `visualization-1b1589d54911.js` → `Visualization`.
++ Source: manifest `type-e8c4aa2e5b51.js`; view `visualization-29270a58da88.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Structural isomers
+
+```diff
+  Type `STRUCTURAL_ISOMERS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6f8389c0db30.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c5ee31be98d5.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Subtracting integers
+
+```diff
+  Parameters: `minuend` (integer, default `7`, range 1 to 12); `subtrahend` (integer, default `4`, range 1 to 12).
+  
+- Source: manifest `model-daf7badaab95.js`; view `visualization-c7286f295924.js` → `SubtractingIntegersVisualization`.
++ Source: manifest `model-daf7badaab95.js`; view `visualization-7f59f3ef2039.js` → `SubtractingIntegersVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Subtracting negative integers: `a - n = a + |n|, \quad n < 0`
+
+```diff
+  Parameters: `positiveInteger` (integer, default `7`, range 1 to 12); `negativeInteger` (integer, default `-4`, range -12 to -1).
+  
+- Source: manifest `model-fd2977478028.js`; view `visualization-c41ec5c14ba9.js` → `SubtractingNegativeIntegersVisualization`.
++ Source: manifest `model-fd2977478028.js`; view `visualization-bdffced18aac.js` → `SubtractingNegativeIntegersVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Successive percent change: `100\left(1+\frac{p_1}{100}\right)\left(1+\frac{p_2}{100}\right)`
+
+```diff
+  Parameters: `firstChangePercent` (number, default `50`, range -95 to 100); `secondChangePercent` (number, default `-50`, range -100 to 100).
+  
+- Source: manifest `type-d21946d43d46.js`; view `visualization-269bf2659ccf.js` → `SuccessivePercentChangeVisualization`.
++ Source: manifest `type-d21946d43d46.js`; view `visualization-e5c3c37a5cfe.js` → `SuccessivePercentChangeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Supply and demand
+
+```diff
+  Parameters: `demand_shift` (number, default `10`, range -20 to 20); `supply_shift` (number, default `0`, range -20 to 20).
+  
+- Source: manifest `model-4017459b0c00.js`; view `visualization-e3688210e54b.js` → `MarketEquilibriumShiftsVisualization`.
++ Source: manifest `model-4017459b0c00.js`; view `visualization-38bc9f5b3b39.js` → `MarketEquilibriumShiftsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Supply curve
+
+```diff
+  Parameters: `price` (number, default `5`, range 2 to 8); `supplyShift` (number, default `0`, range -1 to 1).
+  
+- Source: manifest `type-592d41260a2e.js`; view `visualization-753a5dd4a510.js` → `SupplyCurveVisualization`.
++ Source: manifest `type-592d41260a2e.js`; view `visualization-c959e87316f5.js` → `SupplyCurveVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Supply shock
+
+```diff
+  Type `SUPPLY_SHOCK`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2db32ac3ed36.js` → `SupplyShockVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-af74cf9d0422.js` → `SupplyShockVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Surface area cube
+
+```diff
+  Type `SURFACE_AREA_CUBE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-2250302f4ab7.js` → `SurfaceAreaCubeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-913c8584b2b1.js` → `SurfaceAreaCubeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Surface area sphere: `S = 4\pi r^2`
+
+```diff
+  Parameters: `radius` (number, default `3`, range 0.01 to 10000).
+  
+- Source: manifest `template-c6ddf2ee2bfb.js`; view `visualization-41c908f109cf.js` → `SurfaceAreaSphereVisualization`.
++ Source: manifest `template-c6ddf2ee2bfb.js`; view `visualization-4210e15a7bf0.js` → `SurfaceAreaSphereVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Surface area to volume ratio
+
+```diff
+  Parameters: `side_length` (integer, default `3`, range 1 to 6).
+  
+- Source: manifest `type-96f57cd357c8.js`; view `visualization-4bf2630deed3.js` → `SurfaceAreaToVolumeRatioVisualization`.
++ Source: manifest `type-96f57cd357c8.js`; view `visualization-c657ca824ef1.js` → `SurfaceAreaToVolumeRatioVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Survivorship curves
+
+```diff
+  Type `SURVIVORSHIP_CURVES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-c28962e80ffe.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4963872dc899.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Synaptic transmission
+
+```diff
+  Type `SYNAPTIC_TRANSMISSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ccd3ecf1f69e.js` → `SynapticTransmissionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-0c193e4ec5db.js` → `SynapticTransmissionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Synth signal flow
+
+```diff
+  Type `SYNTH_SIGNAL_FLOW`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e784a3d093b0.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b426d0b7689b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Synthetic division
+
+```diff
+  Parameters: `dividendCoefficient3` (integer, default `4`, range -20 to 20); `dividendCoefficient2` (integer, default `7`, range -20 to 20); `dividendCoefficient1` (integer, default `-13`, range -20 to 20); `dividendCoefficient0` (integer, default `6`, range -20 to 20); `divisorConstant` (integer, default `3`, range -5 to 5).
+  
+- Source: manifest `model-dabd83a67c23.js`; view `visualization-dbaf10d5e784.js` → `SyntheticDivisionVisualization`.
++ Source: manifest `model-dabd83a67c23.js`; view `visualization-b87f20a6d183.js` → `SyntheticDivisionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › System of equations
+
+```diff
+  Type `SYSTEM_OF_EQUATIONS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a4bad3fd7b09.js` → `SystemOfEquationsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-faa424f3d159.js` → `SystemOfEquationsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › T distribution: `T=\frac{\bar{x}-\mu}{s/\sqrt{n}}`
+
+```diff
+  Parameters: `degrees_of_freedom` (integer, default `5`, range 3 to 60); `central_probability` (number, default `0.95`, range 0.9 to 0.99).
+  
+- Source: manifest `model-23ef77a43b60.js`; view `visualization-3fc939dedab4.js` → `Visualization`.
++ Source: manifest `model-23ef77a43b60.js`; view `visualization-194662d88a4c.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › T stat p score
+
+```diff
+  Parameters: `tStatistic` (number, default `2`, range -5 to 5); `degreesOfFreedom` (integer, default `10`, range 1 to 50); `testType` (enum, default `two_sided`, one of `one_sided`, `two_sided`).
+  
+- Source: manifest `model-2519c21474d3.js`; view `visualization-fc94395e3620.js` → `TStatPScoreVisualization`.
++ Source: manifest `model-2519c21474d3.js`; view `visualization-949b0f82cc23.js` → `TStatPScoreVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tangent segments common point: `PA = PB`
+
+```diff
+  Parameters: `radius` (number, default `3.5`, range 2.5 to 4.5); `pointDistance` (number, default `7.2`, range 5.8 to 7.2); `pointAngleDeg` (number, default `180`, range 145 to 215).
+  
+- Source: manifest `type-32562c107c2d.js`; view `visualization-d7a70730f54f.js` → `TangentSegmentsCommonPointVisualization`.
++ Source: manifest `type-32562c107c2d.js`; view `visualization-7c89a92587bd.js` → `TangentSegmentsCommonPointVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tariff
+
+```diff
+  Type `TARIFF`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-398053d21b64.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-e4b393e95bfc.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tax incidence and elasticity
+
+```diff
+  Parameters: `taxPerUnit` (number, default `10`, range 5 to 35); `relativeElasticity` (enum, default `balanced`, one of `balanced`, `demand_more_inelastic`, `supply_more_inelastic`).
+  
+- Source: manifest `model-49a33d251c4c.js`; view `visualization-c195f90b2f9d.js` → `ExciseTaxVisualization`.
++ Source: manifest `model-49a33d251c4c.js`; view `visualization-9d176a0a7b66.js` → `ExciseTaxVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Taxes and subsidies
+
+```diff
+  Parameters: `subsidy_per_unit` (number, default `1.2`, range 0 to 4.2).
+  
+- Source: manifest `model-cc02c8adab2a.js`; view `visualization-da5f52437ac7.js` → `Visualization`.
++ Source: manifest `model-cc02c8adab2a.js`; view `visualization-9f798d3a14c6.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Taylor series expansion
+
+```diff
+  Type `TAYLOR_SERIES_EXPANSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-8d0458a13bf6.js` → `TaylorSeriesExpansionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5be78d53db85.js` → `TaylorSeriesExpansionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tcp three way handshake
+
+```diff
+  Parameters: `client_initial_sequence` (integer, default `100`, range 0 to 9998); `server_initial_sequence` (integer, default `400`, range 0 to 9998).
+  
+- Source: manifest `model-11da4540b9d5.js`; view `visualization-1904c8dba87b.js` → `TcpThreeWayHandshakeVisualization`.
++ Source: manifest `model-11da4540b9d5.js`; view `visualization-2379df23cddc.js` → `TcpThreeWayHandshakeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tcp vs udp
+
+```diff
+  Parameters: `protocol` (enum, default `tcp`, one of `tcp`, `udp`); `lossMode` (enum, default `drop_packet_3`, one of `none`, `drop_packet_3`).
+  
+- Source: manifest `model-a7c5b23f898c.js`; view `visualization-5f7aa0b7d680.js` → `TcpVsUdpVisualization`.
++ Source: manifest `model-a7c5b23f898c.js`; view `visualization-c756b011d04e.js` → `TcpVsUdpVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tempo marking chart
+
+```diff
+  Type `TEMPO_MARKING_CHART`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-55faa9db8360.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f64ccbfee5a5.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Tendon reflex
+
+```diff
+  Type `TENDON_REFLEX`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-4486ce42cd7f.js` → `TendonReflexVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5ae3e93f8358.js` → `TendonReflexVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Test cross
+
+```diff
+  Type `TEST_CROSS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-dda36f4b811c.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8527ac18000b.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Thermohaline circulation
+
+```diff
+  Type `THERMOHALINE_CIRCULATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-326f3557d49c.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-324dfc7912ce.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Three set inclusion exclusion: `|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|`
+
+```diff
+  Parameters: `setACount` (integer, default `21`, range 12 to 30); `setBCount` (integer, default `21`, range 12 to 30); `setCCount` (integer, default `18`, range 12 to 30).
+  
+- Source: manifest `model-92f4db76ba27.js`; view `visualization-2d972856d54e.js` → `ThreeSetInclusionExclusionVisualization`.
++ Source: manifest `model-92f4db76ba27.js`; view `visualization-d95e16b3af3f.js` → `ThreeSetInclusionExclusionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Thyroid regulation
+
+```diff
+  Type `THYROID_REGULATION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5c7e5cc221a3.js` → `ThyroidRegulationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3caba8a4da53.js` → `ThyroidRegulationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Torque
+
+```diff
+  Type `TORQUE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-6245129fdab7.js` → `TorqueVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-54d17456d05d.js` → `TorqueVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Transversal angle relationships
+
+```diff
+  Type `TRANSVERSAL_ANGLE_RELATIONSHIPS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-7f3e6108bcad.js` → `TransversalAngleRelationshipsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-b59a57238bd9.js` → `TransversalAngleRelationshipsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Trapezoid area
+
+```diff
+  Type `TRAPEZOID_AREA`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e0cb3ccfaa74.js` → `TrapezoidAreaVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3907b7d8e5d4.js` → `TrapezoidAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Trapezoidal rule
+
+```diff
+  Type `TRAPEZOIDAL_RULE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-bab55a37c3be.js` → `IntegrationEstimationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9957fed675d9.js` → `IntegrationEstimationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Triangle angle sum
+
+```diff
+  Type `TRIANGLE_ANGLE_SUM`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a31a69800f71.js` → `TriangleAngleSumVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-bfca5b752dd7.js` → `TriangleAngleSumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Triangle angle sum proof
+
+```diff
+  Type `TRIANGLE_ANGLE_SUM_PROOF`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-60d9c200bb97.js` → `TriangleAngleSumProofVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-8defa945e61e.js` → `TriangleAngleSumProofVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Triangle area: `A = \frac{1}{2}bh`
+
+```diff
+  Parameters: `base` (number, default `8`, range 0.01 to 10000); `height` (number, default `6`, range 0.01 to 10000).
+  
+- Source: manifest `type-cb23494cad1e.js`; view `visualization-1d8a77daac0f.js` → `TriangleAreaVisualization`.
++ Source: manifest `type-cb23494cad1e.js`; view `visualization-67e0f5b62102.js` → `TriangleAreaVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Trig angle sum identity
+
+```diff
+  Type `TRIG_ANGLE_SUM_IDENTITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f6cd9e19eb76.js` → `TrigAngleSumIdentityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-f81f97c5293a.js` → `TrigAngleSumIdentityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Trig identity pythagorean
+
+```diff
+  Type `TRIG_IDENTITY_PYTHAGOREAN`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-abf9e9d675e7.js` → `TrigIdentityVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5c2c685aa90d.js` → `TrigIdentityVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Trig inverse
+
+```diff
+  Type `TRIG_INVERSE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-ffa80ec6277b.js` → `TrigInverseVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-1e2f460749dd.js` → `TrigInverseVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Trig ratio tangent: `\tan(\theta) = \frac{\sin(\theta)}{\cos(\theta)}`
+
+```diff
+  Parameters: `angleDeg` (number, default `35`, range 0.01 to 89.99); `angleLabel` (enum, default `θ`, one of `θ`, `α`, `β`, `φ`, `γ`).
+  
+- Source: manifest `type-ffe33386dff8.js`; view `visualization-397c413e821f.js` → `TrigRatioTangentVisualization`.
++ Source: manifest `type-ffe33386dff8.js`; view `visualization-4f03e81a8224.js` → `TrigRatioTangentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Two cable static equilibrium
+
+```diff
+  Parameters: `leftAngleDegrees` (number, default `45`, range 10 to 80); `rightAngleDegrees` (number, default `45`, range 10 to 80); `weightNewtons` (number, default `200`, range 50 to 500).
+  
+- Source: manifest `type-3854ea3b6661.js`; view `visualization-474305e4eeee.js` → `TwoCableEquilibriumVisualization`.
++ Source: manifest `type-3854ea3b6661.js`; view `visualization-d65fbdc726df.js` → `TwoCableEquilibriumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Two digit multiply
+
+```diff
+  Parameters: `factor1` (integer, default `24`, range 10 to 99); `factor2` (integer, default `87`, range 10 to 99).
+  
+- Source: manifest `model-848a1637af6a.js`; view `visualization-2dc18c57dbbd.js` → `TwoDigitMultiplyVisualization`.
++ Source: manifest `model-848a1637af6a.js`; view `visualization-bc6ae1fb3b23.js` → `TwoDigitMultiplyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Two dimensional array indexing
+
+```diff
+  Parameters: `rows` (integer, default `3`, range 2 to 5); `columns` (integer, default `5`, range 2 to 6).
+  
+- Source: manifest `model-6157f9be0476.js`; view `visualization-60e15b553536.js` → `Visualization`.
++ Source: manifest `model-6157f9be0476.js`; view `visualization-a5f63c48ae65.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Two sample t test
+
+```diff
+  Parameters: `meanDifference` (number, default `1.5`, range -3 to 3); `standardError` (number, default `0.75`, range 0.75 to 3); `degreesOfFreedom` (number, default `20`, range 2 to 200).
+  
+- Source: manifest `model-2470e84b6d61.js`; view `visualization-765fe6226c37.js` → `TwoSampleTTestVisualization`.
++ Source: manifest `model-2470e84b6d61.js`; view `visualization-87f3f6a0c1ba.js` → `TwoSampleTTestVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Twos complement
+
+```diff
+  Parameters: `bit_width` (enum, default `8`, one of `4`, `8`, `16`); `initial_value` (integer, default `-4`, range -32768 to 32767).
+  
+- Source: manifest `model-467b7dfbb450.js`; view `visualization-1ba2371b3add.js` → `TwosComplementVisualization`.
++ Source: manifest `model-467b7dfbb450.js`; view `visualization-50c2dc300033.js` → `TwosComplementVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Type i type ii power
+
+```diff
+  Type `TYPE_I_TYPE_II_POWER`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-880a45e7e46c.js` → `TypeITypeIIPowerVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a99f53cf9d50.js` → `TypeITypeIIPowerVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Union probability inclusion exclusion
+
+```diff
+  Type `UNION_PROBABILITY_INCLUSION_EXCLUSION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-91d0e9835b2f.js` → `UnionProbabilityInclusionExclusionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-4ff09b4ff0b7.js` → `UnionProbabilityInclusionExclusionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Unit circle: `x^2 + y^2 = 1`
+
+```diff
+  Parameters: `angleDeg` (number, default `45`, range -36000 to 36000).
+  
+- Source: manifest `type-4677b661e846.js`; view `visualization-55ca484d7edf.js` → `UnitCircleVisualization`.
++ Source: manifest `type-4677b661e846.js`; view `visualization-c7d68ab3b565.js` → `UnitCircleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Urbanization and impervious surfaces
+
+```diff
+  Type `URBANIZATION_AND_IMPERVIOUS_SURFACES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-5ec4331c6707.js` → `UrbanizationVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-622cc107c958.js` → `UrbanizationVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Vapor pressure
+
+```diff
+  Parameters: `initial_temperature_c` (number, default `25`, range 0 to 60); `surrounding_pressure_kpa` (number, default `101.325`, range 40 to 160).
+  
+- Source: manifest `type-15f2f7d7853c.js`; view `visualization-d6369f624c33.js` → `VaporPressureVisualization`.
++ Source: manifest `type-15f2f7d7853c.js`; view `visualization-d30c0fab96a0.js` → `VaporPressureVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Vapor pressure lowering: `P_{\mathrm{solution}}=X_{\mathrm{solvent}}P^\circ_{\mathrm{solvent}}`
+
+```diff
+  Parameters: `pure_solvent_vapor_pressure_kpa` (number, default `100`, range 10 to 200).
+  
+- Source: manifest `model-715993df7e45.js`; view `visualization-b128fecccca5.js` → `VaporPressureLoweringVisualization`.
++ Source: manifest `model-715993df7e45.js`; view `visualization-c8d5b5f24b94.js` → `VaporPressureLoweringVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Variance
+
+```diff
+  Type `VARIANCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-cf32904930e9.js` → `VarianceVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-6634d70e917f.js` → `VarianceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Vector components: `x=r\cos\theta,\qquad y=r\sin\theta`
+
+```diff
+  Parameters: `magnitude` (number, default `6`, range 0.1 to 100); `angleDeg` (number, default `35`, range -180 to 180).
+  
+- Source: manifest `type-f1e9ea4637a1.js`; view `visualization-50f2d98e7835.js` → `VectorComponentsVisualization`.
++ Source: manifest `type-f1e9ea4637a1.js`; view `visualization-fac956575355.js` → `VectorComponentsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Vector dot product
+
+```diff
+  Type `VECTOR_DOT_PRODUCT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-3ad8ebfd9be9.js` → `VectorDotProductVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-366368f086cb.js` → `VectorDotProductVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Vector projection
+
+```diff
+  Type `VECTOR_PROJECTION`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-189e4a4d3d10.js` → `VectorProjectionVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-3bfd0e41c0eb.js` → `VectorProjectionVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Velocity as slope graph: `v = \frac{\Delta x}{\Delta t}`
+
+```diff
+  Parameters: `positionAt0SecondsMeters` (number, default `-3`, range -10 to 10); `positionAt2_5SecondsMeters` (number, default `4`, range -10 to 10); `positionAt5SecondsMeters` (number, default `4`, range -10 to 10); `positionAt7_5SecondsMeters` (number, default `-2`, range -10 to 10); `positionAt10SecondsMeters` (number, default `3`, range -10 to 10).
+  
+- Source: manifest `model-372acd82c554.js`; view `visualization-4c8c27e4ab57.js` → `VelocityAsSlopeGraphVisualization`.
++ Source: manifest `model-372acd82c554.js`; view `visualization-69319e6dc0ec.js` → `VelocityAsSlopeGraphVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Venn diagram two set counting
+
+```diff
+  Type `VENN_DIAGRAM_TWO_SET_COUNTING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-98d9e5e16bec.js` → `VennDiagramTwoSetCountingVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9a15eb1aa866.js` → `VennDiagramTwoSetCountingVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Virus life cycle
+
+```diff
+  Type `VIRUS_LIFE_CYCLE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-d8c2b496e466.js` → `VirusLifeCycleVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-99f0231f99e2.js` → `VirusLifeCycleVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Visual fields
+
+```diff
+  Type `VISUAL_FIELDS`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-a79ada10d46a.js` → `VisualFieldsVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-edacd42ee358.js` → `VisualFieldsVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Vocal ranges
+
+```diff
+  Type `VOCAL_RANGES`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-1f8238d5a159.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-2bc51d2c490d.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Volume cube
+
+```diff
+  Type `VOLUME_CUBE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-dbceeadf2e37.js` → `VolumeCubeVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-26fcb1b9bfec.js` → `VolumeCubeVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Waste hierarchy
+
+```diff
+  Type `WASTE_HIERARCHY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-23ed589eb85f.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c8f09de8d138.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Wastewater treatment
+
+```diff
+  Type `WASTEWATER_TREATMENT`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-e71f308ecc88.js` → `WastewaterTreatmentVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ee0985dd628d.js` → `WastewaterTreatmentVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Water phase diagram
+
+```diff
+  Parameters: `temperature_c` (number, default `25`, range -80 to 450); `pressure_kpa` (number, default `101.325`, range 0.001 to 50000).
+  
+- Source: manifest `type-9acfe2203543.js`; view `visualization-142f29b0b5c8.js` → `WaterPhaseDiagramVisualization`.
++ Source: manifest `type-9acfe2203543.js`; view `visualization-5d94d5bbc3a3.js` → `WaterPhaseDiagramVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Water polarity
+
+```diff
+  Type `WATER_POLARITY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-43cc7290e02c.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-db8034086712.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Water potential
+
+```diff
+  Type `WATER_POTENTIAL`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-f0df496335b2.js` → `WaterPotentialVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-c7a886ee6f35.js` → `WaterPotentialVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Wave speed: `v = f\lambda`
+
+```diff
+  Parameters: `frequency` (number, default `2`, range 0.1 to 20000); `wavelength` (number, default `3`, range 0.1 to 10000).
+  
+- Source: manifest `type-ac19101079c5.js`; view `visualization-3429dfbe668f.js` → `WaveSpeedVisualization`.
++ Source: manifest `type-ac19101079c5.js`; view `visualization-1401c764ca47.js` → `WaveSpeedVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Waveform anatomy
+
+```diff
+  Type `WAVEFORM_ANATOMY`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-98d5d5521bb6.js` → `WaveformAnatomyVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-9944ad31f3d4.js` → `WaveformAnatomyVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Weight force: `F_g = mg`
+
+```diff
+  Parameters: `mass` (number, default `8`, range 0.01 to 10000); `gravity` (number, default `9.8`, range 0 to 10000).
+  
+- Source: manifest `type-722d579b6777.js`; view `visualization-af949146d52f.js` → `WeightForceVisualization`.
++ Source: manifest `type-722d579b6777.js`; view `visualization-6351bd060878.js` → `WeightForceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Wetland filtration and flood buffering
+
+```diff
+  Type `WETLAND_FILTRATION_AND_FLOOD_BUFFERING`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-441d10b08de8.js` → `Visualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-ba24eec093db.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › While loop boolean condition
+
+```diff
+  Parameters: `initial_counter` (integer, default `2`, range 0 to 8); `stopping_bound` (integer, default `5`, range 0 to 8).
+  
+- Source: manifest `type-161aea9178de.js`; view `visualization-8735282baed7.js` → `WhileLoopVisualization`.
++ Source: manifest `type-161aea9178de.js`; view `visualization-f3683f4c6d2c.js` → `WhileLoopVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Wilcoxon rank sum
+
+```diff
+  Parameters: `initial_pattern` (enum, default `intermingled`, one of `intermingled`, `group-a-lower`, `group-a-higher`, `ties`).
+  
+- Source: manifest `model-65fc78301123.js`; view `visualization-c79e18949055.js` → `WilcoxonRankSumVisualization`.
++ Source: manifest `model-65fc78301123.js`; view `visualization-7dc56ae15a02.js` → `WilcoxonRankSumVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Wind turbine
+
+```diff
+  Parameters: `rated_power_kw` (number, default `3000`, range 100 to 20000).
+  
+- Source: manifest `type-3f4953af8baf.js`; view `visualization-81fc446bf4f0.js` → `Visualization`.
++ Source: manifest `type-3f4953af8baf.js`; view `visualization-ac4c184c5168.js` → `Visualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Withdrawal reflex
+
+```diff
+  Type `WITHDRAWAL_REFLEX`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-152bf315a7f7.js` → `WithdrawalReflexVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-5e999380aa0a.js` → `WithdrawalReflexVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Work done by force
+
+```diff
+  Type `WORK_DONE_BY_FORCE`.
+  
+- Source: manifest `analytics-d7f135dc6152.js (inline)`; view `visualization-12c05b44bebf.js` → `WorkDoneByForceVisualization`.
++ Source: manifest `analytics-ac17465a32f8.js (inline)`; view `visualization-a0f712791808.js` → `WorkDoneByForceVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Z score p value
+
+```diff
+  Parameters: `zScore` (number, default `1.96`, range -3.5 to 3.5); `testType` (enum, default `two-sided`, one of `one-sided`, `two-sided`).
+  
+- Source: manifest `model-a9901c18f348.js`; view `visualization-be3e85cdfd95.js` → `ZScorePValueVisualization`.
++ Source: manifest `model-a9901c18f348.js`; view `visualization-14c727847c25.js` → `ZScorePValueVisualization`.
+```
+
+#### changed: Other views (no three.js or Lottie dependency) (809) › Zero based array indexing
+
+```diff
+  Parameters: `initial_length` (integer, default `6`, range 1 to 8).
+  
+- Source: manifest `model-f9237046088a.js`; view `visualization-e8fa2678d074.js` → `ZeroBasedArrayIndexingVisualization`.
++ Source: manifest `model-f9237046088a.js`; view `visualization-faecbdb93b86.js` → `ZeroBasedArrayIndexingVisualization`.
+```
+
+# Desktop app: other model-facing text
+
+## Changed documents
+
+- `outputs/desktop-model-facing-text.md`: changed (added: Starter and prefilled messages › Help me turn this Page into my…; added: Starter and prefilled messages › Help me make this Page a tracker…; added: Starter and prefilled messages › Help me write this week’s update on…; added: Starter and prefilled messages › Help me organize feedback on this Page.…; added: Starter and prefilled messages › Help me write release notes on this…; added: Starter and prefilled messages › Help me set up this Project Home…; added: Starter and prefilled messages › Help me make an FAQ on this…; changed: Starter and prefilled messages › Help me build and maintain a weekly…; changed: Starter and prefilled messages › Help me build and maintain accurate, useful…; changed: Starter and prefilled messages › Help me make this Project Home my…; changed: Starter and prefilled messages › Help me turn this Page into a…; changed: Starter and prefilled messages › Make this my global to-do list. Make…; changed: Starter and prefilled messages › Help me build and maintain a useful…; changed: Starter and prefilled messages › Help me make this FAQ my own.…; added: Starter and prefilled messages › Use the {templateName} template to create a…; added: Prompts, rules and context › Do the user request below, using this…; changed: Prompts, rules and context › --- name: visualize description: "Create visualizations and…; added: Prompts, rules and context › For the Page body, do not add…; removed: Starter and prefilled messages › Do the user request below, using this…)
+
+### desktop-model-facing-text.md
+
+#### added: Starter and prefilled messages › Help me turn this Page into my…
+
+````text
+Role: Jev classification (0.87 confidence); execution path unverified.
+
+```text
+Help me turn this Page into my to-do list. Check relevant conversations and connected apps you can access for things I need to do. If you can’t find enough, ask me what to add. Replace the sample tasks, keep the checkbox…
+````
+
+#### added: Starter and prefilled messages › Help me make this Page a tracker…
+
+````text
+Role: Jev classification (0.90 confidence); execution path unverified.
+
+```text
+Help me make this Page a tracker for my project. Use relevant conversations and connected apps you can access to find milestones and tasks, and ask me for anything missing. Replace the examples, keep my edits, and don’t …
+````
+
+#### added: Starter and prefilled messages › Help me write this week’s update on…
+
+````text
+Role: Jev classification (0.91 confidence); execution path unverified.
+
+```text
+Help me write this week’s update on this Page. Look for progress, blockers, and next steps in relevant conversations and connected apps you can access. Ask which project or week I mean if it’s unclear, and don’t make up …
+````
+
+#### added: Starter and prefilled messages › Help me organize feedback on this Page.…
+
+````text
+Role: Jev classification (0.90 confidence); execution path unverified.
+
+```text
+Help me organize feedback on this Page. Use relevant conversations and connected apps you can access to find feedback. Ask what product or topic to focus on if it’s unclear, replace the examples with what you find, and d…
+````
+
+#### added: Starter and prefilled messages › Help me write release notes on this…
+
+````text
+Role: Jev classification (0.91 confidence); execution path unverified.
+
+```text
+Help me write release notes on this Page. Check relevant conversations and connected apps you can access for confirmed changes and limitations. Ask which release I mean if it’s unclear, and don’t add unconfirmed details …
+````
+
+#### added: Starter and prefilled messages › Help me set up this Project Home…
+
+````text
+Role: Jev classification (0.88 confidence); execution path unverified.
+
+```text
+Help me set up this Project Home Page. Use relevant conversations and connected apps you can access for the project’s goals, team, milestones, and links. Ask me for anything missing, keep my edits, and don’t make up owne…
+````
+
+#### added: Starter and prefilled messages › Help me make an FAQ on this…
+
+````text
+Role: Jev classification (0.91 confidence); execution path unverified.
+
+```text
+Help me make an FAQ on this Page. Look for trusted answers in relevant conversations and connected apps you can access. Ask who it’s for and what it’s about if unclear, and leave anything unverified as an open question.
+…
+````
+
+#### changed: Starter and prefilled messages › Help me build and maintain a weekly…
+
+```diff
+  As soon as the evidence supports a scope, add one initial Page comment:
+  “I picked [project or work scope] for this weekly update because [brief, specific evidence]. I’m writing it for cross-functional partners, stakeholders, and executives. If you’d like a different topic or audience, reply here with the details or a source and I’ll change it.”
+- Anchor it to the title when supported; otherwise use the introduction. Open and focus it when supported. Continue without waiting for a reply.
+- If evidence is insufficient, explain the missing context in that comment. If comments are unavailable, put the same brief message beneath the introduction. Do not claim a comment was created unless it was saved.
++ Anchor it to the title when supported; otherwise use the first existing content section outside Instructions. Open and focus it when supported. Continue without waiting for a reply.
++ If evidence is insufficient, explain the missing context in that comment. If comments are unavailable, send the same brief message in chat. Do not claim a comment was created unless it was saved.
+  Use relevant comments for later questions requiring my input. Avoid repeating questions in the body and chat.
+  Find meaningful changes
+  …
+  Compare with the previous update when available. Emphasize what changed. Carry forward an unchanged item only when its blocker, risk, or upcoming decision remains important, and identify it as unchanged.
+  Save a useful draft after the first source pass. Investigate only gaps that could change the summary, status, or asks. Stop when readers can understand progress and the next decisions.
+- Respect source permissions. If a source fails, continue and state any material coverage limitation briefly.
++ Respect source permissions. If a source fails, continue and state any material coverage limitation briefly in comments or chat.
+  Write for a wider audience
+  Aim for a draft someone can read in two minutes. Let a reader understand the essential message from the opening alone.
+- Begin with one sentence reminding readers what the project is trying to achieve, unless the title and existing context already make that clear. Follow with a short summary of the most consequential progress, outlook, and attention needed.
++ Start directly with concise bullets covering the most consequential progress, outlook, and attention needed. Include the project goal in a relevant bullet when needed to understand its impact.
+  Use these sections only when useful:
+  - **Progress this week:** up to three meaningful outcomes or changes.
+  …
+  Show material conflicts with dated evidence. Flag missing information only when it changes the reader’s interpretation or next action.
+  Use information appropriate for the intended audience. Do not include sensitive personal, recruiting, customer-identifying, or restricted information merely because I can access it. Prefer canonical sources the audience is expected to be able to access; do not broaden permissions or assume that linking a private source grants access.
+- Keep research gaps, drafting questions, and the refresh timestamp in a compact **Draft notes** section below the share-ready update. Put questions for me in comments when supported. Do not mix agent bookkeeping into the stakeholder narrative.
+- In Draft notes, add this invitation once:
++ Put research gaps and drafting questions in comments or chat. Keep material uncertainty beside the claim it qualifies. Do not add a Draft notes section or refresh timestamps to the Page.
++ In comments or chat, add this invitation once:
+  “Add missing projects or sources here with @, or type @ChatGPT and ask me to change the audience or scope. Use / to add your own updates.”
+  Preserve and maintain
+  …
+  Save durable instructions covering scope, audience, reporting periods, evidence, audience-appropriate disclosure, archiving, and protection of my edits.
+  Verify the updater is enabled and its saved schedule matches the requested time. Do not substitute more frequent refreshes or allow a required controller to duplicate them.
+- Each run should reconcile the current week, check unresolved risks and commitments, and record the last successful refresh time in Draft notes. Preserve content during source outages and describe partial coverage honestly.
++ Each run should reconcile the current week and check unresolved risks and commitments. Preserve content during source outages and report material coverage gaps in comments or chat.
+  Notify me once when a materially changed weekly draft is ready, or when a blocker or question requires my action. Stay quiet when nothing meaningful changes.
+  Finish
+  …
+```
+
+#### changed: Starter and prefilled messages › Help me build and maintain accurate, useful…
+
+```diff
+  As soon as the evidence supports a choice, add one initial Page comment:
+  “I picked [product and release or date range] for these release notes because [brief, specific evidence]. If you’d like this Page to cover something else, reply here with the release, topic, or a source and I’ll change it.”
+- Anchor it to the title when supported; otherwise use the introduction. Open and focus it when supported. Continue without waiting for a reply.
+- If evidence is insufficient, explain the missing context in that comment. If comments are unavailable, put the same brief message beneath the introduction. Do not claim a comment was created unless it was saved.
++ Anchor it to the title when supported; otherwise use the first existing content section outside Instructions. Open and focus it when supported. Continue without waiting for a reply.
++ If evidence is insufficient, explain the missing context in that comment. If comments are unavailable, send the same brief message in chat. Do not claim a comment was created unless it was saved.
+  Keep the selected release boundary fixed across updates. Do not silently switch to a newer release because it becomes the most recent one.
+  Follow an established audience and voice. Otherwise, draft for end users in plain language and keep the Page unpublished for internal review.
+  …
+  For breaking changes and deprecations, include the affected behavior, effective date, required action, and migration guidance when supported. Flag missing essential details for review instead of inventing instructions.
+  Include known limitations confirmed by release or rollout owners. Do not promote every unresolved bug report into an audience-facing known issue.
+- Near the first useful context gap, add this invitation once:
++ For the first useful context gap, add this invitation once in comments or chat:
+  “Add the release plan, changelog, or rollout evidence here with @, or type @ChatGPT and ask me to change the release or audience. Use / to add your own notes.”
+  Separate verified changes from candidates
+  …
+  Save durable instructions covering the fixed release boundary, audience, evidence standards, exclusions, and protection of my edits. Verify the updater is enabled and its saved schedule matches the requested time. Do not substitute more frequent refreshes or allow a required controller to duplicate them.
+  Each run should check relevant changes and unresolved verification questions. Preserve content during source outages and label verification gaps.
+- Show the last successful refresh time and material coverage gaps in Release review, outside the audience-facing copy.
++ Report material source-coverage gaps in comments or chat. Keep release-specific verification gaps beside the affected entries in Release review; do not add refresh timestamps to the Page.
+  Notify me when the draft first becomes ready for review, a material shipped claim changes, or a question requires my action. Stay quiet for routine wording changes and unchanged states.
+  When I explicitly mark the notes final or published, stop automatic edits to that release and pause its updater when supported. Verify the pause; if it cannot be completed, report that limitation. Do not rewrite published history or start a new release without my request.
+  …
+```
+
+#### changed: Starter and prefilled messages › Help me make this Project Home my…
+
+````diff
+- Role: Jev classification (0.96 confidence); execution path unverified.
++ Role: Jev classification (0.95 confidence); execution path unverified.
+  
+  ```text
+  …
+  Make sure the Page has a title. If it is untitled, use “Project Home” initially. Preserve an existing title and any user edits.
+  
+- Before searching connected sources, add a brief introduction and an editable starting structure with two sections: Project overview and Essential resources. Include supported details already available in context. Keep this first version compact and useful, without a wall of empty headings or repeated placeholders. Send this brief chat message: “I’m filling in your Project Home. You can edit any section while I work.”
++ Before searching connected sources, add an editable starting structure with two sections: Project overview and Essential resources. Include supported details already available in context. Keep this first version compact and useful, without a wall of empty headings or repeated placeholders. Send this brief chat message: “I’m filling in your Project Home. You can edit any section while I work.”
+  
+  Choose the most relevant project using your best judgment. Prioritize context attached to this Page or its current Space, then recent conversations and project activity. If several projects are plausible, pick the strongest candidate and treat it as a working assumption. Do not stop to ask which project to use or wait for approval before filling in supported details. Choose a real project supported by context; do not invent one. If the initial context provides no candidate, search recent connected sources for one.
+  …
+  Leave one comment explaining the choice: “I picked [project] based on [context] and started filling in this Page. If you’d like a different project, reply here with its name or a source and I’ll switch.”
+  
+- Prefer anchoring this comment to the Page title. If title comments are unsupported, use the existing introduction directly below the title, outside the Instructions section. If supported, open and focus the comment so it is visible above the chat. Do not claim it is open or focused unless verified. Do not create body content solely to anchor the comment, and do not repeat the project-selection question in the body.
++ Prefer anchoring this comment to the Page title. If title comments are unsupported, use the first existing content section outside Instructions. If supported, open and focus the comment so it is visible above the chat. Do not claim it is open or focused unless verified. Do not create body content solely to anchor the comment, and do not repeat the project-selection question in the body.
+  
+  Continue working immediately after leaving the comment. Use the project’s Slack channel, relevant emails, project notes, and links to fill in the Page incrementally. Write useful findings as you find them instead of waiting until all research is complete. Add short, scannable sections as evidence becomes available:
+  …
+  Use Open questions only for substantive project unknowns. Label these “Needs input” or “Not yet found” where useful. Do not create an Open questions section to ask which project to use. If no real project can be found after a reasonable search, preserve the starting structure and explain the missing context in the single comment rather than fabricating a project.
+  
+- Use Page comments for focused questions and assumptions. Prefer the title, or the existing introduction if title comments are unsupported. Refer to the relevant section in the comment instead of anchoring questions farther down the Page. Ask only what is needed to move forward, and continue supported work while awaiting answers. If a relevant app isn’t connected, offer to connect it and continue with available sources.
++ Use Page comments for focused questions and assumptions. Prefer the title, or the first existing content section outside Instructions if title comments are unsupported. Refer to the relevant section in the comment instead of anchoring questions farther down the Page. Ask only what is needed to move forward, and continue supported work while awaiting answers. If a relevant app isn’t connected, offer to connect it and continue with available sources.
+  
+- Near the first place where input would help, add one brief, contextual invitation: “Add a project brief here with @, or type @ChatGPT, select it from the Page’s mention menu, and ask me to use a different project. Use / to add content to the Page.” Adapt the example to the actual gap and leave room for the user to type. Do not repeat this guidance throughout the Page.
++ When input would help, add one brief, contextual invitation in comments or chat: “Add a project brief here with @, or type @ChatGPT, select it from the Page’s mention menu, and ask me to use a different project. Use / to add content to the Page.” Adapt the example to the actual gap. Do not repeat this guidance in the Page body.
+  
+  Write using native Page blocks. Check current content before replacing anything, and preserve edits the user makes while you work. When the user names a different project or provides new context, update the relevant sections, revise the choice comment, and remove obsolete content, resolved questions, and unnecessary hints.
+  …
+````
+
+#### changed: Starter and prefilled messages › Help me turn this Page into a…
+
+````diff
+- Role: Jev classification (0.94 confidence); execution path unverified.
++ Role: Jev classification (0.95 confidence); execution path unverified.
+  
+  ```text
+  …
+  Read the current Page before editing. Preserve my content, comments, customized title, and manually changed task states.
+  Before adding content, collapse the Instructions section if it exists and the available controls support it. Keep it collapsed. If you cannot change its collapsed state, say so briefly and continue.
+- Add a brief introduction and two native, editable sections: **Project snapshot** and **Milestones and key work**. Include supported details already available in context. If the project is not yet identifiable, use a short explanation of what you are establishing; do not invent details, add sample tasks, or create empty tables.
++ Add two native, editable sections: **Project snapshot** and **Milestones and key work**. Include supported details already available in context. If the project is not yet identifiable, explain the missing context briefly in comments or chat; do not invent details, add sample tasks, or create empty tables.
+  Send this chat message: “I’m filling in your Project Tracker. You can edit any section while I work.”
+  Choose the project
+  …
+  Use “[Project name] Tracker” if the Page is untitled or has the default template title. Preserve a customized title.
+  Add one initial comment: “I picked [project] based on [specific context] and started building its tracker. If you’d like a different project, reply here with its name or a source and I’ll switch.”
+- Anchor it to the title if supported; otherwise use the existing introduction outside Instructions. Open and focus it if supported. Do not create extra body content just to anchor a comment, and do not let comment controls delay the work.
++ Anchor it to the title if supported; otherwise use the first existing content section outside Instructions. Open and focus it if supported. Do not create extra body content just to anchor a comment, and do not let comment controls delay the work.
+  Research and write incrementally
+  Find the team’s existing tracker or plan first, then check the most relevant recent discussions, emails, and meeting notes for updates or conflicts. Use the established system of record for task status. Link to underlying records rather than building a competing backlog.
+- Keep research bounded. Write the first useful findings after the initial source pass, then investigate only gaps that could materially change the next milestone, ownership, or readiness. Do not exhaust every connected app. If a source fails or stalls, continue with available evidence and identify the resulting limitation.
++ Keep research bounded. Write the first useful findings after the initial source pass, then investigate only gaps that could materially change the next milestone, ownership, or readiness. Do not exhaust every connected app. If a source fails or stalls, continue with available evidence and identify the resulting source-coverage limitation in comments or chat.
+  If no external tracker is found, organize supported commitments here in an editable table or checklist.
+  Build a concise tracker
+  …
+  When sources conflict, show the discrepancy and the dates. Distinguish publication dates from event dates. If I request a historical snapshot, state the cutoff and do not silently incorporate later developments.
+  Invite useful input
+- Near the first material context gap, add this invitation once, adapting it to what is missing:
++ For the first material context gap, add this invitation once in comments or chat, adapting it to what is missing:
+  “Add the project plan or existing tracker here with @, or type @ChatGPT and ask me to change what this tracker covers. Use / to add content to the Page.”
+  After the initial project-choice comment, add another comment only for a focused question whose answer would materially improve the tracker. Continue supported work without waiting for a reply.
+  …
+````
+
+#### changed: Starter and prefilled messages › Make this my global to-do list. Make…
+
+````diff
+- Role: Jev classification (0.95 confidence); execution path unverified.
++ Role: Jev classification (0.94 confidence); execution path unverified.
+  
+  ```text
+  …
+  - Read the Page before editing and preserve anything I’ve added. Start with useful, supported tasks as soon as you find them, then refine the list. Don’t wait until every source has been checked.
+  
+- Use this opening structure:
+- 
+- - Use “Todo list” as the default title. Only use “[User's name]’s to-do list ✅” when my name is verified from reliable available context; never invent a name or leave the placeholder in the title. Preserve a title I’ve customized.
+- - A clear next step for everything on your plate.
++ Use “Todo list” as the default title. Only use “[User's name]’s to-do list ✅” when my name is verified from reliable available context; never invent a name or leave the placeholder in the title. Preserve a title I’ve customized.
+  
+- Place a short instructions block directly beneath the opening: “Type tasks directly, use @ to add sources, or ask @ChatGPT to change the list.” Don’t repeat these instructions elsewhere.
++ Send this guidance once in chat: “Type tasks directly, use @ to add sources, or ask @ChatGPT to change the list.” Don’t repeat these instructions elsewhere.
+  
+- If automatic updates are already enabled, show the verified schedule in plain language directly beneath the title, including the timezone—for example, “Updates weekdays at 9 a.m. Pacific.” Show the last successful update time there only when known. Don’t claim updates are enabled without checking.
++ If automatic updates are already enabled, confirm the verified schedule and timezone briefly in chat. Keep scheduling details and refresh timestamps out of the Page body. Don’t claim updates are enabled without checking.
+  
+  Needs your attention
+  …
+  To do
+  
+- - Directly beneath this heading, write: “Ranked by urgency, most urgent first.”
+  - Create one native, editable checkbox list across all projects. Rank tasks by supported deadlines, blockers, and time-sensitive requests. Don’t split the list into projects or categories such as “Recommended,” “Needs clarification,” or “Waiting on others.”
+  - Write tasks as natural, concise actions: what to do, for whom, and the outcome needed. Start with a verb. Don’t prefix tasks with labels such as “Direct request,” “Assigned,” “Recommended,” or “Acceptance unverified.” Don’t explain how you classified the task.
+  …
+````
+
+#### changed: Starter and prefilled messages › Help me build and maintain a useful…
+
+````diff
+- Role: Jev classification (0.95 confidence); execution path unverified.
++ Role: Jev classification (0.96 confidence); execution path unverified.
+  
+  ```text
+  …
+  Skip the initial Page read only when this is a new, untouched template. If it already contains user content, read it before writing. Before subsequent edits, read the content you intend to change so you preserve my notes, classifications, priorities, and manually changed states.
+  Use “Feedback tracker” as the default title. When the scope is clear, use “[Product or project] feedback tracker.” Use sentence case and preserve titles I customize.
+- Add a brief introduction and a native, editable **Needs attention** section. Include supported feedback already available. Do not add sample feedback, empty tables, or repeated placeholders.
++ Add a native, editable **Needs attention** section. Include supported feedback already available. Do not add sample feedback, empty tables, or repeated placeholders.
+  Keep Instructions collapsed when supported.
+  Send this chat message: “I’m organizing feedback into actionable themes and follow-ups. You can edit the tracker while I work.”
+  …
+  As soon as the evidence supports a topic, add one initial Page comment:
+  “I picked [product or topic] for this feedback tracker because [brief, specific evidence]. If you’d like this Page to cover something else, reply here with the topic or a source and I’ll change it.”
+- Anchor it to the title when supported; otherwise use the introduction. Open and focus it when supported. Continue without waiting for a reply.
+- If evidence is insufficient, explain the missing context in that comment. If comments are unavailable, put the same brief message beneath the introduction. Do not claim a comment was created unless it was saved.
++ Anchor it to the title when supported; otherwise use the first existing content section outside Instructions. Open and focus it when supported. Continue without waiting for a reply.
++ If evidence is insufficient, explain the missing context in that comment. If comments are unavailable, send the same brief message in chat. Do not claim a comment was created unless it was saved.
+  Use relevant comments for later questions requiring my input. Do not repeat the same question across comments, the body, and chat.
+  Find relevant feedback
+  …
+  Treat suggested next steps as recommendations until assigned or accepted. A reporter is not automatically the owner of the fix.
+  Link existing external issues and summarize the next action. Do not recreate the issue backlog.
+- Near the first useful context gap, add this invitation once:
++ For the first useful context gap, add this invitation once in comments or chat:
+  “Add feedback channels, research, or support sources here with @, or type @ChatGPT and ask me to change what this tracker covers. Use / to add feedback yourself.”
+  Keep the evidence honest
+  …
+  Save durable instructions covering scope, sources, counting, prioritization, deduplication, status evidence, and protection of my edits. Verify the updater is enabled and its saved schedule matches the requested time. Do not substitute more frequent refreshes or allow a required controller to duplicate them.
+  On each run, check new feedback and active follow-ups. Periodically reconcile unresolved external issues. Preserve entries during source failures and label affected statuses unverified.
+- Show the last successful refresh time and material coverage gaps. Do not present a partial scan as comprehensive.
++ Report material source-coverage gaps in comments or chat; do not add refresh timestamps to the Page. Keep qualifications on counts and statuses beside the affected entries. Do not present a partial scan as comprehensive.
+  Notify me only about a newly supported serious issue, a material priority or scope change, or a decision requiring my action. Stay quiet for routine additions and unchanged states.
+  Finish
+  …
+````
+
+#### changed: Starter and prefilled messages › Help me make this FAQ my own.…
+
+````diff
+  
+  ```text
+- Help me make this FAQ my own. Ask for the topic, audience and trusted source notes or links, including relevant Slack discussions and approved guidance. Offer to connect relevant apps when needed. Build the most useful questions with concise supported answers and source links. Combine equivalent questions, keep unanswered or disputed questions visible with an owner or next decision, and include a latest-update note. Link a separate feedback tracker if I have one. Write directly into this Page using native Page blocks, preserving its title and my edits. Do not invent answers or treat unconfirmed replies as authoritative guidance. Keep source-channel replies unsent and automatic updates unconfigured unless I ask to set them up. Ask only the setup questions needed to proceed. Keep chat replies brief and focused on the next step. Organize the Page into short, scannable sections with actionable details. Don't repeat Page content in chat.
++ Help me make this FAQ my own. Ask for the topic, audience and trusted source notes or links, including relevant Slack discussions and approved guidance. Offer to connect relevant apps when needed. Build the most useful questions with concise supported answers and source links. Combine equivalent questions, keep unanswered or disputed questions visible with an owner or next decision, and keep material freshness qualifiers beside the answers they affect. Link a separate feedback tracker if I have one. Write directly into this Page using native Page blocks, preserving its title and my edits. Do not invent answers or treat unconfirmed replies as authoritative guidance. Keep source-channel replies unsent and automatic updates unconfigured unless I ask to set them up. Ask only the setup questions needed to proceed. Keep chat replies brief and focused on the next step. Organize the Page into short, scannable sections with actionable details. Don't repeat Page content in chat.
+  ```
+````
+
+#### added: Starter and prefilled messages › Use the {templateName} template to create a…
+
+````text
+Role: Jev classification (0.88 confidence); execution path unverified.
+
+```text
+Use the {templateName} template to create a native Page in Space. Adapt its content and structure to Page blocks, not a Word document, Google Doc, or downloadable file. Save the result as a Page in Space and return its l…
+````
+
+#### added: Prompts, rules and context › Do the user request below, using this…
+
+````text
+Role: Jev classification (0.96 confidence); execution path unverified.
+
+```text
+Do the user request below, using [this Page](page://<…>) and comment thread <…> as context. The original comment message is <…>; a Page-initiated request may have only an @ChatGPT mention in that comment.
+
+Comment workfl…
+````
+
+#### changed: Prompts, rules and context › --- name: visualize description: "Create visualizations and…
+
+```diff
+  - On coarse pointers, provide non-overlapping effective targets about 44px by 44px without breaking 320px layouts; visible icons and marks may stay small. Keep fine-pointer controls compact, and let shared utilities own touch sizing and at least 16px editable-field text.
+  - Keep essential content and actions available without hover.
++ - Try to keep 90×50px clear for host controls (top-right in LTR hosts, top-left in RTL hosts).
+  
+  ## Design system
+  …
+```
+
+#### added: Prompts, rules and context › For the Page body, do not add…
+
+````text
+Role: Jev classification (0.92 confidence); execution path unverified.
+
+```text
+For the Page body, do not add introductory paragraphs, conclusions, coverage summaries, methodology, scheduling details, or explanations of how you maintain the checklist. Avoid boilerplate such as ‘source deadlines are …
+````
+
+#### removed: Starter and prefilled messages › Do the user request below, using this…
+
+````text
+Role: Jev classification (0.96 confidence); execution path unverified.
+
+```text
+Do the user request below, using [this Page](page://<…>) and comment thread <…> as context. The original comment message is <…>; a Page-initiated request may have only an @ChatGPT mention in that comment.
+
+Comment workfl…
+````
+
+# New app surfaces: ChatGPT desktop 26.930.21537 (12776)
+
+Compared with the committed baseline (ChatGPT desktop 26.928.21956, build 12404). 25 flagged changes: new families of at least 5 members, families that grew by at least 20 members and 25%, and every new endpoint or content-reference category. Jev labels up to 25 per run.
+
+## Documentable (Jev)
+
+- **New message sub-namespace `codex.leaveDeactivatedWorkspace`**: 16 members. Jev documentable (0.75).
+  Samples: `codex.leaveDeactivatedWorkspace.successBody`, `codex.leaveDeactivatedWorkspace.membershipRemoved`, `codex.leaveDeactivatedWorkspace.unnamedLastOwnerWarning`, `codex.leaveDeactivatedWorkspace.ownerRestriction`.
+  Texts: "Your membership and access to this workspace have been removed"; "Your membership has been removed"; "Because you're the only owner in this workspace, assign the owner role to another member before leaving"; "Workspace owners must reactivate the workspace and transfer ownership as needed before leaving".
+- **New message sub-namespace `businessProfiles.location`**: 10 members. Jev documentable (0.61).
+  Samples: `businessProfiles.location.address`, `businessProfiles.location.street`, `businessProfiles.location.unit`, `businessProfiles.location.city`.
+  Texts: "Business address"; "Apartment, unit, etc. (optional)"; "State / region"; "Add a street, city, and country or region".
+- **New message namespace `educationOnboarding`**: 7 members. Jev documentable (0.53).
+  Samples: `educationOnboarding.apps.more.title`, `educationOnboarding.apps.title`, `educationOnboarding.apps.more.subtitle`, `educationOnboarding.apps.subtitle`.
+  Texts: "Connect more apps"; "Select apps you use at work"; "Get better answers by connecting more apps"; "These apps are enabled for your workspace".
+- **New backend endpoint `/chat/frontend/v1/business-profiles/{business_profile_id}/manager/verification-flows/{flow_id}/checks/{check_key}/challenge`**. Jev documentable (0.70).
+- **New backend endpoint `/shopping/business-profiles/{business_profile_id}/manual-products`**. Jev documentable (0.73).
+- **New backend endpoint `/shopping/entities/{entity_share_id}`**. Jev documentable (0.71).
+- **New backend endpoint `/shopping/entity-shares`**. Jev documentable (0.71).
+- **New backend endpoint `/wham/images/edits`**. Jev documentable (0.74).
+
+## Not documentable (Jev)
+
+- **Grew message sub-namespace `chatgpt.checkout`**: 83 → 109. Jev not documentable (0.47).
+  Samples: `chatgpt.checkout.paypal_promo.banner.additional_offer_applied`, `chatgpt.checkout.paypal_promo.form.billing_address.unsupported_country.error.v2`, `chatgpt.checkout.saved_payment.reuse.link_separate_consent_retry`, `chatgpt.checkout.saved_payment.reuse.new_card_choice_retry`.
+  Texts: "Additional offer applied: {offerName}"; "This offer is only available in Germany. <continueToCheckoutLink>Continue to checkout without this offer.</continueToCheckoutLink>"; "Link manages saving separately. Review the Link options and try again."; "Choose whether to save this card, then try again".
+- **New message namespace `missionControl`**: 23 members. Jev not documentable (0.21).
+  Samples: `missionControl.filters`, `missionControl.clearFilters`, `missionControl.back`, `missionControl.loadError`.
+  Texts: "Filters{count, plural, =0 {} one { (#)} other { (#)}}"; "Clear filters"; "Back to catch-up"; "Some tasks couldn’t be loaded".
+- **New message sub-namespace `businessProfiles.about`**: 18 members. Jev not documentable (0.32).
+  Samples: `businessProfiles.about.descriptionCount`, `businessProfiles.about.invalidField`, `businessProfiles.about.listItem`, `businessProfiles.about.removeListItem`.
+  Texts: "{count} / 1,000"; "Complete each entry, remove duplicate items, and stay within the field limits"; "{field, select, category {Category {number}} attributes {Attribute {number}} services {Service {number}} other {Item {number}}}"; "{field, select, category {Remove category {number}} attributes {Remove attribute {number}} services {Remove service {number}} other {Remove item {number}}}".
+- **New message sub-namespace `businessProfiles.manual`**: 16 members. Jev not documentable (0.44).
+  Samples: `businessProfiles.manual.productTitle`, `businessProfiles.manual.image`, `businessProfiles.manual.uploadImage`, `businessProfiles.manual.imageHelp`.
+  Texts: "Product image"; "Upload product image"; "300 x 300px recommended. JPGs, JPEGs, and PNGs supported"; "Choose a JPG or PNG image up to 2 MiB".
+- **New enum family `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_`**: 15 members. Jev not documentable (0.49).
+  Samples: `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_APP_RECEIVED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_CONTINUE_ATTEMPTED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_CONTINUE_DOWNLOAD_CLICKED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_CONTINUE_LAUNCHED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_CONTINUE_SIGN_IN_REQUIRED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_FIRST_MESSAGE_ACCEPTED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_SNAPSHOT_LOADED`, `CODEX_SHARED_THREAD_VIEWER_EVENT_TYPE_SNAPSHOT_LOAD_FAILED`.
+- **New message namespace `leaveWorkspaceModal`**: 14 members. Jev not documentable (0.22).
+  Samples: `leaveWorkspaceModal.leaveFailed`, `leaveWorkspaceModal.leftWorkspaceDescription`, `leaveWorkspaceModal.ownerCountError.body`, `leaveWorkspaceModal.lastOwnerWarning`.
+  Texts: "Failed to leave workspace"; "You have successfully left the {workspaceName} workspace."; "We couldn't load the workspace details. Close this dialog and try again."; "Because you're the only owner in the {workspaceName} workspace, assign the owner role to another member before leaving.".
+- **New message sub-namespace `businessProfiles.contact`**: 12 members. Jev not documentable (0.26).
+  Samples: `businessProfiles.contact.linksLabel`, `businessProfiles.contact.unreadableLinks`, `businessProfiles.contact.linkLabel`, `businessProfiles.contact.linkLabelPlaceholder`.
+  Texts: "{field, select, social_links {Social profiles} other {Customer action links}}"; "These links couldn’t be read; you can replace them with a new list"; "Link {number} label"; "Link {number} URL".
+- **New enum family `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_`**: 8 members. Jev not documentable (0.38).
+  Samples: `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_CONFIRM_RETURNED`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_ELIGIBLE_EXPOSURE`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_LINK_ELEMENT_READY`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_LINK_LOAD_FAILED`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_LINK_PLACEMENT_REACHED`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_PAYMENT_FORM_READY`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_SUBMITTED`, `CHATGPT_CHECKOUT_SAVED_PAYMENT_EXPERIMENT_ACTION_UNSPECIFIED`.
+- **New enum family `CODEX_PAGES_RECOVERY_COPY_ACTION_`**: 8 members. Jev not documentable (0.45).
+  Samples: `CODEX_PAGES_RECOVERY_COPY_ACTION_CLOSED`, `CODEX_PAGES_RECOVERY_COPY_ACTION_DISCARDED`, `CODEX_PAGES_RECOVERY_COPY_ACTION_DISCARD_CANCELED`, `CODEX_PAGES_RECOVERY_COPY_ACTION_DISCARD_REQUESTED`, `CODEX_PAGES_RECOVERY_COPY_ACTION_NEXT`, `CODEX_PAGES_RECOVERY_COPY_ACTION_OPENED`, `CODEX_PAGES_RECOVERY_COPY_ACTION_PREVIOUS`, `CODEX_PAGES_RECOVERY_COPY_ACTION_UNSPECIFIED`.
+- **New message sub-namespace `orbit.phoneLanding`**: 6 members. Jev not documentable (0.29).
+  Samples: `orbit.phoneLanding.existingTitle`, `orbit.phoneLanding.setupTitle`, `orbit.phoneLanding.existingDescription`, `orbit.phoneLanding.setupDescription`.
+  Texts: "Continue chatting with your dot in the ChatGPT app"; "Please create a dot on your computer"; "Get the app to keep chatting on your phone"; "Dots work best on your desktop computer. Please get set up there instead.".
+- **New message sub-namespace `quickChat.dock`**: 6 members. Jev not documentable (0.21).
+  Samples: `quickChat.dock.openTab`, `quickChat.dock.left`, `quickChat.dock.right`, `quickChat.dock.minimizeComposer`.
+  Texts: "Open in full view"; "Move to left pane"; "Move to right pane"; "Minimize composer".
+- **New asset family `webview/assets/banner.js`**: 5 members. Jev not documentable (0.25).
+  Samples: `banner-26ad24d7d353.js`, `banner-8b19f1171ffd.js`, `banner-bd1f79a9c765.js`, `banner-d74f7df06ae1.js`.
+  Texts: "We’ll let you know when your admin responds. <requestAccess>Request sent</requestAccess>"; "<requestAccess>Sending request…</requestAccess> to your admin"; "<requestAccess>Request access</requestAccess> Could not send your request. Try again."; "<requestAccess>Request access</requestAccess> from your admin".
+- **New asset family `webview/assets/details.js`**: 5 members. Jev not documentable (0.27).
+  Samples: `details-10b2f66e58cc.js`, `details-9ca72c2aec7a.js`, `details-9e2d14e29924.js`, `details-f21844eaab6c.js`.
+  Texts: "Enlarge image {index} of {product}"; "Show previous product image"; "Show next product image"; "Generating try-on".
+- **New message sub-namespace `appgenAccess.description`**: 5 members. Jev not documentable (0.29).
+  Samples: `appgenAccess.description.workspaceMemberCount`, `appgenAccess.description.ownerOnly`, `appgenAccess.description.invited`, `appgenAccess.description.workspace`.
+  Texts: "{count, plural, one {# workspace member with the link can view} other {# workspace members with the link can view}}"; "People who already have access can view"; "You and people you’ve added can view"; "Workspace members with the link can view".
+- **New message sub-namespace `sidebar.threadProject`**: 5 members. Jev not documentable (0.46).
+  Samples: `sidebar.threadProject.projectMenu`, `sidebar.threadProject.moveToProject`, `sidebar.threadProject.projectName`, `sidebar.threadProject.removeSelectionFromProjects`.
+  Texts: "Move to project"; "{projectName}"; "Remove from project"; "Remove from {projectName}".
+- **New backend endpoint `/accounts/{account_id}/users/owner_count`**. Jev not documentable (0.47).
+- **New backend endpoint `/gizmos/oauth_redirect`**. Jev not documentable (0.43).
+
+## Removed
+
+- asset family `webview/assets/runtime.js` (5 members)
+- backend endpoint `/pages/{page_id}/access-policy`
+
+# Codex/ChatGPT package changes
+
+136 further changes were not sent to Jev this run (cap).
+
+## Flagged by Jev
+
+- **both** (0.42) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: Entitlement added: com.apple.security.personal-information.calendars = true
+- **both** (0.69) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app`: Info.plist NSCalendarsFullAccessUsageDescription: null -> "ChatGPT uses Calendar to read and manage your events."
+- **security** (0.89) · `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex`: New credential string in Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex: openai-key 2838701a2678
+- **security** (0.32) · `Contents/Resources/native/browser-use-peer-authorization.node`: New host string in Contents/Resources/native/browser-use-peer-authorization.node: com.openai.codex.dev
+- **feature** (0.9) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New env string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: CODEX_APP_SETTINGS_TAB_CODE_REVIEW
+- **feature** (0.7) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New env string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: CODEX_APP_SETTINGS_TAB_CONSUMER_VIEW
+- **feature** (0.81) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New env string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: CODEX_APP_SETTINGS_TAB_CODE_REVIEW
+- **feature** (0.63) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New env string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: CODEX_APP_SETTINGS_TAB_CONSUMER_VIEW
+- **feature** (0.9) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient`: New env string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient: CODEX_APP_SETTINGS_TAB_CODE_REVIEW
+- **feature** (0.76) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient`: New env string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient: CODEX_APP_SETTINGS_TAB_CONSUMER_VIEW
+- **feature** (0.51) · `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex`: New flag string in Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex: groupanimations_enabled
+- **feature** (0.58) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: features_enabled
+- **feature** (0.87) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: has_annotation_features
+- **feature** (0.74) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: net.waterfox.nightly
+- **feature** (0.43) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: features_enabled
+- **feature** (0.73) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: has_annotation_features
+- **feature** (0.42) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: net.waterfox.nightly
+- **feature** (0.65) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient: features_enabled
+- **feature** (0.92) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient: has_annotation_features
+- **feature** (0.6) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient`: New flag string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient: net.waterfox.nightly
+- **feature** (0.52) · `Contents/Resources/native/browser-use-peer-authorization.node`: New flag string in Contents/Resources/native/browser-use-peer-authorization.node: com.openai.codex.alpha
+- **feature** (0.69) · `Contents/Resources/native/browser-use-peer-authorization.node`: New flag string in Contents/Resources/native/browser-use-peer-authorization.node: com.openai.codex.beta
+- **feature** (0.55) · `Contents/Resources/native/browser-use-peer-authorization.node`: New flag string in Contents/Resources/native/browser-use-peer-authorization.node: com.openai.codex.nightly
+- **feature** (0.28) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New libs entry: /System/Library/Frameworks/MapKit.framework/Versions/A/MapKit
+- **feature** (0.23) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: SELECT DISTINCT concat(store.
+- **security** (0.09) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: SELECT ROWID, entity_type, type, status, role, identity_id, owner_id, email, phone_number, is_self, comment, strftime(
+- **feature** (0.42) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: SELECT ROWID, name, notes, default_alarm_offset, type, disabled, external_id, persistent_id, display_order, owner_name FROM
+- **feature** (0.39) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: SELECT ROWID, store_id, title, flags, color, symbolic_color_name, color_is_display, supported_entity_types, external_id, display_order, uuid, shared_owner_name, notes, strftime(
+- **feature** (0.64) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: SELECT ROWID, title, address, latitude, longitude, reference_frame, radius FROM
+- **security** (0.19) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: SELECT ROWID, entity_type, type, status, role, identity_id, owner_id, email, phone_number, is_self, comment, strftime(
+- **both** (0.16) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New sql string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: SELECT ROWID, title, address, latitude, longitude, reference_frame, radius FROM
+- **feature** (0.46) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: group.com.apple.calendar
+- **feature** (0.49) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: item.self_attendee_id
+- **feature** (0.62) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: net.imput.helium
+- **feature** (0.66) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: net.librewolf.librewolf
+- **feature** (0.8) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService: net.waterfox.waterfox
+- **both** (0.24) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: group.com.apple.calendar
+- **feature** (0.25) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: item.self_attendee_id
+- **feature** (0.41) · `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian`: New config_key string in Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian: net.imput.helium
+
+## Entitlements
+
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService`: `com.apple.security.personal-information.calendars` `null` → `true` — **both** (0.42)
+
+## Info.plist
+
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app`: `NSCalendarsFullAccessUsageDescription` `null` → `ChatGPT uses Calendar to read and manage your events.` — **both** (0.69)
+
+## Files
+
+- changed (133): `Contents/Frameworks/Codex Framework.framework/Versions/<version>`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Codex Framework`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Alerts).app/Contents/MacOS/Codex (Alerts)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Alerts).app/Contents/MacOS/Codex (Aperitif Alerts)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif GPU).app/Contents/MacOS/Codex (Aperitif GPU)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif Renderer).app/Contents/MacOS/Codex (Aperitif Renderer)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Aperitif).app/Contents/MacOS/Codex (Aperitif)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (GPU).app/Contents/MacOS/Codex (GPU)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/app_mode_loader`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/browser_crashpad_handler`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Helpers/web_app_shortcut_copier`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libvk_swiftshader.dylib`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libvulkan.dylib`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Resources/Info.plist`, `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Resources/app_mode-Info.plist`, `Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate`, `Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle`, `Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater`, `Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader`, `Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer`, `Contents/Info.plist`, `Contents/MacOS/ChatGPT`, `Contents/PlugIns/CodexDockTilePlugin.docktileplugin/Contents/MacOS/CodexDockTilePlugin`, `Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/dist/native/darwin/permissions.node`, `Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/node-hid/prebuilds/HID-darwin-arm64/node-napi-v4.node`, `Contents/Resources/app.asar.unpacked/node_modules/@worklouder/device-kit-oai/node_modules/@worklouder/wl-device-kit/node_modules/serialport/node_modules/@serialport/bindings-cpp/prebuilds/darwin-x64+arm64/node.napi.node`, `Contents/Resources/app.asar.unpacked/node_modules/better-sqlite3/build/Release/better_sqlite3.node`, `Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node`, `Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/pty.node.dSYM/Contents/Info.plist`, `Contents/Resources/app.asar.unpacked/node_modules/node-pty/build/Release/spawn-helper`, `Contents/Resources/app.asar.unpacked/node_modules/objc-js/prebuilds/darwin-arm64/node.napi.armv8.node`, `Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex`, `Contents/Resources/codex-cli/bin/codex-code-mode-host`, `Contents/Resources/codex-cli/codex-package.json`, `Contents/Resources/codex-cli/codex-path/rg`, `Contents/Resources/codex-cli/codex-resources/voice/bin/codex-voice-host`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libffi.8.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgio-2.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libglib-2.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgmodule-2.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgobject-2.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstapp-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstaudio-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstbase-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstnet-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstpbutils-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstreamer-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgstrtp-1.0.0.dylib`, `Contents/Resources/codex-cli/codex-resources/voice/lib/libgsttag-1.0.0.dylib`, …
+
+## Grouped files
+
+- document: 457 → 457 files (contents changed)
+- image: 151 → 151 files (contents changed)
+- locale: 313 → 313 files (contents changed)
+- other: 1055 → 1056 files (contents changed)
+- resource: 12 → 12 files (contents changed)
+- web-code: 1889 → 1889 files (contents changed)
+
+## Linking
+
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Codex Framework` libs: added `@executable_path/../Frameworks/Codex Framework.framework/Versions/154.0.8037.93/Codex Framework` removed `@executable_path/../Frameworks/Codex Framework.framework/Versions/154.0.8037.57/Codex Framework`
+- `Contents/Frameworks/Codex Framework.framework/Versions/<version>/Libraries/libaperitif.dylib` libs: added `@executable_path/../Frameworks/Codex Framework.framework/Versions/154.0.8037.93/Libraries/libaperitif.dylib` removed `@executable_path/../Frameworks/Codex Framework.framework/Versions/154.0.8037.57/Libraries/libaperitif.dylib`
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService` libs: added `/System/Library/Frameworks/MapKit.framework/Versions/A/MapKit`, `/usr/lib/swift/libswiftMapKit.dylib`
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService` weak_libs: added `/usr/lib/swift/libswiftMapKit.dylib`
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian` libs: added `/System/Library/Frameworks/MapKit.framework/Versions/A/MapKit`, `/usr/lib/swift/libswiftMapKit.dylib`
+- `Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian` weak_libs: added `/usr/lib/swift/libswiftMapKit.dylib`
+
+## Strings in native code
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · url
+
+- added `https://github.com/clap-rs/clap/issuesmessage` — **routine** (0.86)
+- added `https://github.com/openai/codex/discussions/7782ModelInvocationContextFileSystemPermissionsDHEECDHEUtf8BytesConciseContentItemsDeveloperAssistantReviewCompactSupersededServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMismatchactualActiveTurnNotSteerableturn_kindActiveTurnOutputSchemaMi` — **routine** (0.29)
+- added `https://github.com/openai/codex/discussions/7782TrueColorAnsi256Ansi16` — **routine** (0.56)
+- added `https://github.com/openai/codex/discussions/7782fewer` — **routine** (0.78)
+- added `https://github.com/openai/codex/discussions/7782invocationstart_timeanimations_enabledMcpToolCallCellFlowControlwindow_sizeavailableDHEECDHEMaxAttemptsMustNotBeZeroFailedToParseMaxAttemptsSectionInnerpropertiesServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMismatchactualActiveTurnNot` — **routine** (0.25)
+- added `https://github.com/openai/codex/discussions/7782log` — **routine** (0.66)
+- added `https://github.com/openai/codex/discussions/7782logmissing` — **routine** (0.59)
+- removed (6): `https://github.com/clap-rs/clap/issuesBrowserUseConfigTomlallow_history_accessdefault_origin_policyoriginsBrowserUseOriginPolicyConfigTomlaccessdownloadsuploadsfull_cdp_access`, `https://github.com/openai/codex/discussions/7782:read-onlylogfewer`, `https://github.com/openai/codex/discussions/7782ModelInvocationContextFileSystemPermissionsDHEECDHESendErrorUtf8BytesConciseContentItemsDeveloperAssistantReviewCompactServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMismatchactualActiveTurnNotSteerableturn_kindActiveTurnOutputSchemaMis`, `https://github.com/openai/codex/discussions/7782TrueColorAnsi256Ansi16overflow`, `https://github.com/openai/codex/discussions/7782goals.max_goal_token_budget`, `https://github.com/openai/codex/discussions/7782invocationstart_timeanimations_enabledMcpToolCallCellTrueColorAnsi256Ansi16FlowControlwindow_sizeavailableDHEECDHEMaxAttemptsMustNotBeZeroFailedToParseMaxAttemptsSectionInnerpropertiesServerDrainingNotIdlePendingTriggerTurnNoActiveTurnExpectedTurnMisma`
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · env
+
+- removed (1): `CODEX_VERSION`
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · flag
+
+- added `groupanimations_enabled` — **feature** (0.51)
+- removed (1): `rollout_contents`
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · codename
+
+- removed (1): `gpt-6.1-sol`
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · fs_path
+
+- removed (1): `~/7]^9`
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · config_key
+
+- removed (3): `code.module.namecode.line.number`, `image_gen.generation`, `insert_history_cell.clean.process`
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · prose
+
+- added `UntitledSingleSelectEnumSchematype_titledescriptionenum_defaultMapAccess::next_value called before next_keynotifications/subscriptions/acknowledgedexpect const string value "notifications/subscriptions/acknowledged"map with a single keystring or mapinternal error: entered unreachable code}false{fewe…`
+- added `archived_sessionsfailedcapacity overflowChoose an import sourceSelect the app whose setup you want to import. cancel`
+- added `Invalid argumentNot a typewriterMessage too longNo route to hostEALREADYENOTSOCKEMSGSIZEENETDOWNENOTCONNEPROCLIMEBADEXECEBADARCHEDOMinternal error: entered unreachable code`
+- added `DeliveredConfigTomlenterprise_managedmanaged_layersfailed to write whole bufferinternal error: entered unreachable codea Display implementation returned an error unexpectedlyreentrant initdescription() is deprecated; use Displaymid > lenattempt to join into collection with len > usize::MAXbackground…`
+- added `[ApiWebSocketHttpClientFactoryoutbound_proxy_policysystem_proxy_fallbacknetwork_policyapiotherUnavailableDestinationUnsupportedTransportReqwestDefaultRespectSystemProxyapplication network policy is unavailabledestination denied by application network policyapplication network permission was revokedt…`
+- added `event core/src/responses_retry.rs:81codex_core::responses_retryturn_idretry_delaycore/src/responses_retry.rsevent core/src/responses_retry.rs:90codex_otel.trace_safeevent.nameretry.attemptretry.delay_msretry.layerretry.operationevent core/src/responses_retry.rs:139stream connection failed; waiting t…`
+- added `struct IdClaimsvariant index 0 <= i < 17struct AuthClaimsstruct ProfileClaimsstruct AccountUserClaimsstruct StandardJwtClaimsstruct AccountUserAuthClaimsstruct UserCodeRespstruct CodeSuccessRespstruct StoredTokenstruct TokenResponsestruct BedrockApiKeyAuth`
+- added `CliPROMPTOptional user prompt to start the sessionstrict_configSTRICT_CONFIGError out when config.toml contains fields that are not recognized by this version of Codexstrict-configAPPROVAL_POLICYConfigure when the model requires human approval before executing a commandWEB_SEARCHEnable live web sear…`
+- added `Urlschemequerydescription() is deprecated; use DisplayDomaininternal error: entered unreachable code: invalid Once stateinner has gone away`
+- added `struct AppsListResponsestruct AppsReadResponsestruct variant ReviewTarget::Customstruct variant ReviewTarget::BaseBranchstruct variant ReviewTarget::Commitstruct variant ThreadStatus::Activestruct FuzzyFileSearchParamsstruct FuzzyFileSearchResultstruct ConnectorMetadatastruct ProjectRootstruct Threa…`
+- added `# AGENTS.md instructions</INSTRUCTIONS><skill></skill>raw_memories.mdrollout_summariesextensionsskipping memories startup because Codex rate limits are below the configured threshold`
+- added `regex: thread ID allocation space exhaustedassertion failed: limit > 0failed to write whole bufferinternal error: entered unreachable codemid > lenUnclosedClassInvalidRangeUnopenedAlternatesUnclosedAlternatesDanglingEscapeRegexattempt to join into collection with len > usize::MAXfailed to spawn thre…`
+- added `iselected_versionExecutionStartedExecutionOutcomeErrorfalsestruct WireToolNamestruct variant WireContentItem::InputTextstruct variant WireContentItem::InputAudiostruct variant WireContentItem::InputImagevariant identifierfield identifierstruct WireNestedToolCallconst | anyOfoneOfallOf & propertiesad…`
+- added `Reviewing approval requestReviewing Workingagent-turn-completeapproval-requestedplan-mode-promptasync-questionAgent turn completeFull resetReset your current usage limitsplugin://app://event tui/src/chatwidget/user_messages.rs:785codex_tui::chatwidget::user_messagestui/src/chatwidget/user_messages.r…`
+- added `config/batchWrite failed in TUIskills/config/write failed in TUIconfig/read failed in TUIenvironment/info failed while resolving remote project trustfailed to resolve the remote project directoryconfig/read failed while checking remote project trustproject_root_markersremote project directory is ins…`
+- added `expect const string value "sampling/createMessage"expect const string value "notifications/progress"ApiWebSocketOtherexpect const string value "notifications/cancelled"notifications/initialized`
+- added `typemcp_tool_callevent core/src/mcp_tool_call.rs:8499failed to refresh Codex Apps tools after connector auth:`
+- added `` a Display implementation returned an error unexpectedlydescription() is deprecated; use Displaymid > lencalled `Result::unwrap()` on an `Err` valuestart of range should be a character boundaryend of range should be a character boundary ``
+- added `proxy-authorizationMCP HTTP headers helper task failedMCP HTTP headers helper task was unavailableacceptconnectioncontent-lengthcontent-type`
+- added `effortEventListener was not inserted into the linked list, make sure you're not polling EventListener/listener! after it has finishedrev-parsegitGIT_OPTIONAL_LOCKS0-csafe.bareRepository=explicit/dev/nullremote-vcore.fsmonitor=falsecore.fsmonitor=trueurl::form_urlencoded::Serializer double finish`
+- added `Error()Unable to allocate another spannumber of capture groups can vary in a matcha match}{:capacity overflowFatal internal error. Please consider filing a bug report at https://github.com/clap-rs/clap/issuesmessage`
+- added `rejecting exec-server websocket listener request with Origin headerToolInputinputRequests`
+- added `accessTokenchatgptPlanTypefileSystemtokenurl_prefixesurl_prefix_from_envheaderprefixwritecredentialIdsignaturea formatting trait implementation returned an error when the underlying stream did notRUST_MIN_STACKa Display implementation returned an error unexpectedly`
+- added `innertargetvisible_targetflap_sampletile_arrivalsstarted_atmotion_modeframe_requesterSplitFlapTranscriptCellMarkdownRenderCachecachedinternal error: entered unreachable codefuture still here when dropping`
+- added `[KOtherErrorUnlessTrustedOnRequestNever<redacted>Mutex<locked>poisonedneither VISUAL nor EDITOR is setfailed to parse editor commandeditor command is empty`
+- added `failed to parse ResponseItem from output_item.doneincomplete_detailsreasonevent codex-api/src/sse/responses.rs:575error_categoryerror_lineerror_columnpayload_bytesevent codex-api/src/sse/responses.rs:545event codex-api/src/sse/responses.rs:570stream closed before response.completedFailed to parse SS…`
+- added `event core/src/realtime_conversation.rs:2486event core/src/realtime_conversation.rs:2446handoff output channel closedcodexBackground agent finished. Use the preceding [BACKEND] messages as the result.standalone handoffdropping stale realtime handoff progress updatehandoffuser audio input channel clo…`
+- added `subscriber should downcast to expected type; this is a bug!registry should have a span for the current IDOtelDataState should be a Context after starting it; this is a bug!layer should downcast to expected type; this is a bug!struct ProxyOptionalParamshellexecutorVersionproviderIduserHomeDirplatform…`
+- added `` web_search_mode~TMPDIR0.159.0-alpha.12.1https://chatgpt.com/backend-api/`approval_policy = "never"` cannot be used because requirements do not allow `sandbox_mode = "danger-full-access"`; Codex would fall back to read-only permissions with approvals disabled. Choose an `approval_policy` based on wha… ``
+- added `data did not match any variant of untagged enum McpServerEnvVarshort-descriptionThe previously provided AGENTS.md instructions no longer apply.These AGENTS.md instructions replace all previously provided AGENTS.md instructions.# AGENTS.md instructions</INSTRUCTIONS></apps_instructions></model_switch…`
+- added `failed to read current time; the clock provider may be stalledappend realtime historyMCP runtime refresh semaphore closedskipping capability root without a filesystem sandbox contextignoring selected capability root with conflicting locationignoring excess selected capability roots from ready enviro…`
+- added `failed to read current time for the sleep tool; the clock provider may be stalledfailed to read current timegitdircommondir`
+- added `struct AsyncUserInputQuestion with 2 elementsstruct UpdatePlanArgs with 2 elementsshort_descriptionicon_smallicon_largebrand_colordefault_promptresourceauthorization_serverauthorization_serversstruct ResourceServerMetadata with 4 elements`
+- added `argumentsevents/stream request failedhosted MCP event server was removedinternal error: entered unreachable code: failed to match bindMCP server tools unavailable while building tool listusing cached MCP catalog without waiting for startupomitting pending optional MCP serveromitting MCP server witho…`
+- added `$internal error: entered unreachable code: typed extension data stored an incompatible value`
+- added `0ErrorMapAccess::next_value called before next_keymap with a single keystring or map`
+- added `CODEX_AUTHAPI_BASE_URLhttps://auth.openai.com/api/accountsexternal auth is not configuredYour access token could not be refreshed. Please log out and sign in again.Skipping auth reload because no account id is available.Token data is not available.Reloading auth`
+- added `unauthorizedephemeralcolorpreviousAccountId0.159.0-alpha.12.1failed to write whole buffera Display implementation returned an error unexpectedlydescription() is deprecated; use Displaymid > lenattempt to join into collection with len > usize::MAXtracing::span`
+- added `max_output_tokensEventListener was not inserted into the linked list, make sure you're not polling EventListener/listener! after it has finishedtag already taken`
+- added `send_input send message existing agent subagent follow up interrupt redirect queue targetclose_agent close shutdown stop agent subagent thread status targetfollowup_taskexecutor MCP discovery timed outurlbearer_token_env_var`
+- added `assertion failed: self.is_char_boundary(idx)cannot remove a char from the end of a stringfailed to write whole bufferwindow size must be non-zeroFromUtf8ErrorbyteserrorEmptyInvalidfalseErroroverflow when adding durationsInterrupted`
+- added `Mcp-Session-Idlegacy MCP endpoint does not support server/discovermessagemissing-content-typetimed out waiting for MCP event stream response headers`
+- added `8overflow when subtracting remaining buffer size from inner stream positionMinimalLowMediumXHighMaxUltraPersistentCustomTo work without the background server, rerun the same command with --no-daemon (including resume or fork and its arguments).linesOut of bounds accessChatGptemailApiKeyserialize_val…`
+- added `MCP Clientclient_secret was provided without a pre-registered client_id; pair with_client_secret with with_preregistered_client`
+- added `This Mermaid diagram uses features the terminal renderer doesn't support.This Mermaid diagram exceeds the terminal renderer's size limits.This Mermaid diagram doesn't fit the current terminal width.event tui/src/lib.rs:1244codex_tuitui/src/lib.rsevent tui/src/lib.rs:1413event tui/src/lib.rs:1162[att…`
+- added `environment registry returned incomplete Noise connection dataenvironment registry returned a different environment idenvironment_idregistration_idevent exec-server/src/remote/direct.rs:163codex_exec_server::remote::directexec-server/src/remote/direct.rsevent exec-server/src/remote/direct.rs:219code…`
+- added `extendsworkspace_rootsfilesystemnetworkFileSystemAccessModewritedenydata did not match any variant of untagged enum FilesystemPermissionTomlglob_scan_max_depth`
+- added `a Display implementation returned an error unexpectedlyinvalid tagCryptoPkcs8PointEncodingVersionAlgorithmParametersMissingKeyMalformedOidUnknownoidLengthFailedFileNotFoundIncompleteexpected_lenactual_lenIotagNoncanonicalOidMalformedSetDuplicateSetOrderingOverlengthPemReaderTagModeUnknownTagUnexpect…`
+- added `toolsstruct WaitTargetstruct FileDescriptor with 2 elementsskillsstruct CloudToml with 1 elementmax_goal_token_budgetstruct GoalsToml with 1 elementweb_searchexperimental_request_user_inputupdate_planstruct ToolsToml with 3 elementsstateenabled_toolswritable_rootsnetwork_accessexclude_tmpdir_env_var…`
+- added `` Fatal internal error. Please consider filing a bug report at https://github.com/clap-rs/clap/issues`Extensions` tracks values by typeBrowserUseConfigTomlallow_history_accessdefault_origin_policyoriginsBrowserUseOriginPolicyConfigTomlaccessdownloadsuploadsfull_cdp_access ``
+- added `too many temporary files existRelayResetRelayResumePeek polled after completion`
+- added `Error loading tasksTask detailsModel: BranchPromptNo prompt available.Last message`
+- added `categoriessubCategoriesseoDescriptionscreenshotsversionIdversionNotesfirstPartyRequiresInstallshowInComposerWhenUnlinkedAppScreenshoturlfileIdfile_iduserPromptuser_promptMASQUE proxy resolved to no addresses0.0.0.0:0[::]:0QUIC handshake timed out`
+- added `configRequirements/read failed during TUI bootstrapmodel/list failed during TUI bootstrapdynamictoolsdynamic toolinputschemaapp server does not support TUI dynamic tools; starting without themmcp_servers.codex_tuioptional collaborationMode/list discovery unavailable*failed to load startup hook revie…`
+- added `[LocalNode::with ensures it is setUnavailableDestinationRevokedUnsupportedTransportContentItemKindno more values in next_value_seed, internal error in ValueDeserializer`
+- added `deniedescalatedcommand failed; retry without sandbox?timed_outsignalevent core/src/tools/multi_agent_tool.rs:47codex_core::tools::multi_agent_toolreasoncore/src/tools/multi_agent_tool.rsInvalid catalog tool parameters; using bundled parametersschema omits an encrypted parameterenvironment network po…`
+- added `Arc counter overflowUtf8Errorvalid_up_toerror_lenErrorParseIntErrorEmptyInvalidDigitPosOverflowNegOverflowInsufficientScopeErrorwww_authenticate_headerrequired_scope[internal exception] blocking task ran twice.PolicyRequestRouteBuildUnsupportedRedirectSchemeTimeoutShared future polled again after co…`
+- added `deregistering event source from pollermio::poll_chunk size must be non-zerofailed to write whole bufferfailed to write the buffered datainternal error: entered unreachable code: invalid Once statea Display implementation returned an error unexpectedlyreentrant init`
+- added `thread/read failed during TUI session lookupevent tui/src/app_server_session.rs:549codex_tui::app_server_sessiontui/src/app_server_session.rsfailed to persist task-reference capabilityevent tui/src/app_server_session.rs:1008event tui/src/app_server_session.rs:1080event tui/src/app_server_session.rs:…`
+- added `` internal error: entered unreachable code: the empty-scope attempt always returnsfailed to listen for Ctrl-COAuth login cancelled`codex queue` does not support image attachmentsunder developmentexperimentaloverflowkeep-aliveHTTP/1.1 100 Continue ``
+- added `User verification is required. Please respond in the app.<user_verification_notice></user_verification_notice>model_switch.instructions<model_switch></model_switch>`
+- added `provider OAuth token response omitted its access tokenprovider OAuth token response returned a zero lifetimeprovider OAuth token response returned an unsupported token typeprovider OAuth token lifetime is too largeprovider OAuth token expiry overflows<invalid-url>provider OAuth token response is inv…`
+- added `parse eof{role=server}{role=client}maybe_notify; read eofmaybe_notify; read_from_io blockedshut down IO complete`
+- added `reverse JSONL scan end is past the fileinterrupt_agent<permissions instructions></permissions instructions>generic.developer_instructionsJSON number out of rangenot a JSON numberhooks.additional_context`
+- added `` next_value_seed called before next_key_seedcall_idRequestPermissionsEvent$__serde_spanned_private_start$__serde_spanned_private_end$__serde_spanned_private_valueAttempted to create a NULL object.struct variantnewtype variantBUG: we do not expose the `.close()` method ``
+- added `Corrupt Adobe App14 segmentToo short of a length for App14 segmentToo small APP14 lengthInvalid Huffman length in imageBogus Huffman table definitionEncountered Huffman table with excessive length in DHTNumber of components cannot be zero.Two Start of Frame MarkersInvalid DQT length. Length should b…`
+- added `trust_levelcredential_brokerenablednetwork_proxycredentialsenvurl_prefix_from_env.codexconfig.tomlhooksfeature_requirementsexperimental_networkManaged config load task was cancelledFailed to load managed configManaged requirements load task was cancelledFailed to load managed requirements`
+- added `deregistering event source from pollermio::pollfailed to write whole bufferinternal error: entered unreachable code`
+- added `0.159.0-alpha.12.1codex-appcodex-climacoshttps://chat.openai.comhttps://chat.openai.com/backend-apihttps://chat.openai.com/codexhttps://chat.openai.com/backend-api/codexhttps://chatgpt-staging.comhttps://chatgpt-staging.com/backend-apihttps://chatgpt-staging.com/codexhttps://chatgpt-staging.com/back…`
+- added `unsupported OpenAI elicitation modeunsupported MCP tool input requestmodeinvalid MCP tool input request2026-07-282025-06-18`
+- added `keysRSAHS256HS384HS512ES256ES384RS256RS384RS512PS256PS384PS512EdDSARSA1_5RSA-OAEP-256octP-256P-384P-521Ed25519usekey_opsalgkidx5ux5cx5tOKPnekdata did not match any variant of untagged enum AlgorithmParametersECLockTimeoutSupersededNOT_AVAILABLEAVAILABLEINSTALLED_BY_DEFAULTON_INSTALLON_USEdeveloper<c…`
+- added `OkErrCallToolResultstructured_contentSendersharedSharedis_closedref_count_rxImageGenerationSleepWebSearchvalue is missingexpected table with exactly 1 entry, found empty tablePoisonError$__toml_private_datetimeAcquireErrorfatal runtime error: thread result panicked on drop, aborting`
+- added `` }assertion failed: new_left_len <= CAPACITYbad huffman valueICC profile too largeBuffer length in `ImageBuffer::new` overflows usizefilled must not become larger than initializedNo more data but no end marker detectedtracing::span ``
+- added `codex.exec_server.remote.noise.websocket_connectinitializefs/copy requires recursive: true when sourcePath is a directoryfs/copy cannot copy a directory to itself or one of its descendantsfs/copy only supports regular files, directories, and symlinksconfig.tomlfs/readBlock.app.jsonagents/openai.yaml…`
+- added `refresh_tokensecretsgateway_oauth.locktimed out waiting for provider OAuth credentialsagent identity registration attempt failed; retryingCODEX_AGENT_IDENTITY_JWKS_BASE_URL`
+- added `connection error PROTOCOL_ERROR -- read_preface: invalid preface;TokenNotLoadedInvalidConfigurationProviderErrorJSONRPCErrorErrorRestrictedEnabledserialize_value called before serialize_key`
+- added `approval_policy = "untrusted" is no longer supported; remove this settingQuicksilverTranscription`
+- added `event file-watcher/src/lib.rs:670codex_file_watchermessagefile-watcher/src/lib.rsfile watcher loop skipped: no Tokio runtime availableevent file-watcher/src/lib.rs:663event file-watcher/src/lib.rs:604event file-watcher/src/lib.rs:591Arc counter overflowJoinHandle polled after completion`
+- added `exitcommandtimeout_mscwdenvpermission_profile  ruleswindowsall branches are disabled and there is no else branch`
+- added `` a scoped thread panickedcalled `Result::unwrap()` on an `Err` valueBase64CharacterEncodingLabelLengthPreEncapsulationBoundaryPostEncapsulationBoundaryUnexpectedTypeLabelInvalid UTF8Attempted to create a NULL object. ``
+- … 103 more added
+- removed (181): `(prose 001485affc)`, `(prose 00eba8f82e)`, `(prose 01724762a9)`, `(prose 023fc260d5)`, `(prose 05707bf462)`, `(prose 06663da0ac)`, `(prose 0ae111a459)`, `(prose 0b4ce6fb21)`, `(prose 0ecacf068b)`, `(prose 1091d24f4d)`, `(prose 1096aa69fa)`, `(prose 113b5d51b7)`, `(prose 1216e7429f)`, `(prose 13d8e41a3f)`, `(prose 1526c8303a)`, `(prose 155fa4be5b)`, `(prose 1587723ac8)`, `(prose 16ae240b90)`, `(prose 18e031d348)`, `(prose 1bdeb3a40c)`, `(prose 1d31f8ea4d)`, `(prose 200475c905)`, `(prose 204c75727b)`, `(prose 20bc86b5eb)`, `(prose 212467dc93)`, `(prose 2399f58f5a)`, `(prose 23a90323c7)`, `(prose 2617d1519a)`, `(prose 268598645a)`, `(prose 2804879b94)`, …
+
+### Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex · credential
+
+- added `openai-key 2838701a2678` — **security** (0.89)
+- removed (1): `openai-key d4a8311a0e38`
+
+### Contents/Resources/codex-cli/bin/codex-code-mode-host · config_key
+
+- removed (1): `n.a15j7`
+
+### Contents/Resources/codex-cli/bin/codex-code-mode-host · prose
+
+- added `,fatal runtime error: thread local panicked on drop, aborting`
+- added `page must have been allocated to insert!a shard can only be inserted by the thread that owns it, this is a bug!a sequencefailed to read code-mode gRPC listen addressfailed to publish code-mode gRPC listen addresscode-mode gRPC TCP listener failedcode-mode-hostcodex-code-mode-host0.159.0-alpha.12.1`
+- added `failed to read OTEL trace websocket listen address127.0.0.1:0failed to bind loopback OTLP trace receiverfailed to read OTLP trace receiver listen address/v1/traces/OTEL trace websocket listener failedOTLP trace receiver failedOTEL trace websocket client connectedOTEL trace websocket writer failedOTE…`
+- added `[ApiWebSocketHttpClientFactoryoutbound_proxy_policysystem_proxy_fallbacknetwork_policyapiotherReqwestDefaultRespectSystemProxyapplication network policy is unavailabledestination denied by application network policyapplication network permission was revokedthis SDK transport is disabled by applicati…`
+- added `failed to write code-mode host messageall branches are disabled and there is no else branchfailed to read code-mode gRPC listen addressfailed to publish code-mode gRPC listen addresscode-mode gRPC TCP listener failedtimed out shutting down code-mode host statetimed out supervising code-mode writer t…`
+- removed (5): `(prose 30357ec9f0)`, `(prose 6d96879223)`, `(prose 7f3dcbe01a)`, `(prose aa4678e811)`, `(prose df4d08a02b)`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService · env
+
+- added `CODEX_APP_SETTINGS_TAB_CODE_REVIEW` — **feature** (0.9)
+- added `CODEX_APP_SETTINGS_TAB_CONSUMER_VIEW` — **feature** (0.7)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService · flag
+
+- added `features_enabled` — **feature** (0.58)
+- added `has_annotation_features` — **feature** (0.87)
+- added `net.waterfox.nightly` — **feature** (0.74)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService · sql
+
+- added `SELECT DISTINCT concat(store.` — **feature** (0.23)
+- added `SELECT ROWID, entity_type, type, status, role, identity_id, owner_id, email, phone_number, is_self, comment, strftime(` — **security** (0.09)
+- added `SELECT ROWID, name, notes, default_alarm_offset, type, disabled, external_id, persistent_id, display_order, owner_name FROM` — **feature** (0.42)
+- added `SELECT ROWID, store_id, title, flags, color, symbolic_color_name, color_is_display, supported_entity_types, external_id, display_order, uuid, shared_owner_name, notes, strftime(` — **feature** (0.39)
+- added `SELECT ROWID, title, address, latitude, longitude, reference_frame, radius FROM` — **feature** (0.64)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService · fs_path
+
+- added `/Applications/Codex.app` — **routine** (0.42)
+- removed (1): `/Applications/Codex.app/Contents/Resources/codex`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService · config_key
+
+- added `group.com.apple.calendar` — **feature** (0.46)
+- added `item.self_attendee_id` — **feature** (0.49)
+- added `net.imput.helium` — **feature** (0.62)
+- added `net.librewolf.librewolf` — **feature** (0.66)
+- added `net.waterfox.waterfox` — **feature** (0.8)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/MacOS/SkyComputerUseService · prose
+
+- added `events match this request. No partial results were returned. Try a shorter date range or fewer calendars.`
+- added `Get one event occurrence by id. Use this to retrieve notes omitted by list_events. If the intended event's id is already available, use it directly.`
+- added `List calendars. Returns each calendar's id for reuse with list_events, create_event, and update_event.`
+- added `The read approval response was invalid. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.`
+- added `Update an event occurrence by id. Omitted fields remain unchanged. Clear title, location, notes, or URL with an empty string, and attendees with an empty list. Returns the updated event; use its returned id for subsequent operations. Changes may notify attendees.`
+- added `The next_cursor returned by the preceding list_events response. Use it unchanged to retrieve the next page, with the same start_date, end_date, and calendar_ids values.`
+- added `For recurring events, thisEvent affects only the specified occurrence; futureEvents affects the specified occurrence and all following occurrences.`
+- added `Event start as an ISO-8601 date-time with a timezone offset.`
+- added `WHEN loc.title IS NOT NULL AND loc.address IS NOT NULL THEN loc.title || ', ' || loc.address`
+- added `cursor version is unsupported; call list_events again without a cursor`
+- added `Messages returned an invalid read response. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.`
+- added `Attendees with email addresses. Names are optional and are not resolved to email addresses. On update, replaces the attendees.`
+- added `Optional calendar IDs. When nonempty, returns only events from those calendars.`
+- added `Event end as an ISO-8601 date-time. If omitted or earlier than start_date, uses the Calendar app's default event duration.`
+- added `The complete id object from an event returned by list_events, get_event, create_event, or update_event. Use it unchanged.`
+- added `RFC 2445 recurrence rule without an RRULE prefix, such as FREQ=WEEKLY;COUNT=3. Empty or invalid rules are ignored.`
+- added `Create an event. Unless the user requests a specific calendar, omit calendar_id to use their default calendar. Returns the created event. Including attendees may send invitations.`
+- added `End of the requested range as an ISO-8601 date-time. Must not precede start_date or be more than 31 calendar days later. Equal dates query that day in the Mac's local timezone.`
+- added `Opaque continuation for the next event page. Omitted on the final page.`
+- added `Event end as an ISO-8601 date-time. If omitted when start_date is provided, preserves the original duration.`
+- added `Could not determine the calendar day for the requested date.`
+- added `Delete an event occurrence by id. Deletion may notify attendees.`
+- added `Tools for working with calendars and events in the macOS Calendar app.`
+- added `cursor is malformed; use next_cursor returned by list_events`
+- removed (4): `(prose 18dc214dbf)`, `(prose 49c874eca9)`, `(prose a7b8121253)`, `(prose d43c659848)`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian · env
+
+- added `CODEX_APP_SETTINGS_TAB_CODE_REVIEW` — **feature** (0.81)
+- added `CODEX_APP_SETTINGS_TAB_CONSUMER_VIEW` — **feature** (0.63)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian · flag
+
+- added `features_enabled` — **feature** (0.43)
+- added `has_annotation_features` — **feature** (0.73)
+- added `net.waterfox.nightly` — **feature** (0.42)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian · sql
+
+- added `SELECT DISTINCT concat(store.` — **routine** (0.08)
+- added `SELECT ROWID, entity_type, type, status, role, identity_id, owner_id, email, phone_number, is_self, comment, strftime(` — **security** (0.19)
+- added `SELECT ROWID, name, notes, default_alarm_offset, type, disabled, external_id, persistent_id, display_order, owner_name FROM` — **routine** (0.26)
+- added `SELECT ROWID, store_id, title, flags, color, symbolic_color_name, color_is_display, supported_entity_types, external_id, display_order, uuid, shared_owner_name, notes, strftime(` — **routine** (0.27)
+- added `SELECT ROWID, title, address, latitude, longitude, reference_frame, radius FROM` — **both** (0.16)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian · fs_path
+
+- added `/Applications/Codex.app` — **routine** (0.25)
+- removed (1): `/Applications/Codex.app/Contents/Resources/codex`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian · config_key
+
+- added `group.com.apple.calendar` — **both** (0.24)
+- added `item.self_attendee_id` — **feature** (0.25)
+- added `net.imput.helium` — **feature** (0.41)
+- added `net.librewolf.librewolf`
+- added `net.waterfox.waterfox`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/CUALockScreenGuardian.app/Contents/MacOS/CUALockScreenGuardian · prose
+
+- added `events match this request. No partial results were returned. Try a shorter date range or fewer calendars.`
+- added `Get one event occurrence by id. Use this to retrieve notes omitted by list_events. If the intended event's id is already available, use it directly.`
+- added `List calendars. Returns each calendar's id for reuse with list_events, create_event, and update_event.`
+- added `The read approval response was invalid. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.`
+- added `Update an event occurrence by id. Omitted fields remain unchanged. Clear title, location, notes, or URL with an empty string, and attendees with an empty list. Returns the updated event; use its returned id for subsequent operations. Changes may notify attendees.`
+- added `The next_cursor returned by the preceding list_events response. Use it unchanged to retrieve the next page, with the same start_date, end_date, and calendar_ids values.`
+- added `For recurring events, thisEvent affects only the specified occurrence; futureEvents affects the specified occurrence and all following occurrences.`
+- added `Event start as an ISO-8601 date-time with a timezone offset.`
+- added `WHEN loc.title IS NOT NULL AND loc.address IS NOT NULL THEN loc.title || ', ' || loc.address`
+- added `cursor version is unsupported; call list_events again without a cursor`
+- added `Messages returned an invalid read response. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.`
+- added `Attendees with email addresses. Names are optional and are not resolved to email addresses. On update, replaces the attendees.`
+- added `Optional calendar IDs. When nonempty, returns only events from those calendars.`
+- added `Event end as an ISO-8601 date-time. If omitted or earlier than start_date, uses the Calendar app's default event duration.`
+- added `The complete id object from an event returned by list_events, get_event, create_event, or update_event. Use it unchanged.`
+- added `RFC 2445 recurrence rule without an RRULE prefix, such as FREQ=WEEKLY;COUNT=3. Empty or invalid rules are ignored.`
+- added `Create an event. Unless the user requests a specific calendar, omit calendar_id to use their default calendar. Returns the created event. Including attendees may send invitations.`
+- added `End of the requested range as an ISO-8601 date-time. Must not precede start_date or be more than 31 calendar days later. Equal dates query that day in the Mac's local timezone.`
+- added `Opaque continuation for the next event page. Omitted on the final page.`
+- added `Event end as an ISO-8601 date-time. If omitted when start_date is provided, preserves the original duration.`
+- added `Could not determine the calendar day for the requested date.`
+- added `Delete an event occurrence by id. Deletion may notify attendees.`
+- added `Tools for working with calendars and events in the macOS Calendar app.`
+- added `cursor is malformed; use next_cursor returned by list_events`
+- removed (4): `(prose 18dc214dbf)`, `(prose 49c874eca9)`, `(prose a7b8121253)`, `(prose d43c659848)`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient · env
+
+- added `CODEX_APP_SETTINGS_TAB_CODE_REVIEW` — **feature** (0.9)
+- added `CODEX_APP_SETTINGS_TAB_CONSUMER_VIEW` — **feature** (0.76)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient · flag
+
+- added `features_enabled` — **feature** (0.65)
+- added `has_annotation_features` — **feature** (0.92)
+- added `net.waterfox.nightly` — **feature** (0.6)
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient · fs_path
+
+- added `/Applications/Codex.app` — **routine** (0.31)
+- added `~/ZXFp|` — **routine** (0.38)
+- removed (1): `/Applications/Codex.app/Contents/Resources/codex`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient · config_key
+
+- added `net.imput.helium`
+- added `net.librewolf.librewolf`
+- added `net.waterfox.waterfox`
+
+### Contents/Resources/cua_node/lib/node_modules/@oai/sky/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient · prose
+
+- added `Get one event occurrence by id. Use this to retrieve notes omitted by list_events. If the intended event's id is already available, use it directly.`
+- added `List calendars. Returns each calendar's id for reuse with list_events, create_event, and update_event.`
+- added `The read approval response was invalid. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.`
+- added `Update an event occurrence by id. Omitted fields remain unchanged. Clear title, location, notes, or URL with an empty string, and attendees with an empty list. Returns the updated event; use its returned id for subsequent operations. Changes may notify attendees.`
+- added `The next_cursor returned by the preceding list_events response. Use it unchanged to retrieve the next page, with the same start_date, end_date, and calendar_ids values.`
+- added `For recurring events, thisEvent affects only the specified occurrence; futureEvents affects the specified occurrence and all following occurrences.`
+- added `Event start as an ISO-8601 date-time with a timezone offset.`
+- added `Messages returned an invalid read response. No content was returned. Do not ask the user to approve access or retry. Do not fall back to Computer Use or other tools to access the withheld content unless the user explicitly requests that alternative.`
+- added `Attendees with email addresses. Names are optional and are not resolved to email addresses. On update, replaces the attendees.`
+- added `Optional calendar IDs. When nonempty, returns only events from those calendars.`
+- added `Event end as an ISO-8601 date-time. If omitted or earlier than start_date, uses the Calendar app's default event duration.`
+- added `The complete id object from an event returned by list_events, get_event, create_event, or update_event. Use it unchanged.`
+- added `RFC 2445 recurrence rule without an RRULE prefix, such as FREQ=WEEKLY;COUNT=3. Empty or invalid rules are ignored.`
+- added `Create an event. Unless the user requests a specific calendar, omit calendar_id to use their default calendar. Returns the created event. Including attendees may send invitations.`
+- added `End of the requested range as an ISO-8601 date-time. Must not precede start_date or be more than 31 calendar days later. Equal dates query that day in the Mac's local timezone.`
+- added `Opaque continuation for the next event page. Omitted on the final page.`
+- added `Event end as an ISO-8601 date-time. If omitted when start_date is provided, preserves the original duration.`
+- added `Delete an event occurrence by id. Deletion may notify attendees.`
+- added `Tools for working with calendars and events in the macOS Calendar app.`
+- removed (4): `(prose 18dc214dbf)`, `(prose 49c874eca9)`, `(prose a7b8121253)`, `(prose d43c659848)`
+
+### Contents/Resources/native/browser-use-peer-authorization.node · host
+
+- added `com.openai.codex.dev` — **security** (0.32)
+
+### Contents/Resources/native/browser-use-peer-authorization.node · flag
+
+- added `com.openai.codex.alpha` — **feature** (0.52)
+- added `com.openai.codex.beta` — **feature** (0.69)
+- added `com.openai.codex.nightly` — **feature** (0.55)
+
+### Contents/Resources/native/browser-use-peer-authorization.node · config_key
+
+- added `com.openai.codex` — **security** (0.32)
+- added `com.openai.codex.agent`
+- added `com.openai.codex.cli`
+- added `com.openai.codex.runtime`
+
+## Other
+
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/app-protocol-D7MWcAkM.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/application-network-startup-DN7Ktmlk.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/bootstrap-yYZ8rgHq.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/build-flavor-D-8k-LBe.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/capture-Dhob6HoY.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/desktop-open-path-queue-QUtlC_Hq.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/dist-C8Kg8cNQ.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/main-C3nRcJ3D.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/record-aeon-assistant-message-delivery-yxtzp_x4.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/service-B1KkQ8AD.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/skills-TvgzL2bh.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/src-CiqPSNHo.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/startup-requirements-BuflV7ux.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/upload-Bf6qzLBK.js
+- `Contents/Resources/app.asar`: New app.asar file: .vite/build/windows-file-copy-CQuz6P0L.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/app-protocol-DaeIspKt.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/application-network-startup-D74LEWDz.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/bootstrap-B7ariqxX.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/build-flavor-IWwoo-v9.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/capture-Co6M_NLD.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/desktop-open-path-queue-BHXvnlW9.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/dist-DIN9p4ot.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/main-BbeJ4AAR.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/record-aeon-assistant-message-delivery-CNVrpbk0.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/service-CfoPTlYu.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/skills-dBJL9FsS.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/src-ghAWefM3.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/startup-requirements-Da3KfG8r.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/upload-BDaLOHBf.js
+- `Contents/Resources/app.asar`: Removed app.asar file: .vite/build/windows-file-copy-BC90BUDy.js
+
+# Binwalk: ChatGPT desktop 26.930.21537 (12776)
+
+## ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex
+
+Changed payloads (1):
+
+- `0xB05F11D` copyright, 12,093 bytes, SHA-256 `f7d09f8101b0` (was `0xB06A151` copyright, 12,051 bytes, SHA-256 `93a58399b402`)
+
+## ChatGPT.app/Contents/Resources/native/usb_webauthn.node
+
+Changed payloads (1):
+
+- `0x28A088` aes_sbox, 2,158,904 bytes, SHA-256 `82d7d1d301d0` (was `0x28A088` aes_sbox, 2,158,904 bytes, SHA-256 `603875316683`)
+
+## ChatGPT.app/Contents/Resources/app.asar
+
+New payloads (1):
+
+- `0x1DD1B836` copyright, 3,964,212 bytes, SHA-256 `135dac2e1880`
+
+Changed payloads (28):
+
+- `0x12B39` copyright, 5,703,705 bytes, SHA-256 `e04fca7d063e` (was `0x12B39` copyright, 20,278,135 bytes, SHA-256 `24b48edf9bf1`)
+- `0x5A37AE` copyright, 14,473,566 bytes, SHA-256 `368a2f7bff84` (was `0x1D81F3D` copyright, 2,669,128 bytes, SHA-256 `7400f9e1250b`)
+- `0x1D8BBCD` copyright, 2,669,141 bytes, SHA-256 `577b5cef7155` (was `0x5565905` copyright, 3,663,150 bytes, SHA-256 `41833917cb58`)
+- `0x3C85474` svg, 155 bytes, SHA-256 `279000b1710b` (was `0x3C81D86` svg, 155 bytes, SHA-256 `b38f723db72e`)
+- `0x3C85820` svg, 205 bytes, SHA-256 `a343988aedad` (was `0x3C82132` svg, 205 bytes, SHA-256 `be71a68797e9`)
+- `0x5556A4B` copyright, 3,815,299 bytes, SHA-256 `5c01f7410de9` (was `0x6539F83` copyright, 3,991,086 bytes, SHA-256 `85e70bf384bd`)
+- `0x655345B` copyright, 3,992,104 bytes, SHA-256 `bef424e5d970` (was `0x7DDFF66` copyright, 570,022 bytes, SHA-256 `1111fb2bce2e`)
+- `0x7DFF1FC` copyright, 570,022 bytes, SHA-256 `b7492d716cd6` (was `0xC0CC995` copyright, 2,945,059 bytes, SHA-256 `a7913878fa05`)
+- `0x96B61CA` svg, 59,802 bytes, SHA-256 `f07e7eda38c4` (was `0x40428DF` svg, 140 bytes, SHA-256 `86d49f656286`)
+- `0x973428E` svg, 375 bytes, SHA-256 `c673b26613fd` (was `0x969891C` svg, 515,614 bytes, SHA-256 `dbea93517c1b`)
+- `0xBD19549` svg, 38,426 bytes, SHA-256 `86f245c13010` (was `0xBC1FBF0` svg, 38,426 bytes, SHA-256 `5ddc181c6c77`)
+- `0xC1C67DF` copyright, 2,945,061 bytes, SHA-256 `21d2d2cfbf8b` (was `0xCF1269D` copyright, 4,965,393 bytes, SHA-256 `e2ac2c67c515`)
+- `0xD00CD5E` copyright, 4,966,838 bytes, SHA-256 `2a7b21299e5d` (was `0x128BC0BD` copyright, 5,707,612 bytes, SHA-256 `9133fa120ac9`)
+- `0x129C3D56` copyright, 5,708,459 bytes, SHA-256 `fd1eabacc12c` (was `0x13081385` copyright, 3,625,786 bytes, SHA-256 `88476255c42e`)
+- `0x1318964F` copyright, 3,625,777 bytes, SHA-256 `3ba7296bacdc` (was `0x14055151` copyright, 206,960 bytes, SHA-256 `4c06d29acecc`)
+- `0x14159E18` copyright, 208,050 bytes, SHA-256 `1077b52cd07a` (was `0x157105BA` copyright, 3,155,530 bytes, SHA-256 `bd8e347d3cb4`)
+- `0x14BF479E` png, 1,153 bytes, SHA-256 `4efc0fcd1668` (was `0x14B0F577` png, 1,662 bytes, SHA-256 `5ace55df7499`)
+- `0x14C05D15` png, 1,934 bytes, SHA-256 `a987f74d5fbc` (was `0x14B2266B` png, 7,637 bytes, SHA-256 `4afecf5269f5`)
+- `0x14C1343B` png, 7,640 bytes, SHA-256 `32e53e3a0186` (was `0x14B3772D` png, 6,227 bytes, SHA-256 `44152edec0a9`)
+- `0x14C1E6F6` png, 6,223 bytes, SHA-256 `f69aa24332d4` (was `0x14B3A121` png, 6,699 bytes, SHA-256 `11e4e1ef10f9`)
+- `0x14C1FF45` png, 1,665 bytes, SHA-256 `1cbc7dd0fb3f` (was `0x14B4B111` png, 1,156 bytes, SHA-256 `dead01de6cfc`)
+- `0x14C26C12` png, 6,691 bytes, SHA-256 `d3cba4eca7c3` (was `0x14B4D39E` png, 1,934 bytes, SHA-256 `e3afa8378e65`)
+- `0x15F5C6F2` copyright, 3,181,334 bytes, SHA-256 `b63566654ad4` (was `0x15D5F271` copyright, 1,994,616 bytes, SHA-256 `96f935967376`)
+- `0x165D3F30` copyright, 1,859,331 bytes, SHA-256 `01509ed80214` (was `0x16C00BDD` copyright, 4,781,756 bytes, SHA-256 `b583251dd629`)
+- `0x173BEF16` copyright, 4,782,290 bytes, SHA-256 `98eebea0360e` (was `0x180ABDF8` copyright, 2,021,930 bytes, SHA-256 `7aaa4b6ca0c3`)
+- `0x1882C7FA` copyright, 2,022,556 bytes, SHA-256 `e0ed5eaf1a24` (was `0x1AB97756` copyright, 1,948,108 bytes, SHA-256 `a56b79c14b16`)
+- `0x1B376DFE` copyright, 1,948,108 bytes, SHA-256 `faf034570f53` (was `0x1C81F1CF` copyright, 3,033,997 bytes, SHA-256 `8569f4745c95`)
+- `0x1D05A0AC` copyright, 2,872,454 bytes, SHA-256 `66708e1a0cd6` (was `0x1D508088` copyright, 3,962,390 bytes, SHA-256 `69e1356fb48b`)
+
 ## 2026-10-01 · ChatGPT desktop 26.928.21956 (12404), Codex CLI codex-cli 0.159.2
 
 # Codex refresh diff
