@@ -29,7 +29,7 @@ The [official Dev Day recap](https://openai.com/index/devday-2026-recap/) provid
 
 ## What was refreshed
 
-The configuration reference now contains 1,148 entries; the environment-variable reference contains 340. The desktop manifest contains 71 tools. The five ChatGPT prompt pages publish 95 items. CLI prompt/skill verification is in [the compiled CLI inventory](https://harness.dtmont.com/codex/codex-cli-prompts/). Exact spans, assembled templates, path-only evidence and unavailable anchors retain separate labels.
+The configuration reference now contains 1,148 entries; the environment-variable reference contains 340. The desktop manifest contains 71 tools. The five ChatGPT prompt pages publish 96 items. CLI prompt/skill verification is in [the compiled CLI inventory](https://harness.dtmont.com/codex/codex-cli-prompts/). Exact spans, assembled templates, path-only evidence and unavailable anchors retain separate labels.
 
 The [Dev Day surface coverage ledger](https://harness.dtmont.com/codex/devday-surface-coverage/) accounts for all 25 structural candidates and maps them to existing coverage, added evidence, incidental changes or unresolved implementation details. Jev's 8 positive classifications are review signals; 5 are endpoints. These counts do not establish newly active features. The [package scan](https://harness.dtmont.com/codex/package-scan/) and [binary scan](https://harness.dtmont.com/codex/binwalk-scan/) preserve their own build provenance and experimental-method boundaries.
 

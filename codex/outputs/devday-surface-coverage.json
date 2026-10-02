@@ -8,11 +8,11 @@
   },
   "scan_baseline": true,
   "baseline_source": {
-    "app_version": "26.928.21956",
-    "app_build": "12404",
-    "asar_sha256": "3bda98f2265ad23677dfe0163d1cc7855beade6bef11d27f830f6663d7658406"
+    "app_version": "26.930.21537",
+    "app_build": "12776",
+    "asar_sha256": "c662897ab25e819cd97a7981cf34d10eefcb9243095d527d27adff71bc18af0a"
   },
-  "review_universe": "current scan",
+  "review_universe": "retained same-build review",
   "scope": {
     "candidates": 25,
     "classifier_positive": 8,
@@ -579,22 +579,7 @@
       "candidate_ids": []
     }
   ],
-  "removed": [
-    {
-      "kind": "asset_families",
-      "name": "webview/assets/runtime.js",
-      "change": "removed",
-      "count": 0,
-      "previous": 5
-    },
-    {
-      "kind": "endpoints",
-      "name": "/pages/{page_id}/access-policy",
-      "change": "removed",
-      "count": 0,
-      "previous": 1
-    }
-  ],
+  "removed": [],
   "removal_qualification": "Absent from the current structural inventory relative to the scan baseline. This does not establish feature disablement or server-side removal.",
   "candidates": [
     {

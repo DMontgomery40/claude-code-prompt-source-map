@@ -10,7 +10,7 @@
     "binary_sha256": "1180e2d56ea06ec583092acd933345685da3441cb1769a436d76dbf320613e75"
   },
   "catalog": {
-    "fetched_at": "2026-10-02T18:57:22.082577Z",
+    "fetched_at": "2026-10-02T19:08:22.045259Z",
     "client_version": "0.159.0",
     "models": [
       "gpt-6.1-sol",

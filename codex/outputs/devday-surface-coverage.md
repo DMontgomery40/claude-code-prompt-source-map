@@ -2,7 +2,7 @@
 
 A complete disposition ledger of 25 structural candidates against the refreshed prompt, tool, plugin and learning-block records. “Dev Day” names the review, not an independently established launch date. Source: shipped app.asar, SHA-256 `c662897ab25e819cd97a7981cf34d10eefcb9243095d527d27adff71bc18af0a`.
 
-The classifier labelled 8 candidates positive and 17 negative; 0 are unlabelled. The reviewed universe comes from the current scan. Neither its score nor a new inventory entry establishes a newly launched or enabled feature. Endpoint paths are client-side evidence, not a public API contract. “Already captured” means a namespace has at least one exact message ID or instruction text in a published record (absence/exclusion lists are ignored); it does not certify that every message in that namespace is model-facing or fully extracted.
+The classifier labelled 8 candidates positive and 17 negative; 0 are unlabelled. The reviewed universe comes from the retained same-build review. Neither its score nor a new inventory entry establishes a newly launched or enabled feature. Endpoint paths are client-side evidence, not a public API contract. “Already captured” means a namespace has at least one exact message ID or instruction text in a published record (absence/exclusion lists are ignored); it does not certify that every message in that namespace is model-facing or fully extracted.
 
 | Disposition | Candidates |
 |---|---:|
@@ -124,13 +124,6 @@ Each endpoint candidate below has its own source locator and method where visibl
 | `/wham` | 1 |
 
 ## Instruction-bearing gaps
-
-## Removed inventory entries
-
-Absent from the current structural inventory relative to the scan baseline. This does not establish feature disablement or server-side removal.
-
-- asset_families `webview/assets/runtime.js` (5 prior members).
-- endpoints `/pages/{page_id}/access-policy` (1 prior members).
 
 ## Complete ledger
 

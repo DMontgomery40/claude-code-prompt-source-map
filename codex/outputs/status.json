@@ -1,10 +1,10 @@
 {
-  "last_changed": "2026-10-02T18:58:56.091Z",
+  "last_changed": "2026-10-02T19:09:25.746Z",
   "checked": "hourly",
   "sources": {
     "app_version": "26.930.21537",
     "app_build": "12776",
     "cli_version": "codex-cli 0.159.0-alpha.12.1",
-    "catalog_fetched_at": "2026-10-02T18:57:22.082577Z"
+    "catalog_fetched_at": "2026-10-02T19:08:22.045259Z"
   }
 }

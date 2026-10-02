@@ -720,16 +720,6 @@ Role: Jev classification (0.90 confidence); execution path unverified.
 {sites} turn the attached HTML file into a working website, preserving its layout, styling, content, and interactions as closely as possible. Make only the changes necessary for it to function and be hosted.
 ```
 
-### Use the {templateName} template to create a…
-
-Source: `webview/assets/space-template-catalog-34e6b2c9e123.js`, offset 9394, SHA-256 `1c9e22b3d410ffc3db0ecd834e1c6c54da78f727674dc4a6113fb989e2dd39af`.
-
-Role: Jev classification (0.88 confidence); execution path unverified.
-
-```text
-Use the {templateName} template to create a native Page in Space. Adapt its content and structure to Page blocks, not a Word document, Google Doc, or downloadable file. Save the result as a Page in Space and return its link.
-```
-
 ### Demonstrate your ability to use this computer…
 
 Source: `webview/assets/use-imported-setup-opportunity-d9266ec95ef6.js`, offset 11036, SHA-256 `584164c3a47ecb7c634f3c391246491008c97f7810a83878f3cdfc91eae1a240`.
