@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -127,6 +128,16 @@ test("module evaluator refuses large modules and modules it cannot resolve", () 
   assert.equal(ev.evaluate("big.js"), null);
   assert.equal(ev.manifest("dep.js"), null);
   assert.deepEqual(manifestLiterals(files["dep.js"]), { type: "X", version: 1, thumbnailAssetKey: null });
+});
+
+test("a module whose evaluation leaves a rejected promise behind is still read, and the process goes on", () => {
+  const evaluator = JSON.stringify(new URL("../learning-blocks.mjs", import.meta.url).href);
+  const files = { "m.js": "var a=async()=>{missing()};a();var i={type:`X`,version:1};export{i as n};" };
+  const result = spawnSync(process.execPath, ["--input-type=module", "-e", `import { moduleEvaluator } from ${evaluator};
+const files = ${JSON.stringify(files)};
+console.log(JSON.stringify(moduleEvaluator(name => files[name] ?? null).evaluate("m.js").n));`], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '{"type":"X","version":1}\n');
 });
 
 test("registry parsing keys registrations by view module and keeps each one's analytics type", () => {

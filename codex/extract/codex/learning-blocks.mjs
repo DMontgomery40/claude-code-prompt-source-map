@@ -22,6 +22,7 @@ import { pathToFileURL } from "node:url";
 import vm from "node:vm";
 import { codexApp } from "./lib/app-layout.mjs";
 import { openAsar } from "./lib/asar.mjs";
+import { sandboxContext } from "./lib/js-scan.mjs";
 import { privacyScan } from "./lib/privacy.mjs";
 import { renderChangedDocuments, semanticDiff } from "./lib/semantic-diff.mjs";
 
@@ -112,7 +113,7 @@ class Unavailable extends Error {}
 // Evaluates small bundle modules, each in its own scope inside one vm context. Only modules
 // under maxBytes are run, so no large app chunk is ever executed.
 export function moduleEvaluator(readModule, { maxBytes = 64 * 1024 } = {}) {
-  const context = vm.createContext({ __modules: {}, __exports: null, __result: null });
+  const context = sandboxContext({ __modules: {}, __exports: null, __result: null });
   const cache = new Map();
   function evaluate(file) {
     if (cache.has(file)) return cache.get(file);

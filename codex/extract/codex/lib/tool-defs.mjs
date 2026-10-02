@@ -8,7 +8,7 @@
 import crypto from "node:crypto";
 import vm from "node:vm";
 import { byteOffset } from "./asar.mjs";
-import { insideLiteral, literalsOf, scanCode } from "./js-scan.mjs";
+import { insideLiteral, literalsOf, sandboxContext, scanCode } from "./js-scan.mjs";
 
 export const sha256 = text => crypto.createHash("sha256").update(text).digest("hex");
 
@@ -215,7 +215,7 @@ export class Chunks {
   }
   scope(file, { shared, persistent = false }) {
     const chunks = this;
-    const context = vm.createContext(Object.create(null));
+    const context = sandboxContext();
     const self = { file, context, log: [], stubs: [] };
     chunks.realms.set(vm.runInContext("ReferenceError", context), self);
     const put = (name, value, entry) => { context[name] = value; self.log.push({ name, ...entry }); };

@@ -249,11 +249,30 @@ const sameValue = (a, b) =>
     ? a.toString() === b.toString()
     : JSON.stringify(a) === JSON.stringify(b) && typeof a === typeof b;
 
+// A vm context for evaluating bundle code. Bundle code can start async work, such as a
+// request helper that a definition calls while it is being built. If that work fails, its
+// promise rejects after the evaluation has returned, where no try/catch sees it, and Node's
+// default for an unhandled rejection ends the process. So an unhandled rejection of a
+// promise made inside one of these contexts is ignored; any other still ends the process.
+const sandboxPromises = new WeakSet();
+let rejectionsGuarded = false;
+export function sandboxContext(globals = Object.create(null)) {
+  const context = vm.createContext(globals);
+  sandboxPromises.add(vm.runInContext("Promise.prototype", context));
+  if (!rejectionsGuarded) {
+    rejectionsGuarded = true;
+    process.on("unhandledRejection", (reason, promise) => {
+      if (!sandboxPromises.has(Object.getPrototypeOf(promise))) throw reason;
+    });
+  }
+  return context;
+}
+
 // Evaluates `fnSource` in an isolated context and calls it with `args`.
 // Free identifiers are resolved on demand from their definitions in `src`;
 // a name with no definition, or with conflicting definitions, is an error.
 export function callExtracted(src, fnSource, args, { label } = {}) {
-  const context = vm.createContext(Object.create(null));
+  const context = sandboxContext();
   const resolved = [];
   const resolve = (name, chain) => {
     if (chain.includes(name)) throw new Error(`${label}: circular definition of ${name}`);

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { AnchorError, extractAppPrompts } from "../lib/app-prompts.mjs";
 import { canonicalCatalog, pythonJson } from "../lib/catalog.mjs";
@@ -32,6 +33,29 @@ test("conflicting definitions of a free identifier fail instead of guessing", ()
   const src = "var K=1;function f(){var K=2}function g(){return `v${K}`}";
   const fn = enclosingFunction(src, src.indexOf("return `v"));
   assert.throws(() => callExtracted(src, fn.source, [], { label: "g" }), /K has 2 conflicting definitions/);
+});
+
+// Bundle code can start async work that fails after the evaluation returned. Each case runs in
+// its own process, since an unhandled rejection ends the process rather than failing a test.
+const jsScan = JSON.stringify(new URL("../lib/js-scan.mjs", import.meta.url).href);
+const runModule = code => spawnSync(process.execPath, ["--input-type=module", "-e", code], { encoding: "utf8" });
+
+test("a rejection left behind by evaluated bundle code does not end the process", () => {
+  const src = "var a=async()=>{missing()},b=async()=>{throw 'text'},c=()=>Promise.reject(new Error('x'));";
+  const result = runModule(`import { callExtracted } from ${jsScan};
+console.log(callExtracted(${JSON.stringify(src)}, "function f(e){a();b();c();return 'ok '+e}", ["x"], { label: "f" }).text);`);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, "ok x\n");
+});
+
+test("an unhandled rejection outside the sandbox still ends the process", () => {
+  const result = runModule(`import { callExtracted, sandboxContext } from ${jsScan};
+sandboxContext();
+callExtracted("var a=async()=>{missing()};", "function f(){a();return ''}", [], { label: "f" });
+Promise.reject(new Error("extractor bug"));`);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /extractor bug/);
+  assert.doesNotMatch(result.stderr, /missing is not defined/);
 });
 
 test("declarator names are recovered through wrapper calls", () => {

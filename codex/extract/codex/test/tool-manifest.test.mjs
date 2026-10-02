@@ -159,6 +159,17 @@ test("a chunk that cannot be scanned is listed under Not found in this build, wi
   assert.match(page, /- `chunk\/webview\/assets\/app-shared-bbbbbbbbbbbb\.js`: could not be scanned \(unterminated template/);
 });
 
+test("a definition whose evaluation starts failing async work is still published, with exit 0", () => {
+  const { root, app } = fakeApp({
+    "webview/assets/app-initial-aaaaaaaaaaaa.js":
+      "var q=async()=>{missing()},n=`fire_confetti`,d={name:n,description:`Fire confetti.`,inputSchema:{type:`object`,properties:{x:{type:`string`,description:(q(),`The x.`)}}}};"
+  });
+  const result = run(app, root);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout.trim().split("\n").at(-1)).tool_manifest.tools, 1);
+  assert.match(fs.readFileSync(path.join(root, "outputs", "desktop-tool-manifest.md"), "utf8"), /### fire_confetti/);
+});
+
 test("an unreadable app is a clear exit 2", () => {
   const { root, app } = fakeApp(null);
   const result = run(app, root);
